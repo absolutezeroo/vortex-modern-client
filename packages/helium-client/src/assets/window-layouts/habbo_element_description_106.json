@@ -1,0 +1,21 @@
+{
+  "name": "habbo_element_description#106",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "tab_container_button",
+      "intent": "white",
+      "style": "2",
+      "renderer": "skin",
+      "asset": "habbo_skin_button_tab_white_xml",
+      "layout": "button_tab_white"
+    },
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

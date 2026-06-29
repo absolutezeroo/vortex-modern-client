@@ -1,0 +1,181 @@
+{
+  "name": "snowwar_team_scores",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\674_snowwar_team_scores.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "189",
+          "height": "147",
+          "params": "64",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "188",
+              "height": "147",
+              "params": "16",
+              "style": "0",
+              "name": "backgroundImage",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "ui_timer_and_points"
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "29",
+              "y": "44",
+              "width": "56",
+              "height": "27",
+              "params": "16",
+              "style": "0",
+              "color": "0x0ff"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "56",
+                  "height": "27",
+                  "params": "16",
+                  "style": "0",
+                  "name": "score_blue_stroke",
+                  "caption": "0",
+                  "tags": "stroke",
+                  "width_min": "30"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "center",
+                  "font_face": "UbuntuThick",
+                  "font_size": 32,
+                  "grid_fit_type": "subpixel",
+                  "text_color": 1079212,
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "56",
+                  "height": "26",
+                  "params": "16",
+                  "style": "0",
+                  "name": "score_blue",
+                  "caption": "0",
+                  "width_min": "30"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "center",
+                  "font_face": "Ubuntu",
+                  "font_size": 32,
+                  "grid_fit_type": "subpixel",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "104",
+              "y": "44",
+              "width": "56",
+              "height": "27",
+              "params": "16",
+              "style": "0",
+              "color": "0x0ff0000"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "56",
+                  "height": "27",
+                  "params": "16",
+                  "style": "0",
+                  "name": "score_red_stroke",
+                  "caption": "0",
+                  "width_min": "30"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "center",
+                  "font_face": "UbuntuThick",
+                  "font_size": 32,
+                  "grid_fit_type": "subpixel",
+                  "text_color": 16607321,
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "56",
+                  "height": "26",
+                  "params": "16",
+                  "style": "0",
+                  "name": "score_red",
+                  "caption": "0"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "center",
+                  "font_face": "Ubuntu",
+                  "font_size": 32,
+                  "grid_fit_type": "subpixel",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 189,
+  "layoutHeight": 147
+}

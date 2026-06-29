@@ -1,0 +1,151 @@
+{
+  "name": "report_photo",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\620_report_photo.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "108",
+          "y": "48",
+          "width": "395",
+          "height": "666",
+          "params": "33025",
+          "style": "101",
+          "width_min": "50",
+          "height_min": "50"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "10",
+              "y": "-2",
+              "width": "165",
+              "height": "17",
+              "params": "16",
+              "style": "100",
+              "caption": "${help.report.selfie.header}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 18,
+              "text_style": "il_border",
+              "margin_left": 10,
+              "margin_right": 10,
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "9",
+              "y": "19",
+              "width": "371",
+              "height": "17",
+              "params": "16",
+              "style": "100",
+              "caption": "${help.report.selfie.body}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 18,
+              "text_style": "il_border",
+              "margin_left": 10,
+              "margin_right": 10,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "bold": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "26",
+              "y": "55",
+              "width": "340",
+              "height": "405",
+              "params": "16",
+              "style": "3",
+              "name": "selfieLoader"
+            },
+            "children": []
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "26",
+              "y": "471",
+              "width": "340",
+              "height": "64",
+              "params": "16",
+              "style": "3",
+              "name": "input_widget"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "illumina_input",
+              "illumina_input:button_caption": "",
+              "illumina_input:multiline": true
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "204",
+              "y": "538",
+              "width": "173",
+              "height": "48",
+              "params": "393233",
+              "style": "100",
+              "name": "report_confirm",
+              "caption": "${help.report.selfie.button}",
+              "width_min": "0",
+              "width_max": "196",
+              "height_min": "48",
+              "height_max": "48"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.7490196078431373",
+              "blurX": "80",
+              "blurY": "80"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 70,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 395,
+  "layoutHeight": 666
+}

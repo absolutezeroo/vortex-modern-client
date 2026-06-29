@@ -1,0 +1,778 @@
+{
+  "name": "club_center",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1708_club_center.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "460",
+          "height": "597",
+          "params": "33025",
+          "style": "3",
+          "name": "hc_center",
+          "caption": "${generic.hccenter}",
+          "color": "0xff418db0",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "460",
+              "height": "559",
+              "params": "8388624",
+              "style": "3",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "459",
+                  "height": "137",
+                  "params": "16",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "459",
+                      "height": "137",
+                      "params": "16",
+                      "style": "3",
+                      "name": "coverpic"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "hc_center_hc_center_cover",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "21",
+                      "y": "85",
+                      "width": "261",
+                      "height": "33",
+                      "params": "8388624",
+                      "style": "3",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "button_thick",
+                        "typeId": 61,
+                        "attributes": {
+                          "x": "0",
+                          "y": "-2",
+                          "width": "121",
+                          "height": "33",
+                          "params": "3276801",
+                          "style": "6",
+                          "name": "btn_buy",
+                          "caption": "${hccenter.btn.buy}",
+                          "color": "0x054c32e"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "button_thick",
+                        "typeId": 61,
+                        "attributes": {
+                          "x": "135",
+                          "y": "-2",
+                          "width": "126",
+                          "height": "33",
+                          "params": "3276801",
+                          "style": "5",
+                          "name": "btn_earn",
+                          "caption": "${hccenter.btn.earn}",
+                          "color": "0x03399cc"
+                        },
+                        "children": []
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 14,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "137",
+                  "width": "460",
+                  "height": "75",
+                  "params": "16",
+                  "style": "3",
+                  "name": "basic"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "19",
+                      "y": "11",
+                      "width": "50",
+                      "height": "50",
+                      "params": "16",
+                      "style": "3",
+                      "name": "hc_badge_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "50",
+                          "height": "50",
+                          "params": "3935440",
+                          "style": "3",
+                          "name": "hc_badge"
+                        },
+                        "children": [],
+                        "vars": {
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "itemgrid_vertical",
+                    "typeId": 53,
+                    "attributes": {
+                      "x": "72",
+                      "y": "7",
+                      "width": "360",
+                      "height": "62",
+                      "params": "16",
+                      "style": "3",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "html",
+                        "typeId": 11,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "290",
+                          "height": "16",
+                          "params": "1",
+                          "style": "3",
+                          "name": "status_title"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_bold",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0,
+                          "editable": false,
+                          "selectable": false
+                        }
+                      },
+                      {
+                        "tag": "html",
+                        "typeId": 11,
+                        "attributes": {
+                          "x": "0",
+                          "y": "16",
+                          "width": "285",
+                          "height": "45",
+                          "params": "1",
+                          "style": "3",
+                          "name": "status_info"
+                        },
+                        "children": [],
+                        "vars": {
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0,
+                          "editable": false,
+                          "selectable": false
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "scale_to_fit_items": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "20",
+                  "y": "212",
+                  "width": "420",
+                  "height": "208",
+                  "params": "16",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "420",
+                      "height": "134",
+                      "params": "16",
+                      "style": "3",
+                      "name": "special_content"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "412",
+                          "height": "128",
+                          "params": "16",
+                          "style": "3",
+                          "color": "0x053a3cb"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "16",
+                              "y": "16",
+                              "width": "180",
+                              "height": "22",
+                              "params": "16",
+                              "style": "3",
+                              "name": "special_title",
+                              "caption": "${hccenter.special.title}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_size": 22,
+                              "text_color": 16777215,
+                              "text_style": "u_bold",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "16",
+                              "y": "36",
+                              "width": "180",
+                              "height": "56",
+                              "params": "16",
+                              "style": "3",
+                              "name": "special_info",
+                              "caption": "${hccenter.special.info}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_color": 16777215,
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "link",
+                            "typeId": 14,
+                            "attributes": {
+                              "x": "16",
+                              "y": "100",
+                              "width": "190",
+                              "height": "19",
+                              "params": "1",
+                              "style": "3",
+                              "name": "special_infolink",
+                              "caption": "${hccenter.special.infolink}",
+                              "treshold": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_color": 16777215,
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "underline": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "134",
+                      "width": "412",
+                      "height": "74",
+                      "params": "16",
+                      "style": "3",
+                      "name": "gift_content",
+                      "color": "0x054c32e"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "16",
+                          "y": "16",
+                          "width": "250",
+                          "height": "22",
+                          "params": "16",
+                          "style": "3",
+                          "name": "gift_title",
+                          "caption": "${hccenter.gift.title}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 22,
+                          "text_color": 16777215,
+                          "text_style": "u_bold",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "html",
+                        "typeId": 11,
+                        "attributes": {
+                          "x": "16",
+                          "y": "36",
+                          "width": "250",
+                          "height": "32",
+                          "params": "33025",
+                          "style": "3",
+                          "name": "gift_info",
+                          "caption": "${hccenter.gift.info}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_color": 16777215,
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0,
+                          "editable": false,
+                          "selectable": false
+                        }
+                      },
+                      {
+                        "tag": "button_thick",
+                        "typeId": 61,
+                        "attributes": {
+                          "x": "233",
+                          "y": "22",
+                          "width": "154",
+                          "height": "33",
+                          "params": "3538945",
+                          "style": "5",
+                          "name": "btn_gift",
+                          "caption": "${hccenter.btn.gifts.view}",
+                          "color": "0x03399cc"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "420",
+                  "width": "460",
+                  "height": "139",
+                  "params": "16",
+                  "style": "3",
+                  "name": "footer",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "36",
+                      "y": "6",
+                      "width": "190",
+                      "height": "22",
+                      "params": "16",
+                      "style": "3",
+                      "name": "general_title",
+                      "caption": "${hccenter.general.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_size": 22,
+                      "text_color": 4886193,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "html",
+                    "typeId": 11,
+                    "attributes": {
+                      "x": "36",
+                      "y": "28",
+                      "width": "174",
+                      "height": "97",
+                      "params": "1",
+                      "style": "3",
+                      "name": "general_info",
+                      "caption": "${hccenter.general.info}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0,
+                      "editable": false,
+                      "selectable": false
+                    }
+                  },
+                  {
+                    "tag": "link",
+                    "typeId": 14,
+                    "attributes": {
+                      "x": "36",
+                      "y": "118",
+                      "width": "174",
+                      "height": "26",
+                      "params": "1",
+                      "style": "3",
+                      "name": "general_infolink",
+                      "caption": "${hccenter.general.infolink}",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_color": 4886193,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "256",
+                      "y": "10",
+                      "width": "200",
+                      "height": "130",
+                      "params": "16",
+                      "style": "3",
+                      "name": "hc_center_illustration"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "hc_center_hc_center_illustration",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "360",
+              "y": "14",
+              "width": "90",
+              "height": "130",
+              "params": "16",
+              "style": "100",
+              "name": "avatar"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "room_previewer",
+              "room_previewer:offsety": -30,
+              "room_previewer:zoom": 2
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "218",
+              "y": "204",
+              "width": "222",
+              "height": "150",
+              "params": "16",
+              "style": "3",
+              "name": "special_content_postit"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "222",
+                  "height": "150",
+                  "params": "16",
+                  "style": "3",
+                  "name": "hc_postit_bg"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "hc_center_hc_postit_bg",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "13",
+                  "y": "16",
+                  "width": "190",
+                  "height": "22",
+                  "params": "16",
+                  "style": "3",
+                  "name": "special_time_title",
+                  "caption": "${hccenter.special.time.title}"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 22,
+                  "text_color": 6828547,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "html",
+                "typeId": 11,
+                "attributes": {
+                  "x": "47",
+                  "y": "41",
+                  "width": "153",
+                  "height": "22",
+                  "params": "1",
+                  "style": "3",
+                  "name": "special_time_content"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 22,
+                  "text_color": 6828547,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0,
+                  "editable": false,
+                  "selectable": false
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "13",
+                  "y": "68",
+                  "width": "190",
+                  "height": "22",
+                  "params": "16",
+                  "style": "3",
+                  "name": "special_amount_title",
+                  "caption": "${hccenter.special.amount.title}"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 22,
+                  "text_color": 6828547,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "html",
+                "typeId": 11,
+                "attributes": {
+                  "x": "47",
+                  "y": "95",
+                  "width": "153",
+                  "height": "22",
+                  "params": "1",
+                  "style": "3",
+                  "name": "special_amount_content"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 22,
+                  "text_color": 6828547,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0,
+                  "editable": false,
+                  "selectable": false
+                }
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "17",
+                  "y": "120",
+                  "width": "190",
+                  "height": "17",
+                  "params": "262145",
+                  "style": "3",
+                  "name": "special_breakdown_link",
+                  "caption": "${hccenter.breakdown.infolink}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "right",
+                  "text_color": 4886193,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "7",
+                  "y": "41",
+                  "width": "24",
+                  "height": "24",
+                  "params": "16",
+                  "style": "3",
+                  "name": "special_time_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "hc_center_hc_center_timer"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "17",
+                  "y": "94",
+                  "width": "24",
+                  "height": "24",
+                  "params": "16",
+                  "style": "3",
+                  "name": "special_amount_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "hc_center_icon_credits"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "help_page": "habboclub",
+          "margin_left": 0,
+          "margin_top": 32,
+          "margin_right": 0,
+          "margin_bottom": -10
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 460,
+  "layoutHeight": 597
+}

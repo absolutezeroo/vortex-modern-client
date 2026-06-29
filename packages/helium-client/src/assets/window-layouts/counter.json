@@ -1,0 +1,35 @@
+{
+  "name": "counter",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\682_counter.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bitmap",
+        "typeId": 21,
+        "attributes": {
+          "x": "171",
+          "y": "131",
+          "width": "164",
+          "height": "164",
+          "params": "3264",
+          "style": "0",
+          "name": "counterBitmap",
+          "tags": "bitmap",
+          "width_min": "164",
+          "height_min": "164"
+        },
+        "children": [],
+        "vars": {
+          "bitmap_asset_name": "explosion001"
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 164,
+  "layoutHeight": 164
+}

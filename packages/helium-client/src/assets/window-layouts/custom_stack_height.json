@@ -1,0 +1,157 @@
+{
+  "name": "custom_stack_height",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\561_custom_stack_height.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "320",
+          "height": "189",
+          "params": "32769",
+          "style": "100",
+          "caption": "${widget.custom.stack.height.title}"
+        },
+        "children": [
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "3",
+              "y": "101",
+              "width": "140",
+              "height": "50",
+              "params": "131089",
+              "style": "101",
+              "name": "button_above_stack",
+              "caption": "${furniture.above.stack}",
+              "color": "0x0bbbbbb"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "165",
+              "y": "99",
+              "width": "148",
+              "height": "50",
+              "params": "393233",
+              "style": "101",
+              "name": "button_floor_level",
+              "caption": "${furniture.floor.level}",
+              "color": "0x0bbbbbb"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "10",
+              "y": "69",
+              "width": "238",
+              "height": "30",
+              "params": "17",
+              "style": "105",
+              "name": "slider"
+            },
+            "children": [
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "30",
+                  "params": "33073",
+                  "style": "102",
+                  "name": "slider_button"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "10",
+              "y": "5",
+              "width": "294",
+              "height": "59",
+              "params": "16",
+              "style": "100",
+              "caption": "${widget.custom.stack.height.text}"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "250",
+              "y": "69",
+              "width": "58",
+              "height": "30",
+              "params": "16",
+              "style": "105"
+            },
+            "children": [
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "7",
+                  "y": "7",
+                  "width": "45",
+                  "height": "20",
+                  "params": "1",
+                  "style": "100",
+                  "name": "input_height",
+                  "caption": "1.0"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "restrict": "0123456789.",
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 320,
+  "layoutHeight": 189
+}

@@ -1,0 +1,50 @@
+{
+  "name": "achievement_notification",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\150_achievement_notification.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "405",
+          "height": "95",
+          "params": "133136",
+          "style": "0",
+          "name": "item_container"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "5",
+              "width": "395",
+              "height": "85",
+              "params": "133136",
+              "style": "0",
+              "name": "message_text"
+            },
+            "children": [],
+            "vars": {
+              "text_color": 0,
+              "embed_fonts": true,
+              "multiline": true,
+              "word_wrap": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 405,
+  "layoutHeight": 95
+}

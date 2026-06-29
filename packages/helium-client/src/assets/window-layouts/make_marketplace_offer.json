@@ -1,0 +1,348 @@
+{
+  "name": "make_marketplace_offer",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\328_make_marketplace_offer.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "300",
+          "height": "340",
+          "params": "33025",
+          "style": "3",
+          "caption": "${inventory.marketplace.make_offer.title}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "288",
+              "height": "304",
+              "params": "2192",
+              "style": "0",
+              "name": "main_border",
+              "caption": "Marketplace offer"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "12",
+                  "width": "70",
+                  "height": "70",
+                  "params": "16",
+                  "style": "105",
+                  "name": "image_border",
+                  "caption": "Marketplace offer"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "70",
+                      "height": "70",
+                      "params": "16",
+                      "style": "3",
+                      "name": "furni_image",
+                      "caption": "Marketplace offer"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "2",
+                  "y": "2",
+                  "width": "36",
+                  "height": "36",
+                  "params": "16",
+                  "style": "3",
+                  "name": "unique_item_overlay_widget",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "limited_item_overlay_preview"
+                }
+              },
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "2",
+                  "y": "2",
+                  "width": "36",
+                  "height": "36",
+                  "params": "16",
+                  "style": "3",
+                  "name": "rarity_item_overlay_widget",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "rarity_item_overlay_grid"
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "88",
+                  "y": "13",
+                  "width": "190",
+                  "height": "19",
+                  "params": "16",
+                  "style": "3",
+                  "name": "furni_name",
+                  "caption": "${001_lorem_ipsum_title}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_headline_medium",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "88",
+                  "y": "34",
+                  "width": "190",
+                  "height": "49",
+                  "params": "16",
+                  "style": "3",
+                  "name": "furni_desc",
+                  "caption": "${002_lorem_ipsum_content}"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "87",
+                  "width": "268",
+                  "height": "39",
+                  "params": "16",
+                  "style": "3",
+                  "name": "expiration_info",
+                  "caption": "${inventory.marketplace.make_offer.expiration_info}"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "-86",
+                  "y": "131",
+                  "width": "295",
+                  "height": "19",
+                  "params": "262160",
+                  "style": "3",
+                  "name": "price_request",
+                  "caption": "${inventory.marketplace.make_offer.price_request}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "right",
+                  "text_style": "u_headline_small",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "212",
+                  "y": "129",
+                  "width": "66",
+                  "height": "26",
+                  "params": "16",
+                  "style": "105",
+                  "name": "input_border",
+                  "caption": "Marketplace offer"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "8",
+                      "y": "3",
+                      "width": "50",
+                      "height": "19",
+                      "params": "1",
+                      "style": "3",
+                      "name": "price_input",
+                      "width_min": "50",
+                      "width_max": "50"
+                    },
+                    "children": [],
+                    "vars": {
+                      "always_show_selection": true,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "159",
+                  "width": "268",
+                  "height": "42",
+                  "params": "16",
+                  "style": "3",
+                  "name": "average_price",
+                  "caption": "${inventory.marketplace.make_offer.average_price}"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "210",
+                  "width": "268",
+                  "height": "54",
+                  "params": "1040",
+                  "style": "105",
+                  "name": "final_price_border",
+                  "caption": "Marketplace offer"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "6",
+                      "y": "4",
+                      "width": "257",
+                      "height": "46",
+                      "params": "16",
+                      "style": "3",
+                      "name": "final_price",
+                      "caption": "${inventory.marketplace.make_offer.final_price}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "10",
+                  "y": "271",
+                  "width": "74",
+                  "height": "28",
+                  "params": "132113",
+                  "style": "3",
+                  "name": "make_offer_button",
+                  "caption": "${inventory.marketplace.make_offer.post}",
+                  "width_max": "130"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "223",
+                  "y": "271",
+                  "width": "56",
+                  "height": "28",
+                  "params": "394257",
+                  "style": "3",
+                  "name": "cancel_make_offer_button",
+                  "caption": "${inventory.marketplace.make_offer.cancel}",
+                  "width_max": "130"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 30,
+          "margin_right": 6,
+          "margin_bottom": 6
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 300,
+  "layoutHeight": 340
+}

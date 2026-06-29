@@ -1,0 +1,177 @@
+{
+  "name": "Group_Entry",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\627_Group_Entry.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "62",
+          "height": "60",
+          "params": "16",
+          "style": "0",
+          "name": "group_entry_container",
+          "color": "0x0c9c9c9"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "60",
+              "params": "16",
+              "style": "0",
+              "name": "bg_selected_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}achievement_active.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "60",
+              "params": "17",
+              "style": "0",
+              "name": "bg_unselected_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}achievement_inactive.png"
+            }
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "11",
+              "y": "10",
+              "width": "40",
+              "height": "40",
+              "params": "16",
+              "style": "0",
+              "name": "group_pic_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "badge_image",
+              "badge_image:type": "group",
+              "badge_image:pivot_point": "center",
+              "badge_image:stretched_x": false,
+              "badge_image:stretched_y": false
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "60",
+              "params": "17",
+              "style": "0",
+              "name": "bg_region",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "18",
+              "height": "16",
+              "params": "81",
+              "style": "0",
+              "name": "clear_favourite",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "18",
+                  "height": "16",
+                  "params": "16",
+                  "style": "0",
+                  "name": "icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "extended_profile_clear_favourite",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ],
+            "vars": {
+              "tool_tip_caption": "${group.clearfavourite}"
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "18",
+              "height": "16",
+              "params": "81",
+              "style": "0",
+              "name": "make_favourite",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "18",
+                  "height": "16",
+                  "params": "16",
+                  "style": "0",
+                  "name": "icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "extended_profile_make_favourite",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ],
+            "vars": {
+              "tool_tip_caption": "${group.makefavourite}"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 62,
+  "layoutHeight": 60
+}

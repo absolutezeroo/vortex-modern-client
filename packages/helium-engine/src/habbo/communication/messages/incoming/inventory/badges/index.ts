@@ -1,0 +1,1 @@
+export {BadgesMessageEvent} from './BadgesMessageEvent';

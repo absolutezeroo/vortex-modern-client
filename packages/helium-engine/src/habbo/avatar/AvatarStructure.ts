@@ -1,0 +1,591 @@
+import {ActionDefinition} from './actions/ActionDefinition';
+import {AvatarActionManager} from './actions/AvatarActionManager';
+import type {IActiveActionData} from './actions/IActiveActionData';
+import type {Animation} from './animation/Animation';
+import type {AnimationLayerData} from './animation/AnimationLayerData';
+import {AnimationManager} from './animation/AnimationManager';
+import {AvatarImagePartContainer} from './AvatarImagePartContainer';
+import {AvatarDirectionAngle} from './enum/AvatarDirectionAngle';
+import {AvatarModelGeometry} from './geometry/AvatarModelGeometry';
+import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
+import type {IAvatarImage} from './IAvatarImage';
+import {AnimationData} from './structure/AnimationData';
+import type {AvatarCanvas} from './structure/AvatarCanvas';
+import {FigureSetData} from './structure/FigureSetData';
+import type {IFigureData} from './structure/IFigureData';
+import type {IPartColor} from './structure/figure/IPartColor';
+import type {IFigurePartSet} from './structure/figure/IFigurePartSet';
+import {PartSetsData} from './structure/PartSetsData';
+
+/**
+ * Central orchestrator connecting geometry, actions, animations, and figure data.
+ *
+ * @see sources/win63_version/habbo/avatar/AvatarStructure.as
+ */
+export class AvatarStructure
+{
+	private _geometry: AvatarModelGeometry | null = null;
+	private _actionManager: AvatarActionManager | null = null;
+	private _figureSetData: FigureSetData;
+	private _partSetsData: PartSetsData;
+	private _animationData: AnimationData;
+	private _defaultAction: ActionDefinition | null = null;
+	private _mandatorySetTypeCache: Map<string, Map<number, string[]>>;
+
+	constructor()
+	{
+		this._figureSetData = new FigureSetData();
+		this._partSetsData = new PartSetsData();
+		this._animationData = new AnimationData();
+		this._animationManager = new AnimationManager();
+		this._mandatorySetTypeCache = new Map();
+	}
+
+	private _animationManager: AnimationManager;
+
+	public get animationManager(): AnimationManager
+	{
+		return this._animationManager;
+	}
+
+	public get figureData(): IFigureData
+	{
+		return this._figureSetData;
+	}
+
+	public init(): void
+	{
+		this._mandatorySetTypeCache = new Map();
+	}
+
+	public initGeometry(data: any): void
+	{
+		if (!data) return;
+
+		this._geometry = new AvatarModelGeometry(data);
+	}
+
+	public initActions(data: any): void
+	{
+		if (!data) return;
+
+		this._actionManager = new AvatarActionManager(data);
+		this._defaultAction = this._actionManager.getDefaultAction();
+	}
+
+	public updateActions(data: any): void
+	{
+		if (this._actionManager)
+		{
+			this._actionManager.updateActions(data);
+			this._defaultAction = this._actionManager.getDefaultAction();
+		}
+	}
+
+	public initPartSets(data: any): boolean
+	{
+		if (!data) return false;
+
+		if (this._partSetsData.parse(data))
+		{
+			const riDef = this._partSetsData.getPartDefinition('ri');
+			const liDef = this._partSetsData.getPartDefinition('li');
+
+			if (riDef) riDef.appendToFigure = true;
+			if (liDef) liDef.appendToFigure = true;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public initAnimation(data: any): boolean
+	{
+		if (!data) return false;
+
+		return this._animationData.parse(data);
+	}
+
+	public initFigureData(data: any): boolean
+	{
+		if (!data) return false;
+
+		return this._figureSetData.parse(data);
+	}
+
+	public injectFigureData(data: any): void
+	{
+		this._figureSetData.injectJSON(data);
+	}
+
+	public registerAnimation(data: any): void
+	{
+		this._animationManager.registerAnimation(
+			(actionId: string) => this.getActionDefinition(actionId),
+			data
+		);
+	}
+
+	public getPartColor(figure: IAvatarFigureContainer, partType: string, colorIndex: number = 0): IPartColor | null
+	{
+		const colorIds = figure.getPartColorIds(partType);
+
+		if (!colorIds || colorIds.length <= colorIndex) return null;
+
+		const setType = this._figureSetData.getSetType(partType);
+
+		if (!setType) return null;
+
+		const palette = this._figureSetData.getPalette(setType.paletteID);
+
+		if (!palette) return null;
+
+		return palette.getColor(colorIds[colorIndex]);
+	}
+
+	public getBodyPartData(animationName: string, frameIndex: number, partId: string): AnimationLayerData | null
+	{
+		return this._animationManager.getLayerData(animationName, frameIndex, partId);
+	}
+
+	public getAnimation(name: string): Animation | null
+	{
+		return this._animationManager.getAnimation(name) as Animation | null;
+	}
+
+	public getActionDefinition(id: string): ActionDefinition | null
+	{
+		if (!this._actionManager) return null;
+
+		return this._actionManager.getActionDefinition(id);
+	}
+
+	public getActionDefinitionWithState(state: string): ActionDefinition | null
+	{
+		if (!this._actionManager) return null;
+
+		return this._actionManager.getActionDefinitionWithState(state);
+	}
+
+	public isMainAvatarSet(setId: string): boolean
+	{
+		if (!this._geometry) return false;
+
+		return this._geometry.isMainAvatarSet(setId);
+	}
+
+	public sortActions(actions: IActiveActionData[]): IActiveActionData[]
+	{
+		if (!this._actionManager) return actions;
+
+		return this._actionManager.sortActions(actions);
+	}
+
+	public maxFrames(actions: IActiveActionData[]): number
+	{
+		let max = 0;
+
+		for (const action of actions)
+		{
+			max = Math.max(max, this._animationData.getFrameCount(action.definition));
+		}
+
+		return max;
+	}
+
+	public getMandatorySetTypeIds(gender: string, clubLevel: number): string[]
+	{
+		if (!this._mandatorySetTypeCache.has(gender))
+		{
+			this._mandatorySetTypeCache.set(gender, new Map());
+		}
+
+		const genderCache = this._mandatorySetTypeCache.get(gender)!;
+
+		if (genderCache.has(clubLevel))
+		{
+			return genderCache.get(clubLevel)!;
+		}
+
+		const result = this._figureSetData.getMandatorySetTypeIds(gender, clubLevel);
+
+		genderCache.set(clubLevel, result);
+
+		return result;
+	}
+
+	public getDefaultPartSet(type: string, gender: string): IFigurePartSet | null
+	{
+		return this._figureSetData.getDefaultPartSet(type, gender);
+	}
+
+	public getCanvasOffsets(actions: IActiveActionData[], scale: string, direction: number): number[] | null
+	{
+		if (!this._actionManager) return null;
+
+		return this._actionManager.getCanvasOffsets(actions, scale, direction);
+	}
+
+	public getCanvas(scale: string, geometryId: string): AvatarCanvas | null
+	{
+		if (!this._geometry) return null;
+
+		return this._geometry.getCanvas(scale, geometryId);
+	}
+
+	public removeDynamicItems(avatar: IAvatarImage): void
+	{
+		if (this._geometry) this._geometry.removeDynamicItems(avatar);
+	}
+
+	public getActiveBodyPartIds(action: IActiveActionData, avatar: IAvatarImage): string[]
+	{
+		if (!this._geometry) return [];
+
+		const bodyPartIds: string[] = [];
+		const geometryType = action.definition.geometryType;
+		let animation: Animation | null = null;
+
+		if (action.definition.isAnimation)
+		{
+			const animName = action.definition.state + '.' + action.actionParameter;
+
+			animation = this.getAnimation(animName);
+
+			if (animation)
+			{
+				const animatedIds = animation.getAnimatedBodyPartIds(0, action.overridingAction);
+
+				if (animation.hasAddData())
+				{
+					for (const addData of animation.addData)
+					{
+						const bodyPart = this._geometry.getBodyPart(geometryType, addData.align);
+
+						if (bodyPart)
+						{
+							bodyPart.addPart({
+								id: addData.id,
+								x: 0,
+								y: 0,
+								z: 0,
+								radius: 0.01,
+								nx: 0,
+								ny: 0,
+								nz: -1,
+								double: 1
+							}, avatar);
+
+							const partDef = this._partSetsData.addPartDefinition({
+								'set-type': addData.id,
+								setType: addData.id
+							});
+
+							partDef.appendToFigure = true;
+
+							if (addData.base === '')
+							{
+								partDef.staticId = 1;
+							}
+
+							if (bodyPartIds.indexOf(bodyPart.id) === -1)
+							{
+								bodyPartIds.push(bodyPart.id);
+							}
+						}
+					}
+				}
+
+				for (const partId of animatedIds)
+				{
+					const bodyPart = this._geometry.getBodyPart(geometryType, partId);
+
+					if (bodyPart && bodyPartIds.indexOf(bodyPart.id) === -1)
+					{
+						bodyPartIds.push(bodyPart.id);
+					}
+				}
+			}
+		}
+		else
+		{
+			const activeParts = this._partSetsData.getActiveParts(action.definition);
+
+			for (const partId of activeParts)
+			{
+				const bodyPart = this._geometry.getBodyPartOfItem(geometryType, partId, avatar);
+
+				if (bodyPart && bodyPartIds.indexOf(bodyPart.id) === -1)
+				{
+					bodyPartIds.push(bodyPart.id);
+				}
+			}
+		}
+
+		return bodyPartIds;
+	}
+
+	public getBodyPartsUnordered(setId: string): string[]
+	{
+		if (!this._geometry) return [];
+
+		return this._geometry.getBodyPartIdsInAvatarSet(setId);
+	}
+
+	public getBodyParts(setType: string, geometryType: string, direction: number): string[]
+	{
+		if (!this._geometry) return [];
+
+		const angle = AvatarDirectionAngle.DIRECTION_ANGLES[direction] || 0;
+
+		return this._geometry.getBodyPartsAtAngle(setType, angle, geometryType);
+	}
+
+	public getFrameBodyPartOffset(action: IActiveActionData, direction: number, frameIndex: number, bodyPartId: string): {
+		x: number;
+		y: number
+	}
+	{
+		const animAction = this._animationData.getAction(action.definition);
+
+		if (animAction)
+		{
+			return animAction.getFrameBodyPartOffset(direction, frameIndex, bodyPartId);
+		}
+
+		return {x: 0, y: 0};
+	}
+
+	public getParts(
+		bodyPartId: string,
+		figure: IAvatarFigureContainer,
+		action: IActiveActionData,
+		geometryType: string,
+		direction: number,
+		hiddenLayers: string[],
+		avatar: IAvatarImage,
+		effectParts: Map<string, string> | null = null
+	): AvatarImagePartContainer[]
+	{
+		if (!action || !this._geometry) return [];
+
+		const activeParts = this._partSetsData.getActiveParts(action.definition);
+		const containers: AvatarImagePartContainer[] = [];
+		let defaultFrames: number[] = [0];
+
+		const animAction = this._animationData.getAction(action.definition);
+		let animation: Animation | null = null;
+
+		if (action.definition.isAnimation)
+		{
+			const animName = action.definition.state + '.' + action.actionParameter;
+
+			animation = this.getAnimation(animName);
+
+			if (animation)
+			{
+				defaultFrames = this.getPopulatedArray(animation.frameCount(action.overridingAction));
+
+				for (const partId of animation.getAnimatedBodyPartIds(0, action.overridingAction))
+				{
+					if (partId === bodyPartId)
+					{
+						const geomBodyPart = this._geometry.getBodyPart(geometryType, partId);
+
+						if (geomBodyPart)
+						{
+							for (const dynamicPart of geomBodyPart.getDynamicParts(avatar))
+							{
+								activeParts.push(dynamicPart.id);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		const geometryParts = this._geometry.getParts(geometryType, bodyPartId, direction, activeParts, avatar);
+		const figurePartTypes = figure.getPartTypeIds();
+
+		// Build containers from figure parts
+		const figureContainers: { partType: string; container: AvatarImagePartContainer }[] = [];
+
+		for (const partType of figurePartTypes)
+		{
+			if (effectParts && effectParts.has(partType)) continue;
+
+			const partSetId = figure.getPartSetId(partType);
+			const colorIds = figure.getPartColorIds(partType);
+			const setType = this._figureSetData.getSetType(partType);
+
+			if (!setType) continue;
+
+			const palette = this._figureSetData.getPalette(setType.paletteID);
+
+			if (!palette) continue;
+
+			const partSet = setType.getPartSet(partSetId);
+
+			if (!partSet) continue;
+
+			hiddenLayers.push(...partSet.hiddenLayers);
+
+			for (const part of partSet.parts)
+			{
+				if (geometryParts.indexOf(part.type) > -1)
+				{
+					let frames: any[] = defaultFrames;
+
+					if (animAction)
+					{
+						const actionPart = animAction.getPart(part.type);
+
+						if (actionPart) frames = actionPart.frames;
+					}
+
+					let actionDef = action.definition;
+
+					if (activeParts.indexOf(part.type) === -1)
+					{
+						actionDef = this._defaultAction!;
+					}
+
+					const partDef = this._partSetsData.getPartDefinition(part.type);
+					let flippedType = partDef ? partDef.flippedSetType : part.type;
+
+					if (!flippedType) flippedType = part.type;
+
+					let color: IPartColor | null = null;
+
+					if (colorIds && colorIds.length > part.colorLayerIndex - 1)
+					{
+						color = palette.getColor(colorIds[part.colorLayerIndex - 1]);
+					}
+
+					const isColorable = part.colorLayerIndex > 0;
+
+					const container = new AvatarImagePartContainer(
+						bodyPartId, part.type, part.id.toString(), color,
+						frames, actionDef, isColorable, part.paletteMap, flippedType
+					);
+
+					figureContainers.push({partType: part.type, container});
+				}
+			}
+		}
+
+		// Order containers by geometry part order
+		const result: AvatarImagePartContainer[] = [];
+
+		for (const partType of geometryParts)
+		{
+			let found = false;
+
+			for (const entry of figureContainers)
+			{
+				if (entry.partType === partType)
+				{
+					if (hiddenLayers.indexOf(partType) === -1)
+					{
+						result.push(entry.container);
+					}
+
+					found = true;
+				}
+			}
+
+			if (!found)
+			{
+				// Handle effect parts and appended figure parts
+				if (effectParts && effectParts.has(partType))
+				{
+					const effectPartId = effectParts.get(partType)!;
+					let frames: any[] = defaultFrames;
+
+					if (animAction)
+					{
+						const actionPart = animAction.getPart(partType);
+
+						if (actionPart) frames = actionPart.frames;
+					}
+
+					const container = new AvatarImagePartContainer(
+						bodyPartId, partType, effectPartId, null,
+						frames, action.definition, false, -1, partType, false, 1
+					);
+
+					result.push(container);
+				}
+				else if (activeParts.indexOf(partType) > -1)
+				{
+					const geomBodyPart = this._geometry.getBodyPartOfItem(geometryType, partType, avatar);
+
+					if (geomBodyPart && bodyPartId === geomBodyPart.id)
+					{
+						const partDef = this._partSetsData.getPartDefinition(partType);
+
+						if (partDef && partDef.appendToFigure)
+						{
+							let partId = '1';
+
+							if (action.actionParameter !== '') partId = action.actionParameter;
+							if (partDef.hasStaticId()) partId = partDef.staticId.toString();
+
+							let isBlendable = false;
+							let blend = 1;
+
+							if (animation)
+							{
+								const addData = animation.getAddData(partType);
+
+								if (addData)
+								{
+									isBlendable = addData.isBlended;
+									blend = addData.blend;
+								}
+							}
+
+							let frames: any[] = defaultFrames;
+
+							if (animAction)
+							{
+								const actionPart = animAction.getPart(partType);
+
+								if (actionPart) frames = actionPart.frames;
+							}
+
+							const container = new AvatarImagePartContainer(
+								bodyPartId, partType, partId, null,
+								frames, action.definition, false, -1, partType, isBlendable, blend
+							);
+
+							result.push(container);
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public dispose(): void
+	{
+		this._geometry = null;
+		this._actionManager = null;
+		this._mandatorySetTypeCache.clear();
+	}
+
+	private getPopulatedArray(count: number): number[]
+	{
+		const result: number[] = [];
+
+		for (let i = 0; i < count; i++)
+		{
+			result.push(i);
+		}
+
+		return result;
+	}
+}

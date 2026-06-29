@@ -1,0 +1,53 @@
+{
+  "name": "textInputWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\209_textInputWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "61",
+          "y": "282",
+          "width": "229",
+          "height": "71",
+          "params": "16",
+          "style": "0",
+          "name": "textInputWidget"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "229",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "input_text",
+              "caption": "lorem ipsum"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 229,
+  "layoutHeight": 71
+}

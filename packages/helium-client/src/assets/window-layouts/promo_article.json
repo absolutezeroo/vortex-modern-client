@@ -1,0 +1,681 @@
+{
+  "name": "promo_article",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\796_promo_article.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "500",
+          "height": "118",
+          "params": "147472",
+          "style": "0",
+          "name": "root",
+          "clipping": "false",
+          "width_max": "500"
+        },
+        "children": [
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "500",
+              "height": "18",
+              "params": "147600",
+              "style": "0",
+              "name": "title",
+              "width_min": "500",
+              "width_max": "500"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "10",
+                  "width": "12",
+                  "height": "4",
+                  "params": "16",
+                  "style": "100",
+                  "name": "border_bar"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "illumina_light_border_top_center",
+                  "pivot_point": "center left",
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "16",
+                  "y": "4",
+                  "width": "155",
+                  "height": "14",
+                  "params": "16",
+                  "style": "100",
+                  "name": "header_txt",
+                  "caption": "${landing.view.promo.article.header}",
+                  "tags": "COLORABLE"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 9,
+                  "text_style": "il_heading_3",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "175",
+                  "y": "10",
+                  "width": "500",
+                  "height": "4",
+                  "params": "16",
+                  "style": "100",
+                  "name": "hdr_line"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "illumina_light_border_top_center",
+                  "pivot_point": "center left",
+                  "stretched_y": false
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 4,
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "23",
+              "width": "160",
+              "height": "10",
+              "params": "0",
+              "style": "100",
+              "name": "navigation"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "10",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "1",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "20",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "2",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "30",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "3",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "40",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "4",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "50",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "5",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "60",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "6",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "70",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "7",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "80",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "8",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "90",
+                  "y": "0",
+                  "width": "8",
+                  "height": "8",
+                  "params": "17",
+                  "style": "100",
+                  "name": "article_navigation",
+                  "id": "9",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "8",
+                      "height": "8",
+                      "params": "16",
+                      "style": "100",
+                      "name": "navigation_disk",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "progress_disk_flat_off",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${promo.article.widget.tooltip.go.to.article}",
+                  "tool_tip_delay": 592
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "17",
+              "width": "500",
+              "height": "101",
+              "params": "8536080",
+              "style": "100",
+              "name": "article"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "10",
+                  "y": "19",
+                  "width": "150",
+                  "height": "82",
+                  "params": "16",
+                  "style": "100",
+                  "name": "promo_image",
+                  "width_max": "150"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "170",
+                  "y": "0",
+                  "width": "330",
+                  "height": "34",
+                  "params": "16",
+                  "style": "0",
+                  "name": "content",
+                  "clipping": "false"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "330",
+                      "height": "24",
+                      "params": "16",
+                      "style": "100",
+                      "name": "promo_title",
+                      "caption": "${promo.article.widget.loading}",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "il_heading_title",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "formatted_text",
+                    "typeId": 15,
+                    "attributes": {
+                      "x": "0",
+                      "y": "30",
+                      "width": "330",
+                      "height": "4",
+                      "params": "16",
+                      "style": "100",
+                      "name": "promo_text",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "-10",
+                      "y": "40",
+                      "width": "52",
+                      "height": "48",
+                      "params": "131073",
+                      "style": "100",
+                      "name": "button",
+                      "visible": "false",
+                      "width_max": "330"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 6,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 500,
+  "layoutHeight": 118
+}

@@ -1,0 +1,177 @@
+{
+  "name": "chat_report",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\366_chat_report.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "380",
+          "height": "491",
+          "params": "32769",
+          "style": "100",
+          "name": "emergency_help_request",
+          "caption": "${help.emergency.main.title}"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "9",
+              "y": "8",
+              "width": "360",
+              "height": "1423",
+              "params": "131088",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "179",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${help.emergency.chat_report.subtitle}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "il_heading_1",
+                  "text_color": 5592405
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "27",
+                  "width": "270",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${help.emergency.chat_report.description}",
+                  "width_min": "270",
+                  "width_max": "270"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "scrollable_itemlist_vertical",
+                "typeId": 56,
+                "attributes": {
+                  "x": "5",
+                  "y": "51",
+                  "width": "332",
+                  "height": "350",
+                  "params": "144",
+                  "style": "100",
+                  "name": "room_items"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "317",
+                      "height": "24",
+                      "params": "147472",
+                      "style": "102"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "8",
+                          "width": "280",
+                          "height": "15",
+                          "params": "16",
+                          "style": "100",
+                          "name": "room_name"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "il_border"
+                        }
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "9",
+                          "y": "23",
+                          "width": "307",
+                          "height": "1",
+                          "params": "149648",
+                          "style": "100",
+                          "name": "chat_items"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 8
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "122",
+              "y": "409",
+              "width": "135",
+              "height": "43",
+              "params": "131281",
+              "style": "101",
+              "name": "submit_button",
+              "caption": "${help.emergency.chat_report.submit.button}",
+              "color": "0x0bbbbbb"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 380,
+  "layoutHeight": 491
+}

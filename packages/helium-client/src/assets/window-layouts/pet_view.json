@@ -1,0 +1,1157 @@
+{
+  "name": "pet_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\470_pet_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_vertical",
+        "typeId": 50,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "1036",
+          "height": "440",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "190",
+              "height": "285",
+              "params": "17",
+              "style": "1",
+              "name": "info_border"
+            },
+            "children": [
+              {
+                "tag": "closebutton",
+                "typeId": 72,
+                "attributes": {
+                  "x": "170",
+                  "y": "6",
+                  "width": "18",
+                  "height": "16",
+                  "params": "17",
+                  "style": "1",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "close"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "10",
+                  "y": "10",
+                  "width": "173",
+                  "height": "270",
+                  "params": "16",
+                  "style": "0",
+                  "name": "infostand_element_list"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "84",
+                      "y": "0",
+                      "width": "4",
+                      "height": "4",
+                      "params": "208",
+                      "style": "0",
+                      "name": "name_text"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_face": "Volter Bold",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "84",
+                      "y": "4",
+                      "width": "4",
+                      "height": "4",
+                      "params": "208",
+                      "style": "0",
+                      "name": "breed_text"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "8",
+                      "width": "163",
+                      "height": "83",
+                      "params": "16",
+                      "style": "0",
+                      "name": "image_container",
+                      "width_max": "163"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "80",
+                          "height": "83",
+                          "params": "16",
+                          "style": "0",
+                          "name": "avatar_image",
+                          "width_max": "80"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "76",
+                          "y": "0",
+                          "width": "95",
+                          "height": "78",
+                          "params": "16",
+                          "style": "0",
+                          "name": "level_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "25",
+                              "y": "10",
+                              "width": "45",
+                              "height": "13",
+                              "params": "208",
+                              "style": "0",
+                              "name": "level_text",
+                              "caption": "${pet.level}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "31",
+                              "width": "115",
+                              "height": "13",
+                              "params": "208",
+                              "style": "0",
+                              "name": "status_skill_text",
+                              "caption": "${infostand.pet.text.skill}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_color": 10790052,
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "8",
+                              "y": "47",
+                              "width": "78",
+                              "height": "18",
+                              "params": "208",
+                              "style": "0",
+                              "name": "skill_level_indicator"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "91",
+                      "width": "170",
+                      "height": "140",
+                      "params": "16",
+                      "style": "0",
+                      "name": "status_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "170",
+                          "height": "142",
+                          "params": "16",
+                          "style": "0",
+                          "name": "status_item_list_default"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "169",
+                              "height": "34",
+                              "params": "16",
+                              "style": "0",
+                              "name": "status_happiness_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "10",
+                                  "y": "1",
+                                  "width": "148",
+                                  "height": "13",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_happiness_text",
+                                  "caption": "${infostand.pet.text.happiness}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "6",
+                                  "y": "17",
+                                  "width": "162",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_happiness_bitmap"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "82",
+                                  "y": "18",
+                                  "width": "4",
+                                  "height": "4",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_happiness_value_text"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "16",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_happiness_icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "bitmap_asset_name": "icon_pet_happiness"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "34",
+                              "width": "169",
+                              "height": "34",
+                              "params": "16",
+                              "style": "0",
+                              "name": "status_experience_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "8",
+                                  "y": "1",
+                                  "width": "153",
+                                  "height": "13",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_experience_text",
+                                  "caption": "${infostand.pet.text.experience}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "6",
+                                  "y": "17",
+                                  "width": "162",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_experience_bitmap"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "82",
+                                  "y": "18",
+                                  "width": "4",
+                                  "height": "4",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_experience_value_text"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "16",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_experience_icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "bitmap_asset_name": "icon_pet_experience"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "68",
+                              "width": "169",
+                              "height": "34",
+                              "params": "16",
+                              "style": "0",
+                              "name": "status_energy_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "18",
+                                  "y": "1",
+                                  "width": "133",
+                                  "height": "13",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_energy_text",
+                                  "caption": "${infostand.pet.text.energy}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "6",
+                                  "y": "17",
+                                  "width": "162",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_energy_bitmap"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "82",
+                                  "y": "18",
+                                  "width": "4",
+                                  "height": "4",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_energy_value_text"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "16",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_energy_icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "bitmap_asset_name": "icon_pet_energy"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "11",
+                              "y": "102",
+                              "width": "149",
+                              "height": "18",
+                              "params": "208",
+                              "style": "0",
+                              "name": "status_rarity_level",
+                              "caption": "${infostand.pet.text.raritylevel}",
+                              "height_min": "15"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "margin_top": 5,
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "170",
+                          "height": "137",
+                          "params": "16",
+                          "style": "0",
+                          "name": "status_item_list_monsterplant",
+                          "visible": "false"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "169",
+                              "height": "34",
+                              "params": "16",
+                              "style": "0",
+                              "name": "status_wellbeing_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "13",
+                                  "y": "1",
+                                  "width": "142",
+                                  "height": "13",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_wellbeing_text",
+                                  "caption": "${infostand.pet.text.wellbeing}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "6",
+                                  "y": "17",
+                                  "width": "162",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_wellbeing_bitmap"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "82",
+                                  "y": "18",
+                                  "width": "4",
+                                  "height": "4",
+                                  "params": "208",
+                                  "style": "0",
+                                  "name": "status_wellbeing_value_text"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "16",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "status_wellbeing_icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "bitmap_asset_name": "icon_pet_wellbeing"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "18",
+                              "y": "36",
+                              "width": "134",
+                              "height": "15",
+                              "params": "208",
+                              "style": "0",
+                              "name": "growth_status_text",
+                              "caption": "${infostand.pet.text.growth}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "margin_bottom": 2,
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "36",
+                              "y": "53",
+                              "width": "99",
+                              "height": "37",
+                              "params": "147664",
+                              "style": "0",
+                              "name": "growth_status_widget"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "countdown",
+                              "countdown:seconds": 12054
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "11",
+                              "y": "92",
+                              "width": "149",
+                              "height": "15",
+                              "params": "208",
+                              "style": "0",
+                              "name": "status_rarity_level",
+                              "caption": "${infostand.pet.text.raritylevel}",
+                              "height_min": "15"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "margin_top": -2,
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "67",
+                              "y": "109",
+                              "width": "40",
+                              "height": "28",
+                              "params": "16",
+                              "style": "0",
+                              "name": "rarity_item_overlay_widget"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "rarity_item_overlay_preview"
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 2,
+                          "resize_on_item_update": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "231",
+                      "width": "164",
+                      "height": "21",
+                      "params": "16",
+                      "style": "0",
+                      "name": "petrespect_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "15",
+                          "y": "5",
+                          "width": "135",
+                          "height": "13",
+                          "params": "208",
+                          "style": "0",
+                          "name": "petrespect_text",
+                          "caption": "${infostand.text.petrespect}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_color": 16777215,
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "3",
+                          "width": "13",
+                          "height": "21",
+                          "params": "16",
+                          "style": "0",
+                          "name": "petrespect_icon"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "66",
+                      "y": "252",
+                      "width": "41",
+                      "height": "13",
+                      "params": "208",
+                      "style": "0",
+                      "name": "age_text",
+                      "caption": "${pet.age}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "23",
+                      "y": "265",
+                      "width": "126",
+                      "height": "13",
+                      "params": "208",
+                      "style": "0",
+                      "name": "owner_text",
+                      "caption": "${infostand.text.petowner}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "295",
+              "width": "1000",
+              "height": "25",
+              "params": "16",
+              "style": "0",
+              "name": "button_list"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "54",
+                  "height": "25",
+                  "params": "17",
+                  "style": "1",
+                  "name": "pick",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "137",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_pick",
+                      "caption": "${infostand.button.pickup}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "64",
+                  "y": "0",
+                  "width": "44",
+                  "height": "25",
+                  "params": "17",
+                  "style": "1",
+                  "name": "train",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "130",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_train",
+                      "caption": "${infostand.button.train}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "118",
+                  "y": "0",
+                  "width": "147",
+                  "height": "25",
+                  "params": "17",
+                  "style": "1",
+                  "name": "buy_food",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "147",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_buy_food",
+                      "caption": "${infostand.button.buyfood}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "275",
+                  "y": "0",
+                  "width": "163",
+                  "height": "25",
+                  "params": "17",
+                  "style": "0",
+                  "name": "petrespect",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "163",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_petrespect",
+                      "caption": "${infostand.button.petrespect}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "275",
+                  "y": "0",
+                  "width": "163",
+                  "height": "25",
+                  "params": "17",
+                  "style": "0",
+                  "name": "pettreat",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "150",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_pettreat",
+                      "caption": "${infostand.button.pettreat}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "448",
+                  "y": "0",
+                  "width": "141",
+                  "height": "25",
+                  "params": "17",
+                  "style": "1",
+                  "name": "kick",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "141",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_kick",
+                      "caption": "${infostand.button.petkick}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "589",
+                  "y": "0",
+                  "width": "132",
+                  "height": "25",
+                  "params": "17",
+                  "style": "1",
+                  "name": "move",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "132",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_move",
+                      "caption": "${infostand.button.move}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "600",
+                  "y": "0",
+                  "width": "132",
+                  "height": "25",
+                  "params": "17",
+                  "style": "0",
+                  "name": "rotate",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "139",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "btn_rotate",
+                      "caption": "${infostand.button.rotate}",
+                      "tags": "CMD_BUTTON"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vars": {
+          "spacing": 10
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1036,
+  "layoutHeight": 440
+}

@@ -1,0 +1,21 @@
+{
+  "name": "habbo_element_description#107",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "tab_content",
+      "intent": "white",
+      "style": "2",
+      "renderer": "skin",
+      "asset": "habbo_skin_border_colorless_xml",
+      "layout": "border_colorless"
+    },
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

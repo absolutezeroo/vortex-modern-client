@@ -1,0 +1,1472 @@
+{
+  "name": "new_extended_profile",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\633_new_extended_profile.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "521",
+          "height": "537",
+          "params": "33025",
+          "style": "3",
+          "caption": "${extendedprofile.caption}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "6",
+              "y": "-1",
+              "width": "500",
+              "height": "495",
+              "params": "16",
+              "style": "3"
+            },
+            "children": [
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "500",
+                  "height": "207",
+                  "params": "16",
+                  "style": "3",
+                  "name": "top"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "16",
+                      "width": "257",
+                      "height": "192",
+                      "params": "16",
+                      "style": "100",
+                      "name": "top_left"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "56",
+                          "height": "113",
+                          "params": "16",
+                          "style": "100",
+                          "name": "avatar"
+                        },
+                        "children": [
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "10",
+                              "y": "0",
+                              "width": "34",
+                              "height": "84",
+                              "params": "787536",
+                              "style": "100",
+                              "name": "avatar_image"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "avatar_image",
+                              "avatar_image:cropped": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "56",
+                          "y": "-4",
+                          "width": "200",
+                          "height": "118",
+                          "params": "16",
+                          "style": "100",
+                          "name": "user_info"
+                        },
+                        "children": [
+                          {
+                            "tag": "formatted_text",
+                            "typeId": 15,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "141",
+                              "height": "16",
+                              "params": "16",
+                              "style": "100",
+                              "name": "user_name",
+                              "caption": "${extendedprofile.username}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "16",
+                              "width": "200",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100",
+                              "name": "motto_txt"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_size": 17,
+                              "text_style": "u_italic",
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "formatted_text",
+                            "typeId": 15,
+                            "attributes": {
+                              "x": "0",
+                              "y": "46",
+                              "width": "129",
+                              "height": "16",
+                              "params": "16",
+                              "style": "100",
+                              "name": "user_created",
+                              "caption": "${extendedprofile.created}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "formatted_text",
+                            "typeId": 15,
+                            "attributes": {
+                              "x": "0",
+                              "y": "78",
+                              "width": "161",
+                              "height": "16",
+                              "params": "16",
+                              "style": "100",
+                              "name": "user_activity_points",
+                              "caption": "${extendedprofile.activitypoints}",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "formatted_text",
+                            "typeId": 15,
+                            "attributes": {
+                              "x": "0",
+                              "y": "62",
+                              "width": "137",
+                              "height": "16",
+                              "params": "16",
+                              "style": "100",
+                              "name": "user_last_login",
+                              "caption": "${extendedprofile.last.login}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "94",
+                              "width": "200",
+                              "height": "1",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "0",
+                              "y": "95",
+                              "width": "198",
+                              "height": "27",
+                              "params": "144",
+                              "style": "100",
+                              "name": "status"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "40",
+                                  "height": "23",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "online_offline_container"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "3",
+                                      "width": "40",
+                                      "height": "18",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "offline_icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "${image.library.url}guilds/offline_icon.png",
+                                      "fit_size_to_contents": true
+                                    }
+                                  },
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "1",
+                                      "y": "3",
+                                      "width": "37",
+                                      "height": "18",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "online_icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "${image.library.url}guilds/online_icon.png",
+                                      "fit_size_to_contents": true
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "45",
+                                  "y": "0",
+                                  "width": "140",
+                                  "height": "23",
+                                  "params": "147472",
+                                  "style": "100",
+                                  "name": "friendstatus",
+                                  "width_max": "140"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "5",
+                                      "width": "16",
+                                      "height": "16",
+                                      "params": "16",
+                                      "style": "8",
+                                      "name": "ok_icon",
+                                      "color": "0x03ce600",
+                                      "visible": "false"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "16",
+                                      "y": "4",
+                                      "width": "132",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "status_txt",
+                                      "caption": "${extendedprofile.friend}",
+                                      "color": "0x00"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "4",
+                                      "width": "184",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "friend_request_sent_txt",
+                                      "caption": "${extendedprofile.friendrequestsent}",
+                                      "color": "0x00",
+                                      "visible": "false"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "text_style": "u_regular",
+                                      "mouse_wheel_enabled": false,
+                                      "italic": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "button",
+                                    "typeId": 60,
+                                    "attributes": {
+                                      "x": "12",
+                                      "y": "0",
+                                      "width": "105",
+                                      "height": "23",
+                                      "params": "131089",
+                                      "style": "3",
+                                      "name": "addasfriend_button",
+                                      "caption": "${extendedprofile.addasafriend}",
+                                      "visible": "false",
+                                      "width_min": "105",
+                                      "width_max": "105"
+                                    },
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 5,
+                              "auto_arrange_items": false
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "auto_arrange_items": false
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "117",
+                          "width": "257",
+                          "height": "15",
+                          "params": "16",
+                          "style": "100",
+                          "name": "change_own_attributes"
+                        },
+                        "children": [
+                          {
+                            "tag": "link",
+                            "typeId": 14,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "160",
+                              "height": "16",
+                              "params": "1",
+                              "style": "100",
+                              "name": "change_looks",
+                              "caption": "${extended.profile.change.looks}",
+                              "treshold": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "il_link_regular",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "link",
+                            "typeId": 14,
+                            "attributes": {
+                              "x": "85",
+                              "y": "0",
+                              "width": "169",
+                              "height": "16",
+                              "params": "262209",
+                              "style": "100",
+                              "name": "change_badges",
+                              "caption": "${extended.profile.change.badges}",
+                              "treshold": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "il_link_regular",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "1",
+                          "y": "136",
+                          "width": "256",
+                          "height": "55",
+                          "params": "16",
+                          "style": "2",
+                          "name": "badges",
+                          "color": "0xffafafaf"
+                        },
+                        "children": [
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "7",
+                              "y": "6",
+                              "width": "42",
+                              "height": "42",
+                              "params": "16",
+                              "style": "100",
+                              "name": "badge_0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "57",
+                              "y": "6",
+                              "width": "42",
+                              "height": "42",
+                              "params": "16",
+                              "style": "100",
+                              "name": "badge_1"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "107",
+                              "y": "6",
+                              "width": "42",
+                              "height": "42",
+                              "params": "16",
+                              "style": "100",
+                              "name": "badge_2"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "157",
+                              "y": "6",
+                              "width": "42",
+                              "height": "42",
+                              "params": "16",
+                              "style": "100",
+                              "name": "badge_3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "207",
+                              "y": "6",
+                              "width": "42",
+                              "height": "42",
+                              "params": "16",
+                              "style": "100",
+                              "name": "badge_4"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "265",
+                      "y": "12",
+                      "width": "1",
+                      "height": "192",
+                      "params": "16",
+                      "style": "8",
+                      "name": "spacer",
+                      "color": "0xffffafafaf",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "274",
+                      "y": "13",
+                      "width": "226",
+                      "height": "192",
+                      "params": "16",
+                      "style": "100",
+                      "name": "top_right"
+                    },
+                    "children": [
+                      {
+                        "tag": "formatted_text",
+                        "typeId": 15,
+                        "attributes": {
+                          "x": "0",
+                          "y": "5",
+                          "width": "161",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "friend_count",
+                          "caption": "${extendedprofile.friends.count}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "formatted_text",
+                        "typeId": 15,
+                        "attributes": {
+                          "x": "0",
+                          "y": "24",
+                          "width": "150",
+                          "height": "17",
+                          "params": "16",
+                          "style": "100",
+                          "name": "rel_status_label_txt",
+                          "caption": "${extendedprofile.relstatus}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_bold",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "39",
+                          "width": "227",
+                          "height": "156",
+                          "params": "16",
+                          "style": "100",
+                          "name": "relationships"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "227",
+                              "height": "47",
+                              "params": "16",
+                              "style": "100",
+                              "name": "relationship_heart"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "15",
+                                  "width": "16",
+                                  "height": "14",
+                                  "params": "16",
+                                  "style": "100"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "relationship_status_heart"
+                                }
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "23",
+                                  "y": "11",
+                                  "width": "202",
+                                  "height": "22",
+                                  "params": "16",
+                                  "style": "2"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "region",
+                                    "typeId": 5,
+                                    "attributes": {
+                                      "x": "7",
+                                      "y": "3",
+                                      "width": "160",
+                                      "height": "16",
+                                      "params": "17",
+                                      "style": "100",
+                                      "name": "heart_friend_name_link_region",
+                                      "caption": "${extended.profile.relationship.add.friends}",
+                                      "treshold": "0",
+                                      "width_max": "160"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "text",
+                                        "typeId": 10,
+                                        "attributes": {
+                                          "x": "0",
+                                          "y": "0",
+                                          "width": "160",
+                                          "height": "16",
+                                          "params": "16",
+                                          "style": "100",
+                                          "name": "heart_friend_name_link_text",
+                                          "caption": "${extended.profile.relationship.add.friends}",
+                                          "width_max": "160"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "auto_size": "left",
+                                          "mouse_wheel_enabled": false,
+                                          "bold": true,
+                                          "underline": true,
+                                          "spacing": 0,
+                                          "leading": 0
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "widget",
+                                "typeId": 16,
+                                "attributes": {
+                                  "x": "191",
+                                  "y": "2",
+                                  "width": "33",
+                                  "height": "34",
+                                  "params": "1049616",
+                                  "style": "100",
+                                  "name": "heart_head"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "widget_type": "avatar_image",
+                                  "avatar_image:only_head": true,
+                                  "avatar_image:cropped": true,
+                                  "avatar_image:direction": "southwest"
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "31",
+                                  "y": "33",
+                                  "width": "186",
+                                  "height": "16",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "heart_txt",
+                                  "caption": "${extendedprofile.relstatus.others.heart}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 8355711,
+                                  "mouse_wheel_enabled": false,
+                                  "italic": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "47",
+                              "width": "227",
+                              "height": "47",
+                              "params": "16",
+                              "style": "100",
+                              "name": "relationship_smile"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "15",
+                                  "width": "16",
+                                  "height": "14",
+                                  "params": "16",
+                                  "style": "100"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "relationship_status_smile"
+                                }
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "23",
+                                  "y": "11",
+                                  "width": "202",
+                                  "height": "22",
+                                  "params": "16",
+                                  "style": "2"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "region",
+                                    "typeId": 5,
+                                    "attributes": {
+                                      "x": "7",
+                                      "y": "3",
+                                      "width": "160",
+                                      "height": "16",
+                                      "params": "17",
+                                      "style": "100",
+                                      "name": "smile_friend_name_link_region",
+                                      "caption": "${extended.profile.relationship.add.friends}",
+                                      "treshold": "0",
+                                      "width_max": "160"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "text",
+                                        "typeId": 10,
+                                        "attributes": {
+                                          "x": "0",
+                                          "y": "0",
+                                          "width": "160",
+                                          "height": "16",
+                                          "params": "16",
+                                          "style": "100",
+                                          "name": "smile_friend_name_link_text",
+                                          "caption": "${extended.profile.relationship.add.friends}",
+                                          "width_max": "160"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "auto_size": "left",
+                                          "mouse_wheel_enabled": false,
+                                          "bold": true,
+                                          "underline": true,
+                                          "spacing": 0,
+                                          "leading": 0
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "widget",
+                                "typeId": 16,
+                                "attributes": {
+                                  "x": "191",
+                                  "y": "2",
+                                  "width": "33",
+                                  "height": "34",
+                                  "params": "1049616",
+                                  "style": "100",
+                                  "name": "smile_head"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "widget_type": "avatar_image",
+                                  "avatar_image:only_head": true,
+                                  "avatar_image:cropped": true,
+                                  "avatar_image:direction": "southwest"
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "31",
+                                  "y": "33",
+                                  "width": "185",
+                                  "height": "16",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "smile_txt",
+                                  "caption": "${extendedprofile.relstatus.others.smile}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 8355711,
+                                  "mouse_wheel_enabled": false,
+                                  "italic": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "94",
+                              "width": "227",
+                              "height": "47",
+                              "params": "16",
+                              "style": "100",
+                              "name": "relationship_bobba"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "15",
+                                  "width": "16",
+                                  "height": "14",
+                                  "params": "16",
+                                  "style": "100"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "relationship_status_bobba"
+                                }
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "23",
+                                  "y": "11",
+                                  "width": "202",
+                                  "height": "22",
+                                  "params": "16",
+                                  "style": "2"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "region",
+                                    "typeId": 5,
+                                    "attributes": {
+                                      "x": "7",
+                                      "y": "3",
+                                      "width": "160",
+                                      "height": "16",
+                                      "params": "17",
+                                      "style": "100",
+                                      "name": "bobba_friend_name_link_region",
+                                      "caption": "${extended.profile.relationship.add.friends}",
+                                      "treshold": "0",
+                                      "width_max": "160"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "text",
+                                        "typeId": 10,
+                                        "attributes": {
+                                          "x": "0",
+                                          "y": "0",
+                                          "width": "160",
+                                          "height": "16",
+                                          "params": "16",
+                                          "style": "100",
+                                          "name": "bobba_friend_name_link_text",
+                                          "caption": "${extended.profile.relationship.add.friends}",
+                                          "width_max": "160"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "auto_size": "left",
+                                          "mouse_wheel_enabled": false,
+                                          "bold": true,
+                                          "underline": true,
+                                          "spacing": 0,
+                                          "leading": 0
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "widget",
+                                "typeId": 16,
+                                "attributes": {
+                                  "x": "191",
+                                  "y": "2",
+                                  "width": "33",
+                                  "height": "34",
+                                  "params": "1049616",
+                                  "style": "100",
+                                  "name": "bobba_head"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "widget_type": "avatar_image",
+                                  "avatar_image:only_head": true,
+                                  "avatar_image:cropped": true,
+                                  "avatar_image:direction": "southwest"
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "31",
+                                  "y": "33",
+                                  "width": "190",
+                                  "height": "16",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "bobba_txt",
+                                  "caption": "${extendedprofile.relstatus.others.bobba}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 8355711,
+                                  "mouse_wheel_enabled": false,
+                                  "italic": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 8,
+                  "auto_arrange_items": false
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "213",
+                  "width": "512",
+                  "height": "1",
+                  "params": "16",
+                  "style": "8",
+                  "name": "spacer",
+                  "color": "0xffffafafaf",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "3",
+                  "y": "220",
+                  "width": "495",
+                  "height": "27",
+                  "params": "16",
+                  "style": "100",
+                  "name": "middle",
+                  "width_min": "495"
+                },
+                "children": [
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "163",
+                      "height": "30",
+                      "params": "147473",
+                      "style": "100",
+                      "name": "rooms_button",
+                      "treshold": "0",
+                      "width_min": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "35",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "extended_profile_rooms",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "39",
+                          "y": "6",
+                          "width": "124",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "rooms_link_text",
+                          "caption": "${extendedprofile.rooms}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_link_strong",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "183",
+                      "y": "0",
+                      "width": "1",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3",
+                      "name": "spacer",
+                      "color": "0xffffafafaf",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "204",
+                      "y": "0",
+                      "width": "100",
+                      "height": "30",
+                      "params": "17",
+                      "style": "3",
+                      "name": "levelRegion",
+                      "width_min": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "35",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "extended_profile_level",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "35",
+                          "y": "6",
+                          "width": "124",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100",
+                          "name": "levelLabel",
+                          "caption": "${generic.level}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "75",
+                          "y": "6",
+                          "width": "30",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100",
+                          "name": "levelValue",
+                          "caption": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "324",
+                      "y": "0",
+                      "width": "1",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3",
+                      "name": "spacer",
+                      "color": "0xffffafafaf",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "345",
+                      "y": "0",
+                      "width": "160",
+                      "height": "32",
+                      "params": "17",
+                      "style": "3",
+                      "name": "starGemRegion",
+                      "width_min": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "28",
+                          "height": "27",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "extended_profile_star_gems",
+                          "pivot_point": "center"
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "6",
+                          "width": "70",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100",
+                          "name": "starGemCount",
+                          "caption": "99999999"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 20
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "253",
+                  "width": "512",
+                  "height": "1",
+                  "params": "16",
+                  "style": "8",
+                  "name": "spacer",
+                  "color": "0xffffafafaf",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "260",
+                  "width": "500",
+                  "height": "236",
+                  "params": "16",
+                  "style": "100",
+                  "name": "bottom"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "5",
+                      "width": "83",
+                      "height": "227",
+                      "params": "16",
+                      "style": "100",
+                      "name": "all_groups"
+                    },
+                    "children": [
+                      {
+                        "tag": "formatted_text",
+                        "typeId": 15,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "159",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "total_group_count",
+                          "caption": "${extendedprofile.groups.count}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "scrollable_itemlist_vertical",
+                        "typeId": 56,
+                        "attributes": {
+                          "x": "3",
+                          "y": "27",
+                          "width": "74",
+                          "height": "195",
+                          "params": "16",
+                          "style": "100",
+                          "name": "groups_list"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "89",
+                      "y": "5",
+                      "width": "410",
+                      "height": "224",
+                      "params": "16",
+                      "style": "2",
+                      "name": "group_details",
+                      "color": "0x0afafaf"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "33",
+                          "y": "5",
+                          "width": "343",
+                          "height": "214",
+                          "params": "16",
+                          "style": "100",
+                          "name": "group_cont"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 6
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 6
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 3,
+          "margin_top": 36,
+          "margin_right": 3,
+          "margin_bottom": 3
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 521,
+  "layoutHeight": 537
+}

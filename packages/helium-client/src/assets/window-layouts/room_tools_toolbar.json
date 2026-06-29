@@ -1,0 +1,902 @@
+{
+  "name": "room_tools_toolbar",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\402_room_tools_toolbar.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "-2",
+          "y": "0",
+          "width": "165",
+          "height": "207",
+          "params": "16384",
+          "style": "7"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "1",
+              "y": "0",
+              "width": "164",
+              "height": "207",
+              "params": "8538112",
+              "style": "2",
+              "name": "window_bg",
+              "color": "0x024231e",
+              "blend": "0.8"
+            },
+            "children": [
+              {
+                "tag": "itemlist",
+                "typeId": 50,
+                "attributes": {
+                  "x": "24",
+                  "y": "6",
+                  "width": "140",
+                  "height": "201",
+                  "params": "8536064",
+                  "style": "3",
+                  "name": "itemlist_buttons",
+                  "width_min": "140"
+                },
+                "children": [
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "130",
+                      "height": "25",
+                      "params": "131073",
+                      "style": "0",
+                      "dynamic_style": "brightness_and_shadow_under",
+                      "name": "button_settings",
+                      "color": "0x0494742",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "28",
+                          "height": "25",
+                          "params": "16",
+                          "style": "0",
+                          "color": "0x0686661",
+                          "blend": "0",
+                          "clipping": "false"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "3",
+                          "y": "0",
+                          "width": "25",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "roomtools_gear",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "4",
+                          "width": "90",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "name": "text_settings",
+                          "caption": "${room.settings.button.text}",
+                          "width_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_color": 13421772,
+                          "mouse_wheel_enabled": false,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${room.settings.button.tooltip}"
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "25",
+                      "width": "130",
+                      "height": "25",
+                      "params": "131073",
+                      "style": "0",
+                      "dynamic_style": "brightness_and_shadow_under",
+                      "name": "button_zoom",
+                      "caption": "z",
+                      "color": "0x0494742",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "28",
+                          "height": "25",
+                          "params": "16",
+                          "style": "0",
+                          "color": "0x0686661",
+                          "blend": "0",
+                          "clipping": "false"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "3",
+                          "y": "0",
+                          "width": "25",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "roomtools_magnifier",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "3",
+                          "width": "90",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "name": "text_zoom",
+                          "caption": "${room.zoom.button.text}",
+                          "color": "0x0999999",
+                          "width_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_color": 12303291,
+                          "text_style": "u_button_tab",
+                          "mouse_wheel_enabled": false,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${toolbar.icon.tooltip.zoom}"
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "50",
+                      "width": "130",
+                      "height": "25",
+                      "params": "131073",
+                      "style": "0",
+                      "dynamic_style": "brightness_and_shadow_under",
+                      "name": "button_chat_history",
+                      "caption": "z",
+                      "color": "0x0494742",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "28",
+                          "height": "25",
+                          "params": "16",
+                          "style": "6",
+                          "color": "0x055534e",
+                          "clipping": "false"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "3",
+                          "y": "0",
+                          "width": "25",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "roomtools_chat_history",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "3",
+                          "width": "90",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "name": "text_chat_history",
+                          "caption": "${room.chathistory.button.text}",
+                          "color": "0x0999999",
+                          "width_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_color": 12303291,
+                          "text_style": "u_button_tab",
+                          "mouse_wheel_enabled": false,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${chat.history.button.tooltip}"
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "75",
+                      "width": "130",
+                      "height": "25",
+                      "params": "131073",
+                      "style": "0",
+                      "dynamic_style": "brightness_and_shadow_under",
+                      "name": "button_like",
+                      "caption": "z",
+                      "color": "0x0494742",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "28",
+                          "height": "25",
+                          "params": "16",
+                          "style": "6",
+                          "color": "0x02e506f",
+                          "clipping": "false"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "0",
+                          "width": "27",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "roomtools_like",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "3",
+                          "width": "90",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "name": "text_like",
+                          "caption": "${room.like.button.text}",
+                          "color": "0x0999999",
+                          "width_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_color": 12303291,
+                          "text_style": "u_button_tab",
+                          "mouse_wheel_enabled": false,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${room.like.button.tooltip}"
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "100",
+                      "width": "130",
+                      "height": "29",
+                      "params": "131073",
+                      "style": "0",
+                      "dynamic_style": "brightness_and_shadow_under",
+                      "name": "button_camera",
+                      "caption": "z",
+                      "color": "0x0494742",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "5",
+                          "width": "28",
+                          "height": "2",
+                          "params": "16",
+                          "style": "6",
+                          "color": "0x055534e",
+                          "clipping": "false"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "0",
+                          "width": "27",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "roomtools_camera",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "3",
+                          "width": "90",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "name": "text_camera",
+                          "caption": "${room.camera.button.text}",
+                          "color": "0x0999999",
+                          "width_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_color": 12303291,
+                          "text_style": "u_button_tab",
+                          "mouse_wheel_enabled": false,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${room.camera.button.tooltip}"
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "129",
+                      "width": "130",
+                      "height": "29",
+                      "params": "131073",
+                      "style": "0",
+                      "dynamic_style": "brightness_and_shadow_under",
+                      "name": "button_share",
+                      "caption": "z",
+                      "color": "0x0494742",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "5",
+                          "width": "28",
+                          "height": "2",
+                          "params": "16",
+                          "style": "6",
+                          "color": "0x055534e",
+                          "clipping": "false"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "0",
+                          "width": "27",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "navigation_icon_weblink",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "36",
+                          "y": "3",
+                          "width": "90",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "name": "text_share",
+                          "caption": "${navigator.embed.caption}",
+                          "color": "0x0999999",
+                          "width_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 17,
+                          "text_color": 12303291,
+                          "text_style": "u_button_tab",
+                          "mouse_wheel_enabled": false,
+                          "underline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${room.camera.button.tooltip}"
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "3",
+                      "y": "158",
+                      "width": "115",
+                      "height": "43",
+                      "params": "0",
+                      "style": "3",
+                      "name": "cnt_history",
+                      "clipping": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "0",
+                          "y": "3",
+                          "width": "37",
+                          "height": "34",
+                          "params": "131073",
+                          "style": "3",
+                          "dynamic_style": "brightness_and_shadow_under",
+                          "name": "button_history_back",
+                          "caption": "<",
+                          "clipping": "false",
+                          "treshold": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "3",
+                              "y": "2",
+                              "width": "34",
+                              "height": "31",
+                              "params": "16",
+                              "style": "3",
+                              "color": "0x044a88d",
+                              "visible": "false",
+                              "clipping": "false",
+                              "tags": "#bg"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "roomtools_history_forward_bg",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "zoom_x": -1,
+                              "etching_color": 1207959552,
+                              "fit_size_to_contents": true
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "4",
+                              "y": "3",
+                              "width": "30",
+                              "height": "30",
+                              "params": "16",
+                              "style": "3",
+                              "clipping": "false",
+                              "tags": "#icon"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "roomtools_history_back_icon",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "tool_tip_caption": "${room.history.button.back.tooltip}"
+                        }
+                      },
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "38",
+                          "y": "0",
+                          "width": "35",
+                          "height": "38",
+                          "params": "131073",
+                          "style": "3",
+                          "dynamic_style": "brightness_and_shadow_under",
+                          "name": "button_history",
+                          "caption": "H",
+                          "clipping": "false",
+                          "treshold": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "1",
+                              "y": "1",
+                              "width": "33",
+                              "height": "35",
+                              "params": "16",
+                              "style": "3",
+                              "color": "0x044a88d",
+                              "clipping": "false",
+                              "treshold": "0",
+                              "tags": "#icon"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "roomtools_history_open_bg",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552,
+                              "fit_size_to_contents": true
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "2",
+                              "y": "3",
+                              "width": "32",
+                              "height": "35",
+                              "params": "16",
+                              "style": "3",
+                              "clipping": "false",
+                              "tags": "#icon"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "roomtools_history_open_icon",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "tool_tip_caption": "${room.history.button.tooltip}"
+                        }
+                      },
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "74",
+                          "y": "5",
+                          "width": "34",
+                          "height": "32",
+                          "params": "131073",
+                          "style": "3",
+                          "dynamic_style": "brightness_and_shadow_under",
+                          "name": "button_history_forward",
+                          "caption": ">",
+                          "clipping": "false",
+                          "treshold": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "34",
+                              "height": "31",
+                              "params": "16",
+                              "style": "3",
+                              "color": "0x044a88d",
+                              "clipping": "false",
+                              "tags": "#bg"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "roomtools_history_forward_bg",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552,
+                              "fit_size_to_contents": true
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "3",
+                              "y": "1",
+                              "width": "30",
+                              "height": "30",
+                              "params": "16",
+                              "style": "3",
+                              "clipping": "false",
+                              "tags": "#icon"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "roomtools_history_back_icon",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "zoom_x": -1,
+                              "etching_color": 1207959552
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "tool_tip_caption": "${room.history.button.forward.tooltip}"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "19",
+              "height": "172",
+              "params": "16384",
+              "style": "2",
+              "name": "side_bar_collapse",
+              "color": "0x03b3933"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "19",
+                  "height": "172",
+                  "params": "1",
+                  "style": "3",
+                  "name": "button_collapse",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "9",
+                      "y": "99",
+                      "width": "6",
+                      "height": "8",
+                      "params": "3145744",
+                      "style": "3",
+                      "name": "arrow_collapse",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "roomtools_minimizebutton",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "64",
+              "width": "19",
+              "height": "108",
+              "params": "1064960",
+              "style": "2",
+              "name": "side_bar_expand",
+              "color": "0x03b3933"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "19",
+                  "height": "108",
+                  "params": "2049",
+                  "style": "3",
+                  "name": "button_expand",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "11",
+                      "y": "50",
+                      "width": "6",
+                      "height": "8",
+                      "params": "3145744",
+                      "style": "3",
+                      "name": "arrow_expand"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "roomtools_minimizebutton",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "zoom_x": -1,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 165,
+  "layoutHeight": 207
+}

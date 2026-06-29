@@ -1,0 +1,2251 @@
+{
+  "name": "vault_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\194_vault_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "490",
+          "height": "342",
+          "params": "32769",
+          "style": "3",
+          "name": "VaultBase",
+          "caption": "${earnings.title}",
+          "color": "0xff418db0",
+          "width_min": "490",
+          "width_max": "490",
+          "height_min": "300"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "478",
+              "height": "301",
+              "params": "2064",
+              "style": "3",
+              "name": "top_content",
+              "tags": "TOP_CONTENT"
+            },
+            "children": [
+              {
+                "tag": "tab_context",
+                "typeId": 91,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "480",
+                  "height": "37",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "tabs",
+                  "caption": "earnings"
+                },
+                "children": [
+                  {
+                    "tag": "tab_button",
+                    "typeId": 93,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "146",
+                      "height": "32",
+                      "params": "17",
+                      "style": "3",
+                      "name": "earningsTab",
+                      "caption": "${earnings.earnings.title}",
+                      "width_max": "232"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "tab_button",
+                    "typeId": 93,
+                    "attributes": {
+                      "x": "146",
+                      "y": "0",
+                      "width": "126",
+                      "height": "32",
+                      "params": "17",
+                      "style": "3",
+                      "name": "vaultTab",
+                      "caption": "${earnings.vault.title}",
+                      "width_max": "232"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "35",
+                  "width": "468",
+                  "height": "261",
+                  "params": "2064",
+                  "style": "4",
+                  "name": "contentArea"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "earningsContentArea"
+                    },
+                    "children": [
+                      {
+                        "tag": "scrollable_itemlist_vertical",
+                        "typeId": 56,
+                        "attributes": {
+                          "x": "0",
+                          "y": "10",
+                          "width": "468",
+                          "height": "255",
+                          "params": "16",
+                          "style": "3",
+                          "name": "scrolling_earnings_list",
+                          "width_min": "468",
+                          "width_max": "468"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "dailygift_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "dailygift_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "147472",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "dailygiftDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "dailygiftCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "dailygift_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "dailygift_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_dailygift",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "dailygift_label",
+                                      "caption": "${earnings.dailygift.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "dailygift_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "42",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "achievements_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "achievementsextended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "147472",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "achievementsDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "achievementsCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "achievements_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "achievements_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_achievements",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "achievements_label",
+                                      "caption": "${earnings.achievements.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "achievements_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "84",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "marketplace_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "marketplace_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "147472",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "marketplaceDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "60",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "marketplaceCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "marketplace_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "marketplace_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_marketplace",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "marketplace_label",
+                                      "caption": "${earnings.marketplace.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "marketplace_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "126",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "habboclub_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "habboclub_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "147472",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "habboclubDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "60",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "habboclubCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "habboclub_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "habboclub_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_hcpayday",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "habboclub_label",
+                                      "caption": "${earnings.hc.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "habboclub_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "168",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "levelprogression_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "levelprogression_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "147472",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "levelprogressionDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "levelprogressionCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "levelprogression_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "levelprogression_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_levelprogression",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "levelprogression_label",
+                                      "caption": "${earnings.levelprogression.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "levelprogression_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "210",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "donation_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "donation_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "151833",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "donationDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "60",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "donationCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "donation_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "donation_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_donations",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "donation_label",
+                                      "caption": "${earnings.donations.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "donation_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "252",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "bonusbag_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "bonusbag_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "147472",
+                                      "style": "32",
+                                      "name": "ducketIcon",
+                                      "visible": "false"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "bonusbagProductValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon",
+                                      "visible": "false"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "60",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "bonusbagCreditValue",
+                                      "caption": "0",
+                                      "visible": "false"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "productIcon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "icon_present",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "bonusbag_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "bonusbag_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_bonusbag",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "bonusbag_label",
+                                      "caption": "${earnings.bonusbag.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "bonusbag_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "294",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "surprise_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "surprise_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "151833",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "surpriseDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "60",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "surpriseCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "surprise_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "surprise_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_surprise",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "donation_label",
+                                      "caption": "${earnings.surpriseboxes.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "surprise_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "336",
+                              "width": "468",
+                              "height": "40",
+                              "params": "16",
+                              "style": "3",
+                              "name": "snowstorm_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "220",
+                                  "y": "0",
+                                  "width": "225",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "snowstorm_extended_border",
+                                  "color": "0x0c4d1d8"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "15",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "151833",
+                                      "style": "32",
+                                      "name": "ducketIcon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "7",
+                                      "width": "40",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "snowstormDucketValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "icon",
+                                    "typeId": 1,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "34",
+                                      "name": "creditIcon",
+                                      "visible": "false"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "110",
+                                      "y": "7",
+                                      "width": "60",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "snowstormCreditValue",
+                                      "caption": "0"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 20,
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "85",
+                                      "y": "7",
+                                      "width": "30",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "productIcon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "icon_present",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "230",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "5",
+                                  "name": "snowstorm_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "4",
+                                      "width": "32",
+                                      "height": "32",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "snowstorm_bitmap",
+                                      "tags": "#icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "earnings_icon_snowstorm",
+                                      "pivot_point": "center",
+                                      "etching_color": 1207959552
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "42",
+                                      "y": "10",
+                                      "width": "160",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "donation_label",
+                                      "caption": "${earnings.snowstorm.label}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "u_bold",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "380",
+                                  "y": "5",
+                                  "width": "60",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "snowstorm_claim_button",
+                                  "caption": "${earnings.claim.button}",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 2
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "vaultContentArea",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "190",
+                          "width": "468",
+                          "height": "70",
+                          "params": "1168",
+                          "style": "3",
+                          "name": "vaultWithdrawArea"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "468",
+                              "height": "70",
+                              "params": "144",
+                              "style": "3",
+                              "name": "vault_desc_bg_box",
+                              "color": "0x0c4d1d8"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "378",
+                              "y": "35",
+                              "width": "80",
+                              "height": "30",
+                              "params": "393297",
+                              "style": "3",
+                              "name": "vaultWithdraw_button",
+                              "caption": "${earnings.vault.withdraw.button}",
+                              "width_min": "80",
+                              "width_max": "80"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "5",
+                              "y": "2",
+                              "width": "365",
+                              "height": "65",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultWithdrawInfo",
+                              "caption": "${earnings.vault.withdraw.info}",
+                              "color": "0x01"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_size": 18,
+                              "text_style": "u_headline_small",
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "word_wrap": true,
+                              "max_lines": 6,
+                              "bold": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "378",
+                              "y": "2",
+                              "width": "80",
+                              "height": "30",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultCredits_bg_box",
+                              "color": "0x0a6bac4",
+                              "width_min": "80"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "430",
+                              "y": "7",
+                              "width": "25",
+                              "height": "25",
+                              "params": "16",
+                              "style": "34",
+                              "name": "vaultCredits_icon"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "385",
+                              "y": "10",
+                              "width": "40",
+                              "height": "17",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultCredits_amount",
+                              "caption": "0",
+                              "color": "0x00"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "right",
+                              "text_style": "u_bold",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "468",
+                          "height": "185",
+                          "params": "16",
+                          "style": "3",
+                          "name": "informationContainer"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "40",
+                              "width": "468",
+                              "height": "145",
+                              "params": "16",
+                              "style": "3",
+                              "name": "informationBorder",
+                              "color": "0x0658698"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "220",
+                              "y": "10",
+                              "width": "248",
+                              "height": "42",
+                              "params": "16",
+                              "style": "3",
+                              "name": "creditsBorder",
+                              "color": "0x0c4d1d8"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "10",
+                              "width": "230",
+                              "height": "42",
+                              "params": "16",
+                              "style": "5",
+                              "name": "titleBorder",
+                              "color": "0x0ececec"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "430",
+                              "y": "22",
+                              "width": "25",
+                              "height": "25",
+                              "params": "16",
+                              "style": "34",
+                              "name": "vaultCreditsPending_Icon"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "385",
+                              "y": "25",
+                              "width": "40",
+                              "height": "17",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultCreditsPending_amount",
+                              "caption": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "right",
+                              "text_style": "u_bold",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "42",
+                              "y": "20",
+                              "width": "160",
+                              "height": "18",
+                              "params": "16",
+                              "style": "3",
+                              "name": "titleLabel",
+                              "caption": "${earnings.my.vault.title}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_size": 20,
+                              "text_style": "u_bold",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "2",
+                              "y": "12",
+                              "width": "31",
+                              "height": "39",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultClosed_bitmap"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "vault_window_vault_closed"
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "470",
+                              "height": "190",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultLockedInstructions_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "52",
+                                  "y": "138",
+                                  "width": "318",
+                                  "height": "42",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "VaultUnlock_text",
+                                  "caption": "${earnings.vault.unlock}",
+                                  "width_min": "318",
+                                  "width_max": "318",
+                                  "height_min": "42",
+                                  "height_max": "42"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "max_lines": 3,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "5",
+                                  "y": "140",
+                                  "width": "46",
+                                  "height": "39",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "vaultKey_bitmap",
+                                  "tags": "#icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "vault_window_vault_opener",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false,
+                                  "etching_color": 1207959552
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "378",
+                                  "y": "150",
+                                  "width": "80",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "vaultOpenShop_button",
+                                  "caption": "${generic.shop}",
+                                  "width_min": "80",
+                                  "width_max": "80"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "5",
+                                  "y": "60",
+                                  "width": "455",
+                                  "height": "75",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "vaultLockedWithdrawInfo",
+                                  "caption": "${earnings.vault.info}",
+                                  "color": "0x00"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "max_lines": 10,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "470",
+                              "height": "190",
+                              "params": "16",
+                              "style": "3",
+                              "name": "vaultUnlockedInstructions_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "5",
+                                  "y": "60",
+                                  "width": "455",
+                                  "height": "75",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "vaultUnlockedWithdrawInfo",
+                                  "caption": "${earnings.vault.member.info}",
+                                  "color": "0x00"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "max_lines": 10,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "378",
+                                  "y": "150",
+                                  "width": "80",
+                                  "height": "30",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "vaultWithdrawAll_button",
+                                  "caption": "${earnings.vault.withdraw.button}",
+                                  "width_min": "80",
+                                  "width_max": "80"
+                                },
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "301",
+              "width": "478",
+              "height": "1",
+              "params": "16",
+              "style": "3",
+              "name": "subContentArea",
+              "caption": "${inventory.title}"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 35,
+          "margin_right": 6,
+          "margin_bottom": 6
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 490,
+  "layoutHeight": 342
+}

@@ -1,0 +1,649 @@
+{
+  "name": "grid_purse",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\91_grid_purse.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "-38",
+          "y": "0",
+          "width": "230",
+          "height": "77",
+          "params": "0",
+          "style": "6",
+          "color": "0x0686661"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "230",
+              "height": "76",
+              "params": "16",
+              "style": "9",
+              "color": "0x0686661"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "114",
+              "height": "69",
+              "params": "16",
+              "style": "3",
+              "color": "0x0201e19",
+              "blend": "0.8",
+              "visible": "false"
+            },
+            "children": []
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "7",
+              "y": "4",
+              "width": "52",
+              "height": "55",
+              "params": "3145728",
+              "style": "0",
+              "name": "purse_itemlist",
+              "height_max": "62"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "52",
+                  "height": "19",
+                  "params": "1",
+                  "style": "3",
+                  "dynamic_style": "brightness_and_shadow_under",
+                  "name": "diamond_count_button",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "25",
+                      "y": "2",
+                      "width": "10",
+                      "height": "17",
+                      "params": "262160",
+                      "style": "3",
+                      "name": "diamond_count",
+                      "caption": "0",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "etching_color": 1157627904,
+                      "etching_position": "bottom",
+                      "text_color": 3721963,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "36",
+                      "y": "2",
+                      "width": "15",
+                      "height": "15",
+                      "params": "18",
+                      "style": "3",
+                      "treshold": "0",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "pursearea_diamond_icon",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "etching_color": 1207959552
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${achievements.activitypoint.5}"
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "19",
+                  "width": "52",
+                  "height": "19",
+                  "params": "1",
+                  "style": "3",
+                  "dynamic_style": "brightness_and_shadow_under",
+                  "name": "credit_count_button",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "25",
+                      "y": "2",
+                      "width": "10",
+                      "height": "17",
+                      "params": "262160",
+                      "style": "3",
+                      "name": "credit_count",
+                      "caption": "0",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "etching_color": 1157627904,
+                      "etching_position": "bottom",
+                      "text_color": 14004002,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "36",
+                      "y": "2",
+                      "width": "15",
+                      "height": "15",
+                      "params": "18",
+                      "style": "3",
+                      "treshold": "0",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "pursearea_credits_icon",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "etching_color": 1207959552
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${purse_coins}"
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "38",
+                  "width": "52",
+                  "height": "17",
+                  "params": "1",
+                  "style": "3",
+                  "dynamic_style": "brightness_and_shadow_under",
+                  "name": "ducket_count_button",
+                  "clipping": "false",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "25",
+                      "y": "2",
+                      "width": "10",
+                      "height": "17",
+                      "params": "262160",
+                      "style": "3",
+                      "name": "ducket_count",
+                      "caption": "0",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "etching_color": 1157627904,
+                      "etching_position": "bottom",
+                      "text_color": 14125015,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "36",
+                      "y": "2",
+                      "width": "15",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "treshold": "0",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "pursearea_duckets_icon",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "etching_color": 1207959552
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${achievements.activitypoint.0}"
+                }
+              }
+            ],
+            "vars": {
+              "resize_on_item_update": true
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "64",
+              "y": "7",
+              "width": "90",
+              "height": "28",
+              "params": "16",
+              "style": "2",
+              "color": "0x03b3933",
+              "blend": "0.8"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "64",
+              "y": "12",
+              "width": "90",
+              "height": "26",
+              "params": "1",
+              "style": "0",
+              "dynamic_style": "brightness_and_shadow_under",
+              "name": "hc_join_button",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "33",
+                  "y": "0",
+                  "width": "25",
+                  "height": "17",
+                  "params": "786640",
+                  "style": "3",
+                  "name": "join",
+                  "caption": "join",
+                  "visible": "false",
+                  "tags": "#icon"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_bold",
+                  "text_color": 49604
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "27",
+                  "y": "0",
+                  "width": "50",
+                  "height": "28",
+                  "params": "802832",
+                  "style": "3",
+                  "name": "days",
+                  "caption": "23 d.",
+                  "tags": "#icon",
+                  "width_max": "50",
+                  "height_min": "28",
+                  "height_max": "28"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 49604,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "max_lines": 2,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "5",
+                  "y": "0",
+                  "width": "20",
+                  "height": "18",
+                  "params": "16",
+                  "style": "3",
+                  "tags": "#icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "pursearea_hc_icon",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "etching_color": 1207959552
+                }
+              }
+            ],
+            "vars": {
+              "tool_tip_caption": "${catalog.club.hc}"
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "64",
+              "y": "39",
+              "width": "90",
+              "height": "28",
+              "params": "16",
+              "style": "2",
+              "color": "0x03b3933",
+              "blend": "0.8"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "64",
+              "y": "44",
+              "width": "90",
+              "height": "26",
+              "params": "1",
+              "style": "0",
+              "dynamic_style": "brightness_and_shadow_under",
+              "name": "vault_button",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "27",
+                  "y": "0",
+                  "width": "50",
+                  "height": "28",
+                  "params": "802832",
+                  "style": "3",
+                  "name": "vault",
+                  "caption": "${earnings.vault.title}",
+                  "tags": "#icon",
+                  "width_max": "50",
+                  "height_min": "28",
+                  "height_max": "28"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 49604,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "max_lines": 2,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "5",
+                  "y": "0",
+                  "width": "20",
+                  "height": "18",
+                  "params": "16",
+                  "style": "3",
+                  "tags": "#icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "pursearea_vault_icon",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "etching_color": 1207959552
+                }
+              }
+            ],
+            "vars": {
+              "tool_tip_caption": "${earnings.vault.title}"
+            }
+          },
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "159",
+              "y": "11",
+              "width": "1",
+              "height": "55",
+              "params": "16",
+              "style": "3",
+              "color": "0xffff444444",
+              "background": "true",
+              "height_min": "23"
+            },
+            "children": []
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "165",
+              "y": "8",
+              "width": "63",
+              "height": "62",
+              "params": "0",
+              "style": "0",
+              "tags": "relative(1)"
+            },
+            "children": [
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "61",
+                  "height": "19",
+                  "params": "129",
+                  "style": "0",
+                  "name": "help_button",
+                  "caption": "${toolbar.help}",
+                  "color": "0x0217bb5",
+                  "clipping": "false",
+                  "width_min": "61",
+                  "width_max": "62"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "0",
+                      "y": "1",
+                      "width": "71",
+                      "height": "17",
+                      "params": "1838288",
+                      "style": "3",
+                      "caption": "${toolbar.help}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_color": 16777215
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${toolbar.help}"
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "21",
+                  "width": "61",
+                  "height": "19",
+                  "params": "1",
+                  "style": "0",
+                  "name": "logout_button",
+                  "caption": "x",
+                  "color": "0x0de5347",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "26",
+                      "y": "0",
+                      "width": "15",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "pursearea_logout_icon",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${toolbar.logout}"
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "42",
+                  "width": "61",
+                  "height": "19",
+                  "params": "1",
+                  "style": "0",
+                  "name": "settings_button",
+                  "caption": "s",
+                  "color": "0x0726b86",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "1",
+                      "y": "1",
+                      "width": "61",
+                      "height": "18",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "pursearea_settings_icon",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${widget.memenu.settings}"
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 2
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "55",
+              "width": "35",
+              "height": "16",
+              "params": "0",
+              "style": "3",
+              "name": "beta_sign",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "common_beta_sign",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 230,
+  "layoutHeight": 77
+}

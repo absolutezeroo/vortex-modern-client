@@ -1,0 +1,122 @@
+{
+  "name": "unique_item_overlay_griditem",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\79_unique_item_overlay_griditem.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "36",
+          "height": "36",
+          "params": "16",
+          "style": "0",
+          "name": "unique_item_overlay_container_internal"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "1",
+              "y": "28",
+              "width": "34",
+              "height": "7",
+              "params": "16",
+              "style": "0",
+              "name": "unique_item_overlay_plaque_background_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "handle_bitmap_disposing": false,
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "27",
+              "width": "36",
+              "height": "9",
+              "params": "16",
+              "style": "0",
+              "name": "unique_item_plaque_foreground_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "unique_item_label_plaque_border",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "6",
+              "y": "29",
+              "width": "24",
+              "height": "5",
+              "params": "16",
+              "style": "0",
+              "name": "unique_item_overlay_plaque_number_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "27",
+              "width": "36",
+              "height": "9",
+              "params": "16",
+              "style": "0",
+              "name": "unique_item_plaque_studs_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "unique_item_label_studs",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "36",
+              "height": "36",
+              "params": "16",
+              "style": "0",
+              "name": "unique_item_overlay_glaze_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "unique_item_label_glass_shine"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 36,
+  "layoutHeight": 36
+}

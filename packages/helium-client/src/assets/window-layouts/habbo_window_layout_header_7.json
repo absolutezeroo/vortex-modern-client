@@ -1,0 +1,106 @@
+{
+  "name": "habbo_window_layout_header_7",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\845_habbo_window_layout_header_7.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "name": "header_container",
+          "style": "0",
+          "x": "0",
+          "y": "0",
+          "width": "64",
+          "height": "33",
+          "tags": "_EXCLUDE, _INTERNAL",
+          "params": "-2147483472"
+        },
+        "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "name": "header_title_text",
+              "x": "4",
+              "y": "2",
+              "width": "12",
+              "height": "15",
+              "background": "false",
+              "tags": "_TITLE, _EXCLUDE, _INTERNAL",
+              "params": "-2147483440"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_frame_title",
+              "grid_fit_type": "subpixel",
+              "text_color": 16777215,
+              "margins": {
+                "left": 8,
+                "top": 1,
+                "right": 8,
+                "bottom": 1
+              }
+            }
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "20",
+              "y": "2",
+              "width": "45",
+              "height": "20",
+              "background": "false",
+              "color": "0xffffffff",
+              "tags": "_EXCLUDE, _INTERNAL, _COLORIZE, _CONTROLS",
+              "params": "80"
+            },
+            "children": [
+              {
+                "tag": "closebutton",
+                "typeId": 72,
+                "attributes": {
+                  "name": "header_button_help",
+                  "style": "4",
+                  "x": "0",
+                  "y": "0",
+                  "width": "19",
+                  "height": "20",
+                  "tags": "_EXCLUDE, _INTERNAL, help",
+                  "params": "17"
+                },
+                "children": []
+              },
+              {
+                "tag": "closebutton",
+                "typeId": 72,
+                "attributes": {
+                  "name": "header_button_close",
+                  "style": "3",
+                  "x": "23",
+                  "y": "0",
+                  "width": "19",
+                  "height": "20",
+                  "tags": "_EXCLUDE, _INTERNAL, close",
+                  "params": "17"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 64,
+  "layoutHeight": 33
+}

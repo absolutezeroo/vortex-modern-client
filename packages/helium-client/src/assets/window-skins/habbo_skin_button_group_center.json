@@ -1,0 +1,601 @@
+{
+  "id": "habbo_skin_button_group_center",
+  "name": "button_group_center_skin",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\85_button_group_center_skin.xml",
+  "variables": {
+    "asset": "habbo_blue_skin"
+  },
+  "templates": [
+    {
+      "name": "default_button_group_center",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 90,
+            "y": 22,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 90,
+            "y": 25,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 90,
+            "y": 41,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 91,
+            "y": 22,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 91,
+            "y": 25,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 91,
+            "y": 41,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 95,
+            "y": 22,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 95,
+            "y": 25,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 95,
+            "y": 41,
+            "width": 3,
+            "height": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "disabled_button_group_center",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 100,
+            "y": 22,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 100,
+            "y": 25,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 100,
+            "y": 41,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 101,
+            "y": 22,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 101,
+            "y": 25,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 101,
+            "y": 41,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 105,
+            "y": 22,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 105,
+            "y": 25,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 105,
+            "y": 41,
+            "width": 3,
+            "height": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "selected_button_group_center",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 22,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 25,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 41,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 111,
+            "y": 22,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 111,
+            "y": 25,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 111,
+            "y": 41,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 115,
+            "y": 22,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 115,
+            "y": 25,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 115,
+            "y": 41,
+            "width": 3,
+            "height": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "hovering_button_group_center",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 46,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 49,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 65,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 111,
+            "y": 46,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 111,
+            "y": 49,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 111,
+            "y": 65,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 115,
+            "y": 46,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 115,
+            "y": 49,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 115,
+            "y": 65,
+            "width": 3,
+            "height": 3
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "button_group_center",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 3,
+            "width": 1,
+            "height": 16
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 19,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 1,
+          "name": "top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 1,
+            "y": 0,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 1,
+          "name": "mid_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 1,
+            "y": 3,
+            "width": 1,
+            "height": 16
+          }
+        },
+        {
+          "id": 1,
+          "name": "btm_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 1,
+            "y": 19,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 2,
+          "name": "top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 2,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "id": 2,
+          "name": "mid_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 2,
+            "y": 3,
+            "width": 3,
+            "height": 16
+          }
+        },
+        {
+          "id": 2,
+          "name": "btm_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 2,
+            "y": 19,
+            "width": 3,
+            "height": 3
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "button_group_center",
+      "template": "default_button_group_center"
+    },
+    {
+      "name": "pressed",
+      "layout": "button_group_center",
+      "template": "selected_button_group_center"
+    },
+    {
+      "name": "selected",
+      "layout": "button_group_center",
+      "template": "selected_button_group_center"
+    },
+    {
+      "name": "disabled",
+      "layout": "button_group_center",
+      "template": "disabled_button_group_center"
+    },
+    {
+      "name": "hovering",
+      "layout": "button_group_center",
+      "template": "hovering_button_group_center"
+    }
+  ]
+}

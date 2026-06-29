@@ -1,0 +1,23 @@
+{
+  "name": "habbo_element_description#162",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "button",
+      "intent": "window",
+      "style": "101",
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_xml",
+      "window_layout": "illumina_light_button_xml",
+      "layout": "illumina_light_button",
+      "color": "0xbbbbbb"
+    },
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

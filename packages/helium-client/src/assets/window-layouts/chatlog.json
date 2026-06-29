@@ -1,0 +1,254 @@
+{
+  "name": "chatlog",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\308_chatlog.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "60",
+          "y": "4",
+          "width": "480",
+          "height": "565",
+          "params": "98305",
+          "style": "0",
+          "caption": "Chatlog",
+          "color": "0xff418db0",
+          "width_min": "150",
+          "height_min": "100"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "470",
+              "height": "533",
+              "params": "2192",
+              "style": "0",
+              "name": "chat_cont",
+              "caption": "Chatlog",
+              "color": "0xffff4184b0",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "443",
+                  "height": "530",
+                  "params": "2193",
+                  "style": "0",
+                  "name": "evidence_list",
+                  "caption": "Chatlog",
+                  "color": "0xffff418db0",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "450",
+                      "height": "21",
+                      "params": "144",
+                      "style": "0",
+                      "color": "0xffff418db0",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "57",
+                          "height": "19",
+                          "params": "17",
+                          "style": "3",
+                          "name": "text",
+                          "caption": "Context",
+                          "color": "0xffff418db0",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_headline_small",
+                          "text_color": 16777215
+                        }
+                      },
+                      {
+                        "tag": "button",
+                        "typeId": 60,
+                        "attributes": {
+                          "x": "340",
+                          "y": "0",
+                          "width": "110",
+                          "height": "22",
+                          "params": "131089",
+                          "style": "0",
+                          "name": "btnHeaderAction",
+                          "caption": "Room tool",
+                          "width_min": "110",
+                          "width_max": "110"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "button",
+                        "typeId": 60,
+                        "attributes": {
+                          "x": "227",
+                          "y": "0",
+                          "width": "110",
+                          "height": "22",
+                          "params": "131089",
+                          "style": "0",
+                          "name": "btnHeaderAction2",
+                          "caption": "Open thread",
+                          "width_min": "110",
+                          "width_max": "110"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "21",
+                      "width": "420",
+                      "height": "41",
+                      "params": "144",
+                      "style": "0",
+                      "name": "chatline",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "33",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "time_txt",
+                          "caption": "18:30"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_bold"
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "40",
+                          "y": "0",
+                          "width": "95",
+                          "height": "15",
+                          "params": "17",
+                          "style": "0",
+                          "name": "chatter_txt",
+                          "caption": "ROBIN_WAN_PERSI",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "antialias_type": "advanced",
+                          "font_face": "Ubuntu",
+                          "font_size": 18,
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "bold": true,
+                          "underline": true,
+                          "kerning": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "140",
+                          "y": "0",
+                          "width": "210",
+                          "height": "65",
+                          "params": "16",
+                          "style": "3",
+                          "name": "msg_txt",
+                          "caption": "Sharing your password or personal details online is dangerous. The moderators might monitor these conversations for your safety."
+                        },
+                        "children": [],
+                        "vars": {
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "451",
+                  "y": "0",
+                  "width": "17",
+                  "height": "533",
+                  "params": "2129",
+                  "style": "0",
+                  "name": "scroller",
+                  "caption": "Chatlog"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "evidence_list"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 480,
+  "layoutHeight": 565
+}

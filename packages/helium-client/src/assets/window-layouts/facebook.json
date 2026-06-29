@@ -1,0 +1,74 @@
+{
+  "name": "facebook",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\787_facebook.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "121",
+          "height": "19",
+          "params": "144",
+          "style": "0",
+          "name": "facebook",
+          "color": "0xffff72893f",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "1",
+              "y": "2",
+              "width": "14",
+              "height": "14",
+              "params": "16",
+              "style": "0",
+              "name": "icon"
+            },
+            "children": [],
+            "vars": {
+              "handle_bitmap_disposing": false,
+              "bitmap_asset_name": "fb_icon_small_png"
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "32",
+              "y": "-2",
+              "width": "87",
+              "height": "15",
+              "params": "8388752",
+              "style": "0",
+              "name": "name",
+              "caption": "Baz Bar Foo"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 16777215,
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "sharpness": 80,
+              "thickness": -15,
+              "word_wrap": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 121,
+  "layoutHeight": 19
+}

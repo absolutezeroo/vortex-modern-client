@@ -1,0 +1,1172 @@
+{
+  "name": "floor_plan_editor_bc",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\727_floor_plan_editor_bc.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "662",
+          "height": "609",
+          "params": "33025",
+          "style": "3",
+          "caption": "${floor.plan.editor.title}",
+          "color": "0x0ff8d00"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "662",
+              "height": "50",
+              "params": "16",
+              "style": "1",
+              "color": "0xffff4e4844",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "3",
+                  "y": "2",
+                  "width": "656",
+                  "height": "45",
+                  "params": "16",
+                  "style": "1",
+                  "color": "0xffff2d2724",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "9",
+                      "y": "5",
+                      "width": "38",
+                      "height": "38",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "floor_plan_editor_logo",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  },
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "74",
+                      "y": "9",
+                      "width": "115",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${floor.plan.editor.subtitle}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_small",
+                      "text_color": 16777215
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "10",
+              "y": "57",
+              "width": "344",
+              "height": "448",
+              "params": "16",
+              "style": "3",
+              "name": "heightmap_border",
+              "color": "0x0bdbdb5"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "8",
+                  "y": "4",
+                  "width": "322",
+                  "height": "127",
+                  "params": "16",
+                  "style": "3",
+                  "name": "controls_container"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "318",
+                      "height": "24",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "1",
+                          "width": "161",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${floor.plan.editor.draw.mode}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "24",
+                      "width": "320",
+                      "height": "52",
+                      "params": "16",
+                      "style": "3",
+                      "name": "buttons_itemlist"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "51",
+                          "height": "42",
+                          "params": "17",
+                          "style": "3",
+                          "name": "add_tile"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "5",
+                              "y": "0",
+                              "width": "40",
+                              "height": "40",
+                              "params": "3932176",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "floor_plan_editor_add_tile",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "61",
+                          "y": "0",
+                          "width": "51",
+                          "height": "42",
+                          "params": "17",
+                          "style": "3",
+                          "name": "remove_tile"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "5",
+                              "y": "1",
+                              "width": "40",
+                              "height": "40",
+                              "params": "1835024",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "floor_plan_editor_remove_tile",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "122",
+                          "y": "0",
+                          "width": "2",
+                          "height": "42",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "landing_view_reception_horizontal",
+                          "stretched_x": false
+                        }
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "134",
+                          "y": "0",
+                          "width": "51",
+                          "height": "42",
+                          "params": "17",
+                          "style": "3",
+                          "name": "increase_height"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "6",
+                              "y": "1",
+                              "width": "40",
+                              "height": "40",
+                              "params": "3932176",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "floor_plan_editor_raise_tile",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "195",
+                          "y": "0",
+                          "width": "51",
+                          "height": "42",
+                          "params": "17",
+                          "style": "3",
+                          "name": "decrease_height"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "6",
+                              "y": "4",
+                              "width": "40",
+                              "height": "40",
+                              "params": "3932176",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "floor_plan_editor_sink_tile",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "256",
+                          "y": "0",
+                          "width": "2",
+                          "height": "42",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "landing_view_reception_horizontal",
+                          "stretched_x": false
+                        }
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "268",
+                          "y": "0",
+                          "width": "51",
+                          "height": "42",
+                          "params": "17",
+                          "style": "3",
+                          "name": "set_enter_tile"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "5",
+                              "y": "1",
+                              "width": "40",
+                              "height": "40",
+                              "params": "3932176",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "floor_plan_editor_enter_tile",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 10
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "76",
+                      "width": "317",
+                      "height": "48",
+                      "params": "16",
+                      "style": "3",
+                      "name": "tileheight_controller_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "html",
+                        "typeId": 11,
+                        "attributes": {
+                          "x": "0",
+                          "y": "4",
+                          "width": "156",
+                          "height": "16",
+                          "params": "1",
+                          "style": "3",
+                          "name": "tile_height_text",
+                          "caption": "${floor.plan.editor.tile.height}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 0,
+                          "leading": 0,
+                          "editable": false,
+                          "selectable": false
+                        }
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "1",
+                          "y": "23",
+                          "width": "315",
+                          "height": "19",
+                          "params": "17",
+                          "style": "3",
+                          "name": "tile_height_colormap"
+                        },
+                        "children": [],
+                        "vars": {
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 16777215
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "29",
+                          "width": "12",
+                          "height": "16",
+                          "params": "16",
+                          "style": "3",
+                          "name": "tile_height_slider_track"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "avatar_editor_avatar_editor_download_icon",
+                          "zoom_y": -1
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "scale_to_fit_items": true
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "132",
+                  "width": "332",
+                  "height": "304",
+                  "params": "16",
+                  "style": "3",
+                  "name": "heightmap_bg",
+                  "color": "0x00"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "132",
+                  "width": "331",
+                  "height": "304",
+                  "params": "16",
+                  "style": "3",
+                  "name": "heightmap_wrapper"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "29",
+                      "width": "331",
+                      "height": "304",
+                      "params": "17",
+                      "style": "3",
+                      "name": "heightmap_bitmap"
+                    },
+                    "children": [],
+                    "vars": {
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "scale_to_fit_items": true,
+                  "scroll_step_h": 1,
+                  "scroll_step_v": 1
+                }
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "331",
+                  "y": "132",
+                  "width": "13",
+                  "height": "304",
+                  "params": "17",
+                  "style": "3",
+                  "name": "heightmap_scroll_vertical"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "heightmap_wrapper"
+                }
+              },
+              {
+                "tag": "scrollbar_horizontal",
+                "typeId": 130,
+                "attributes": {
+                  "x": "0",
+                  "y": "435",
+                  "width": "332",
+                  "height": "13",
+                  "params": "17",
+                  "style": "3",
+                  "name": "heightmap_scroll_horizontal"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "heightmap_wrapper"
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "12",
+                  "y": "400",
+                  "width": "20",
+                  "height": "26",
+                  "params": "17",
+                  "style": "3",
+                  "name": "zoom",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "-4",
+                      "y": "-3",
+                      "width": "30",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3",
+                      "name": "zoom"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "roomtools_magnifier",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "366",
+              "y": "57",
+              "width": "289",
+              "height": "449",
+              "params": "16",
+              "style": "3",
+              "name": "preview_border",
+              "color": "0x0bdbdb5"
+            },
+            "children": [
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "3",
+                  "y": "3",
+                  "width": "271",
+                  "height": "98",
+                  "params": "16",
+                  "style": "3",
+                  "name": "room_controls_itemlist"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "139",
+                      "height": "98",
+                      "params": "16",
+                      "style": "3",
+                      "name": "enterdirection_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "17",
+                          "y": "46",
+                          "width": "25",
+                          "height": "24",
+                          "params": "17",
+                          "style": "5",
+                          "name": "enterdirection_left"
+                        },
+                        "children": [
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "7",
+                              "y": "7",
+                              "width": "30",
+                              "height": "30",
+                              "params": "16",
+                              "style": "2",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "82",
+                          "y": "46",
+                          "width": "25",
+                          "height": "24",
+                          "params": "17",
+                          "style": "5",
+                          "name": "enterdirection_right"
+                        },
+                        "children": [
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "9",
+                              "y": "7",
+                              "width": "28",
+                              "height": "29",
+                              "params": "16",
+                              "style": "3",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "41",
+                          "y": "12",
+                          "width": "45",
+                          "height": "72",
+                          "params": "16",
+                          "style": "3",
+                          "name": "enterdirection_ghost_avatar"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "avatar_image",
+                          "avatar_image:scale": "sh"
+                        }
+                      },
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "7",
+                          "y": "4",
+                          "width": "120",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${floor.plan.editor.enter.direction}",
+                          "width_max": "120"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "139",
+                      "y": "0",
+                      "width": "3",
+                      "height": "97",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "landing_view_reception_horizontal",
+                      "stretched_x": false
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "142",
+                      "y": "0",
+                      "width": "128",
+                      "height": "99",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "14",
+                          "y": "4",
+                          "width": "110",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${floor.plan.editor.room.options}",
+                          "width_max": "110"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "dropmenu",
+                        "typeId": 102,
+                        "attributes": {
+                          "x": "16",
+                          "y": "30",
+                          "width": "104",
+                          "height": "21",
+                          "params": "17",
+                          "style": "3",
+                          "name": "wall_thickness_drop"
+                        },
+                        "children": [],
+                        "vars": {
+                          "item_array": [
+                            "${navigator.roomsettings.wall_thickness.thinnest}",
+                            "${navigator.roomsettings.wall_thickness.thin}",
+                            "${navigator.roomsettings.wall_thickness.normal}",
+                            "${navigator.roomsettings.wall_thickness.thick}"
+                          ]
+                        }
+                      },
+                      {
+                        "tag": "dropmenu",
+                        "typeId": 102,
+                        "attributes": {
+                          "x": "16",
+                          "y": "58",
+                          "width": "104",
+                          "height": "21",
+                          "params": "17",
+                          "style": "3",
+                          "name": "floor_thickness_drop"
+                        },
+                        "children": [],
+                        "vars": {
+                          "item_array": [
+                            "${navigator.roomsettings.floor_thickness.thinnest}",
+                            "${navigator.roomsettings.floor_thickness.thin}",
+                            "${navigator.roomsettings.floor_thickness.normal}",
+                            "${navigator.roomsettings.floor_thickness.thick}"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "7",
+                  "y": "97",
+                  "width": "269",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "wall_height_controls"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "7",
+                      "width": "18",
+                      "height": "17",
+                      "params": "17",
+                      "style": "3",
+                      "name": "walls_fixed_height_enabled_checkbox"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "18",
+                      "y": "6",
+                      "width": "105",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "wall_height_text",
+                      "caption": "${floor.editor.wall.height}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "123",
+                      "y": "6",
+                      "width": "25",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "wall_height_number",
+                      "caption": "1",
+                      "width_max": "25"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "grid_fit_type": "subpixel",
+                      "text_color": 6250335,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "148",
+                      "y": "0",
+                      "width": "118",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "0",
+                          "width": "111",
+                          "height": "30",
+                          "params": "17",
+                          "style": "3",
+                          "name": "wall_height_slider",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_divider",
+                          "pivot_point": "center left",
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "7",
+                          "width": "12",
+                          "height": "16",
+                          "params": "16",
+                          "style": "3",
+                          "name": "wall_height_slider_track"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "avatar_editor_avatar_editor_download_icon",
+                          "zoom_y": -1
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "133",
+                  "width": "275",
+                  "height": "302",
+                  "params": "16",
+                  "style": "3",
+                  "name": "preview_bitmap_border"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "1",
+                  "y": "135",
+                  "width": "273",
+                  "height": "300",
+                  "params": "16",
+                  "style": "3",
+                  "name": "preview_wrapper"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "273",
+                      "height": "300",
+                      "params": "16",
+                      "style": "3",
+                      "name": "preview_bitmap"
+                    },
+                    "children": [],
+                    "vars": {
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "scale_to_fit_items": true,
+                  "scroll_step_h": 1,
+                  "scroll_step_v": 1
+                }
+              },
+              {
+                "tag": "scrollbar_horizontal",
+                "typeId": 130,
+                "attributes": {
+                  "x": "0",
+                  "y": "435",
+                  "width": "280",
+                  "height": "14",
+                  "params": "17",
+                  "style": "3",
+                  "name": "preview_scroll_horizontal"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "preview_wrapper"
+                }
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "274",
+                  "y": "135",
+                  "width": "20",
+                  "height": "299",
+                  "params": "17",
+                  "style": "3",
+                  "name": "preview_scroll_vertical"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "preview_wrapper"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "530",
+              "width": "643",
+              "height": "40",
+              "params": "16",
+              "style": "3",
+              "name": "main_buttons"
+            },
+            "children": [
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "120",
+                  "height": "40",
+                  "params": "16",
+                  "style": "3",
+                  "name": "left_buttons"
+                },
+                "children": [
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "120",
+                      "height": "35",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "reload",
+                      "caption": "${floor.plan.editor.reload}",
+                      "width_min": "100",
+                      "width_max": "120"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 5,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "273",
+                  "y": "0",
+                  "width": "370",
+                  "height": "40",
+                  "params": "262160",
+                  "style": "3",
+                  "name": "right_buttons"
+                },
+                "children": [
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "120",
+                      "height": "35",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "import_export",
+                      "caption": "${floor.plan.editor.import.export}",
+                      "width_min": "90",
+                      "width_max": "120"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "125",
+                      "y": "0",
+                      "width": "120",
+                      "height": "35",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "cancel",
+                      "caption": "${floor.plan.editor.cancel}",
+                      "width_min": "90",
+                      "width_max": "120"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "250",
+                      "y": "0",
+                      "width": "120",
+                      "height": "35",
+                      "params": "131089",
+                      "style": "5",
+                      "name": "save",
+                      "caption": "${floor.plan.editor.save}",
+                      "color": "0x0bb3e3",
+                      "width_min": "90",
+                      "width_max": "120"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 5,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "help_page": "builders-club/info",
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 662,
+  "layoutHeight": 609
+}

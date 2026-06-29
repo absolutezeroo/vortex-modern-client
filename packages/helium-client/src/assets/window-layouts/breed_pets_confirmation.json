@@ -1,0 +1,488 @@
+{
+  "name": "breed_pets_confirmation",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\459_breed_pets_confirmation.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "274",
+          "height": "387",
+          "params": "32769",
+          "style": "3",
+          "caption": "${breedpets.widget.title}",
+          "color": "0xff418db0",
+          "width_min": "274",
+          "width_max": "274"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "272",
+              "height": "279",
+              "params": "147472",
+              "style": "3",
+              "name": "element_list",
+              "width_max": "272"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "274",
+                  "height": "1",
+                  "params": "16",
+                  "style": "3",
+                  "name": "separator"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "11",
+                  "width": "254",
+                  "height": "18",
+                  "params": "16",
+                  "style": "3",
+                  "name": "description",
+                  "caption": "${breedpets.widget.text}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 19,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "39",
+                  "width": "254",
+                  "height": "18",
+                  "params": "16",
+                  "style": "3",
+                  "name": "request",
+                  "caption": "${breedpets.widget.request}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 19,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "67",
+                  "width": "254",
+                  "height": "18",
+                  "params": "16",
+                  "style": "3",
+                  "name": "info",
+                  "caption": "${breedpets.widget.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 19,
+                  "text_style": "u_italic",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "10",
+                  "y": "95",
+                  "width": "254",
+                  "height": "122",
+                  "params": "147472",
+                  "style": "3",
+                  "name": "preview_list"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "122",
+                      "height": "122",
+                      "params": "147472",
+                      "style": "3",
+                      "name": "plant1_itemlist",
+                      "width_min": "122",
+                      "width_max": "122"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "1",
+                          "y": "0",
+                          "width": "122",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "plant_name",
+                          "caption": "${breedpets.widget.plant1.name}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "18",
+                          "width": "122",
+                          "height": "130",
+                          "params": "16",
+                          "style": "3",
+                          "name": "preview_image",
+                          "width_min": "122",
+                          "width_max": "122",
+                          "height_min": "130",
+                          "height_max": "130"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "149",
+                          "width": "134",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3",
+                          "name": "plant_rarity_level",
+                          "caption": "${breedpets.widget.plant1.raritylevel}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "180",
+                          "width": "122",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3",
+                          "name": "plant_description",
+                          "caption": "${breedpets.widget.plant1.description}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 1,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "132",
+                      "y": "0",
+                      "width": "122",
+                      "height": "122",
+                      "params": "147472",
+                      "style": "3",
+                      "name": "plant2_itemlist",
+                      "width_min": "122",
+                      "width_max": "122"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "1",
+                          "y": "0",
+                          "width": "122",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "plant_name",
+                          "caption": "${breedpets.widget.plant2.name}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "18",
+                          "width": "122",
+                          "height": "130",
+                          "params": "16",
+                          "style": "3",
+                          "name": "preview_image2",
+                          "width_min": "122",
+                          "width_max": "122",
+                          "height_min": "130",
+                          "height_max": "130"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "149",
+                          "width": "134",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3",
+                          "name": "plant_rarity_level",
+                          "caption": "${breedpets.widget.plant2.raritylevel}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "180",
+                          "width": "122",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3",
+                          "name": "plant_description",
+                          "caption": "${breedpets.widget.plant2.description}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 1,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 10,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "227",
+                  "width": "274",
+                  "height": "1",
+                  "params": "16",
+                  "style": "3",
+                  "name": "separator"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "10",
+                  "y": "238",
+                  "width": "254",
+                  "height": "30",
+                  "params": "147472",
+                  "style": "3",
+                  "name": "button_list",
+                  "width_min": "254",
+                  "width_max": "254"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "122",
+                      "height": "30",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "cancel_button",
+                      "caption": "${breedpets.widget.cancel}",
+                      "width_min": "122",
+                      "width_max": "122"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "132",
+                      "y": "0",
+                      "width": "122",
+                      "height": "30",
+                      "params": "131089",
+                      "style": "5",
+                      "name": "save_button",
+                      "caption": "${breedpets.widget.use}",
+                      "color": "0x0aa00",
+                      "width_min": "122",
+                      "width_max": "122"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "264",
+                      "y": "0",
+                      "width": "122",
+                      "height": "30",
+                      "params": "131089",
+                      "style": "5",
+                      "name": "accept_button",
+                      "caption": "${breedpets.widget.accept}",
+                      "color": "0x0aa00",
+                      "width_min": "122",
+                      "width_max": "122"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 10,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "278",
+                  "width": "272",
+                  "height": "1",
+                  "params": "16",
+                  "style": "3",
+                  "width_min": "272"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 10,
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 3,
+          "margin_top": 36,
+          "margin_right": 3,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 274,
+  "layoutHeight": 387
+}

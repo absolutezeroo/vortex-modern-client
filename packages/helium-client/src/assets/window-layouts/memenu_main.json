@@ -1,0 +1,497 @@
+{
+  "name": "memenu_main",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\579_memenu_main.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "245",
+          "height": "249",
+          "params": "17",
+          "style": "0",
+          "name": "buttons"
+        },
+        "children": [
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "hc",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "hc_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "61",
+                  "width": "94",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "hc_text",
+                  "caption": "${widget.memenu.hc}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "83",
+              "y": "83",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "rooms",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "rooms_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "rooms_text",
+                  "caption": "${widget.memenu.myrooms}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "83",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "clothes",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "clothes_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "clothes_text",
+                  "caption": "${widget.memenu.myclothes}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "166",
+              "y": "83",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "effects",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "effects_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "effects_text",
+                  "caption": "${widget.memenu.effects}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "165",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "dance",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "dance_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "dance_text",
+                  "caption": "${widget.memenu.dance}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "83",
+              "y": "165",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "wave",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "wave_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "wave_text",
+                  "caption": "${widget.memenu.wave}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "166",
+              "y": "165",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "settings",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "settings_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "settings_text",
+                  "caption": "${widget.memenu.settings}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "83",
+              "y": "1",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "credits",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "credits_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "credits_text",
+                  "caption": "${widget.memenu.credits}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "166",
+              "y": "1",
+              "width": "79",
+              "height": "79",
+              "params": "17",
+              "style": "1",
+              "name": "minimail",
+              "color": "0xff3d3d3d",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "70",
+                  "height": "55",
+                  "params": "16",
+                  "style": "0",
+                  "name": "minimail_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "4",
+                  "y": "61",
+                  "width": "70",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "minimail_text",
+                  "caption": "${widget.memenu.minimail}",
+                  "width_max": "70"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 245,
+  "layoutHeight": 249
+}

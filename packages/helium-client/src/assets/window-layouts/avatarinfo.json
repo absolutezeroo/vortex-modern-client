@@ -1,0 +1,126 @@
+{
+  "name": "avatarinfo",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\464_avatarinfo.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bubble",
+        "typeId": 45,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "129",
+          "height": "39",
+          "params": "1",
+          "style": "5",
+          "name": "border",
+          "color": "0x03d3d3d"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "2",
+              "y": "4",
+              "width": "16",
+              "height": "14",
+              "params": "16",
+              "style": "100",
+              "name": "relationship_status"
+            },
+            "children": [],
+            "vars": {
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "16",
+              "y": "3",
+              "width": "81",
+              "height": "16",
+              "params": "4194320",
+              "style": "0",
+              "name": "name",
+              "caption": "my_name_here"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 17,
+              "text_color": 16777215,
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "19",
+              "width": "123",
+              "height": "18",
+              "params": "209",
+              "style": "0",
+              "name": "change_name_container",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "20",
+                  "y": "0",
+                  "width": "106",
+                  "height": "18",
+                  "params": "16",
+                  "style": "0",
+                  "caption": "${widget.avatar.change_name}"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 16,
+                  "text_color": 16433664,
+                  "text_style": "u_italic",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "7",
+                  "y": "1",
+                  "width": "12",
+                  "height": "12",
+                  "params": "16",
+                  "style": "0",
+                  "name": "pen_icon"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 129,
+  "layoutHeight": 39
+}

@@ -1,0 +1,275 @@
+{
+  "name": "chatinput_window_new",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\543_chatinput_window_new.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "471",
+          "height": "100",
+          "params": "16",
+          "style": "3",
+          "name": "master_container",
+          "width_min": "90"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "471",
+              "height": "100",
+              "params": "1048592",
+              "style": "3",
+              "name": "bubblecont",
+              "tags": "chat_bubble",
+              "width_min": "90"
+            },
+            "children": [
+              {
+                "tag": "closebutton",
+                "typeId": 72,
+                "attributes": {
+                  "x": "449",
+                  "y": "68",
+                  "width": "20",
+                  "height": "25",
+                  "params": "1",
+                  "style": "4",
+                  "name": "helpbutton",
+                  "background": "true",
+                  "treshold": "0",
+                  "height_min": "25",
+                  "height_max": "25"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "60",
+                  "width": "451",
+                  "height": "57",
+                  "params": "16",
+                  "style": "3",
+                  "name": "chat_input_container"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "51",
+                      "y": "0",
+                      "width": "400",
+                      "height": "38",
+                      "params": "0",
+                      "style": "8",
+                      "name": "input_border",
+                      "color": "0x0e5e5e5"
+                    },
+                    "children": [
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "1",
+                          "y": "-1",
+                          "width": "401",
+                          "height": "37",
+                          "params": "1",
+                          "style": "3",
+                          "name": "helpbutton_show_hover_region",
+                          "treshold": "0"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "10",
+                          "y": "9",
+                          "width": "325",
+                          "height": "23",
+                          "params": "16",
+                          "style": "0",
+                          "name": "block_text",
+                          "caption": "${chat.input.alert.flood}",
+                          "visible": "false",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "antialias_type": "advanced",
+                          "font_face": "Ubuntu",
+                          "font_size": 20,
+                          "grid_fit_type": "subpixel",
+                          "text_color": 16711680,
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "bold": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "input",
+                        "typeId": 77,
+                        "attributes": {
+                          "x": "10",
+                          "y": "7",
+                          "width": "326",
+                          "height": "24",
+                          "params": "1",
+                          "style": "0",
+                          "name": "chat_input",
+                          "caption": "${widgets.chatinput.default}",
+                          "clipping": "false",
+                          "treshold": "0",
+                          "tags": "FIT:chatInputField"
+                        },
+                        "children": [],
+                        "vars": {
+                          "always_show_selection": true,
+                          "antialias_type": "advanced",
+                          "font_face": "Ubuntu",
+                          "font_size": 23,
+                          "text_color": 7829367,
+                          "mouse_wheel_enabled": false,
+                          "max_chars": 100,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0,
+                          "focus_capturer": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "60",
+                      "height": "39",
+                      "params": "1",
+                      "style": "3",
+                      "name": "styles",
+                      "clipping": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "57",
+                          "height": "38",
+                          "params": "16",
+                          "style": "3",
+                          "name": "style_bg",
+                          "clipping": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "common_chat_style_block",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "25",
+                          "y": "10",
+                          "width": "17",
+                          "height": "19",
+                          "params": "16",
+                          "style": "100",
+                          "name": "style_icon",
+                          "clipping": "false",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "common_chat_styles",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "10",
+                          "y": "17",
+                          "width": "10",
+                          "height": "5",
+                          "params": "0",
+                          "style": "7",
+                          "dynamic_style": "brightness_and_shadow_under",
+                          "color": "0x04c4c4c"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "2",
+              "y": "0",
+              "width": "160",
+              "height": "100",
+              "params": "1179648",
+              "style": "0",
+              "name": "chatstyles_menu"
+            },
+            "children": [],
+            "filters": [
+              {
+                "type": "DropShadowFilter",
+                "attributes": {
+                  "distance": "4",
+                  "alpha": "0.6"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 471,
+  "layoutHeight": 100
+}

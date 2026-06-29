@@ -1,0 +1,234 @@
+{
+  "name": "AchievementCategory",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\128_AchievementCategory.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "112",
+          "height": "105",
+          "params": "16",
+          "style": "0",
+          "name": "achievement_category_container"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "112",
+              "height": "105",
+              "params": "3089",
+              "style": "0",
+              "name": "category_bg_act",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}achievement_background_active_1.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "112",
+              "height": "105",
+              "params": "3089",
+              "style": "0",
+              "name": "category_bg_act_hover",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}achievement_background_active_2.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "1",
+              "width": "110",
+              "height": "103",
+              "params": "3088",
+              "style": "0",
+              "name": "category_bg_inact",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}achievement_category_bkg_empty_3.png"
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "115",
+              "height": "104",
+              "params": "16",
+              "style": "0",
+              "name": "hover_container"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "23",
+                  "y": "7",
+                  "width": "65",
+                  "height": "17",
+                  "params": "208",
+                  "style": "0",
+                  "name": "header_txt",
+                  "caption": "Decoration"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "12",
+                  "y": "27",
+                  "width": "86",
+                  "height": "72",
+                  "params": "16",
+                  "style": "0",
+                  "name": "category_pic_bitmap"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "40",
+                  "y": "70",
+                  "width": "30",
+                  "height": "14",
+                  "params": "208",
+                  "style": "0",
+                  "name": "completion_txt",
+                  "caption": "1/10"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "110",
+              "height": "103",
+              "params": "17",
+              "style": "0",
+              "name": "category_region",
+              "treshold": "0",
+              "tags": "FIT:achievementsSelectCategory"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "71",
+              "y": "27",
+              "width": "18",
+              "height": "20",
+              "params": "409616",
+              "style": "7",
+              "name": "unseen_count_border",
+              "color": "0x0de4537"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "18",
+                  "height": "20",
+                  "params": "16",
+                  "style": "3",
+                  "name": "unseen_count",
+                  "caption": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "text_style": "u_bold",
+                  "margin_left": 3,
+                  "margin_top": 1,
+                  "margin_right": 5,
+                  "margin_bottom": 2,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 112,
+  "layoutHeight": 105
+}

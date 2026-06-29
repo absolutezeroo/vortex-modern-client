@@ -1,0 +1,385 @@
+{
+  "name": "rentablespace",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\465_rentablespace.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "17",
+          "y": "13",
+          "width": "256",
+          "height": "224",
+          "params": "164097",
+          "style": "3",
+          "caption": "${rentablespace.widget.title}",
+          "color": "0xff67a3bf"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "2",
+              "y": "4",
+              "width": "243",
+              "height": "216",
+              "params": "8519696",
+              "style": "3",
+              "name": "rent_view"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "1",
+                  "y": "0",
+                  "width": "241",
+                  "height": "22",
+                  "params": "8388624",
+                  "style": "3",
+                  "name": "rent_instructions",
+                  "caption": "${rentablespace.widget.instructions}",
+                  "clipping": "false"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "margin_left": 5,
+                  "margin_top": 5,
+                  "margin_right": 5,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "32",
+                  "width": "270",
+                  "height": "44",
+                  "params": "147665",
+                  "style": "3",
+                  "name": "rent_button"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "270",
+                      "height": "44",
+                      "params": "147472",
+                      "style": "3"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "11",
+                          "width": "56",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "price_label",
+                          "caption": "100 x"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_headline_medium",
+                          "margin_left": 10
+                        }
+                      },
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "61",
+                          "y": "10",
+                          "width": "28",
+                          "height": "24",
+                          "params": "16",
+                          "style": "10"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "94",
+                          "y": "11",
+                          "width": "176",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "rent_label",
+                          "caption": "${rentablespace.widget.rent}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_headline_medium",
+                          "margin_right": 10
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 5
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "1",
+                  "y": "126",
+                  "width": "245",
+                  "height": "40",
+                  "params": "147472",
+                  "style": "3",
+                  "name": "cant_rent_error",
+                  "caption": "Only HabboClub members can rent spaces.",
+                  "color": "0x0ff0000"
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 16711680,
+                  "text_style": "u_bold",
+                  "margin_left": 5,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "209",
+                  "y": "112",
+                  "width": "37",
+                  "height": "40",
+                  "params": "16",
+                  "style": "15",
+                  "name": "icon_habboclub"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 10
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "2",
+              "y": "4",
+              "width": "245",
+              "height": "97",
+              "params": "8536080",
+              "style": "3",
+              "name": "rented_view",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "268",
+                  "height": "29",
+                  "params": "16",
+                  "style": "3",
+                  "name": "rented_to_label",
+                  "caption": "${rentablespace.widget.rented_to_label}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_headline_small",
+                  "margin_left": 10,
+                  "margin_top": 10
+                }
+              },
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "34",
+                  "width": "37",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "renter_name",
+                  "caption": "User"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_italic",
+                  "margin_left": 10,
+                  "margin_right": 5
+                }
+              },
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "56",
+                  "width": "249",
+                  "height": "19",
+                  "params": "16",
+                  "style": "3",
+                  "name": "time_label",
+                  "caption": "${rentablespace.widget.expires_label}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_headline_small",
+                  "margin_left": 10
+                }
+              },
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "80",
+                  "width": "113",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "time_remaining_label",
+                  "caption": "5 days and 2 hours"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_italic",
+                  "margin_left": 10
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "20",
+                  "y": "102",
+                  "width": "204",
+                  "height": "30",
+                  "params": "131281",
+                  "style": "3",
+                  "name": "cancel_rent_button",
+                  "caption": "${rentablespace.widget.cancel_rent}",
+                  "visible": "false"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 5
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "253",
+              "height": "182",
+              "params": "131088",
+              "style": "3",
+              "name": "error_view",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "252",
+                  "height": "119",
+                  "params": "16",
+                  "style": "3",
+                  "name": "error_message",
+                  "caption": "Somebody else already rented this space."
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 16711680,
+                  "margin_left": 5,
+                  "margin_top": 10,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "42",
+                  "y": "119",
+                  "width": "169",
+                  "height": "22",
+                  "params": "147473",
+                  "style": "3",
+                  "name": "error_button_close",
+                  "caption": "${rentablespace.widget.close}"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 30,
+          "margin_right": 5,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 256,
+  "layoutHeight": 224
+}

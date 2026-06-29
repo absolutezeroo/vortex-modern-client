@@ -1,0 +1,50 @@
+{
+  "name": "element_community_goal_score",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\748_element_community_goal_score.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "102",
+          "height": "25",
+          "params": "16",
+          "style": "0",
+          "color": "0x00",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "99",
+              "height": "37",
+              "params": "147472",
+              "style": "0",
+              "name": "running_number_widget"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "running_number",
+              "running_number:digits": "10",
+              "running_number:update_frequency": "25"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 102,
+  "layoutHeight": 25
+}

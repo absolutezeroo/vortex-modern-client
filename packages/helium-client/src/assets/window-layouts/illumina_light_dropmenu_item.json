@@ -1,0 +1,38 @@
+{
+  "name": "illumina_light_dropmenu_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\53_illumina_light_dropmenu_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_BTN_TEXT",
+          "x": "0",
+          "y": "0",
+          "width": "8",
+          "height": "12",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147480560"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "il_regular",
+          "margins": {
+            "left": 4,
+            "top": 1,
+            "right": 4,
+            "bottom": 2
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 8,
+  "layoutHeight": 12
+}

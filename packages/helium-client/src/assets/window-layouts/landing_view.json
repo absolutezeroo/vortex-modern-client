@@ -1,0 +1,68 @@
+{
+  "name": "landing_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\810_landing_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "250",
+          "height": "30",
+          "params": "147472",
+          "style": "0",
+          "color": "0x00",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "10",
+              "y": "10",
+              "width": "20",
+              "height": "20",
+              "params": "16",
+              "style": "0",
+              "name": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "250",
+              "height": "20",
+              "params": "16",
+              "style": "0",
+              "name": "content_container"
+            },
+            "children": [],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 250,
+  "layoutHeight": 30
+}

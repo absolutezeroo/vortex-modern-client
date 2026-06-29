@@ -1,0 +1,165 @@
+{
+  "name": "productViewWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\286_productViewWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "200",
+          "params": "2064",
+          "style": "0",
+          "name": "main_container"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "200",
+              "params": "2192",
+              "style": "0",
+              "name": "ctlg_teaserimg_1"
+            },
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "200",
+              "params": "2193",
+              "style": "0",
+              "name": "room_canvas_container",
+              "color": "0xffff000000",
+              "background": "true",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "display_object_wrapper",
+                "typeId": 20,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "360",
+                  "height": "200",
+                  "params": "2208",
+                  "style": "3",
+                  "name": "room_canvas"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "0",
+              "y": "130",
+              "width": "360",
+              "height": "4",
+              "params": "1168",
+              "style": "100",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "separator"
+            }
+          },
+          {
+            "tag": "scrollable_itemgrid_vertical",
+            "typeId": 140,
+            "attributes": {
+              "x": "11",
+              "y": "88",
+              "width": "137",
+              "height": "76",
+              "params": "16",
+              "style": "3",
+              "name": "bundleGrid"
+            },
+            "children": [],
+            "vars": {
+              "spacing": 2,
+              "scale_to_fit_items": true
+            }
+          },
+          {
+            "tag": "formatted_text",
+            "typeId": 15,
+            "attributes": {
+              "x": "5",
+              "y": "22",
+              "width": "48",
+              "height": "17",
+              "params": "0",
+              "style": "3",
+              "name": "ctlg_product_name",
+              "caption": "product"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 16777215,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "formatted_text",
+            "typeId": 15,
+            "attributes": {
+              "x": "5",
+              "y": "36",
+              "width": "175",
+              "height": "15",
+              "params": "0",
+              "style": "3",
+              "name": "ctlg_description",
+              "caption": "description"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 16777215,
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "italic": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 200
+}

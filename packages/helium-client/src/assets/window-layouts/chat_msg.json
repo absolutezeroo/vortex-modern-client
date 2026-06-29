@@ -1,0 +1,32 @@
+{
+  "name": "chat_msg",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\376_chat_msg.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "widget",
+        "typeId": 16,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "259",
+          "height": "64",
+          "params": "147472",
+          "style": "100",
+          "name": "msg_widget"
+        },
+        "children": [],
+        "vars": {
+          "widget_type": "illumina_chat_bubble"
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 259,
+  "layoutHeight": 64
+}

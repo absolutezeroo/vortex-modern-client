@@ -1,0 +1,126 @@
+{
+  "name": "mannequin_owner_main",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\549_mannequin_owner_main.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "386",
+          "height": "180",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "typeId": 77,
+            "attributes": {
+              "x": "133",
+              "y": "25",
+              "width": "190",
+              "height": "21",
+              "params": "1",
+              "style": "3",
+              "name": "outfit_name_set",
+              "background": "true"
+            },
+            "children": [],
+            "vars": {
+              "border": true,
+              "font_size": 19,
+              "text_style": "u_regular",
+              "max_chars": 30,
+              "sharpness": 80,
+              "thickness": -15
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "330",
+              "y": "27",
+              "width": "17",
+              "height": "18",
+              "params": "16",
+              "style": "0",
+              "name": "write_deco"
+            },
+            "children": []
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "133",
+              "y": "58",
+              "width": "219",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "configure_button",
+              "caption": "${mannequin.widget.style}",
+              "width_min": "219"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "133",
+              "y": "98",
+              "width": "219",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "wear_button",
+              "caption": "${mannequin.widget.wear}",
+              "width_min": "219"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "20",
+              "y": "10",
+              "width": "83",
+              "height": "130",
+              "params": "16",
+              "style": "3",
+              "name": "preview_image"
+            },
+            "children": []
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "80",
+              "y": "110",
+              "width": "43",
+              "height": "29",
+              "params": "16",
+              "style": "0",
+              "name": "club_icon"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 386,
+  "layoutHeight": 180
+}

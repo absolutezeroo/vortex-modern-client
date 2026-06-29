@@ -1,0 +1,1 @@
+export {BotInventoryMessageEvent} from './BotInventoryMessageEvent';

@@ -1,0 +1,191 @@
+{
+  "name": "ude_addon_inputs_7",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\51_ude_addon_inputs_7.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "228",
+          "height": "87",
+          "params": "17",
+          "style": "0",
+          "name": "cont",
+          "color": "0xffff3d3d3d",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "228",
+              "height": "1",
+              "params": "16",
+              "style": "0",
+              "name": "ruler",
+              "color": "0xffff232323",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "5",
+              "width": "218",
+              "height": "13",
+              "params": "786432",
+              "style": "0",
+              "name": "desc_txt",
+              "caption": "${wiredfurni.params.select_options}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Volter Bold",
+              "text_color": 16777215,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "checkbox",
+            "typeId": 70,
+            "attributes": {
+              "x": "5",
+              "y": "25",
+              "width": "17",
+              "height": "17",
+              "params": "17",
+              "style": "1",
+              "name": "keep_altitude_checkbox"
+            },
+            "children": []
+          },
+          {
+            "tag": "checkbox",
+            "typeId": 70,
+            "attributes": {
+              "x": "5",
+              "y": "45",
+              "width": "17",
+              "height": "17",
+              "params": "17",
+              "style": "1",
+              "name": "move_through_furni_checkbox"
+            },
+            "children": []
+          },
+          {
+            "tag": "checkbox",
+            "typeId": 70,
+            "attributes": {
+              "x": "5",
+              "y": "65",
+              "width": "17",
+              "height": "17",
+              "params": "17",
+              "style": "1",
+              "name": "move_through_users_checkbox"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "25",
+              "y": "25",
+              "width": "200",
+              "height": "13",
+              "params": "0",
+              "style": "0",
+              "name": "desc_txt",
+              "caption": "${wiredfurni.params.movephysics.keep_altitude}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "text_color": 16777215,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "25",
+              "y": "45",
+              "width": "200",
+              "height": "13",
+              "params": "0",
+              "style": "0",
+              "name": "desc_txt",
+              "caption": "${wiredfurni.params.movephysics.move_through_furni}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "text_color": 16777215,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "25",
+              "y": "65",
+              "width": "200",
+              "height": "13",
+              "params": "0",
+              "style": "0",
+              "name": "desc_txt",
+              "caption": "${wiredfurni.params.movephysics.move_through_users}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "text_color": 16777215,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 228,
+  "layoutHeight": 87
+}

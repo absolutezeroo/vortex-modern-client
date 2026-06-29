@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Helium</title>
+</head>
+<body>
+
+<div id="helium-ui"></div>
+
+<script type="module">
+    const ssoTicket = new URLSearchParams(window.location.search).get('ssoTicket') || null;
+
+    window.HeliumConfig = {
+        connection: {
+            host: '127.0.0.1',
+            ports: [30001],
+            ssoTicket: ssoTicket,
+            autoConnect: !!ssoTicket,
+        },
+        configurationUrl: '/gamedata/external_variables/1'
+    };
+</script>
+
+<script src="./src/index.ts" type="module"></script>
+</body>
+</html>

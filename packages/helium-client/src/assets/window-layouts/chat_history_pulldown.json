@@ -1,0 +1,115 @@
+{
+  "name": "chat_history_pulldown",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\581_chat_history_pulldown.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "200",
+          "height": "39",
+          "params": "144",
+          "style": "0",
+          "name": "GrapbarContainer"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "200",
+              "height": "39",
+              "params": "144",
+              "style": "0",
+              "name": "grapBarBg"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "7",
+              "width": "200",
+              "height": "21",
+              "params": "144",
+              "style": "0",
+              "name": "GrapBarStripe"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "51",
+                  "y": "0",
+                  "width": "98",
+                  "height": "21",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "grapBarHandle"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "184",
+                  "y": "4",
+                  "width": "13",
+                  "height": "13",
+                  "params": "262225",
+                  "style": "0",
+                  "name": "GrapBarX"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "3",
+                  "width": "48",
+                  "height": "15",
+                  "params": "262288",
+                  "style": "0",
+                  "name": "grapBarGripL"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "152",
+                  "y": "3",
+                  "width": "29",
+                  "height": "15",
+                  "params": "16",
+                  "style": "0",
+                  "name": "grapBarGripR"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

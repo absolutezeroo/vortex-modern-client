@@ -1,0 +1,39 @@
+{
+  "name": "habbo_element_description#231",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "icon",
+      "intent": "Subscription Point Big",
+      "style": "36",
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set_xml",
+      "layout": "iconSubscriptionPointBig"
+    },
+    "children": [
+      {
+        "tag": "states",
+        "typeId": -1,
+        "attributes": {},
+        "children": [
+          {
+            "tag": "state",
+            "typeId": -1,
+            "attributes": {
+              "name": "default",
+              "layout": "iconSubscriptionPointBig",
+              "template": "icon_36"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

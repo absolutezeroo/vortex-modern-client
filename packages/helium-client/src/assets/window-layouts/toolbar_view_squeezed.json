@@ -1,0 +1,1030 @@
+{
+  "name": "toolbar_view_squeezed",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\108_toolbar_view_squeezed.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "87",
+          "height": "875",
+          "params": "147456",
+          "style": "6",
+          "name": "main_toolbar",
+          "color": "0x079756e",
+          "tags": "FIT:toolbar"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "5",
+              "width": "87",
+              "height": "870",
+              "params": "8536080",
+              "style": "0",
+              "name": "toolbar_items"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "0",
+                  "width": "76",
+                  "height": "70",
+                  "params": "17",
+                  "style": "0",
+                  "name": "RECEPTION",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,VISIBLE_GAME_CENTER,FIT:toolbarReception,RECEPTION"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "57",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_reception",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_reception",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_reception_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "64",
+                      "width": "76",
+                      "height": "2",
+                      "params": "16",
+                      "style": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "icons_toolbar_divider",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "70",
+                  "width": "76",
+                  "height": "70",
+                  "params": "17",
+                  "style": "0",
+                  "name": "HOME",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_HOTEL,FIT:toolbarHome,HOME"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "57",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_home",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "-2",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_home",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_home_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "64",
+                      "width": "76",
+                      "height": "2",
+                      "params": "16",
+                      "style": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "icons_toolbar_divider",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "140",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "NAVIGATOR",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_HOTEL,VISIBLE_ROOM,VISIBLE_GAME_CENTER,FIT:toolbarNavigator"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_navigator",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "-2",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_navigator",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_navigator_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.navigator}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "220",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "QUESTS",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,FIT:toolbarQuests"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_quests",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_quests",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_quests_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.quests}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "300",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "GAMES",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,VISIBLE_HOTEL,FIT:toolbarGames"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_games",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_games",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_games_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.games}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "380",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "STORIES",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_HOTEL,FIT:toolbarStories"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_stories",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_stories",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_stories_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.stories}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "460",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "ACHIEVEMENTS",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,FIT:toolbarAchievements"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_achievements",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_achievements",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_achievements_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.achievements}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "540",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "CATALOGUE",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,VISIBLE_HOTEL,VISIBLE_GAME_CENTER,FIT:toolbarCatalogue"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_catalogue",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_catalogue",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_catalogue_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.catalogue}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "620",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "BUILDER",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,VISIBLE_HOTEL,FIT:toolbarCatalogue"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_builder",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_builder",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_builder_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.builder}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "700",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "INVENTORY",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,FIT:toolbarInventory"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_inventory",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icons_toolbar_inventory",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_toolbar_inventory_normal",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.inventory}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "5",
+                  "y": "780",
+                  "width": "76",
+                  "height": "80",
+                  "params": "17",
+                  "style": "0",
+                  "name": "MEMENU",
+                  "background": "true",
+                  "treshold": "0",
+                  "tags": "TOGGLE,VISIBLE_ROOM,VISIBLE_HOTEL,VISIBLE_GAME_CENTER,FIT:toolbarMeMenu"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "5",
+                      "width": "70",
+                      "height": "75",
+                      "params": "2064",
+                      "style": "2",
+                      "name": "bg_memenu",
+                      "color": "0x057544d",
+                      "tags": "ICON_BORDER"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "60",
+                          "height": "60",
+                          "params": "208",
+                          "style": "0",
+                          "name": "icon_me_menu",
+                          "tags": "ICON_BMP"
+                        },
+                        "children": [],
+                        "vars": {
+                          "handle_bitmap_disposing": false,
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "62",
+                      "width": "76",
+                      "height": "17",
+                      "params": "263184",
+                      "style": "0",
+                      "name": "text",
+                      "caption": "${toolbar.icon.label.memenu}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "etching_color": 4278190080,
+                      "etching_position": "bottom-right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "bold": true,
+                      "kerning": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "60",
+                      "y": "38",
+                      "width": "13",
+                      "height": "26",
+                      "params": "16",
+                      "style": "100",
+                      "name": "guide_icon",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "help_guide_icon"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "5",
+                  "y": "860",
+                  "width": "76",
+                  "height": "10",
+                  "params": "16",
+                  "style": "0",
+                  "name": "bottom_padding"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "3",
+              "alpha": "0.6"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 87,
+  "layoutHeight": 875
+}

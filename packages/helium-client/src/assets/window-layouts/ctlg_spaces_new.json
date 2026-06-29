@@ -1,0 +1,241 @@
+{
+  "name": "ctlg_spaces_new",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\248_ctlg_spaces_new.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "2064",
+          "style": "0",
+          "name": "ctlg_spaces_new"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "240",
+              "params": "16",
+              "style": "0",
+              "name": "productViewWidget",
+              "tags": "NO_ROOM_CANVAS"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "240",
+              "params": "16",
+              "style": "0",
+              "name": "roomPreviewWidget"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "360",
+                  "height": "240",
+                  "params": "16",
+                  "style": "0",
+                  "name": "catalog_floor_preview_example"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "29",
+                  "y": "21",
+                  "width": "288",
+                  "height": "147",
+                  "params": "16",
+                  "style": "0",
+                  "name": "catalog_wall_preview_b_right"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "123",
+                  "y": "51",
+                  "width": "120",
+                  "height": "118",
+                  "params": "16",
+                  "style": "0",
+                  "name": "catalog_space_preview_window"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "180",
+              "y": "205",
+              "width": "175",
+              "height": "28",
+              "params": "0",
+              "style": "0",
+              "name": "activityPointDisplayWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "245",
+              "width": "360",
+              "height": "180",
+              "params": "2064",
+              "style": "0",
+              "name": "spacesNewWidget",
+              "tags": "EMBEDDED,FIXED"
+            },
+            "children": [
+              {
+                "tag": "selector",
+                "typeId": 42,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "360",
+                  "height": "22",
+                  "params": "17",
+                  "style": "100",
+                  "name": "groups"
+                },
+                "children": [
+                  {
+                    "tag": "button_group_left",
+                    "typeId": 67,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "147",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "100",
+                      "name": "group.walls",
+                      "caption": "${catalog.spaces.tab.walls}",
+                      "width_min": "50"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_group_center",
+                    "typeId": 68,
+                    "attributes": {
+                      "x": "50",
+                      "y": "0",
+                      "width": "152",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "100",
+                      "name": "group.floors",
+                      "caption": "${catalog.spaces.tab.floors}",
+                      "width_min": "50"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_group_right",
+                    "typeId": 69,
+                    "attributes": {
+                      "x": "100",
+                      "y": "0",
+                      "width": "150",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "100",
+                      "name": "group.views",
+                      "caption": "${catalog.spaces.tab.views}",
+                      "width_min": "50"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "25",
+                  "width": "360",
+                  "height": "155",
+                  "params": "2064",
+                  "style": "6",
+                  "blend": "0.5"
+                },
+                "children": []
+              },
+              {
+                "tag": "scrollable_itemgrid_vertical",
+                "typeId": 140,
+                "attributes": {
+                  "x": "2",
+                  "y": "27",
+                  "width": "356",
+                  "height": "151",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "itemGrid"
+                },
+                "children": [],
+                "vars": {
+                  "spacing": 2,
+                  "scale_to_fit_items": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "1040",
+              "style": "0",
+              "name": "purchaseWidget"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

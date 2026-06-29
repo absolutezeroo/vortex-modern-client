@@ -1,0 +1,573 @@
+{
+  "name": "calendar",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\84_calendar.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "1033",
+          "height": "607",
+          "params": "1",
+          "style": "3",
+          "caption": "",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "1033",
+              "height": "607",
+              "params": "2192",
+              "style": "0",
+              "color": "0xffff0e0f1f",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "106",
+                  "width": "1033",
+                  "height": "463",
+                  "params": "144",
+                  "style": "3",
+                  "name": "spinner_container"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "15",
+                      "width": "1033",
+                      "height": "447",
+                      "params": "149",
+                      "style": "3",
+                      "name": "calendar_itemlist"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "202",
+                          "height": "447",
+                          "params": "21",
+                          "style": "3",
+                          "name": "btn_slot"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "202",
+                              "height": "447",
+                              "params": "19",
+                              "style": "3",
+                              "name": "bitmap_item"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "campaign_day_generic_bg",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "7",
+                              "y": "115",
+                              "width": "192",
+                              "height": "192",
+                              "params": "16",
+                              "style": "0",
+                              "name": "btn_present"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "192",
+                                  "height": "192",
+                                  "params": "4079635",
+                                  "style": "3",
+                                  "name": "bitmap_bg"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              },
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "192",
+                                  "height": "192",
+                                  "params": "4079635",
+                                  "style": "3",
+                                  "name": "bitmap_opened_bg",
+                                  "visible": "false"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "campaign_opened",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              },
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "192",
+                                  "height": "192",
+                                  "params": "4079635",
+                                  "style": "3",
+                                  "name": "bitmap_icon2"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              },
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "192",
+                                  "height": "192",
+                                  "params": "4079635",
+                                  "style": "3",
+                                  "name": "bitmap_icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "47",
+                              "height": "51",
+                              "params": "4079635",
+                              "style": "3",
+                              "name": "bitmap_lock"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "campaign_generic_lock",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "206",
+                          "y": "0",
+                          "width": "202",
+                          "height": "447",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "202",
+                              "height": "447",
+                              "params": "16",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "campaign_day_generic_bg",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "412",
+                          "y": "0",
+                          "width": "202",
+                          "height": "447",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "202",
+                              "height": "447",
+                              "params": "16",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "campaign_day_generic_bg",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "618",
+                          "y": "0",
+                          "width": "202",
+                          "height": "447",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "202",
+                              "height": "447",
+                              "params": "16",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "campaign_day_generic_bg",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "824",
+                          "y": "0",
+                          "width": "202",
+                          "height": "447",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "202",
+                              "height": "447",
+                              "params": "16",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "campaign_day_generic_bg",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 4
+                    }
+                  },
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "15",
+                      "width": "408",
+                      "height": "447",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "gradient1"
+                    },
+                    "children": [],
+                    "vars": {
+                      "fit_size_to_contents": true
+                    }
+                  },
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "618",
+                      "y": "15",
+                      "width": "408",
+                      "height": "447",
+                      "params": "2048",
+                      "style": "3",
+                      "name": "gradient2"
+                    },
+                    "children": [],
+                    "vars": {
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "31",
+              "y": "32",
+              "width": "47",
+              "height": "51",
+              "params": "16",
+              "style": "3"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "campaign_calendar_icon"
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "95",
+              "y": "28",
+              "width": "500",
+              "height": "50",
+              "params": "16",
+              "style": "3",
+              "height_max": "120"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "500",
+                  "height": "26",
+                  "params": "9584688",
+                  "style": "3",
+                  "name": "info_heading",
+                  "caption": "December 20th",
+                  "color": "0x07ecaed",
+                  "width_max": "500"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 32,
+                  "text_color": 8309485,
+                  "text_style": "ubuntu_condensed_title",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "29",
+                  "width": "500",
+                  "height": "17",
+                  "params": "9437232",
+                  "style": "3",
+                  "name": "info_body",
+                  "caption": "This spell will produce xxxxxx xxx xxxxx",
+                  "width_max": "500"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 3
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "991",
+              "y": "325",
+              "width": "33",
+              "height": "34",
+              "params": "147457",
+              "style": "100",
+              "name": "btn_forward",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "33",
+                  "height": "34",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "icons_forward",
+                  "fit_size_to_contents": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "4",
+              "y": "325",
+              "width": "33",
+              "height": "34",
+              "params": "147457",
+              "style": "100",
+              "name": "btn_back",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "33",
+                  "height": "34",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "icons_back",
+                  "fit_size_to_contents": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "120",
+              "height": "30",
+              "params": "131089",
+              "style": "6",
+              "name": "btn_force_open",
+              "caption": "FORCE OPEN",
+              "color": "0x0299f3a",
+              "visible": "false",
+              "width_min": "120",
+              "width_max": "120"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1033,
+  "layoutHeight": 607
+}

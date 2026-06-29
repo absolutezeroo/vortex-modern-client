@@ -1,0 +1,376 @@
+{
+  "name": "chatter_configuration",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\401_chatter_configuration.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bubble",
+        "typeId": 45,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "278",
+          "height": "369",
+          "params": "33025",
+          "style": "100",
+          "color": "0x06e6b67"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "260",
+              "height": "20",
+              "params": "144",
+              "style": "100",
+              "color": "0xffff000000",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "31",
+                  "y": "2",
+                  "width": "199",
+                  "height": "17",
+                  "params": "786640",
+                  "style": "100",
+                  "caption": "${bot.skill.chatter.configuration.title}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_bold",
+                  "text_color": 16777215
+                }
+              }
+            ]
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "7",
+              "y": "25",
+              "width": "247",
+              "height": "321",
+              "params": "16",
+              "style": "100",
+              "name": "configuration_items"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "183",
+                  "height": "15",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${bot.skill.chatter.configuration.chat.text}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_small",
+                  "text_color": 16777215
+                }
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "0",
+                  "y": "17",
+                  "width": "246",
+                  "height": "178",
+                  "params": "1",
+                  "style": "100",
+                  "name": "chat_text",
+                  "caption": "${bot.skill.chatter.configuration.text.placeholder}"
+                },
+                "children": [],
+                "vars": {
+                  "border": true,
+                  "border_color": 16777215,
+                  "font_size": 16,
+                  "text_color": 16777215,
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "max_chars": 1000,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "197",
+                  "width": "248",
+                  "height": "22",
+                  "params": "16",
+                  "style": "100",
+                  "name": "auto_chat_container"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "0",
+                      "y": "4",
+                      "width": "207",
+                      "height": "15",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${bot.skill.chatter.configuration.automatic.chat}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_small",
+                      "text_color": 16777215
+                    }
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "209",
+                      "y": "1",
+                      "width": "39",
+                      "height": "21",
+                      "params": "17",
+                      "style": "100",
+                      "name": "auto_chat_checkbox",
+                      "treshold": "0",
+                      "height_min": "21",
+                      "height_max": "21"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "221",
+                  "width": "248",
+                  "height": "22",
+                  "params": "16",
+                  "style": "100",
+                  "name": "markov_container"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "0",
+                      "y": "4",
+                      "width": "175",
+                      "height": "15",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${bot.skill.chatter.configuration.markov}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_small",
+                      "text_color": 16777215
+                    }
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "209",
+                      "y": "1",
+                      "width": "39",
+                      "height": "21",
+                      "params": "17",
+                      "style": "100",
+                      "name": "markov_checkbox",
+                      "treshold": "0",
+                      "height_min": "21",
+                      "height_max": "21"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "245",
+                  "width": "248",
+                  "height": "22",
+                  "params": "16",
+                  "style": "100",
+                  "name": "chat_delay_container"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "0",
+                      "y": "4",
+                      "width": "188",
+                      "height": "15",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${bot.skill.chatter.configuration.chat.delay}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_small",
+                      "text_color": 16777215
+                    }
+                  },
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "215",
+                      "y": "3",
+                      "width": "31",
+                      "height": "15",
+                      "params": "1",
+                      "style": "100",
+                      "name": "chat_delay_text",
+                      "height_max": "21"
+                    },
+                    "children": [],
+                    "vars": {
+                      "border": true,
+                      "border_color": 16777215,
+                      "text_color": 16777215,
+                      "text_style": "u_small",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "0",
+                  "y": "269",
+                  "width": "250",
+                  "height": "16",
+                  "params": "1",
+                  "style": "100",
+                  "name": "help_link",
+                  "caption": "${bot.skill.chatter.configuration.help.link}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 12566527,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "287",
+                  "width": "246",
+                  "height": "36",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "123",
+                      "y": "7",
+                      "width": "124",
+                      "height": "35",
+                      "params": "262224",
+                      "style": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "button_thick",
+                        "typeId": 61,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "60",
+                          "height": "28",
+                          "params": "131089",
+                          "style": "3",
+                          "name": "cancel_button",
+                          "caption": "${cancel}",
+                          "width_max": "120"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "button_thick",
+                        "typeId": 61,
+                        "attributes": {
+                          "x": "64",
+                          "y": "0",
+                          "width": "60",
+                          "height": "28",
+                          "params": "393233",
+                          "style": "5",
+                          "name": "save_button",
+                          "caption": "${save}",
+                          "color": "0x03f9f3f",
+                          "width_min": "60",
+                          "width_max": "120"
+                        },
+                        "children": []
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 4,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 278,
+  "layoutHeight": 369
+}

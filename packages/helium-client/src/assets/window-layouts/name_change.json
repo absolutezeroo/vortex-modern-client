@@ -1,0 +1,179 @@
+{
+  "name": "name_change",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\369_name_change.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "1",
+          "y": "1",
+          "width": "315",
+          "height": "225",
+          "params": "32769",
+          "style": "3",
+          "caption": "${tutorial.name_change.title.main}",
+          "color": "0x0418db0",
+          "width_min": "50",
+          "height_min": "50"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "303",
+              "height": "190",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "6",
+                  "y": "21",
+                  "width": "290",
+                  "height": "69",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${tutorial.name_change.info.main}"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "8",
+                  "y": "96",
+                  "width": "289",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${tutorial.name_change.current}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "4",
+                  "y": "124",
+                  "width": "142",
+                  "height": "66",
+                  "params": "17",
+                  "style": "3",
+                  "name": "change_name_button",
+                  "caption": "name_change_title"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "12",
+                      "y": "18",
+                      "width": "118",
+                      "height": "28",
+                      "params": "3145744",
+                      "style": "100",
+                      "caption": "${tutorial.name_change.change}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "mouse_wheel_enabled": false,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "155",
+                  "y": "124",
+                  "width": "142",
+                  "height": "66",
+                  "params": "17",
+                  "style": "3",
+                  "name": "keep_name_button",
+                  "caption": "name_change_title"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "12",
+                      "y": "19",
+                      "width": "108",
+                      "height": "28",
+                      "params": "3145744",
+                      "style": "100",
+                      "caption": "${tutorial.name_change.keep}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "mouse_wheel_enabled": false,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 315,
+  "layoutHeight": 225
+}

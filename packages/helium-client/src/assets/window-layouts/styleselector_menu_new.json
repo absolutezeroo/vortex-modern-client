@@ -1,0 +1,50 @@
+{
+  "name": "styleselector_menu_new",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\418_styleselector_menu_new.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "67",
+          "height": "41",
+          "params": "16",
+          "style": "2",
+          "color": "0x024231e",
+          "blend": "0.8"
+        },
+        "children": [
+          {
+            "tag": "itemgrid_vertical",
+            "typeId": 53,
+            "attributes": {
+              "x": "6",
+              "y": "5",
+              "width": "55",
+              "height": "33",
+              "params": "12582928",
+              "style": "0",
+              "name": "itemgrid"
+            },
+            "children": [],
+            "vars": {
+              "spacing": 1,
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 67,
+  "layoutHeight": 41
+}

@@ -1,0 +1,140 @@
+{
+  "name": "club_promo_bar",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\117_club_promo_bar.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "44",
+          "params": "16",
+          "style": "9",
+          "name": "club_promo_bar_border",
+          "color": "0x0686661"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "46",
+              "height": "37",
+              "params": "16",
+              "style": "0",
+              "name": "flashing_animation"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "26",
+              "y": "6",
+              "width": "161",
+              "height": "30",
+              "params": "8388625",
+              "style": "0",
+              "name": "text_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "1",
+                  "y": "1",
+                  "width": "160",
+                  "height": "30",
+                  "params": "16",
+                  "style": "0",
+                  "name": "promo_text_shadow",
+                  "caption": "club extend discount promo text",
+                  "width_min": "160",
+                  "width_max": "160"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "160",
+                  "height": "30",
+                  "params": "8388624",
+                  "style": "0",
+                  "name": "promo_text",
+                  "caption": "club extend discount promo text",
+                  "width_min": "160",
+                  "width_max": "160"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "6",
+              "y": "7",
+              "width": "16",
+              "height": "16",
+              "params": "16",
+              "style": "14",
+              "name": "club_icon"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 44
+}

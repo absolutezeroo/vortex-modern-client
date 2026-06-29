@@ -1,0 +1,148 @@
+{
+  "name": "ude_slider",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\133_ude_slider.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "228",
+          "height": "36",
+          "params": "17",
+          "style": "0",
+          "name": "cont",
+          "color": "0xff3d3d3d",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "19",
+              "y": "6",
+              "width": "195",
+              "height": "24",
+              "params": "16",
+              "style": "0",
+              "name": "slider_container"
+            },
+            "children": [
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "20",
+                  "params": "17",
+                  "style": "1",
+                  "name": "slider_button_left"
+                },
+                "children": [
+                  {
+                    "tag": "icon",
+                    "typeId": 1,
+                    "attributes": {
+                      "x": "4",
+                      "y": "5",
+                      "width": "12",
+                      "height": "12",
+                      "params": "16",
+                      "style": "2",
+                      "color": "0x666666"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "26",
+                  "y": "2",
+                  "width": "141",
+                  "height": "17",
+                  "params": "16",
+                  "style": "0",
+                  "name": "slider_base"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "26",
+                  "y": "3",
+                  "width": "141",
+                  "height": "15",
+                  "params": "16",
+                  "style": "0",
+                  "name": "slider_movement_area"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "12",
+                      "height": "15",
+                      "params": "33073",
+                      "style": "0",
+                      "name": "slider_button"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "173",
+                  "y": "0",
+                  "width": "20",
+                  "height": "20",
+                  "params": "17",
+                  "style": "1",
+                  "name": "slider_button_right"
+                },
+                "children": [
+                  {
+                    "tag": "icon",
+                    "typeId": 1,
+                    "attributes": {
+                      "x": "6",
+                      "y": "5",
+                      "width": "12",
+                      "height": "12",
+                      "params": "16",
+                      "style": "3",
+                      "color": "0x666666"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

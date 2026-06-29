@@ -1,0 +1,317 @@
+{
+  "name": "club_buy_confirmation",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1633_club_buy_confirmation.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "20",
+          "y": "29",
+          "width": "369",
+          "height": "210",
+          "params": "33025",
+          "style": "3",
+          "caption": "${catalog.club.buy.confirm}",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "362",
+              "height": "161",
+              "params": "8536080",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "354",
+                  "height": "97",
+                  "params": "147472",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "icon",
+                    "typeId": 1,
+                    "attributes": {
+                      "x": "12",
+                      "y": "20",
+                      "width": "85",
+                      "height": "40",
+                      "params": "16",
+                      "style": "18",
+                      "name": "icon",
+                      "caption": "${catalog.club.buy.confirm}"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "109",
+                      "y": "10",
+                      "width": "245",
+                      "height": "87",
+                      "params": "147472",
+                      "style": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "245",
+                          "height": "39",
+                          "params": "8388624",
+                          "style": "0",
+                          "name": "subscription_name",
+                          "caption": "${catalog.vip.buy.confirm.product}",
+                          "width_min": "245",
+                          "width_max": "245"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "font_size": 22,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "42",
+                          "width": "207",
+                          "height": "20",
+                          "params": "16",
+                          "style": "0",
+                          "name": "end_date",
+                          "caption": "${catalog.vip.buy.confirm.end_date}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_size": 20,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "65",
+                          "width": "288",
+                          "height": "22",
+                          "params": "147472",
+                          "style": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "1",
+                              "width": "268",
+                              "height": "19",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "${catalog.purchase.confirmation.dialog.cost}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "font_size": 20,
+                              "text_style": "u_regular",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "268",
+                              "y": "0",
+                              "width": "20",
+                              "height": "22",
+                              "params": "147472",
+                              "style": "0",
+                              "name": "purchase_cost_box"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 3
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "107",
+                  "width": "353",
+                  "height": "17",
+                  "params": "147472",
+                  "style": "100",
+                  "name": "disclaimer"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "31",
+                      "y": "0",
+                      "width": "322",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${disclaimer.credit_spending}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "11",
+                      "y": "0",
+                      "width": "342",
+                      "height": "16",
+                      "params": "17",
+                      "style": "3",
+                      "name": "spending_disclaimer",
+                      "treshold": "0"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "134",
+                  "width": "355",
+                  "height": "27",
+                  "params": "147472",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "9",
+                      "y": "0",
+                      "width": "120",
+                      "height": "27",
+                      "params": "132113",
+                      "style": "3",
+                      "name": "cancel_button",
+                      "caption": "${cancel}",
+                      "width_min": "120",
+                      "width_max": "120",
+                      "height_min": "27",
+                      "height_max": "27"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "235",
+                      "y": "0",
+                      "width": "120",
+                      "height": "27",
+                      "params": "132177",
+                      "style": "5",
+                      "name": "select_button",
+                      "caption": "${catalog.club.buy.subscribe}",
+                      "color": "0x0aa00",
+                      "width_min": "120",
+                      "width_max": "120",
+                      "height_min": "27",
+                      "height_max": "27"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 10
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "help_page": "habboclub",
+          "margin_left": 3,
+          "margin_top": 36,
+          "margin_right": 3,
+          "margin_bottom": 3
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 369,
+  "layoutHeight": 210
+}

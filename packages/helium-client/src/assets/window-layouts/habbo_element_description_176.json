@@ -1,0 +1,25 @@
+{
+  "name": "habbo_element_description#176",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "radiobutton",
+      "intent": "default",
+      "style": "100",
+      "renderer": "skin",
+      "asset": "illumina_light_skin_radio_button_xml",
+      "window_layout": "illumina_light_radio_button_xml",
+      "layout": "button_radio",
+      "treshold": "0",
+      "height_min": "16",
+      "height_max": "16"
+    },
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

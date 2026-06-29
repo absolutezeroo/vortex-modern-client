@@ -1,0 +1,80 @@
+{
+  "name": "chooser_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\517_chooser_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "203",
+          "height": "168",
+          "params": "98305",
+          "style": "3",
+          "caption": "${widget.chooser.title}",
+          "color": "0x0418db0",
+          "width_min": "150",
+          "height_min": "90"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "9",
+              "y": "13",
+              "width": "173",
+              "height": "120",
+              "params": "2192",
+              "style": "0",
+              "caption": "${widgets.chooser.title}"
+            },
+            "children": [
+              {
+                "tag": "scrollable_itemlist_vertical",
+                "typeId": 56,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "172",
+                  "height": "120",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "item_list",
+                  "caption": "${widgets.chooser.title}"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 203,
+  "layoutHeight": 168
+}

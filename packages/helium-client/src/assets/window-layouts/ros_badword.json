@@ -1,0 +1,71 @@
+{
+  "name": "ros_badword",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\693_ros_badword.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "200",
+          "height": "20",
+          "params": "16",
+          "style": "0",
+          "name": "badword_container",
+          "color": "0xcc0000",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "111",
+              "height": "20",
+              "params": "17",
+              "style": "0",
+              "name": "bg_region",
+              "color": "0x00",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "4",
+              "y": "1",
+              "width": "200",
+              "height": "17",
+              "params": "16",
+              "style": "0",
+              "name": "badword_txt",
+              "caption": "PH Badword",
+              "color": "0x00"
+            },
+            "children": [],
+            "vars": {
+              "always_show_selection": true,
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 200,
+  "layoutHeight": 20
+}

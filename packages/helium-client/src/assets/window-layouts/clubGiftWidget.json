@@ -1,0 +1,116 @@
+{
+  "name": "clubGiftWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\237_clubGiftWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "340",
+          "height": "320",
+          "params": "16",
+          "style": "0",
+          "name": "widget_main_container"
+        },
+        "children": [
+          {
+            "tag": "scrollable_itemlist_vertical",
+            "typeId": 56,
+            "attributes": {
+              "x": "0",
+              "y": "35",
+              "width": "340",
+              "height": "269",
+              "params": "2064",
+              "style": "3",
+              "name": "gift_list"
+            },
+            "children": [],
+            "vars": {
+              "spacing": 1
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "340",
+              "height": "35",
+              "params": "16",
+              "style": "3",
+              "name": "info_text",
+              "caption": "lorem ipsum"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_italic",
+              "mouse_wheel_enabled": false,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "305",
+              "width": "340",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "past_club_days",
+              "caption": "lorem ipsum"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "30",
+              "y": "305",
+              "width": "310",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "past_vip_days",
+              "caption": "lorem ipsum",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "right",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 340,
+  "layoutHeight": 320
+}

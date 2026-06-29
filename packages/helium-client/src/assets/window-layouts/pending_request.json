@@ -1,0 +1,227 @@
+{
+  "name": "pending_request",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\348_pending_request.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "369",
+          "height": "211",
+          "params": "163841",
+          "style": "100",
+          "name": "pending_request",
+          "caption": "${help.emergency.pending.title}"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "8",
+              "y": "2",
+              "width": "351",
+              "height": "175",
+              "params": "8536080",
+              "style": "100",
+              "clipping": "false"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "217",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${help.emergency.pending.subtitle}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "il_heading_1",
+                  "text_color": 12779520
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "22",
+                  "width": "351",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${help.emergency.pending.description}",
+                  "width_min": "351",
+                  "width_max": "351"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "margin_bottom": 8,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "49",
+                  "width": "351",
+                  "height": "55",
+                  "params": "147472",
+                  "style": "102",
+                  "width_min": "351",
+                  "width_max": "351"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "13",
+                      "y": "11",
+                      "width": "192",
+                      "height": "15",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${help.emergency.pending.message.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "il_border",
+                      "text_color": 4473924
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "14",
+                      "y": "28",
+                      "width": "324",
+                      "height": "27",
+                      "params": "16",
+                      "style": "100",
+                      "name": "request_message",
+                      "caption": "message body",
+                      "width_min": "324",
+                      "width_max": "324"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "margin_bottom": 11,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "107",
+                  "width": "351",
+                  "height": "13",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "illumina_horizontal_separator",
+                  "pivot_point": "bottom center",
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "-10",
+                  "y": "123",
+                  "width": "370",
+                  "height": "52",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "232",
+                      "height": "48",
+                      "params": "131089",
+                      "style": "101",
+                      "name": "keep_button",
+                      "caption": "${help.emergency.pending.button.keep}",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "128",
+                      "y": "0",
+                      "width": "243",
+                      "height": "48",
+                      "params": "393233",
+                      "style": "101",
+                      "name": "discard_button",
+                      "caption": "${help.emergency.pending.button.discard}",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 3
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 369,
+  "layoutHeight": 211
+}

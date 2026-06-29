@@ -1,0 +1,151 @@
+{
+  "name": "floor_plan_export_import",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\726_floor_plan_export_import.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "379",
+          "height": "374",
+          "params": "98305",
+          "style": "3",
+          "caption": "${floor.plan.editor.import.export}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "8",
+              "y": "12",
+              "width": "348",
+              "height": "269",
+              "params": "2193",
+              "style": "105",
+              "color": "0xffffffffff",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "0",
+                  "y": "1",
+                  "width": "347",
+                  "height": "266",
+                  "params": "2177",
+                  "style": "100",
+                  "name": "data"
+                },
+                "children": [],
+                "vars": {
+                  "font_face": "Courier",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "scrollbar_vertical",
+            "typeId": 131,
+            "attributes": {
+              "x": "356",
+              "y": "12",
+              "width": "17",
+              "height": "268",
+              "params": "264273",
+              "style": "3"
+            },
+            "children": [],
+            "vars": {
+              "scrollable": "data"
+            }
+          },
+          {
+            "tag": "scrollbar_horizontal",
+            "typeId": 130,
+            "attributes": {
+              "x": "8",
+              "y": "280",
+              "width": "349",
+              "height": "18",
+              "params": "1049745",
+              "style": "3"
+            },
+            "children": [],
+            "vars": {
+              "scrollable": "data"
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "-3",
+              "y": "294",
+              "width": "191",
+              "height": "49",
+              "params": "132113",
+              "style": "101",
+              "name": "revert",
+              "caption": "${floor.plan.editor.revert.to.last.received.map}",
+              "color": "0x0bbbbbb",
+              "width_max": "191"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "301",
+              "y": "294",
+              "width": "73",
+              "height": "49",
+              "params": "394321",
+              "style": "101",
+              "name": "save",
+              "caption": "${floor.plan.editor.save}",
+              "color": "0x0bbbbbb",
+              "width_max": "73"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 30,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 379,
+  "layoutHeight": 374
+}

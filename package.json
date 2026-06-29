@@ -1,0 +1,16 @@
+{
+  "name": "helium",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modern Habbo client renderer - Lighter than Nitro",
+  "scripts": {
+    "dev": "pnpm --filter helium-client dev",
+    "build": "pnpm --filter helium-client build",
+    "preview": "pnpm --filter helium-client preview"
+  },
+  "author": "Clayton",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "vite": "^6.4.1"
+  }
+}

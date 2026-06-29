@@ -1,0 +1,110 @@
+/**
+ * StuffDataBase
+ *
+ * Based on AS3: com.sulake.habbo.room.object.data.StuffDataBase
+ *
+ * Base class for furniture data implementations.
+ */
+import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import type {IRoomObjectModel} from '@room/object/IRoomObjectModel';
+import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
+import {RoomObjectVariableEnum} from '../RoomObjectVariableEnum';
+import type {IStuffData} from './IStuffData';
+
+export abstract class StuffDataBase implements IStuffData
+{
+	protected static readonly UNIQUE_SERIAL_FLAG = 256;
+
+	private _flags: number = 0;
+
+	get flags(): number
+	{
+		return this._flags;
+	}
+
+	set flags(value: number)
+	{
+		this._flags = value;
+	}
+
+	private _uniqueSerialNumber: number = 0;
+
+	get uniqueSerialNumber(): number
+	{
+		return this._uniqueSerialNumber;
+	}
+
+	set uniqueSerialNumber(value: number)
+	{
+		this._uniqueSerialNumber = value;
+	}
+
+	private _uniqueSeriesSize: number = 0;
+
+	get uniqueSeriesSize(): number
+	{
+		return this._uniqueSeriesSize;
+	}
+
+	set uniqueSeriesSize(value: number)
+	{
+		this._uniqueSeriesSize = value;
+	}
+
+	get rarityLevel(): number
+	{
+		return -1;
+	}
+
+	get state(): number
+	{
+		const value = Number(this.getLegacyString());
+
+		return isNaN(value) ? -1 : Math.floor(value);
+	}
+
+	initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
+	{
+		if ((this._flags & StuffDataBase.UNIQUE_SERIAL_FLAG) > 0)
+		{
+			this._uniqueSerialNumber = wrapper.readInt();
+			this._uniqueSeriesSize = wrapper.readInt();
+		}
+	}
+
+	initializeFromRoomObjectModel(model: IRoomObjectModel): void
+	{
+		this._uniqueSerialNumber = model.getNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_SERIAL_NUMBER);
+		this._uniqueSeriesSize = model.getNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_EDITION_SIZE);
+	}
+
+	writeRoomObjectModel(model: IRoomObjectModelController): void
+	{
+		model.setNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_SERIAL_NUMBER, this._uniqueSerialNumber);
+		model.setNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_EDITION_SIZE, this._uniqueSeriesSize);
+	}
+
+	getLegacyString(): string
+	{
+		return '';
+	}
+
+	compare(_data: IStuffData): boolean
+	{
+		return false;
+	}
+
+	getJSONValue(key: string): string
+	{
+		try
+		{
+			const json = JSON.parse(this.getLegacyString());
+
+			return String(json[key] ?? '');
+		}
+		catch
+		{
+			return '';
+		}
+	}
+}

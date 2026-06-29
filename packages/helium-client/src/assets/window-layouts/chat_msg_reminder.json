@@ -1,0 +1,56 @@
+{
+  "name": "chat_msg_reminder",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\350_chat_msg_reminder.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "270",
+          "height": "24",
+          "params": "147472",
+          "style": "102",
+          "name": "chat_msg_reminder"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "270",
+              "height": "24",
+              "params": "16",
+              "style": "100",
+              "name": "content",
+              "width_min": "270",
+              "width_max": "270"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "margin_top": 10,
+              "margin_bottom": 10,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 270,
+  "layoutHeight": 24
+}

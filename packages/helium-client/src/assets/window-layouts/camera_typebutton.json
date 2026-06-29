@@ -1,0 +1,81 @@
+{
+  "name": "camera_typebutton",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\480_camera_typebutton.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "95",
+          "height": "37",
+          "params": "1",
+          "style": "3",
+          "dynamic_style": "brightness_and_shadow_under",
+          "name": "region",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "95",
+              "height": "47",
+              "params": "16",
+              "style": "0",
+              "color": "0x0cccccc",
+              "tags": "#bg"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "95",
+              "height": "47",
+              "params": "16",
+              "style": "8",
+              "name": "active_border",
+              "tags": "#bg"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "18",
+              "y": "0",
+              "width": "60",
+              "height": "37",
+              "params": "16",
+              "style": "3",
+              "name": "icon"
+            },
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 95,
+  "layoutHeight": 37
+}

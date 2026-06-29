@@ -1,0 +1,157 @@
+{
+  "name": "habbo_orderinfo_dialog",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\229_habbo_orderinfo_dialog.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "105",
+          "width": "282",
+          "height": "127",
+          "params": "16",
+          "style": "0",
+          "name": "giftInfoContainer"
+        },
+        "children": [
+          {
+            "tag": "checkbox",
+            "typeId": 70,
+            "attributes": {
+              "x": "21",
+              "y": "0",
+              "width": "20",
+              "height": "20",
+              "params": "17",
+              "style": "3",
+              "name": "buyAsGift"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "43",
+              "y": "1",
+              "width": "78",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "caption": "${catalog.purchase.confirmation.dialog.buyasgift.checkbox}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "25",
+              "y": "24",
+              "width": "220",
+              "height": "20",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "200",
+                  "height": "12",
+                  "params": "1",
+                  "style": "3",
+                  "name": "receiver"
+                },
+                "children": [],
+                "vars": {
+                  "always_show_selection": true,
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "25",
+              "y": "72",
+              "width": "220",
+              "height": "50",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "200",
+                  "height": "40",
+                  "params": "1",
+                  "style": "3",
+                  "name": "message"
+                },
+                "children": [],
+                "vars": {
+                  "always_show_selection": true,
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "25",
+              "y": "47",
+              "width": "213",
+              "height": "26",
+              "params": "16",
+              "style": "3",
+              "caption": "${catalog.purchase.confirmation.dialog.buyasgift.greetings.info}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 282,
+  "layoutHeight": 127
+}

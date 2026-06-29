@@ -1,0 +1,47 @@
+{
+  "name": "addOnBadgeViewWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\156_addOnBadgeViewWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "40",
+          "height": "40",
+          "params": "0",
+          "style": "0",
+          "name": "addOnBadgeViewWidget"
+        },
+        "children": [
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "40",
+              "height": "40",
+              "params": "16",
+              "style": "3",
+              "name": "badge"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "badge_image"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 40,
+  "layoutHeight": 40
+}

@@ -1,0 +1,396 @@
+{
+  "name": "roc_create_room",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\695_roc_create_room.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "1",
+          "y": "1",
+          "width": "585",
+          "height": "367",
+          "params": "32769",
+          "style": "3",
+          "name": "roc_create_room",
+          "caption": "${navigator.createroom.title}",
+          "color": "0xff418db0",
+          "width_min": "600",
+          "width_max": "585",
+          "height_min": "367"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "15",
+              "width": "255",
+              "height": "315",
+              "params": "16",
+              "style": "3",
+              "name": "room_settings_container"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "122",
+                  "height": "13",
+                  "params": "1041",
+                  "style": "0",
+                  "name": "create_room_caption",
+                  "caption": "${navigator.roomname}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "0",
+                  "y": "20",
+                  "width": "240",
+                  "height": "19",
+                  "params": "1153",
+                  "style": "0",
+                  "name": "room_name_input",
+                  "caption": "PH Room Name Info",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "always_show_selection": true,
+                  "border": true,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "50",
+                  "width": "120",
+                  "height": "13",
+                  "params": "1041",
+                  "style": "0",
+                  "name": "create_desc_caption",
+                  "caption": "${navigator.roomdesc}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "0",
+                  "y": "70",
+                  "width": "240",
+                  "height": "60",
+                  "params": "1153",
+                  "style": "0",
+                  "name": "room_desc_input",
+                  "caption": "PH Room Desc",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "always_show_selection": true,
+                  "border": true,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "140",
+                  "width": "117",
+                  "height": "13",
+                  "params": "1041",
+                  "style": "0",
+                  "name": "create_category_caption",
+                  "caption": "${navigator.category}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "0",
+                  "y": "160",
+                  "width": "240",
+                  "height": "21",
+                  "params": "17",
+                  "style": "2",
+                  "name": "categories_list"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "190",
+                  "width": "132",
+                  "height": "13",
+                  "params": "1041",
+                  "style": "0",
+                  "name": "create_visitors_caption",
+                  "caption": "${navigator.maxvisitors}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "0",
+                  "y": "210",
+                  "width": "240",
+                  "height": "21",
+                  "params": "17",
+                  "style": "0",
+                  "name": "visitors_list"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "240",
+                  "width": "145",
+                  "height": "13",
+                  "params": "1041",
+                  "style": "0",
+                  "name": "create_trade_caption",
+                  "caption": "${navigator.tradesettings}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "0",
+                  "y": "260",
+                  "width": "240",
+                  "height": "21",
+                  "params": "17",
+                  "style": "0",
+                  "name": "trade_settings_list"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "0",
+                  "y": "290",
+                  "width": "100",
+                  "height": "21",
+                  "params": "132113",
+                  "style": "0",
+                  "name": "create_button",
+                  "caption": "${navigator.createroom.create}",
+                  "width_min": "100",
+                  "width_max": "100"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "140",
+                  "y": "290",
+                  "width": "100",
+                  "height": "21",
+                  "params": "132177",
+                  "style": "0",
+                  "name": "back_button",
+                  "caption": "${generic.cancel}",
+                  "width_min": "100",
+                  "width_max": "100"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "270",
+              "y": "15",
+              "width": "300",
+              "height": "315",
+              "params": "16",
+              "style": "3",
+              "name": "room_layout_container"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "0",
+                  "y": "20",
+                  "width": "290",
+                  "height": "295",
+                  "params": "2193",
+                  "style": "0",
+                  "name": "layout_item_list",
+                  "caption": "${navigator.title}",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "278",
+                  "y": "20",
+                  "width": "17",
+                  "height": "295",
+                  "params": "2129",
+                  "style": "0",
+                  "name": "scroller",
+                  "caption": "${navigator.title}"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "layout_item_list"
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "257",
+                  "height": "13",
+                  "params": "17",
+                  "style": "0",
+                  "name": "choose_layout_caption",
+                  "caption": "${navigator.createroom.chooselayoutcaption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 585,
+  "layoutHeight": 367
+}

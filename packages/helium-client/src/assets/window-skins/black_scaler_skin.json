@@ -1,0 +1,58 @@
+{
+  "id": "black_scaler_skin",
+  "name": "black_scaler_skin",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\28_black_scaler_skin.xml",
+  "variables": {
+    "asset": "habbo_blue_skin"
+  },
+  "templates": [
+    {
+      "name": "default_scaler_black",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "scaler",
+          "type": "bitmap",
+          "region": {
+            "x": 41,
+            "y": 32,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "scaler_black",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "scaler",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "scaler_black",
+      "template": "default_scaler_black"
+    }
+  ]
+}

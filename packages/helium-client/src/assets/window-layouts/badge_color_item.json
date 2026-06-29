@@ -1,0 +1,72 @@
+{
+  "name": "badge_color_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\636_badge_color_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "15",
+          "height": "15",
+          "params": "17",
+          "style": "0",
+          "name": "container"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "15",
+              "params": "2192",
+              "style": "0",
+              "name": "background"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "15",
+              "params": "2192",
+              "style": "0",
+              "name": "foreground"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "15",
+              "params": "2192",
+              "style": "0",
+              "name": "selected"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 15,
+  "layoutHeight": 15
+}

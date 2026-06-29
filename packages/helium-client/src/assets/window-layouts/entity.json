@@ -1,0 +1,183 @@
+{
+  "name": "entity",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\808_entity.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "127",
+          "height": "164",
+          "params": "1",
+          "style": "6",
+          "name": "frame",
+          "color": "0xff74dbfa",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "7",
+              "y": "3",
+              "width": "116",
+              "height": "140",
+              "params": "8388752",
+              "style": "0",
+              "name": "tab_content",
+              "height_min": "40"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "112",
+                  "height": "31",
+                  "params": "145",
+                  "style": "0",
+                  "name": "header",
+                  "color": "0xff4f8e38",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "-2",
+                      "y": "-5",
+                      "width": "31",
+                      "height": "34",
+                      "params": "1310720",
+                      "style": "0",
+                      "name": "icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "bitmap_asset_name": "add_friends_icon_png"
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "29",
+                      "y": "0",
+                      "width": "77",
+                      "height": "30",
+                      "params": "3148816",
+                      "style": "0",
+                      "name": "title",
+                      "caption": "${friend.bar.find.title}",
+                      "tags": "label"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "grid_fit_type": "subpixel",
+                      "text_color": 16777215,
+                      "text_style": "headline_medium",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "bold": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "31",
+                  "width": "112",
+                  "height": "62",
+                  "params": "16",
+                  "style": "0",
+                  "name": "text",
+                  "caption": "${friend.bar.find.text}",
+                  "color": "0xffffffffff",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "margin_left": 2,
+                  "margin_top": 2,
+                  "margin_right": 2,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "93",
+                  "width": "1",
+                  "height": "6",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacer"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "0",
+                  "y": "99",
+                  "width": "111",
+                  "height": "32",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "button",
+                  "caption": "${friend.bar.find.button}",
+                  "width_min": "111",
+                  "width_max": "111"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 127,
+  "layoutHeight": 164
+}

@@ -1,0 +1,9 @@
+import {createIID} from '@core/runtime/IID';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+
+/**
+ * IID for Avatar Render Manager
+ *
+ * Based on AS3: com.sulake.iid.IIDAvatarRenderManager
+ */
+export const IID_AvatarRenderManager = createIID<IAvatarRenderManager>('IAvatarRenderManager');

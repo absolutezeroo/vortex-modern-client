@@ -1,0 +1,136 @@
+{
+  "name": "safety_quiz_promo",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\807_safety_quiz_promo.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "186",
+          "y": "0",
+          "width": "577",
+          "height": "57",
+          "params": "192",
+          "style": "2",
+          "name": "safety_quiz_overlay",
+          "color": "0x09b0000"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "571",
+              "height": "51",
+              "params": "144",
+              "style": "106"
+            },
+            "children": []
+          },
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "73",
+              "y": "11",
+              "width": "174",
+              "height": "19",
+              "params": "16",
+              "style": "100",
+              "caption": "${safety.promo.widget.title}"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "il_heading_1",
+              "text_color": 10158080
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "74",
+              "y": "30",
+              "width": "160",
+              "height": "16",
+              "params": "16",
+              "style": "100",
+              "caption": "${safety.promo.widget.message}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "386",
+              "y": "3",
+              "width": "188",
+              "height": "51",
+              "params": "396305",
+              "style": "100",
+              "name": "safety_quiz_button",
+              "caption": "${safety.promo.widget.button}"
+            },
+            "children": []
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "-8",
+              "y": "-28",
+              "width": "90",
+              "height": "130",
+              "params": "16",
+              "style": "100",
+              "name": "avatar"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "avatar_image",
+              "avatar_image:only_head": true,
+              "avatar_image:direction": "south"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "9",
+              "y": "34",
+              "width": "57",
+              "height": "18",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "help_bandaid",
+              "pivot_point": "bottom center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 577,
+  "layoutHeight": 57
+}

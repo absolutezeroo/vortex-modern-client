@@ -1,0 +1,130 @@
+{
+  "name": "error_window",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\378_error_window.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "242",
+          "height": "147",
+          "params": "32769",
+          "style": "100",
+          "name": "rejected_window",
+          "caption": "${guide.help.request.rejected.title}",
+          "width_min": "242",
+          "width_max": "242",
+          "height_min": "50"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "8",
+              "y": "0",
+              "width": "226",
+              "height": "99",
+              "params": "8538128",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "221",
+                  "height": "35",
+                  "params": "16",
+                  "style": "100",
+                  "name": "heading",
+                  "caption": "${guide.help.request.rejected.heading}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "35",
+                  "width": "221",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "message",
+                  "caption": "${guide.help.request.rejected.message}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "3",
+                  "y": "51",
+                  "width": "221",
+                  "height": "48",
+                  "params": "131281",
+                  "style": "101",
+                  "name": "close_button",
+                  "caption": "${guide.help.request.rejected.button}",
+                  "color": "0x0bbbbbb",
+                  "height_min": "48",
+                  "height_max": "48"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 35,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 242,
+  "layoutHeight": 147
+}

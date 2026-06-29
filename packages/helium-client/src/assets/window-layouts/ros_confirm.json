@@ -1,0 +1,83 @@
+{
+  "name": "ros_confirm",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\2841_ros_confirm.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "215",
+          "height": "203",
+          "params": "32769",
+          "style": "3",
+          "name": "event_window",
+          "caption": "title",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "10",
+              "y": "7",
+              "width": "190",
+              "height": "122",
+              "params": "2177",
+              "style": "0",
+              "name": "message",
+              "caption": "message"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "mouse_wheel_enabled": false,
+              "word_wrap": true
+            }
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "5",
+              "y": "129",
+              "width": "199",
+              "height": "29",
+              "params": "132113",
+              "style": "5",
+              "name": "ok",
+              "caption": "${generic.ok}",
+              "color": "0x0bb2200",
+              "width_min": "199",
+              "width_max": "199"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 215,
+  "layoutHeight": 203
+}

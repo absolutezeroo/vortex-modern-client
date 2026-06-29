@@ -1,0 +1,177 @@
+{
+  "name": "unique_item_overlay_supply",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1399_unique_item_overlay_supply.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "200",
+          "height": "40",
+          "params": "16",
+          "style": "0",
+          "name": "limitedItemWidget"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "170",
+              "height": "29",
+              "params": "16",
+              "style": "0",
+              "name": "plaque"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "unique_item_large_background_wide",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "40",
+              "y": "2",
+              "width": "44",
+              "height": "14",
+              "params": "16",
+              "style": "3",
+              "name": "items_left",
+              "caption": "${unique.items.left}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "text_style": "regular",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "108",
+              "y": "0",
+              "width": "35",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "items_left_count",
+              "caption": "1234"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "right",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "text_style": "regular",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "bold": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "40",
+              "y": "15",
+              "width": "58",
+              "height": "14",
+              "params": "16",
+              "style": "3",
+              "name": "items_total",
+              "caption": "${unique.items.number.sold}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "text_style": "regular",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "120",
+              "y": "15",
+              "width": "23",
+              "height": "14",
+              "params": "16",
+              "style": "3",
+              "name": "items_total_count",
+              "caption": "9999"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "right",
+              "font_face": "Ubuntu",
+              "text_style": "regular",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "1",
+              "width": "40",
+              "height": "36",
+              "params": "16",
+              "style": "0",
+              "name": "unique_item_sold_out_bitmap",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "unique_item_sold_out_label"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 200,
+  "layoutHeight": 40
+}

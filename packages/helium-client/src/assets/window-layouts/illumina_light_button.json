@@ -1,0 +1,39 @@
+{
+  "name": "illumina_light_button",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\2_illumina_light_button.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_CAPTION_TEXT",
+          "style": "0",
+          "x": "0",
+          "y": "0",
+          "width": "2",
+          "height": "2",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147483632"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "il_button",
+          "margins": {
+            "left": 42,
+            "top": 4,
+            "right": 0,
+            "bottom": 4
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 50,
+  "layoutHeight": 21
+}

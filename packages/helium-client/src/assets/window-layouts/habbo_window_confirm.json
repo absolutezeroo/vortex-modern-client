@@ -1,0 +1,115 @@
+{
+  "name": "habbo_window_confirm",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\12_habbo_window_confirm.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "300",
+          "height": "165",
+          "params": "32769",
+          "style": "3",
+          "name": "_alert_frame",
+          "caption": "Alert",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "16",
+              "y": "14",
+              "width": "253",
+              "height": "17",
+              "params": "16",
+              "style": "100",
+              "name": "_alert_description",
+              "caption": "Alert",
+              "tags": "DESCRIPTION"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "link",
+            "typeId": 14,
+            "attributes": {
+              "x": "20",
+              "y": "102",
+              "width": "100",
+              "height": "17",
+              "params": "132097",
+              "style": "3",
+              "name": "_alert_button_cancel",
+              "caption": "${generic.cancel}",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "mouse_wheel_enabled": false,
+              "underline": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "180",
+              "y": "98",
+              "width": "82",
+              "height": "28",
+              "params": "918545",
+              "style": "3",
+              "name": "_alert_button_ok",
+              "caption": "${generic.ok}",
+              "color": "0x0efefef",
+              "tags": "OK",
+              "width_min": "50"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 296,
+  "layoutHeight": 163
+}

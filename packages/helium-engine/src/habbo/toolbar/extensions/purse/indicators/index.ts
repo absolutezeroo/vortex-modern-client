@@ -1,0 +1,1 @@
+export {SeasonalCurrencyIndicator} from './SeasonalCurrencyIndicator';

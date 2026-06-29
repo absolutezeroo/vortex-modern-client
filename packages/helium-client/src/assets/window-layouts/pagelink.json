@@ -1,0 +1,40 @@
+{
+  "name": "pagelink",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\652_pagelink.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "text",
+        "typeId": 10,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "30",
+          "height": "13",
+          "params": "17",
+          "style": "0",
+          "name": "pagelink",
+          "caption": "0-99",
+          "color": "0xffffffff",
+          "background": "true"
+        },
+        "children": [],
+        "vars": {
+          "font_face": "Volter",
+          "font_size": 9,
+          "text_color": 0,
+          "auto_size": "left",
+          "embed_fonts": true,
+          "underline": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

@@ -1,0 +1,266 @@
+{
+  "id": "habbo_skin_border_8",
+  "name": "border_8",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\71_border_8.xml",
+  "variables": {
+    "asset": "habbo_skin_ubuntu"
+  },
+  "templates": [
+    {
+      "name": "border_8",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 140,
+            "width": 10,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 140,
+            "width": 14,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 34,
+            "y": 140,
+            "width": 10,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 150,
+            "width": 10,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 150,
+            "width": 14,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 34,
+            "y": 150,
+            "width": 10,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 164,
+            "width": 10,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 164,
+            "width": 14,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 34,
+            "y": 164,
+            "width": 10,
+            "height": 10
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "border_8",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 10,
+            "y": 0,
+            "width": 14,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 24,
+            "y": 0,
+            "width": 10,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 10,
+            "width": 10,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 10,
+            "y": 10,
+            "width": 14,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 24,
+            "y": 10,
+            "width": 10,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 24,
+            "width": 10,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 10,
+            "y": 24,
+            "width": 14,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 24,
+            "y": 24,
+            "width": 10,
+            "height": 10
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "border_8",
+      "template": "border_8"
+    }
+  ]
+}

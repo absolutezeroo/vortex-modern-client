@@ -1,0 +1,1 @@
+export {OfferExtension} from './OfferExtension';

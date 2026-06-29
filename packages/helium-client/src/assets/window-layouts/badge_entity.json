@@ -1,0 +1,46 @@
+{
+  "name": "badge_entity",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\456_badge_entity.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "50",
+          "height": "50",
+          "params": "17",
+          "style": "0",
+          "name": "border.entity",
+          "background": "false"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "50",
+              "height": "50",
+              "params": "16",
+              "style": "0",
+              "name": "badge.image",
+              "tags": "THUMB_BITMAP"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 50,
+  "layoutHeight": 50
+}

@@ -1,0 +1,917 @@
+{
+  "name": "inventory_trading",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\325_inventory_trading.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "478",
+          "height": "307",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "478",
+              "height": "232",
+              "params": "17",
+              "style": "102",
+              "color": "0x027556a"
+            },
+            "children": []
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "22",
+              "y": "30",
+              "width": "170",
+              "height": "16",
+              "params": "17",
+              "style": "0",
+              "name": "text_list_0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "127",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "bold_text",
+                  "caption": "${inventory.trading.you}",
+                  "tags": "OWN_USER_NAME"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "127",
+                  "y": "0",
+                  "width": "167",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "plain_text",
+                  "caption": "${inventory.trading.areoffering}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "17",
+              "y": "50",
+              "width": "180",
+              "height": "136",
+              "params": "16",
+              "style": "102",
+              "name": "item_grid_border_0",
+              "color": "0x027556a",
+              "tags": "OWN_USER_BORDER"
+            },
+            "children": [
+              {
+                "tag": "itemgrid_vertical",
+                "typeId": 53,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "132",
+                  "height": "132",
+                  "params": "17",
+                  "style": "0",
+                  "name": "item_grid_0",
+                  "tags": "OWN_USER_GRID"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "1",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "2",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "44",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "3",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "44",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "4",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "44",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "5",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "88",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "6",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "88",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "7",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "88",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "8",
+                      "color": "0x0cccccc",
+                      "tags": "OWN_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 4,
+                  "scale_to_fit_items": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "160",
+              "y": "134",
+              "width": "50",
+              "height": "50",
+              "params": "16",
+              "style": "0",
+              "name": "lock_0",
+              "tags": "OWN_USER_LOCK"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "inventory_trading_trading_unlocked_icon",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "-1",
+              "y": "18",
+              "width": "29",
+              "height": "43",
+              "params": "16",
+              "style": "0",
+              "name": "accepted_0",
+              "tags": "OWN_USER_ACCEPTED"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "talent_check_mark_circle",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "19",
+              "y": "51",
+              "width": "132",
+              "height": "132",
+              "params": "16",
+              "style": "100",
+              "name": "info_text_0",
+              "caption": "${inventory.trading.warning.own_account_disabled}",
+              "visible": "false",
+              "tags": "OTHER_USER_MESSAGE"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "268",
+              "y": "30",
+              "width": "170",
+              "height": "16",
+              "params": "17",
+              "style": "0",
+              "name": "text_list_1"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "138",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "bold_text",
+                  "caption": "${inventory.trading.other}",
+                  "tags": "OTHER_USER_NAME"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "138",
+                  "y": "0",
+                  "width": "157",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "plain_text",
+                  "caption": "${inventory.trading.isoffering}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "262",
+              "y": "50",
+              "width": "180",
+              "height": "136",
+              "params": "16",
+              "style": "100",
+              "name": "item_grid_border_1",
+              "color": "0x027556a",
+              "tags": "OTHER_USER_BORDER"
+            },
+            "children": [
+              {
+                "tag": "itemgrid_vertical",
+                "typeId": 53,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "132",
+                  "height": "132",
+                  "params": "17",
+                  "style": "0",
+                  "name": "item_grid_1",
+                  "tags": "OTHER_USER_GRID"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "1",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "2",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "3",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "44",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "4",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "44",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "5",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "44",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "6",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "88",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "7",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "88",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "102",
+                      "id": "8",
+                      "color": "0x0cccccc",
+                      "tags": "OTHER_USER_ITEM",
+                      "width_min": "40",
+                      "width_max": "40",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 4,
+                  "scale_to_fit_items": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "407",
+              "y": "134",
+              "width": "50",
+              "height": "50",
+              "params": "16",
+              "style": "0",
+              "name": "lock_1",
+              "tags": "OTHER_USER_LOCK"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "talent_locked_achievement",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "244",
+              "y": "18",
+              "width": "29",
+              "height": "43",
+              "params": "16",
+              "style": "0",
+              "name": "accepted_1",
+              "tags": "OTHER_USER_ACCEPTED"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "talent_check_mark_circle",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "264",
+              "y": "51",
+              "width": "132",
+              "height": "132",
+              "params": "16",
+              "style": "3",
+              "name": "info_text_1",
+              "caption": "${inventory.trading.warning.others_account_disabled}",
+              "visible": "false",
+              "tags": "OTHER_USER_MESSAGE"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "7",
+              "y": "274",
+              "width": "157",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "button_accept",
+              "caption": "${inventory.trading.accept}"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "372",
+              "y": "274",
+              "width": "99",
+              "height": "28",
+              "params": "393233",
+              "style": "3",
+              "name": "button_cancel",
+              "caption": "${generic.cancel}"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "8",
+              "y": "7",
+              "width": "461",
+              "height": "30",
+              "params": "16",
+              "style": "3",
+              "name": "help_text",
+              "tags": "HELP_TEXT"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "218",
+              "y": "45",
+              "width": "30",
+              "height": "160",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "separator",
+              "separator:vertical": true
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "5",
+              "y": "239",
+              "width": "466",
+              "height": "28",
+              "params": "16",
+              "style": "2",
+              "name": "info_border_highlighted",
+              "color": "0x0fc9228"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "453",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "info_text_highlighted",
+                  "caption": "",
+                  "clipping": "false",
+                  "width_max": "453"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "17",
+              "y": "190",
+              "width": "120",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "content_text_1_a",
+              "caption": ""
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "262",
+              "y": "190",
+              "width": "120",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "content_text_2_a",
+              "caption": ""
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "17",
+              "y": "208",
+              "width": "120",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "content_text_1_b",
+              "caption": ""
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "262",
+              "y": "208",
+              "width": "120",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "content_text_2_b",
+              "caption": ""
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 478,
+  "layoutHeight": 307
+}

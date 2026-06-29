@@ -1,0 +1,87 @@
+{
+  "name": "room_info_usercount",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\31_room_info_usercount.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "40",
+          "height": "18",
+          "params": "1835024",
+          "style": "3",
+          "name": "room_info_usercount_border",
+          "color": "0x00"
+        },
+        "children": [
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "3",
+              "y": "1",
+              "width": "31",
+              "height": "15",
+              "params": "786448",
+              "style": "3",
+              "name": "usercount"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "1",
+                  "width": "13",
+                  "height": "14",
+                  "params": "16",
+                  "style": "3",
+                  "name": "room_usercount_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "newnavigator_icon_usercount"
+                }
+              },
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "14",
+                  "y": "0",
+                  "width": "17",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "room_usercount",
+                  "caption": "99"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_bold",
+                  "text_color": 16777215
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 1,
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 40,
+  "layoutHeight": 18
+}

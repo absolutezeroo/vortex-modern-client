@@ -1,0 +1,169 @@
+{
+  "name": "snowwar_leaderboard_entry",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\681_snowwar_leaderboard_entry.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "356",
+          "height": "42",
+          "params": "16",
+          "style": "0",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "356",
+              "height": "42",
+              "params": "16",
+              "style": "0",
+              "name": "highlight",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "leaderboard_highlighter"
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "7",
+              "y": "9",
+              "width": "50",
+              "height": "20",
+              "params": "16",
+              "style": "0",
+              "name": "rank",
+              "caption": "12345"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "center",
+              "font_face": "Ubuntu",
+              "font_size": 21,
+              "text_color": 1079212,
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0.5
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "53",
+              "y": "1",
+              "width": "44",
+              "height": "40",
+              "params": "17",
+              "style": "0",
+              "name": "imageRegion",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "50",
+              "y": "1",
+              "width": "44",
+              "height": "40",
+              "params": "2064",
+              "style": "0",
+              "name": "avatarImage",
+              "caption": "Name"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "98",
+              "y": "9",
+              "width": "88",
+              "height": "20",
+              "params": "16",
+              "style": "0",
+              "name": "name",
+              "caption": "PlayerName"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 21,
+              "text_color": 1079212,
+              "mouse_wheel_enabled": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "284",
+              "y": "9",
+              "width": "58",
+              "height": "20",
+              "params": "262160",
+              "style": "0",
+              "name": "score",
+              "caption": "999999"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 21,
+              "text_color": 1079212,
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0.5
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "40",
+              "width": "350",
+              "height": "2",
+              "params": "1040",
+              "style": "0",
+              "name": "divider",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "leaderboard_divider"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 356,
+  "layoutHeight": 42
+}

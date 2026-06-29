@@ -1,0 +1,241 @@
+{
+  "name": "citizenship_welcome",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\784_citizenship_welcome.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "480",
+          "height": "302",
+          "params": "147472",
+          "style": "100"
+        },
+        "children": [
+          {
+            "tag": "frame",
+            "typeId": 35,
+            "attributes": {
+              "x": "0",
+              "y": "20",
+              "width": "480",
+              "height": "282",
+              "params": "1",
+              "style": "101",
+              "caption": "${citizenship.promo.popup.title}"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "14",
+                  "y": "37",
+                  "width": "469",
+                  "height": "212",
+                  "params": "8536080",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "7",
+                      "y": "0",
+                      "width": "334",
+                      "height": "35",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${citizenship.promo.popup.heading}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "il_heading_1",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "7",
+                      "y": "45",
+                      "width": "294",
+                      "height": "40",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${citizenship.promo.popup.description.1}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "7",
+                      "y": "95",
+                      "width": "294",
+                      "height": "28",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${citizenship.promo.popup.description.2}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "133",
+                      "width": "449",
+                      "height": "79",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "button",
+                        "typeId": 60,
+                        "attributes": {
+                          "x": "155",
+                          "y": "0",
+                          "width": "139",
+                          "height": "52",
+                          "params": "131281",
+                          "style": "100",
+                          "name": "show_citizenship",
+                          "caption": "${citizenship.promo.popup.open.button}"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "110",
+                          "y": "40",
+                          "width": "228",
+                          "height": "22",
+                          "params": "147665",
+                          "style": "100",
+                          "name": "postpone_citizenship",
+                          "treshold": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "0",
+                              "y": "6",
+                              "width": "228",
+                              "height": "16",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${citizenship.promo.popup.close.button}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "il_link_regular"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 10
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "330",
+                  "y": "28",
+                  "width": "178",
+                  "height": "193",
+                  "params": "0",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}talent/welcome.png",
+                  "fit_size_to_contents": true
+                }
+              }
+            ],
+            "filters": [
+              {
+                "type": "DropShadowFilter",
+                "attributes": {
+                  "angle": "0",
+                  "alpha": "0.7490196078431373",
+                  "blurX": "80",
+                  "blurY": "80"
+                }
+              }
+            ],
+            "vars": {
+              "margin_left": 1,
+              "margin_top": 30,
+              "margin_right": 1,
+              "margin_bottom": 1
+            }
+          },
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "10",
+              "y": "7",
+              "width": "98",
+              "height": "14",
+              "params": "0",
+              "style": "100",
+              "caption": "${citizenship.promo.popup.subtitle}"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "il_small_white"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 480,
+  "layoutHeight": 302
+}

@@ -1,0 +1,100 @@
+{
+  "name": "effect_selector",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\421_effect_selector.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "280",
+          "height": "270",
+          "params": "110593",
+          "style": "3",
+          "caption": "Show effect on avatar",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "4",
+              "y": "17",
+              "width": "256",
+              "height": "215",
+              "params": "2224",
+              "style": "0",
+              "color": "0xffffffffff",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "scrollable_itemlist_vertical",
+            "typeId": 56,
+            "attributes": {
+              "x": "4",
+              "y": "17",
+              "width": "256",
+              "height": "215",
+              "params": "2224",
+              "style": "4",
+              "name": "effect_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "256",
+                  "height": "18",
+                  "params": "145",
+                  "style": "0",
+                  "name": "0",
+                  "caption": "None",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 80,
+                  "thickness": -15
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 8,
+          "margin_top": 25,
+          "margin_right": 8,
+          "margin_bottom": 8
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 280,
+  "layoutHeight": 270
+}

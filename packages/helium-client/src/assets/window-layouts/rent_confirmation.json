@@ -1,0 +1,249 @@
+{
+  "name": "rent_confirmation",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\259_rent_confirmation.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "370",
+          "height": "300",
+          "params": "32769",
+          "style": "3",
+          "caption": "${rent.confirmation.title.extend}",
+          "color": "0xff67a3bf"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "20",
+              "y": "25",
+              "width": "160",
+              "height": "180",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "160",
+                  "height": "180",
+                  "params": "2192",
+                  "style": "3",
+                  "name": "image"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "20",
+              "y": "220",
+              "width": "99",
+              "height": "30",
+              "params": "132113",
+              "style": "3",
+              "name": "cancel_button",
+              "caption": "${generic.cancel}"
+            },
+            "children": []
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "268",
+              "y": "220",
+              "width": "82",
+              "height": "30",
+              "params": "394321",
+              "style": "5",
+              "name": "ok_button",
+              "caption": "${generic.ok}",
+              "color": "0x0cc00"
+            },
+            "children": []
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "200",
+              "y": "60",
+              "width": "150",
+              "height": "99",
+              "params": "3293200",
+              "style": "100",
+              "name": "content_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "150",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "rental_description",
+                  "caption": "${rent.confirmation.rental.description}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "40",
+                  "width": "150",
+                  "height": "30",
+                  "params": "16",
+                  "style": "100",
+                  "name": "furni_name",
+                  "caption": "The name of the furni in question"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "80",
+                  "width": "150",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "237",
+                      "height": "17",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${catalog.purchase.confirmation.dialog.cost}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_regular"
+                    }
+                  },
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "240",
+                      "y": "0",
+                      "width": "22",
+                      "height": "17",
+                      "params": "16",
+                      "style": "100",
+                      "name": "price_amount",
+                      "caption": "000"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_regular"
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "265",
+                      "y": "0",
+                      "width": "17",
+                      "height": "18",
+                      "params": "16",
+                      "style": "3",
+                      "name": "price_type"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "toolbar_duckat_icon_0",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 3
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 10
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 30,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 370,
+  "layoutHeight": 300
+}

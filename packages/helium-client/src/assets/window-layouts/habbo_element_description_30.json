@@ -1,0 +1,20 @@
+{
+  "name": "habbo_element_description#30",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "scrollable_itemlist_vertical",
+      "intent": "default",
+      "style": "0",
+      "renderer": "null",
+      "window_layout": "habbo_window_layout_scrollable_itemlist_vertical_xml"
+    },
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

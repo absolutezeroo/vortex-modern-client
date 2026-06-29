@@ -1,0 +1,54 @@
+{
+  "name": "chat_report_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\371_chat_report_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "64",
+          "width": "307",
+          "height": "24",
+          "params": "147473",
+          "style": "105"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "307",
+              "height": "24",
+              "params": "3088",
+              "style": "100",
+              "name": "text",
+              "caption": "foo faa fee"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "margin_top": 4,
+              "margin_bottom": 4,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 307,
+  "layoutHeight": 24
+}

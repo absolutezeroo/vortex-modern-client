@@ -1,0 +1,87 @@
+{
+  "name": "user_entry",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\567_user_entry.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "48",
+          "height": "158",
+          "params": "17",
+          "style": "0",
+          "name": "bg_region",
+          "color": "0x00",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "-23",
+              "y": "-15",
+              "width": "90",
+              "height": "130",
+              "params": "16",
+              "style": "0",
+              "name": "avatar_image_widget"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "avatar_image"
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "12",
+              "y": "112",
+              "width": "26",
+              "height": "24",
+              "params": "17",
+              "style": "0",
+              "name": "extra_link_region",
+              "color": "0x00",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "26",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "name": "extra_link_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "icons_go_to_room_icon",
+                  "fit_size_to_contents": true
+                }
+              }
+            ]
+          }
+        ],
+        "vars": {
+          "tool_tip_caption": "${group.members.showinfo}"
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 48,
+  "layoutHeight": 158
+}

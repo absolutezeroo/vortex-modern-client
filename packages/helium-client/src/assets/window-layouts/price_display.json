@@ -1,0 +1,105 @@
+{
+  "name": "price_display",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\206_price_display.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_horizontal",
+        "typeId": 51,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "55",
+          "height": "21",
+          "params": "147472",
+          "style": "0",
+          "name": "price_box"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "1",
+              "width": "4",
+              "height": "4",
+              "params": "16",
+              "style": "0",
+              "name": "amount_0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 20,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "5",
+              "y": "0",
+              "width": "22",
+              "height": "22",
+              "params": "16",
+              "style": "0",
+              "name": "unit_0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "28",
+              "y": "1",
+              "width": "4",
+              "height": "4",
+              "params": "16",
+              "style": "0",
+              "name": "amount_1"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 20,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "33",
+              "y": "0",
+              "width": "22",
+              "height": "22",
+              "params": "16",
+              "style": "0",
+              "name": "unit_1"
+            },
+            "children": []
+          }
+        ],
+        "vars": {
+          "spacing": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 55,
+  "layoutHeight": 21
+}

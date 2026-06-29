@@ -1,0 +1,83 @@
+{
+  "name": "palette_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\273_palette_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "27",
+          "height": "22",
+          "params": "17",
+          "style": "0",
+          "name": "color_container",
+          "color": "0xffffffffff",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "27",
+              "height": "22",
+              "params": "16",
+              "style": "0",
+              "name": "color"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "catalogue_color_picker_27x22_color"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "27",
+              "height": "22",
+              "params": "16",
+              "style": "0",
+              "name": "border"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "catalogue_color_picker_27x22_border"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "27",
+              "height": "22",
+              "params": "16",
+              "style": "0",
+              "name": "selection"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "catalogue_color_picker_27x22_selection"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 27,
+  "layoutHeight": 22
+}

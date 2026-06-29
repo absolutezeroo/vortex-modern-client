@@ -1,0 +1,147 @@
+{
+  "name": "context_menu_widget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\583_context_menu_widget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bubble",
+        "typeId": 45,
+        "attributes": {
+          "x": "0",
+          "y": "376",
+          "width": "115",
+          "height": "49",
+          "params": "1048865",
+          "style": "0",
+          "color": "0x06e6b67",
+          "blend": "0.5",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "107",
+              "height": "76",
+              "params": "12582928",
+              "style": "0",
+              "name": "border",
+              "color": "0x06e6b67"
+            },
+            "children": [
+              {
+                "tag": "background",
+                "typeId": 2,
+                "attributes": {
+                  "x": "2",
+                  "y": "7",
+                  "width": "103",
+                  "height": "1",
+                  "params": "144",
+                  "style": "0",
+                  "color": "0xffff000000",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "2",
+                  "y": "7",
+                  "width": "103",
+                  "height": "26",
+                  "params": "8519888",
+                  "style": "0",
+                  "name": "buttons"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "101",
+                      "height": "26",
+                      "params": "144",
+                      "style": "3",
+                      "name": "decorate",
+                      "color": "0x00",
+                      "tags": "action"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "-3",
+                          "y": "-4",
+                          "width": "107",
+                          "height": "35",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "button",
+                          "color": "0x02d2a27",
+                          "tags": "action"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "3",
+                              "y": "9",
+                              "width": "101",
+                              "height": "16",
+                              "params": "144",
+                              "style": "0",
+                              "name": "label",
+                              "caption": "${widget.avatar.stop_decorating}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "center",
+                              "font_size": 17,
+                              "text_color": 16777215,
+                              "text_style": "u_regular",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 80,
+                              "thickness": -15
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 1,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          }
+        ],
+        "vars": {
+          "margin_left": 4,
+          "margin_top": 4,
+          "margin_right": 4,
+          "margin_bottom": 4
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 115,
+  "layoutHeight": 49
+}

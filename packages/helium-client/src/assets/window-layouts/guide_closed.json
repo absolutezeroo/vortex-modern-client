@@ -1,0 +1,212 @@
+{
+  "name": "guide_closed",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\349_guide_closed.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "282",
+          "height": "204",
+          "params": "32769",
+          "style": "100",
+          "name": "guide_closed",
+          "caption": "${guide.help.request.guide.closed.title}",
+          "width_min": "282",
+          "width_max": "282",
+          "height_min": "0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "0",
+              "width": "60",
+              "height": "48",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "34",
+                  "height": "84",
+                  "params": "16",
+                  "style": "100",
+                  "name": "requester_avatar"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "avatar_image",
+                  "avatar_image:cropped": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "70",
+              "y": "0",
+              "width": "200",
+              "height": "147",
+              "params": "8536080",
+              "style": "0",
+              "width_min": "200",
+              "width_max": "200"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "271",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.help.request.guide.closed.heading}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "24",
+                  "width": "200",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "close_reason",
+                  "caption": "Lilyflower closed the case."
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "45",
+                  "width": "200",
+                  "height": "28",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.help.request.guide.closed.thanks}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "78",
+                  "width": "266",
+                  "height": "48",
+                  "params": "131089",
+                  "style": "101",
+                  "name": "close_button",
+                  "caption": "${guide.help.request.user.thanks.close.button}",
+                  "color": "0x0bbbbbb",
+                  "height_min": "48",
+                  "height_max": "48"
+                },
+                "children": []
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "20",
+                  "y": "131",
+                  "width": "91",
+                  "height": "16",
+                  "params": "1",
+                  "style": "100",
+                  "name": "report_link",
+                  "caption": "Report Lilyflower",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0,
+                  "tool_tip_caption": "${guide.help.common.report.link.tooltip}",
+                  "tool_tip_delay": 256
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 5
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 40,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 282,
+  "layoutHeight": 204
+}

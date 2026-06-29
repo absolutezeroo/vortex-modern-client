@@ -1,0 +1,616 @@
+{
+  "name": "messenger",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\733_messenger.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "120",
+          "y": "120",
+          "width": "282",
+          "height": "385",
+          "params": "98305",
+          "style": "100",
+          "caption": "${messenger.window.title}",
+          "width_min": "282",
+          "height_min": "275"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "16",
+              "y": "0",
+              "width": "248",
+              "height": "40",
+              "params": "144",
+              "style": "103",
+              "name": "avatar_list"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "35",
+                  "height": "35",
+                  "params": "16",
+                  "style": "102"
+                },
+                "children": [
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "-3",
+                      "y": "-14",
+                      "width": "45",
+                      "height": "72",
+                      "params": "16",
+                      "style": "100",
+                      "name": "avatar_image"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "avatar_image",
+                      "avatar_image:scale": "sh",
+                      "avatar_image:only_head": true
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "8",
+                      "y": "8",
+                      "width": "20",
+                      "height": "20",
+                      "params": "16",
+                      "style": "0",
+                      "name": "group_badge_image",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "badge_image",
+                      "badge_image:type": "group",
+                      "badge_image:fit_size_to_contents": true,
+                      "badge_image:stretched_x": false,
+                      "badge_image:stretched_y": false,
+                      "badge_image:zoom_x": 0.5,
+                      "badge_image:zoom_y": 0.5,
+                      "badge_image:pivot_point": "center"
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "19",
+                      "y": "6",
+                      "width": "13",
+                      "height": "12",
+                      "params": "16",
+                      "style": "100",
+                      "name": "chat_indicator",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "common_chat_indicator"
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "35",
+                      "height": "35",
+                      "params": "17",
+                      "style": "100",
+                      "name": "avatar_click_region",
+                      "treshold": "0"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "35",
+              "params": "17",
+              "style": "100",
+              "name": "avatars_scroll_left",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "7",
+                  "y": "0",
+                  "width": "8",
+                  "height": "35",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "help_habboway_prev",
+                  "pivot_point": "center left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "265",
+              "y": "0",
+              "width": "15",
+              "height": "35",
+              "params": "81",
+              "style": "100",
+              "name": "avatars_scroll_right",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "1",
+                  "y": "0",
+                  "width": "8",
+                  "height": "35",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "help_habboway_next",
+                  "pivot_point": "center left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "0",
+              "y": "39",
+              "width": "281",
+              "height": "15",
+              "params": "144",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "157",
+                  "height": "15",
+                  "params": "3088",
+                  "style": "100",
+                  "name": "separator_label",
+                  "caption": "${messenger.window.separator}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "il_border",
+                  "text_color": 4473924,
+                  "margin_left": 5,
+                  "margin_right": 5
+                }
+              }
+            ],
+            "vars": {
+              "widget_type": "separator"
+            }
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "7",
+              "y": "57",
+              "width": "266",
+              "height": "21",
+              "params": "144",
+              "style": "100",
+              "name": "button_strip"
+            },
+            "children": [
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "21",
+                  "height": "20",
+                  "params": "131089",
+                  "style": "102",
+                  "name": "follow_button",
+                  "caption": "Follow",
+                  "height_max": "20"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "6",
+                      "y": "5",
+                      "width": "9",
+                      "height": "10",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "messenger_visit_icon",
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${messenger.followfriend.tooltip}"
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "25",
+                  "y": "0",
+                  "width": "30",
+                  "height": "20",
+                  "params": "131089",
+                  "style": "102",
+                  "name": "profile_button",
+                  "caption": "Profile",
+                  "height_max": "20"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "7",
+                      "y": "4",
+                      "width": "16",
+                      "height": "12",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "messenger_profile_icon",
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${infostand.profile.link.tooltip}"
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "59",
+                  "y": "0",
+                  "width": "193",
+                  "height": "20",
+                  "params": "131089",
+                  "style": "102",
+                  "name": "report_button",
+                  "caption": "${messenger.window.button.report}",
+                  "height_max": "20"
+                },
+                "children": [],
+                "vars": {
+                  "tool_tip_caption": "${messenger.window.button.report.tooltip}"
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 4
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "253",
+              "y": "57",
+              "width": "20",
+              "height": "20",
+              "params": "81",
+              "style": "102",
+              "name": "close_conversation_button",
+              "caption": "Close",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "20",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "illumina_light_button_frame_close_png"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "scrollable_itemlist_vertical",
+            "typeId": 56,
+            "attributes": {
+              "x": "7",
+              "y": "84",
+              "width": "266",
+              "height": "212",
+              "params": "2192",
+              "style": "100",
+              "name": "conversation"
+            },
+            "children": [
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "259",
+                  "height": "76",
+                  "params": "147472",
+                  "style": "100",
+                  "name": "msg_normal"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "illumina_chat_bubble"
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "76",
+                  "width": "255",
+                  "height": "50",
+                  "params": "147472",
+                  "style": "105",
+                  "name": "msg_notification"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "50",
+                      "height": "50",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "messenger_caution",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "50",
+                      "y": "15",
+                      "width": "205",
+                      "height": "20",
+                      "params": "3088",
+                      "style": "100",
+                      "name": "content"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "margin_top": 7,
+                      "margin_bottom": 9,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "126",
+                  "width": "255",
+                  "height": "50",
+                  "params": "147472",
+                  "style": "105",
+                  "name": "msg_invitation",
+                  "color": "0x0d1efde"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "50",
+                      "height": "50",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "messenger_notification_icon",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "50",
+                      "y": "18",
+                      "width": "205",
+                      "height": "20",
+                      "params": "3088",
+                      "style": "100",
+                      "name": "content"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "margin_top": 7,
+                      "margin_bottom": 9,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "176",
+                  "width": "255",
+                  "height": "24",
+                  "params": "147472",
+                  "style": "102",
+                  "name": "msg_info"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "255",
+                      "height": "24",
+                      "params": "16",
+                      "style": "100",
+                      "name": "content",
+                      "width_min": "255",
+                      "width_max": "255"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "margin_top": 10,
+                      "margin_bottom": 10,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "7",
+              "y": "305",
+              "width": "266",
+              "height": "30",
+              "params": "1168",
+              "style": "100",
+              "name": "input_widget"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "illumina_input",
+              "illumina_input:empty_message": "${messenger.window.input.default}",
+              "illumina_input:max_chars": 120
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 40,
+          "margin_right": 1,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 282,
+  "layoutHeight": 385
+}

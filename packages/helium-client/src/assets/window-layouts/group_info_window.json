@@ -1,0 +1,197 @@
+{
+  "name": "Group_info_window",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\625_Group_info_window.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "428",
+          "height": "215",
+          "params": "32769",
+          "style": "3",
+          "name": "hc_required_window",
+          "caption": "${group.hcrequired.title}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "427",
+              "height": "125",
+              "params": "144",
+              "style": "0",
+              "color": "0xffff3c3c3c",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "23",
+              "y": "19",
+              "width": "92",
+              "height": "44",
+              "params": "16",
+              "style": "18"
+            },
+            "children": []
+          },
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "131",
+              "y": "28",
+              "width": "265",
+              "height": "62",
+              "params": "1",
+              "style": "0",
+              "name": "info_txt",
+              "caption": "Dippa dappa duppa"
+            },
+            "children": [],
+            "vars": {
+              "text_color": 16777215,
+              "text_style": "u_regular",
+              "sharpness": 80,
+              "thickness": -15,
+              "word_wrap": true,
+              "editable": false,
+              "selectable": false
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "131",
+              "y": "83",
+              "width": "282",
+              "height": "18",
+              "params": "17",
+              "style": "0",
+              "name": "more_info_link_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "158",
+                  "height": "17",
+                  "params": "16",
+                  "style": "0",
+                  "name": "more_info_link",
+                  "caption": "${group.hcrequired.moreinfo}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 30975,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 80,
+                  "thickness": -15,
+                  "underline": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "35",
+              "y": "145",
+              "width": "152",
+              "height": "18",
+              "params": "17",
+              "style": "0",
+              "name": "cancel_link_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "40",
+                  "height": "17",
+                  "params": "16",
+                  "style": "0",
+                  "name": "cancel_link",
+                  "caption": "${generic.cancel}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "mouse_wheel_enabled": false,
+                  "underline": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "303",
+              "y": "140",
+              "width": "109",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "join_button",
+              "caption": "${group.hcrequired.join}",
+              "width_min": "109",
+              "width_max": "109"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 3
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 428,
+  "layoutHeight": 215
+}

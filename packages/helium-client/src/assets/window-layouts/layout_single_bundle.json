@@ -1,0 +1,245 @@
+{
+  "name": "layout_single_bundle",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1676_layout_single_bundle.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "2064",
+          "style": "0",
+          "name": "ctlg_single_bundle"
+        },
+        "children": [
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "15",
+              "y": "13",
+              "width": "329",
+              "height": "62",
+              "params": "1",
+              "style": "3",
+              "name": "ctlg_description",
+              "caption": "${lorem.html}"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0,
+              "editable": false,
+              "selectable": false
+            }
+          },
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "159",
+              "y": "92",
+              "width": "173",
+              "height": "25",
+              "params": "1",
+              "style": "3",
+              "name": "ctlg_special_txt",
+              "caption": "${lorem.html}"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0,
+              "editable": false,
+              "selectable": false
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "164",
+              "y": "117",
+              "width": "186",
+              "height": "247",
+              "params": "2064",
+              "style": "6",
+              "name": "bundleGridScrollWidget",
+              "tags": "EMBEDDED"
+            },
+            "children": [
+              {
+                "tag": "scrollable_itemgrid_vertical",
+                "typeId": 140,
+                "attributes": {
+                  "x": "4",
+                  "y": "3",
+                  "width": "178",
+                  "height": "238",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "bundleGrid"
+                },
+                "children": [],
+                "vars": {
+                  "scale_to_fit_items": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "6",
+              "y": "119",
+              "width": "157",
+              "height": "238",
+              "params": "16",
+              "style": "100",
+              "name": "ctlg_teaserimg_1"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}catalogue/small_movie_roomteaser.gif",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "17",
+              "y": "385",
+              "width": "324",
+              "height": "40",
+              "params": "1040",
+              "style": "3",
+              "color": "0x0e0e0e0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "10",
+                  "y": "5",
+                  "width": "32",
+                  "height": "30",
+                  "params": "16",
+                  "style": "100",
+                  "name": "ctlg_special_img"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "html",
+                "typeId": 11,
+                "attributes": {
+                  "x": "51",
+                  "y": "10",
+                  "width": "256",
+                  "height": "22",
+                  "params": "1",
+                  "style": "3",
+                  "name": "ctlg_text_1",
+                  "caption": "${lorem.html}"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0,
+                  "editable": false,
+                  "selectable": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "12",
+              "y": "125",
+              "width": "40",
+              "height": "40",
+              "params": "0",
+              "style": "0",
+              "name": "addOnBadgeViewWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "74",
+              "y": "125",
+              "width": "83",
+              "height": "30",
+              "params": "0",
+              "style": "100",
+              "name": "simplePriceWidget"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "83",
+                  "height": "30",
+                  "params": "16",
+                  "style": "100",
+                  "name": "fake_productimage"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "1040",
+              "style": "0",
+              "name": "purchaseWidget"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

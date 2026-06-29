@@ -1,0 +1,19 @@
+{
+  "name": "habbo_element_description#1",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "container",
+      "intent": "default",
+      "style": "0",
+      "renderer": "null"
+    },
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

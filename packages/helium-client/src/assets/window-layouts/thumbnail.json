@@ -1,0 +1,59 @@
+{
+  "name": "thumbnail",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\664_thumbnail.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "35",
+          "height": "60",
+          "params": "17",
+          "style": "3"
+        },
+        "children": [
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "35",
+              "height": "60",
+              "params": "131089",
+              "style": "3",
+              "name": "button",
+              "tags": "BUTTON"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "35",
+              "height": "60",
+              "params": "16",
+              "style": "0",
+              "name": "bitmap",
+              "tags": "BITMAP"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 35,
+  "layoutHeight": 60
+}

@@ -1,0 +1,362 @@
+{
+  "name": "ude_trigger_inputs_16",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\327_ude_trigger_inputs_16.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "228",
+          "height": "121",
+          "params": "147473",
+          "style": "0",
+          "name": "cont",
+          "color": "0xffff3d3d3d",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "228",
+              "height": "1",
+              "params": "16",
+              "style": "0",
+              "name": "ruler",
+              "color": "0xffff232323",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "3",
+              "width": "218",
+              "height": "13",
+              "params": "786432",
+              "style": "0",
+              "name": "desc_txt",
+              "caption": "${wiredfurni.params.action_selection}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Volter Bold",
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "dropmenu",
+            "typeId": 102,
+            "attributes": {
+              "x": "5",
+              "y": "24",
+              "width": "218",
+              "height": "22",
+              "params": "17",
+              "style": "200",
+              "name": "menu_action",
+              "caption": "${wiredfurni.tooltip.action}"
+            },
+            "children": [],
+            "vars": {
+              "tool_tip_caption": "${wiredfurni.tooltip.action}",
+              "item_array": [
+                "${wiredfurni.params.action.0}",
+                "${wiredfurni.params.action.1}",
+                "${wiredfurni.params.action.2}",
+                "${wiredfurni.params.action.3}",
+                "${wiredfurni.params.action.4}",
+                "${wiredfurni.params.action.5}",
+                "${wiredfurni.params.action.6}",
+                "${wiredfurni.params.action.7}",
+                "${wiredfurni.params.action.8}",
+                "${wiredfurni.params.action.10}",
+                "${wiredfurni.params.action.11}"
+              ]
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "53",
+              "width": "228",
+              "height": "68",
+              "params": "16",
+              "style": "3",
+              "name": "sign_selection"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "228",
+                  "height": "1",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ruler",
+                  "color": "0xffff232323",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "3",
+                  "width": "218",
+                  "height": "13",
+                  "params": "786432",
+                  "style": "0",
+                  "name": "desc_txt",
+                  "caption": "${wiredfurni.params.sign_selection}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Volter Bold",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "checkbox",
+                "typeId": 70,
+                "attributes": {
+                  "x": "5",
+                  "y": "24",
+                  "width": "17",
+                  "height": "17",
+                  "params": "17",
+                  "style": "1",
+                  "name": "usage_checkbox"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "25",
+                  "y": "24",
+                  "width": "200",
+                  "height": "13",
+                  "params": "16",
+                  "style": "0",
+                  "name": "desc_txt",
+                  "caption": "${wiredfurni.params.sign_filter}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "5",
+                  "y": "44",
+                  "width": "218",
+                  "height": "22",
+                  "params": "17",
+                  "style": "200",
+                  "name": "extra_menu",
+                  "caption": "${wiredfurni.tooltip.sign}"
+                },
+                "children": [],
+                "vars": {
+                  "tool_tip_caption": "${wiredfurni.tooltip.sign}",
+                  "item_array": [
+                    "${wiredfurni.params.action.sign.0}",
+                    "${wiredfurni.params.action.sign.1}",
+                    "${wiredfurni.params.action.sign.2}",
+                    "${wiredfurni.params.action.sign.3}",
+                    "${wiredfurni.params.action.sign.4}",
+                    "${wiredfurni.params.action.sign.5}",
+                    "${wiredfurni.params.action.sign.6}",
+                    "${wiredfurni.params.action.sign.7}",
+                    "${wiredfurni.params.action.sign.8}",
+                    "${wiredfurni.params.action.sign.9}",
+                    "${wiredfurni.params.action.sign.10}",
+                    "${wiredfurni.params.action.sign.11}",
+                    "${wiredfurni.params.action.sign.12}",
+                    "${wiredfurni.params.action.sign.13}",
+                    "${wiredfurni.params.action.sign.14}",
+                    "${wiredfurni.params.action.sign.15}",
+                    "${wiredfurni.params.action.sign.16}",
+                    "${wiredfurni.params.action.sign.17}"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "53",
+              "width": "228",
+              "height": "68",
+              "params": "16",
+              "style": "3",
+              "name": "dance_selection"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "228",
+                  "height": "1",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ruler",
+                  "color": "0xffff232323",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "3",
+                  "width": "218",
+                  "height": "13",
+                  "params": "786432",
+                  "style": "0",
+                  "name": "desc_txt",
+                  "caption": "${wiredfurni.params.dance_selection}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Volter Bold",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "checkbox",
+                "typeId": 70,
+                "attributes": {
+                  "x": "5",
+                  "y": "24",
+                  "width": "17",
+                  "height": "17",
+                  "params": "17",
+                  "style": "1",
+                  "name": "usage_checkbox"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "25",
+                  "y": "24",
+                  "width": "200",
+                  "height": "13",
+                  "params": "16",
+                  "style": "0",
+                  "name": "desc_txt",
+                  "caption": "${wiredfurni.params.dance_filter}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "5",
+                  "y": "44",
+                  "width": "218",
+                  "height": "22",
+                  "params": "17",
+                  "style": "200",
+                  "name": "extra_menu",
+                  "caption": "${wiredfurni.tooltip.dance}"
+                },
+                "children": [],
+                "vars": {
+                  "tool_tip_caption": "${wiredfurni.tooltip.dance}",
+                  "item_array": [
+                    "${wiredfurni.params.action.dance.1}",
+                    "${wiredfurni.params.action.dance.2}",
+                    "${wiredfurni.params.action.dance.3}",
+                    "${wiredfurni.params.action.dance.4}"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 228,
+  "layoutHeight": 121
+}

@@ -1,0 +1,399 @@
+{
+  "name": "mystery_box_toolbar_extension",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\588_mystery_box_toolbar_extension.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "137",
+          "params": "16",
+          "style": "6",
+          "color": "0x0676767"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "186",
+              "height": "130",
+              "params": "16",
+              "style": "3",
+              "color": "0x0201e19",
+              "blend": "0.8"
+            },
+            "children": [
+              {
+                "tag": "background",
+                "typeId": 2,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "186",
+                  "height": "20",
+                  "params": "16",
+                  "style": "100",
+                  "color": "0xffff676767",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "1",
+                  "y": "3",
+                  "width": "150",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "caption": "${mysterybox.tracker.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 16,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "6",
+                  "y": "27",
+                  "width": "174",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${mysterybox.tracker.description}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "etching_color": 0,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "49",
+                  "y": "72",
+                  "width": "89",
+                  "height": "39",
+                  "params": "147664",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "39",
+                      "height": "39",
+                      "params": "17",
+                      "style": "100",
+                      "name": "box_region",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "39",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "mysterybox_tracker_border"
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "39",
+                          "params": "16",
+                          "style": "100",
+                          "name": "box_colour",
+                          "color": "0x0ff0000"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "mysterybox_box_base",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "39",
+                          "params": "16",
+                          "style": "100",
+                          "name": "box_overlay"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "mysterybox_box_overlay",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "50",
+                      "y": "0",
+                      "width": "39",
+                      "height": "39",
+                      "params": "17",
+                      "style": "100",
+                      "name": "key_region",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "39",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "mysterybox_tracker_border"
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "39",
+                          "params": "16",
+                          "style": "100",
+                          "name": "key_colour",
+                          "color": "0x0ff0000"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "mysterybox_key_base",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "39",
+                          "params": "16",
+                          "style": "100",
+                          "name": "key_overlay"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "mysterybox_key_overlay",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "24",
+                  "y": "112",
+                  "width": "138",
+                  "height": "17",
+                  "params": "193",
+                  "style": "100",
+                  "name": "faq_link",
+                  "caption": "${mysterybox.tracker.link}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 48895,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "168",
+              "y": "2",
+              "width": "20",
+              "height": "20",
+              "params": "17",
+              "style": "100",
+              "name": "minimize_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "common_minimize_unetched"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "168",
+              "y": "2",
+              "width": "20",
+              "height": "20",
+              "params": "17",
+              "style": "100",
+              "name": "maximize_region",
+              "visible": "false",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "common_maximize_unetched"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "124",
+              "y": "2",
+              "width": "19",
+              "height": "20",
+              "params": "16",
+              "style": "100",
+              "name": "small_box",
+              "color": "0x0ff0000",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "mysterybox_box_small",
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "144",
+              "y": "3",
+              "width": "20",
+              "height": "19",
+              "params": "16",
+              "style": "100",
+              "name": "small_key",
+              "color": "0x0ff0000",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "mysterybox_key_small",
+              "fit_size_to_contents": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 137
+}

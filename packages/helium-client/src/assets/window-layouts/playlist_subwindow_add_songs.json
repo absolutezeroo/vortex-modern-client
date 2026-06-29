@@ -1,0 +1,105 @@
+{
+  "name": "playlist_subwindow_add_songs",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\498_playlist_subwindow_add_songs.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "261",
+          "height": "56",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "180",
+              "height": "56",
+              "params": "16",
+              "style": "0",
+              "name": "background_image",
+              "clipping": "false",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "8",
+              "y": "3",
+              "width": "46",
+              "height": "46",
+              "params": "16",
+              "style": "0",
+              "name": "add_songs_icon_image",
+              "tags": "ICON"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "63",
+              "y": "1",
+              "width": "270",
+              "height": "19",
+              "params": "16",
+              "style": "0",
+              "caption": "${playlist.editor.add.songs.to.your.playlist}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 20,
+              "text_style": "bold",
+              "mouse_wheel_enabled": false,
+              "bold": true
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "63",
+              "y": "21",
+              "width": "200",
+              "height": "32",
+              "params": "16",
+              "style": "0",
+              "caption": "${playlist.editor.text.click.song.to.choose.click.again.to.move}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 261,
+  "layoutHeight": 56
+}

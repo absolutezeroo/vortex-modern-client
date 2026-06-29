@@ -1,0 +1,75 @@
+{
+  "name": "color_chooser_cell",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\589_color_chooser_cell.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "40",
+          "height": "32",
+          "params": "17",
+          "style": "1",
+          "name": "color_chooser_cell"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "40",
+              "height": "32",
+              "params": "2192",
+              "style": "0",
+              "name": "border",
+              "tags": "BG_BORDER"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "40",
+              "height": "32",
+              "params": "2192",
+              "style": "0",
+              "name": "color",
+              "tags": "COLOR_IMAGE"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "40",
+              "height": "32",
+              "params": "2192",
+              "style": "0",
+              "name": "chosen",
+              "tags": "COLOR_CHOSEN"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

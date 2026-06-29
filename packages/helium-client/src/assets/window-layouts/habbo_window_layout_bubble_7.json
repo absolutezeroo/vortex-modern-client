@@ -1,0 +1,89 @@
+{
+  "name": "habbo_window_layout_bubble_7",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\69_habbo_window_layout_bubble.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bubble_pointer_up",
+        "typeId": 46,
+        "attributes": {
+          "x": "4",
+          "y": "-2",
+          "width": "16",
+          "height": "10",
+          "params": "208",
+          "visible": "false",
+          "name": "up",
+          "tags": "_POINTER, _INTERNAL, _EXCLUDE, _COLORIZE"
+        },
+        "children": []
+      },
+      {
+        "tag": "bubble_pointer_down",
+        "typeId": 48,
+        "attributes": {
+          "x": "4",
+          "y": "14",
+          "width": "16",
+          "height": "11",
+          "params": "1232",
+          "visible": "true",
+          "name": "down",
+          "tags": "_POINTER, _INTERNAL, _EXCLUDE, _COLORIZE"
+        },
+        "children": []
+      },
+      {
+        "tag": "bubble_pointer_left",
+        "typeId": 49,
+        "attributes": {
+          "x": "-2",
+          "y": "4",
+          "width": "11",
+          "height": "18",
+          "params": "3088",
+          "visible": "false",
+          "name": "left",
+          "tags": "_POINTER, _INTERNAL, _EXCLUDE, _COLORIZE"
+        },
+        "children": []
+      },
+      {
+        "tag": "bubble_pointer_right",
+        "typeId": 47,
+        "attributes": {
+          "x": "14",
+          "y": "4",
+          "width": "11",
+          "height": "18",
+          "params": "3152",
+          "visible": "false",
+          "name": "right",
+          "tags": "_POINTER, _INTERNAL, _EXCLUDE, _COLORIZE"
+        },
+        "children": []
+      },
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "name": "content_area",
+          "x": "8",
+          "y": "8",
+          "width": "5",
+          "height": "5",
+          "tags": "_CONTENT, _INTERNAL, _EXCLUDE",
+          "params": "12585104"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 23,
+  "layoutHeight": 23
+}

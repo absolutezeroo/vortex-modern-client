@@ -1,0 +1,102 @@
+{
+  "id": "habbo_skin_button_close",
+  "name": "close_button_skin",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\36_close_button_skin.xml",
+  "variables": {
+    "asset": "habbo_blue_skin"
+  },
+  "templates": [
+    {
+      "name": "default_button_mode",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "type": "bitmap",
+          "region": {
+            "x": 377,
+            "y": 0,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    },
+    {
+      "name": "hovering_button_mode",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "type": "bitmap",
+          "region": {
+            "x": 377,
+            "y": 16,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    },
+    {
+      "name": "pressed_button_mode",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "type": "bitmap",
+          "region": {
+            "x": 377,
+            "y": 32,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "button_close",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "button_close",
+      "template": "default_button_mode"
+    },
+    {
+      "name": "hovering",
+      "layout": "button_close",
+      "template": "hovering_button_mode"
+    },
+    {
+      "name": "pressed",
+      "layout": "button_close",
+      "template": "pressed_button_mode"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "itemGridWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\281_itemGridWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "200",
+          "params": "2064",
+          "style": "3"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "200",
+              "params": "2192",
+              "style": "6",
+              "blend": "0.5"
+            },
+            "children": []
+          },
+          {
+            "tag": "scrollable_itemgrid_vertical",
+            "typeId": 140,
+            "attributes": {
+              "x": "4",
+              "y": "4",
+              "width": "352",
+              "height": "192",
+              "params": "2192",
+              "style": "3",
+              "name": "itemGrid"
+            },
+            "children": [],
+            "vars": {
+              "spacing": 3,
+              "scale_to_fit_items": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 200
+}

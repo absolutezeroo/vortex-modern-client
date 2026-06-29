@@ -1,0 +1,166 @@
+import type {IWindow} from '../IWindow';
+import type {IWindowContext} from '../IWindowContext';
+import type {ISelectorListWindow} from './ISelectorListWindow';
+import {WindowController} from '../WindowController';
+import {WindowEvent} from '../events/WindowEvent';
+import {PropertyStruct} from '../utils/PropertyStruct';
+import {SelectorController} from './SelectorController';
+
+/**
+ * Controller for selector list windows.
+ *
+ * Extends SelectorController with automatic layout of selectable
+ * children in either horizontal or vertical orientation.
+ *
+ * @see sources/win63_2021_version/com/sulake/core/window/components/SelectorListController.as
+ */
+export class SelectorListController extends SelectorController implements ISelectorListWindow
+{
+	private _updating: boolean = false;
+
+	constructor(
+		name: string,
+		type: number,
+		style: number,
+		param: number,
+		context: IWindowContext,
+		rect: { x: number; y: number; width: number; height: number },
+		parent: IWindow | null = null,
+		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+		tags: string[] | null = null,
+		properties: unknown[] | null = null,
+		id: number = 0
+	)
+	{
+		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+
+		this._bringToFront = false;
+	}
+
+	protected _spacing: number = 0;
+
+	/**
+	 * The spacing between selectable children.
+	 */
+	public get spacing(): number
+	{
+		return this._spacing;
+	}
+
+	public set spacing(value: number)
+	{
+		this._spacing = value;
+		this.updateSelectableRegion();
+	}
+
+	private _vertical: boolean = false;
+
+	/**
+	 * Whether children are arranged vertically.
+	 */
+	public get vertical(): boolean
+	{
+		return this._vertical;
+	}
+
+	public set vertical(value: boolean)
+	{
+		this._vertical = value;
+		this.updateSelectableRegion();
+	}
+
+	public override get properties(): unknown[]
+	{
+		const props = super.properties;
+
+		props.push(this.createProperty('spacing', this._spacing));
+		props.push(this.createProperty('vertical', this._vertical));
+
+		return props;
+	}
+
+	public override set properties(value: unknown[])
+	{
+		for (const item of value)
+		{
+			const prop = item as PropertyStruct;
+
+			switch (prop.key)
+			{
+				case 'spacing':
+					if (prop.value !== this._spacing)
+					{
+						this.spacing = prop.value as number;
+					}
+					break;
+				case 'vertical':
+					if (prop.value !== this._vertical)
+					{
+						this.vertical = prop.value as boolean;
+					}
+					break;
+			}
+		}
+
+		super.properties = value;
+	}
+
+	public override update(source: WindowController, event: WindowEvent): boolean
+	{
+		if (event.type === 'WE_CHILD_ADDED')
+		{
+			this.updateSelectableRegion();
+		}
+		else if (event.type === 'WE_CHILD_RESIZED')
+		{
+			this.updateSelectableRegion();
+		}
+		else if (event.type === 'WE_CHILD_RELOCATED')
+		{
+			this.updateSelectableRegion();
+		}
+		else if (event.type === 'WE_CHILD_REMOVED')
+		{
+			this.updateSelectableRegion();
+		}
+
+		return super.update(source, event);
+	}
+
+	/**
+	 * Re-arranges children along the main axis.
+	 */
+	private updateSelectableRegion(): void
+	{
+		if (this._updating)
+		{
+			return;
+		}
+
+		this._updating = true;
+
+		const count = this.numSelectables;
+		let offset: number = 0;
+
+		for (let i = 0; i < count; i++)
+		{
+			const child = this.getSelectableAt(i) as unknown as IWindow;
+
+			if (child)
+			{
+				if (this._vertical)
+				{
+					child.y = offset;
+					offset += child.height + this._spacing;
+				}
+				else
+				{
+					child.x = offset;
+					offset += child.width + this._spacing;
+				}
+			}
+		}
+
+		this._updating = false;
+	}
+}

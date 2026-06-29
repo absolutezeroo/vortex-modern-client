@@ -1,0 +1,39 @@
+{
+  "name": "habbo_element_description#196",
+  "source": "sources\\win63_2023_version\\binaryDataXml\\1433_habbo_element_description.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {
+      "type": "icon",
+      "intent": "Simple arrow up",
+      "style": "1",
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set_xml",
+      "layout": "icon16"
+    },
+    "children": [
+      {
+        "tag": "states",
+        "typeId": -1,
+        "attributes": {},
+        "children": [
+          {
+            "tag": "state",
+            "typeId": -1,
+            "attributes": {
+              "name": "default",
+              "layout": "icon16",
+              "template": "icon_1"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

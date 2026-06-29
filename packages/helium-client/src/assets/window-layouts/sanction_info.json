@@ -1,0 +1,369 @@
+{
+  "name": "sanction_info",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\345_sanction_info.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "460",
+          "height": "360",
+          "params": "166145",
+          "style": "3",
+          "caption": "${help.sanction.info.title}",
+          "color": "0xff418db0",
+          "height_min": "350",
+          "height_max": "360"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "18",
+              "y": "13",
+              "width": "420",
+              "height": "252",
+              "params": "16",
+              "style": "3",
+              "name": "main_contents_list",
+              "width_min": "420",
+              "width_max": "420"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "420",
+                  "height": "41",
+                  "params": "16",
+                  "style": "3",
+                  "name": "probation_reminder_title",
+                  "caption": "${help.sanction.probation.reminder}",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 22,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "41",
+                  "width": "420",
+                  "height": "76",
+                  "params": "8536080",
+                  "style": "3",
+                  "name": "no_sanction_info",
+                  "caption": "${help.sanction.current.none}",
+                  "visible": "false",
+                  "clipping": "false"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "41",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "custom_mute_info",
+                  "caption": "${help.sanction.custom.mute}",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "41",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "trade_lock_info",
+                  "caption": "${trade.locked.until}",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "last_sanction_type",
+                  "caption": "..."
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "30",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "sanction_start_time",
+                  "caption": "${generic.start.time}"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "60",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "sanction_reason",
+                  "caption": "${generic.reason}"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "90",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "probation_info",
+                  "caption": "${help.sanction.probation.days.left}"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "120",
+                  "width": "420",
+                  "height": "45",
+                  "params": "16",
+                  "style": "3",
+                  "name": "next_sanction",
+                  "caption": "...",
+                  "height_max": "45"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "165",
+                  "width": "420",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "22",
+                      "height": "19",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "icons_link_icon",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "link",
+                    "typeId": 14,
+                    "attributes": {
+                      "x": "22",
+                      "y": "0",
+                      "width": "389",
+                      "height": "30",
+                      "params": "147457",
+                      "style": "3",
+                      "name": "faq_link",
+                      "caption": "${help.main.faq.link.text}",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_size": 20,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "157",
+                  "y": "195",
+                  "width": "99",
+                  "height": "40",
+                  "params": "917649",
+                  "style": "5",
+                  "name": "ok_button",
+                  "caption": "${generic.got.it}",
+                  "color": "0x09900"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "235",
+                  "width": "420",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "sanction_info_disclaimer",
+                  "caption": "${help.sanction.info.disclaimer}"
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 6908265,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 540,
+  "layoutHeight": 360
+}

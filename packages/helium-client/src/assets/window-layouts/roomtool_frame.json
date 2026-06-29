@@ -1,0 +1,804 @@
+{
+  "name": "roomtool_frame",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\304_roomtool_frame.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "10",
+          "y": "10",
+          "width": "240",
+          "height": "437",
+          "params": "32769",
+          "style": "0",
+          "caption": "Room Info",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "230",
+              "height": "405",
+              "params": "8388625",
+              "style": "0",
+              "name": "list_cont",
+              "caption": "Room Info",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "230",
+                  "height": "97",
+                  "params": "4194320",
+                  "style": "0",
+                  "name": "room_cont",
+                  "caption": "Room Info"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "5",
+                      "y": "5",
+                      "width": "220",
+                      "height": "90",
+                      "params": "16",
+                      "style": "0",
+                      "name": "room_data",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "220",
+                          "height": "30",
+                          "params": "144",
+                          "style": "0",
+                          "name": "name",
+                          "caption": "PH Room Name: Neque porro quisquam est que"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_face": "Volter Bold",
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "word_wrap": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "30",
+                          "width": "220",
+                          "height": "30",
+                          "params": "144",
+                          "style": "0",
+                          "name": "desc",
+                          "caption": "PH Room Desc: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_color": 8421504,
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "word_wrap": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "60",
+                          "width": "220",
+                          "height": "30",
+                          "params": "16",
+                          "style": "0",
+                          "name": "tags_cont",
+                          "caption": "Room Info"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "40",
+                              "height": "13",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Tags:"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "40",
+                              "y": "0",
+                              "width": "178",
+                              "height": "30",
+                              "params": "144",
+                              "style": "0",
+                              "name": "tags_txt",
+                              "caption": "PH Room Name: Neque porro quisquam est que"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "word_wrap": true,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "97",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "102",
+                  "width": "230",
+                  "height": "74",
+                  "params": "16",
+                  "style": "0",
+                  "name": "info_cont",
+                  "caption": "Room Info"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "2",
+                      "width": "80",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Room owner:"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter Bold",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "15",
+                      "width": "90",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Users in room:"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter Bold",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "28",
+                      "width": "90",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Owner in room:"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter Bold",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "41",
+                      "width": "90",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Has event:"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter Bold",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "85",
+                      "y": "2",
+                      "width": "71",
+                      "height": "13",
+                      "params": "17",
+                      "style": "0",
+                      "name": "owner_name_txt",
+                      "caption": "sulka",
+                      "background": "true"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "underline": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "100",
+                      "y": "28",
+                      "width": "40",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "owner_in_room_txt",
+                      "caption": "yes"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "100",
+                      "y": "15",
+                      "width": "40",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "user_count_txt",
+                      "caption": "18"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "100",
+                      "y": "41",
+                      "width": "40",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "has_event_txt",
+                      "caption": "no"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "155",
+                      "y": "4",
+                      "width": "70",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "enter_room_but",
+                      "caption": "Enter room",
+                      "width_min": "70",
+                      "width_max": "70"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "155",
+                      "y": "26",
+                      "width": "70",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "chatlog_but",
+                      "caption": "Chatlog",
+                      "width_min": "70",
+                      "width_max": "70"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "155",
+                      "y": "48",
+                      "width": "70",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "edit_in_hk_but",
+                      "caption": "Edit in HK",
+                      "width_min": "70",
+                      "width_max": "70"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "176",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "event_spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "181",
+                  "width": "230",
+                  "height": "17",
+                  "params": "16",
+                  "style": "0",
+                  "name": "event_cont",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "198",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "203",
+                  "width": "230",
+                  "height": "76",
+                  "params": "16",
+                  "style": "0",
+                  "name": "act_cont",
+                  "caption": "Room Info"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "5",
+                      "y": "5",
+                      "width": "16",
+                      "height": "16",
+                      "params": "17",
+                      "style": "0",
+                      "name": "kick_check",
+                      "caption": "Room Info"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "5",
+                      "y": "30",
+                      "width": "16",
+                      "height": "16",
+                      "params": "17",
+                      "style": "0",
+                      "name": "lock_check",
+                      "caption": "Room Info"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "5",
+                      "y": "54",
+                      "width": "16",
+                      "height": "16",
+                      "params": "17",
+                      "style": "0",
+                      "name": "changename_check",
+                      "caption": "Room Info"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "5",
+                      "width": "199",
+                      "height": "25",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Kick users out of the room (automatically stops the event)"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "31",
+                      "width": "199",
+                      "height": "16",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Change room lock to doorbell"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "48",
+                      "width": "199",
+                      "height": "25",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Change room name to 'Inappropriate to hotel management'"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "279",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "0",
+                  "y": "284",
+                  "width": "227",
+                  "height": "20",
+                  "params": "1",
+                  "style": "0",
+                  "name": "msgTemplatesSelect",
+                  "caption": "Select from message templates"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "304",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "0",
+                  "y": "309",
+                  "width": "227",
+                  "height": "45",
+                  "params": "1",
+                  "style": "0",
+                  "name": "message_input",
+                  "caption": "Type a mandatory message to the users in this text box.",
+                  "color": "0xffffffffff",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "always_show_selection": true,
+                  "border": true,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "354",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "359",
+                  "width": "230",
+                  "height": "5",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "caption": "Room Info"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "364",
+                  "width": "230",
+                  "height": "21",
+                  "params": "16",
+                  "style": "0",
+                  "name": "footer_cont",
+                  "caption": "Room Info"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "97",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "send_caution_but",
+                      "caption": "Send Caution",
+                      "width_min": "97",
+                      "width_max": "97"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "131",
+                      "y": "0",
+                      "width": "97",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "send_message_but",
+                      "caption": "Send message",
+                      "width_min": "97",
+                      "width_max": "97"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 240,
+  "layoutHeight": 437
+}

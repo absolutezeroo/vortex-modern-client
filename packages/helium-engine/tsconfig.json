@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@core/*": ["src/core/*"],
+            "@core": ["src/core"],
+            "@habbo/*": ["src/habbo/*"],
+            "@habbo": ["src/habbo"],
+            "@room/*": ["src/room/*"],
+            "@room": ["src/room"],
+            "@iid/*": ["src/iid/*"],
+            "@iid": ["src/iid"]
+        },
+        "outDir": "dist"
+    },
+    "include": ["src/**/*"]
+}

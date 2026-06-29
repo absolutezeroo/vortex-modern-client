@@ -1,0 +1,80 @@
+{
+  "name": "nav_error_popup",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\690_nav_error_popup.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "184",
+          "height": "33",
+          "params": "1",
+          "style": "0",
+          "name": "popup_container"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "184",
+              "height": "23",
+              "params": "16",
+              "style": "0",
+              "name": "border"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "8",
+                  "y": "4",
+                  "width": "173",
+                  "height": "20",
+                  "params": "0",
+                  "style": "0",
+                  "name": "error_text",
+                  "caption": "PH loren ipsum dolor pubba hubba duppa papatiti"
+                },
+                "children": [],
+                "vars": {
+                  "font_face": "Volter",
+                  "font_size": 9,
+                  "text_color": 0,
+                  "embed_fonts": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "50",
+              "y": "22",
+              "width": "11",
+              "height": "11",
+              "params": "16",
+              "style": "0",
+              "name": "popup_arrow_down"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

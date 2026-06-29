@@ -1,0 +1,157 @@
+{
+  "name": "builderWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\272_builderWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "60",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "30",
+              "y": "30",
+              "width": "130",
+              "height": "30",
+              "params": "131089",
+              "style": "5",
+              "name": "place_one",
+              "caption": "${builder.placement_widget.place_one}",
+              "color": "0x0dda100",
+              "width_min": "130",
+              "width_max": "130"
+            },
+            "children": []
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "201",
+              "y": "30",
+              "width": "130",
+              "height": "30",
+              "params": "131089",
+              "style": "5",
+              "name": "place_many",
+              "caption": "${builder.placement_widget.place_many}",
+              "color": "0x0a9bc5",
+              "width_min": "130",
+              "width_max": "130"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "3",
+              "width": "143",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "caption": "${builder.placement_widget.hint}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "25",
+              "params": "16400",
+              "style": "3",
+              "name": "error_container"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "2",
+                  "width": "360",
+                  "height": "22",
+                  "params": "16",
+                  "style": "2",
+                  "color": "0xfff2d193"
+                },
+                "children": []
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "4",
+                  "y": "0",
+                  "width": "25",
+                  "height": "25",
+                  "params": "16",
+                  "style": "3",
+                  "name": "error_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "icons_builder_error_full",
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "38",
+                  "y": "5",
+                  "width": "105",
+                  "height": "16",
+                  "params": "16",
+                  "style": "3",
+                  "name": "error_message",
+                  "caption": "We have a problem!"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 17,
+                  "text_color": 14552586,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 60
+}

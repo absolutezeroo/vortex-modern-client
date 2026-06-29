@@ -1,0 +1,163 @@
+{
+  "name": "use_product_saddle",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\445_use_product_saddle.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "386",
+          "height": "180",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "230",
+              "y": "112",
+              "width": "130",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "save_button",
+              "caption": "${useproduct.widget.use}",
+              "width_min": "130",
+              "width_max": "145"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "10",
+              "y": "10",
+              "width": "122",
+              "height": "130",
+              "params": "17",
+              "style": "3",
+              "name": "preview_image_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "122",
+                  "height": "130",
+                  "params": "16",
+                  "style": "3",
+                  "name": "preview_image"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "140",
+              "y": "15",
+              "width": "200",
+              "height": "61",
+              "params": "16",
+              "style": "3",
+              "name": "description",
+              "caption": "${useproduct.widget.text.saddle ",
+              "width_min": "200",
+              "width_max": "200"
+            },
+            "children": [],
+            "vars": {
+              "font_size": 19,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "160",
+              "y": "118",
+              "width": "65",
+              "height": "25",
+              "params": "17",
+              "style": "0",
+              "name": "cancel_text",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "160",
+              "y": "120",
+              "width": "70",
+              "height": "25",
+              "params": "16",
+              "style": "3",
+              "caption": "${useproduct.widget.cancel}"
+            },
+            "children": [],
+            "vars": {
+              "font_size": 19,
+              "mouse_wheel_enabled": false,
+              "underline": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "140",
+              "y": "60",
+              "width": "200",
+              "height": "40",
+              "params": "16",
+              "style": "3",
+              "name": "info",
+              "caption": "${useproduct.widget.info.saddle}",
+              "width_min": "200",
+              "width_max": "200"
+            },
+            "children": [],
+            "vars": {
+              "font_size": 19,
+              "text_style": "u_italic",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 386,
+  "layoutHeight": 180
+}

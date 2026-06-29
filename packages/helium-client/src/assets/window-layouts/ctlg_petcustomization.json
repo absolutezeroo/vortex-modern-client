@@ -1,0 +1,174 @@
+{
+  "name": "ctlg_petcustomization",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\294_ctlg_petcustomization.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "2064",
+          "style": "0",
+          "name": "ctlg_petcustomization"
+        },
+        "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "8",
+              "y": "133",
+              "width": "107",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "ctlg_selectproduct",
+              "caption": "${catalog_selectproduct}",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_small",
+              "text_color": 6710886
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "245",
+              "width": "360",
+              "height": "180",
+              "params": "2064",
+              "style": "0",
+              "name": "itemGridWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "240",
+              "params": "16",
+              "style": "0",
+              "name": "petPreviewWidget"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "175",
+                  "height": "275",
+                  "params": "16",
+                  "style": "4",
+                  "name": "petPreviewBackground",
+                  "color": "0x0cccccc",
+                  "visible": "false",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "360",
+                  "height": "240",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ctlg_teaserimg_1"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "8",
+                  "y": "12",
+                  "width": "74",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_product_name",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "8",
+                  "y": "31",
+                  "width": "162",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_description",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "1040",
+              "style": "0",
+              "name": "purchaseWidget"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

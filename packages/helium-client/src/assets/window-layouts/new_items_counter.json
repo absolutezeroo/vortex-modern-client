@@ -1,0 +1,54 @@
+{
+  "name": "new_items_counter",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\52_new_items_counter.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "3",
+          "y": "0",
+          "width": "29",
+          "height": "18",
+          "params": "262160",
+          "style": "7",
+          "name": "unseen_item_container",
+          "color": "0x0ee2924"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "4",
+              "y": "0",
+              "width": "21",
+              "height": "16",
+              "params": "4194320",
+              "style": "100",
+              "name": "count",
+              "caption": "999"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "il_regular_white",
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 29,
+  "layoutHeight": 18
+}

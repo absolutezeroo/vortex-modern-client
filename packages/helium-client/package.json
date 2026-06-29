@@ -1,0 +1,33 @@
+{
+  "name": "helium-client",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "prebuild": "node ./tools/bundle-assets.mjs",
+    "predev": "node ./tools/bundle-assets.mjs",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "build:layouts": "node ./tools/compile-window-layouts.mjs",
+    "organize:binary-layouts": "node ./scripts/organize-binary-layout-xml.mjs",
+    "build:skins": "node ./tools/compile-window-skins.mjs",
+    "build:window-data": "node ./tools/compile-window-skins.mjs && node ./tools/compile-window-layouts.mjs",
+    "build:bundle": "node ./tools/bundle-assets.mjs"
+  },
+  "dependencies": {
+    "helium-engine": "workspace:*",
+    "eventemitter3": "^5.0.1",
+    "pixi.js": "^8.6.6"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.28.6",
+    "@babel/plugin-transform-class-properties": "^7.28.6",
+    "@types/node": "^22.10.0",
+    "@xmldom/xmldom": "^0.9.7",
+    "sass-embedded": "^1.97.3",
+    "sharp": "^0.34.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0",
+    "vite-plugin-babel": "^1.4.1"
+  }
+}

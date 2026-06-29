@@ -1,0 +1,70 @@
+{
+  "name": "poll_answer_text_input",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\443_poll_answer_text_input.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "10",
+          "y": "12",
+          "width": "300",
+          "height": "90",
+          "params": "16",
+          "style": "0",
+          "name": "poll_answer_border"
+        },
+        "children": [
+          {
+            "tag": "input",
+            "typeId": 77,
+            "attributes": {
+              "x": "8",
+              "y": "3",
+              "width": "282",
+              "height": "84",
+              "params": "2177",
+              "style": "0",
+              "name": "poll_answer_input"
+            },
+            "children": [],
+            "vars": {
+              "always_show_selection": true,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "max_chars": 512,
+              "multiline": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "270",
+              "y": "10",
+              "width": "17",
+              "height": "18",
+              "params": "16",
+              "style": "0",
+              "name": "write_deco"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "common_small_pen"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 300,
+  "layoutHeight": 90
+}

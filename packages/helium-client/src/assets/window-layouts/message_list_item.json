@@ -1,0 +1,381 @@
+{
+  "name": "message_list_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\806_message_list_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "670",
+          "height": "126",
+          "params": "16400",
+          "style": "0",
+          "name": "container_layer",
+          "background": "true",
+          "treshold": "0",
+          "width_min": "0",
+          "height_min": "0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "26",
+              "width": "670",
+              "height": "100",
+              "params": "18576",
+              "style": "3",
+              "name": "msg_container",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "130",
+                  "y": "0",
+                  "width": "540",
+                  "height": "100",
+                  "params": "144",
+                  "style": "3",
+                  "name": "message_text_container",
+                  "clipping": "false",
+                  "height_min": "100"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "6",
+                      "y": "2",
+                      "width": "534",
+                      "height": "21",
+                      "params": "16536",
+                      "style": "3",
+                      "name": "message_text",
+                      "caption": "Message text",
+                      "clipping": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "grid_fit_type": "subpixel",
+                      "margin_left": 2,
+                      "margin_top": 2,
+                      "margin_right": 2,
+                      "margin_bottom": 2,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "130",
+                  "height": "100",
+                  "params": "18449",
+                  "style": "3",
+                  "name": "avatar_image",
+                  "color": "0xffffc7eff8",
+                  "clipping": "false",
+                  "background": "true",
+                  "treshold": "0",
+                  "height_min": "100"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "2",
+                      "y": "5",
+                      "width": "126",
+                      "height": "20",
+                      "params": "144",
+                      "style": "3",
+                      "name": "author",
+                      "caption": "AuthorName",
+                      "color": "0x0fffeee",
+                      "clipping": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "-20",
+                      "y": "10",
+                      "width": "90",
+                      "height": "130",
+                      "params": "16",
+                      "style": "3",
+                      "name": "avatar_widget"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "avatar_image"
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "75",
+                      "y": "60",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "100",
+                      "name": "badge_widget"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "badge_image",
+                      "badge_image:pivot_point": "center",
+                      "badge_image:stretched_x": false,
+                      "badge_image:stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "2",
+                      "y": "23",
+                      "width": "126",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3",
+                      "name": "author_post_count",
+                      "caption": "AuthorPosts"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "670",
+              "height": "26",
+              "params": "144",
+              "style": "0",
+              "name": "texts_container",
+              "color": "0xffff227aad",
+              "clipping": "false",
+              "background": "true",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "4",
+                  "width": "670",
+                  "height": "18",
+                  "params": "144",
+                  "style": "3",
+                  "name": "date",
+                  "caption": "10 days ago",
+                  "color": "0x02767a7",
+                  "clipping": "false"
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 15658734,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "564",
+                  "y": "0",
+                  "width": "106",
+                  "height": "26",
+                  "params": "80",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "4",
+                      "width": "40",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "reply_num",
+                      "caption": "#5",
+                      "color": "0x02767a7",
+                      "clipping": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "right",
+                      "text_color": 15658734,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "40",
+                      "y": "0",
+                      "width": "22",
+                      "height": "26",
+                      "params": "17",
+                      "style": "3",
+                      "name": "delete_message",
+                      "color": "0xffffde4537",
+                      "background": "true",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "4",
+                          "y": "5",
+                          "width": "16",
+                          "height": "16",
+                          "params": "16",
+                          "style": "3",
+                          "name": "icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "forum_forum_hide"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "62",
+                      "y": "0",
+                      "width": "22",
+                      "height": "26",
+                      "params": "17",
+                      "style": "3",
+                      "name": "report_message",
+                      "color": "0xffffff9c65",
+                      "background": "true",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "6",
+                          "width": "17",
+                          "height": "15",
+                          "params": "16",
+                          "style": "3",
+                          "name": "icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "forum_forum_report"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "84",
+                      "y": "0",
+                      "width": "22",
+                      "height": "26",
+                      "params": "17",
+                      "style": "3",
+                      "name": "reply_message",
+                      "color": "0xffff45a3d9",
+                      "background": "true",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "6",
+                          "width": "17",
+                          "height": "15",
+                          "params": "16",
+                          "style": "3",
+                          "name": "icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "forum_reply"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 670,
+  "layoutHeight": 126
+}

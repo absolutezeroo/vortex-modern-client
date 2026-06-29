@@ -1,0 +1,719 @@
+{
+  "name": "gift_wrapping",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\175_gift_wrapping.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "72",
+          "y": "1",
+          "width": "342",
+          "height": "482",
+          "params": "33025",
+          "style": "3",
+          "caption": "${catalog.gift_wrapping.title}",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "10",
+              "width": "330",
+              "height": "440",
+              "params": "2192",
+              "style": "3",
+              "color": "0x0e9e9e9"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "12",
+                  "width": "284",
+                  "height": "27",
+                  "params": "16",
+                  "style": "0",
+                  "name": "name_border"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "8",
+                      "y": "3",
+                      "width": "266",
+                      "height": "21",
+                      "params": "2177",
+                      "style": "0",
+                      "name": "name_input"
+                    },
+                    "children": [],
+                    "vars": {
+                      "always_show_selection": true,
+                      "font_size": 19,
+                      "text_style": "u_italic",
+                      "mouse_wheel_enabled": false,
+                      "max_chars": 32,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "8",
+                      "y": "3",
+                      "width": "266",
+                      "height": "21",
+                      "params": "16",
+                      "style": "0",
+                      "name": "name_input_hint",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_size": 19,
+                      "text_color": 7829367,
+                      "text_style": "u_italic",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "301",
+                  "y": "15",
+                  "width": "17",
+                  "height": "18",
+                  "params": "16",
+                  "style": "0",
+                  "name": "write_deco"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "common_small_pen"
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "18",
+                  "y": "39",
+                  "width": "264",
+                  "height": "0",
+                  "params": "147457",
+                  "style": "0",
+                  "name": "suggestion_container",
+                  "color": "0xffff999999",
+                  "visible": "false",
+                  "background": "true",
+                  "width_min": "150",
+                  "width_max": "267"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "263",
+                      "height": "0",
+                      "params": "12730385",
+                      "style": "0",
+                      "color": "0xffffffffff",
+                      "background": "true",
+                      "width_min": "150",
+                      "width_max": "265"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "1",
+                          "y": "0",
+                          "width": "262",
+                          "height": "0",
+                          "params": "12730385",
+                          "style": "0",
+                          "name": "suggestion_list",
+                          "width_min": "148",
+                          "width_max": "262"
+                        },
+                        "children": [],
+                        "vars": {
+                          "scale_to_fit_items": true,
+                          "resize_on_item_update": true
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "10",
+                  "y": "56",
+                  "width": "306",
+                  "height": "149",
+                  "params": "16",
+                  "style": "0",
+                  "name": "gift_card"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "catalogue_giftcard_blank"
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "15",
+                  "y": "51",
+                  "width": "60",
+                  "height": "149",
+                  "params": "16",
+                  "style": "0",
+                  "name": "avatar_image_container",
+                  "width_min": "60",
+                  "width_max": "60",
+                  "height_min": "149",
+                  "height_max": "149"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "60",
+                      "height": "149",
+                      "params": "3935440",
+                      "style": "0",
+                      "name": "avatar_image"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "95",
+                  "y": "77",
+                  "width": "190",
+                  "height": "100",
+                  "params": "1",
+                  "style": "0",
+                  "name": "message_input"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "max_chars": 140,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "max_lines": 5,
+                  "spacing": 0,
+                  "leading": 4
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "95",
+                  "y": "77",
+                  "width": "190",
+                  "height": "100",
+                  "params": "16",
+                  "style": "0",
+                  "name": "message_input_hint",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 19,
+                  "text_color": 7829367,
+                  "text_style": "u_italic",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "95",
+                  "y": "169",
+                  "width": "190",
+                  "height": "4",
+                  "params": "16",
+                  "style": "0",
+                  "name": "message_from"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "right",
+                  "text_style": "u_italic",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "checkbox",
+                "typeId": 70,
+                "attributes": {
+                  "x": "46",
+                  "y": "220",
+                  "width": "16",
+                  "height": "15",
+                  "params": "17",
+                  "style": "0",
+                  "name": "show_face_checkbox"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "66",
+                  "y": "218",
+                  "width": "260",
+                  "height": "20",
+                  "params": "16",
+                  "style": "0",
+                  "name": "show_face_checkbox_title",
+                  "caption": "${catalog.gift_wrapping.show_face.title}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "10",
+                  "y": "253",
+                  "width": "306",
+                  "height": "83",
+                  "params": "16",
+                  "style": "0",
+                  "name": "box_picker_container"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "82",
+                      "height": "82",
+                      "params": "16",
+                      "style": "0",
+                      "name": "image_border",
+                      "color": "0x0f1f1f1"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "1",
+                          "y": "1",
+                          "width": "80",
+                          "height": "80",
+                          "params": "16",
+                          "style": "0",
+                          "name": "product_image"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "154",
+                      "y": "5",
+                      "width": "152",
+                      "height": "20",
+                      "params": "16",
+                      "style": "0",
+                      "name": "pick_box_title",
+                      "caption": "${catalog.gift_wrapping.pick_box}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "154",
+                      "y": "20",
+                      "width": "155",
+                      "height": "20",
+                      "params": "147473",
+                      "style": "0",
+                      "name": "price_box_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "155",
+                          "height": "17",
+                          "params": "16",
+                          "style": "0",
+                          "name": "pick_box_price_title",
+                          "caption": "${catalog.gift_wrapping.price}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "155",
+                          "y": "1",
+                          "width": "16",
+                          "height": "16",
+                          "params": "16",
+                          "style": "0",
+                          "name": "small_coin"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "common_small_coin"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "92",
+                      "y": "9",
+                      "width": "25",
+                      "height": "25",
+                      "params": "17",
+                      "style": "0",
+                      "name": "box_prev"
+                    },
+                    "children": [
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "7",
+                          "y": "8",
+                          "width": "17",
+                          "height": "16",
+                          "params": "16",
+                          "style": "2",
+                          "color": "0x00"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "121",
+                      "y": "9",
+                      "width": "25",
+                      "height": "25",
+                      "params": "17",
+                      "style": "0",
+                      "name": "box_next"
+                    },
+                    "children": [
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "8",
+                          "y": "8",
+                          "width": "17",
+                          "height": "16",
+                          "params": "16",
+                          "style": "3",
+                          "color": "0x00"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "154",
+                      "y": "50",
+                      "width": "152",
+                      "height": "22",
+                      "params": "16",
+                      "style": "0",
+                      "name": "pick_ribbon_title",
+                      "caption": "${catalog.gift_wrapping.pick_ribbon.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "92",
+                      "y": "47",
+                      "width": "25",
+                      "height": "25",
+                      "params": "17",
+                      "style": "0",
+                      "name": "ribbon_prev"
+                    },
+                    "children": [
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "7",
+                          "y": "8",
+                          "width": "17",
+                          "height": "16",
+                          "params": "16",
+                          "style": "2",
+                          "color": "0x00"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "121",
+                      "y": "47",
+                      "width": "25",
+                      "height": "25",
+                      "params": "17",
+                      "style": "0",
+                      "name": "ribbon_next"
+                    },
+                    "children": [
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "9",
+                          "y": "8",
+                          "width": "17",
+                          "height": "16",
+                          "params": "16",
+                          "style": "3",
+                          "color": "0x00"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "11",
+                  "y": "341",
+                  "width": "306",
+                  "height": "22",
+                  "params": "16",
+                  "style": "0",
+                  "name": "box_color_title",
+                  "caption": "${catalog.gift_wrapping.pick_color}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "20",
+                  "y": "360",
+                  "width": "308",
+                  "height": "30",
+                  "params": "16",
+                  "style": "0",
+                  "name": "color_picker_container",
+                  "color": "0x0eeeeee"
+                },
+                "children": [
+                  {
+                    "tag": "itemgrid_vertical",
+                    "typeId": 53,
+                    "attributes": {
+                      "x": "1",
+                      "y": "2",
+                      "width": "306",
+                      "height": "26",
+                      "params": "786449",
+                      "style": "0",
+                      "name": "color_grid"
+                    },
+                    "children": [],
+                    "vars": {
+                      "spacing": 2,
+                      "scale_to_fit_items": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "171",
+                  "y": "404",
+                  "width": "150",
+                  "height": "25",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "give_gift_button",
+                  "caption": "${catalog.gift_wrapping.give_gift}",
+                  "width_min": "150",
+                  "width_max": "150"
+                },
+                "children": []
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "9",
+                  "y": "407",
+                  "width": "100",
+                  "height": "20",
+                  "params": "17",
+                  "style": "0",
+                  "name": "cancel_link_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "80",
+                      "height": "20",
+                      "params": "16",
+                      "style": "0",
+                      "name": "cancel_link",
+                      "caption": "${catalog.gift_wrapping.cancel}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "u_regular",
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 342,
+  "layoutHeight": 482
+}

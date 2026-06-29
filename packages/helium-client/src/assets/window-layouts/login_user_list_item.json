@@ -1,0 +1,72 @@
+{
+  "name": "login_user_list_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\814_login_user_list_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "172",
+          "height": "20",
+          "params": "131089",
+          "style": "200",
+          "caption": "username",
+          "treshold": "0",
+          "width_min": "172",
+          "width_max": "172"
+        },
+        "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "20",
+              "y": "2",
+              "width": "27",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "title",
+              "caption": "title"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_bold",
+              "text_color": 6710886
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "20",
+              "height": "20",
+              "params": "16",
+              "style": "3",
+              "name": "icon"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "illumina_light_separator_png",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 172,
+  "layoutHeight": 20
+}

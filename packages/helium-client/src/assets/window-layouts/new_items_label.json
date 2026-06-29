@@ -1,0 +1,53 @@
+{
+  "name": "new_items_label",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\101_new_items_label.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "1",
+          "y": "1",
+          "width": "27",
+          "height": "20",
+          "params": "16",
+          "style": "7",
+          "color": "0x0ee2924"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "1",
+              "y": "2",
+              "width": "22",
+              "height": "15",
+              "params": "4194320",
+              "style": "7",
+              "name": "new_textfield",
+              "caption": "new"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 16777215,
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "sharpness": 80,
+              "thickness": -15
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 27,
+  "layoutHeight": 20
+}
