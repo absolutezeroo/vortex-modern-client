@@ -74,7 +74,7 @@ export interface IHeliumConfig extends IHeliumCoreConfig
 	/** Configuration object (alternative to URL) */
 	configuration?: Record<string, string>;
 
-	/** AS3 embedded TextAsset configuration contents keyed by asset name. */
+	/** AS3 embedded text/XML asset contents keyed by asset name. */
 	embeddedConfigurations?: Record<string, string>;
 
 	/** Allow arbitrary configuration properties at the top level */

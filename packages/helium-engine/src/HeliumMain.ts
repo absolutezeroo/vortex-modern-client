@@ -25,6 +25,8 @@ import {HabboFriendBar} from '@habbo/friendbar/HabboFriendBar';
 import {RoomUI} from '@habbo/ui/RoomUI';
 import {Core} from '@core/Core';
 import {AssetLibrary} from '@core/assets/AssetLibrary';
+import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
+import {XmlAsset} from '@core/assets/XmlAsset';
 import {CoreCommunicationManager} from '@core/communication/CoreCommunicationManager';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
 import {CoreSetup} from '@core/runtime/CoreComponentContext';
@@ -83,6 +85,15 @@ const CORE_RATIO = 0.6;
  * @see sources/win63_2021_version/HabboAirMain.as line 32
  */
 const INIT_STEPS = 3;
+
+const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
+	'action_offset_lay',
+	'action_offset_swim',
+	'HabboAvatarAnimation',
+	'HabboAvatarFigure',
+	'HabboAvatarGeometry',
+	'HabboAvatarPartSets',
+];
 
 
 /**
@@ -462,6 +473,31 @@ export class HeliumMain implements IHeliumMain
 		this._application = null;
 	}
 
+	private registerEmbeddedAvatarAssets(config?: IHeliumConfig): void
+	{
+		if (!this._assets || !config?.embeddedConfigurations)
+		{
+			return;
+		}
+
+		const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
+			?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
+
+		for (const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES)
+		{
+			const content = config.embeddedConfigurations[assetName];
+
+			if (content === undefined)
+			{
+				continue;
+			}
+
+			const asset = new XmlAsset(declaration, assetName);
+
+			asset.setUnknownContent(content);
+			this._assets.setAsset(assetName, asset, true);
+		}
+	}
 	/**
 	 * Create Core and prepare all components.
 	 *
@@ -485,6 +521,7 @@ export class HeliumMain implements IHeliumMain
 		// Asset Library — manages all game assets
 		this._assets = new AssetLibrary(ctx);
 		ctx.attachComponent(this._assets, [IID_AssetLibrary]);
+		this.registerEmbeddedAvatarAssets(config);
 
 		// Core Communication Manager — low-level socket communication
 		const coreCommunication = new CoreCommunicationManager(ctx);
@@ -701,59 +738,10 @@ export class HeliumMain implements IHeliumMain
 			await config.initConfigurationDownload();
 		}
 
-		if (resources.externalUiVariablesUrl && resources.externalUiVariablesHash)
-		{
-			const externalUiVariablesUrl = `${resources.externalUiVariablesUrl}/${resources.externalUiVariablesHash}`;
-
-			config.setProperty(HabboProperty.EXTERNAL_VARIABLES, externalUiVariablesUrl);
-
-			await config.initConfigurationDownload();
-		}
-
-		// Override config properties with hash-derived URLs (url/hash format)
-		if (resources.furnitureDataUrl && resources.furnitureDataHash)
-		{
-			config.setProperty('furnidata.url', `${resources.furnitureDataUrl}/${resources.furnitureDataHash}`);
-		}
-
-		if (resources.effectMapUrl && resources.effectMapHash)
-		{
-			config.setProperty('avatar.effectmap.url', `${resources.effectMapUrl}/${resources.effectMapHash}`);
-		}
-
-		if (resources.productDataUrl && resources.productDataHash)
-		{
-			config.setProperty('productdata.url', `${resources.productDataUrl}/${resources.productDataHash}`);
-		}
 
 		if (resources.figureDataUrl && resources.figureDataHash)
 		{
-			config.setProperty('avatar.figuredata.url', `${resources.figureDataUrl}/${resources.figureDataHash}`);
-		}
-
-		if (resources.figureMapUrl && resources.figureMapHash)
-		{
-			config.setProperty('avatar.figuremap.url', `${resources.figureMapUrl}/${resources.figureMapHash}`);
-		}
-
-		if (resources.habboAvatarActionsUrl && resources.habboAvatarActionsHash)
-		{
-			config.setProperty('avatar.actions.url', `${resources.habboAvatarActionsUrl}/${resources.habboAvatarActionsHash}`);
-		}
-
-		if (resources.habboAvatarAnimationsUrl && resources.habboAvatarAnimationsHash)
-		{
-			config.setProperty('avatar.animations.url', `${resources.habboAvatarAnimationsUrl}/${resources.habboAvatarAnimationsHash}`);
-		}
-
-		if (resources.habboAvatarGeometryUrl && resources.habboAvatarGeometryHash)
-		{
-			config.setProperty('avatar.geometry.url', `${resources.habboAvatarGeometryUrl}/${resources.habboAvatarGeometryHash}`);
-		}
-
-		if (resources.habboAvatarPartSetsUrl && resources.habboAvatarPartSetsHash)
-		{
-			config.setProperty('avatar.partsets.url', `${resources.habboAvatarPartSetsUrl}/${resources.habboAvatarPartSetsHash}`);
+			config.setProperty('external.figurepartlist.txt', `${resources.figureDataUrl}/${resources.figureDataHash}`);
 		}
 
 		// Trigger furnidata/productdata loading now that URLs are available
@@ -765,7 +753,7 @@ export class HeliumMain implements IHeliumMain
 		// Trigger avatar resource loading now that hash-based URLs are available
 		if (this._avatarRenderManager)
 		{
-			this._avatarRenderManager.onGameDataReady();
+			this._avatarRenderManager.onConfigurationComplete();
 		}
 	}
 

@@ -3,6 +3,7 @@ import type {IAssetLibrary} from '@core/assets';
 import type {IAvatarEffectListener} from './IAvatarEffectListener';
 import type {AvatarStructure} from './AvatarStructure';
 import {EffectAssetDownloadLibrary} from './EffectAssetDownloadLibrary';
+import {getXmlAttribute, getXmlChildElements, getXmlRoot} from './structure/AvatarXmlUtils';
 
 /**
  * Manages downloading avatar effect asset libraries.
@@ -186,34 +187,56 @@ export class EffectAssetDownloadManager extends EventEmitter
 	 * In AS3, iterates XML `<effect>` elements, creating EffectAssetDownloadLibrary
 	 * instances keyed by effect ID string.
 	 */
+	// AS3: sources/win63_version/habbo/avatar/EffectAssetDownloadManager.as::generateMap()
 	private generateMap(data: any): void
 	{
+		const root = getXmlRoot(data);
+
+		if (root)
+		{
+			for (const effectElement of getXmlChildElements(root, 'effect'))
+			{
+				this.addEffectLibrary(
+					getXmlAttribute(effectElement, 'id'),
+					getXmlAttribute(effectElement, 'lib'),
+					'0'
+				);
+			}
+
+			return;
+		}
+
 		if (!data || !data.effects) return;
 
 		for (const effectData of data.effects)
 		{
-			const effectId = String(effectData.id || '');
-			const libName = String(effectData.lib || '');
-			const revision = String(effectData.revision || '0');
-
-			if (effectId === '' || libName === '') continue;
-
-			const library = new EffectAssetDownloadLibrary(
-				libName,
-				revision,
-				this._downloadUrl,
-				this._assetLibrary
+			this.addEffectLibrary(
+				String(effectData.id || ''),
+				String(effectData.lib || ''),
+				String(effectData.revision || '0')
 			);
-
-			library.on(EffectAssetDownloadLibrary.COMPLETE, () => this.onLibraryComplete(library));
-
-			if (!this._effectMap.has(effectId))
-			{
-				this._effectMap.set(effectId, []);
-			}
-
-			this._effectMap.get(effectId)!.push(library);
 		}
+	}
+
+	private addEffectLibrary(effectId: string, libName: string, revision: string): void
+	{
+		if (effectId === '' || libName === '') return;
+
+		const library = new EffectAssetDownloadLibrary(
+			libName,
+			revision,
+			this._downloadUrl,
+			this._assetLibrary
+		);
+
+		library.on(EffectAssetDownloadLibrary.COMPLETE, () => this.onLibraryComplete(library));
+
+		if (!this._effectMap.has(effectId))
+		{
+			this._effectMap.set(effectId, []);
+		}
+
+		this._effectMap.get(effectId)!.push(library);
 	}
 
 	/**

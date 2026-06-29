@@ -20,20 +20,6 @@ interface HashesData
  */
 export class GameDataResources implements IGameDataResources
 {
-	private _effectMapUrl: string = '';
-
-	get effectMapUrl(): string
-	{
-		return this._effectMapUrl;
-	}
-
-	private _effectMapHash: string = '';
-
-	get effectMapHash(): string
-	{
-		return this._effectMapHash;
-	}
-
 	private _externalFlashTextsUrl: string = '';
 
 	get externalFlashTextsUrl(): string
@@ -46,20 +32,6 @@ export class GameDataResources implements IGameDataResources
 	get externalFlashTextsHash(): string
 	{
 		return this._externalFlashTextsHash;
-	}
-
-	private _externalUiVariablesUrl: string = '';
-
-	get externalUiVariablesUrl(): string
-	{
-		return this._externalUiVariablesUrl;
-	}
-
-	private _externalUiVariablesHash: string = '';
-
-	get externalUiVariablesHash(): string
-	{
-		return this._externalUiVariablesHash;
 	}
 
 	private _externalVariablesUrl: string = '';
@@ -108,20 +80,6 @@ export class GameDataResources implements IGameDataResources
 		return this._figureDataHash;
 	}
 
-	private _figureMapUrl: string = '';
-
-	get figureMapUrl(): string
-	{
-		return this._figureMapUrl;
-	}
-
-	private _figureMapHash: string = '';
-
-	get figureMapHash(): string
-	{
-		return this._figureMapHash;
-	}
-
 	private _furnitureDataUrl: string = '';
 
 	// AS3: sources/win63_version/core/localization/class_2118.as::getFurniDataUrl()
@@ -136,62 +94,6 @@ export class GameDataResources implements IGameDataResources
 	get furnitureDataHash(): string
 	{
 		return this._furnitureDataHash;
-	}
-
-	private _habboAvatarActionsUrl: string = '';
-
-	get habboAvatarActionsUrl(): string
-	{
-		return this._habboAvatarActionsUrl;
-	}
-
-	private _habboAvatarActionsHash: string = '';
-
-	get habboAvatarActionsHash(): string
-	{
-		return this._habboAvatarActionsHash;
-	}
-
-	private _habboAvatarAnimationsUrl: string = '';
-
-	get habboAvatarAnimationsUrl(): string
-	{
-		return this._habboAvatarAnimationsUrl;
-	}
-
-	private _habboAvatarAnimationsHash: string = '';
-
-	get habboAvatarAnimationsHash(): string
-	{
-		return this._habboAvatarAnimationsHash;
-	}
-
-	private _habboAvatarGeometryUrl: string = '';
-
-	get habboAvatarGeometryUrl(): string
-	{
-		return this._habboAvatarGeometryUrl;
-	}
-
-	private _habboAvatarGeometryHash: string = '';
-
-	get habboAvatarGeometryHash(): string
-	{
-		return this._habboAvatarGeometryHash;
-	}
-
-	private _habboAvatarPartSetsUrl: string = '';
-
-	get habboAvatarPartSetsUrl(): string
-	{
-		return this._habboAvatarPartSetsUrl;
-	}
-
-	private _habboAvatarPartSetsHash: string = '';
-
-	get habboAvatarPartSetsHash(): string
-	{
-		return this._habboAvatarPartSetsHash;
 	}
 
 	private _productDataUrl: string = '';
@@ -233,62 +135,39 @@ export class GameDataResources implements IGameDataResources
 
 			switch (entry.name)
 			{
-				case 'effect_map':
-					resources._effectMapUrl = url;
-					resources._effectMapHash = entry.hash;
-					break;
 				case 'external_flash_texts':
 					resources._externalFlashTextsUrl = url;
 					resources._externalFlashTextsHash = entry.hash;
-					break;
-				case 'external_renderer_variables':
-				case 'external_variables':
-					resources._externalVariablesUrl = url;
-					resources._externalVariablesHash = entry.hash;
-					break;
-				case 'external_ui_variables':
-					resources._externalUiVariablesUrl = url;
-					resources._externalUiVariablesHash = entry.hash;
 					break;
 				case 'external_texts':
 					resources._externalTextsUrl = url;
 					resources._externalTextsHash = entry.hash;
 					break;
-				case 'figure_data':
-					resources._figureDataUrl = url;
-					resources._figureDataHash = entry.hash;
-					break;
-				case 'figure_map':
-					resources._figureMapUrl = url;
-					resources._figureMapHash = entry.hash;
+				case 'external_variables':
+					resources._externalVariablesUrl = url;
+					resources._externalVariablesHash = entry.hash;
 					break;
 				case 'furnidata':
-				case 'furniture_data':
 					resources._furnitureDataUrl = url;
 					resources._furnitureDataHash = entry.hash;
 					break;
-				case 'habbo_avatar_actions':
-					resources._habboAvatarActionsUrl = url;
-					resources._habboAvatarActionsHash = entry.hash;
-					break;
-				case 'habbo_avatar_animations':
-					resources._habboAvatarAnimationsUrl = url;
-					resources._habboAvatarAnimationsHash = entry.hash;
-					break;
-				case 'habbo_avatar_geometry':
-					resources._habboAvatarGeometryUrl = url;
-					resources._habboAvatarGeometryHash = entry.hash;
-					break;
-				case 'habbo_avatar_part_sets':
-					resources._habboAvatarPartSetsUrl = url;
-					resources._habboAvatarPartSetsHash = entry.hash;
+				case 'figuredata':
+					resources._figureDataUrl = url;
+					resources._figureDataHash = entry.hash;
 					break;
 				case 'productdata':
-				case 'product_data':
 					resources._productDataUrl = url;
 					resources._productDataHash = entry.hash;
 					break;
 			}
+		}
+
+		if (!resources._externalTextsUrl && !resources._externalTextsHash &&
+			resources._externalFlashTextsUrl && resources._externalFlashTextsHash)
+		{
+			// Current asset hosts can expose the AS3 external_texts payload under the Flash-era external_flash_texts name.
+			resources._externalTextsUrl = resources._externalFlashTextsUrl;
+			resources._externalTextsHash = resources._externalFlashTextsHash;
 		}
 
 		return resources;

@@ -1,28 +1,34 @@
+import {getXmlAttribute, getXmlRoot} from '../structure/AvatarXmlUtils';
+
 /**
- * Represents an action type with its behavioral flags, parsed from JSON.
+ * Represents an action type with its behavioral flags, parsed from AS3 XML.
  *
  * @see sources/win63_version/habbo/avatar/actions/ActionType.as
  */
 export class ActionType
 {
+	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::ActionType()
 	constructor(data: any)
 	{
-		this._id = parseInt(data.value) || 0;
-		this._value = parseInt(data.value) || 0;
+		const element = getXmlRoot(data);
+		const value = element ? getXmlAttribute(element, 'value') : data.value;
+
+		this._id = parseInt(value) || 0;
+		this._value = parseInt(value) || 0;
 		this._prevents = [];
 		this._preventHeadTurn = true;
 		this._isAnimated = true;
 
-		const prevents: string = String(data.prevents ?? '');
+		const prevents = element ? getXmlAttribute(element, 'prevents') : String(data.prevents ?? '');
 
 		if (prevents !== '')
 		{
 			this._prevents = prevents.split(',');
 		}
 
-		this._preventHeadTurn = (String(data.preventheadturn) === 'true');
+		this._preventHeadTurn = (element ? getXmlAttribute(element, 'preventheadturn') : String(data.preventheadturn)) === 'true';
 
-		const animated: string = String(data.animated ?? '');
+		const animated = element ? getXmlAttribute(element, 'animated') : String(data.animated ?? '');
 
 		if (animated === '')
 		{
@@ -36,9 +42,7 @@ export class ActionType
 
 	private _id: number;
 
-	/**
-	 * The action type numeric identifier.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get id()
 	public get id(): number
 	{
 		return this._id;
@@ -46,9 +50,7 @@ export class ActionType
 
 	private _value: number;
 
-	/**
-	 * The action type value.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get value()
 	public get value(): number
 	{
 		return this._value;
@@ -56,9 +58,7 @@ export class ActionType
 
 	private _prevents: string[];
 
-	/**
-	 * The list of action identifiers that this type prevents.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get prevents()
 	public get prevents(): string[]
 	{
 		return this._prevents;
@@ -66,9 +66,7 @@ export class ActionType
 
 	private _preventHeadTurn: boolean;
 
-	/**
-	 * Whether this action type prevents head turning.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get preventHeadTurn()
 	public get preventHeadTurn(): boolean
 	{
 		return this._preventHeadTurn;
@@ -76,9 +74,7 @@ export class ActionType
 
 	private _isAnimated: boolean;
 
-	/**
-	 * Whether this action type is animated.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get isAnimated()
 	public get isAnimated(): boolean
 	{
 		return this._isAnimated;

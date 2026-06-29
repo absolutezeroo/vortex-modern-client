@@ -7,6 +7,7 @@ import {AnimationManager} from './animation/AnimationManager';
 import {AvatarImagePartContainer} from './AvatarImagePartContainer';
 import {AvatarDirectionAngle} from './enum/AvatarDirectionAngle';
 import {AvatarModelGeometry} from './geometry/AvatarModelGeometry';
+import type {IAssetLibrary} from '@core/assets';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import {AnimationData} from './structure/AnimationData';
@@ -30,6 +31,7 @@ export class AvatarStructure
 	private _partSetsData: PartSetsData;
 	private _animationData: AnimationData;
 	private _defaultAction: ActionDefinition | null = null;
+	private _defaultLayAction: ActionDefinition | null = null;
 	private _mandatorySetTypeCache: Map<string, Map<number, string[]>>;
 
 	constructor()
@@ -65,20 +67,28 @@ export class AvatarStructure
 		this._geometry = new AvatarModelGeometry(data);
 	}
 
-	public initActions(data: any): void
+	// AS3: sources/win63_version/habbo/avatar/AvatarStructure.as::initActions()
+	public initActions(assetsOrData: IAssetLibrary | any, data: any = null): void
 	{
-		if (!data) return;
+		const actionData = data !== null ? data : assetsOrData;
 
-		this._actionManager = new AvatarActionManager(data);
+		if (!actionData) return;
+
+		this._actionManager = data !== null
+			? new AvatarActionManager(assetsOrData as IAssetLibrary, actionData)
+			: new AvatarActionManager(actionData);
 		this._defaultAction = this._actionManager.getDefaultAction();
+		this._defaultLayAction = this._actionManager.getDefaultLayAction();
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/AvatarStructure.as::updateActions()
 	public updateActions(data: any): void
 	{
 		if (this._actionManager)
 		{
 			this._actionManager.updateActions(data);
 			this._defaultAction = this._actionManager.getDefaultAction();
+			this._defaultLayAction = this._actionManager.getDefaultLayAction();
 		}
 	}
 
@@ -114,9 +124,10 @@ export class AvatarStructure
 		return this._figureSetData.parse(data);
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/AvatarStructure.as::injectFigureData()
 	public injectFigureData(data: any): void
 	{
-		this._figureSetData.injectJSON(data);
+		this._figureSetData.injectXML(data);
 	}
 
 	public registerAnimation(data: any): void
@@ -448,7 +459,9 @@ export class AvatarStructure
 
 					if (activeParts.indexOf(part.type) === -1)
 					{
-						actionDef = this._defaultAction!;
+						actionDef = action.definition.geometryType === 'horizontal' && this._defaultLayAction !== null
+							? this._defaultLayAction
+							: this._defaultAction!;
 					}
 
 					const partDef = this._partSetsData.getPartDefinition(part.type);
@@ -574,6 +587,8 @@ export class AvatarStructure
 	{
 		this._geometry = null;
 		this._actionManager = null;
+		this._defaultAction = null;
+		this._defaultLayAction = null;
 		this._mandatorySetTypeCache.clear();
 	}
 

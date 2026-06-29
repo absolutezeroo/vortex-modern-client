@@ -1,3 +1,5 @@
+import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtils';
+
 /**
  * Represents a named set of active body part types used during avatar rendering.
  *
@@ -8,10 +10,21 @@ export class ActivePartSet
 	// AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::ActivePartSet()
 	constructor(data: any)
 	{
-		this._id = String(data.id ?? data['@id'] ?? '');
+		const element = getXmlRoot(data);
+
+		this._id = element ? getXmlAttribute(element, 'id') : String(data.id ?? data['@id'] ?? '');
 		this._parts = [];
 
-		// Nitro: activeParts (camelCase array), XML-JSON: activePart
+		if (element)
+		{
+			for (const activePart of getXmlChildElements(element, 'activePart'))
+			{
+				this._parts.push(getXmlAttribute(activePart, 'set-type'));
+			}
+
+			return;
+		}
+
 		const rawParts = data.activeParts || data.activePart;
 
 		if (rawParts)
@@ -20,7 +33,6 @@ export class ActivePartSet
 
 			for (const part of activeParts)
 			{
-				// Nitro: camelCase (setType), XML-JSON: hyphenated (set-type)
 				this._parts.push(String(part.setType ?? part['set-type'] ?? ''));
 			}
 		}
@@ -28,6 +40,7 @@ export class ActivePartSet
 
 	private _id: string;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get id()
 	public get id(): string
 	{
 		return this._id;
@@ -35,6 +48,7 @@ export class ActivePartSet
 
 	private _parts: string[];
 
+	// AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get parts()
 	public get parts(): string[]
 	{
 		return this._parts;

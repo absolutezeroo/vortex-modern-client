@@ -1,3 +1,5 @@
+import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../structure/AvatarXmlUtils';
+
 /**
  * Represents a set of body parts for avatar rendering.
  *
@@ -9,36 +11,54 @@ export class AvatarSet
 	private _bodyPartIds: string[];
 	private _allBodyPartIds: string[];
 
+	// AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::AvatarSet()
 	constructor(data: any)
 	{
-		this._id = String(data.id);
+		const element = getXmlRoot(data);
 
-		// Nitro: data.main (boolean), XML-JSON: data.main (string "1"/"0")
-		this._isMain = Boolean(typeof data.main === 'boolean' ? data.main : parseInt(data.main));
+		this._id = element ? getXmlAttribute(element, 'id') : String(data.id);
+		this._isMain = element
+			? Boolean(parseInt(getXmlAttribute(element, 'main')))
+			: Boolean(typeof data.main === 'boolean' ? data.main : parseInt(data.main));
 		this._subSets = new Map();
 		this._bodyPartIds = [];
 
-		// Nitro: avatarSets (camelCase), XML-JSON: avatarsets (lowercase)
-		const subSets = data.avatarSets || data.avatarsets;
-
-		if (subSets)
+		if (element)
 		{
-			for (const subData of subSets)
+			for (const subElement of getXmlChildElements(element, 'avatarset'))
 			{
-				const subSet = new AvatarSet(subData);
+				const subSet = new AvatarSet(subElement);
 
-				this._subSets.set(String(subData.id), subSet);
+				this._subSets.set(getXmlAttribute(subElement, 'id'), subSet);
+			}
+
+			for (const bodyPart of getXmlChildElements(element, 'bodypart'))
+			{
+				this._bodyPartIds.push(getXmlAttribute(bodyPart, 'id'));
 			}
 		}
-
-		// Nitro: bodyParts (camelCase), XML-JSON: bodyparts (lowercase)
-		const bodyParts = data.bodyParts || data.bodyparts;
-
-		if (bodyParts)
+		else
 		{
-			for (const bp of bodyParts)
+			const subSets = data.avatarSets || data.avatarsets;
+
+			if (subSets)
 			{
-				this._bodyPartIds.push(String(bp.id));
+				for (const subData of subSets)
+				{
+					const subSet = new AvatarSet(subData);
+
+					this._subSets.set(String(subData.id), subSet);
+				}
+			}
+
+			const bodyParts = data.bodyParts || data.bodyparts;
+
+			if (bodyParts)
+			{
+				for (const bp of bodyParts)
+				{
+					this._bodyPartIds.push(String(bp.id));
+				}
 			}
 		}
 
@@ -54,6 +74,7 @@ export class AvatarSet
 
 	private _id: string;
 
+	// AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::get id()
 	public get id(): string
 	{
 		return this._id;
@@ -61,6 +82,7 @@ export class AvatarSet
 
 	private _isMain: boolean;
 
+	// AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::get isMain()
 	public get isMain(): boolean
 	{
 		if (this._isMain) return true;
@@ -73,18 +95,22 @@ export class AvatarSet
 		return false;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::findAvatarSet()
 	public findAvatarSet(id: string): AvatarSet | null
 	{
 		if (id === this._id) return this;
 
 		for (const subSet of this._subSets.values())
 		{
-			if (subSet.findAvatarSet(id) != null) return subSet;
+			const found = subSet.findAvatarSet(id);
+
+			if (found !== null) return found;
 		}
 
 		return null;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/geometry/AvatarSet.as::getBodyParts()
 	public getBodyParts(): string[]
 	{
 		return [...this._allBodyPartIds];

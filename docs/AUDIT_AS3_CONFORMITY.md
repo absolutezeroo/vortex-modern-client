@@ -143,7 +143,6 @@ Les 5 renderers sont des artefacts Flash — le système TS utilise déjà des r
 
 | Fichier                  | Élément inventé                                    |
 |--------------------------|----------------------------------------------------|
-| `AvatarRenderManager.ts` | Méthode `onGameDataReady()`                        |
 | `MessageRegistry.ts`     | Classe entière (pas de correspondance AS3 claire)  |
 
 ---
@@ -195,12 +194,9 @@ Les 5 renderers sont des artefacts Flash — le système TS utilise déjà des r
 
 - **AvatarRenderManager.ts** :
   - 7+ méthodes manquantes : `getAssetByName()`, `getAnimationManager()`, `resolveClubLevel()`, `getItemIds()`, `purgeAssets()`, `resetAssetManager()`, mode getter/setter
-  - Méthode `onGameDataReady()` INVENTÉE (absente de l'AS3)
 
 - **AvatarStructure.ts** :
   - N'hérite PAS de `EventDispatcherWrapper` (AS3 oui)
-  - `initActions()` : 1 paramètre (TS) vs 2 (AS3: IAssetLibrary + XML)
-  - `dispose()` manquant
 
 - **IAvatarRenderManager.ts** :
   - 8 méthodes d'interface manquantes : `assets`, `getAssetByName()`, `mode`, `getAnimationManager()`, `resetAssetManager()`, `resolveClubLevel()`, `getItemIds()`, `purgeAssets()`

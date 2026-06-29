@@ -67,7 +67,6 @@ import {Logger} from "@core";
 import {RoomVisualizationData} from './object/visualization/room/RoomVisualizationData';
 import type {IAssetRoomVisualizationData} from './object/visualization/room/rasterizer/basic/PlaneRasterizerTypes';
 import type {NitroAsset} from '@core/assets/NitroAsset';
-import {AssetLoaderEvent, AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
@@ -132,7 +131,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 	private _contentLoader: RoomContentLoader;
 	private _contentLoaderEvents: EventEmitter = new EventEmitter();
 	private _roomInstanceData: Map<number, RoomEngineRoomInstanceData>;
-	private _boundOnContentLoaded: ((type: string) => void);
+	private _boundOnContentLoaded: ((type: string) => void) = this.onContentLoaded.bind(this);
+	private _boundOnContentLoaderReady: (() => void) = this.onContentLoaderReady.bind(this);
 	private _pendingFurnitureViz: Map<string, Array<{
 		roomId: number;
 		objectId: number;
@@ -242,7 +242,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 				{
 					this._configurationManager = config;
 
-					// Load room content once the config manager is available
+					// AS3: configuration availability initializes RoomContentLoader; content URLs are resolved there.
 					if (config)
 					{
 						this._roomDraggingAlwaysCenters = config.getBoolean('room.dragging.always_center');
@@ -252,7 +252,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 							data.roomCamera.activateFollowing(this.cameraFollowDuration);
 						}
 
-						this.loadRoomContent();
 						this.initializeContentLoader();
 					}
 				},
@@ -2238,6 +2237,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 		this._visualizationFactory.dispose();
 
 		// Dispose content loader
+		this.events.off(RoomContentLoader.CONTENT_LOADER_READY, this._boundOnContentLoaderReady);
 		this._contentLoader.dispose();
 		this._contentLoaderEvents.removeAllListeners();
 		this._pendingFurnitureViz.clear();
@@ -2255,61 +2255,10 @@ export class RoomEngine extends Component implements IRoomEngine,
 	protected override initComponent(): void
 	{
 		// Listen for content load success events (AS3: "RCLE_SUCCESS")
-		this._boundOnContentLoaded = this.onContentLoaded.bind(this);
 		this._contentLoaderEvents.on(RoomContentLoadedEvent.CONTENT_LOAD_SUCCESS, this._boundOnContentLoaded);
 
 		// Register to receive update calls from the context
 		this.registerUpdateReceiver(this, 1);
-	}
-
-	/**
-	 * Load the room content bundle (.nitro) containing floor/wall textures.
-	 * Based on AS3: RoomContentLoader loading room assets.
-	 */
-	private loadRoomContent(): void
-	{
-		const assetName = 'room';
-
-		// Check if already loaded
-		if (this.hasAsset(assetName))
-		{
-			this.onRoomContentReady();
-			return;
-		}
-
-		// Build URL from configuration using generic.asset.url template
-		// e.g. generic.asset.url = "${asset.url}/bundled/generic/%libname%.nitro"
-		let url = '';
-
-		if (this._configurationManager)
-		{
-			url = this._configurationManager.getProperty('generic.asset.url', {libname: assetName});
-		}
-
-		if (!url)
-		{
-			log.warn('[RoomEngine] Cannot load room content - no generic.asset.url configured');
-			return;
-		}
-
-		log.debug(`[RoomEngine] Loading room content from: ${url}`);
-
-		const loader = this.loadAssetFromFile(assetName, url);
-
-		if (loader)
-		{
-			loader.events.on('event', (event: AssetLoaderEvent) =>
-			{
-				if (event.type === AssetLoaderEventType.COMPLETE)
-				{
-					this.onRoomContentReady();
-				}
-				else if (event.type === AssetLoaderEventType.ERROR)
-				{
-					log.warn('[RoomEngine] Failed to load room content bundle');
-				}
-			});
-		}
 	}
 
 	/**
@@ -2984,20 +2933,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 			this._contentLoader.sessionDataManager = this._sessionDataManager;
 		}
 
-		// Pre-load placeholder content types
-		const placeHolderTypes = this._contentLoader.getPlaceHolderTypes();
-
-		for(const type of placeHolderTypes)
-		{
-			if(type === 'room')
-			{
-				continue;
-			}
-
-			this._contentLoader.loadObjectContent(type, this._contentLoaderEvents);
-		}
-
-		// Set up room manager categories, content loader, and initialize
+		// AS3: _roomManager categories and content loader are set here; initialize() waits for RCL_LOADER_READY.
 		if(this._roomManager)
 		{
 			this._roomManager.addObjectUpdateCategory(10);
@@ -3006,13 +2942,21 @@ export class RoomEngine extends Component implements IRoomEngine,
 			this._roomManager.addObjectUpdateCategory(200);
 			this._roomManager.addObjectUpdateCategory(0);
 			this._roomManager.setContentLoader(this._contentLoader);
-
-			// In AS3, _roomManager.initialize() is called from onContentLoaderReady()
-			// after RCL_LOADER_READY. In our TS app, DI resolution is async and room
-			// data arrives before furniture data is loaded. Initialize immediately —
-			// the room manager loads placeholders and transitions independently.
-			this._roomManager.initialize(null, this);
 		}
+
+		this.events.off(RoomContentLoader.CONTENT_LOADER_READY, this._boundOnContentLoaderReady);
+		this.events.on(RoomContentLoader.CONTENT_LOADER_READY, this._boundOnContentLoaderReady);
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::onContentLoaderReady()
+	private onContentLoaderReady(): void
+	{
+		if(this._roomManager === null)
+		{
+			return;
+		}
+
+		this._roomManager.initialize(null, this);
 	}
 
 	/**
@@ -3091,6 +3035,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 	 */
 	private onContentLoaded(type: string): void
 	{
+		if(type === OBJECT_TYPE_ROOM)
+		{
+			this.onRoomContentReady();
+		}
+
 		// Create visualizations for all pending objects of this type
 		const pending = this._pendingFurnitureViz.get(type);
 

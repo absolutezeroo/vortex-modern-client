@@ -1,19 +1,26 @@
 import {AvatarScaleType} from '../enum/AvatarScaleType';
+import {getXmlAttribute, getXmlRoot} from './AvatarXmlUtils';
 
 /**
  * Data class representing a canvas configuration for avatar rendering.
- * Parsed from JSON with properties: id, width, height, dx, dy.
+ * Parsed from AS3 XML or converted JSON with properties: id, width, height, dx, dy.
  *
  * @see sources/win63_version/habbo/avatar/structure/AvatarCanvas.as
  */
 export class AvatarCanvas
 {
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::AvatarCanvas()
 	constructor(data: any, scale: string)
 	{
-		this._id = String(data.id);
-		this._width = parseInt(data.width) || 0;
-		this._height = parseInt(data.height) || 0;
-		this._offset = {x: parseInt(data.dx) || 0, y: parseInt(data.dy) || 0};
+		const element = getXmlRoot(data);
+
+		this._id = element ? getXmlAttribute(element, 'id') : String(data.id);
+		this._width = parseInt(element ? getXmlAttribute(element, 'width') : data.width) || 0;
+		this._height = parseInt(element ? getXmlAttribute(element, 'height') : data.height) || 0;
+		this._offset = {
+			x: parseInt(element ? getXmlAttribute(element, 'dx') : data.dx) || 0,
+			y: parseInt(element ? getXmlAttribute(element, 'dy') : data.dy) || 0
+		};
 
 		if (scale === AvatarScaleType.LARGE)
 		{
@@ -27,9 +34,7 @@ export class AvatarCanvas
 
 	private _id: string;
 
-	/**
-	 * The canvas identifier.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get id()
 	public get id(): string
 	{
 		return this._id;
@@ -37,9 +42,7 @@ export class AvatarCanvas
 
 	private _width: number;
 
-	/**
-	 * The canvas width in pixels.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get width()
 	public get width(): number
 	{
 		return this._width;
@@ -47,9 +50,7 @@ export class AvatarCanvas
 
 	private _height: number;
 
-	/**
-	 * The canvas height in pixels.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get height()
 	public get height(): number
 	{
 		return this._height;
@@ -57,9 +58,7 @@ export class AvatarCanvas
 
 	private _offset: { x: number; y: number };
 
-	/**
-	 * The canvas offset point.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get offset()
 	public get offset(): { x: number; y: number }
 	{
 		return this._offset;
@@ -67,9 +66,7 @@ export class AvatarCanvas
 
 	private _regPoint: { x: number; y: number };
 
-	/**
-	 * The canvas registration point used for alignment.
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarCanvas.as::get regPoint()
 	public get regPoint(): { x: number; y: number }
 	{
 		return this._regPoint;

@@ -32,11 +32,6 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
-			'/images': {
-				target: 'http://vortex-assets.local',
-				changeOrigin: true,
-				secure: false,
-			},
 			'/dcr': {
 				target: 'http://vortex-assets.local',
 				changeOrigin: true,
@@ -47,28 +42,11 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
-			'/bundled': {
+			'/gordon': {
 				target: 'http://vortex-assets.local',
 				changeOrigin: true,
 				secure: false,
-			},
-			'/sounds': {
-				target: 'http://vortex-assets.local',
-				changeOrigin: true,
-				secure: false,
-			},
-			'/__habbo_images': {
-				target: 'https://images.habbo.com',
-				changeOrigin: true,
-				secure: true,
-				rewrite: path => path.replace(/^\/__habbo_images/, ''),
-			},
-			'/__habbo': {
-				target: 'https://www.habbo.com',
-				changeOrigin: true,
-				secure: true,
-				rewrite: path => path.replace(/^\/__habbo/, ''),
-			},
+			}
 		},
 	},
 	build: {

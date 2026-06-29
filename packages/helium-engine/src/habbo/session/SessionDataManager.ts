@@ -215,6 +215,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	private _furnitureDataParser: FurnitureDataParser | null = null;
 	private _loadingFurnitureDataParser: FurnitureDataParser | null = null;
 	private _furniDataReady: boolean = false;
+	private _furniDataListenersNotified: boolean = false;
 	private _furniDataListeners: Set<IFurniDataListener> = new Set();
 	// Product data - owned by SessionDataManager (AS3 pattern)
 	private _products: Map<string, IProductData> = new Map();
@@ -1022,13 +1023,13 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	/**
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 1122
 	 */
-	getFurniData(listener: IFurniDataListener): IFurnitureData[]
+	getFurniData(listener: IFurniDataListener): IFurnitureData[] | null
 	{
-		if (this._floorItems.size === 0 && this._wallItems.size === 0)
+		if (this._floorItems.size === 0)
 		{
 			this._furniDataListeners.add(listener);
 
-			return [];
+			return null;
 		}
 
 		const result: IFurnitureData[] = [];
@@ -1092,7 +1093,6 @@ export class SessionDataManager extends Component implements ISessionDataManager
 		this._wallItems = new Map();
 		this._floorItemsByName = new Map();
 		this._wallItemsByName = new Map();
-		this._furniDataReady = false;
 		this.initFurnitureData(false);
 	}
 
@@ -1259,7 +1259,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	}
 
 	/**
-	 * Called when configuration properties (furnidata.url, productdata.url) are available.
+	 * Called when configuration properties (furnidata.load.url, productdata.load.url) are available.
 	 * Triggers furniture and product data loading.
 	 *
 	 * In AS3 this is the onConfigurationComplete callback from the
@@ -1306,7 +1306,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 * Initialize furniture data parser and start loading
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 297 initFurnitureData()
 	 */
-	private initFurnitureData(dispatchLocalization: boolean = true): void
+	private initFurnitureData(critical: boolean = true): void
 	{
 		if (this._loadingFurnitureDataParser)
 		{
@@ -1318,7 +1318,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
 			this._floorItems,
 			this._wallItems,
 			this._floorItemsByName,
-			this._wallItemsByName
+			this._wallItemsByName,
+			this._localization,
+			critical
 		);
 
 		this._loadingFurnitureDataParser.events.on('FDP_furniture_data_ready', () =>
@@ -1326,9 +1328,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
 			this.onFurnitureReady();
 		});
 
-		if (this.propertyExists('furnidata.url'))
+		if (this.propertyExists('furnidata.load.url'))
 		{
-			let url = this.getProperty('furnidata.url');
+			let url = this.getProperty('furnidata.load.url');
 
 			log.info(`Loading furnidata from: ${url}`);
 
@@ -1344,7 +1346,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 		}
 		else
 		{
-			log.warn('furnidata.url property not found in configuration');
+			log.warn('furnidata.load.url property not found in configuration');
 		}
 	}
 
@@ -1360,9 +1362,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
 			this._productDataParser = null;
 		}
 
-		if (this.propertyExists('productdata.url'))
+		if (this.propertyExists('productdata.load.url'))
 		{
-			const url = this.getProperty('productdata.url');
+			const url = this.getProperty('productdata.load.url');
 
 			this._productDataParser = new ProductDataParser(url, this._products);
 			this._productDataParser.events.on('PDP_product_data_ready', () =>
@@ -1387,9 +1389,11 @@ export class SessionDataManager extends Component implements ISessionDataManager
 		this._furnitureDataParser = this._loadingFurnitureDataParser;
 		this._loadingFurnitureDataParser = null;
 
-		if (!this._furniDataReady)
+		this._furniDataReady = true;
+
+		if (!this._furniDataListenersNotified)
 		{
-			this._furniDataReady = true;
+			this._furniDataListenersNotified = true;
 			this.notifyFurniDataListeners();
 		}
 
@@ -1588,6 +1592,12 @@ export class SessionDataManager extends Component implements ISessionDataManager
 		this._systemOpen = parser.isOpen;
 		this._systemShutDown = parser.onShutDown;
 		this._isAuthenticHabbo = parser.isAuthenticHabbo;
+
+		if (this._furniDataReady && !this._furniDataListenersNotified)
+		{
+			this._furniDataListenersNotified = true;
+			this.notifyFurniDataListeners();
+		}
 
 		// log.debug(`Availability: Open=${this._systemOpen}, ShutDown=${this._systemShutDown}`);
 	}

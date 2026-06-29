@@ -17,10 +17,20 @@ import {PlaceholderAvatarImage} from './PlaceholderAvatarImage';
 import {AvatarAssetDownloadManager} from './AvatarAssetDownloadManager';
 import {EffectAssetDownloadManager} from './EffectAssetDownloadManager';
 import {AvatarRenderEvent} from './enum/AvatarRenderEvent';
-import {EMBEDDED_AVATAR_ANIMATION_DATA} from './structure/EmbeddedAvatarAnimationData';
+import {AvatarStructureDownload} from './structure/AvatarStructureDownload';
+import type {IStructureData} from './structure/IStructureData';
+import {parseXmlDocument} from './structure/AvatarXmlUtils';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('AvatarRenderManager');
+
+const EMBEDDED_AVATAR_ACTIONS_XML = `<actions><action  id="Default" precedence="1000" state="std" main="1" isdefault="1" geometrytype="vertical" activepartset="figure" assetpartdefinition="std"/>	<!-- baked in actions for snowwar -->
+				<action  id="SnowWarRun" state="swrun" precedence="104" main="1" geometrytype="vertical" activepartset="snowwarrun" assetpartdefinition="swrun" prevents="fx.2,fx.3,fx.6,fx.14,fx.15,fx.17,fx.18,fx.19,fx.20,fx.21,fx.22,fx.33,fx.34,fx.35,fx.36,fx.38,fx.39,fx.45,fx.46,fx.48,fx.54,fx.55,fx.56,fx.57,fx.58,fx.69,fx.71,fx.72,fx.89,fx.90,fx.91,fx.92,fx.94,fx.97,fx.100,fx.104,fx.107,fx.108,fx.115,fx.116,fx.117,fx.118,fx.119,fx.120,fx.121,fx.122,fx.123,fx.124,fx.125,fx.127,fx.129,fx.130,fx.131,fx.132,fx.134,fx.135,fx.136,fx.137,fx.138,fx.139,fx.140,fx.141,fx.142,fx.143,fx.144,fx.145,fx.146,fx.147,fx.148,fx.149,fx.150,fx.151,fx.152,fx.153,fx.154,fx.155,fx.156,fx.157,fx.158,fx.159,fx.160,fx.161,fx.162,fx.164,fx.165,fx.166,fx167,fx168,fx169,fx170,fx171,fx172,fx173,fx174,fx175,fx176,dance"/>
+				<action  id="SnowWarDieFront" state="swdiefront" precedence="105" main="1" geometrytype="swhorizontal" activepartset="snowwardiefront" assetpartdefinition="swdie" startfromframezero="true" prevents="fx.2,fx.3,fx.6,fx.14,fx.15,fx.17,fx.18,fx.19,fx.20,fx.21,fx.22,fx.33,fx.34,fx.35,fx.36,fx.38,fx.39,fx.45,fx.46,fx.48,fx.54,fx.55,fx.56,fx.57,fx.58,fx.69,fx.71,fx.72,fx.89,fx.90,fx.91,fx.92,fx.94,fx.97,fx.100,fx.104,fx.105,fx.107,fx.108,fx.115,fx.116,fx.117,fx.118,fx.119,fx.120,fx.121,fx.122,fx.123,fx.124,fx.125,fx.127,fx.129,fx.130,fx.131,fx.132,fx.134,fx.135,fx.136,fx.137,fx.138,fx.139,fx.140,fx.141,fx.142,fx.143,fx.144,fx.145,fx.146,fx.147,fx.148,fx.149,fx.150,fx.151,fx.152,fx.153,fx.154,fx.155,fx.156,fx.157,fx.158,fx.159,fx.160,fx.161,fx.162,fx.164,fx.165,fx.166,fx167,fx168,fx169,fx170,fx171,fx172,fx173,fx174,fx175,fx176,dance"/>
+				<action  id="SnowWarDieBack" state="swdieback" precedence="106" main="1" geometrytype="swhorizontal" activepartset="snowwardieback" assetpartdefinition="swdie" startfromframezero="true" prevents="fx.2,fx.3,fx.6,fx.14,fx.15,fx.17,fx.18,fx.19,fx.20,fx.21,fx.22,fx.33,fx.34,fx.35,fx.36,fx.38,fx.39,fx.45,fx.46,fx.48,fx.54,fx.55,fx.56,fx.57,fx.58,fx.69,fx.71,fx.72,fx.89,fx.90,fx.91,fx.92,fx.94,fx.97,fx.100,fx.104,fx.105,fx.107,fx.108,fx.115,fx.116,fx.117,fx.118,fx.119,fx.120,fx.121,fx.122,fx.123,fx.124,fx.125,fx.127,fx.129,fx.130,fx.131,fx.132,fx.134,fx.135,fx.140,fx.141,fx.142,fx.143,fx.144,fx.145,fx.146,fx.147,fx.148,fx.149,fx.150,fx.151,fx.152,fx.153,fx.154,fx.155,fx.156,fx.157,fx.158,fx.159,fx.160,fx.161,fx.162,fx.164,fx.165,fx.166,fx167,fx168,fx169,fx170,fx171,fx172,fx173,fx174,fx175,fx176,dance"/>
+				<action  id="SnowWarPick" state="swpick" precedence="107" main="1" geometrytype="vertical" activepartset="snowwarpick" assetpartdefinition="swpick" startfromframezero="true" prevents="fx.2,fx.3,fx.6,fx.14,fx.15,fx.17,fx.18,fx.19,fx.20,fx.21,fx.22,fx.33,fx.34,fx.35,fx.36,fx.38,fx.39,fx.45,fx.46,fx.48,fx.54,fx.55,fx.56,fx.57,fx.58,fx.69,fx.71,fx.72,fx.89,fx.90,fx.91,fx.92,fx.94,fx.97,fx.100,fx.104,fx.105,fx.107,fx.108,fx.115,fx.116,fx.117,fx.118,fx.119,fx.120,fx.121,fx.122,fx.123,fx.124,fx.125,fx.127,fx.129,fx.130,fx.131,fx.132,fx.134,fx.135,fx.136,fx.137,fx.138,fx.139,fx.140,fx.141,fx.142,fx.143,fx.144,fx.145,fx.146,fx.147,fx.148,fx.149,fx.150,fx.151,fx.152,fx.153,fx.154,fx.155,fx.156,fx.157,fx.158,fx.159,fx.160,fx.161,fx.162,fx.164,fx.165,fx.166,fx167,fx168,fx169,fx170,fx171,fx172,fx173,fx174,fx175,fx176,dance"/>
+				<action  id="SnowWarThrow" state="swthrow" precedence="108" main="1" geometrytype="vertical" activepartset="snowwarthrow" assetpartdefinition="swthrow" startfromframezero="true" prevents="fx.2,fx.3,fx.6,fx.14,fx.15,fx.17,fx.18,fx.19,fx.20,fx.21,fx.22,fx.33,fx.34,fx.35,fx.36,fx.38,fx.39,fx.45,fx.46,fx.48,fx.54,fx.55,fx.56,fx.57,fx.58,fx.69,fx.71,fx.72,fx.89,fx.90,fx.91,fx.92,fx.94,fx.97,fx.100,fx.104,fx.105,fx.107,fx.108,fx.115,fx.116,fx.117,fx.118,fx.119,fx.120,fx.121,fx.122,fx.123,fx.124,fx.125,fx.127,fx.129,fx.130,fx.131,fx.132,fx.134,fx.135,fx.136,fx.137,fx.138,fx.139,fx.140,fx.141,fx.142,fx.143,fx.144,fx.145,fx.146,fx.147,fx.148,fx.149,fx.150,fx.151,fx.152,fx.153,fx.154,fx.155,fx.156,fx.157,fx.158,fx.159,fx.160,fx.161,fx.162,fx.164,fx.165,fx.166,fx167,fx168,fx169,fx170,fx171,fx172,fx173,fx.174,fx175,fx176,dance"/>
+			</actions>`;
 
 /**
  * Main avatar render manager component. Initializes and manages the avatar rendering system.
@@ -48,6 +58,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 	private _actionsReady: boolean = false;
 	private _animationsReady: boolean = false;
 	private _effectMapReady: boolean = false;
+	private _structureDownload: AvatarStructureDownload | null = null;
 
 	constructor(context: IContext)
 	{
@@ -92,6 +103,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 			),
 		];
 	}
+
 	// AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
 	protected override initComponent(): void
 	{
@@ -232,6 +244,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 		}
 
 		this._pendingFigureDownloads.length = 0;
+		this._structureDownload = null;
 		this._placeholderFigure = null;
 		this._structure.dispose();
 		this._aliasCollection.dispose();
@@ -240,82 +253,70 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 	}
 
 	/**
-	 * Called by HeliumMain when game_data hash URLs become available.
-	 * Loads all avatar resources whose URLs are derived from game_data hashes
-	 * (avatar.actions.url, avatar.figuredata.url, avatar.figuremap.url, etc.)
-	 * and any remaining resources not yet loaded.
-	 */
-	public onGameDataReady(): void
-	{
-		if (!this._configuration) return;
-
-		log.info('Game data URLs available, loading avatar resources...');
-
-		// Load hash-based resources (URLs set by HeliumMain.onGameDataResourcesReady)
-		this.loadActions();
-		this.loadFigureData();
-
-		// Initialize download managers (figure map + effect map)
-		this.initDownloadManagers();
-	}
-
-	/**
-	 * AS3 initComponent(): loads geometry/partsets from asset library (embedded in .nitro bundles),
-	 * registers a hardcoded Default action, and marks animations ready (per-effect only).
+	 * AS3 initComponent(): loads embedded avatar XML assets from AssetLibrary.
 	 *
-	 * @see sources/flash_version/com/sulake/habbo/avatar/AvatarRenderManager.as lines 67-82
+	 * @see sources/win63_version/habbo/avatar/class_49.as
 	 */
 	private onConfigurationReady(): void
 	{
-		if (!this._configuration) return;
+		if (!this._assetLibrary) return;
 
-		log.info('Configuration ready, loading avatar data...');
+		log.info('Loading embedded avatar XML assets...');
 
-		// AS3 line 71: hardcoded Default action as initial fallback
-		this._structure.initActions({
-			action: [{
-				id: 'Default',
-				precedence: '1000',
-				state: 'std',
-				main: '1',
-				isdefault: '1',
-				geometrytype: 'vertical',
-				activepartset: 'figure',
-				assetpartdefinition: 'std'
-			}]
-		});
-		this._actionsReady = true;
-		this._structure.initAnimation(EMBEDDED_AVATAR_ANIMATION_DATA);
+		const embeddedActions = parseXmlDocument(EMBEDDED_AVATAR_ACTIONS_XML);
+
+		this._structure.initGeometry(this.getEmbeddedAvatarAssetContent('HabboAvatarGeometry'));
+		this._geometryReady = true;
+		this._structure.initPartSets(this.getEmbeddedAvatarAssetContent('HabboAvatarPartSets'));
+		this._partSetsReady = true;
+
+		if (embeddedActions !== null)
+		{
+			this._structure.initActions(this._assetLibrary, embeddedActions);
+		}
+
+		this._structure.initAnimation(this.getEmbeddedAvatarAssetContent('HabboAvatarAnimation'));
 		this._animationsReady = true;
-
-		// AS3 uses embedded HabboAvatarPartSets; geometry still follows the existing converted web data path until its XML parser is fully ported.
-		this.loadGeometry();
-		this.loadPartSets();
+		this._structure.initFigureData(this.getEmbeddedAvatarAssetContent('HabboAvatarFigure'));
 
 		this.checkReady();
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
+	public onConfigurationComplete(): void
+	{
+		void this.loadActions();
+		this.loadFigureData();
+		this.initDownloadManagers();
+	}
 	/**
-	 * Load actions from habbo_avatar_actions URL.
-	 * Uses updateActions() to append to the hardcoded Default action.
+	 * AS3 requestActions()/onAvatarActionsLoaded(): loads HabboAvatarActions XML and updates actions.
 	 *
-	 * @see AS3 RoomEngine._Str_1200() loads HabboAvatarActions.xml externally
+	 * @see sources/win63_version/habbo/avatar/class_49.as::requestActions()
+	 * @see sources/win63_version/habbo/avatar/class_49.as::onAvatarActionsLoaded()
 	 */
 	private async loadActions(): Promise<void>
 	{
 		try
 		{
-			const url = this._configuration?.getProperty('avatar.actions.url');
+			let data = this.getEmbeddedAvatarAssetContent('HabboAvatarActions', false);
 
-			if (url)
+			if (data === null)
 			{
-				const response = await fetch(url);
-				const data = await response.json();
+				const url = this.getAvatarActionsUrl();
 
-				this._structure.updateActions(data);
+				if (url !== '')
+				{
+					data = await this.loadXmlFromUrl(url, 'HabboAvatarActions');
+				}
 			}
 
-			this.checkReady();
+			if (data !== null)
+			{
+				this._structure.updateActions(data);
+				this._actionsReady = true;
+				this.checkReady();
+			}
 		}
 		catch (error)
 		{
@@ -323,128 +324,88 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 		}
 	}
 
-	/**
-	 * Fetches avatar geometry JSON from configured URL.
-	 * TODO(AS3): sources/win63_version/habbo/avatar/class_49.as::initComponent() should read HabboAvatarGeometry from assets once AvatarModelGeometry supports AS3 XML directly.
-	 */
-	private async loadGeometry(): Promise<void>
-	{
-		try
-		{
-			const url = this._configuration?.getProperty('avatar.geometry.url');
-
-			if (url)
-			{
-				log.info(`Loading geometry from: ${url}`);
-
-				const response = await fetch(url);
-
-				if (!response.ok)
-				{
-					log.error(`Geometry fetch failed: ${response.status} ${response.statusText}`);
-				}
-				else
-				{
-					const data = await response.json();
-
-					this._structure.initGeometry(data.geometry ?? data);
-					log.info('Loaded geometry data');
-				}
-			}
-			else
-			{
-				log.warn('No avatar.geometry.url configured');
-			}
-
-			this._geometryReady = true;
-			this.checkReady();
-		}
-		catch (error)
-		{
-			log.error('Failed to load geometry data', error);
-			this._geometryReady = true;
-			this.checkReady();
-		}
-	}
-
 	// AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
-	private loadPartSets(): void
-	{
-		this._structure.initPartSets(this.getEmbeddedAvatarAssetContent('HabboAvatarPartSets'));
-		this._partSetsReady = true;
-		this.checkReady();
-	}
-
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
-	private getEmbeddedAvatarAssetContent(assetName: string): unknown | null
+	private getEmbeddedAvatarAssetContent(assetName: string, warnIfMissing: boolean = true): unknown | null
 	{
 		if (!this._assetLibrary || !this._assetLibrary.hasAsset(assetName))
 		{
-			log.warn(`Missing embedded avatar asset: ${assetName}`);
+			if (warnIfMissing)
+			{
+				log.warn(`Missing embedded avatar asset: ${assetName}`);
+			}
 
 			return null;
 		}
 
 		return this._assetLibrary.getAssetByName(assetName)?.content ?? null;
 	}
-	private async loadFigureData(): Promise<void>
+
+	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
+	private loadFigureData(): void
 	{
-		try
+		const url = this._configuration?.getProperty('external.figurepartlist.txt') ?? '';
+
+		if (url === '')
 		{
-			const url = this._configuration?.getProperty('avatar.figuredata.url');
+			return;
+		}
 
-			// log.debug(`Loading figure data from: ${url}`);
-
-			if (url)
-			{
-				const response = await fetch(url);
-
-				if (!response.ok)
-				{
-					log.error(`Figure data fetch failed: ${response.status} ${response.statusText}`);
-				}
-				else
-				{
-					const text = await response.text();
-
-					// Try parsing as JSON first
-					try
-					{
-						const data = JSON.parse(text);
-						const figureData = data.figuredata ?? data.figureData ?? data;
-
-						// log.info(`Figure data parsed as JSON. Top keys: ${Object.keys(data).join(', ')}`);
-						this._structure.initFigureData(figureData);
-					}
-					catch (parseError)
-					{
-						// If JSON parsing fails, try as XML
-						// log.info('Figure data is not JSON, trying XML parser...');
-						const xmlData = this.parseFigureDataXml(text);
-
-						if (xmlData)
-						{
-							this._structure.initFigureData(xmlData);
-						}
-						else
-						{
-							log.error('Failed to parse figure data as JSON or XML');
-						}
-					}
-				}
-			}
-
+		this._structureDownload = new AvatarStructureDownload(url, this._structure.figureData as unknown as IStructureData);
+		this._structureDownload.once(AvatarStructureDownload.STRUCTURE_DONE, () =>
+		{
+			this._structureDownload = null;
+			this._structure.init();
 			this._structureReady = true;
 			this.checkReady();
-		}
-		catch (error)
+		});
+	}
+	private getAvatarActionsUrl(): string
+	{
+		if (!this._configuration)
 		{
-			log.error('Failed to load figure data', error);
-			this._structureReady = true;
-			this.checkReady();
+			return '';
 		}
+
+		const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
+
+		if (this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl))
+		{
+			return dynamicAvatarUrl + 'HabboAvatarActions.xml';
+		}
+
+		return '';
 	}
 
+	private getEffectMapUrl(): string
+	{
+		if (!this._configuration)
+		{
+			return '';
+		}
+
+		const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
+
+		return this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl) ? dynamicAvatarUrl + 'effectmap.xml' : '';
+	}
+	private async loadXmlFromUrl(url: string, assetName: string): Promise<Document | null>
+	{
+		const response = await fetch(url);
+
+		if (!response.ok)
+		{
+			throw new Error(`${assetName} fetch failed: ${response.status} ${response.statusText}`);
+		}
+
+		const text = await response.text();
+		const document = parseXmlDocument(text);
+
+		if (document === null)
+		{
+			throw new Error(`${assetName} is not valid XML`);
+		}
+
+		return document;
+	}
 	private initDownloadManagers(): void
 	{
 		const avatarDownloadUrl = this.getAvatarDownloadUrlTemplate(
@@ -632,133 +593,21 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 		}
 	}
 
-	/**
-	 * Parses figure data XML into the JSON format expected by FigureSetData.parse().
-	 *
-	 * XML format:
-	 * <figuredata>
-	 *   <colors><palette id="1"><color id="0" index="0" club="0" selectable="1">FFFFFF</color></palette></colors>
-	 *   <sets><settype type="hd" paletteid="1" ...><set id="1" gender="M" ...><part type="hd" id="1" .../></set></settype></sets>
-	 * </figuredata>
-	 */
-	private parseFigureDataXml(xmlText: string): any | null
-	{
-		try
-		{
-			const parser = new DOMParser();
-			const doc = parser.parseFromString(xmlText, 'text/xml');
-
-			// Parse palettes
-			const palettes: any[] = [];
-			const paletteElements = doc.querySelectorAll('colors > palette');
-
-			for (const paletteEl of paletteElements)
-			{
-				const colors: any[] = [];
-				const colorElements = paletteEl.querySelectorAll('color');
-
-				for (const colorEl of colorElements)
-				{
-					colors.push({
-						id: parseInt(colorEl.getAttribute('id') || '0'),
-						index: parseInt(colorEl.getAttribute('index') || '0'),
-						club: parseInt(colorEl.getAttribute('club') || '0'),
-						selectable: colorEl.getAttribute('selectable') === '1',
-						hexCode: colorEl.textContent?.trim() || '0'
-					});
-				}
-
-				palettes.push({
-					id: parseInt(paletteEl.getAttribute('id') || '0'),
-					colors
-				});
-			}
-
-			// Parse set types
-			const setTypes: any[] = [];
-			const setTypeElements = doc.querySelectorAll('sets > settype');
-
-			for (const setTypeEl of setTypeElements)
-			{
-				const sets: any[] = [];
-				const setElements = setTypeEl.querySelectorAll('set');
-
-				for (const setEl of setElements)
-				{
-					const parts: any[] = [];
-					const partElements = setEl.querySelectorAll('part');
-
-					for (const partEl of partElements)
-					{
-						parts.push({
-							id: parseInt(partEl.getAttribute('id') || '0'),
-							type: partEl.getAttribute('type') || '',
-							colorable: partEl.getAttribute('colorable') === '1',
-							index: parseInt(partEl.getAttribute('index') || '0'),
-							colorindex: parseInt(partEl.getAttribute('colorindex') || '0')
-						});
-					}
-
-					const hiddenLayers: any[] = [];
-					const layerElements = setEl.querySelectorAll('hiddenlayers > layer');
-
-					for (const layerEl of layerElements)
-					{
-						hiddenLayers.push({
-							partType: layerEl.getAttribute('parttype') || ''
-						});
-					}
-
-					sets.push({
-						id: parseInt(setEl.getAttribute('id') || '0'),
-						gender: setEl.getAttribute('gender') || '',
-						club: parseInt(setEl.getAttribute('club') || '0'),
-						colorable: setEl.getAttribute('colorable') === '1',
-						selectable: setEl.getAttribute('selectable') === '1',
-						preselectable: setEl.getAttribute('preselectable') === '1',
-						sellable: setEl.getAttribute('sellable') === '1',
-						parts,
-						hiddenLayers: hiddenLayers.length > 0 ? hiddenLayers : undefined
-					});
-				}
-
-				setTypes.push({
-					type: setTypeEl.getAttribute('type') || '',
-					paletteId: parseInt(setTypeEl.getAttribute('paletteid') || '0'),
-					mandatory_m_0: setTypeEl.getAttribute('mand_m_0') === '1',
-					mandatory_m_1: setTypeEl.getAttribute('mand_m_1') === '1',
-					mandatory_f_0: setTypeEl.getAttribute('mand_f_0') === '1',
-					mandatory_f_1: setTypeEl.getAttribute('mand_f_1') === '1',
-					sets
-				});
-			}
-
-			if (palettes.length === 0 && setTypes.length === 0) return null;
-
-			log.info(`Parsed XML figure data: ${palettes.length} palettes, ${setTypes.length} set types`);
-
-			return {palettes, setTypes};
-		}
-		catch (error)
-		{
-			log.error('Figure data XML parsing error', error);
-
-			return null;
-		}
-	}
-
+	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
 	private async loadEffectMap(): Promise<void>
 	{
 		try
 		{
-			const url = this._configuration?.getProperty('avatar.effectmap.url');
+			const url = this.getEffectMapUrl();
 
-			if (url && this._effectAssetDownloadManager)
+			if (url !== '' && this._effectAssetDownloadManager)
 			{
-				const response = await fetch(url);
-				const data = await response.json();
+				const data = await this.loadXmlFromUrl(url, 'effectmap');
 
-				this._effectAssetDownloadManager.loadEffectMap(data);
+				if (data !== null)
+				{
+					this._effectAssetDownloadManager.loadEffectMap(data);
+				}
 			}
 
 			this._effectMapReady = true;

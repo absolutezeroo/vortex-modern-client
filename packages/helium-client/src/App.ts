@@ -31,6 +31,15 @@ const ATLAS_NAMES = [
 	'skin_ubuntu_bg_9',
 ];
 
+const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
+	'action_offset_lay',
+	'action_offset_swim',
+	'HabboAvatarAnimation',
+	'HabboAvatarFigure',
+	'HabboAvatarGeometry',
+	'HabboAvatarPartSets',
+];
+
 interface IWindowLayoutJsonNode extends IWindowLayoutNode
 {
 	/**
@@ -309,8 +318,53 @@ function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, st
 		assets.localization_configuration = localizationConfiguration;
 	}
 
+	const bundleKeys = bundle.listKeys();
+
+	for (const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES)
+	{
+		const content = readEmbeddedAvatarXmlAsset(bundle, bundleKeys, assetName);
+
+		if (content !== null)
+		{
+			assets[assetName] = content;
+		}
+	}
+
 	return assets;
 }
+
+function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], assetName: string): string | null
+{
+	const candidates = [
+		`configurations/${assetName}.xml`,
+		`configurations/${assetName}_xml.xml`,
+		`configurations/${assetName}.json`,
+		`avatar/${assetName}.xml`,
+		`avatar/${assetName}_xml.xml`,
+		`${assetName}.xml`,
+		`${assetName}_xml.xml`,
+	];
+
+	for (const candidate of candidates)
+	{
+		const content = bundle.getText(candidate);
+
+		if (content !== null)
+		{
+			return content;
+		}
+	}
+
+	const suffixMatch = bundleKeys.find((key) =>
+	{
+		return key.endsWith(`/${assetName}.xml`)
+			|| key.endsWith(`/${assetName}_xml.xml`)
+			|| key.endsWith(`/${assetName}.json`);
+	});
+
+	return suffixMatch ? bundle.getText(suffixMatch) : null;
+}
+
 function parseLayoutEntries(raw: string, source: string, baseName: string): IWindowLayoutXmlData[]
 {
 	if (isXmlText(raw))

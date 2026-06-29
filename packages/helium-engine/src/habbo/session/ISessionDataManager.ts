@@ -202,7 +202,7 @@ export interface ISessionDataManager extends IDisposable
 
 	loadProductData(listener?: IProductDataListener): boolean;
 
-	getFurniData(listener: IFurniDataListener): IFurnitureData[];
+	getFurniData(listener: IFurniDataListener): IFurnitureData[] | null;
 
 	getXmlWindow(name: string): IWindow | null;
 

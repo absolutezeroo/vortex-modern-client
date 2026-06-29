@@ -1,4 +1,5 @@
 import {AnimationFrame} from './AnimationFrame';
+import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtils';
 
 /**
  * Represents the frames for a single body part within an animation action.
@@ -8,11 +9,23 @@ import {AnimationFrame} from './AnimationFrame';
  */
 export class AnimationActionPart
 {
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationActionPart.as::AnimationActionPart()
 	constructor(data: any)
 	{
 		this._frames = [];
 
-		// Nitro: frames (camelCase), XML-JSON: frame
+		const element = getXmlRoot(data);
+
+		if (element)
+		{
+			for (const frameElement of getXmlChildElements(element, 'frame'))
+			{
+				this.pushFrame(frameElement, getXmlAttribute(frameElement, 'repeats'));
+			}
+
+			return;
+		}
+
 		const rawFrames = data.frames || data.frame;
 
 		if (rawFrames)
@@ -21,26 +34,32 @@ export class AnimationActionPart
 
 			for (const frameData of frames)
 			{
-				const frame = new AnimationFrame(frameData);
-				this._frames.push(frame);
-
-				let repeats: number = parseInt(frameData.repeats) || 0;
-
-				if (repeats > 1)
-				{
-					while (--repeats > 0)
-					{
-						this._frames.push(this._frames[this._frames.length - 1]);
-					}
-				}
+				this.pushFrame(frameData, frameData.repeats);
 			}
 		}
 	}
 
 	private _frames: AnimationFrame[];
 
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationActionPart.as::get frames()
 	public get frames(): AnimationFrame[]
 	{
 		return this._frames;
+	}
+
+	private pushFrame(frameData: any, repeatsData: any): void
+	{
+		const frame = new AnimationFrame(frameData);
+		this._frames.push(frame);
+
+		let repeats = parseInt(repeatsData) || 0;
+
+		if (repeats > 1)
+		{
+			while (--repeats > 0)
+			{
+				this._frames.push(frame);
+			}
+		}
 	}
 }

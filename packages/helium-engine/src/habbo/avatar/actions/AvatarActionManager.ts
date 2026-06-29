@@ -1,5 +1,7 @@
+import type {IAssetLibrary} from '@core/assets';
 import {ActionDefinition} from './ActionDefinition';
 import type {IActiveActionData} from './IActiveActionData';
+import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../structure/AvatarXmlUtils';
 
 /**
  * Manages avatar action definitions, sorting and filtering.
@@ -8,42 +10,68 @@ import type {IActiveActionData} from './IActiveActionData';
  */
 export class AvatarActionManager
 {
+	private _assets: IAssetLibrary | null;
 	private _actions: Map<string, ActionDefinition>;
 	private _defaultAction: ActionDefinition | null = null;
+	private _defaultLayAction: ActionDefinition | null = null;
 
-	constructor(data: any)
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::AvatarActionManager()
+	constructor(assetsOrData: IAssetLibrary | any, data: any = null)
 	{
+		this._assets = data !== null ? assetsOrData as IAssetLibrary : null;
 		this._actions = new Map();
-		this.updateActions(data);
+		this.updateActions(data !== null ? data : assetsOrData);
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::updateActions()
 	public updateActions(data: any): void
 	{
-		const actions = data?.actions ?? data?.action;
+		if (!data) return;
 
-		if (!actions) return;
+		const root = getXmlRoot(data);
 
-		const actionList = Array.isArray(actions) ? actions : [actions];
-
-		for (const actionData of actionList)
+		if (root)
 		{
-			const state = String(actionData.state || '');
-
-			if (state !== '')
+			for (const actionElement of getXmlChildElements(root, 'action'))
 			{
-				const definition = new ActionDefinition(actionData);
+				const state = getXmlAttribute(actionElement, 'state');
 
-				this._actions.set(state, definition);
+				if (state !== '')
+				{
+					this._actions.set(state, new ActionDefinition(actionElement));
+				}
+			}
+		}
+		else
+		{
+			const actions = data?.actions ?? data?.action;
+
+			if (!actions) return;
+
+			const actionList = Array.isArray(actions) ? actions : [actions];
+
+			for (const actionData of actionList)
+			{
+				const state = String(actionData.state || '');
+
+				if (state !== '')
+				{
+					this._actions.set(state, new ActionDefinition(actionData));
+				}
+			}
+
+			if (data.actionOffsets)
+			{
+				this.parseActionOffsets(data.actionOffsets);
 			}
 		}
 
-		// Parse action offsets (Nitro format: data.actionOffsets)
-		if (data.actionOffsets)
-		{
-			this.parseActionOffsets(data.actionOffsets);
-		}
+		this._defaultAction = null;
+		this._defaultLayAction = null;
+		this.parseActionOffsetsFromAssets();
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getActionDefinition()
 	public getActionDefinition(id: string): ActionDefinition | null
 	{
 		for (const action of this._actions.values())
@@ -54,11 +82,13 @@ export class AvatarActionManager
 		return null;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getActionDefinitionWithState()
 	public getActionDefinitionWithState(state: string): ActionDefinition | null
 	{
 		return this._actions.get(state) || null;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getDefaultAction()
 	public getDefaultAction(): ActionDefinition | null
 	{
 		if (this._defaultAction) return this._defaultAction;
@@ -76,6 +106,24 @@ export class AvatarActionManager
 		return null;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getDefaultLayAction()
+	public getDefaultLayAction(): ActionDefinition | null
+	{
+		if (this._defaultLayAction) return this._defaultLayAction;
+
+		const defaultAction = this.getDefaultAction();
+
+		if (!defaultAction) return null;
+
+		this._defaultLayAction = defaultAction.copy();
+		this._defaultLayAction.setGeometryType('horizontal');
+		this._defaultLayAction.setState('lay');
+		this._defaultLayAction.setAssetPartDefinition('lay');
+
+		return this._defaultLayAction;
+	}
+
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::getCanvasOffsets()
 	public getCanvasOffsets(actions: IActiveActionData[], scale: string, direction: number): number[] | null
 	{
 		let offsets: number[] | null = null;
@@ -95,6 +143,7 @@ export class AvatarActionManager
 		return offsets;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::sortActions()
 	public sortActions(actions: IActiveActionData[]): IActiveActionData[]
 	{
 		const filtered = this.filterActions(actions);
@@ -125,6 +174,38 @@ export class AvatarActionManager
 		return result;
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::parseActionOffsets()
+	private parseActionOffsetsFromAssets(): void
+	{
+		if (!this._assets) return;
+
+		for (const action of this._actions.values())
+		{
+			const state = action.state;
+			const assetName = 'action_offset_' + state;
+
+			if (!this._assets.hasAsset(assetName))
+			{
+				continue;
+			}
+
+			const root = getXmlRoot(this._assets.getAssetByName(assetName)?.content ?? null);
+
+			if (!root) continue;
+
+			for (const offsetElement of getXmlChildElements(root, 'offset'))
+			{
+				const size = getXmlAttribute(offsetElement, 'size');
+				const direction = parseInt(getXmlAttribute(offsetElement, 'direction')) || 0;
+				const x = parseInt(getXmlAttribute(offsetElement, 'x')) || 0;
+				const y = parseInt(getXmlAttribute(offsetElement, 'y')) || 0;
+				const z = Number(getXmlAttribute(offsetElement, 'z')) || 0;
+
+				action.setOffsets(size, direction, [x, y, z]);
+			}
+		}
+	}
+
 	private parseActionOffsets(offsets: any[]): void
 	{
 		if (!offsets || offsets.length === 0) return;
@@ -134,7 +215,6 @@ export class AvatarActionManager
 			const action = this._actions.get(offset.action);
 
 			if (!action) continue;
-
 			if (!offset.offsets) continue;
 
 			for (const canvasOffset of offset.offsets)
@@ -153,6 +233,7 @@ export class AvatarActionManager
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/avatar/actions/AvatarActionManager.as::filterActions()
 	private filterActions(actions: IActiveActionData[]): IActiveActionData[]
 	{
 		const prevents: Set<string> = new Set();

@@ -1,4 +1,10 @@
 import {AnimationActionPart} from './AnimationActionPart';
+import {
+	getXmlAttribute,
+	getXmlChildElements,
+	getXmlFirstChildElement,
+	getXmlRoot
+} from '../AvatarXmlUtils';
 
 /**
  * Represents a complete animation action containing parts and body part offsets.
@@ -13,96 +19,30 @@ export class AnimationAction
 	private _offsets: Map<number, Map<number, Map<string, { x: number; y: number }>>>;
 	private _offsetFrames: number[];
 
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::AnimationAction()
 	constructor(data: any)
 	{
-		this._id = String(data.id ?? '');
+		const element = getXmlRoot(data);
+
+		this._id = element ? getXmlAttribute(element, 'id') : String(data.id ?? '');
 		this._parts = new Map();
 		this._offsets = new Map();
 		this._frameCount = 0;
 		this._offsetFrames = [];
 
-		// Nitro: parts (camelCase), XML-JSON: part
-		const rawParts = data.parts || data.part;
-
-		if (rawParts)
+		if (element)
 		{
-			const parts: any[] = Array.isArray(rawParts) ? rawParts : [rawParts];
-
-			for (const partData of parts)
-			{
-				const actionPart = new AnimationActionPart(partData);
-
-				// Nitro: setType (camelCase), XML-JSON: set-type (hyphenated)
-				this._parts.set(String(partData.setType ?? partData['set-type']), actionPart);
-				this._frameCount = Math.max(this._frameCount, actionPart.frames.length);
-			}
+			this.parseXml(element);
 		}
-
-		// Nitro: offsets is array of frames directly, XML-JSON: data.offsets.frame
-		const rawOffsetFrames = Array.isArray(data.offsets)
-			? data.offsets
-			: (data.offsets?.frame ? (Array.isArray(data.offsets.frame) ? data.offsets.frame : [data.offsets.frame]) : null);
-
-		if (rawOffsetFrames)
+		else
 		{
-			for (const frameData of rawOffsetFrames)
-			{
-				const frameId: number = parseInt(frameData.id) || 0;
-				this._frameCount = Math.max(this._frameCount, frameId);
-
-				const directionMap = new Map<number, Map<string, { x: number; y: number }>>();
-				this._offsets.set(frameId, directionMap);
-
-				// Nitro: directions is array directly, XML-JSON: directions.direction
-				const rawDirections = Array.isArray(frameData.directions)
-					? frameData.directions
-					: (frameData.directions?.direction
-						? (Array.isArray(frameData.directions.direction) ? frameData.directions.direction : [frameData.directions.direction])
-						: null);
-
-				if (rawDirections)
-				{
-					for (const directionData of rawDirections)
-					{
-						const directionId: number = parseInt(directionData.id) || 0;
-						const bodyPartMap = new Map<string, { x: number; y: number }>();
-						directionMap.set(directionId, bodyPartMap);
-
-						// Nitro: bodyParts (camelCase), XML-JSON: bodypart
-						const rawBodyParts = directionData.bodyParts || directionData.bodypart;
-
-						if (rawBodyParts)
-						{
-							const bodyParts: any[] = Array.isArray(rawBodyParts) ? rawBodyParts : [rawBodyParts];
-
-							for (const bodyPartData of bodyParts)
-							{
-								const bodyPartId: string = String(bodyPartData.id);
-								const dx: number = (bodyPartData.dx !== undefined) ? parseInt(bodyPartData.dx) || 0 : 0;
-								const dy: number = (bodyPartData.dy !== undefined) ? parseInt(bodyPartData.dy) || 0 : 0;
-								bodyPartMap.set(bodyPartId, {x: dx, y: dy});
-							}
-						}
-					}
-				}
-
-				this._offsetFrames.push(frameId);
-
-				let repeats: number = parseInt(frameData.repeats) || 0;
-
-				if (repeats > 1)
-				{
-					while (--repeats > 0)
-					{
-						this._offsetFrames.push(frameId);
-					}
-				}
-			}
+			this.parseObject(data);
 		}
 	}
 
 	private _id: string;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::get id()
 	public get id(): string
 	{
 		return this._id;
@@ -110,6 +50,7 @@ export class AnimationAction
 
 	private _parts: Map<string, AnimationActionPart>;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::get parts()
 	public get parts(): Map<string, AnimationActionPart>
 	{
 		return this._parts;
@@ -117,30 +58,19 @@ export class AnimationAction
 
 	private _frameCount: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::get frameCount()
 	public get frameCount(): number
 	{
 		return this._frameCount;
 	}
 
-	/**
-	 * Gets the animation action part for a given set type.
-	 *
-	 * @param setType - The set type identifier
-	 * @returns The matching action part, or null if not found
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::getPart()
 	public getPart(setType: string): AnimationActionPart | null
 	{
 		return this._parts.get(setType) ?? null;
 	}
 
-	/**
-	 * Gets the body part offset for a given direction, frame index, and body part.
-	 *
-	 * @param direction - The avatar direction
-	 * @param frameIndex - The animation frame index
-	 * @param bodyPartId - The body part identifier
-	 * @returns The offset point, or the default (0, 0) if not found
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/animation/AnimationAction.as::getFrameBodyPartOffset()
 	public getFrameBodyPartOffset(direction: number, frameIndex: number, bodyPartId: string): { x: number; y: number }
 	{
 		if (this._offsetFrames.length === 0)
@@ -148,9 +78,8 @@ export class AnimationAction
 			return AnimationAction.DEFAULT_OFFSET;
 		}
 
-		const normalizedIndex: number = frameIndex % this._offsetFrames.length;
-		const frameId: number = this._offsetFrames[normalizedIndex];
-
+		const normalizedIndex = frameIndex % this._offsetFrames.length;
+		const frameId = this._offsetFrames[normalizedIndex];
 		const directionMap = this._offsets.get(frameId);
 
 		if (directionMap)
@@ -169,5 +98,146 @@ export class AnimationAction
 		}
 
 		return AnimationAction.DEFAULT_OFFSET;
+	}
+
+	private parseXml(element: Element): void
+	{
+		for (const partElement of getXmlChildElements(element, 'part'))
+		{
+			const actionPart = new AnimationActionPart(partElement);
+
+			this._parts.set(getXmlAttribute(partElement, 'set-type'), actionPart);
+			this._frameCount = Math.max(this._frameCount, actionPart.frames.length);
+		}
+
+		const offsetsElement = getXmlFirstChildElement(element, 'offsets');
+
+		if (offsetsElement !== null)
+		{
+			for (const frameElement of getXmlChildElements(offsetsElement, 'frame'))
+			{
+				this.parseOffsetFrame(
+					getXmlAttribute(frameElement, 'id'),
+					getXmlAttribute(frameElement, 'repeats'),
+					getXmlFirstChildElement(frameElement, 'directions')
+				);
+			}
+		}
+	}
+
+	private parseObject(data: any): void
+	{
+		const rawParts = data.parts || data.part;
+
+		if (rawParts)
+		{
+			const parts: any[] = Array.isArray(rawParts) ? rawParts : [rawParts];
+
+			for (const partData of parts)
+			{
+				const actionPart = new AnimationActionPart(partData);
+
+				this._parts.set(String(partData.setType ?? partData['set-type']), actionPart);
+				this._frameCount = Math.max(this._frameCount, actionPart.frames.length);
+			}
+		}
+
+		const rawOffsetFrames = Array.isArray(data.offsets)
+			? data.offsets
+			: (data.offsets?.frame ? (Array.isArray(data.offsets.frame) ? data.offsets.frame : [data.offsets.frame]) : null);
+
+		if (rawOffsetFrames)
+		{
+			for (const frameData of rawOffsetFrames)
+			{
+				this.parseObjectOffsetFrame(frameData);
+			}
+		}
+	}
+
+	private parseOffsetFrame(frameIdData: string, repeatsData: string, directionsElement: Element | null): void
+	{
+		const frameId = parseInt(frameIdData) || 0;
+		this._frameCount = Math.max(this._frameCount, frameId);
+
+		const directionMap = new Map<number, Map<string, { x: number; y: number }>>();
+		this._offsets.set(frameId, directionMap);
+
+		if (directionsElement !== null)
+		{
+			for (const directionElement of getXmlChildElements(directionsElement, 'direction'))
+			{
+				const directionId = parseInt(getXmlAttribute(directionElement, 'id')) || 0;
+				const bodyPartMap = new Map<string, { x: number; y: number }>();
+				directionMap.set(directionId, bodyPartMap);
+
+				for (const bodyPartElement of getXmlChildElements(directionElement, 'bodypart'))
+				{
+					bodyPartMap.set(getXmlAttribute(bodyPartElement, 'id'), {
+						x: parseInt(getXmlAttribute(bodyPartElement, 'dx')) || 0,
+						y: parseInt(getXmlAttribute(bodyPartElement, 'dy')) || 0
+					});
+				}
+			}
+		}
+
+		this.pushOffsetFrame(frameId, repeatsData);
+	}
+
+	private parseObjectOffsetFrame(frameData: any): void
+	{
+		const frameId = parseInt(frameData.id) || 0;
+		this._frameCount = Math.max(this._frameCount, frameId);
+
+		const directionMap = new Map<number, Map<string, { x: number; y: number }>>();
+		this._offsets.set(frameId, directionMap);
+
+		const rawDirections = Array.isArray(frameData.directions)
+			? frameData.directions
+			: (frameData.directions?.direction
+				? (Array.isArray(frameData.directions.direction) ? frameData.directions.direction : [frameData.directions.direction])
+				: null);
+
+		if (rawDirections)
+		{
+			for (const directionData of rawDirections)
+			{
+				const directionId = parseInt(directionData.id) || 0;
+				const bodyPartMap = new Map<string, { x: number; y: number }>();
+				directionMap.set(directionId, bodyPartMap);
+
+				const rawBodyParts = directionData.bodyParts || directionData.bodypart;
+
+				if (rawBodyParts)
+				{
+					const bodyParts: any[] = Array.isArray(rawBodyParts) ? rawBodyParts : [rawBodyParts];
+
+					for (const bodyPartData of bodyParts)
+					{
+						bodyPartMap.set(String(bodyPartData.id), {
+							x: (bodyPartData.dx !== undefined) ? parseInt(bodyPartData.dx) || 0 : 0,
+							y: (bodyPartData.dy !== undefined) ? parseInt(bodyPartData.dy) || 0 : 0
+						});
+					}
+				}
+			}
+		}
+
+		this.pushOffsetFrame(frameId, frameData.repeats);
+	}
+
+	private pushOffsetFrame(frameId: number, repeatsData: any): void
+	{
+		this._offsetFrames.push(frameId);
+
+		let repeats = parseInt(repeatsData) || 0;
+
+		if (repeats > 1)
+		{
+			while (--repeats > 0)
+			{
+				this._offsetFrames.push(frameId);
+			}
+		}
 	}
 }

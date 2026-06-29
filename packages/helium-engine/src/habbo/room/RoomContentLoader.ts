@@ -1272,6 +1272,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 		return [];
 	}
 
+
 	/**
 	 * @see sources/win63_version/habbo/room/class_1835.as::resolveLocalOrAssetBaseUrl()
 	 */
@@ -1318,7 +1319,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 					else if(event.type === AssetLoaderEventType.ERROR)
 					{
 						failed = true;
-						this.onContentLoadError(type);
+						this.onContentLoadError(type, url);
 						this._loadingTypes.delete(type);
 						events.emit(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, type);
 						resolve();
@@ -1332,17 +1333,21 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 * @see sources/win63_version/habbo/room/class_1835.as::onContentLoadError()
 	 */
 	// AS3: sources/win63_version/habbo/room/class_1835.as::onContentLoadError()
-	private onContentLoadError(type: string): void
+	private onContentLoadError(type: string, failedUrl: string): void
 	{
 		const placeHolderTypes = this.getPlaceHolderTypes();
 
 		for(const placeHolderType of placeHolderTypes)
 		{
-			if(type === placeHolderType)
+			const urls = this.getObjectContentURLs(placeHolderType);
+
+			if(urls.length > 0 && failedUrl !== '' && failedUrl.indexOf(urls[0]) === 0)
 			{
-				throw new Error(`Failed to load critical room content asset: ${type}`);
+				throw new Error(`Failed to load critical room content asset: ${failedUrl}`);
 			}
 		}
+
+		log.warn(`[RoomContentLoader] Failed to load content asset ${type}: ${failedUrl}`);
 	}
 
 	/**

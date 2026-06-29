@@ -3,6 +3,7 @@ import type {ActionDefinition} from '../actions/ActionDefinition';
 import type {IStructureData} from './IStructureData';
 import {ActivePartSet} from './parts/ActivePartSet';
 import {PartDefinition} from './parts/PartDefinition';
+import {getXmlAttribute, getXmlChildElements, getXmlFirstChildElement, getXmlRoot} from './AvatarXmlUtils';
 
 /**
  * Manages part set definitions and active part sets for avatar rendering.
@@ -39,25 +40,40 @@ export class PartSetsData implements IStructureData
 	{
 		if (!data) return false;
 
-		if (this.isXmlDocument(data))
-		{
-			return this.parseXmlElement(data.documentElement);
-		}
+		const root = getXmlRoot(data);
 
-		if (this.isXmlElement(data))
+		if (root)
 		{
-			return this.parseXmlElement(data);
+			this.parseXml(root);
+
+			return true;
 		}
 
 		return this.parseObject(data);
 	}
 
 	// AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::appendXML()
-	public appendJSON(data: any): boolean
+	public appendXML(data: any): boolean
 	{
 		if (!data) return false;
 
-		return this.parse(data);
+		const root = getXmlRoot(data);
+
+		if (root)
+		{
+			this.parseXml(root);
+
+			return false;
+		}
+
+		this.parseObject(data);
+
+		return false;
+	}
+
+	public appendJSON(data: any): boolean
+	{
+		return this.appendXML(data);
 	}
 
 	// AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::getActiveParts()
@@ -79,7 +95,8 @@ export class PartSetsData implements IStructureData
 	// AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::addPartDefinition()
 	public addPartDefinition(data: any): PartDefinition
 	{
-		const setType = String(data.setType || data['set-type']);
+		const element = getXmlRoot(data);
+		const setType = element ? getXmlAttribute(element, 'set-type') : String(data.setType || data['set-type']);
 
 		if (!this._parts.has(setType))
 		{
@@ -126,61 +143,21 @@ export class PartSetsData implements IStructureData
 	}
 
 	// AS3: sources/win63_version/habbo/avatar/structure/PartSetsData.as::parse()
-	private parseXmlElement(root: Element): boolean
+	private parseXml(root: Element): void
 	{
-		const partSet = root.getElementsByTagName('partSet')[0] ?? root.getElementsByTagName('partset')[0];
+		const partSet = getXmlFirstChildElement(root, 'partSet');
 
-		if (partSet)
+		if (partSet !== null)
 		{
-			for (const child of Array.from(partSet.children))
+			for (const partElement of getXmlChildElements(partSet, 'part'))
 			{
-				if (child.tagName !== 'part')
-				{
-					continue;
-				}
-
-				const partData = {
-					'set-type': child.getAttribute('set-type') ?? '',
-					'flipped-set-type': child.getAttribute('flipped-set-type') ?? '',
-					'remove-set-type': child.getAttribute('remove-set-type') ?? ''
-				};
-
-				this._parts.set(partData['set-type'], new PartDefinition(partData));
+				this._parts.set(getXmlAttribute(partElement, 'set-type'), new PartDefinition(partElement));
 			}
 		}
 
-		for (const activePartSet of Array.from(root.getElementsByTagName('activePartSet')))
+		for (const activePartSetElement of getXmlChildElements(root, 'activePartSet'))
 		{
-			const activePart: Array<Record<string, string>> = [];
-
-			for (const child of Array.from(activePartSet.children))
-			{
-				if (child.tagName !== 'activePart')
-				{
-					continue;
-				}
-
-				activePart.push({'set-type': child.getAttribute('set-type') ?? ''});
-			}
-
-			const activePartSetData = {
-				id: activePartSet.getAttribute('id') ?? '',
-				activePart
-			};
-
-			this._activePartSets.set(activePartSetData.id, new ActivePartSet(activePartSetData));
+			this._activePartSets.set(getXmlAttribute(activePartSetElement, 'id'), new ActivePartSet(activePartSetElement));
 		}
-
-		return true;
-	}
-
-	private isXmlDocument(data: unknown): data is Document
-	{
-		return typeof Document !== 'undefined' && data instanceof Document;
-	}
-
-	private isXmlElement(data: unknown): data is Element
-	{
-		return typeof Element !== 'undefined' && data instanceof Element;
 	}
 }

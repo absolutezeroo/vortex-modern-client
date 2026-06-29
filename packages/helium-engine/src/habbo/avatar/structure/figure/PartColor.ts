@@ -1,21 +1,26 @@
 import type {IPartColor} from './IPartColor';
+import {getXmlAttribute, getXmlRoot, getXmlText} from '../AvatarXmlUtils';
 
 /**
- * Represents a color entry parsed from a palette in figure data JSON.
+ * Represents a color entry parsed from a palette in figure data XML.
  *
  * @see sources/win63_version/habbo/avatar/structure/figure/PartColor.as
  */
 export class PartColor implements IPartColor
 {
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::PartColor()
 	constructor(data: any)
 	{
-		this._id = parseInt(data.id) || 0;
-		this._index = parseInt(data.index) || 0;
-		this._clubLevel = parseInt(data.club) || 0;
-		this._isSelectable = Boolean(typeof data.selectable === 'boolean' ? data.selectable : parseInt(data.selectable));
+		const element = getXmlRoot(data);
 
-		// Nitro format: data.hexCode, XML-JSON format: data.color
-		const colorHex: string = String(data.hexCode || data.color || '0');
+		this._id = parseInt(element ? getXmlAttribute(element, 'id') : data.id) || 0;
+		this._index = parseInt(element ? getXmlAttribute(element, 'index') : data.index) || 0;
+		this._clubLevel = parseInt(element ? getXmlAttribute(element, 'club') : data.club) || 0;
+		this._isSelectable = element
+			? Boolean(parseInt(getXmlAttribute(element, 'selectable')))
+			: Boolean(typeof data.selectable === 'boolean' ? data.selectable : parseInt(data.selectable));
+
+		const colorHex = element ? getXmlText(element) : String(data.hexCode || data.color || '0');
 		this._rgb = parseInt(colorHex, 16);
 		this._r = (this._rgb >> 16) & 0xFF;
 		this._g = (this._rgb >> 8) & 0xFF;
@@ -32,6 +37,7 @@ export class PartColor implements IPartColor
 
 	private _id: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get id()
 	public get id(): number
 	{
 		return this._id;
@@ -39,6 +45,7 @@ export class PartColor implements IPartColor
 
 	private _index: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get index()
 	public get index(): number
 	{
 		return this._index;
@@ -46,6 +53,7 @@ export class PartColor implements IPartColor
 
 	private _clubLevel: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get clubLevel()
 	public get clubLevel(): number
 	{
 		return this._clubLevel;
@@ -53,6 +61,7 @@ export class PartColor implements IPartColor
 
 	private _isSelectable: boolean;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get isSelectable()
 	public get isSelectable(): boolean
 	{
 		return this._isSelectable;
@@ -60,6 +69,7 @@ export class PartColor implements IPartColor
 
 	private _rgb: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get rgb()
 	public get rgb(): number
 	{
 		return this._rgb;
@@ -67,6 +77,7 @@ export class PartColor implements IPartColor
 
 	private _r: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get r()
 	public get r(): number
 	{
 		return this._r;
@@ -74,6 +85,7 @@ export class PartColor implements IPartColor
 
 	private _g: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get g()
 	public get g(): number
 	{
 		return this._g;
@@ -81,6 +93,7 @@ export class PartColor implements IPartColor
 
 	private _b: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get b()
 	public get b(): number
 	{
 		return this._b;
@@ -88,6 +101,7 @@ export class PartColor implements IPartColor
 
 	private _redMultiplier: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get redMultiplier()
 	public get redMultiplier(): number
 	{
 		return this._redMultiplier;
@@ -95,6 +109,7 @@ export class PartColor implements IPartColor
 
 	private _greenMultiplier: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get greenMultiplier()
 	public get greenMultiplier(): number
 	{
 		return this._greenMultiplier;
@@ -102,6 +117,7 @@ export class PartColor implements IPartColor
 
 	private _blueMultiplier: number;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get blueMultiplier()
 	public get blueMultiplier(): number
 	{
 		return this._blueMultiplier;
@@ -109,6 +125,7 @@ export class PartColor implements IPartColor
 
 	private _colorTransform: { redMultiplier: number; greenMultiplier: number; blueMultiplier: number };
 
+	// AS3: sources/win63_version/habbo/avatar/structure/figure/PartColor.as::get colorTransform()
 	public get colorTransform(): { redMultiplier: number; greenMultiplier: number; blueMultiplier: number }
 	{
 		return this._colorTransform;

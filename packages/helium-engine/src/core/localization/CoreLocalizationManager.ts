@@ -152,7 +152,8 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
 					const externalTextUrls = [`${externalTextsUrl}/${externalTextsHash}`];
 
-					if (resources.externalFlashTextsUrl && resources.externalFlashTextsHash)
+					if (resources.externalFlashTextsUrl && resources.externalFlashTextsHash &&
+						(resources.externalFlashTextsUrl !== externalTextsUrl || resources.externalFlashTextsHash !== externalTextsHash))
 					{
 						externalTextUrls.push(`${resources.externalFlashTextsUrl}/${resources.externalFlashTextsHash}`);
 					}

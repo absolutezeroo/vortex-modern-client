@@ -1,12 +1,9 @@
 import EventEmitter from 'eventemitter3';
 import type {IStructureData} from './IStructureData';
+import {parseXmlDocument} from './AvatarXmlUtils';
 
 /**
  * Downloads and applies additional avatar structure data (figure part lists).
- *
- * In AS3, this extends EventDispatcherWrapper and uses AssetLoaderStruct to load XML data.
- * The loaded data is parsed and appended to the IStructureData receiver via appendXML/appendJSON.
- * Dispatches STRUCTURE_DONE when the download and parse is complete.
  *
  * @see sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as
  * @see sources/flash_version/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as
@@ -17,39 +14,41 @@ export class AvatarStructureDownload extends EventEmitter
 
 	private _structureData: IStructureData;
 
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as::AvatarStructureDownload()
 	constructor(url: string, structureData: IStructureData)
 	{
 		super();
 
 		this._structureData = structureData;
-
 		this.download(url);
 	}
 
-	/**
-	 * Fetches structure data from the given URL and appends it to the structure data receiver.
-	 *
-	 * In AS3, the data is loaded as text/plain, parsed to XML, then passed to
-	 * IStructureData.appendXML(). In our port, we fetch JSON and call appendJSON().
-	 */
+	// AS3: sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as::onDataComplete()
 	private async download(url: string): Promise<void>
 	{
 		try
 		{
 			const response = await fetch(url);
-			const data = await response.json();
 
-			if (data)
+			if (!response.ok)
 			{
-				this._structureData.appendJSON(data);
+				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 			}
 
+			const text = await response.text();
+			const document = parseXmlDocument(text);
+
+			if (document === null)
+			{
+				throw new Error(`Invalid avatar structure XML from ${url}`);
+			}
+
+			this._structureData.appendXML(document);
 			this.emit(AvatarStructureDownload.STRUCTURE_DONE);
 		}
 		catch (error)
 		{
 			console.error('[AvatarStructureDownload] Failed to download structure data', error);
-			this.emit(AvatarStructureDownload.STRUCTURE_DONE);
 		}
 	}
 }

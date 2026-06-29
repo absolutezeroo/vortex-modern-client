@@ -195,8 +195,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 
 				if (!this.propertyExists(key))
 				{
-					// Keep original if key doesn't exist
-					result += interpolated.substring(lastIndex, match.index + match[0].length);
+					return '';
 				}
 				else
 				{
@@ -549,12 +548,9 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 		this.setProperty('client.fatal.error.url', '${url.prefix}/flash_client_error');
 		this.setProperty('game.center.error.url', '${url.prefix}/log/gameerror');
 		this.setProperty('furniture.asset.url', '${asset.url}/bundled/furniture/%className%.nitro');
-		this.setProperty('generic.asset.url', '${asset.url}/bundled/generic/%libname%.nitro');
 		this.setProperty('avatar.asset.url', '${asset.url}/bundled/figure/%libname%.nitro');
 		this.setProperty('avatar.effect.url', '${asset.url}/bundled/effect/%libname%.nitro');
-		this.setProperty('avatar.animations.url', '${asset.url}/gamedata/habbo_avatar_animations/1');
-		this.setProperty('avatar.geometry.url', '${asset.url}/gamedata/habbo_avatar_geometry/1');
-		this.setProperty('avatar.partsets.url', '${asset.url}/gamedata/habbo_avatar_part_sets/1');
+
 	}
 
 	private configurationsLoaded(): void
