@@ -1,7 +1,9 @@
-import {Component, type IContext} from '@core/runtime';
+import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
 import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import type {IHabboConfigurationManager} from './IHabboConfigurationManager';
+import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {HabboProperty} from './enum/HabboProperty';
 
 const log = Logger.getLogger('Configuration');
@@ -30,6 +32,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 	private _isConfigLoaded: boolean = false;
 	private _isConfigReadOnly: boolean = false;
 	private _embeddedConfigurationAssets: Map<string, string> = new Map();
+	private _localization: IHabboLocalizationManager | null = null;
 
 	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::HabboConfigurationManager()
 	constructor(context: IContext)
@@ -47,6 +50,22 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 		{
 			this._embeddedConfigurationAssets.set(name, content);
 		}
+	}
+
+	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::get dependencies()
+	protected override get dependencies(): Array<ComponentDependency<any>>
+	{
+		return [
+			new ComponentDependency(
+				IID_HabboLocalizationManager,
+				(localization: IHabboLocalizationManager | null) =>
+				{
+					this._localization = localization;
+				},
+				false,
+				[{type: 'complete', callback: this.onLocalizationComplete.bind(this)}]
+			),
+		];
 	}
 
 	private _environmentId: string = '';
@@ -264,6 +283,39 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 		{
 			this.initEmbeddedConfigurations();
 		}
+	}
+
+	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::onLocalizationComplete()
+	private onLocalizationComplete(): void
+	{
+		if (!this._localization)
+		{
+			return;
+		}
+
+		const resources = this._localization.getGameDataResources();
+
+		if (!resources)
+		{
+			return;
+		}
+
+		const url = resources.externalVariablesUrl;
+		const hash = resources.externalVariablesHash;
+
+		if (!url || !hash)
+		{
+			return;
+		}
+
+		this.setProperty(HabboProperty.EXTERNAL_VARIABLES, `${url}/${hash}`);
+
+		void this.initConfigurationDownload().catch((error) =>
+		{
+			const err = error instanceof Error ? error : new Error(String(error));
+
+			log.error(`Configuration reload after localization failed: ${err.message}`);
+		});
 	}
 
 	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::initConfigurationDownload()
@@ -547,9 +599,6 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 	{
 		this.setProperty('client.fatal.error.url', '${url.prefix}/flash_client_error');
 		this.setProperty('game.center.error.url', '${url.prefix}/log/gameerror');
-		this.setProperty('furniture.asset.url', '${asset.url}/bundled/furniture/%className%.nitro');
-		this.setProperty('avatar.asset.url', '${asset.url}/bundled/figure/%libname%.nitro');
-		this.setProperty('avatar.effect.url', '${asset.url}/bundled/effect/%libname%.nitro');
 
 	}
 

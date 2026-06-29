@@ -7,6 +7,7 @@ import type {IHabboCommunicationManager} from '../communication/IHabboCommunicat
 import type {ISessionDataManager} from './ISessionDataManager';
 import {HabboClubLevelEnum, UIFlagsEnum} from './enum';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
+import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -674,6 +675,12 @@ export class SessionDataManager extends Component implements ISessionDataManager
 				true
 			),
 			new ComponentDependency(
+				IID_HabboConfigurationManager,
+				null,
+				true,
+				[{type: 'complete', callback: this.onConfigurationComplete.bind(this)}]
+			),
+			new ComponentDependency(
 				IID_HabboWindowManager,
 				(manager: IHabboWindowManager | null) =>
 				{
@@ -1269,6 +1276,12 @@ export class SessionDataManager extends Component implements ISessionDataManager
 	 */
 	onConfigurationComplete(): void
 	{
+		this._products = new Map();
+		this._floorItems = new Map();
+		this._wallItems = new Map();
+		this._floorItemsByName = new Map();
+		this._wallItemsByName = new Map();
+
 		this.initFurnitureData();
 		this.initProductData();
 	}
@@ -1290,12 +1303,6 @@ export class SessionDataManager extends Component implements ISessionDataManager
 		this.send(new GetUserNftChatStylesMessageComposer());
 		// TODO(AS3): Port GetDailyTasksComposer from the WIN63 package_78 source and send it here, matching SessionDataManager.initSessionData().
 
-		// Initialize furniture/product data maps (loading triggered later by onConfigurationComplete)
-		this._products = new Map();
-		this._floorItems = new Map();
-		this._wallItems = new Map();
-		this._floorItemsByName = new Map();
-		this._wallItemsByName = new Map();
 
 		this.registerMessageEvents();
 

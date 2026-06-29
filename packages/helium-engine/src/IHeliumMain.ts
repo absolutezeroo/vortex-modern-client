@@ -1,4 +1,4 @@
-import type {IDisposable, IGameDataResources} from "@core";
+import type {IDisposable} from "@core";
 import type {IHabboCommunicationDemo, IHabboCommunicationManager} from "@habbo/communication";
 import type {IHabboLocalizationManager} from "@habbo/localization";
 import type {IHabboNavigator, IHabboNewNavigator} from "@habbo/navigator";
@@ -53,11 +53,6 @@ export interface IHeliumMain extends IDisposable
 	 */
 	prepareCore(config?: IHeliumConfig): Promise<void>;
 
-	/**
-	 * Called when game data resources (hashes) are available.
-	 * Sets config properties from hashes for game data loading.
-	 */
-	onGameDataResourcesReady(resources: IGameDataResources): Promise<void>;
 
 	/**
 	 * Initialize localization

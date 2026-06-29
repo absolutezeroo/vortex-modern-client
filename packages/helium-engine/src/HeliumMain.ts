@@ -54,7 +54,6 @@ import {IID_Core} from '@iid/IIDCore';
 import {HabboProperty} from '@habbo/configuration';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
-import type {IGameDataResources} from '@core/localization/IGameDataResources';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
@@ -600,11 +599,6 @@ export class HeliumMain implements IHeliumMain
 		this._localizationManager.setConfigurationManager(this._configurationManager);
 		this._localizationManager.setCommunicationManager(this._habboCommunicationManager);
 
-		// Wire game data loading from hashes
-		this._localizationManager.events.on('gameDataResourcesReady', (resources: IGameDataResources) =>
-		{
-			this.onGameDataResourcesReady(resources);
-		});
 
 		// 5. Room Manager (must be registered before RoomEngine)
 		this._roomManager = new RoomManager(ctx);
@@ -717,44 +711,6 @@ export class HeliumMain implements IHeliumMain
 		ctx.attachComponent(this._friendBar, [IID_HabboFriendBar]);
 
 		log.info('Friend Bar initialized');
-	}
-
-	/**
-	 * Called when game data resources (hashes) are available.
-	 * Sets config properties from hashes for game data loading.
-	 */
-	async onGameDataResourcesReady(resources: IGameDataResources): Promise<void>
-	{
-		const config = this._configurationManager!;
-
-		log.info('Game data resources (hashes) available, updating configuration...');
-
-		if (resources.externalVariablesUrl && resources.externalVariablesHash)
-		{
-			const externalVariablesUrl = `${resources.externalVariablesUrl}/${resources.externalVariablesHash}`;
-
-			config.setProperty(HabboProperty.EXTERNAL_VARIABLES, externalVariablesUrl);
-
-			await config.initConfigurationDownload();
-		}
-
-
-		if (resources.figureDataUrl && resources.figureDataHash)
-		{
-			config.setProperty('external.figurepartlist.txt', `${resources.figureDataUrl}/${resources.figureDataHash}`);
-		}
-
-		// Trigger furnidata/productdata loading now that URLs are available
-		if (this._sessionDataManager)
-		{
-			this._sessionDataManager.onConfigurationComplete();
-		}
-
-		// Trigger avatar resource loading now that hash-based URLs are available
-		if (this._avatarRenderManager)
-		{
-			this._avatarRenderManager.onConfigurationComplete();
-		}
 	}
 
 	/**

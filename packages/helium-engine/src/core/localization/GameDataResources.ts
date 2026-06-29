@@ -16,24 +16,11 @@ interface HashesData
 /**
  * Game data resources containing hashes for external files
  *
- * Based on AS3 com.sulake.core.localization.class_2118
+ * Based on AS3 sources/win63_version/core/localization/class_2118.as
  */
+// AS3: sources/win63_version/core/localization/class_2118.as::class_2118()
 export class GameDataResources implements IGameDataResources
 {
-	private _externalFlashTextsUrl: string = '';
-
-	get externalFlashTextsUrl(): string
-	{
-		return this._externalFlashTextsUrl;
-	}
-
-	private _externalFlashTextsHash: string = '';
-
-	get externalFlashTextsHash(): string
-	{
-		return this._externalFlashTextsHash;
-	}
-
 	private _externalVariablesUrl: string = '';
 
 	// AS3: sources/win63_version/core/localization/class_2118.as::getExternalVariablesUrl()
@@ -64,20 +51,6 @@ export class GameDataResources implements IGameDataResources
 	get externalTextsHash(): string
 	{
 		return this._externalTextsHash;
-	}
-
-	private _figureDataUrl: string = '';
-
-	get figureDataUrl(): string
-	{
-		return this._figureDataUrl;
-	}
-
-	private _figureDataHash: string = '';
-
-	get figureDataHash(): string
-	{
-		return this._figureDataHash;
 	}
 
 	private _furnitureDataUrl: string = '';
@@ -135,10 +108,6 @@ export class GameDataResources implements IGameDataResources
 
 			switch (entry.name)
 			{
-				case 'external_flash_texts':
-					resources._externalFlashTextsUrl = url;
-					resources._externalFlashTextsHash = entry.hash;
-					break;
 				case 'external_texts':
 					resources._externalTextsUrl = url;
 					resources._externalTextsHash = entry.hash;
@@ -151,23 +120,11 @@ export class GameDataResources implements IGameDataResources
 					resources._furnitureDataUrl = url;
 					resources._furnitureDataHash = entry.hash;
 					break;
-				case 'figuredata':
-					resources._figureDataUrl = url;
-					resources._figureDataHash = entry.hash;
-					break;
 				case 'productdata':
 					resources._productDataUrl = url;
 					resources._productDataHash = entry.hash;
 					break;
 			}
-		}
-
-		if (!resources._externalTextsUrl && !resources._externalTextsHash &&
-			resources._externalFlashTextsUrl && resources._externalFlashTextsHash)
-		{
-			// Current asset hosts can expose the AS3 external_texts payload under the Flash-era external_flash_texts name.
-			resources._externalTextsUrl = resources._externalFlashTextsUrl;
-			resources._externalTextsHash = resources._externalFlashTextsHash;
 		}
 
 		return resources;

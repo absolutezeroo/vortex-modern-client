@@ -91,7 +91,8 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 				{
 					this._configuration = config;
 				},
-				true
+				true,
+				[{type: 'complete', callback: this.onConfigurationComplete.bind(this)}]
 			),
 			new ComponentDependency(
 				IID_AssetLibrary,
@@ -289,6 +290,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 		this.loadFigureData();
 		this.initDownloadManagers();
 	}
+
 	/**
 	 * AS3 requestActions()/onAvatarActionsLoaded(): loads HabboAvatarActions XML and updates actions.
 	 *
@@ -359,6 +361,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 			this.checkReady();
 		});
 	}
+
 	private getAvatarActionsUrl(): string
 	{
 		if (!this._configuration)
@@ -387,6 +390,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
 		return this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl) ? dynamicAvatarUrl + 'effectmap.xml' : '';
 	}
+
 	private async loadXmlFromUrl(url: string, assetName: string): Promise<Document | null>
 	{
 		const response = await fetch(url);
@@ -406,19 +410,14 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
 		return document;
 	}
+
+	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
 	private initDownloadManagers(): void
 	{
 		const avatarDownloadUrl = this.getAvatarDownloadUrlTemplate(
 			'flash.dynamic.avatar.download.url',
-			'flash.dynamic.avatar.download.name.template',
-			'avatar.asset.url');
-		const effectDownloadUrl = this.getAvatarDownloadUrlTemplate(
-			'flash.dynamic.effect.download.url',
-			'flash.dynamic.effect.download.name.template',
-			'avatar.effect.url') || avatarDownloadUrl;
-
-		// log.debug(`Avatar download URL: ${avatarDownloadUrl}`);
-		// log.debug(`Effect download URL: ${effectDownloadUrl}`);
+			'flash.dynamic.avatar.download.name.template');
+		const effectDownloadUrl = avatarDownloadUrl;
 
 		if (!this._assetLibrary)
 		{
@@ -427,38 +426,41 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 			return;
 		}
 
-		this._mandatoryLibrariesReady = false;
-
 		// Connect alias collection to asset library for sprite resolution
 		this._aliasCollection.setAssetLibrary(this._assetLibrary);
 
-		this._avatarAssetDownloadManager = new AvatarAssetDownloadManager(
-			avatarDownloadUrl,
-			this._structure,
-			this._assetLibrary,
-			this._aliasCollection,
-			() => this._isReady,
-			() =>
-			{
-				this._mandatoryLibrariesReady = true;
-				this.checkReady();
-			}
-		);
+		if (this._avatarAssetDownloadManager === null)
+		{
+			this._mandatoryLibrariesReady = false;
+			this._avatarAssetDownloadManager = new AvatarAssetDownloadManager(
+				avatarDownloadUrl,
+				this._structure,
+				this._assetLibrary,
+				this._aliasCollection,
+				() => this._isReady,
+				() =>
+				{
+					this._mandatoryLibrariesReady = true;
+					this.checkReady();
+				}
+			);
 
-		this._effectAssetDownloadManager = new EffectAssetDownloadManager(
-			effectDownloadUrl,
-			this._structure,
-			this._assetLibrary
-		);
+			this.loadFigureMap();
+		}
 
-		// Load figure map
-		this.loadFigureMap();
+		if (this._effectAssetDownloadManager === null)
+		{
+			this._effectAssetDownloadManager = new EffectAssetDownloadManager(
+				effectDownloadUrl,
+				this._structure,
+				this._assetLibrary
+			);
 
-		// Load effect map
-		this.loadEffectMap();
+			this.loadEffectMap();
+		}
 	}
 
-	private getAvatarDownloadUrlTemplate(downloadUrlKey: string, nameTemplateKey: string, fallbackUrlKey: string): string
+	private getAvatarDownloadUrlTemplate(downloadUrlKey: string, nameTemplateKey: string): string
 	{
 		if (!this._configuration)
 		{
@@ -467,19 +469,12 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
 		const downloadUrl = this._configuration.getProperty(downloadUrlKey);
 
-		if (this.isResolvedDownloadUrlTemplate(downloadUrl))
-		{
-			return downloadUrl + this._configuration.getProperty(nameTemplateKey);
-		}
-
-		const fallbackUrl = this._configuration.getProperty(fallbackUrlKey);
-
-		if (!this.isResolvedDownloadUrlTemplate(fallbackUrl))
+		if (!this.isResolvedDownloadUrlTemplate(downloadUrl))
 		{
 			return '';
 		}
 
-		return fallbackUrl;
+		return downloadUrl + this._configuration.getProperty(nameTemplateKey);
 	}
 
 	private isResolvedDownloadUrlTemplate(url: string): boolean
@@ -491,56 +486,41 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 	{
 		try
 		{
-			const url = this._configuration?.getProperty('avatar.figuremap.url');
+			const url = this._configuration?.getProperty('flash.dynamic.avatar.download.configuration') ?? '';
 
-			log.info(`Loading figure map from: ${url}`);
-
-			if (url && this._avatarAssetDownloadManager)
+			if (url === '' || !this._avatarAssetDownloadManager)
 			{
-				const response = await fetch(url);
-
-				if (!response.ok)
-				{
-					log.error(`Figure map fetch failed: ${response.status} ${response.statusText}`);
-				}
-				else
-				{
-					const text = await response.text();
-
-					// Try parsing as JSON first
-					try
-					{
-						const data = JSON.parse(text);
-
-						this._avatarAssetDownloadManager.loadFigureMap(data);
-					}
-					catch (parseError)
-					{
-						// If JSON parsing fails, try as XML
-						log.info('Figure map is not JSON, trying XML parser...');
-
-						const xmlData = this.parseFigureMapXml(text);
-
-						if (xmlData)
-						{
-							this._avatarAssetDownloadManager.loadFigureMap(xmlData);
-						}
-						else
-						{
-							log.error('Failed to parse figure map as JSON or XML');
-						}
-					}
-				}
+				return;
 			}
 
+			const response = await fetch(url);
+
+			if (!response.ok)
+			{
+				throw new Error(`Figure map fetch failed: ${response.status} ${response.statusText}`);
+			}
+
+			const text = await response.text();
+			let data = this.parseFigureMapXml(text);
+			const trimmed = text.trim();
+
+			if (data === null && (trimmed.startsWith('{') || trimmed.startsWith('[')))
+			{
+				data = JSON.parse(trimmed);
+			}
+
+			if (data === null)
+			{
+				throw new Error('Figure map is not valid XML');
+			}
+
+			this._avatarAssetDownloadManager.loadFigureMap(data);
 			this._figureMapReady = true;
 			this.checkReady();
 		}
 		catch (error)
 		{
 			log.error('Failed to load figure map', error);
-			this._figureMapReady = true;
-			this.checkReady();
 		}
 	}
 
@@ -616,8 +596,6 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 		catch (error)
 		{
 			log.error('Failed to load effect map', error);
-			this._effectMapReady = true;
-			this.checkReady();
 		}
 	}
 

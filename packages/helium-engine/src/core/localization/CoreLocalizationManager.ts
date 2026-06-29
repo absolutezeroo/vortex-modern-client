@@ -134,8 +134,6 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
 					this._gameDataResources = resources;
 
-					// Notify listeners that game data resources (hashes) are available
-					this.events.emit('gameDataResourcesReady', resources);
 
 					// Construct final URL: url + "/" + hash
 					const externalTextsUrl = resources.externalTextsUrl;
@@ -150,15 +148,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 						return;
 					}
 
-					const externalTextUrls = [`${externalTextsUrl}/${externalTextsHash}`];
-
-					if (resources.externalFlashTextsUrl && resources.externalFlashTextsHash &&
-						(resources.externalFlashTextsUrl !== externalTextsUrl || resources.externalFlashTextsHash !== externalTextsHash))
-					{
-						externalTextUrls.push(`${resources.externalFlashTextsUrl}/${resources.externalFlashTextsHash}`);
-					}
-
-					this.loadExternalTextUrls(externalTextUrls, acceptEmpty);
+					this.loadExternalTextUrls([`${externalTextsUrl}/${externalTextsHash}`], acceptEmpty);
 				}
 				catch (error)
 				{
