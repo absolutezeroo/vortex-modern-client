@@ -419,6 +419,7 @@ AS3: 32 files | TS: 22 files
 15. **advertisement, campaign, toolbar, nux, phonenumber**
 
 ### Recently completed
+- ✅ **Navigator thumbnails layout AS3 parity fix**: `CategoryElementFactory.getOpenCategoryElement()` now uses arranged tile content height to size thumbnail categories/backgrounds, preserving collapse controls, and `RoomEntryElementFactory.updateCommonEntryElements()` re-arranges the AS3 `usercount` itemlist after caption updates so room player counts stay centered.
 - ✅ **core/window ItemList resize-on-update AS3 parity fix**: `ItemListController.updateScrollAreaRegion()` now ensures `resize_on_item_update` resizes the itemlist window itself when children change, preserving AS3 right-anchor behavior for navigator category thumbnail/row controls and other converted Flash itemlists.
 - ✅ **Session furnidata AS3 init parity**: `SessionDataManager.initFurnitureData()` now uses AS3 `furnidata.load.url`, `getFurniData()` returns `null` until floor furnidata exists, `FurnitureDataParser` loads text before parsing XML/lingo/converted JSON, and hash-derived `furnidata.url`/`productdata.url` overrides were removed.
 - ✅ **WIN63 gamedata/config/avatar URL parity pass**: `GameDataResources` now matches AS3 `class_2118` (`external_texts`, `external_variables`, `furnidata`, `productdata` only), `CoreLocalizationManager` loads only `external_texts`, `HabboConfigurationManager` reloads `external_variables` on localization `complete`, `SessionDataManager`/`AvatarRenderManager` listen to configuration `complete` through DI like AS3, `HeliumMain` no longer mutates config from hashes, and avatar figuremap uses `flash.dynamic.avatar.download.configuration` with no `avatar.figuremap.url`/asset-url fallback.
@@ -474,4 +475,4 @@ AS3: 32 files | TS: 22 files
 
 ---
 
-*Document updated — 2026-06-30 (core/window itemlist resize-on-update parity restored.)*
+*Document updated — 2026-06-30 (navigator thumbnail layout parity restored.)*

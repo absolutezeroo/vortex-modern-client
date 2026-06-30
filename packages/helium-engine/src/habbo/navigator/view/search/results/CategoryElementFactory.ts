@@ -69,6 +69,7 @@ export class CategoryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as getOpenCategoryElement()
 	 */
+	// AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::getOpenCategoryElement()
 	getOpenCategoryElement(
 		guestRooms: GuestRoomData[],
 		title: string,
@@ -237,7 +238,22 @@ export class CategoryElementFactory
 				}
 			}
 
-			roomList.arrangeItems();
+			roomList.arrangeListItems();
+
+			if(resultMode !== 0)
+			{
+				const contentBottom = roomList.y + roomList.height;
+
+				if(bgEl && bgEl.height < contentBottom + 1)
+				{
+					bgEl.height = contentBottom + 1;
+				}
+
+				if(container.height < contentBottom + 5)
+				{
+					container.height = contentBottom + 5;
+				}
+			}
 		}
 
 		return container;

@@ -192,6 +192,7 @@ export class RoomEntryElementFactory
 	 * @param roomData - The guest room data
 	 * @param isTile - Whether this is a tile element (affects mouse over behavior)
 	 */
+	// AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::updateCommonEntryElements()
 	private updateCommonEntryElements(container: IWindowContainer, roomData: GuestRoomData, isTile: boolean): void
 	{
 		const userCountEl = container.findChildByName('room_usercount');
@@ -199,6 +200,13 @@ export class RoomEntryElementFactory
 		if (userCountEl)
 		{
 			userCountEl.caption = roomData.userCount.toString();
+		}
+
+		const userCountList = container.findChildByName('usercount') as IItemListWindow | null;
+
+		if(userCountList)
+		{
+			userCountList.arrangeListItems();
 		}
 
 		const roomNameEl = container.findChildByName('room_name');
