@@ -2,6 +2,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
@@ -335,8 +336,11 @@ export class SimpleAlertDialog implements IDisposable
 	{
 		if (!this._window || !this._listMain) return;
 
-		// TODO(AS3): call arrangeListItems() on _listMain, _listTop, _listBottom before measuring
-		// sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::resizeWindow()
+		// AS3: _listMain.arrangeListItems(); _listTop.arrangeListItems(); _listBottom.arrangeListItems()
+		(this._listMain as unknown as IItemListWindow).arrangeListItems?.();
+		(this._listTop as unknown as IItemListWindow)?.arrangeListItems?.();
+		(this._listBottom as unknown as IItemListWindow)?.arrangeListItems?.();
+
 		this._window.height = this._listMain.height + 40;
 		this._window.center();
 	}

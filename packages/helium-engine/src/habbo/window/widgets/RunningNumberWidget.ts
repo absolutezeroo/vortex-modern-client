@@ -2,6 +2,8 @@ import type {IRunningNumberWidget} from './IRunningNumberWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IUpdateReceiver} from '@core/runtime/IContext';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 
 /**
@@ -52,8 +54,15 @@ export class RunningNumberWidget implements IRunningNumberWidget
 			this._root = root;
 		}
 
-		// TODO(AS3): _windowManager.registerUpdateReceiver(this, updateFrequency)
-		// sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::RunningNumberWidget()
+		// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::RunningNumberWidget() — _windowManager.registerUpdateReceiver(this, var_1449)
+		const updateAwareManager = this._windowManager as unknown as
+		{
+			registerUpdateReceiver?: (r: IUpdateReceiver, p: number) => void;
+			context?: { registerUpdateReceiver?: (r: IUpdateReceiver, p: number) => void };
+		};
+		updateAwareManager.registerUpdateReceiver?.(this, this._updateFrequency);
+		updateAwareManager.context?.registerUpdateReceiver?.(this, this._updateFrequency);
+
 		this._widgetWindow.setParamFlag(147456);
 		this._widgetWindow.rootWindow = this._root;
 	}
@@ -206,7 +215,22 @@ export class RunningNumberWidget implements IRunningNumberWidget
 					this._displayedNumber + this._millisSinceLastUpdate / this._updateFrequency
 				);
 				this._millisSinceLastUpdate -= this._updateFrequency;
+				this.setFieldValue(this._displayedNumber);
 			}
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set fieldValue()
+	private setFieldValue(value: number): void
+	{
+		if (!this._root) return;
+
+		const textWindow = this._root.findChildByName('number_field') as unknown as ITextWindow | null;
+
+		if (textWindow)
+		{
+			textWindow.text = this.formattedValue;
+			textWindow.invalidate();
 		}
 	}
 
@@ -227,8 +251,15 @@ export class RunningNumberWidget implements IRunningNumberWidget
 			this._widgetWindow = null;
 		}
 
-		// TODO(AS3): _windowManager.removeUpdateReceiver(this)
-		// sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::dispose()
+		// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::dispose() — _windowManager.removeUpdateReceiver(this)
+		const updateAwareManager = this._windowManager as unknown as
+		{
+			removeUpdateReceiver?: (r: IUpdateReceiver) => void;
+			context?: { removeUpdateReceiver?: (r: IUpdateReceiver) => void };
+		};
+		updateAwareManager.removeUpdateReceiver?.(this);
+		updateAwareManager.context?.removeUpdateReceiver?.(this);
+
 		this._windowManager = null;
 		this._disposed = true;
 	}

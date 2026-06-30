@@ -3,8 +3,13 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
+import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import {GroupDetailsChangedMessageEvent} from '@habbo/communication/messages/incoming/users/GroupDetailsChangedMessageEvent';
+import {HabboGroupBadgesMessageEvent} from '@habbo/communication/messages/incoming/users/HabboGroupBadgesMessageEvent';
+import {GetHabboGroupDetailsMessageComposer} from '@habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
 
 /**
  * Badge image rendering widget.
@@ -40,6 +45,10 @@ export class BadgeImageWidget implements IBadgeImageWidget
 	private _bitmap: IWindow | null = null;
 	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_region
 	private _region: IWindow | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_2554
+	private _groupDetailsEvent: IMessageEvent | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_1600
+	private _groupBadgesEvent: IMessageEvent | null = null;
 	// TS-only: bound event handler ref for removeEventListener
 	private _onClickBound: Function;
 
@@ -118,11 +127,30 @@ export class BadgeImageWidget implements IBadgeImageWidget
 	}
 
 	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set groupId()
-	// TODO(AS3): register/unregister GroupDetailsChangedMessageEvent + HabboGroupBadgesMessageEvent
-	// sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set groupId()
 	public set groupId(value: number)
 	{
 		this._groupId = value;
+
+		const shouldListen = this._type === 'group' && this._groupId > 0;
+		const comm = this._windowManager?.communication ?? null;
+
+		if(comm)
+		{
+			if(!shouldListen && this._groupBadgesEvent !== null)
+			{
+				comm.removeHabboConnectionMessageEvent(this._groupDetailsEvent!);
+				comm.removeHabboConnectionMessageEvent(this._groupBadgesEvent!);
+				this._groupDetailsEvent = null;
+				this._groupBadgesEvent = null;
+			}
+			else if(shouldListen && this._groupBadgesEvent === null)
+			{
+				this._groupDetailsEvent = new GroupDetailsChangedMessageEvent((e) => this.onGroupDetailsChanged(e as GroupDetailsChangedMessageEvent));
+				this._groupBadgesEvent = new HabboGroupBadgesMessageEvent((e) => this.onHabboGroupBadges(e as HabboGroupBadgesMessageEvent));
+				comm.addHabboConnectionMessageEvent(this._groupDetailsEvent);
+				comm.addHabboConnectionMessageEvent(this._groupBadgesEvent);
+			}
+		}
 	}
 
 	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
@@ -135,10 +163,12 @@ export class BadgeImageWidget implements IBadgeImageWidget
 			case 'normal':
 				return '${image.library.url}album1584/' + this._badgeId + '.png';
 			case 'group':
+			{
+				// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
 				// AS3: _windowManager.getProperty("group.badge.url").replace("%imagerdata%", _badgeId)
-				// TODO(AS3): resolve group badge URL via windowManager configuration property
-				// sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
-				return this._badgeId;
+				const template = (this._windowManager as unknown as { getProperty?: (k: string) => string }).getProperty?.('group.badge.url') ?? '';
+				return template ? template.replace('%imagerdata%', this._badgeId) : this._badgeId;
+			}
 			case 'perk':
 				return '${image.library.url}perk/' + this._badgeId + '.png';
 			default:
@@ -184,12 +214,39 @@ export class BadgeImageWidget implements IBadgeImageWidget
 		this.refresh();
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onGroupDetailsChanged()
+	private onGroupDetailsChanged(event: GroupDetailsChangedMessageEvent): void
+	{
+		this.forceRefresh(event.groupId, this._badgeId);
+	}
+
+	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onHabboGroupBadges()
+	private onHabboGroupBadges(event: HabboGroupBadgesMessageEvent): void
+	{
+		const badge = event.badges?.get(this._groupId);
+
+		if(badge !== undefined)
+		{
+			this.forceRefresh(this._groupId, badge);
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::forceRefresh()
+	private forceRefresh(groupId: number, badgeId: string): void
+	{
+		if(groupId !== this._groupId) return;
+
+		this._badgeId = badgeId;
+		(this._windowManager?.resourceManager as unknown as { removeAsset?: (uri: string) => void })?.removeAsset?.(this.assetUri);
+		this.refresh();
+	}
+
 	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
 
-		this._groupId = 0;
+		this.groupId = 0;
 
 		if (this._region)
 		{
@@ -221,14 +278,22 @@ export class BadgeImageWidget implements IBadgeImageWidget
 	{
 		if (this._batchUpdate) return;
 
-		// TODO(AS3): _bitmap.assetUri = assetUri; _bitmap.blend = _widgetWindow.blend; _bitmap.invalidate()
-		// sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::refresh()
+		const bitmap = this._bitmap as unknown as IStaticBitmapWrapperWindow;
+
+		if(bitmap)
+		{
+			bitmap.assetUri = this.assetUri;
+			(bitmap as unknown as { blend: number }).blend = this._widgetWindow?.blend ?? 0;
+			bitmap.invalidate();
+		}
 	}
 
 	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onClick()
 	private onClick(_event: WindowMouseEvent): void
 	{
-		// TODO(AS3): send GetHabboGroupDetailsMessageComposer if groupId > 0
-		// sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onClick()
+		if(this._groupId > 0 && this._windowManager?.communication?.connection)
+		{
+			this._windowManager.communication.connection.send(new GetHabboGroupDetailsMessageComposer(this._groupId, true));
+		}
 	}
 }
