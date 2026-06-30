@@ -79,6 +79,12 @@ export class ResourceManager implements IResourceManager
 		if (this._assets.has(resolvedName)) return;
 
 		this._assetUrls.set(resolvedName, url);
+
+		if (this._pendingReceivers.has(resolvedName) && !this._loading.has(resolvedName))
+		{
+			this._loading.add(resolvedName);
+			this.loadFromUrl(resolvedName, url);
+		}
 	}
 
 	/**

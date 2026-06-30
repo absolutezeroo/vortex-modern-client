@@ -17,9 +17,12 @@ const log = Logger.getLogger('ExtensionView');
  *
  * @see sources/win63_version/habbo/toolbar/ExtensionView.as
  */
+// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::ExtensionView
 export class ExtensionView implements IExtensionView
 {
+	// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::MARGIN
 	private static readonly MARGIN: number = 3;
+	// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::PURSE_EXTENSION_OFFSET
 	private static readonly PURSE_EXTENSION_OFFSET: number = -8;
 
 	private _toolbar: HabboToolbar | null;
@@ -143,6 +146,7 @@ export class ExtensionView implements IExtensionView
 		return this._items.has(id);
 	}
 
+	// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::refreshItemWindow()
 	public refreshItemWindow(): void
 	{
 		if(!this._var104) return;
@@ -180,7 +184,12 @@ export class ExtensionView implements IExtensionView
 					break;
 				case 'purse':
 					this._var104.addListItem(window);
-					this._var104.y = ExtensionView.MARGIN + ExtensionView.PURSE_EXTENSION_OFFSET;
+					{
+						const targetY = ExtensionView.MARGIN + ExtensionView.PURSE_EXTENSION_OFFSET;
+
+						// AS3 target is -5; keep the offset calculation but avoid clipping outside the Pixi canvas.
+						this._var104.y = Math.max(0, targetY);
+					}
 					break;
 				default:
 					if(!this._landingView)
@@ -190,7 +199,7 @@ export class ExtensionView implements IExtensionView
 			}
 		}
 
-		this._var104.arrangeItems();
+		this._var104.arrangeListItems();
 		this._var104.invalidate();
 	}
 

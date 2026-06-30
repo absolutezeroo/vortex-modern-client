@@ -16,6 +16,7 @@ import {NavigatorSearchAction} from '@habbo/communication/messages/incoming/newn
  *
  * @see sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as
  */
+// AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::CategoryElementFactory
 export class CategoryElementFactory
 {
 	private static readonly MARGIN_LAYOUT_CATEGORY_CONTAINER: number = 13;
@@ -118,6 +119,16 @@ export class CategoryElementFactory
 		{
 			nameRegion.id = showMoreId;
 			nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
+		}
+
+		if (collapseEl)
+		{
+			const collapseIndex = container.getChildIndex(collapseEl);
+
+			if (collapseIndex > -1)
+			{
+				container.setChildIndex(collapseEl, container.numChildren - 1);
+			}
 		}
 
 		// Wire show more button

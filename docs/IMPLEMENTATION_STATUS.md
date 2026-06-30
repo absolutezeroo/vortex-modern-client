@@ -419,6 +419,8 @@ AS3: 32 files | TS: 22 files
 15. **advertisement, campaign, toolbar, nux, phonenumber**
 
 ### Recently completed
+- ✅ **Navigator collapse + toolbar purse visual AS3 follow-up**: `CategoryElementFactory.getOpenCategoryElement()` keeps the AS3 `category_collapse` control above the title hit region in the Pixi draw order, and `ExtensionView.refreshItemWindow()` now uses AS3 `arrangeListItems()` while clamping the AS3 purse offset at the canvas top edge to avoid visible top clipping.
+- ✅ **Window ResourceManager pending asset wake-up**: `registerAssetUrl()` now starts lazy loading for receivers that requested a static bitmap before the bundled image URL was registered, restoring Flash embedded-asset behavior for navigator category controls such as `category_collapse`.
 - ✅ **Navigator thumbnails layout AS3 parity fix**: `CategoryElementFactory.getOpenCategoryElement()` now uses arranged tile content height to size thumbnail categories/backgrounds, preserving collapse controls, and `RoomEntryElementFactory.updateCommonEntryElements()` re-arranges the AS3 `usercount` itemlist after caption updates so room player counts stay centered.
 - ✅ **core/window ItemList resize-on-update AS3 parity fix**: `ItemListController.updateScrollAreaRegion()` now ensures `resize_on_item_update` resizes the itemlist window itself when children change, preserving AS3 right-anchor behavior for navigator category thumbnail/row controls and other converted Flash itemlists.
 - ✅ **Session furnidata AS3 init parity**: `SessionDataManager.initFurnitureData()` now uses AS3 `furnidata.load.url`, `getFurniData()` returns `null` until floor furnidata exists, `FurnitureDataParser` loads text before parsing XML/lingo/converted JSON, and hash-derived `furnidata.url`/`productdata.url` overrides were removed.
@@ -475,4 +477,4 @@ AS3: 32 files | TS: 22 files
 
 ---
 
-*Document updated — 2026-06-30 (navigator thumbnail layout parity restored.)*
+*Document updated — 2026-06-30 (navigator collapse z-order and purse top clipping aligned.)*
