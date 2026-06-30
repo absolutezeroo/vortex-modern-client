@@ -14,45 +14,54 @@ import type {IUpdateReceiver} from '@core/runtime/IContext';
 export class HintManager
 	implements IUpdateReceiver
 {
+	// AS3: sources/win63_version/habbo/window/HintManager.as::VERTICAL_PADDING
 	private static readonly VERTICAL_PADDING: number = 10;
+	// TS-only: replaces AS3 Motion duration constant
 	private static readonly ANIMATION_DURATION: number = 400;
+	// AS3: sources/win63_version/habbo/window/HintManager.as::MIN_DISTANCE
 	private static readonly MIN_DISTANCE: number = 15;
 
+	// AS3: sources/win63_version/habbo/window/HintManager.as::_windowManager
 	private _windowManager: IHabboWindowManager;
+	// AS3: sources/win63_version/habbo/window/HintManager.as::_registeredWindows (Dictionary)
 	private _registeredWindows: Map<string, HintTarget> = new Map();
+	// AS3: sources/win63_version/habbo/window/HintManager.as::_activeHint
 	private _activeHint: HintTarget | null = null;
+	// AS3: sources/win63_version/habbo/window/HintManager.as::_hint
 	private _hint: IHintWindow | null = null;
+	// AS3: sources/win63_version/habbo/window/HintManager.as::var_5208
 	private _targetRect: { x: number; y: number; width: number; height: number } | null = null;
+	// AS3: sources/win63_version/habbo/window/HintManager.as::var_2535
 	private _currentRect: { x: number; y: number; width: number; height: number } | null = null;
+	// TS-only: animation state (replaces AS3 Motion framework)
 	private _animationStartTime: number = 0;
 	private _animationDuration: number = 0;
 	private _animationFromRect: { x: number; y: number; width: number; height: number } | null = null;
 	private _animationToRect: { x: number; y: number; width: number; height: number } | null = null;
 	private _animationActive: boolean = false;
 
+	// AS3: sources/win63_version/habbo/window/HintManager.as::HintManager()
 	constructor(windowManager: IHabboWindowManager)
 	{
 		this._windowManager = windowManager;
 	}
 
+	// AS3: sources/win63_version/habbo/window/HintManager.as::_disposed
 	private _disposed: boolean = false;
 
+	// AS3: sources/win63_version/habbo/window/HintManager.as::get disposed()
 	public get disposed(): boolean
 	{
 		return this._disposed;
 	}
 
-	/**
-	 * Returns the key of the active hint.
-	 */
+	// TS-only: convenience accessor (AS3 accessed _activeHint.key directly)
 	private get activeKey(): string | null
 	{
 		return this._activeHint?.key ?? null;
 	}
 
-	/**
-	 * Registers a window for hint support.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::registerWindow()
 	public registerWindow(key: string, window: IWindow, style: number = 0): void
 	{
 		if (this._registeredWindows.has(key))
@@ -63,9 +72,7 @@ export class HintManager
 		this._registeredWindows.set(key, new HintTarget(window, key, style));
 	}
 
-	/**
-	 * Unregisters a window.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::unregisterWindow()
 	public unregisterWindow(key: string): void
 	{
 		if (this._activeHint && this.activeKey === key)
@@ -76,9 +83,7 @@ export class HintManager
 		this._registeredWindows.delete(key);
 	}
 
-	/**
-	 * Shows a hint for a registered window.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::showHint()
 	public showHint(key: string, rect: { x: number; y: number; width: number; height: number } | null = null): void
 	{
 		const target = this._registeredWindows.get(key);
@@ -130,9 +135,7 @@ export class HintManager
 		}
 	}
 
-	/**
-	 * Hides the active hint.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::hideHint()
 	public hideHint(): void
 	{
 		this.unregisterFromUpdates();
@@ -152,9 +155,7 @@ export class HintManager
 		this._animationDuration = 0;
 	}
 
-	/**
-	 * Hides hint if it matches the given key.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::hideMatchingHint()
 	public hideMatchingHint(key: string): void
 	{
 		if (this.activeKey === key)
@@ -163,9 +164,7 @@ export class HintManager
 		}
 	}
 
-	/**
-	 * Update tick for hint positioning/animation.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::update()
 	public update(_time: number): void
 	{
 		if (!this._activeHint || !this._hint || !this._activeHint.window) return;
@@ -282,9 +281,7 @@ export class HintManager
 		this._hint.visible = this._activeHint.window.visible;
 	}
 
-	/**
-	 * Dispose the hint manager.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
@@ -295,9 +292,7 @@ export class HintManager
 		this._registeredWindows.clear();
 	}
 
-	/**
-	 * Calculates target rectangle for hint positioning.
-	 */
+	// AS3: sources/win63_version/habbo/window/HintManager.as::getTargetRect()
 	private getTargetRect(window: IWindow): { x: number; y: number; width: number; height: number }
 	{
 		const globalPos = {x: 0, y: 0};
@@ -345,6 +340,10 @@ export class HintManager
 		return rect;
 	}
 
+	// AS3: sources/win63_version/habbo/window/HintManager.as::animateHint()
+	// TS note: in AS3 registerForUpdates() was called in motionComplete() (after animation).
+	// In TS the animation is driven by the update loop itself, so registerForUpdates() must
+	// be called before the animation starts.
 	private animateHint(rect: { x: number; y: number; width: number; height: number }): void
 	{
 		if (!this._hint || !this._currentRect) return;
@@ -383,6 +382,7 @@ export class HintManager
 		this.registerForUpdates();
 	}
 
+	// TS-only: registers with the window manager's update loop (AS3 used ENTER_FRAME)
 	private registerForUpdates(): void
 	{
 		const updateAwareManager = this._windowManager as unknown as {
@@ -396,6 +396,7 @@ export class HintManager
 		updateAwareManager.context?.registerUpdateReceiver?.(this, 10);
 	}
 
+	// TS-only: unregisters from the window manager's update loop
 	private unregisterFromUpdates(): void
 	{
 		const updateAwareManager = this._windowManager as unknown as {

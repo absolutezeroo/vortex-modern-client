@@ -55,121 +55,45 @@ export interface IHabboWindowManager extends IDisposable
 {
 	// ── Declarative window API (existing) ──────────────────────────────
 
-	/**
-	 * Event emitter for window lifecycle events.
-	 * Emits 'window:open', 'window:close', 'window:update'.
-	 *
-	 * NOTE: This is NOT the Component.events emitter.
-	 * Uses a separate emitter to avoid the DI override bug.
-	 */
+	// TS-only: declarative window event emitter
 	readonly windowEvents: EventEmitter;
 
-	/**
-	 * The element registry containing descriptors for all element types.
-	 */
+	// TS-only: element registry
 	readonly elementRegistry: ElementRegistry;
-	/**
-	 * The avatar render manager.
-	 *
-	 * Injected via component dependency. Used by AvatarImageWidget
-	 * and other widgets that render avatars.
-	 *
-	 * In AS3: HabboWindowManagerComponent.avatarRenderer
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::avatarRenderer
 	readonly avatarRenderer: IAvatarRenderManager | null;
-	/**
-	 * The communication manager.
-	 *
-	 * Injected via component dependency. Used by widgets that need
-	 * to send messages (e.g. GetExtendedProfileMessageComposer).
-	 *
-	 * In AS3: HabboWindowManagerComponent.communication
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::communication
 	readonly communication: IHabboCommunicationManager | null;
-	/**
-	 * The session data manager.
-	 *
-	 * In AS3: HabboWindowManagerComponent.sessionDataManager
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::sessionDataManager
 	readonly sessionDataManager: ISessionDataManager | null;
-	/**
-	 * The room engine reference.
-	 *
-	 * In AS3: HabboWindowManagerComponent.roomEngine
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::roomEngine
 	readonly roomEngine: IRoomEngine | null;
-	/**
-	 * The resource manager.
-	 *
-	 * In AS3: IHabboWindowManager.resourceManager
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::resourceManager
 	readonly resourceManager: IResourceManager | null;
-	/**
-	 * The localization manager reference.
-	 *
-	 * In AS3: HabboWindowManagerComponent.localization
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::localization
 	readonly localization: IHabboLocalizationManager | null;
-	/**
-	 * Habbopedia stylesheet accessor.
-	 *
-	 * In AS3 this returned HabboPagesViewer.styleSheet.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::habboPagesStyleSheet
 	readonly habboPagesStyleSheet: unknown | null;
 
-	/**
-	 * Load element description data into the registry.
-	 */
+	// TS-only
 	loadElementDescription(data: IElementDescriptionData): void;
-
-	/**
-	 * Open a window from a preloaded layout.
-	 */
+	// TS-only
 	openWindow(layout: IWindowLayout, vars?: Record<string, unknown>, layer?: number): IWindowInstance;
-
-	/**
-	 * Close and destroy a window by its instance ID.
-	 */
+	// TS-only
 	closeWindow(id: number): void;
-
-	/**
-	 * Get a window instance by ID.
-	 */
+	// TS-only
 	getWindow(id: number): IWindowInstance | null;
-
-	/**
-	 * Get all open windows, optionally filtered by layer.
-	 */
+	// TS-only
 	getWindows(layer?: number): IWindowInstance[];
 
 	// ── AS3-compatible API (ICoreWindowManager + IHabboWindowManager) ──
 
-	/**
-	 * Register a layout by name for later retrieval.
-	 */
+	// TS-only
 	registerLayout(name: string, layout: IWindowLayout): void;
-
-	/**
-	 * Get a registered layout by name.
-	 */
+	// TS-only
 	getLayout(name: string): IWindowLayout | null;
 
-	/**
-	 * Create a window using the core factory.
-	 *
-	 * @param name - Window name
-	 * @param type - WindowType constant
-	 * @param style - WindowStyle constant
-	 * @param param - WindowParam flags
-	 * @param rect - Position and size
-	 * @param procedure - Event handler callback
-	 * @param dynamicStyle - Optional dynamic style name
-	 * @param id - Optional window ID
-	 * @param tags - Optional tags
-	 * @param parent - Optional parent window
-	 * @param properties - Optional property array
-	 * @returns The created IWindow
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::create()
 	create(
 		name: string,
 		type: number,
@@ -184,50 +108,25 @@ export interface IHabboWindowManager extends IDisposable
 		properties?: unknown[] | null
 	): IWindow;
 
-	/**
-	 * Build a window tree from an XML layout definition.
-	 *
-	 * @param layout - The XML layout payload
-	 * @param layer - Context layer (default 1)
-	 * @param vars - Variable map
-	 * @returns The root IWindow
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::buildFromXML()
 	buildFromXML(layout: string | Document | Element, layer?: number, vars?: Map<string, string> | null): IWindow;
 
-	/**
-	 * Serialize a window tree.
-	 *
-	 * AS3 method name kept for API parity.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::windowToXMLString()
 	windowToXMLString(window: IWindow): string;
 
-	/**
-	 * Destroy a window.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::destroy()
 	destroy(window: IWindow): void;
 
-	/**
-	 * Show a notify dialog.
-	 *
-	 * AS3: notify(title, message, callback, flags)
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::notify()
 	notify(title: string, message: string, callback: AlertDialogCallback | null, flags?: number): IAlertDialog;
 
-	/**
-	 * Show an alert dialog.
-	 *
-	 * AS3: alert(title, message, flags, callback)
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::alert()
 	alert(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IAlertDialog;
 
-	/**
-	 * Show a modal alert dialog.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::alertWithModal()
 	alertWithModal(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IAlertDialog;
 
-	/**
-	 * Show an alert dialog with link.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::alertWithLink()
 	alertWithLink(
 		title: string,
 		message: string,
@@ -237,51 +136,18 @@ export interface IHabboWindowManager extends IDisposable
 		callback: AlertDialogCallback | null
 	): IAlertDialogWithLink;
 
-	/**
-	 * Show a confirm dialog.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::confirm()
 	confirm(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IConfirmDialog;
 
-	/**
-	 * Show a modal confirm dialog.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::confirmWithModal()
 	confirmWithModal(title: string, message: string, flags: number, callback: AlertDialogCallback | null): IConfirmDialog;
 
-	/**
-	 * Register a widget layout XML asset by name.
-	 *
-	 * @param name - The layout asset name (e.g. "hover_bitmap", "avatar_image")
-	 * @param xml - The XML layout source
-	 */
+	// TS-only
 	registerWidgetLayout(name: string, xml: string): void;
-
-	/**
-	 * Build a widget's internal window tree from a registered layout asset.
-	 *
-	 * Equivalent to AS3:
-	 * `buildFromXML(assets.getAssetByName("widget_xml").content as XML)`
-	 *
-	 * @param name - The layout asset name
-	 * @param layer - Context layer (default 1)
-	 * @returns The root IWindow of the built tree, or null
-	 */
+	// TS-only
 	buildWidgetLayout(name: string, layer?: number): IWindow | null;
 
-	/**
-	 * Create a window by name, type, style, param in a given context layer.
-	 *
-	 * @param name - Window name
-	 * @param caption - Display caption
-	 * @param type - WindowType
-	 * @param style - WindowStyle
-	 * @param param - WindowParam
-	 * @param rect - Position and size
-	 * @param procedure - Event handler
-	 * @param id - Window ID
-	 * @param layer - Context layer (default 1)
-	 * @param dynamicStyle - Dynamic style name
-	 * @returns The created IWindow
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::createWindow()
 	createWindow(
 		name: string,
 		caption?: string,
@@ -295,209 +161,97 @@ export interface IHabboWindowManager extends IDisposable
 		dynamicStyle?: string
 	): IWindow;
 
-	/**
-	 * Remove a window by name from a context layer.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::removeWindow()
 	removeWindow(name: string, layer?: number): void;
 
-	/**
-	 * Get a window by name from a context layer.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::getWindowByName()
 	getWindowByName(name: string, layer?: number): IWindow | null;
 
-	/**
-	 * Get the topmost active window in a context layer.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::getActiveWindow()
 	getActiveWindow(layer?: number): IWindow | null;
 
-	/**
-	 * Toggle fullscreen mode.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::toggleFullScreen()
 	toggleFullScreen(): void;
 
-	/**
-	 * Get a window context by layer index.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::getWindowContext()
 	getWindowContext(layer: number): IWindowContext;
 
-	/**
-	 * Get the desktop window for a given context layer.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::getDesktop()
 	getDesktop(layer: number): IWindow | null;
 
-	/**
-	 * Search for a window by name across all context layers.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::findWindowByName()
 	findWindowByName(name: string): IWindow | null;
 
-	/**
-	 * Search for a window by tag across all context layers.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::findWindowByTag()
 	findWindowByTag(tag: string): IWindow | null;
 
-	/**
-	 * Group windows with a given tag across contexts.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::groupWindowsWithTag()
 	groupWindowsWithTag(tag: string, windows: IWindow[], depth?: number): number;
 
-	/**
-	 * Add an input event tracker to all context layers.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::addMouseEventTracker()
 	addMouseEventTracker(tracker: IInputEventTracker): void;
 
-	/**
-	 * Remove an input event tracker from all context layers.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::removeMouseEventTracker()
 	removeMouseEventTracker(tracker: IInputEventTracker): void;
 
-	/**
-	 * Input tracking callback.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::eventReceived()
 	eventReceived(event: WindowEvent, window: IWindow): void;
 
-	/**
-	 * Register a localization parameter.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::registerLocalizationParameter()
 	registerLocalizationParameter(key: string, parameter: string, value: string, delimiter?: string): void;
 
-	/**
-	 * Create an unseen item counter widget.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::createUnseenItemCounter()
 	createUnseenItemCounter(): IWindowContainer | null;
 
-	/**
-	 * Register a hint window.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::registerHintWindow()
 	registerHintWindow(hintId: string, window: IWindow, direction?: number): void;
 
-	/**
-	 * Unregister a hint window.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::unregisterHintWindow()
 	unregisterHintWindow(hintId: string): void;
 
-	/**
-	 * Show a hint by ID.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::showHint()
 	showHint(hintId: string, rect?: { x: number; y: number; width: number; height: number } | null): void;
 
-	/**
-	 * Hide the current hint.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::hideHint()
 	hideHint(): void;
 
-	/**
-	 * Hide a hint matching the given ID.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::hideMatchingHint()
 	hideMatchingHint(hintId: string): void;
 
-	/**
-	 * Open a help page.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::openHelpPage()
 	openHelpPage(pageId: string): void;
 
-	/**
-	 * Build a modal dialog from an XML layout definition.
-	 *
-	 * Creates a dimmed background overlay and a centered content
-	 * window from the provided layout. Returns an IModalDialog
-	 * that wraps both.
-	 *
-	 * In AS3: buildModalDialogFromXML(xml: XML): IModalDialog
-	 *
-	 * @param layout - The XML layout source
-	 * @returns The modal dialog instance
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::buildModalDialogFromXML()
 	buildModalDialogFromXML(layout: string): IModalDialog;
 
-	/**
-	 * Registers a bitmap asset with the resource manager.
-	 *
-	 * Called by the client layer after loading images. Assets registered
-	 * here are available to StaticBitmapWrapperController via `assetUri`.
-	 *
-	 * @param name - The asset name
-	 * @param bitmap - The decoded ImageBitmap
-	 */
+	// TS-only
 	registerAsset(name: string, bitmap: ImageBitmap): void;
-
-	/**
-	 * Registers an asset URL for lazy loading.
-	 *
-	 * The bitmap is NOT decoded immediately. When a window requests this
-	 * asset via `assetUri`, it is fetched and decoded on demand.
-	 *
-	 * @param name - The asset name
-	 * @param url - The URL to fetch the image from
-	 */
+	// TS-only
 	registerAssetUrl(name: string, url: string): void;
-
-	/**
-	 * Loads skin assets and creates BitmapSkinRenderers from skin XML data.
-	 *
-	 * @param skins - Map of skin id → skin JSON data
-	 * @param atlases - Map of atlas asset name → ImageBitmap
-	 */
+	// TS-only
 	loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void;
-
-	/**
-	 * Returns the skin container.
-	 */
+	// TS-only
 	getSkinContainer(): ISkinContainer;
-
-	/**
-	 * Returns the window renderer.
-	 */
+	// TS-only
 	getWindowRenderer(): IWindowRenderer | null;
 
-	/**
-	 * Returns the skin renderer for a given type/style.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::getRendererByTypeAndStyle()
 	getRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null;
 
-	/**
-	 * Composites all window layers into a single OffscreenCanvas buffer.
-	 *
-	 * Walks each context layer, retrieves its desktop, and recursively
-	 * draws each window's skin buffer at its absolute position.
-	 *
-	 * @param width - The target buffer width
-	 * @param height - The target buffer height
-	 * @returns The composited buffer, or null if renderer is unavailable
-	 */
+	// TS-only
 	compositeToBuffer(width: number, height: number): OffscreenCanvas | null;
-
-	/**
-	 * Finds the deepest visible window at the given screen point.
-	 *
-	 * Iterates layers in reverse order (tooltips → background) so that
-	 * the topmost layer wins.
-	 *
-	 * @param x - The global X coordinate
-	 * @param y - The global Y coordinate
-	 * @returns The deepest window at the point, or null
-	 */
+	// TS-only
 	findWindowAtPoint(x: number, y: number): IWindow | null;
 
-	/**
-	 * Display the floor plan editor.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::displayFloorPlanEditor()
 	displayFloorPlanEditor(): void;
 
-	/**
-	 * Returns the shared service manager for mouse drag/scale operations.
-	 *
-	 * Used by the client renderer to forward DOM mouse events.
-	 */
+	// TS-only
 	getServiceManager(): IInternalWindowServices | null;
-
-	/**
-	 * Create a widget by type.
-	 */
+	// TS-only
 	createWidget(type: string, window: IWidgetWindow): IWidget | null;
 
-	/**
-	 * Show a simple alert dialog.
-	 */
+	// AS3: sources/win63_version/habbo/window/class_38.as::simpleAlert()
 	simpleAlert(
 		title: string,
 		message: string,

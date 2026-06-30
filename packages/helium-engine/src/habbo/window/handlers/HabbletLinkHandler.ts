@@ -9,66 +9,64 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
  */
 export class HabbletLinkHandler
 {
+	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::_windowManager
 	private _windowManager: IHabboWindowManager;
 
+	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::HabbletLinkHandler()
 	constructor(windowManager: IHabboWindowManager)
 	{
 		this._windowManager = windowManager;
 	}
 
+	// TS-only: explicit disposed flag (AS3 uses _windowManager == null check)
 	private _disposed: boolean = false;
 
+	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get disposed()
 	public get disposed(): boolean
 	{
-		return this._disposed;
+		return this._windowManager == null;
 	}
 
-	/**
-	 * The link pattern this handler matches.
-	 */
+	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get linkPattern()
 	public get linkPattern(): string
 	{
 		return 'habblet/';
 	}
 
-	/**
-	 * Handles a received link URL.
-	 *
-	 * Supported patterns:
-	 * - "habblet/open/credits" -> Opens web shop
-	 * - "habblet/open/<name>" -> Opens web habblet
-	 */
+	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
 	public linkReceived(link: string): void
 	{
 		const parts = link.split('/');
 
-		if (parts.length < 3) return;
+		// AS3: if(_loc2_.length < 2) return
+		if (parts.length < 2) return;
 
 		const action = parts[1];
-		const target = parts[2];
 
 		if (action === 'open')
 		{
+			// AS3: if(_loc2_.length > 2) _loc3_ = _loc2_[2]
+			const target = parts.length > 2 ? parts[2] : null;
+
 			if (target === 'credits')
 			{
-				// In AS3: HabboWebTools.openWebPageAndMinimizeClient()
-				// Opens the web shop URL
+				// TODO(AS3): HabboWebTools.openWebPageAndMinimizeClient()
+				// sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
 			}
-			else
+			else if (target)
 			{
-				// In AS3: HabboWebTools.openWebHabblet(target)
-				// Opens the named web habblet
+				// TODO(AS3): HabboWebTools.openWebHabblet(target)
+				// sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
 			}
 		}
 	}
 
-	/**
-	 * Dispose the link handler.
-	 */
+	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
 
 		this._disposed = true;
+		this._windowManager = null!;
 	}
 }

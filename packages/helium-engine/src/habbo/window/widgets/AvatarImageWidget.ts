@@ -28,35 +28,54 @@ import {
  */
 export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListener
 {
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::TYPE
 	public static readonly TYPE: string = 'avatar_image';
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::FIGURE_KEY
 	private static readonly FIGURE_KEY: string = 'avatar_image:figure';
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::SCALE_KEY
 	private static readonly SCALE_KEY: string = 'avatar_image:scale';
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::ONLY_HEAD_KEY
 	private static readonly ONLY_HEAD_KEY: string = 'avatar_image:only_head';
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::CROPPED_KEY
 	private static readonly CROPPED_KEY: string = 'avatar_image:cropped';
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_KEY
 	private static readonly DIRECTION_KEY: string = 'avatar_image:direction';
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTIONS
 	private static readonly DIRECTIONS: string[] = [
 		'northeast', 'east', 'southeast', 'south',
 		'southwest', 'west', 'northwest', 'north'
 	];
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::FIGURE_DEFAULT (PropertyStruct in AS3)
 	private static readonly FIGURE_DEFAULT: string = 'hd-180-1.ch-210-66.lg-270-82.sh-290-81';
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::SCALE_DEFAULT
 	private static readonly SCALE_DEFAULT: string = 'h';
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::ONLY_HEAD_DEFAULT
 	private static readonly ONLY_HEAD_DEFAULT: boolean = false;
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::CROPPED_DEFAULT
 	private static readonly CROPPED_DEFAULT: boolean = false;
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::DIRECTION_DEFAULT
 	private static readonly DIRECTION_DEFAULT: number = 2;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_widgetWindow
 	private _widgetWindow: IWidgetWindow | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_windowManager
 	private _windowManager: IHabboWindowManager | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_root
 	private _root: IWindowContainer | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_bitmap
 	private _bitmap: IBitmapWrapperWindow | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_region
 	private _region: IWindow | null = null;
+	// TS-only: bound event handler refs for removeEventListener
 	private _onClickBound: Function;
 	private _onAvatarRendererReadyBound: () => void;
 	private _avatarRendererReadyRegistered: boolean = false;
 	private _placeholderRequestId: number = 0;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::AvatarImageWidget()
 	constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
 	{
 		this._widgetWindow = window;
@@ -85,20 +104,25 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_disposed
 	private _disposed: boolean = false;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get disposed()
 	public get disposed(): boolean
 	{
 		return this._disposed;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_figure
 	private _figure: string = AvatarImageWidget.FIGURE_DEFAULT;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get figure()
 	public get figure(): string
 	{
 		return this._figure;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set figure()
 	public set figure(value: string)
 	{
 		if (value !== this._figure)
@@ -109,13 +133,16 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_scale
 	private _scale: string = AvatarImageWidget.SCALE_DEFAULT;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get scale()
 	public get scale(): string
 	{
 		return this._scale;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set scale()
 	public set scale(value: string)
 	{
 		if (value !== this._scale)
@@ -125,13 +152,16 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_onlyHead
 	private _onlyHead: boolean = AvatarImageWidget.ONLY_HEAD_DEFAULT;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get onlyHead()
 	public get onlyHead(): boolean
 	{
 		return this._onlyHead;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set onlyHead()
 	public set onlyHead(value: boolean)
 	{
 		if (value !== this._onlyHead)
@@ -141,13 +171,16 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_cropped
 	private _cropped: boolean = AvatarImageWidget.CROPPED_DEFAULT;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get cropped()
 	public get cropped(): boolean
 	{
 		return this._cropped;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set cropped()
 	public set cropped(value: boolean)
 	{
 		if (value !== this._cropped)
@@ -157,13 +190,16 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_direction
 	private _direction: number = AvatarImageWidget.DIRECTION_DEFAULT;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get direction()
 	public get direction(): number
 	{
 		return this._direction;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set direction()
 	public set direction(value: number)
 	{
 		if (value !== this._direction)
@@ -173,13 +209,16 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_userId
 	private _userId: number = 0;
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get userId()
 	public get userId(): number
 	{
 		return this._userId;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set userId()
 	public set userId(value: number)
 	{
 		if (this._userId !== value)
@@ -193,16 +232,16 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_figureEmpty
 	private _figureEmpty: boolean = false;
 
-	/**
-	 * Whether the figure string was set to an empty/null value.
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get figureEmpty()
 	public get figureEmpty(): boolean
 	{
 		return this._figureEmpty;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::get properties()
 	public get properties(): PropertyStruct[]
 	{
 		if (this._disposed) return [];
@@ -216,6 +255,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		];
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::set properties()
 	public set properties(values: PropertyStruct[])
 	{
 		for (const prop of values)
@@ -241,9 +281,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
-	/**
-	 * Clean up a figure string, replacing NaN values and defaulting empty strings.
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::cleanupAvatarString()
 	private static cleanupAvatarString(figure: string | null): string
 	{
 		if (!figure || figure.length === 0)
@@ -254,14 +292,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		return figure.replace(/NaN/g, '');
 	}
 
-	/**
-	 * IAvatarImageListener implementation.
-	 *
-	 * Called when an asynchronous avatar image download completes.
-	 * If the completed figure matches our current figure, refresh.
-	 *
-	 * @param figureString - The completed figure string
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::avatarImageReady()
 	public avatarImageReady(figureString: string): void
 	{
 		if (AvatarImageWidget.cleanupAvatarString(figureString) === this._figure)
@@ -270,6 +301,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
@@ -307,15 +339,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		this._disposed = true;
 	}
 
-	/**
-	 * Refresh the avatar bitmap rendering.
-	 *
-	 * Creates an avatar image via the renderer, sets direction,
-	 * gets the cropped or full image at the appropriate scale,
-	 * and applies greyscale if the figure was empty.
-	 *
-	 * @see AvatarImageWidget.as refresh()
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::refresh()
 	private refresh(): void
 	{
 		if (!this._bitmap || !this._windowManager) return;
@@ -395,6 +419,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		}
 	}
 
+	// TS-only: callback for avatar renderer ready event
 	private onAvatarRendererReady(): void
 	{
 		const avatarRenderer = this._windowManager?.avatarRenderer;
@@ -408,6 +433,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		this.refresh();
 	}
 
+	// TS-only: loads placeholder avatar bitmap while real figure is unavailable
 	private requestPlaceholder(): void
 	{
 		if (!this._bitmap || !this._windowManager?.resourceManager) return;
@@ -446,6 +472,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		this._windowManager.resourceManager.retrieveAsset(assetUri, receiver);
 	}
 
+	// TS-only: greyscale conversion via OffscreenCanvas (replaces AS3 ColorTransform)
 	private static createGreyscaleBitmap(bitmap: ImageBitmap): ImageBitmap | null
 	{
 		if (bitmap.width < 1 || bitmap.height < 1 || typeof OffscreenCanvas === 'undefined') return null;
@@ -461,11 +488,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 		return canvas.transferToImageBitmap();
 	}
 
-	/**
-	 * Handle click on the avatar region.
-	 *
-	 * Sends GetExtendedProfileMessageComposer if userId > 0.
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::onClick()
 	private onClick(_event: WindowMouseEvent): void
 	{
 		if (this._userId > 0 && this._windowManager)

@@ -15,9 +15,11 @@ import {RoomEntryUtils} from '../../RoomEntryUtils';
  *
  * @see sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as
  */
+// AS3: sources/win63_version/habbo/navigator/view/search/results/RoomEntryElementFactory.as::RoomEntryElementFactory
 export class RoomEntryElementFactory
 {
 	static readonly TILES_PER_CONTAINER: number = 3;
+	private static readonly ROOM_USERCOUNT_FLASH_LABEL_OFFSET_Y: number = 1;
 
 	private _navigator: HabboNewNavigator;
 
@@ -200,6 +202,7 @@ export class RoomEntryElementFactory
 		if (userCountEl)
 		{
 			userCountEl.caption = roomData.userCount.toString();
+			userCountEl.y = RoomEntryElementFactory.ROOM_USERCOUNT_FLASH_LABEL_OFFSET_Y;
 		}
 
 		const userCountList = container.findChildByName('usercount') as IItemListWindow | null;

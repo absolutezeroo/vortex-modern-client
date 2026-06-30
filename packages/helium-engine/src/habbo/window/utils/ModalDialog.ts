@@ -23,26 +23,26 @@ const log = Logger.getLogger('ModalDialog');
  */
 export class ModalDialog implements IModalDialog
 {
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::MODAL_DIALOG_LAYER
 	private static readonly MODAL_DIALOG_LAYER: number = 3;
 
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_windowManager (static)
 	private static _windowManager: IHabboWindowManager | null = null;
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_container (static)
 	private static _container: IWindowContainer | null = null;
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_refreshPending (static)
 	private static _refreshPending: number = 0;
+	// TS-only: replaces AS3 var_360: Stage null-check init guard
 	private static _initialized: boolean = false;
 
-	/**
-	 * Creates a new modal dialog.
-	 *
-	 * @param windowManager - The Habbo window manager
-	 * @param xml - The XML layout definition for the dialog content
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::ModalDialog()
 	constructor(windowManager: IHabboWindowManager, xml: string)
 	{
 		ModalDialog.initialiseStaticMembers(windowManager);
 
-		// Create background overlay window in the modal container
+		// AS3: create("","",21,0,1,new Rectangle(0,0,1,1),null,_container,0)
 		this._background = ModalDialog._windowManager!.createWindow(
-			'modal_bg', '', 21, 0, 0,
+			'modal_bg', '', 21, 0, 1,
 			{x: 0, y: 0, width: 1, height: 1},
 			null, 0, ModalDialog.MODAL_DIALOG_LAYER
 		);
@@ -65,42 +65,34 @@ export class ModalDialog implements IModalDialog
 		ModalDialog.refresh();
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_disposed
 	private _disposed: boolean = false;
 
-	/**
-	 * Whether this modal dialog has been disposed.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::get disposed()
 	public get disposed(): boolean
 	{
 		return this._disposed;
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_rootWindow
 	private _rootWindow: IWindow | null = null;
 
-	/**
-	 * The root window of this modal dialog.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::get rootWindow()
 	public get rootWindow(): IWindow | null
 	{
 		return this._rootWindow;
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::_background
 	private _background: IWindow | null = null;
 
-	/**
-	 * The background overlay window.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::get background()
 	public get background(): IWindow | null
 	{
 		return this._background;
 	}
 
-	/**
-	 * Handles stage resize events.
-	 *
-	 * In AS3 this listened on Stage.resize. In the TS port,
-	 * this can be called from the window manager on viewport resize.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::onResize()
 	public static onResize(): void
 	{
 		if (!ModalDialog._container || ModalDialog._container.numChildren <= 0) return;
@@ -115,12 +107,7 @@ export class ModalDialog implements IModalDialog
 		}
 	}
 
-	/**
-	 * Per-frame update for deferred refresh.
-	 *
-	 * In AS3 this was an enterFrame listener. In the TS port,
-	 * the window manager can call this from its update loop.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::onUpdate()
 	public static onUpdate(): void
 	{
 		if (!ModalDialog._container || ModalDialog._container.numChildren <= 0) return;
@@ -136,11 +123,7 @@ export class ModalDialog implements IModalDialog
 		}
 	}
 
-	/**
-	 * Initializes static members shared across all modal dialogs.
-	 *
-	 * @param windowManager - The Habbo window manager
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::initialiseStaticMembers()
 	private static initialiseStaticMembers(windowManager: IHabboWindowManager): void
 	{
 		if (ModalDialog._initialized) return;
@@ -158,15 +141,10 @@ export class ModalDialog implements IModalDialog
 		log.debug('Modal dialog static members initialized');
 	}
 
-	/**
-	 * Refreshes the modal container layout and background.
-	 *
-	 * In AS3, this captured BitmapData from the desktop layers,
-	 * applied a ColorTransform darkening, and drew stacked bitmaps.
-	 * In the TS port, this manages visibility and layout of the
-	 * container children. The actual darkening effect is deferred
-	 * to the UI rendering layer.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::refresh()
+	// TODO(AS3): AS3 refresh() captures desktop layers using BitmapData and applies
+	// ColorTransform(0.25,0.25,0.25) darkening before drawing stacked bitmap pairs.
+	// sources/win63_version/habbo/window/utils/ModalDialog.as::refresh()
 	private static refresh(): void
 	{
 		if (!ModalDialog._container) return;
@@ -226,9 +204,7 @@ export class ModalDialog implements IModalDialog
 		}
 	}
 
-	/**
-	 * Disposes this modal dialog and its windows.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;

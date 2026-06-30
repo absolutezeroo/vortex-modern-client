@@ -44,6 +44,7 @@ export class ConfirmDialog extends AlertDialog
 	 * @param callback - Callback for button events (required for confirm dialogs)
 	 * @param modal - Whether to display as a modal dialog
 	 */
+	// AS3: sources/win63_version/habbo/window/utils/ConfirmDialog.as::ConfirmDialog()
 	constructor(
 		windowManager: IHabboWindowManager,
 		xml: string,
@@ -67,6 +68,7 @@ export class ConfirmDialog extends AlertDialog
 	 * @param event - The window event
 	 * @param window - The window that triggered the event
 	 */
+	// AS3: sources/win63_version/habbo/window/utils/ConfirmDialog.as::dialogEventProc()
 	protected override dialogEventProc(event: WindowEvent, window: IWindow): void
 	{
 		if (event.type === WindowMouseEvent.CLICK)

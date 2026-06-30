@@ -58,28 +58,27 @@ export interface IAlertDialog extends IDisposable
  */
 export class AlertDialog implements IAlertDialog
 {
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::LIST_BUTTONS
 	protected static readonly LIST_BUTTONS: string = '_alert_button_list';
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_OK
 	protected static readonly BUTTON_OK: string = '_alert_button_ok';
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_CANCEL
 	protected static readonly BUTTON_CANCEL: string = '_alert_button_cancel';
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::BUTTON_CUSTOM
 	protected static readonly BUTTON_CUSTOM: string = '_alert_button_custom';
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::HEADER_BUTTON_CLOSE
 	protected static readonly HEADER_BUTTON_CLOSE: string = 'header_button_close';
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::TEXT_SUMMARY
 	protected static readonly TEXT_SUMMARY: string = '_alert_text_summary';
 
+	// TS-only: instance counter for unique window names
 	private static _instanceCounter: number = 0;
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_window
 	protected _window: IWindowContainer | null = null;
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_modalDialog
 	protected _modalDialog: IModalDialog | null = null;
 
-	/**
-	 * Creates a new alert dialog.
-	 *
-	 * @param windowManager - The Habbo window manager
-	 * @param xml - The XML layout definition
-	 * @param title - Dialog title
-	 * @param summary - Dialog summary text
-	 * @param flags - Bitwise HabboAlertDialogFlag values controlling which elements appear
-	 * @param callback - Optional callback for button events
-	 * @param modal - Whether to display as a modal dialog
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::AlertDialog()
 	constructor(
 		windowManager: IHabboWindowManager,
 		xml: string,
@@ -148,19 +147,16 @@ export class AlertDialog implements IAlertDialog
 		this.callback = callback;
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::var_839
 	protected _title: string = '';
 
-	/**
-	 * Gets the dialog title.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get title()
 	public get title(): string
 	{
 		return this._title;
 	}
 
-	/**
-	 * Sets the dialog title.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set title()
 	public set title(value: string)
 	{
 		this._title = value;
@@ -171,19 +167,16 @@ export class AlertDialog implements IAlertDialog
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::var_2854
 	protected _summary: string = '';
 
-	/**
-	 * Gets the dialog summary text.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get summary()
 	public get summary(): string
 	{
 		return this._summary;
 	}
 
-	/**
-	 * Sets the dialog summary text.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set summary()
 	public set summary(value: string)
 	{
 		this._summary = value;
@@ -194,42 +187,37 @@ export class AlertDialog implements IAlertDialog
 
 			if (descriptionWindow)
 			{
-				descriptionWindow.caption = this._summary;
+				// AS3: ITextWindow(_window.findChildByTag("DESCRIPTION")).text = var_2854
+				(descriptionWindow as IWindow & { text: string }).text = this._summary;
 			}
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::_disposed
 	protected _disposed: boolean = false;
 
-	/**
-	 * Whether this dialog has been disposed.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get disposed()
 	public get disposed(): boolean
 	{
 		return this._disposed;
 	}
 
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::var_393 (callback ref)
 	protected _callback: AlertDialogCallback | null = null;
 
-	/**
-	 * Gets the dialog callback.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get callback()
 	public get callback(): AlertDialogCallback | null
 	{
 		return this._callback;
 	}
 
-	/**
-	 * Sets the dialog callback.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set callback()
 	public set callback(value: AlertDialogCallback | null)
 	{
 		this._callback = value;
 	}
 
-	/**
-	 * Gets the title bar color.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get titleBarColor()
 	public get titleBarColor(): number
 	{
 		if (!this._window) return 0;
@@ -237,9 +225,7 @@ export class AlertDialog implements IAlertDialog
 		return this._window.color;
 	}
 
-	/**
-	 * Sets the title bar color.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set titleBarColor()
 	public set titleBarColor(value: number)
 	{
 		if (!this._window) return;
@@ -247,12 +233,7 @@ export class AlertDialog implements IAlertDialog
 		this._window.color = value;
 	}
 
-	/**
-	 * Gets the caption of a button by its flag.
-	 *
-	 * @param buttonFlag - One of HabboAlertDialogFlag.BUTTON_OK, BUTTON_CANCEL, or BUTTON_CUSTOM
-	 * @returns The button caption, or null if not found
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::getButtonCaption()
 	public getButtonCaption(buttonFlag: number): ICaption | null
 	{
 		if (this._disposed || !this._window) return null;
@@ -278,19 +259,15 @@ export class AlertDialog implements IAlertDialog
 
 		if (!button) return null;
 
+		// AS3: new AlertDialogCaption(_loc2_.caption, _loc2_.toolTipCaption, _loc2_.visible)
 		return new AlertDialogCaption(
 			button.caption ?? '',
-			'', // toolTipCaption - not directly available on IWindow
+			(button as IWindow & { toolTipCaption?: string }).toolTipCaption ?? '',
 			button.visible
 		);
 	}
 
-	/**
-	 * Sets the caption of a button by its flag.
-	 *
-	 * @param buttonFlag - One of HabboAlertDialogFlag.BUTTON_OK, BUTTON_CANCEL, or BUTTON_CUSTOM
-	 * @param caption - The caption to set
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::setButtonCaption()
 	public setButtonCaption(buttonFlag: number, caption: ICaption): void
 	{
 		if (this._disposed || !this._window) return;
@@ -320,9 +297,7 @@ export class AlertDialog implements IAlertDialog
 		}
 	}
 
-	/**
-	 * Disposes this alert dialog and its windows.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
@@ -344,15 +319,7 @@ export class AlertDialog implements IAlertDialog
 		this._disposed = true;
 	}
 
-	/**
-	 * Handles dialog window events.
-	 *
-	 * Dispatches WE_OK on OK button click, WE_CANCEL on Cancel or
-	 * close button click. If no callback is set, the dialog self-disposes.
-	 *
-	 * @param event - The window event
-	 * @param window - The window that triggered the event
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::dialogEventProc()
 	protected dialogEventProc(event: WindowEvent, window: IWindow): void
 	{
 		if (event.type === WindowMouseEvent.CLICK)

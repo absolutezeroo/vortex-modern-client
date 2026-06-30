@@ -20,49 +20,34 @@ const log = Logger.getLogger('ElementPointerHandler');
  */
 export class ElementPointerHandler
 {
+	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::_windowManager
 	private _windowManager: IHabboWindowManager | null;
 
-	/**
-	 * Creates a new element pointer handler.
-	 *
-	 * @param windowManager - The Habbo window manager
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
+	// TODO(AS3): ElementPointerMessageEvent field — register when class is ported
+	// sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
+
+	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
 	constructor(windowManager: IHabboWindowManager)
 	{
 		this._windowManager = windowManager;
 
-		// In AS3:
-		//   if(_windowManager.communication != null)
-		//   {
-		//       var_4013 = new ElementPointerMessageEvent(onElementPointerMessage);
-		//       _windowManager.communication.addHabboConnectionMessageEvent(var_4013);
-		//   }
-		//
-		// Communication event registration will be connected when
-		// ElementPointerMessageEvent is implemented.
+		// TODO(AS3): register ElementPointerMessageEvent on communication when ported
+		// sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
 
 		log.debug('ElementPointerHandler initialized');
 	}
 
+	// TS-only: explicit disposed flag (AS3 uses _windowManager == null check)
 	private _disposed: boolean = false;
 
-	/**
-	 * Whether this handler has been disposed.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::get disposed()
 	public get disposed(): boolean
 	{
-		return this._disposed;
+		return this._windowManager == null;
 	}
 
-	/**
-	 * Processes an element pointer message.
-	 *
-	 * Call this when an ElementPointerMessageEvent is received.
-	 * Shows the hint for the given key, or hides all hints if
-	 * the key is null or empty.
-	 *
-	 * @param key - The hint element key, or null/empty to hide
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::onElementPointerMessage()
 	public onElementPointerMessage(key: string | null): void
 	{
 		if (!this._windowManager) return;
@@ -77,21 +62,13 @@ export class ElementPointerHandler
 		}
 	}
 
-	/**
-	 * Disposes this handler and unregisters from communication.
-	 */
+	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
 
-		// In AS3:
-		//   if(_windowManager.communication != null)
-		//   {
-		//       _windowManager.communication.removeHabboConnectionMessageEvent(var_4013);
-		//   }
-		//
-		// Communication event unregistration will be connected when
-		// ElementPointerMessageEvent is implemented.
+		// TODO(AS3): unregister ElementPointerMessageEvent from communication when ported
+		// sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
 
 		this._windowManager = null;
 		this._disposed = true;

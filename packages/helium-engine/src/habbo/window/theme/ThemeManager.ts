@@ -24,6 +24,7 @@ export interface IThemeAndIntent
  */
 export class ThemeManager implements IThemeManager
 {
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::THEMES
 	private static readonly THEMES: string[] = [
 		Theme.NONE,
 		Theme.VOLTER,
@@ -34,15 +35,19 @@ export class ThemeManager implements IThemeManager
 		Theme.LEGACY_BORDER,
 	];
 
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::const_1031
 	private static readonly LEGACY_STYLE_UPPER_BOUND: number = 100;
 
-	/** Window type constants for Icon and Border lookups. */
+	// TS-only: named window type constants for Icon and Border lookups
 	private static readonly WINDOW_TYPE_ICON: number = 1;
 	private static readonly WINDOW_TYPE_BORDER: number = 30;
 
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::var_693
 	private _themes: Map<string, Theme> = new Map();
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::var_779
 	private _skinContainer: SkinContainer;
 
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager()
 	constructor(skinContainer: SkinContainer)
 	{
 		this._skinContainer = skinContainer;
@@ -50,16 +55,19 @@ export class ThemeManager implements IThemeManager
 		const properties = new PropertyMap();
 
 		properties.addBoolean('always_show_selection', false);
-		properties.addString('antialias_type', 'advanced');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("antialias_type","advanced",["normal","advanced"])
+		properties.addEnumeration('antialias_type', 'advanced', ['normal', 'advanced']);
 		properties.addString('asset_uri', '');
 		properties.addBoolean('auto_arrange_items', true);
-		properties.addString('auto_size', 'none');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("auto_size","none",["none","left","center","right"])
+		properties.addEnumeration('auto_size', 'none', ['none', 'left', 'center', 'right']);
 		properties.addString('bitmap_asset_name', '');
 		properties.addBoolean('border', false);
 		properties.addHex('border_color', 0);
 		properties.addBoolean('condense_white', false);
 		properties.addBoolean('container_resize_to_columns', false);
-		properties.addString('direction', 'down');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("direction","down",["up","down","left","right"])
+		properties.addEnumeration('direction', 'down', ['up', 'down', 'left', 'right']);
 		properties.addBoolean('display_as_password', false);
 		properties.addBoolean('display_raw', false);
 		properties.addBoolean('editable', true);
@@ -67,10 +75,12 @@ export class ThemeManager implements IThemeManager
 		properties.addBoolean('fit_size_to_contents', false);
 		properties.addBoolean('focus_capturer', false);
 		properties.addBoolean('greyscale', false);
-		properties.addString('grid_fit_type', 'pixel');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("grid_fit_type","pixel",["pixel","none","subpixel"])
+		properties.addEnumeration('grid_fit_type', 'pixel', ['pixel', 'none', 'subpixel']);
 		properties.addBoolean('handle_bitmap_disposing', true);
 		properties.addString('help_page', '');
-		properties.addString('link_target', 'default');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("link_target","default",["default","_blank","_parent","_self","_top","internal"])
+		properties.addEnumeration('link_target', 'default', ['default', '_blank', '_parent', '_self', '_top', 'internal']);
 		properties.addInt('spacing', 0);
 		properties.addInt('margin_left', 0);
 		properties.addInt('margin_top', 0);
@@ -81,7 +91,13 @@ export class ThemeManager implements IThemeManager
 		properties.addArray('item_array', []);
 		properties.addBoolean('mouse_wheel_enabled', true);
 		properties.addBoolean('multiline', false);
-		properties.addString('pivot_point', 'top_left');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("pivot_point", PivotPoint.PIVOT_NAMES[0], class_2901.PIVOT_POINT_RANGE)
+		// PIVOT_POINT_RANGE = PivotPoint.PIVOT_NAMES — sources/win63_version/core/window/enum/PivotPoint.as::PIVOT_NAMES
+		properties.addEnumeration('pivot_point', 'top left', [
+			'top left', 'top center', 'top right',
+			'center left', 'center', 'center right',
+			'bottom left', 'bottom center', 'bottom right',
+		]);
 		properties.addInt('pointer_offset', 0);
 		properties.addBoolean('resize_on_item_update', false);
 		properties.addBoolean('inverse_resize_on_item_update', false);
@@ -94,13 +110,27 @@ export class ThemeManager implements IThemeManager
 		properties.addBoolean('stretched_x', true);
 		properties.addBoolean('stretched_y', true);
 		properties.addHex('text_color', 0);
-		properties.addString('text_style', 'regular');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("text_style","regular",class_3398.getStyleNameArrayRef())
+		// class_3398 = sources/win63_version/core/window/utils/class_3398.as — base styles; skin CSS adds more at runtime
+		properties.addEnumeration('text_style', 'regular', ['regular', 'italic', 'bold']);
 		properties.addString('tool_tip_caption', '');
 		properties.addUint('tool_tip_delay', 500);
 		properties.addBoolean('tool_tip_is_dynamic', false);
 		properties.addBoolean('interactive_cursor_disabled', false);
 		properties.addBoolean('vertical', false);
-		properties.addString('widget_type', '');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("widget_type","",class_2086.WIDGET_TYPES)
+		// class_2086 = sources/win63_version/habbo/window/widgets/class_2086.as — WIDGET_TYPES is sorted alphabetically
+		properties.addEnumeration('widget_type', '', [
+			'avatar_image', 'badge_image', 'balloon', 'countdown',
+			'furniture_image', 'hover_bitmap', 'illumina_border',
+			'illumina_chat_bubble', 'illumina_input',
+			'limited_item_overlay_grid', 'limited_item_overlay_preview', 'limited_item_overlay_supply',
+			'pet_image', 'pixel_limit', 'product_icon', 'product_image',
+			'progress_indicator',
+			'rarity_item_overlay_grid', 'rarity_item_overlay_preview',
+			'room_previewer', 'room_thumbnail', 'room_user_count',
+			'running_number', 'separator', 'updating_timestamp',
+		]);
 		properties.addBoolean('word_wrap', false);
 		properties.addNumber('zoom_x', 1);
 		properties.addNumber('zoom_y', 1);
@@ -112,7 +142,8 @@ export class ThemeManager implements IThemeManager
 		properties.addBoolean('wrap_x', false);
 		properties.addBoolean('wrap_y', false);
 		properties.addNumber('rotation', 0);
-		properties.addString('illumina_border:border_style', 'illumina_light');
+		// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("illumina_border:border_style","illumina_light",IlluminaBorderWidget.BORDER_STYLES)
+		properties.addEnumeration('illumina_border:border_style', 'illumina_light', ['illumina_light', 'illumina_dark']);
 
 		// None theme: virtual, covers all styles
 		this._themes.set(Theme.NONE, new Theme(Theme.NONE, false, 0, 0xFFFFFFFF, properties));
@@ -143,39 +174,29 @@ export class ThemeManager implements IThemeManager
 		// Ubuntu theme: real theme, styles 3-7
 		const ubuntuProps = properties.clone();
 
-		ubuntuProps.addString('antialias_type', 'advanced');
-		ubuntuProps.addString('text_style', 'u_regular');
+		ubuntuProps.addEnumeration('antialias_type', 'advanced', ['normal', 'advanced']);
+		ubuntuProps.addEnumeration('text_style', 'u_regular', ['regular', 'italic', 'bold']);
 
 		this._themes.set(Theme.UBUNTU, new Theme(Theme.UBUNTU, true, 3, 5, ubuntuProps));
 
 		// Illumina Light theme: real theme, styles 100-199
 		const illuminaLightProps = properties.clone();
 
-		illuminaLightProps.addString('antialias_type', 'advanced');
-		illuminaLightProps.addString('text_style', 'il_regular');
+		illuminaLightProps.addEnumeration('antialias_type', 'advanced', ['normal', 'advanced']);
 		illuminaLightProps.addHex('etching_color', 3003121663);
+		illuminaLightProps.addEnumeration('text_style', 'il_regular', ['regular', 'italic', 'bold']);
 
 		this._themes.set(Theme.ILLUMINA_LIGHT, new Theme(Theme.ILLUMINA_LIGHT, true, 100, 100, illuminaLightProps));
 
 		// Illumina Dark theme: real theme, styles 200-299
 		const illuminaDarkProps = illuminaLightProps.clone();
 
-		illuminaDarkProps.addString('illumina_border:border_style', 'illumina_dark');
+		illuminaDarkProps.addEnumeration('illumina_border:border_style', 'illumina_dark', ['illumina_light', 'illumina_dark']);
 
 		this._themes.set(Theme.ILLUMINA_DARK, new Theme(Theme.ILLUMINA_DARK, true, 200, 100, illuminaDarkProps));
 	}
 
-	/**
-	 * Resolves a style index for a given theme, element type, and intent.
-	 *
-	 * For the "None" theme, returns the intent parsed as an integer.
-	 * Otherwise searches the theme's style range for a matching intent.
-	 *
-	 * @param themeName - The theme name
-	 * @param elementType - The window element type
-	 * @param intent - The intent string to match
-	 * @returns The resolved style index
-	 */
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::getStyle()
 	public getStyle(themeName: string, elementType: number, intent: string): number
 	{
 		if (themeName === Theme.NONE)
@@ -203,13 +224,7 @@ export class ThemeManager implements IThemeManager
 		return theme.baseStyle;
 	}
 
-	/**
-	 * Determines the theme name and intent for a given element type and style.
-	 *
-	 * @param elementType - The window element type
-	 * @param style - The style index
-	 * @returns An object with theme name and intent string
-	 */
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::getThemeAndIntent()
 	public getThemeAndIntent(elementType: number, style: number): IThemeAndIntent
 	{
 		const intent = this._skinContainer.getIntentByTypeAndStyle(elementType, style);
@@ -235,14 +250,7 @@ export class ThemeManager implements IThemeManager
 		return {theme: Theme.NONE, intent};
 	}
 
-	/**
-	 * Returns all available intents for a given element type within a theme.
-	 *
-	 * @param elementType - The window element type
-	 * @param themeName - The theme name
-	 * @param fallbackStyle - The fallback style if no intents are found
-	 * @returns An array of intent strings
-	 */
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::getIntents()
 	public getIntents(elementType: number, themeName: string, fallbackStyle: number): string[]
 	{
 		const intents: string[] = [];
@@ -273,15 +281,7 @@ export class ThemeManager implements IThemeManager
 		return intents;
 	}
 
-	/**
-	 * Returns the property defaults for a given style.
-	 *
-	 * Searches real themes for one that covers the style and returns
-	 * its property defaults. Falls back to an empty PropertyMap.
-	 *
-	 * @param style - The style index
-	 * @returns The property map defaults
-	 */
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::getPropertyDefaults()
 	public getPropertyDefaults(style: number): IPropertyMap | null
 	{
 		for (const theme of this._themes.values())
@@ -295,22 +295,13 @@ export class ThemeManager implements IThemeManager
 		return new PropertyMap();
 	}
 
-	/**
-	 * Sets property defaults for a given style (no-op placeholder).
-	 *
-	 * @param _style - The style index
-	 * @param _properties - The property map to set
-	 */
+	// TS-only: setPropertyDefaults is declared in IThemeManager but not implemented in AS3 ThemeManager
 	public setPropertyDefaults(_style: number, _properties: IPropertyMap): void
 	{
 		// Not used in the Habbo ThemeManager; property defaults are set per-theme in the constructor.
 	}
 
-	/**
-	 * Returns the list of all available theme names.
-	 *
-	 * @returns An array of theme name strings
-	 */
+	// AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::getThemes()
 	public getThemes(): string[]
 	{
 		return [...ThemeManager.THEMES];

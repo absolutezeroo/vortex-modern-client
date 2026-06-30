@@ -18,18 +18,28 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export class RunningNumberWidget implements IRunningNumberWidget
 {
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::TYPE
 	public static readonly TYPE: string = 'running_number';
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::NUMBER_KEY
 	private static readonly NUMBER_KEY: string = 'running_number:number';
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::DIGITS_KEY
 	private static readonly DIGITS_KEY: string = 'running_number:digits';
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::COLOR_STYLE_KEY
 	private static readonly COLOR_STYLE_KEY: string = 'running_number:color_style';
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::UPDATE_FREQUENCY_KEY
 	private static readonly UPDATE_FREQUENCY_KEY: string = 'running_number:update_frequency';
+	// TS-only: accumulates elapsed time between update ticks
 	private _millisSinceLastUpdate: number = 0;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_widgetWindow
 	private _widgetWindow: IWidgetWindow | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_windowManager
 	private _windowManager: IHabboWindowManager | null = null;
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_root
 	private _root: IWindowContainer | null = null;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::RunningNumberWidget()
 	constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
 	{
 		this._widgetWindow = window;
@@ -42,85 +52,98 @@ export class RunningNumberWidget implements IRunningNumberWidget
 			this._root = root;
 		}
 
-		// AS3: _windowManager.registerUpdateReceiver(this, updateFrequency) — skipped for now
+		// TODO(AS3): _windowManager.registerUpdateReceiver(this, updateFrequency)
+		// sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::RunningNumberWidget()
 		this._widgetWindow.setParamFlag(147456);
 		this._widgetWindow.rootWindow = this._root;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_disposed
 	private _disposed: boolean = false;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get disposed()
 	public get disposed(): boolean
 	{
 		return this._disposed;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_number
 	private _number: number = 0;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get number()
 	public get number(): number
 	{
 		return this._number;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set number()
 	public set number(value: number)
 	{
 		this._number = value;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_displayedNumber
 	private _displayedNumber: number = 0;
 
-	/**
-	 * The currently displayed number (may differ from target during animation).
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get displayedNumber()
 	public get displayedNumber(): number
 	{
 		return this._displayedNumber;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_digits
 	private _digits: number = 8;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get digits()
 	public get digits(): number
 	{
 		return this._digits;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set digits()
 	public set digits(value: number)
 	{
 		this._digits = value;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_colorStyle
 	private _colorStyle: number = 0;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get colorStyle()
 	public get colorStyle(): number
 	{
 		return this._colorStyle;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set colorStyle()
 	public set colorStyle(value: number)
 	{
 		this._colorStyle = value;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::_updateFrequency (var_1449)
 	private _updateFrequency: number = 50;
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get updateFrequency()
 	public get updateFrequency(): number
 	{
 		return this._updateFrequency;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set updateFrequency()
 	public set updateFrequency(value: number)
 	{
 		this._updateFrequency = value;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set initialNumber()
 	public set initialNumber(value: number)
 	{
 		this._displayedNumber = value;
 		this._number = value;
 	}
 
-	/**
-	 * Get the formatted display string with leading zeros.
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get formattedValue()
 	public get formattedValue(): string
 	{
 		let str = Math.floor(this._displayedNumber).toString();
@@ -133,6 +156,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
 		return str;
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::get properties()
 	public get properties(): PropertyStruct[]
 	{
 		if (this._disposed) return [];
@@ -145,6 +169,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
 		];
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::set properties()
 	public set properties(values: PropertyStruct[])
 	{
 		for (const prop of values)
@@ -167,11 +192,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
 		}
 	}
 
-	/**
-	 * Update the animation by the given elapsed milliseconds.
-	 *
-	 * @param elapsed - Milliseconds since last update
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::update()
 	public update(elapsed: number): void
 	{
 		if (this._displayedNumber < this._number)
@@ -189,6 +210,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
@@ -205,7 +227,8 @@ export class RunningNumberWidget implements IRunningNumberWidget
 			this._widgetWindow = null;
 		}
 
-		// AS3: _windowManager.removeUpdateReceiver(this) — skipped for now
+		// TODO(AS3): _windowManager.removeUpdateReceiver(this)
+		// sources/win63_version/habbo/window/widgets/RunningNumberWidget.as::dispose()
 		this._windowManager = null;
 		this._disposed = true;
 	}

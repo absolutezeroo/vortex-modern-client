@@ -25,33 +25,33 @@ const LOCAL_ASSET_HTTPS_ORIGIN = 'https://vortex-assets.local';
  */
 export class ResourceManager implements IResourceManager
 {
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::_windowManager
 	private _windowManager: IHabboWindowManager;
+	// TS-only: web-side bitmap cache (replaces Flash asset system)
 	private _assets: Map<string, ImageBitmap> = new Map();
+	// TS-only: lazy-loaded URL registry
 	private _assetUrls: Map<string, string> = new Map();
+	// TS-only: replaces AS3 _assetReceivers Dictionary
 	private _pendingReceivers: Map<string, IAssetReceiver[]> = new Map();
+	// TS-only: tracks in-progress fetches
 	private _loading: Set<string> = new Set();
 
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::ResourceManager()
 	constructor(windowManager: IHabboWindowManager)
 	{
 		this._windowManager = windowManager;
 	}
 
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::_disposed
 	private _disposed: boolean = false;
 
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::get disposed()
 	public get disposed(): boolean
 	{
 		return this._disposed;
 	}
 
-	/**
-	 * Registers a bitmap asset by name (immediate).
-	 *
-	 * If there are pending receivers waiting for this asset,
-	 * delivers it to them immediately.
-	 *
-	 * @param name - The asset name
-	 * @param bitmap - The decoded bitmap
-	 */
+	// TS-only
 	public registerAsset(name: string, bitmap: ImageBitmap): void
 	{
 		const resolvedName = this.resolveAssetName(name);
@@ -59,19 +59,10 @@ export class ResourceManager implements IResourceManager
 		this._assets.set(resolvedName, bitmap);
 		this._assetUrls.delete(resolvedName);
 
-		// Deliver to any pending receivers
 		this.deliverToReceivers(resolvedName, bitmap);
 	}
 
-	/**
-	 * Registers an asset URL for lazy loading.
-	 *
-	 * The bitmap is NOT decoded immediately. When `retrieveAsset()` is called
-	 * for this name, the URL is fetched and decoded on demand.
-	 *
-	 * @param name - The asset name
-	 * @param url - The URL to fetch the image from
-	 */
+	// TS-only
 	public registerAssetUrl(name: string, url: string): void
 	{
 		const resolvedName = this.resolveAssetName(name);
@@ -87,18 +78,7 @@ export class ResourceManager implements IResourceManager
 		}
 	}
 
-	/**
-	 * Retrieves an asset by URI and delivers it to the receiver.
-	 *
-	 * If the asset is already cached, delivers immediately via
-	 * `receiver.receiveAsset()`. If a URL is registered, loads it
-	 * lazily. Otherwise, queues the receiver for later delivery.
-	 *
-	 * In AS3: `retrieveAsset(uri: String, receiver: IAssetReceiver)`
-	 *
-	 * @param uri - The asset URI
-	 * @param receiver - The receiver to deliver the asset to
-	 */
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::retrieveAsset()
 	public retrieveAsset(uri: string, receiver: IAssetReceiver): void
 	{
 		if (!uri || !receiver) return;
@@ -107,7 +87,6 @@ export class ResourceManager implements IResourceManager
 
 		if (!resolvedName) return;
 
-		// Check bitmap cache first
 		const cached = this._assets.get(resolvedName);
 
 		if (cached)
@@ -117,7 +96,6 @@ export class ResourceManager implements IResourceManager
 			return;
 		}
 
-		// Queue receiver
 		let receivers = this._pendingReceivers.get(resolvedName);
 
 		if (!receivers)
@@ -128,7 +106,6 @@ export class ResourceManager implements IResourceManager
 
 		receivers.push(receiver);
 
-		// If a URL is registered and not already loading, start loading
 		const url = this._assetUrls.get(resolvedName);
 
 		if (url && !this._loading.has(resolvedName))
@@ -150,37 +127,19 @@ export class ResourceManager implements IResourceManager
 		}
 	}
 
-	/**
-	 * Whether the resolved asset name is a directly fetchable URL.
-	 *
-	 * Mirrors the AS3 check `substr(0,7) == "http://" || substr(0,8) == "https://"`.
-	 * The TS port also accepts root-relative paths so localhost can load
-	 * `vortex-assets.local` resources through the Vite proxy without CORS.
-	 */
+	// TS-only: mirrors AS3 check `substr(0,7) == "http://" || substr(0,8) == "https://"`
 	private isFetchableUrl(name: string): boolean
 	{
 		return name.startsWith('http://') || name.startsWith('https://') || (name.length > 1 && name.startsWith('/'));
 	}
 
-	/**
-	 * Checks if two asset URIs resolve to the same asset.
-	 *
-	 * @param uri1 - First URI
-	 * @param uri2 - Second URI
-	 * @returns True if they resolve to the same asset
-	 */
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::isSameAsset()
 	public isSameAsset(uri1: string, uri2: string): boolean
 	{
 		return this.resolveAssetName(uri1) === this.resolveAssetName(uri2);
 	}
 
-	/**
-	 * Registers an asset content object under a name.
-	 *
-	 * AS3 exposes createAsset(name, assetClass, content). In the TS port
-	 * StaticBitmapWrapperController consumes ImageBitmap directly, so this
-	 * method only persists ImageBitmap payloads.
-	 */
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::createAsset()
 	public createAsset(name: string, _assetClass: new (...args: unknown[]) => unknown, content: unknown): void
 	{
 		if (content instanceof ImageBitmap)
@@ -189,9 +148,7 @@ export class ResourceManager implements IResourceManager
 		}
 	}
 
-	/**
-	 * Removes an asset from all local caches.
-	 */
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::removeAsset()
 	public removeAsset(name: string): void
 	{
 		const resolvedName = this.resolveAssetName(name);
@@ -202,9 +159,7 @@ export class ResourceManager implements IResourceManager
 		this._loading.delete(resolvedName);
 	}
 
-	/**
-	 * Dispose the resource manager.
-	 */
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::dispose()
 	public dispose(): void
 	{
 		if (this._disposed) return;
@@ -216,15 +171,7 @@ export class ResourceManager implements IResourceManager
 		this._loading.clear();
 	}
 
-	/**
-	 * Resolves an asset name through window manager interpolation.
-	 *
-	 * In AS3, this used `_windowManager.interpolate()` for variable
-	 * substitution.
-	 *
-	 * @param uri - The raw asset URI
-	 * @returns The resolved asset name
-	 */
+	// AS3: sources/win63_version/habbo/window/ResourceManager.as::resolveAssetName()
 	private resolveAssetName(uri: string): string
 	{
 		const interpolatingManager = this._windowManager as unknown as {
@@ -236,12 +183,7 @@ export class ResourceManager implements IResourceManager
 		return normalizeLocalAssetUrl(resolved);
 	}
 
-	/**
-	 * Loads an image from a URL, caches it, and delivers to pending receivers.
-	 *
-	 * @param name - The asset name
-	 * @param url - The URL to fetch
-	 */
+	// TS-only: replaces AS3 passAssetToCallback() event callback
 	private loadFromUrl(name: string, url: string): void
 	{
 		fetch(normalizeLocalAssetUrl(url))
@@ -263,12 +205,7 @@ export class ResourceManager implements IResourceManager
 			});
 	}
 
-	/**
-	 * Delivers a bitmap to all pending receivers for the given name.
-	 *
-	 * @param name - The asset name
-	 * @param bitmap - The bitmap to deliver
-	 */
+	// TS-only: replaces AS3 passAssetToCallback() delivery loop
 	private deliverToReceivers(name: string, bitmap: ImageBitmap): void
 	{
 		const receivers = this._pendingReceivers.get(name);

@@ -922,17 +922,17 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 		);
 	}
 
-	/**
-	 * Open a help page.
-	 */
+	// AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
+	// TODO(AS3): AS3 opens HabboPagesViewer with the given page ID
+	// sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
 	public openHelpPage(_pageId: string): void
 	{
 		// HabboPagesViewer integration - to be connected
 	}
 
-	/**
-	 * Display the floor plan editor.
-	 */
+	// AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
+	// TODO(AS3): AS3 opens BCFloorPlanEditor
+	// sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
 	public displayFloorPlanEditor(): void
 	{
 		// BCFloorPlanEditor integration - to be connected
@@ -945,9 +945,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 	 * - Process input/update from top-most context to bottom
 	 * - Render from bottom context to top-most
 	 */
+	// AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::update()
 	public update(deltaTime: number): void
 	{
-		this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_INPUT);
+		// AS3: only emits TRACKING_EVENT_INPUT when there are queued input events
+		if(WindowContext.inputEventQueue && WindowContext.inputEventQueue.length > 0)
+		{
+			this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_INPUT);
+		}
 
 		for (let i = this._windowContextArray.length - 1; i >= 0; i--)
 		{
@@ -960,6 +965,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 		{
 			this._windowContextArray[i].render(deltaTime);
 		}
+
+		WindowContext.inputEventQueue?.flush();
 
 		MouseCursorControl.change();
 		this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_SLEEP);

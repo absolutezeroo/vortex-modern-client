@@ -15,6 +15,9 @@ type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
  */
 export class WindowComposite
 {
+    // AS3: sources/win63_version/core/window/components/TextController.as::_field
+    private static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
+
     private _compositeBuffer: OffscreenCanvas | null = null;
     private _compositeCtx: OffscreenCanvasRenderingContext2D | null = null;
     private _bitmapBuffer: OffscreenCanvas | null = null;
@@ -652,6 +655,7 @@ export class WindowComposite
 	 *
 	 * @see sources/win63_2021_version/com/sulake/core/window/components/TextController.as refreshTextImage()
 	 */
+	// AS3: sources/win63_version/core/window/components/TextController.as::refreshTextImage()
 	private compositeText(
 		ctx: OffscreenCanvasRenderingContext2D,
 		window: IWindow,
@@ -758,7 +762,7 @@ export class WindowComposite
 			const measuredWidth = this.measureTextWidth(ctx, displayText, spacing);
 			const textW = Math.min(measuredWidth, maxWidth);
 			const textX = this.resolveAlignedTextX(absX + marginL, maxWidth, measuredWidth, autoSize);
-			const textY = absY + marginT;
+			const textY = absY + marginT + WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER;
 
 			if (hasEtching)
 			{
@@ -788,9 +792,9 @@ export class WindowComposite
 				ctx,
 				displayText,
 				absX + marginL,
-				absY + marginT,
+				absY + marginT + WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER,
 				maxWidth,
-				h - marginT - marginB,
+				h - marginT - marginB - WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER,
 				fontSize,
 				tw.wordWrap ?? false,
 				hasEtching ? etchColor : 0,
@@ -805,7 +809,7 @@ export class WindowComposite
 
 		const measuredWidth = this.measureTextWidth(ctx, displayText, spacing);
 		const textX = this.resolveAlignedTextX(absX + marginL, maxWidth, measuredWidth, autoSize);
-		const textY = absY + marginT;
+		const textY = absY + marginT + WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER;
 
 		if (hasEtching)
 		{

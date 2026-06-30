@@ -49,6 +49,7 @@ Overall progress: ████████░░░░░░░░░░░░ ~
 | **phonenumber**                    | 7         | 0       | 0%   | ❌ Not started                          |
 | **window**                         | 5         | 0       | 0%   | ❌ Not started                          |
 | **ui (window system)**             | 369       | 0       | 0%   | ❌ Not started                          |
+| **habbo/window (annotated)**       | ~40       | ~40     | 100% | ✅ AS3 annotations + behavioral fixes   |
 
 ---
 
@@ -419,6 +420,8 @@ AS3: 32 files | TS: 22 files
 15. **advertisement, campaign, toolbar, nux, phonenumber**
 
 ### Recently completed
+- ✅ **Navigator room usercount label AS3 follow-up**: `RoomEntryElementFactory.updateCommonEntryElements()` now keeps the compact `room_usercount` label on the Flash visual baseline after caption updates, while preserving the converted XML positions for the border, icon, and item list.
+- ✅ **core/window TextField vertical AS3 parity fix**: `WindowComposite.compositeText()` now applies the Flash `TextField` top gutter when drawing canvas text, matching `TextSkinRenderer.draw()`/`TextController.refreshTextImage()` behavior so purse currency numbers and other text glyphs no longer render too high.
 - ✅ **Navigator collapse + toolbar purse visual AS3 follow-up**: `CategoryElementFactory.getOpenCategoryElement()` keeps the AS3 `category_collapse` control above the title hit region in the Pixi draw order, and `ExtensionView.refreshItemWindow()` now uses AS3 `arrangeListItems()` while clamping the AS3 purse offset at the canvas top edge to avoid visible top clipping.
 - ✅ **Window ResourceManager pending asset wake-up**: `registerAssetUrl()` now starts lazy loading for receivers that requested a static bitmap before the bundled image URL was registered, restoring Flash embedded-asset behavior for navigator category controls such as `category_collapse`.
 - ✅ **Navigator thumbnails layout AS3 parity fix**: `CategoryElementFactory.getOpenCategoryElement()` now uses arranged tile content height to size thumbnail categories/backgrounds, preserving collapse controls, and `RoomEntryElementFactory.updateCommonEntryElements()` re-arranges the AS3 `usercount` itemlist after caption updates so room player counts stay centered.
@@ -457,6 +460,7 @@ AS3: 32 files | TS: 22 files
 - ✅ **core/window/graphics/WindowRenderer (win63 parity)**: dirty-region queue merge, parent clipping propagation, branch rendering recursion, purge/getDrawBuffer/register/remove behavior realigned with AS3 `sources/win63_version/core/window/graphics/WindowRenderer.as`
 - ✅ **WindowComposite extracted**: web canvas composition + hit-test bridge moved from `WindowRenderer` into `core/window/graphics/WindowComposite.ts` to keep `WindowRenderer` aligned to AS3 responsibilities
 - ✅ **HabboWindowManager AS3 parity pass**: restored AS3-compatible API surface (`buildFromXML/windowToXMLString`, alerts/confirms/simpleAlert, groupWindowsWithTag, input tracking callback), reintroduced Session/Room/Config dependencies and link/element-pointer handler lifecycle wiring in `habbo/window/HabboWindowManager.ts`
+- ✅ **habbo/window full annotation + fix pass (2026-06-30)**: Added `// AS3:` source trace comments to all members across 17 files (enums, HintTarget, Theme, ThemeManager, ResourceManager, ConfirmDialog, HabbletLinkHandler, HintManager, AlertDialog, SimpleAlertDialog, ModalDialog, ElementPointerHandler, AvatarImageWidget, BadgeImageWidget, RunningNumberWidget, HabboWindowManager, IHabboWindowManager). Behavioral fixes: ThemeManager 9× `addString()→addEnumeration()`, HabbletLinkHandler guard `<3→<2`, AlertDialog summary uses `.text` not `.caption`, AlertDialog `getButtonCaption` passes real `toolTipCaption`, ModalDialog constructor 5th param `0→1`, SimpleAlertDialog URL interpolation + link event via `context.createLinkEvent()`, HabboWindowManager `update()` wraps `TRACKING_EVENT_INPUT` in inputEventQueue length guard + calls `flush()` after contexts update.
 - ✅ **core/window/WindowContext + MouseEventProcessor (win63 parity)**: restored queued input processing (`process(state, queue)`), hover/down/click-away state tracking, `WME_UP_OUTSIDE`/cursor resolution flow, localization listener wiring in context, and localization propagation to all contexts from `HabboWindowManager`
 - ✅ **core/window/WindowController (win63 parity)**: restored missing AS3 behaviors for graphic-context lifecycle (`setupGraphicsContext/releaseGraphicsContext`), local/global alpha hit validation (`validate*PointIntersection`), immediate click routing (`immediateClickMode` + handler), child-context reindex/swap synchronization, and desktop mouse position usage
 
@@ -477,4 +481,4 @@ AS3: 32 files | TS: 22 files
 
 ---
 
-*Document updated — 2026-06-30 (navigator collapse z-order and purse top clipping aligned.)*
+*Document updated — 2026-06-30 (navigator room usercount label baseline aligned.)*
