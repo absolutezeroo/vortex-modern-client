@@ -7,5 +7,6 @@ import type {IIterator} from './IIterator';
  */
 export interface IIterable
 {
-	iterator(): IIterator;
+	// AS3: sources/win63_version/core/window/utils/IIterable.as::get iterator()
+	iterator(): IIterator | null;
 }

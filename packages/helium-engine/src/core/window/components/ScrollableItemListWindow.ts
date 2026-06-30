@@ -3,6 +3,7 @@ import type {IWindowContext} from '../IWindowContext';
 import type {IScrollableListWindow} from './IScrollableListWindow';
 import type {IItemListWindow} from './IItemListWindow';
 import type {IScrollbarWindow} from './IScrollbarWindow';
+import type {IIterator} from '../utils/IIterator';
 import {ContainerController} from './ContainerController';
 import {WindowEvent} from '../events/WindowEvent';
 
@@ -296,6 +297,23 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
 		}
 
 		return this._scrollBarRef;
+	}
+
+	// AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::get iterator()
+	public override iterator(): IIterator | null
+	{
+		if(this.isConstructionReady())
+		{
+			return this.itemList!.iterator();
+		}
+
+		return null;
+	}
+
+	// AS3: sources/win63_version/core/window/components/ScrollableItemListWindow.as::isConstructionReady()
+	protected isConstructionReady(): boolean
+	{
+		return this.itemList !== null && this.scrollBar !== null;
 	}
 
 	private scrollBarEventProc(event: WindowEvent): void

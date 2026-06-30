@@ -128,7 +128,7 @@ export class BitmapSkinRenderer extends SkinRenderer
 					destW += deltaW;
 					break;
 				case SkinLayoutEntity.SCALE_CENTER:
-					destX += Math.floor(deltaW / 2);
+					destX = rect.width / 2 - destW / 2;
 					break;
 			}
 
@@ -147,7 +147,7 @@ export class BitmapSkinRenderer extends SkinRenderer
 					destH += deltaH;
 					break;
 				case SkinLayoutEntity.SCALE_CENTER:
-					destY += Math.floor(deltaH / 2);
+					destY = rect.height / 2 - destH / 2;
 					break;
 			}
 

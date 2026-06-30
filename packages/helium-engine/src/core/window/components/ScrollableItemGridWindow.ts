@@ -19,6 +19,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 {
 	private _itemGridRef: IItemGridWindow | null = null;
 	private _scrollBarRef: IScrollbarWindow | null = null;
+	private readonly _scrollBarEventProcBound: (event: WindowEvent) => void;
 
 	constructor(
 		name: string,
@@ -36,6 +37,8 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 	)
 	{
 		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+
+		this._scrollBarEventProcBound = this.scrollBarEventProc.bind(this);
 
 		if (this.scrollBar && this.itemGrid)
 		{
@@ -315,22 +318,23 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 
 			if (this._scrollBarRef)
 			{
-				(this._scrollBarRef as unknown as IWindow).addEventListener('WE_ENABLED', this.scrollBarEventProc.bind(this));
-				(this._scrollBarRef as unknown as IWindow).addEventListener('WE_DISABLED', this.scrollBarEventProc.bind(this));
+				(this._scrollBarRef as unknown as IWindow).addEventListener('WE_ENABLED', this._scrollBarEventProcBound);
+				(this._scrollBarRef as unknown as IWindow).addEventListener('WE_DISABLED', this._scrollBarEventProcBound);
 			}
 		}
 
 		return this._scrollBarRef;
 	}
 
-	public override iterator(): IIterator
+	// AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::get iterator()
+	public override iterator(): IIterator | null
 	{
 		if (this.isConstructionReady() && this.itemGrid)
 		{
-			return (this.itemGrid as unknown as ContainerController).iterator();
+			return this.itemGrid.iterator();
 		}
 
-		return super.iterator();
+		return null;
 	}
 
 	/**
@@ -467,8 +471,8 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 
 		if (this._scrollBarRef)
 		{
-			(this._scrollBarRef as unknown as IWindow).removeEventListener('WE_ENABLED', this.scrollBarEventProc.bind(this));
-			(this._scrollBarRef as unknown as IWindow).removeEventListener('WE_DISABLED', this.scrollBarEventProc.bind(this));
+			(this._scrollBarRef as unknown as IWindow).removeEventListener('WE_ENABLED', this._scrollBarEventProcBound);
+			(this._scrollBarRef as unknown as IWindow).removeEventListener('WE_DISABLED', this._scrollBarEventProcBound);
 			this._scrollBarRef = null;
 		}
 
@@ -480,9 +484,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 		super.dispose();
 	}
 
-	/**
-	 * Checks whether both the item grid and scrollbar have been resolved.
-	 */
+	// AS3: sources/win63_version/core/window/components/ScrollableItemGridWindow.as::isConstructionReady()
 	protected isConstructionReady(): boolean
 	{
 		return !!(this.itemGrid && this.scrollBar);

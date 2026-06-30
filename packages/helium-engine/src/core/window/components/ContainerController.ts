@@ -35,7 +35,7 @@ export class ContainerController extends WindowController implements IWindowCont
 		this._hasVisualContent = this._background || this.testParamFlag(1) || !this.testParamFlag(16);
 	}
 
-	public iterator(): IIterator
+	public iterator(): IIterator | null
 	{
 		return new ContainerIterator(this._children ?? []);
 	}

@@ -95,20 +95,15 @@ export class TabContextController extends WindowController implements ITabContex
 	/**
 	 * Returns an iterator from the selector.
 	 */
-	public iterator(): IIterator
+	// AS3: sources/win63_version/core/window/components/TabContextController.as::get iterator()
+	public iterator(): IIterator | null
 	{
 		if (this._initialized && this.selector)
 		{
 			return this.selector.iterator();
 		}
 
-		return {
-			next: () => null,
-			reset: () =>
-			{
-			},
-			count: () => 0
-		};
+		return null;
 	}
 
 	/**

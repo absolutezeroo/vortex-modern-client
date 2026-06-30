@@ -355,6 +355,9 @@ export class WindowParser implements IWindowParser
 
 		const variablesNode = getDirectChildByName(node, 'variables');
 		const properties = this.parseProperties(variablesNode, sharedVars);
+		const isInternalLayoutChild = tags !== null && tags.indexOf('_INTERNAL') !== -1;
+		const listParent = parent as unknown as { addListItem?: (item: IWindow) => IWindow };
+		const parentIsItemList = !isInternalLayoutChild && typeof listParent.addListItem === 'function';
 
 		const window = parent.context.create(
 			name,
@@ -364,7 +367,7 @@ export class WindowParser implements IWindowParser
 			param,
 			{x, y, width, height},
 			null,
-			parent,
+			parentIsItemList ? null : parent,
 			id,
 			tags,
 			dynamicStyle,
@@ -482,6 +485,28 @@ export class WindowParser implements IWindowParser
 			}
 		}
 
+		if (parentIsItemList)
+		{
+			// AS3: sources/win63_version/core/window/utils/WindowParser.as::parseAndConstruct()
+			// Flash creates list children without a parent and appends them through the
+			// IIterable iterator. Internal layout children (_ITEMLIST/_SCROLLBAR) are
+			// excluded above so ScrollableItemListWindow can build its own structure first.
+			if (window.x !== x || window.y !== y || window.width !== width || window.height !== height)
+			{
+				if ((param & WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK) === WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER)
+				{
+					window.x = x;
+				}
+
+				if ((param & WindowParam.RELATIVE_VERTICAL_SCALE_MASK) === WindowParam.RELATIVE_VERTICAL_SCALE_CENTER)
+				{
+					window.y = y;
+				}
+			}
+
+			listParent.addListItem!(window);
+		}
+
 		if (namedWindows && name)
 		{
 			namedWindows.set(name, window);
@@ -495,7 +520,6 @@ export class WindowParser implements IWindowParser
 			const target = window.getLayoutChildTarget();
 			const boxSizer = window as unknown as BoxSizerController;
 			const isBoxSizer = typeof boxSizer.setAutoRearrange === 'function';
-			const isItemList = typeof (window as unknown as { arrangeItems: () => void }).arrangeItems === 'function';
 
 			if (isBoxSizer)
 			{
@@ -510,11 +534,6 @@ export class WindowParser implements IWindowParser
 			if (isBoxSizer)
 			{
 				boxSizer.setAutoRearrange(true);
-			}
-
-			if (isItemList)
-			{
-				(window as unknown as { arrangeItems: () => void }).arrangeItems();
 			}
 		}
 

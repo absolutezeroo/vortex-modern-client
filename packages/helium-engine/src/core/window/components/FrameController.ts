@@ -316,7 +316,12 @@ export class FrameController extends ContainerController implements IFrameWindow
 	{
 		if (this.content !== null && this._constructed)
 		{
-			return (this.content as unknown as ContainerController).iterator();
+			const iterator = (this.content as unknown as ContainerController).iterator();
+
+			if(iterator !== null)
+			{
+				return iterator;
+			}
 		}
 
 		return new ContainerIterator(this._children ?? []);

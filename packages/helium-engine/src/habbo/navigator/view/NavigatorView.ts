@@ -650,6 +650,21 @@ export class NavigatorView implements IUpdateReceiver
 			this._roomEntryElementFactory.tileContainerTemplate = tileContainerClone;
 		}
 
+		// AS3: sources/win63_version/habbo/navigator/view/NavigatorView.as::createMainWindow()
+		// Flash clones the first block_results item, removes index 0, and repeats
+		// for the collapsed and no-results templates.
+		const blockResults = windowContainer.findChildByName('block_results') as IItemListWindow | null;
+		const cloneNextBlockResultTemplate = (): IWindowContainer =>
+		{
+			const template = blockResults!.getListItemAt(0) as IWindowContainer;
+			const clone = template.clone() as IWindowContainer;
+
+			blockResults!.removeListItemAt(0);
+			template.destroy();
+
+			return clone;
+		};
+
 		// Clear category_content template items
 		const categoryContent = windowContainer.findChildByName('category_content') as IItemListWindow | null;
 
@@ -658,68 +673,19 @@ export class NavigatorView implements IUpdateReceiver
 			categoryContent.destroyListItems();
 		}
 
-		// Category template (open)
-		const categoryContainer = windowContainer.findChildByName('category_container') as IWindowContainer | null;
-
-		if (categoryContainer && this._categoryElementFactory)
+		if (blockResults && this._categoryElementFactory)
 		{
-			this._categoryElementFactory.categoryTemplate = categoryContainer.clone() as IWindowContainer;
-
-			const blockResults = windowContainer.findChildByName('block_results') as IItemListWindow | null;
-
-			if (blockResults)
-			{
-				blockResults.removeListItemAt(0);
-			}
-
-			categoryContainer.destroy();
-		}
-
-		// Collapsed category template
-		const collapsedCategory = windowContainer.findChildByName('category_container_collapsed') as IWindowContainer | null;
-
-		if (collapsedCategory && this._categoryElementFactory)
-		{
-			this._categoryElementFactory.collapsedCategoryTemplate = collapsedCategory.clone() as IWindowContainer;
-
-			const blockResults = windowContainer.findChildByName('block_results') as IItemListWindow | null;
-
-			if (blockResults)
-			{
-				blockResults.removeListItemAt(0);
-			}
-
-			collapsedCategory.destroy();
-		}
-
-		// No results template
-		const noResultsContainer = windowContainer.findChildByName('no_results_container') as IWindowContainer | null;
-
-		if (noResultsContainer && this._categoryElementFactory)
-		{
-			this._categoryElementFactory.noResultsTemplate = noResultsContainer.clone() as IWindowContainer;
-
-			const blockResults = windowContainer.findChildByName('block_results') as IItemListWindow | null;
-
-			if (blockResults)
-			{
-				blockResults.removeListItemAt(0);
-			}
-
-			noResultsContainer.destroy();
+			this._categoryElementFactory.categoryTemplate = cloneNextBlockResultTemplate();
+			this._categoryElementFactory.collapsedCategoryTemplate = cloneNextBlockResultTemplate();
+			this._categoryElementFactory.noResultsTemplate = cloneNextBlockResultTemplate();
 		}
 
 		// --- Wire sub-views to their containers ---
 
 		// Block results list
-		if (this._blockResultsView)
+		if (this._blockResultsView && blockResults)
 		{
-			const blockResultsList = windowContainer.findChildByName('block_results') as IItemListWindow | null;
-
-			if (blockResultsList)
-			{
-				this._blockResultsView.itemList = blockResultsList;
-			}
+			this._blockResultsView.itemList = blockResults;
 		}
 
 		// Search tools container

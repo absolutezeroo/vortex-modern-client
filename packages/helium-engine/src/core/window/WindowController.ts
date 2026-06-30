@@ -255,17 +255,67 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 			};
 		}
 
-		const root = WindowController.resolveLayoutRootElement(layout);
+		const root = WindowController.resolveLayoutDocumentElement(layout);
 
 		if (!root)
 		{
 			return {width: 0, height: 0};
 		}
 
-		const width = WindowController.readIntAttribute(root, 'width');
-		const height = WindowController.readIntAttribute(root, 'height');
+		// AS3: sources/win63_version/core/window/WindowController.as::WindowController()
+		// Flash reads width/height from the layout XML returned by getLayoutByTypeAndStyle(),
+		// before WindowParser descends into its child <window>. Converted JSON layouts keep
+		// those dimensions on <layout>, so preserve that root for sizing.
+		let width = WindowController.readIntAttribute(root, 'width');
+		let height = WindowController.readIntAttribute(root, 'height');
+
+		if ((width === 0 || height === 0) && root.nodeName === 'layout')
+		{
+			const windowRoot = WindowController.resolveLayoutRootElement(root);
+
+			if (windowRoot)
+			{
+				width = width || WindowController.readIntAttribute(windowRoot, 'width');
+				height = height || WindowController.readIntAttribute(windowRoot, 'height');
+			}
+		}
 
 		return {width, height};
+	}
+
+	private static resolveLayoutDocumentElement(layout: unknown): Element | null
+	{
+		if (layout instanceof Element)
+		{
+			return layout;
+		}
+
+		if (layout instanceof Document)
+		{
+			return layout.documentElement;
+		}
+
+		if (typeof layout === 'string')
+		{
+			try
+			{
+				const doc = new DOMParser().parseFromString(layout, 'text/xml');
+				const parserError = doc.getElementsByTagName('parsererror');
+
+				if (parserError.length > 0)
+				{
+					return null;
+				}
+
+				return doc.documentElement;
+			}
+			catch (_)
+			{
+				return null;
+			}
+		}
+
+		return null;
 	}
 
 	private static resolveLayoutRootElement(layout: unknown): Element | null
