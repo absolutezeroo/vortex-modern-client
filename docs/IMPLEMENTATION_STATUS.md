@@ -1,6 +1,6 @@
 # Helium - Implementation Status
 
-> **Last updated**: 2026-06-29
+> **Last updated**: 2026-06-30
 > **Method**: Exhaustive AS3 → TS audit (comparing `source_as_win63/` vs `src/`)
 > **Total AS3 files**: ~2,000+ (logic + display) | **Total TS implemented**: ~716+ files
 > **Approach**: Full port — all AS3 files (logic AND display) are implemented. Flash XML layouts converted to JSON.
@@ -419,6 +419,7 @@ AS3: 32 files | TS: 22 files
 15. **advertisement, campaign, toolbar, nux, phonenumber**
 
 ### Recently completed
+- ✅ **core/window ItemList resize-on-update AS3 parity fix**: `ItemListController.updateScrollAreaRegion()` now ensures `resize_on_item_update` resizes the itemlist window itself when children change, preserving AS3 right-anchor behavior for navigator category thumbnail/row controls and other converted Flash itemlists.
 - ✅ **Session furnidata AS3 init parity**: `SessionDataManager.initFurnitureData()` now uses AS3 `furnidata.load.url`, `getFurniData()` returns `null` until floor furnidata exists, `FurnitureDataParser` loads text before parsing XML/lingo/converted JSON, and hash-derived `furnidata.url`/`productdata.url` overrides were removed.
 - ✅ **WIN63 gamedata/config/avatar URL parity pass**: `GameDataResources` now matches AS3 `class_2118` (`external_texts`, `external_variables`, `furnidata`, `productdata` only), `CoreLocalizationManager` loads only `external_texts`, `HabboConfigurationManager` reloads `external_variables` on localization `complete`, `SessionDataManager`/`AvatarRenderManager` listen to configuration `complete` through DI like AS3, `HeliumMain` no longer mutates config from hashes, and avatar figuremap uses `flash.dynamic.avatar.download.configuration` with no `avatar.figuremap.url`/asset-url fallback.
 - ✅ **Configuration bootstrap + room bundle AS3/Nitro parity fix**: `index.html` no longer forces `/gamedata/external_variables/1`, existing `window.HeliumConfig` overrides are preserved, AS3 hashes `external_texts` parsing is restored, missing config interpolation now resolves to empty like AS3, and `RoomEngine` no longer loads room content directly; AS3 `room`/placeholder content resolves only through `RoomContentLoader` using AS3 dynamic download keys, with the required `.swf` to `.nitro` asset-name translation.
@@ -473,4 +474,4 @@ AS3: 32 files | TS: 22 files
 
 ---
 
-*Document updated — 2026-06-29 (local-dev Habbo gamedata proxy restored.)*
+*Document updated — 2026-06-30 (core/window itemlist resize-on-update parity restored.)*

@@ -1008,6 +1008,21 @@ export class ItemListController extends WindowController implements IItemListWin
 		(this._container as unknown as IWindow).height = this._scrollAreaHeight;
 		(this._container as unknown as IWindow).width = this._scrollAreaWidth;
 
+		if (this._resizeOnItemUpdate)
+		{
+			if (this._isHorizontal)
+			{
+				if (this._width !== this._scrollAreaWidth)
+				{
+					this.width = this._scrollAreaWidth;
+				}
+			}
+			else if (this._height !== this._scrollAreaHeight)
+			{
+				this.height = this._scrollAreaHeight;
+			}
+		}
+
 		if (this._inverseResizeOnItemUpdate)
 		{
 			if (this._isHorizontal)
