@@ -2,11 +2,13 @@ import {EventEmitter} from 'eventemitter3';
 import {Component, ComponentDependency, type IContext,} from '@core/runtime';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
+import {IID_RoomUI} from '@iid/IIDRoomUI';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import type {IHabboToolbar} from './IHabboToolbar';
+import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IExtensionView} from './IExtensionView';
 import type {IHabboCommunicationManager} from '../communication/IHabboCommunicationManager';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
@@ -71,6 +73,9 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	private _extensionView: ExtensionView | null = null;
 	private _purseAreaExtension: PurseAreaExtension | null = null;
 	private _seasonalCurrencyIndicator: SeasonalCurrencyIndicator | null = null;
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::roomUI
+	private _roomUI: IRoomUI | null = null;
 
 	constructor(context: IContext)
 	{
@@ -164,6 +169,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	get windowManager(): IHabboWindowManager | null
 	{
 		return this._windowManager;
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::get roomUI()
+	get roomUI(): IRoomUI | null
+	{
+		return this._roomUI;
 	}
 
 	get inventory(): IHabboInventory | null
@@ -285,6 +296,14 @@ export class HabboToolbar extends Component implements IHabboToolbar
 				(manager: IRoomSessionManager | null) =>
 				{
 					this._roomSessionManager = manager;
+				},
+				false
+			),
+			new ComponentDependency(
+				IID_RoomUI,
+				(roomUI: IRoomUI | null) =>
+				{
+					this._roomUI = roomUI;
 				},
 				false
 			),
@@ -602,6 +621,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 		this._sessionDataManager = null;
 		this._roomSessionManager = null;
 		this._avatarRenderManager = null;
+		this._roomUI = null;
 		this._inventory = null;
 		this._catalog = null;
 		this._localization = null;

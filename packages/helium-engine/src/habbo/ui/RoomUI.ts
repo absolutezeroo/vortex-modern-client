@@ -31,6 +31,7 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
+import {FriendBarResizeEvent} from '@habbo/friendbar/events/FriendBarResizeEvent';
 import type {IHabboLandingView} from '@habbo/friendbar/IHabboLandingView';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 
@@ -146,6 +147,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 				(toolbar: IHabboToolbar | null) =>
 				{
 					this._toolbar = toolbar;
+
+					for(const desktop of this._desktops.values())
+					{
+						desktop.toolbar = toolbar;
+					}
 				},
 				false
 			),
@@ -189,6 +195,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 		desktop.roomSessionManager = this._roomSessionManager;
 		desktop.config = this._config;
 		desktop.localization = this._localization;
+		desktop.toolbar = this._toolbar;
 		desktop.roomWidgetFactory = this._widgetFactory;
 
 		// Set the layout
@@ -250,9 +257,27 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 	/**
 	 * Triggers bottom bar resize.
 	 */
+	// AS3: sources/win63_version/habbo/ui/RoomUI.as::triggerbottomBarResize()
+	public triggerbottomBarResize(): void
+	{
+		this.bottomBarResizeHandler(new FriendBarResizeEvent());
+	}
+
+	/**
+	 * TS alias kept for existing callers; delegates to the AS3-named API.
+	 */
 	public triggerBottomBarResize(): void
 	{
-		// Stub — will be implemented when friend bar is ported
+		this.triggerbottomBarResize();
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomUI.as::bottomBarResizeHandler()
+	private bottomBarResizeHandler(event: FriendBarResizeEvent): void
+	{
+		for(const desktop of this._desktops.values())
+		{
+			desktop.processEvent(event);
+		}
 	}
 
 	/**

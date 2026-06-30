@@ -1,6 +1,7 @@
 import type {EventEmitter} from 'eventemitter3';
 import type {Motion} from '@core/window/motion/Motion';
 import type {IExtensionView} from './IExtensionView';
+import type {IRoomUI} from '@habbo/ui/IRoomUI';
 
 /**
  * Interface for the Habbo toolbar component
@@ -26,6 +27,13 @@ export interface IHabboToolbar
 	 * The width of the toolbar area
 	 */
 	readonly toolBarAreaWidth: number;
+
+	/**
+	 * Room UI dependency used by the bottom bar resize flow.
+	 */
+	// AS3: sources/win63_version/habbo/toolbar/IHabboToolbar.as::get roomUI()
+	readonly roomUI: IRoomUI | null;
+
 	/**
 	 * Set whether the user is on duty (moderation)
 	 */

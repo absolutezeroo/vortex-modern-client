@@ -81,6 +81,8 @@ export class BottomBarLeft
 			throw new Error('Failed to construct toolbar window from layout');
 		}
 
+		this._window.addEventListener(WindowEvent.WE_PARENT_RESIZED, this.onParentResized);
+
 		// Find key children
 		this._buttonContainer = this._window.getChildByName('toolbar_items');
 
@@ -540,6 +542,7 @@ export class BottomBarLeft
 		}
 
 		this.checkSize();
+		this._toolbar?.roomUI?.triggerbottomBarResize();
 	}
 
 	/**
@@ -686,6 +689,7 @@ export class BottomBarLeft
 
 		if (this._window)
 		{
+			this._window.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this.onParentResized);
 			this._window.dispose();
 			this._window = null;
 		}
@@ -763,6 +767,12 @@ export class BottomBarLeft
 
 		this._window.invalidate();
 	}
+
+	// AS3: sources/win63_version/habbo/toolbar/BottomBarLeft.as::onParentResized()
+	private onParentResized = (): void =>
+	{
+		this.checkSize();
+	};
 
 	/**
 	 * Handle icon click events

@@ -13,6 +13,7 @@ import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 import type {RoomDesktopLayoutManager} from './RoomDesktopLayoutManager';
@@ -26,6 +27,8 @@ export interface IRoomWidgetHandlerContainer
 	readonly roomSessionManager: IRoomSessionManager | null;
 	readonly roomWidgetFactory: IRoomWidgetFactory | null;
 	readonly localization: IHabboLocalizationManager | null;
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get toolbar()
+	readonly toolbar: IHabboToolbar | null;
 	readonly windowManager: IHabboWindowManager | null;
 	readonly connection: IConnection | null;
 	readonly layoutManager: RoomDesktopLayoutManager;

@@ -26,6 +26,8 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import type {IRoomDesktop} from './IRoomDesktop';
 import type {IRoomWidgetMessageListener} from './IRoomWidgetMessageListener';
 import type {IRoomWidgetHandlerContainer} from './IRoomWidgetHandlerContainer';
@@ -59,6 +61,8 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	private _roomSessionManager: IRoomSessionManager | null = null;
 	private _config: IHabboConfigurationManager | null = null;
 	private _localization: IHabboLocalizationManager | null = null;
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toolbar
+	private _toolbar: IHabboToolbar | null = null;
 	private _widgetFactory: IRoomWidgetFactory | null = null;
 
 	// Widget management
@@ -177,9 +181,24 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 		return this._layoutManager.roomViewRect;
 	}
 
-	public processEvent(_event: unknown): void
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processEvent()
+	public processEvent(event: unknown): void
 	{
-		// Dispatch to widget event handlers (stub for now)
+		const eventType = (event as { type?: string } | null)?.type;
+
+		if(!eventType) return;
+
+		if(eventType === 'RWZTM_ZOOM_TOGGLE')
+		{
+			this.toggleZoom();
+		}
+
+		const handler = this._widgetEventHandlers.get(eventType);
+
+		if(handler)
+		{
+			handler.processEvent(event);
+		}
 	}
 
 	public processWidgetMessage(_message: unknown): unknown
@@ -221,6 +240,12 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	public get connection(): IConnection | null
 	{
 		return this._connection;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::get toolbar()
+	public get toolbar(): IHabboToolbar | null
+	{
+		return this._toolbar;
 	}
 
 	public get layoutManager(): RoomDesktopLayoutManager
@@ -279,6 +304,22 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	public set localization(value: IHabboLocalizationManager | null)
 	{
 		this._localization = value;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::set toolbar()
+	public set toolbar(value: IHabboToolbar | null)
+	{
+		if(this._toolbar)
+		{
+			this._toolbar.toolbarEvents.off(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
+		}
+
+		this._toolbar = value;
+
+		if(this._toolbar)
+		{
+			this._toolbar.toolbarEvents.on(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
+		}
 	}
 
 	public set roomWidgetFactory(value: IRoomWidgetFactory | null)
@@ -586,6 +627,28 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 		return this._visible;
 	}
 
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onToolbarEvent()
+	private onToolbarEvent = (event: HabboToolbarEvent): void =>
+	{
+		if(event.type === HabboToolbarEvent.ICON_ZOOM)
+		{
+			this.toggleZoom();
+		}
+	};
+
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toggleZoom()
+	private toggleZoom(): void
+	{
+		if(!this._roomEngine || this._canvasIds.length === 0) return;
+
+		const roomId = this._roomEngine.activeRoomId;
+		const canvasId = this.getFirstCanvasId();
+		const currentScale = this._roomEngine.getRoomCanvasScale(roomId, canvasId);
+		const newScale = currentScale === 1 ? 0.5 : 1;
+
+		this._roomEngine.setRoomCanvasScale(roomId, canvasId, newScale);
+	}
+
 	/**
 	 * Called each frame by RoomUI.update().
 	 * Updates color transitions, widget handlers, and zoom momentum.
@@ -621,6 +684,12 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 		this._disposed = true;
 
 		log.debug(`Disposing RoomDesktop for room ${this._session.roomId}`);
+
+		if(this._toolbar)
+		{
+			this._toolbar.toolbarEvents.off(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
+			this._toolbar = null;
+		}
 
 		// Dispose all widgets
 		for(const [type, widget] of this._widgets)
@@ -668,6 +737,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 		this._roomSessionManager = null;
 		this._config = null;
 		this._localization = null;
+		this._toolbar = null;
 		this._widgetFactory = null;
 		this._canvasWrapper = null;
 		this._roomViewWindow = null;
