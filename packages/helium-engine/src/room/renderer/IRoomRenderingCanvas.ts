@@ -8,6 +8,7 @@
  *
  * @see sources/win63_version/room/renderer/IRoomRenderingCanvas.as
  */
+import type {Renderer} from 'pixi.js';
 import type {IRoomGeometry} from '../utils/IRoomGeometry';
 import type {IRoomRenderingCanvasMouseListener} from './IRoomRenderingCanvasMouseListener';
 
@@ -52,6 +53,12 @@ export interface IRoomRenderingCanvas
 	getId(): number;
 
 	update(): void;
+
+	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::takeScreenShot()
+	// AS3 signature takes no arguments (Flash's Stage/DisplayObject could be
+	// rasterized directly). PixiJS extraction requires an explicit Renderer,
+	// which this engine-side class doesn't own, so the caller must supply one.
+	takeScreenShot(renderer: Renderer): HTMLCanvasElement;
 
 	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::skipSpriteVisibilityChecking()
 	skipSpriteVisibilityChecking(): void;

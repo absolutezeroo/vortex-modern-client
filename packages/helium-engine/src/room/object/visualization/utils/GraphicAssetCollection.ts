@@ -330,7 +330,14 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
 				textureName = this._name + '_' + source;
 			}
 
-			const texture = this._textures.get(textureName) || this._textures.get(source) || null;
+			// Some spritesheets key their frames with the original file extension
+			// (e.g. "tile_cursor_tile_cursor_64_a_0_0.png") while asset definitions
+			// never include it — try both forms.
+			const texture = this._textures.get(textureName)
+				|| this._textures.get(textureName + '.png')
+				|| this._textures.get(source)
+				|| this._textures.get(source + '.png')
+				|| null;
 
 			if (texture !== null)
 			{

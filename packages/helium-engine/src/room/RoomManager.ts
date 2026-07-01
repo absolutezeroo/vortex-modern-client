@@ -403,7 +403,13 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 		let visualizationConfig: unknown | null = null;
 		if (this._contentLoader && !this._contentLoader.hasInternalContent(type))
 		{
-			if(assetCollection === null)
+			// A GraphicAssetCollection can exist in the registry (registered
+			// synchronously the moment loading starts) before its async fetch/parse
+			// has actually populated it with assets. Treating "collection object
+			// exists" as "content ready" left objects marked initialized=true while
+			// still asset-less, which permanently skips the updateObjectContents()
+			// re-initialization pass once the real content finishes loading.
+			if(assetCollection === null || !this._contentLoader.isLoaded(type))
 			{
 				this._contentLoader.loadObjectContent(type, this.events);
 				contentType = this._contentLoader.getPlaceHolderType(type);

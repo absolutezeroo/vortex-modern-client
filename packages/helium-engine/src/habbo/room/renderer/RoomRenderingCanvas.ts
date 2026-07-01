@@ -11,7 +11,7 @@
  *
  * @see sources/win63_version/room/renderer/class_3523.as
  */
-import {Container, Graphics, Texture} from 'pixi.js';
+import {Container, Graphics, Texture, type Renderer} from 'pixi.js';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
@@ -87,6 +87,8 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 	private _lastRenderTime: number = 0;
 	private _haltedFrameInterval: number = 0;
 	private _skipSpriteVisibilityChecking: boolean = false;
+	private _useExclusionRects: boolean = false;
+	private _exclusionRects: {left: number; top: number; right: number; bottom: number}[] = [];
 	private _fpsCounterEnabled: boolean = false;
 	private _useMask: boolean = false;
 	private _displayTransformDirty: boolean = true;
@@ -244,6 +246,39 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 		// TODO(AS3): sources/win63_version/room/renderer/class_3523.as fpsCounterEnabled
 		// Flash draws TextField overlays with FPS/render/memory data. Keep the public
 		// API for parity; no Pixi overlay is created yet.
+	}
+
+	/**
+	 * Renders the room at 1:1 scale with no screen offset and captures it to a
+	 * canvas. The AS3 version also lowers Stage.quality for the capture and
+	 * restores it afterward; PixiJS has no per-render quality knob, so that
+	 * step is dropped as a non-portable Flash-ism.
+	 *
+	 * @see sources/win63_version/room/renderer/class_3523.as::takeScreenShot() line 313
+	 */
+	// AS3: sources/win63_version/room/renderer/class_3523.as::takeScreenShot()
+	takeScreenShot(renderer: Renderer): HTMLCanvasElement
+	{
+		this._skipSpriteVisibilityChecking = true;
+
+		const savedScale = this._scale;
+		const savedOffsetX = this._screenOffsetX;
+		const savedOffsetY = this._screenOffsetY;
+
+		this.setScale(1);
+		this._screenOffsetX = 0;
+		this._screenOffsetY = 0;
+
+		this.render(-1, true);
+
+		const canvas = renderer.extract.canvas(this._display) as HTMLCanvasElement;
+
+		this._skipSpriteVisibilityChecking = false;
+		this.setScale(savedScale);
+		this._screenOffsetX = savedOffsetX;
+		this._screenOffsetY = savedOffsetY;
+
+		return canvas;
 	}
 
 	// AS3: sources/win63_version/room/renderer/class_3523.as::skipSpriteVisibilityChecking()
@@ -817,7 +852,61 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 			height *= this._scale;
 		}
 
-		return x < this._width && x + width >= 0 && y < this._height && y + height >= 0;
+		if (x < this._width && x + width >= 0 && y < this._height && y + height >= 0)
+		{
+			if (!this._useExclusionRects)
+			{
+				return true;
+			}
+
+			return this.rectangleVisibleWithExclusion(x, y, width, height);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Culls a rect if it's fully contained within any registered exclusion
+	 * region. Dormant in AS3: the gating flag and exclusion list are declared
+	 * but never populated anywhere in class_3523.as, so this path is
+	 * unreachable there too — ported for structural parity.
+	 *
+	 * @see sources/win63_version/room/renderer/class_3523.as::rectangleVisibleWithExclusion() line 711
+	 */
+	// AS3: sources/win63_version/room/renderer/class_3523.as::rectangleVisibleWithExclusion()
+	private rectangleVisibleWithExclusion(x: number, y: number, width: number, height: number): boolean
+	{
+		if (x < 0)
+		{
+			width += x;
+			x = 0;
+		}
+
+		if (y < 0)
+		{
+			height += y;
+			y = 0;
+		}
+
+		if (x + width >= this._width)
+		{
+			width -= this._width + 1 - (x + width);
+		}
+
+		if (y + height >= this._height)
+		{
+			height -= this._height + 1 - (y + height);
+		}
+
+		for (const rect of this._exclusionRects)
+		{
+			if (x >= rect.left && x + width < rect.right && y >= rect.top && y + height < rect.bottom)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	roomObjectRemoved(objectId: string): void

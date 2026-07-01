@@ -62,6 +62,14 @@ export interface IRoomContentLoader extends IDisposable
 	// AS3: sources/win63_version/room/IRoomContentLoader.as::getGraphicAssetCollection()
 	getGraphicAssetCollection(type: string): IGraphicAssetCollection | null;
 
+	// Helium-specific: not in AS3's IRoomContentLoader. AS3's RoomManager.createRoomObject()
+	// treats getGraphicAssetCollection() != null as proof content is ready, because AS3 only
+	// registers a collection once its data has actually been parsed. This port's content
+	// loader registers a collection synchronously when loading *starts* (before the async
+	// fetch/parse completes), so RoomManager needs this extra check to know whether the
+	// collection it got back is actually populated yet.
+	isLoaded(type: string): boolean;
+
 	// AS3: sources/win63_version/room/IRoomContentLoader.as::roomObjectCreated()
 	roomObjectCreated(object: IRoomObject, roomId: string): void;
 }

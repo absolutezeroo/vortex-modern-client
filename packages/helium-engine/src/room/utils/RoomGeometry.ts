@@ -11,7 +11,9 @@ import {Vector3d} from './Vector3d';
 
 export class RoomGeometry implements IRoomGeometry
 {
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::SCALE_ZOOMED_IN
 	public static readonly SCALE_ZOOMED_IN: number = 64;
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::SCALE_ZOOMED_OUT
 	public static readonly SCALE_ZOOMED_OUT: number = 32;
 	private _x: Vector3d;
 	private _y: Vector3d;
@@ -27,8 +29,10 @@ export class RoomGeometry implements IRoomGeometry
 	private _zScaleInternal: number = 1;
 	private _depthMin: number = -500;
 	private _depthMax: number = 500;
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::var_1033 (displacement map)
 	private _displacements: Map<string, Vector3d> = new Map();
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::RoomGeometry()
 	constructor(scale: number, direction: IVector3d, location: IVector3d, depthDirection: IVector3d | null = null)
 	{
 		this.setScale(scale);
@@ -62,6 +66,7 @@ export class RoomGeometry implements IRoomGeometry
 
 	private _updateId: number = 0;
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::get updateId()
 	get updateId(): number
 	{
 		return this._updateId;
@@ -69,6 +74,7 @@ export class RoomGeometry implements IRoomGeometry
 
 	private _directionAxis: Vector3d;
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::get directionAxis()
 	get directionAxis(): IVector3d
 	{
 		return this._directionAxis;
@@ -76,6 +82,7 @@ export class RoomGeometry implements IRoomGeometry
 
 	private _scale: number = 1;
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::get scale()
 	get scale(): number
 	{
 		return this._scale / Math.sqrt(0.5);
@@ -83,6 +90,7 @@ export class RoomGeometry implements IRoomGeometry
 
 	private _location: Vector3d | null = null;
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::get location()
 	get location(): IVector3d
 	{
 		this._locationCache.assign(this._location);
@@ -95,11 +103,13 @@ export class RoomGeometry implements IRoomGeometry
 
 	private _direction: Vector3d | null = null;
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::get direction()
 	get direction(): IVector3d
 	{
 		return this._directionCache;
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::set x_scale()
 	set x_scale(value: number)
 	{
 		if (this._xScale !== value * this._xScaleInternal)
@@ -109,6 +119,7 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::set y_scale()
 	set y_scale(value: number)
 	{
 		if (this._yScale !== value * this._yScaleInternal)
@@ -118,6 +129,7 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::set z_scale()
 	set z_scale(value: number)
 	{
 		if (this._zScale !== value * this._zScaleInternal)
@@ -127,6 +139,7 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::getIntersectionVector()
 	static getIntersectionVector(
 		origin: IVector3d,
 		direction: IVector3d,
@@ -147,11 +160,16 @@ export class RoomGeometry implements IRoomGeometry
 		return Vector3d.sum(origin, Vector3d.product(direction, t)!);
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::dispose()
 	dispose(): void
 	{
 		this._displacements.clear();
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::setDisplacement()
+	// The AS3 body is decompiler-corrupted (`null.assign(param2)`, `var_1033.add(null,null)`),
+	// so this reconstructs the evident intent (key the displacement map by rounded
+	// location) rather than transliterating the broken code.
 	setDisplacement(location: IVector3d, displacement: IVector3d): void
 	{
 		if (location === null || displacement === null)
@@ -169,6 +187,7 @@ export class RoomGeometry implements IRoomGeometry
 		this._updateId++;
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::setDepthVector()
 	setDepthVector(direction: IVector3d): void
 	{
 		const yAxis = new Vector3d(0, 1, 0);
@@ -213,6 +232,7 @@ export class RoomGeometry implements IRoomGeometry
 		this._updateId++;
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::adjustLocation()
 	adjustLocation(location: IVector3d, z: number): void
 	{
 		if (location === null || this._z === null)
@@ -230,6 +250,7 @@ export class RoomGeometry implements IRoomGeometry
 		this.setLocation(newLocation);
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::getCoordinatePosition()
 	getCoordinatePosition(vector: IVector3d): IVector3d | null
 	{
 		if (vector === null)
@@ -244,6 +265,7 @@ export class RoomGeometry implements IRoomGeometry
 		return new Vector3d(projX, projY, projZ);
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::getScreenPosition()
 	getScreenPosition(vector: IVector3d): IVector3d | null
 	{
 		const diff = Vector3d.dif(vector, this._location);
@@ -291,6 +313,7 @@ export class RoomGeometry implements IRoomGeometry
 		return diff;
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::getScreenPoint()
 	getScreenPoint(vector: IVector3d): Point | null
 	{
 		const screenPos = this.getScreenPosition(vector);
@@ -303,6 +326,7 @@ export class RoomGeometry implements IRoomGeometry
 		return {x: screenPos.x, y: screenPos.y};
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::getPlanePosition()
 	getPlanePosition(point: Point, loc: IVector3d, leftSide: IVector3d, rightSide: IVector3d): Point | null
 	{
 		const screenX = point.x / this._scale;
@@ -356,6 +380,7 @@ export class RoomGeometry implements IRoomGeometry
 		return null;
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::performZoom()
 	performZoom(): void
 	{
 		if (this.isZoomedIn())
@@ -368,21 +393,25 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::isZoomedIn()
 	isZoomedIn(): boolean
 	{
 		return this.scale === 64;
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::performZoomOut()
 	performZoomOut(): void
 	{
 		this.setScale(32);
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::performZoomIn()
 	performZoomIn(): void
 	{
 		this.setScale(64);
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::set scale()
 	private setScale(value: number): void
 	{
 		if (value <= 1)
@@ -399,6 +428,7 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::set location()
 	private setLocation(location: IVector3d | null): void
 	{
 		if (location === null)
@@ -426,6 +456,7 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::set direction()
 	private setDirection(direction: IVector3d | null): void
 	{
 		if (direction === null)
@@ -495,6 +526,7 @@ export class RoomGeometry implements IRoomGeometry
 		}
 	}
 
+	// AS3: sources/win63_version/room/utils/RoomGeometry.as::getDisplacenent() [sic]
 	private getDisplacement(location: IVector3d): IVector3d | null
 	{
 		const key = `${Math.round(location.x)}_${Math.round(location.y)}_${Math.round(location.z)}`;
