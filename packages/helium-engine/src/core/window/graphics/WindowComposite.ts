@@ -8,6 +8,53 @@ import {WindowType} from '../enum/WindowType';
 type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
 
 /**
+ * PERFORMANCE CACHE — do not remove or "simplify away".
+ *
+ * Holds the fully-composited output of `compositeBitmapWrapper()` for one
+ * bitmap-wrapper window, plus every input that output depends on. Rebuilding
+ * that output requires `getImageData`/`putImageData` (in `tintBitmap()` and
+ * `applyGreyscale()`), which are pixel-by-pixel CPU operations — by far the
+ * most expensive step in the whole window-compositing pipeline (see
+ * docs/STYLEGUIDE.md "Performance"). Without this cache, `compositeToBuffer()`
+ * re-ran that pixel work for every bitmap-wrapper window on every single
+ * frame where ANY window in the desktop was dirty, not just when that
+ * window's own bitmap/colour actually changed.
+ *
+ * If you find this entry unused after a refactor, verify the replacement
+ * still skips getImageData/putImageData when nothing changed before deleting
+ * this — otherwise the CPU cost regresses silently (no functional bug, no
+ * test failure, just a slower client).
+ */
+interface BitmapWrapperCacheEntry
+{
+    canvas: OffscreenCanvas;
+    ctx: OffscreenCanvasRenderingContext2D;
+    bmp: ImageBitmap | null;
+    zoomX: number;
+    zoomY: number;
+    stretchedX: boolean;
+    stretchedY: boolean;
+    wrapX: boolean;
+    wrapY: boolean;
+    rotation: number;
+    greyscale: boolean;
+    pivotPoint: number;
+    etchColor: number;
+    w: number;
+    h: number;
+    color: number;
+    hasDynamicStyle: boolean;
+    dsRedMultiplier: number;
+    dsGreenMultiplier: number;
+    dsBlueMultiplier: number;
+    dsAlphaMultiplier: number;
+    dsRedOffset: number;
+    dsGreenOffset: number;
+    dsBlueOffset: number;
+    dsAlphaOffset: number;
+}
+
+/**
  * Canvas composition and hit-test adapter for the web runtime.
  *
  * This class is not part of AS3 WindowRenderer itself; it contains the
@@ -20,8 +67,10 @@ export class WindowComposite
 
     private _compositeBuffer: OffscreenCanvas | null = null;
     private _compositeCtx: OffscreenCanvasRenderingContext2D | null = null;
-    private _bitmapBuffer: OffscreenCanvas | null = null;
-    private _bitmapCtx: OffscreenCanvasRenderingContext2D | null = null;
+    // See BitmapWrapperCacheEntry doc comment above — perf-critical, keyed by
+    // window identity, WeakMap so entries drop automatically once a window is
+    // disposed and no longer referenced elsewhere.
+    private _bitmapWrapperCache: WeakMap<IWindow, BitmapWrapperCacheEntry> = new WeakMap();
     private _drawBufferResolver: DrawBufferResolver;
 
     constructor(drawBufferResolver: DrawBufferResolver)
@@ -120,8 +169,8 @@ export class WindowComposite
     {
         this._compositeBuffer = null;
         this._compositeCtx = null;
-        this._bitmapBuffer = null;
-        this._bitmapCtx = null;
+        // WeakMap has no clear(); dropping the reference releases every entry.
+        this._bitmapWrapperCache = new WeakMap();
     }
 
     private getDrawBufferForRenderable(window: IWindow): OffscreenCanvas | null
@@ -295,120 +344,183 @@ export class WindowComposite
 		const pivotPoint = bdc.pivotPoint ?? PivotPoint.TOP_LEFT;
 		const etchColor = bdc.etchingColor ?? 0;
 		const etchPt = window.etchingPoint;
+		const ds = window.dynamicStyleColor;
 
-		// Per-window scratch buffer = AS3 `param2` BitmapData.
-		const buffer = this.acquireBitmapBuffer(w, h);
-		const bctx = this._bitmapCtx;
+		// PERF: see BitmapWrapperCacheEntry doc comment. Only re-run the
+		// pixel-level compositing (rotate/tile/tint/greyscale) below when a
+		// value it actually depends on has changed since the last frame;
+		// otherwise reuse last frame's canvas as-is.
+		const cached = this._bitmapWrapperCache.get(window) ?? null;
+		const paramsUnchanged = cached !== null
+			&& cached.bmp === bmp
+			&& cached.zoomX === zoomX
+			&& cached.zoomY === zoomY
+			&& cached.stretchedX === stretchedX
+			&& cached.stretchedY === stretchedY
+			&& cached.wrapX === wrapX
+			&& cached.wrapY === wrapY
+			&& cached.rotation === rotation
+			&& cached.greyscale === greyscale
+			&& cached.pivotPoint === pivotPoint
+			&& cached.etchColor === etchColor
+			&& cached.w === w
+			&& cached.h === h
+			&& cached.color === window.color
+			&& cached.hasDynamicStyle === (ds !== null)
+			&& (ds === null
+				|| (cached.dsRedMultiplier === ds.redMultiplier
+					&& cached.dsGreenMultiplier === ds.greenMultiplier
+					&& cached.dsBlueMultiplier === ds.blueMultiplier
+					&& cached.dsAlphaMultiplier === ds.alphaMultiplier
+					&& cached.dsRedOffset === ds.redOffset
+					&& cached.dsGreenOffset === ds.greenOffset
+					&& cached.dsBlueOffset === ds.blueOffset
+					&& cached.dsAlphaOffset === ds.alphaOffset));
 
-		if (!buffer || !bctx) return;
+		const entry = this.acquireBitmapWrapperCacheEntry(window, cached, w, h);
 
-		bctx.imageSmoothingEnabled = false;
-		bctx.setTransform(1, 0, 0, 1, 0, 0);
-		bctx.clearRect(0, 0, w, h);
+		if (!entry) return;
 
-		// Rotation: pre-rotate the source around its centre (AS3 l.55-66).
-		const source = rotation !== 0 ? this.rotateBitmap(bmp, rotation) : bmp;
-		const srcW = bmp.width;
-		const srcH = bmp.height;
-
-		// Signed tile size — a negative zoom flips the bitmap (AS3 l.67-68).
-		const drawW = (stretchedX ? w : srcW) * zoomX;
-		const drawH = (stretchedY ? h : srcH) * zoomY;
-
-		if (drawW === 0 || drawH === 0) return;
-
-		// Tile counts (AS3 l.69-70). Mirrors the signed division.
-		const tilesX = !wrapX ? 1 : Math.floor(w / drawW) + 2;
-		const tilesY = !wrapY ? 1 : Math.floor(h / drawH) + 2;
-
-		// Base position from pivot (AS3 l.73-116).
-		let baseTx: number;
-
-		switch (pivotPoint)
+		if (!paramsUnchanged)
 		{
-			case PivotPoint.TOP_CENTER:
-			case PivotPoint.CENTER:
-			case PivotPoint.BOTTOM_CENTER:
-				baseTx = Math.trunc((w - drawW) / 2);
-				break;
-			case PivotPoint.TOP_RIGHT:
-			case PivotPoint.CENTER_RIGHT:
-			case PivotPoint.BOTTOM_RIGHT:
-				baseTx = zoomX < 0 ? w : w - drawW;
-				break;
-			default:
-				baseTx = zoomX < 0 ? -drawW : 0;
-				break;
-		}
+			const bctx = entry.ctx;
 
-		let baseTy: number;
+			bctx.imageSmoothingEnabled = false;
+			bctx.setTransform(1, 0, 0, 1, 0, 0);
+			bctx.clearRect(0, 0, w, h);
 
-		switch (pivotPoint)
-		{
-			case PivotPoint.CENTER_LEFT:
-			case PivotPoint.CENTER:
-			case PivotPoint.CENTER_RIGHT:
-				baseTy = Math.trunc((h - drawH) / 2);
-				break;
-			case PivotPoint.BOTTOM_LEFT:
-			case PivotPoint.BOTTOM_CENTER:
-			case PivotPoint.BOTTOM_RIGHT:
-				baseTy = zoomY < 0 ? h : h - drawH;
-				break;
-			default:
-				baseTy = zoomY < 0 ? -drawH : 0;
-				break;
-		}
+			// Rotation: pre-rotate the source around its centre (AS3 l.55-66).
+			const source = rotation !== 0 ? this.rotateBitmap(bmp, rotation) : bmp;
+			const srcW = bmp.width;
+			const srcH = bmp.height;
 
-		// Wrap start: shift back by one tile until <= 0 (AS3 l.91-94, 113-116).
-		while (wrapX && baseTx > 0) baseTx -= drawW;
-		while (wrapY && baseTy > 0) baseTy -= drawH;
+			// Signed tile size — a negative zoom flips the bitmap (AS3 l.67-68).
+			const drawW = (stretchedX ? w : srcW) * zoomX;
+			const drawH = (stretchedY ? h : srcH) * zoomY;
 
-		const etchAlpha = (etchColor >>> 24) & 0xFF;
-		const drawEtch = etchAlpha > 0;
-		const silhouette = drawEtch ? this.makeSilhouette(source, srcW, srcH, etchColor) : null;
-
-		// In the non-greyscale branch AS3 applies the colour transform to the
-		// MAIN bitmap only (not the etch), so pre-tint the source once.
-		const tinted = !greyscale
-			? this.tintBitmap(source, srcW, srcH, window.color, window.dynamicStyleColor)
-			: null;
-		const mainBitmap = tinted ?? source;
-
-		// Tile loop (AS3 l.127-176): etch silhouette first, then the main bitmap.
-		for (let ty = 0; ty < tilesY; ty++)
-		{
-			for (let tx = 0; tx < tilesX; tx++)
+			if (drawW !== 0 && drawH !== 0)
 			{
-				const px = baseTx + (tx * drawW);
-				const py = baseTy + (ty * drawH);
+				// Tile counts (AS3 l.69-70). Mirrors the signed division.
+				const tilesX = !wrapX ? 1 : Math.floor(w / drawW) + 2;
+				const tilesY = !wrapY ? 1 : Math.floor(h / drawH) + 2;
 
-				if (silhouette)
+				// Base position from pivot (AS3 l.73-116).
+				let baseTx: number;
+
+				switch (pivotPoint)
 				{
-					bctx.save();
-					bctx.globalAlpha = etchAlpha / 255;
-					bctx.setTransform(drawW / srcW, 0, 0, drawH / srcH, px + etchPt.x, py + etchPt.y);
-					bctx.drawImage(silhouette, 0, 0);
-					bctx.restore();
+					case PivotPoint.TOP_CENTER:
+					case PivotPoint.CENTER:
+					case PivotPoint.BOTTOM_CENTER:
+						baseTx = Math.trunc((w - drawW) / 2);
+						break;
+					case PivotPoint.TOP_RIGHT:
+					case PivotPoint.CENTER_RIGHT:
+					case PivotPoint.BOTTOM_RIGHT:
+						baseTx = zoomX < 0 ? w : w - drawW;
+						break;
+					default:
+						baseTx = zoomX < 0 ? -drawW : 0;
+						break;
 				}
 
-				bctx.save();
-				bctx.setTransform(drawW / srcW, 0, 0, drawH / srcH, px, py);
-				bctx.drawImage(mainBitmap, 0, 0);
-				bctx.restore();
+				let baseTy: number;
+
+				switch (pivotPoint)
+				{
+					case PivotPoint.CENTER_LEFT:
+					case PivotPoint.CENTER:
+					case PivotPoint.CENTER_RIGHT:
+						baseTy = Math.trunc((h - drawH) / 2);
+						break;
+					case PivotPoint.BOTTOM_LEFT:
+					case PivotPoint.BOTTOM_CENTER:
+					case PivotPoint.BOTTOM_RIGHT:
+						baseTy = zoomY < 0 ? h : h - drawH;
+						break;
+					default:
+						baseTy = zoomY < 0 ? -drawH : 0;
+						break;
+				}
+
+				// Wrap start: shift back by one tile until <= 0 (AS3 l.91-94, 113-116).
+				while (wrapX && baseTx > 0) baseTx -= drawW;
+				while (wrapY && baseTy > 0) baseTy -= drawH;
+
+				const etchAlpha = (etchColor >>> 24) & 0xFF;
+				const drawEtch = etchAlpha > 0;
+				const silhouette = drawEtch ? this.makeSilhouette(source, srcW, srcH, etchColor) : null;
+
+				// In the non-greyscale branch AS3 applies the colour transform to the
+				// MAIN bitmap only (not the etch), so pre-tint the source once.
+				const tinted = !greyscale
+					? this.tintBitmap(source, srcW, srcH, window.color, ds)
+					: null;
+				const mainBitmap = tinted ?? source;
+
+				// Tile loop (AS3 l.127-176): etch silhouette first, then the main bitmap.
+				for (let ty = 0; ty < tilesY; ty++)
+				{
+					for (let tx = 0; tx < tilesX; tx++)
+					{
+						const px = baseTx + (tx * drawW);
+						const py = baseTy + (ty * drawH);
+
+						if (silhouette)
+						{
+							bctx.save();
+							bctx.globalAlpha = etchAlpha / 255;
+							bctx.setTransform(drawW / srcW, 0, 0, drawH / srcH, px + etchPt.x, py + etchPt.y);
+							bctx.drawImage(silhouette, 0, 0);
+							bctx.restore();
+						}
+
+						bctx.save();
+						bctx.setTransform(drawW / srcW, 0, 0, drawH / srcH, px, py);
+						bctx.drawImage(mainBitmap, 0, 0);
+						bctx.restore();
+					}
+				}
+
+				bctx.setTransform(1, 0, 0, 1, 0, 0);
+
+				// Greyscale converts the WHOLE buffer to luminance, tinted by window.color
+				// (AS3 l.133-146 applyFilter over param2.rect).
+				if (greyscale)
+				{
+					this.applyGreyscale(bctx, w, h, window.color);
+				}
 			}
+
+			// Snapshot every input this render depended on, so next frame can
+			// detect "nothing changed" and skip straight to the blit below.
+			entry.bmp = bmp;
+			entry.zoomX = zoomX;
+			entry.zoomY = zoomY;
+			entry.stretchedX = stretchedX;
+			entry.stretchedY = stretchedY;
+			entry.wrapX = wrapX;
+			entry.wrapY = wrapY;
+			entry.rotation = rotation;
+			entry.greyscale = greyscale;
+			entry.pivotPoint = pivotPoint;
+			entry.etchColor = etchColor;
+			entry.w = w;
+			entry.h = h;
+			entry.color = window.color;
+			entry.hasDynamicStyle = ds !== null;
+			entry.dsRedMultiplier = ds?.redMultiplier ?? 1;
+			entry.dsGreenMultiplier = ds?.greenMultiplier ?? 1;
+			entry.dsBlueMultiplier = ds?.blueMultiplier ?? 1;
+			entry.dsAlphaMultiplier = ds?.alphaMultiplier ?? 1;
+			entry.dsRedOffset = ds?.redOffset ?? 0;
+			entry.dsGreenOffset = ds?.greenOffset ?? 0;
+			entry.dsBlueOffset = ds?.blueOffset ?? 0;
+			entry.dsAlphaOffset = ds?.alphaOffset ?? 0;
 		}
 
-		bctx.setTransform(1, 0, 0, 1, 0, 0);
-
-		// Greyscale converts the WHOLE buffer to luminance, tinted by window.color
-		// (AS3 l.133-146 applyFilter over param2.rect).
-		if (greyscale)
-		{
-			this.applyGreyscale(bctx, w, h, window.color);
-		}
-
-		// Blit the finished buffer to the composite, clipped to window bounds.
+		// Blit the (possibly cached, unchanged) buffer to the composite,
+		// clipped to window bounds.
 		ctx.save();
 		ctx.beginPath();
 		ctx.rect(absX, absY, w, h);
@@ -416,24 +528,69 @@ export class WindowComposite
 
 		if (blend < 1) ctx.globalAlpha = blend;
 
-		ctx.drawImage(buffer, 0, 0, w, h, absX, absY, w, h);
+		ctx.drawImage(entry.canvas, 0, 0, w, h, absX, absY, w, h);
 		ctx.restore();
 	}
 
 	/**
-	 * Acquires the shared scratch buffer for bitmap-wrapper rendering, resizing
-	 * it when the requested dimensions change. Reused synchronously: each window
-	 * is fully composited and blitted before the next one touches the buffer.
+	 * Gets or creates the persistent per-window canvas backing
+	 * `BitmapWrapperCacheEntry`. Resizing counts as a cache miss (the caller's
+	 * `paramsUnchanged` check already covers `w`/`h`), so a fresh, blank entry
+	 * is handed back for the caller to populate.
 	 */
-	private acquireBitmapBuffer(w: number, h: number): OffscreenCanvas | null
+	private acquireBitmapWrapperCacheEntry(
+		window: IWindow,
+		cached: BitmapWrapperCacheEntry | null,
+		w: number,
+		h: number
+	): BitmapWrapperCacheEntry | null
 	{
-		if (!this._bitmapBuffer || this._bitmapBuffer.width !== w || this._bitmapBuffer.height !== h)
+		const width = Math.max(1, w);
+		const height = Math.max(1, h);
+
+		if (cached && cached.canvas.width === width && cached.canvas.height === height)
 		{
-			this._bitmapBuffer = new OffscreenCanvas(Math.max(1, w), Math.max(1, h));
-			this._bitmapCtx = this._bitmapBuffer.getContext('2d');
+			return cached;
 		}
 
-		return this._bitmapBuffer;
+		const canvas = new OffscreenCanvas(width, height);
+		const ctx = canvas.getContext('2d');
+
+		if (!ctx) return null;
+
+		// Sentinel values guarantee the very first comparison in
+		// `compositeBitmapWrapper()` treats this entry as "changed".
+		const entry: BitmapWrapperCacheEntry = {
+			canvas,
+			ctx,
+			bmp: null,
+			zoomX: NaN,
+			zoomY: NaN,
+			stretchedX: false,
+			stretchedY: false,
+			wrapX: false,
+			wrapY: false,
+			rotation: NaN,
+			greyscale: false,
+			pivotPoint: -1,
+			etchColor: NaN,
+			w: -1,
+			h: -1,
+			color: NaN,
+			hasDynamicStyle: false,
+			dsRedMultiplier: NaN,
+			dsGreenMultiplier: NaN,
+			dsBlueMultiplier: NaN,
+			dsAlphaMultiplier: NaN,
+			dsRedOffset: NaN,
+			dsGreenOffset: NaN,
+			dsBlueOffset: NaN,
+			dsAlphaOffset: NaN,
+		};
+
+		this._bitmapWrapperCache.set(window, entry);
+
+		return entry;
 	}
 
 	/**
