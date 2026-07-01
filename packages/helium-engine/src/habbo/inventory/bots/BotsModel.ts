@@ -185,4 +185,11 @@ export class BotsModel implements IBotsModel
 	{
 		return this._bots.get(id)?.isUnseen ?? false;
 	}
+
+	// AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::updateView()
+	// TODO(AS3): no-op until BotsView (habbo/inventory/bots/BotsView.as) is ported.
+	updateView(): void
+	{
+		// Intentional no-op — matches AS3's `if(var_18 == null) return;` guard.
+	}
 }

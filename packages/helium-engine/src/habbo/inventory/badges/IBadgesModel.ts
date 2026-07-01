@@ -108,4 +108,7 @@ export interface IBadgesModel
 	 * Get IDs of currently active badges for saving
 	 */
 	getActiveBadgeIds(): string[];
+
+	// AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::updateView()
+	updateView(): void;
 }

@@ -72,4 +72,7 @@ export interface IPetsModel extends IDisposable
 	 * Check if pet is unseen
 	 */
 	isUnseen(id: number): boolean;
+
+	// AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::updateView()
+	updateView(): void;
 }

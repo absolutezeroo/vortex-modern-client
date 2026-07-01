@@ -319,6 +319,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	}
 
 	private _bottomBarLeft: BottomBarLeft | null = null;
+	private _pendingIconVisibility: Map<string, boolean> = new Map();
 
 	/**
 	 * Lazy accessor for the BottomBarLeft view.
@@ -342,6 +343,16 @@ export class HabboToolbar extends Component implements IHabboToolbar
 				}
 
 				log.info('BottomBarLeft created successfully');
+
+				// Replay any icon-visibility requests that arrived before the
+				// window layout was registered (construction fails silently
+				// until then — see setIconVisibility()).
+				for (const [iconId, visible] of this._pendingIconVisibility)
+				{
+					this._bottomBarLeft.iconVisibility(iconId, visible);
+				}
+
+				this._pendingIconVisibility.clear();
 			}
 			catch (error)
 			{
@@ -449,15 +460,14 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	}
 
 	/**
-	 * Set bitmap data for a toolbar icon
-	 *
-	 * In AS3, this set a BitmapData on the toolbar view icon.
-	 * In Helium, icon rendering is handled by the SolidJS UI layer.
-	 *
-	 * @param _iconId Icon identifier
-	 * @param _bitmap Bitmap data
-	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as setIconBitmap()
-	 */
+     * Set bitmap data for a toolbar icon
+     *
+     * In AS3, this set a BitmapData on the toolbar view icon.
+     *
+     * @see source_as_win63/habbo/toolbar/HabboToolbar.as setIconBitmap()
+     * @param iconId
+     * @param bitmap
+     */
 	setIconBitmap(iconId: string, bitmap: unknown): void
 	{
 		if (this._bottomBarLeft && (bitmap === null || bitmap instanceof ImageBitmap))
@@ -529,6 +539,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
 		if (this.bottomBarLeft)
 		{
 			this.bottomBarLeft.iconVisibility(iconId, visible);
+		}
+		else
+		{
+			// Window layout may not be registered yet (see bottomBarLeft getter) —
+			// remember the request and apply it once construction succeeds.
+			this._pendingIconVisibility.set(iconId, visible);
 		}
 	}
 

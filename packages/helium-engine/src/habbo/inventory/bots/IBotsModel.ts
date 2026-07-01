@@ -74,4 +74,7 @@ export interface IBotsModel
 	 * Check if bot is unseen
 	 */
 	isUnseen(id: number): boolean;
+
+	// AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::updateView()
+	updateView(): void;
 }
