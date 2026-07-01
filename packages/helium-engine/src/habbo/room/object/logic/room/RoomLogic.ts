@@ -27,17 +27,14 @@ import {RoomPlaneData} from '@habbo/room/object/RoomPlaneData';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {RoomObjectTileMouseEvent} from '@habbo/room/events/RoomObjectTileMouseEvent';
 import {RoomObjectWallMouseEvent} from '@habbo/room/events/RoomObjectWallMouseEvent';
+import {ColorTransitioner} from '@room/utils/ColorTransitioner';
 
 export class RoomLogic extends ObjectLogicBase
 {
-	private _planeParser: RoomPlaneParser;
-	private _planeMaskParser: RoomPlaneBitmapMaskParser;
+	private _planeParser: RoomPlaneParser | null;
+	private _planeMaskParser: RoomPlaneBitmapMaskParser | null;
+	private _colorTransitioner: ColorTransitioner | null;
 	private _needsFloorHoleUpdate: boolean = false;
-	private _colorTransitionTarget: number = 0xFFFFFF;
-	private _colorTransitionCurrent: number = 0xFFFFFF;
-	private _colorTransitionStart: number = 0;
-	private _colorTransitionDuration: number = 500;
-	private _isTransitioning: boolean = false;
 
 	/**
 	 * @see sources/win63_version/habbo/room/object/logic/room/RoomLogic.as lines 28-33
@@ -47,6 +44,7 @@ export class RoomLogic extends ObjectLogicBase
 		super();
 		this._planeParser = new RoomPlaneParser();
 		this._planeMaskParser = new RoomPlaneBitmapMaskParser();
+		this._colorTransitioner = new ColorTransitioner();
 	}
 
 	override getEventTypes(): string[]
@@ -65,21 +63,30 @@ export class RoomLogic extends ObjectLogicBase
 	 */
 	override initialize(data: unknown): void
 	{
-		if (this.object === null)
+		// AS3: if(param1 == null || object == null) return;
+		// AS3: if(!_planeParser.initializeFromXML(param1)) return;
+		// TS is handed an already-parsed RoomPlaneParser instead of raw XML
+		// (see RoomEngine.ts model.setObject(ROOM_PLANE_PARSER, ...)), so the
+		// equivalent guard is simply requiring a valid parser instance.
+		if (this.object === null || !(data instanceof RoomPlaneParser))
 		{
 			return;
 		}
 
-		// AS3: _planeParser.initializeFromXML(param1)
-		if (data instanceof RoomPlaneParser)
-		{
-			this._planeParser = data;
-		}
+		this._planeParser = data;
 
 		const model = this.object.getModelController();
 
 		if (model)
 		{
+			// AS3 also does `model.setString("room_plane_xml", param1.toString())` here.
+			// That string is only ever read back by RoomVisualization.as, which then
+			// re-parses it with its own RoomPlaneParser. TS skips the XML round-trip
+			// entirely: RoomEngine.ts stores this same RoomPlaneParser instance under
+			// ROOM_PLANE_PARSER, and RoomVisualization.ts reads that object directly
+			// (see RoomVisualization.ts::initializeRoomPlanes()). No TS code reads
+			// ROOM_PLANE_XML, and RoomPlaneParser has no XML serializer — this is an
+			// intentional architectural substitution, not a missing port.
 			model.setNumber(RoomObjectVariableEnum.ROOM_BACKGROUND_COLOR, 0xFFFFFF);
 			model.setNumber(RoomObjectVariableEnum.ROOM_FLOOR_VISIBILITY, 1);
 			model.setNumber(RoomObjectVariableEnum.ROOM_WALL_VISIBILITY, 1);
@@ -236,16 +243,8 @@ export class RoomLogic extends ObjectLogicBase
 			return;
 		}
 
-		const leftLength = Math.sqrt(
-			planeLeftSide.x * planeLeftSide.x +
-			planeLeftSide.y * planeLeftSide.y +
-			planeLeftSide.z * planeLeftSide.z
-		);
-		const rightLength = Math.sqrt(
-			planeRightSide.x * planeRightSide.x +
-			planeRightSide.y * planeRightSide.y +
-			planeRightSide.z * planeRightSide.z
-		);
+		const leftLength = planeLeftSide.length;
+		const rightLength = planeRightSide.length;
 
 		if (leftLength === 0 || rightLength === 0)
 		{
@@ -284,6 +283,20 @@ export class RoomLogic extends ObjectLogicBase
 			return;
 		}
 
+		// AS3 sets room_selected_x/y/z/plane unconditionally once in-bounds,
+		// *before* the event-type switch — so a "rollOut" that's still
+		// geometrically over the plane (no matching case below) still commits
+		// the selection instead of leaving it stale.
+		const model = this.object.getModelController();
+
+		if (model)
+		{
+			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_X, tileX);
+			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_Y, tileY);
+			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_Z, tileZ);
+			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_PLANE, planeIndex + 1);
+		}
+
 		// Determine event type
 		let eventType: string;
 
@@ -304,47 +317,49 @@ export class RoomLogic extends ObjectLogicBase
 			return;
 		}
 
-		const model = this.object.getModelController();
-
-		if (model)
+		if (!this.eventDispatcher)
 		{
-			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_X, tileX);
-			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_Y, tileY);
-			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_Z, tileZ);
-			model.setNumber(RoomObjectVariableEnum.ROOM_SELECTED_PLANE, planeIndex + 1);
+			return;
 		}
 
 		// Dispatch appropriate event based on plane type
-		if (this.eventDispatcher)
+		if (planeType === RoomPlaneData.PLANE_FLOOR)
 		{
-			if (planeType === RoomPlaneData.PLANE_FLOOR)
-			{
-				const tileEvent = new RoomObjectTileMouseEvent(
-					eventType, this.object, event.eventId,
-					tileX, tileY, tileZ,
-					event.altKey, event.ctrlKey, event.shiftKey, event.buttonDown
-				);
+			const tileEvent = new RoomObjectTileMouseEvent(
+				eventType, this.object, event.eventId,
+				tileX, tileY, tileZ,
+				event.altKey, event.ctrlKey, event.shiftKey, event.buttonDown
+			);
 
-				this.eventDispatcher.emit(eventType, tileEvent);
-			}
-			else if (planeType === RoomPlaneData.PLANE_WALL || planeType === RoomPlaneData.PLANE_LANDSCAPE)
-			{
-				// Direction: 90 for left-facing walls, 180 for right-facing
-				const direction = (planeLeftSide.x === 0) ? 90 : 180;
-
-				const wallEvent = new RoomObjectWallMouseEvent(
-					eventType, this.object, event.eventId,
-					planeLoc, planeLeftSide, planeRightSide,
-					planeLeftSide.length * planePoint.x / leftLength,
-					planeRightSide.length * planePoint.y / rightLength,
-					direction,
-					event.altKey, event.ctrlKey, event.shiftKey, event.buttonDown
-				);
-
-				this.eventDispatcher.emit(eventType, wallEvent);
-			}
+			this.eventDispatcher.emit(eventType, tileEvent);
 		}
+		else if (planeType === RoomPlaneData.PLANE_WALL || planeType === RoomPlaneData.PLANE_LANDSCAPE)
+		{
+			// AS3: direction = planeNormalDirection.x + 90, normalized into (0, 360]
+			const planeNormalDirection = planeParser.getPlaneNormalDirection(planeIndex);
+			let direction = 90;
 
+			if (planeNormalDirection !== null)
+			{
+				direction = planeNormalDirection.x + 90;
+
+				while (direction > 360)
+				{
+					direction -= 360;
+				}
+			}
+
+			const wallEvent = new RoomObjectWallMouseEvent(
+				eventType, this.object, event.eventId,
+				planeLoc, planeLeftSide, planeRightSide,
+				planeLeftSide.length * planePoint.x / leftLength,
+				planeRightSide.length * planePoint.y / rightLength,
+				direction,
+				event.altKey, event.ctrlKey, event.shiftKey, event.buttonDown
+			);
+
+			this.eventDispatcher.emit(eventType, wallEvent);
+		}
 	}
 
 	/**
@@ -352,18 +367,21 @@ export class RoomLogic extends ObjectLogicBase
 	 */
 	override dispose(): void
 	{
+		super.dispose();
+
 		if (this._planeParser)
 		{
 			this._planeParser.dispose();
-			(this as any)._planeParser = null;
+			this._planeParser = null;
 		}
 
 		if (this._planeMaskParser)
 		{
 			this._planeMaskParser.dispose();
+			this._planeMaskParser = null;
 		}
 
-		super.dispose();
+		this._colorTransitioner = null;
 	}
 
 	/**
@@ -372,41 +390,16 @@ export class RoomLogic extends ObjectLogicBase
 	 */
 	private updateBackgroundColor(time: number): void
 	{
-		if (!this._isTransitioning || this.object === null)
+		if (this.object === null || this._colorTransitioner === null || !this._colorTransitioner.updateColor(time))
 		{
 			return;
-		}
-
-		const elapsed = time - this._colorTransitionStart;
-		const progress = Math.min(1, elapsed / this._colorTransitionDuration);
-
-		if (progress >= 1)
-		{
-			this._colorTransitionCurrent = this._colorTransitionTarget;
-			this._isTransitioning = false;
-		}
-		else
-		{
-			// Interpolate color channels
-			const srcR = (this._colorTransitionCurrent >> 16) & 0xFF;
-			const srcG = (this._colorTransitionCurrent >> 8) & 0xFF;
-			const srcB = this._colorTransitionCurrent & 0xFF;
-			const dstR = (this._colorTransitionTarget >> 16) & 0xFF;
-			const dstG = (this._colorTransitionTarget >> 8) & 0xFF;
-			const dstB = this._colorTransitionTarget & 0xFF;
-
-			const r = Math.round(srcR + (dstR - srcR) * progress);
-			const g = Math.round(srcG + (dstG - srcG) * progress);
-			const b = Math.round(srcB + (dstB - srcB) * progress);
-
-			this._colorTransitionCurrent = (r << 16) | (g << 8) | b;
 		}
 
 		const model = this.object.getModelController();
 
 		if (model)
 		{
-			model.setNumber(RoomObjectVariableEnum.ROOM_BACKGROUND_COLOR, this._colorTransitionCurrent);
+			model.setNumber(RoomObjectVariableEnum.ROOM_BACKGROUND_COLOR, this._colorTransitioner.color);
 		}
 	}
 
@@ -436,6 +429,11 @@ export class RoomLogic extends ObjectLogicBase
 	 */
 	private updatePlaneMasks(message: RoomObjectRoomMaskUpdateMessage, model: IRoomObjectModelController): void
 	{
+		if (this._planeMaskParser === null)
+		{
+			return;
+		}
+
 		let changed = false;
 
 		switch (message.type)
@@ -543,13 +541,10 @@ export class RoomLogic extends ObjectLogicBase
 			targetLight = 255;
 		}
 
-		// Apply light as a multiplier to the color
-		const r = Math.round(((targetColor >> 16) & 0xFF) * targetLight / 255);
-		const g = Math.round(((targetColor >> 8) & 0xFF) * targetLight / 255);
-		const b = Math.round((targetColor & 0xFF) * targetLight / 255);
-
-		this._colorTransitionTarget = (r << 16) | (g << 8) | b;
-		this._colorTransitionStart = performance.now();
-		this._isTransitioning = true;
+		// AS3: var_1485.startTransition(target, light, getTimer()) — no explicit
+		// duration is passed, so ColorTransitioner uses its default (1500ms), and
+		// blends color/light independently via HSL lightness substitution rather
+		// than pre-multiplying light into the RGB channels.
+		this._colorTransitioner?.startTransition(targetColor, targetLight, performance.now());
 	}
 }

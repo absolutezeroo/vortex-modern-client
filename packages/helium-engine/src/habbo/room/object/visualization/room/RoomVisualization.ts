@@ -527,10 +527,13 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 			const floorType = model.getString(RoomObjectVariableEnum.ROOM_FLOOR_TYPE) as string | null;
 			const landscapeType = model.getString(RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE) as string | null;
 
+			// AS3 defaults to "111"/"201"/"1" when no type has been set yet
+			// (RoomEngine.as::initializeRoom() lines 1370-1372) — not a made-up
+			// "default" id, which has no matching floor/wall texture.
 			this.updatePlaneTextureTypes(
-				floorType ?? 'default',
-				wallType ?? 'default',
-				landscapeType ?? 'default'
+				floorType ?? '111',
+				wallType ?? '201',
+				landscapeType ?? '1'
 			);
 
 			const floorVisible = model.getNumber(RoomObjectVariableEnum.ROOM_FLOOR_VISIBILITY);

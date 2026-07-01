@@ -79,6 +79,7 @@ import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
 import {RoomObjectRoomMaskUpdateMessage} from './messages/RoomObjectRoomMaskUpdateMessage';
+import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
@@ -1215,6 +1216,27 @@ export class RoomEngine extends Component implements IRoomEngine,
 					if (eventHandler !== null)
 					{
 						eventHandler.initialize(planeParser);
+					}
+
+					// AS3: RoomEngine.initializeRoom() defaults floor/wall/landscape type to
+					// "111"/"201"/"1" (sources/win63_version/habbo/room/class_34.as lines 1370-1372)
+					// when no separate room-properties message has supplied real values yet — that
+					// message isn't ported (protocol gap, see docs/IMPLEMENTATION_STATUS.md "room"),
+					// so these defaults are what every room currently renders with. Without this,
+					// room_floor_type/room_wall_type stay unset and RoomVisualization falls back to
+					// its own invented "default" id, which has no matching texture and renders as a
+					// blank placeholder instead of the classic floor/wallpaper.
+					if (eventHandler !== null)
+					{
+						eventHandler.processUpdateMessage(
+							new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_FLOOR_UPDATE, '111')
+						);
+						eventHandler.processUpdateMessage(
+							new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_WALL_UPDATE, '201')
+						);
+						eventHandler.processUpdateMessage(
+							new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_LANDSCAPE_UPDATE, '1')
+						);
 					}
 
 					// Store dimensions for compatibility

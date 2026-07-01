@@ -1,7 +1,7 @@
 /**
  * RoomRenderingCanvas
  *
- * Based on AS3: com.sulake.room.renderer.RoomSpriteCanvas (class_3650)
+ * Based on AS3: com.sulake.room.renderer.RoomSpriteCanvas (class_3523)
  *
  * Main rendering canvas for room visualization.
  * Owns a flat display list of ExtendedSprite children.
@@ -9,9 +9,9 @@
  * sorts by Z, and creates/updates canvas-owned ExtendedSprite display objects.
  * Hit-testing iterates ExtendedSprite children backwards (front to back).
  *
- * @see sources/win63_version/room/renderer/class_3650.as
+ * @see sources/win63_version/room/renderer/class_3523.as
  */
-import {Container, Graphics} from 'pixi.js';
+import {Container, Graphics, Texture} from 'pixi.js';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
@@ -21,6 +21,8 @@ import type {IRoomSpriteCanvasContainer} from '@room/renderer/IRoomSpriteCanvasC
 import {RoomGeometry} from '@room/utils/RoomGeometry';
 import {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
 import {Vector3d} from '@room/utils/Vector3d';
+import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
+import {RoomObjectSpriteType} from '@room/object/enum/RoomObjectSpriteType';
 import {ExtendedSprite} from './utils/ExtendedSprite';
 import {SortableSprite} from './utils/SortableSprite';
 import {ObjectMouseData} from './utils/ObjectMouseData';
@@ -545,13 +547,27 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 		);
 		this._mouseCheckCount++;
 
+		// AS3 wires "click"/"doubleClick" to a second, dedicated native-event
+		// listener (clickHandler → checkMouseClickHits) that hit-tests only
+		// clickHandling sprites (ad-banner furniture), independent of and in
+		// addition to the roll-over/click routing above.
+		if (type === 'click' || type === 'doubleClick')
+		{
+			this.checkMouseClickHits(
+				Math.floor(this._mouseLocationX),
+				Math.floor(this._mouseLocationY),
+				type === 'doubleClick',
+				altKey, ctrlKey, shiftKey, buttonDown
+			);
+		}
+
 		return this._mouseSpriteWasHit;
 	}
 
 	/**
 	 * Get the canvas ID.
 	 *
-	 * @see AS3 class_3650 line 1271
+	 * @see sources/win63_version/room/renderer/class_3523.as line 1346
 	 */
 	getId(): number
 	{
@@ -562,7 +578,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 	 * Per-frame update for mouse event processing.
 	 * Based on AS3 RoomSpriteCanvas.update()
 	 *
-	 * @see sources/win63_version/room/renderer/class_3650.as line 1251
+	 * @see sources/win63_version/room/renderer/class_3523.as line 1326
 	 */
 	update(): void
 	{
@@ -964,6 +980,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 		}
 
 		let extSprite: ExtendedSprite;
+		let isNewSprite = false;
 
 		if (index >= this._spriteCount)
 		{
@@ -979,6 +996,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
 			this._display.addChild(extSprite);
 			this._spriteCount++;
+			isNewSprite = true;
 		}
 		else
 		{
@@ -1004,6 +1022,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 				const newSprite = this._spritePool.length > 0 ? this._spritePool.pop()! : new ExtendedSprite();
 				this._display.addChildAt(newSprite, index);
 				extSprite = newSprite;
+				isNewSprite = true;
 			}
 		}
 
@@ -1035,6 +1054,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 			{
 				extSprite.setTexture(null);
 			}
+
+			// AS3: updateEnterRoomEffect(extSprite, sprite, RoomEnterEffect.isVisualizationOn())
+			// only applies the dim/reveal override for freshly created sprites — the
+			// call on the update path always passes `false` in AS3 and is a no-op.
+			this.updateEnterRoomEffect(extSprite, sprite.spriteType, isNewSprite && RoomEnterEffect.isVisualizationOn());
 
 			// Handle flipping
 			if (sprite.flipH)
@@ -1085,6 +1109,38 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 		extSprite.visible = true;
 
 		this._activeSpriteCount = Math.max(this._activeSpriteCount, index + 1);
+	}
+
+	/**
+	 * Applies the new-user room-enter dim/reveal override to a freshly created
+	 * sprite. Dormant unless RoomEnterEffect.init() has been triggered elsewhere
+	 * (habbo/toolbar NUX flow), matching AS3 behavior where this is a no-op until
+	 * the effect is armed.
+	 *
+	 * @see sources/win63_version/room/renderer/class_3523.as::updateEnterRoomEffect() line 879
+	 */
+	// AS3: sources/win63_version/room/renderer/class_3523.as::updateEnterRoomEffect()
+	private updateEnterRoomEffect(extSprite: ExtendedSprite, spriteType: number, active: boolean): void
+	{
+		if (!active || extSprite.texture === Texture.EMPTY)
+		{
+			return;
+		}
+
+		switch (spriteType)
+		{
+			case RoomObjectSpriteType.ROOM_PLANE:
+				extSprite.alpha = RoomEnterEffect.getDelta(0.9);
+				break;
+			case RoomObjectSpriteType.AVATAR:
+				extSprite.alpha = RoomEnterEffect.getDelta(0.5);
+				break;
+			case RoomObjectSpriteType.AVATAR_OWN:
+				break;
+			default:
+				extSprite.alpha = RoomEnterEffect.getDelta(0.1);
+				break;
+		}
 	}
 
 	/**
@@ -1265,6 +1321,63 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
 		this._mouseOldX = x;
 		this._mouseOldY = y;
+
+		return wasHit;
+	}
+
+	/**
+	 * Hit-tests only clickHandling sprites (ad-banner furniture with a click
+	 * URL) for a click/doubleClick, independent of the normal roll-over/click
+	 * routing in checkMouseHits() (which deliberately skips clickHandling
+	 * sprites for click events).
+	 *
+	 * @see sources/win63_version/room/renderer/class_3523.as::checkMouseClickHits() line 1133
+	 */
+	// AS3: sources/win63_version/room/renderer/class_3523.as::checkMouseClickHits()
+	private checkMouseClickHits(
+		x: number, y: number, isDoubleClick: boolean,
+		altKey: boolean = false, ctrlKey: boolean = false,
+		shiftKey: boolean = false, buttonDown: boolean = false
+	): boolean
+	{
+		const type = isDoubleClick ? 'doubleClick' : 'click';
+		const hitObjectIds: Set<string> = new Set();
+		let wasHit = false;
+
+		for (let i = this._activeSpriteCount - 1; i >= 0; i--)
+		{
+			const extSprite = this.getSprite(i);
+
+			if (extSprite === null || !extSprite.clickHandling)
+			{
+				continue;
+			}
+
+			const localX = x - extSprite.x;
+			const localY = y - extSprite.y;
+
+			if (extSprite.hitTest(localX, localY))
+			{
+				const objectId = extSprite.identifier;
+
+				if (!hitObjectIds.has(objectId))
+				{
+					const spriteTag = extSprite.tag;
+					const event = this.createMouseEvent(
+						x, y, localX, localY,
+						type, spriteTag,
+						altKey, ctrlKey, shiftKey, buttonDown
+					);
+
+					this.bufferMouseEvent(event, objectId);
+					hitObjectIds.add(objectId);
+				}
+			}
+
+			wasHit = true;
+		}
+
+		this.processMouseEvents();
 
 		return wasHit;
 	}
