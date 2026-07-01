@@ -62,6 +62,7 @@ import {
 	ActivityPointsMessageEvent,
 	ClubGiftNotificationEvent,
 	ClubGiftSelectedEvent,
+	ElementPointerMessageEvent,
 	HabboAchievementNotificationMessageEvent,
 	HabboBroadcastMessageEvent,
 	InfoFeedEnableMessageEvent,
@@ -815,6 +816,8 @@ export class HabboMessages implements IMessageConfiguration
 		// === NOTIFICATIONS (extended) ===
 		this._events.set(3873, MOTDNotificationEvent);
 		this._events.set(3555, HabboBroadcastMessageEvent);
+		// AS3: sources/win63_version/habbo/communication/class_1881.as — name_1[2806] = ElementPointerMessageEvent
+		this._events.set(2806, ElementPointerMessageEvent);
 		this._events.set(2281, ModeratorMessageEvent);
 		this._events.set(1702, NotificationDialogMessageEvent);
 		this._events.set(486, RespectNotificationMessageEvent);

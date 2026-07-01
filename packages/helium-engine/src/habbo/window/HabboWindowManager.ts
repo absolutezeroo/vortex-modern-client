@@ -968,6 +968,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
 		WindowContext.inputEventQueue?.flush();
 
+		// AS3: ModalDialog.onEnterFrame() is driven by Stage enterFrame — equivalent here
+		ModalDialog.onUpdate();
+
 		MouseCursorControl.change();
 		this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_SLEEP);
 	}
@@ -1362,6 +1365,12 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 			addEventListener: (type: string, listener: (event?: Event) => void): void =>
 			{
 				window.addEventListener(type, listener);
+
+				// AS3: ModalDialog.onResize() is driven by Stage "resize" event
+				if (type === 'resize')
+				{
+					window.addEventListener('resize', () => ModalDialog.onResize());
+				}
 			},
 			removeEventListener: (type: string, listener: (event?: Event) => void): void =>
 			{

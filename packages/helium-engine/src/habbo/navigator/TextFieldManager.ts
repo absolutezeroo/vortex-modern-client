@@ -27,6 +27,7 @@ export class TextFieldManager
 	private _orgTextBackground: boolean;
 	private _orgTextBackgroundColor: number;
 
+	// AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::TextFieldManager()
 	constructor(navigator: IHabboTransitionalNavigator, textField: ITextFieldWindow, maxLen: number = 1000, onEnter: (() => void) | null = null, initialText: string | null = null)
 	{
 		this._navigator = navigator;
@@ -43,6 +44,8 @@ export class TextFieldManager
 		}
 
 		Util.setProcDirectly(this._input, this.onInputClick);
+		this._input.addEventListener('WME_DOWN', this.focusInput);
+		this._input.addEventListener('WME_CLICK', this.focusInput);
 		this._input.addEventListener('WKE_KEY_DOWN', this.checkEnterPress);
 		this._input.addEventListener('WE_CHANGE', this.checkMaxLen);
 		this._orgTextBackground = this._input.textBackground;
@@ -200,10 +203,15 @@ export class TextFieldManager
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::dispose()
 	dispose(): void
 	{
 		if (this._input)
 		{
+			this._input.removeEventListener('WME_DOWN', this.focusInput);
+			this._input.removeEventListener('WME_CLICK', this.focusInput);
+			this._input.removeEventListener('WKE_KEY_DOWN', this.checkEnterPress);
+			this._input.removeEventListener('WE_CHANGE', this.checkMaxLen);
 			this._input.dispose();
 			this._input = null;
 		}
@@ -222,6 +230,7 @@ export class TextFieldManager
 		return !this._includeInfo && Util.trim(this.getText()).length > 2;
 	}
 
+	// AS3: sources/win63_version/habbo/navigator/TextFieldManager.as::onInputClick()
 	private onInputClick = (event: WindowEvent, _window: IWindow): void =>
 	{
 		if (event.type !== 'WE_FOCUSED') return;
@@ -231,10 +240,18 @@ export class TextFieldManager
 		if (this._input)
 		{
 			this._input.text = this._emptyValue;
+			(this._input as unknown as { focus(): boolean }).focus();
+			this._input.setSelection(0, 0);
 		}
 
 		this._includeInfo = false;
 		this.restoreBackground();
+	};
+
+	// TS-only: browser DOM focus bridge for AS3 TextField stage focus.
+	private focusInput = (_event: WindowEvent): void =>
+	{
+		(this._input as unknown as { focus(): boolean } | null)?.focus();
 	};
 
 	private checkEnterPress = (event: WindowKeyboardEvent): void =>

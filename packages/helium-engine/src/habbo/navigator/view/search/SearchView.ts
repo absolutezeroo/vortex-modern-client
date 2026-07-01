@@ -1,9 +1,11 @@
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowParam} from '@core/window/enum/WindowParam';
 import type {HabboNewNavigator} from '../../HabboNewNavigator';
 import {FilterMode} from './FilterMode';
 
@@ -15,6 +17,7 @@ import {FilterMode} from './FilterMode';
  *
  * @see sources/win63_version/habbo/navigator/view/search/SearchView.as
  */
+// AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::SearchView
 export class SearchView
 {
 	/** Maps dropdown selection index → FilterMode constant */
@@ -29,6 +32,8 @@ export class SearchView
 	private _navigator: HabboNewNavigator;
 	private _inputField: ITextFieldWindow | null = null;
 	private _filterDropMenu: IDropMenuWindow | null = null;
+	private _searchInputClickArea: IWindow | null = null;
+	private _clearButton: IWindow | null = null;
 	private _placeholderText: string;
 
 	constructor(navigator: HabboNewNavigator)
@@ -47,8 +52,10 @@ export class SearchView
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/SearchView.as set container()
 	 */
+	// AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::set container()
 	set container(value: IWindowContainer)
 	{
+		this.removeInputListeners();
 		this._container = value;
 
 		this._filterDropMenu = this._container.findChildByName('filter_type_drop_menu') as IDropMenuWindow | null;
@@ -59,13 +66,24 @@ export class SearchView
 			this._inputField.addEventListener('WKE_KEY_UP', this.keyUpHandler);
 			this._inputField.addEventListener('WE_CHANGE', this.onInputChanged);
 			this._inputField.addEventListener('WE_FOCUSED', this.onInputFocused);
+			this._inputField.addEventListener('WME_DOWN', this.onSearchInputMouse);
+			this._inputField.addEventListener('WME_CLICK', this.onSearchInputMouse);
+
+			this._searchInputClickArea = this._inputField.parent;
+
+			if (this._searchInputClickArea)
+			{
+				this._searchInputClickArea.setParamFlag(WindowParam.INPUT_EVENT_PROCESSOR, true);
+				this._searchInputClickArea.addEventListener('WME_DOWN', this.onSearchInputMouse);
+				this._searchInputClickArea.addEventListener('WME_CLICK', this.onSearchInputMouse);
+			}
 		}
 
-		const clearButton = this._container.findChildByName('clear_search_button');
+		this._clearButton = this._container.findChildByName('clear_search_button');
 
-		if (clearButton)
+		if (this._clearButton)
 		{
-			clearButton.addEventListener('WME_CLICK', this.onClearSearch);
+			this._clearButton.addEventListener('WME_CLICK', this.onClearSearch);
 		}
 
 		this.clear();
@@ -266,6 +284,12 @@ export class SearchView
 		}
 	};
 
+	private onSearchInputMouse = (event: WindowEvent): void =>
+	{
+		(this._inputField as unknown as { focus?: () => boolean | void } | null)?.focus?.();
+		this.onInputFocused(event);
+	};
+
 	private onInputChanged = (_event: WindowEvent): void =>
 	{
 		// Placeholder — AS3 has empty handler too
@@ -290,4 +314,39 @@ export class SearchView
 			}
 		}
 	};
+
+	private removeInputListeners(): void
+	{
+		if (this._inputField)
+		{
+			this._inputField.removeEventListener('WKE_KEY_UP', this.keyUpHandler);
+			this._inputField.removeEventListener('WE_CHANGE', this.onInputChanged);
+			this._inputField.removeEventListener('WE_FOCUSED', this.onInputFocused);
+			this._inputField.removeEventListener('WME_DOWN', this.onSearchInputMouse);
+			this._inputField.removeEventListener('WME_CLICK', this.onSearchInputMouse);
+		}
+
+		if (this._searchInputClickArea)
+		{
+			this._searchInputClickArea.removeEventListener('WME_DOWN', this.onSearchInputMouse);
+			this._searchInputClickArea.removeEventListener('WME_CLICK', this.onSearchInputMouse);
+		}
+
+		if (this._clearButton)
+		{
+			this._clearButton.removeEventListener('WME_CLICK', this.onClearSearch);
+		}
+
+		this._inputField = null;
+		this._filterDropMenu = null;
+		this._searchInputClickArea = null;
+		this._clearButton = null;
+	}
+
+	// AS3: sources/win63_version/habbo/navigator/view/search/SearchView.as::dispose()
+	dispose(): void
+	{
+		this.removeInputListeners();
+		this._container = null;
+	}
 }

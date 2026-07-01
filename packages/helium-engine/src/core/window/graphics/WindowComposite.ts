@@ -732,13 +732,24 @@ export class WindowComposite
 
 		// Margins from TextController
 		const marginL = tw.marginLeft ?? tw._marginLeft ?? 2;
-		const marginT = tw.marginTop ?? tw._marginTop ?? 2;
+		const isDropListTitleText = window.name === '_DROPLIST_TITLETEXT';
+		const isDropListButtonText = window.name === '_BTN_TEXT'
+			&& (window.parent?.type === WindowType.DROPMENU_ITEM || window.parent?.type === WindowType.DROPLIST_ITEM);
+		const isCompactDropListText = isDropListTitleText || isDropListButtonText;
+		const marginT = isCompactDropListText
+			? 0
+			: tw.marginTop ?? tw._marginTop ?? 2;
 		const marginR = tw.marginRight ?? tw._marginRight ?? 2;
-		const marginB = tw.marginBottom ?? tw._marginBottom ?? 2;
+		const marginB = isCompactDropListText
+			? 0
+			: tw.marginBottom ?? tw._marginBottom ?? 2;
 		const autoSize = (tw.autoSize ?? tw._autoSize ?? 'none').toLowerCase();
 		const spacing = tw.spacing ?? tw._spacing ?? 0;
 		const leading = tw.leading ?? tw._leading ?? 0;
 		const maxWidth = w - marginL - marginR;
+		const flashTextFieldTopGutter = isCompactDropListText
+			? 0
+			: WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER;
 
 		if (maxWidth <= 0) return;
 
@@ -748,6 +759,11 @@ export class WindowComposite
 		if (type === WindowType.PASSWORD)
 		{
 			displayText = '\u2022'.repeat(text.length);
+		}
+
+		if (isCompactDropListText)
+		{
+			ctx.textBaseline = 'alphabetic';
 		}
 
 		// Etching (shadow text) support for il_* styles
@@ -762,7 +778,7 @@ export class WindowComposite
 			const measuredWidth = this.measureTextWidth(ctx, displayText, spacing);
 			const textW = Math.min(measuredWidth, maxWidth);
 			const textX = this.resolveAlignedTextX(absX + marginL, maxWidth, measuredWidth, autoSize);
-			const textY = absY + marginT + WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER;
+			const textY = absY + marginT + flashTextFieldTopGutter;
 
 			if (hasEtching)
 			{
@@ -792,9 +808,9 @@ export class WindowComposite
 				ctx,
 				displayText,
 				absX + marginL,
-				absY + marginT + WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER,
+				absY + marginT + flashTextFieldTopGutter,
 				maxWidth,
-				h - marginT - marginB - WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER,
+				h - marginT - marginB - flashTextFieldTopGutter,
 				fontSize,
 				tw.wordWrap ?? false,
 				hasEtching ? etchColor : 0,
@@ -809,14 +825,18 @@ export class WindowComposite
 
 		const measuredWidth = this.measureTextWidth(ctx, displayText, spacing);
 		const textX = this.resolveAlignedTextX(absX + marginL, maxWidth, measuredWidth, autoSize);
-		const textY = absY + marginT + WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER;
+		const textY = isCompactDropListText
+			? this.resolveCompactDropListTextY(ctx, displayText, absY, h, fontSize)
+			: absY + marginT + flashTextFieldTopGutter;
+		const clipY = isCompactDropListText ? absY : undefined;
+		const clipHeight = isCompactDropListText ? h : undefined;
 
 		if (hasEtching)
 		{
-			this.drawEtching(ctx, displayText, textX, textY, maxWidth, etchColor, tw.etchingPosition, spacing);
+			this.drawEtching(ctx, displayText, textX, textY, maxWidth, etchColor, tw.etchingPosition, spacing, clipY, clipHeight);
 		}
 
-		this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing);
+		this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing, clipY, clipHeight);
 	}
 
 	/**
@@ -937,13 +957,42 @@ export class WindowComposite
 		return width + ((text.length - 1) * spacing);
 	}
 
+	// AS3: sources/win63_version/core/window/graphics/renderer/TextSkinRenderer.as::draw()
+	private resolveCompactDropListTextY(
+		ctx: OffscreenCanvasRenderingContext2D,
+		text: string,
+		top: number,
+		height: number,
+		fontSize: number
+	): number
+	{
+		const metrics = ctx.measureText(text || 'Hg');
+		const ascent = metrics.actualBoundingBoxAscent || Math.ceil(fontSize * 0.75);
+		const descent = metrics.actualBoundingBoxDescent || Math.ceil(fontSize * 0.25);
+		const textHeight = ascent + descent;
+		const safeHeight = Math.max(1, height);
+
+		if (textHeight <= safeHeight)
+		{
+			const flashTextFieldInnerOffset = 2;
+			const centeredBaseline = top + ((safeHeight - textHeight) / 2) + ascent;
+			const bottomSafeBaseline = top + safeHeight - descent;
+
+			return Math.floor(Math.min(centeredBaseline + flashTextFieldInnerOffset, bottomSafeBaseline));
+		}
+
+		return Math.floor(top + safeHeight - descent);
+	}
+
 	private drawTextLine(
 		ctx: OffscreenCanvasRenderingContext2D,
 		text: string,
 		x: number,
 		y: number,
 		maxWidth: number,
-		spacing: number
+		spacing: number,
+		clipY?: number,
+		clipHeight?: number
 	): void
 	{
 		if (!text)
@@ -951,11 +1000,14 @@ export class WindowComposite
 			return;
 		}
 
+		const resolvedClipY = clipY ?? y - 2;
+		const resolvedClipHeight = clipHeight ?? 4096;
+
 		if (spacing === 0)
 		{
 			ctx.save();
 			ctx.beginPath();
-			ctx.rect(x, y - 2, maxWidth, 4096);
+			ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
 			ctx.clip();
 			ctx.fillText(text, x, y);
 			ctx.restore();
@@ -965,6 +1017,11 @@ export class WindowComposite
 
 		let drawX = x;
 		const maxX = x + maxWidth;
+
+		ctx.save();
+		ctx.beginPath();
+		ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+		ctx.clip();
 
 		for (let i = 0; i < text.length; i++)
 		{
@@ -979,6 +1036,8 @@ export class WindowComposite
 			ctx.fillText(char, drawX, y);
 			drawX += charWidth + spacing;
 		}
+
+		ctx.restore();
 	}
 
 	private wrapLine(
@@ -1086,7 +1145,9 @@ export class WindowComposite
 		maxWidth: number,
 		color: number,
 		position?: string,
-		spacing: number = 0
+		spacing: number = 0,
+		clipY?: number,
+		clipHeight?: number
 	): void
 	{
 		const a = ((color >>> 24) & 0xFF) / 255;
@@ -1137,7 +1198,7 @@ export class WindowComposite
 		const prevFill = ctx.fillStyle;
 
 		ctx.fillStyle = `rgba(${er},${eg},${eb},${a})`;
-		this.drawTextLine(ctx, text, x + dx, y + dy, maxWidth, spacing);
+		this.drawTextLine(ctx, text, x + dx, y + dy, maxWidth, spacing, clipY, clipHeight);
 		ctx.fillStyle = prevFill;
 	}
 

@@ -1,7 +1,6 @@
-import {Logger} from '@core/utils/Logger';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
-
-const log = Logger.getLogger('ElementPointerHandler');
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {ElementPointerMessageEvent} from '@habbo/communication/messages/incoming/notifications/ElementPointerMessageEvent';
 
 /**
  * Handles element pointer (hint) messages from the server.
@@ -11,11 +10,6 @@ const log = Logger.getLogger('ElementPointerHandler');
  * sends a key, the handler shows the corresponding hint; when the key
  * is null or empty, the handler hides the current hint.
  *
- * In AS3, this directly registered an ElementPointerMessageEvent on
- * the communication manager. In the TS port, since the message event
- * class may not yet exist, we store a reference and provide a public
- * method for processing pointer messages.
- *
  * @see sources/win63_version/habbo/window/utils/ElementPointerHandler.as
  */
 export class ElementPointerHandler
@@ -24,33 +18,32 @@ export class ElementPointerHandler
 	private _windowManager: IHabboWindowManager | null;
 
 	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
-	// TODO(AS3): ElementPointerMessageEvent field — register when class is ported
-	// sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
+	private _event: IMessageEvent | null = null;
 
 	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
 	constructor(windowManager: IHabboWindowManager)
 	{
 		this._windowManager = windowManager;
 
-		// TODO(AS3): register ElementPointerMessageEvent on communication when ported
-		// sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
-
-		log.debug('ElementPointerHandler initialized');
+		if(this._windowManager.communication !== null)
+		{
+			this._event = new ElementPointerMessageEvent((e) => this.onElementPointerMessage(e as ElementPointerMessageEvent));
+			this._windowManager.communication.addHabboConnectionMessageEvent(this._event);
+		}
 	}
-
-	// TS-only: explicit disposed flag (AS3 uses _windowManager == null check)
-	private _disposed: boolean = false;
 
 	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::get disposed()
 	public get disposed(): boolean
 	{
-		return this._windowManager == null;
+		return this._windowManager === null;
 	}
 
 	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::onElementPointerMessage()
-	public onElementPointerMessage(key: string | null): void
+	private onElementPointerMessage(event: ElementPointerMessageEvent): void
 	{
 		if (!this._windowManager) return;
+
+		const key = event.key;
 
 		if (!key || key.length === 0)
 		{
@@ -65,12 +58,12 @@ export class ElementPointerHandler
 	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
 	public dispose(): void
 	{
-		if (this._disposed) return;
-
-		// TODO(AS3): unregister ElementPointerMessageEvent from communication when ported
-		// sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
+		if (this._windowManager?.communication && this._event !== null)
+		{
+			this._windowManager.communication.removeHabboConnectionMessageEvent(this._event);
+			this._event = null;
+		}
 
 		this._windowManager = null;
-		this._disposed = true;
 	}
 }

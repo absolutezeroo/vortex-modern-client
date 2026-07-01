@@ -420,6 +420,9 @@ AS3: 32 files | TS: 22 files
 15. **advertisement, campaign, toolbar, nux, phonenumber**
 
 ### Recently completed
+- ✅ **core/window dropdown compact text follow-up**: `WindowComposite` now treats `_DROPLIST_TITLETEXT` and dropdown item `_BTN_TEXT` as compact Flash TextField content, using AS3 `TextSkinRenderer.draw()`-style metrics/clipping plus the Flash TextField inner baseline offset so dropdown labels sit correctly without rendering cut downward.
+- ✅ **Navigator dropdown/create-room input follow-up**: top-level navigator tabs now select the AS3 matching search index, dropmenu title text uses compact Flash margins, create-room thumbnails use AS3 interpolated image URIs plus AS3 tile label colors, and TextFieldManager refocuses the browser input after AS3 placeholder clearing.
+- ✅ **Navigator create-room/search/dropdown tabs AS3 parity pass**: RoomCreateViewCtrl now follows WIN63 prepare, refresh, thumbnail, dropdown, and create composer flow; navigator top tabs avoid the converted Flash y=-1 canvas truncation; search input border clicks focus the text field like AS3; and dropmenu title text no longer receives the generic Flash text-field gutter.
 - ✅ **Navigator room usercount label AS3 follow-up**: `RoomEntryElementFactory.updateCommonEntryElements()` now keeps the compact `room_usercount` label on the Flash visual baseline after caption updates, while preserving the converted XML positions for the border, icon, and item list.
 - ✅ **core/window TextField vertical AS3 parity fix**: `WindowComposite.compositeText()` now applies the Flash `TextField` top gutter when drawing canvas text, matching `TextSkinRenderer.draw()`/`TextController.refreshTextImage()` behavior so purse currency numbers and other text glyphs no longer render too high.
 - ✅ **Navigator collapse + toolbar purse visual AS3 follow-up**: `CategoryElementFactory.getOpenCategoryElement()` keeps the AS3 `category_collapse` control above the title hit region in the Pixi draw order, and `ExtensionView.refreshItemWindow()` now uses AS3 `arrangeListItems()` while clamping the AS3 purse offset at the canvas top edge to avoid visible top clipping.
@@ -481,4 +484,4 @@ AS3: 32 files | TS: 22 files
 
 ---
 
-*Document updated — 2026-06-30 (navigator room usercount label baseline aligned.)*
+*Document updated — 2026-06-30 (core/window dropdown compact text follow-up.)*

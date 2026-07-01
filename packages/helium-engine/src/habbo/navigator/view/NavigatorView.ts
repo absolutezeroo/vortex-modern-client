@@ -326,6 +326,7 @@ export class NavigatorView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/NavigatorView.as onSearchResults()
 	 */
+	// AS3: sources/win63_version/habbo/navigator/view/NavigatorView.as::onSearchResults()
 	onSearchResults(results: NavigatorSearchResultSet, source: string = ''): void
 	{
 		if (this._navigator.newResultsRendered)
@@ -346,7 +347,13 @@ export class NavigatorView implements IUpdateReceiver
 		{
 			if (this._topViewSelector)
 			{
-				this._topViewSelector.selectTabByIndex(0);
+				const topLevelSearches = this._navigator.contextContainer.getTopLevelSearches();
+				const index = topLevelSearches.indexOf(results.searchCodeOriginal);
+
+				if (index !== -1)
+				{
+					this._topViewSelector.selectTabByIndex(index);
+				}
 			}
 		}
 
@@ -553,6 +560,12 @@ export class NavigatorView implements IUpdateReceiver
 			this._liftView = null;
 		}
 
+		if(this._searchView)
+		{
+			this._searchView.dispose();
+			this._searchView = null;
+		}
+
 		if(this._window)
 		{
 			this._window.dispose();
@@ -603,6 +616,7 @@ export class NavigatorView implements IUpdateReceiver
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/NavigatorView.as createMainWindow()
 	 */
+	// AS3: sources/win63_version/habbo/navigator/view/NavigatorView.as::createMainWindow()
 	private createMainWindow(): void
 	{
 		const windowManager = this._navigator.windowManager;
@@ -737,6 +751,11 @@ export class NavigatorView implements IUpdateReceiver
 
 			if (tabContext)
 			{
+				// Flash lets the top tab bleed from y=-1 in navigator_frame_2; canvas clipping cuts it.
+				tabContext.y = 0;
+				tabContext.height = Math.max(tabContext.height, 32);
+				tabContext.clipping = false;
+
 				const firstTab = tabContext.getTabItemAt(0);
 
 				if (firstTab)
