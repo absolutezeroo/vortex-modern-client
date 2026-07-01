@@ -1,230 +1,168 @@
 # Helium Project Context
 
-This document provides the complete architecture and project context. Read BEFORE any implementation.
+This document provides the architecture and project context. Read it before implementation work, then use `docs/IMPLEMENTATION_STATUS.md` for the current project state.
 
 ## Overview
 
-**Helium** is a full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client, organized as a pnpm monorepo. The goal is to create a lighter client than Nitro while staying faithful to the original AS3 architecture.
+**Helium** is an in-progress full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client, organized as a pnpm monorepo. The target is a lighter client than Nitro while staying faithful to the original AS3 architecture.
 
-We fully reuse the lifecycle system AND the display system from the original AS3 source. The class hierarchy, dispose patterns, flush/parse cycles, object management, and UI window system must match the AS3 architecture. The original Flash XML layouts are converted to JSON.
+The port must reuse the lifecycle system and display/window architecture from the original AS3 source: class hierarchy, dispose patterns, flush/parse cycles, object management, message wiring, and UI window behavior should match AS3 unless a JS-specific performance divergence is explicitly documented.
 
 ### Tech stack
 
-| Technology      | Role                                         |
-|-----------------|----------------------------------------------|
-| TypeScript      | Primary language (strict mode)               |
-| PixiJS v8       | 2D rendering (rooms, avatars, furniture, UI) |
-| EventEmitter3   | Inter-component communication in the engine  |
-| pnpm workspaces | Monorepo management                          |
-| Vite            | Bundler and dev server                       |
+| Technology      | Role                                                        |
+|-----------------|-------------------------------------------------------------|
+| TypeScript      | Primary language                                            |
+| PixiJS v8       | 2D rendering for rooms, avatars, furniture, and UI surfaces |
+| EventEmitter3   | Component/event communication                               |
+| pnpm workspaces | Monorepo management                                         |
+| Vite            | Client bundler/dev server                                   |
 
 ### Monorepo
 
 ```
 helium/
 ├── packages/
-│   ├── helium-engine/     Engine (logic, protocol, data)
-│   └── helium-client/     Client (display, UI, PixiJS rendering)
+│   ├── helium-engine/     Engine, protocol, room engine, Habbo logic, ported Flash window/UI framework
+│   └── helium-client/     Vite shell, login/bootstrap, asset bundling, converted layout/skin assets
 ├── sources/
-│   ├── source_as_win63/   Primary AS3 source (~4,465 files)
-│   └── source_as_flash/   Secondary AS3 source (~7,160 files)
+│   ├── win63_version/     Primary AS3 source, 4,783 .as files
+│   └── flash_version/     Secondary AS3 source, 7,159 .as files
 ├── docs/
-│   ├── CONTEXT.md          This file
-│   ├── PATTERNS.md         Implementation templates
-│   ├── STYLEGUIDE.md       Complete style guide
-│   ├── IMPLEMENTATION_STATUS.md  Progress tracking
-│   └── architectures/     Per-module AS3 architecture
-├── CLAUDE.md              Claude Code instructions
-└── AGENTS.md              Universal AI agent instructions
+│   ├── CONTEXT.md
+│   ├── IMPLEMENTATION_STATUS.md
+│   ├── MESSAGES_PORT_BACKLOG.md
+│   ├── PATTERNS.md
+│   ├── STYLEGUIDE.md
+│   └── audits/
+├── AGENTS.md
+└── package.json
 ```
 
-## Engine architecture
+## Current Status Rule
 
-### Layer structure
+Do not infer completion from this context file. The current state lives in:
+
+- `docs/IMPLEMENTATION_STATUS.md` for module/file-count status.
+- `docs/MESSAGES_PORT_BACKLOG.md` for communication message gaps.
+- `docs/audits/` for deeper audit notes.
+
+Raw file counts are useful for orientation, but they do not prove AS3 parity. A module is complete only after its AS3 public API, constructor behavior, listeners, lifecycle, parser/composer behavior, and dispose contract have been checked.
+
+## Engine Architecture
 
 ```
 packages/helium-engine/src/
-│
-├── core/                   @core/    LOW-LEVEL
-│   ├── communication/      WebSocket, protocol, encryption
-│   │   ├── connections/    SocketConnection, pool management
-│   │   ├── encryption/     Diffie-Hellman, ArcFour
-│   │   └── messages/       MessageComposer, MessageParser, MessageEvent
-│   ├── assets/             Asset loading and management
-│   │   ├── loaders/        AssetManager, GraphicAssetCollection
-│   │   └── content/        RoomContentLoader
-│   ├── di/                 Dependency injection system
-│   │   ├── Component.ts    Base class for all managers
-│   │   └── ComponentContext.ts  Dependency resolution
-│   ├── common/             Shared utilities (Point, Vector3d, etc.)
-│   └── utils/              ByteArray, compression, crypto
-│
-├── habbo/                  @habbo/   GAME LOGIC
-│   ├── communication/      HabboCommunicationManager, HabboMessages
-│   ├── session/            SessionDataManager, RoomSessionManager
-│   ├── avatar/             AvatarRenderManager, figure, animations
-│   ├── catalog/            CatalogManager, pages, offers
-│   ├── inventory/          InventoryManager, trading, marketplace
-│   ├── navigator/          HabboNewNavigator, search, filters
-│   ├── room/               HabboRoomFactory (bridge habbo ↔ room engine)
-│   └── [other modules]/    friendlist, sound, groups, etc.
-│
-├── room/                   @room/    ROOM ENGINE
-│   ├── RoomManager.ts      Room instance management
-│   ├── RoomInstance.ts      Individual room instance
-│   ├── object/             Room objects (furniture, avatars, tiles)
-│   │   ├── RoomObject.ts   Base object
-│   │   ├── logic/          Object logic (FurnitureLogic, AvatarLogic)
-│   │   └── visualization/  Visualizations (FurnitureVisualization, etc.)
-│   ├── renderer/           PixiJS rendering (RoomRenderer, RoomSpriteCanvas)
-│   ├── utils/              Geometry, stacking, cameras
-│   └── floorplan/          Floor plan parsing and rendering
-│
-└── iid/                    @iid/     DI SYMBOLS
-    └── index.ts            All IIDs (Symbol) for the Component system
+├── core/          Low-level runtime, assets, communication, localization, window framework
+├── habbo/         Habbo managers, session, navigator, inventory, toolbar, window/UI, messages
+├── room/          Low-level room manager/renderer/object support
+├── iid/           Dependency injection symbols
+├── Helium.ts      Application-level engine shell
+└── HeliumMain.ts  Engine manager registration/orchestration
 ```
 
-### Dependency injection (Component system)
+### Layer boundaries
 
-The project uses a custom DI system based on `Component`:
+- `helium-engine` must not import from `helium-client`.
+- The client may import from the engine.
+- UI/display state should flow from engine events into client/window classes, not from engine code reaching into client-specific UI.
+
+### Dependency injection
+
+The project uses a custom Component/IID system:
 
 ```typescript
-// IID definition
 export const IID_IRoomEngine = Symbol('IRoomEngine');
 
-// A manager is a Component
 export class RoomEngine extends Component implements IRoomEngine
 {
-    // Dependencies are resolved via ComponentContext
-    // Component.unlock() is called when all deps are ready
+    // Dependencies are resolved through ComponentContext.
 }
 ```
 
-**Critical rule**: NEVER override `get events()` in a Component subclass. The `events` getter is used by the DI system for dependency resolution.
+Critical rule: never override `get events()` in a `Component` subclass. The DI/event system depends on that getter.
 
 ### Communication protocol
 
 ```
-Client WebSocket
-    → SocketConnection (WebSocket + EventEmitter3)
-    → CoreCommunicationManager (connection pool)
-    → HabboCommunicationManager (Habbo protocol layer)
-    → Message Registry (server ID → Event/Composer)
+SocketConnection
+    -> CoreCommunicationManager
+    -> HabboCommunicationManager
+    -> HabboMessages registry
+    -> MessageEvent / IMessageParser / MessageComposer
 ```
 
-- **Encryption**: Diffie-Hellman key exchange + ArcFour
-- **Incoming messages**: The server sends an ID → the registry finds the matching Event → the Parser extracts data
-- **Outgoing messages**: Code creates a Composer → `getMessageArray()` serializes → sent via WebSocket
-- **Registry**: `HabboMessages.ts` maps server IDs to Event/Composer classes
+- Incoming messages: server ID maps to an event class and parser.
+- Outgoing messages: composer `getMessageArray()` serializes payloads.
+- Protocol coverage is partial; check `docs/MESSAGES_PORT_BACKLOG.md` before adding message work.
 
 ### Path aliases
 
-| Alias     | Engine resolves to        | Client resolves to            |
-|-----------|---------------------------|-------------------------------|
-| `@core/`  | `src/core/`               | `../helium-engine/src/core/`  |
-| `@habbo/` | `src/habbo/`              | `../helium-engine/src/habbo/` |
-| `@room/`  | `src/room/`               | `../helium-engine/src/room/`  |
-| `@iid/`   | `src/iid/`                | `../helium-engine/src/iid/`   |
-| `@ui/`    | N/A (forbidden in engine) | `src/`                        |
-| `@/`      | N/A (forbidden in engine) | `src/`                        |
+| Alias     | Engine resolves to | Client resolves to            |
+|-----------|--------------------|-------------------------------|
+| `@core/`  | `src/core/`        | `../helium-engine/src/core/`  |
+| `@habbo/` | `src/habbo/`       | `../helium-engine/src/habbo/` |
+| `@room/`  | `src/room/`        | `../helium-engine/src/room/`  |
+| `@iid/`   | `src/iid/`         | `../helium-engine/src/iid/`   |
+| `@/`      | N/A                | `src/`                        |
 
-## Client architecture
-
-### Display system
-
-The entire Flash display and UI system is ported to TypeScript/PixiJS. There is no third-party UI framework — the Flash window system (IWindow, IFrameWindow, etc.) is faithfully ported.
-
-### XML → JSON layouts
-
-The original Flash XML layout files that defined UI structure (window positions, element layouts, sizes, etc.) are converted to JSON and loaded at runtime. The JSON structure mirrors the original XML hierarchy.
-
-### Structure
+## Client Architecture
 
 ```
 packages/helium-client/src/
-├── Helium.ts          Application singleton shell, bootstraps engine + PixiJS
-├── HeliumMain.ts      Engine orchestrator (creates and registers all managers)
-├── ui/                Flash UI system ported (IWindow, IFrameWindow, etc.)
-├── window/            Window management (from AS3 window framework)
-├── display/           PixiJS display components (buttons, text, scrollbars, etc.)
-├── layouts/           JSON layouts (converted from Flash XML)
-└── api/               Engine ↔ UI bridge (typed access to managers)
+├── App.ts                         Browser/Pixi app shell
+├── index.ts                       Client entry
+├── AssetBundle.ts                 Bundled asset access
+├── HeliumLoadingScreen.ts         Loading screen implementation
+├── login/                         Login flow and SSO views
+├── window/WindowXmlAssetParser.ts Converted window layout parser bridge
+└── assets/
+    ├── window-layouts/            1,045 converted Flash XML layouts
+    ├── window-skins/              97 converted skin definitions
+    ├── images/
+    └── webfonts/
 ```
 
-### Data flow
+Most ported Flash window/controller code currently lives in `packages/helium-engine/src/core/window`, `packages/helium-engine/src/habbo/window`, and `packages/helium-engine/src/habbo/ui`. The client package is mainly the browser shell plus converted assets.
 
-```typescript
-// 1. Engine class emits an event
-class HabboNewNavigator extends Component
-{
-    onSearchResults(data: SearchResultData): void
-    {
-        this.emit('searchResults', data);
-    }
-}
+## AS3 Sources
 
-// 2. UI class listens and updates display
-class NavigatorWindow extends FrameWindow
-{
-    constructor(navigator: IHabboNewNavigator)
-    {
-        navigator.on('searchResults', (data: SearchResultData) =>
-        {
-            this.updateResults(data);
-        });
-    }
-}
-```
+| Directory                | Count       | Package roots                             | Usage                                              |
+|--------------------------|-------------|-------------------------------------------|----------------------------------------------------|
+| `sources/win63_version/` | 4,783 `.as` | `core/`, `habbo/`, `room/`, `iid/`        | Primary source; read first.                        |
+| `sources/flash_version/` | 7,159 `.as` | `src/com/sulake/...` plus embedded assets | Secondary source when WIN63 is missing or unclear. |
 
-The engine NEVER knows about UI classes. The separation is strict.
-
-## AS3 sources
-
-### Two available directories
-
-| Directory                | Files  | Package roots       | Usage                                        |
-|--------------------------|--------|---------------------|----------------------------------------------|
-| `sources/win63_version/` | ~4,465 | `habbo/`, `room/`   | **PRIMARY** — contains entire core engine    |
-| `sources/flash_version/` | ~7,160 | `com/sulake/habbo/` | **SECONDARY** — Nitro version, more detailed |
-
-### Path mapping
+Path mapping examples:
 
 ```
-sources/win63_version/habbo/<module>/   ↔   sources/flash_version/com/sulake/habbo/<module>/
-sources/win63_version/room/             ↔   sources/flash_version/com/sulake/room/
+sources/win63_version/habbo/<module>/<Class>.as
+sources/flash_version/src/com/sulake/habbo/<module>/<Class>.as
+sources/win63_version/room/<Class>.as
+sources/flash_version/src/com/sulake/room/<Class>.as
 ```
 
-### Full port
+## Porting Protocol
 
-ALL AS3 files are ported — both logic and display classes. The original ENGINE/VIEW distinction no longer applies; everything is implemented in TypeScript.
+For implementation tasks:
 
-### Global statistics
+1. Read `docs/STYLEGUIDE.md` and `docs/PATTERNS.md` for local conventions.
+2. Read the relevant AS3 file in full before writing TypeScript.
+3. Preserve AS3 public API, constructor contract, inheritance intent, listener lifecycle, and dispose behavior.
+4. Add the required `// AS3: ...` trace comments for ported declarations.
+5. Update `docs/IMPLEMENTATION_STATUS.md` and any relevant backlog/audit doc when the implementation changes project status.
+6. Validate code changes with the appropriate build/test command.
 
-~2,000+ AS3 files to implement (logic + display combined).
+## Key Entry Points
 
-## Per-module documentation
-
-| Doc                         | Files | Description                            |
-|-----------------------------|-------|----------------------------------------|
-| `room-architecture.md`      | 313+  | Room engine (CORE)                     |
-| `session-architecture.md`   | 77    | Session management                     |
-| `ui-architecture.md`        | 369   | UI handlers, events, messages, windows |
-| `avatar-architecture.md`    | ~120  | Avatar rendering system                |
-| `catalog-architecture.md`   | 105   | Catalog system                         |
-| `inventory-architecture.md` | 51    | Inventory management                   |
-| `sound-architecture.md`     | 28    | Audio system                           |
-| `navigator-architecture.md` | 70+   | Room navigator                         |
-| `game-architecture.md`      | 58    | SnowWar                                |
-| Others (20+ modules)        | ~700  | See `docs/architectures/`              |
-
-## Key entry points
-
-| File                                                                          | Role                             |
-|-------------------------------------------------------------------------------|----------------------------------|
-| `packages/helium-client/index.html`                                           | HTML entry point                 |
-| `packages/helium-client/src/Helium.ts`                                        | Application singleton, bootstrap |
-| `packages/helium-client/src/HeliumMain.ts`                                    | Engine manager registration      |
-| `packages/helium-engine/src/habbo/communication/HabboMessages.ts`             | All message registry             |
-| `packages/helium-engine/src/habbo/communication/HabboCommunicationManager.ts` | Protocol layer                   |
-| `packages/helium-engine/src/room/RoomManager.ts`                              | Room manager                     |
-| `packages/helium-engine/src/iid/index.ts`                                     | All DI symbols                   |
+| File                                                                          | Role                        |
+|-------------------------------------------------------------------------------|-----------------------------|
+| `packages/helium-client/index.html`                                           | Browser entry HTML          |
+| `packages/helium-client/src/index.ts`                                         | Client bootstrap            |
+| `packages/helium-client/src/App.ts`                                           | Browser/Pixi app shell      |
+| `packages/helium-engine/src/Helium.ts`                                        | Engine application shell    |
+| `packages/helium-engine/src/HeliumMain.ts`                                    | Engine manager registration |
+| `packages/helium-engine/src/habbo/communication/HabboMessages.ts`             | Message registry            |
+| `packages/helium-engine/src/habbo/communication/HabboCommunicationManager.ts` | Habbo protocol layer        |
+| `packages/helium-engine/src/habbo/room/RoomEngine.ts`                         | Habbo room engine facade    |
+| `packages/helium-engine/src/room/RoomManager.ts`                              | Low-level room manager      |
+| `packages/helium-engine/src/iid/index.ts`                                     | DI symbol exports           |

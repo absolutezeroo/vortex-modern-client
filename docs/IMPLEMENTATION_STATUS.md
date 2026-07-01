@@ -1,487 +1,134 @@
 # Helium - Implementation Status
 
-> **Last updated**: 2026-06-30
-> **Method**: Exhaustive AS3 → TS audit (comparing `source_as_win63/` vs `src/`)
-> **Total AS3 files**: ~2,000+ (logic + display) | **Total TS implemented**: ~716+ files
-> **Approach**: Full port — all AS3 files (logic AND display) are implemented. Flash XML layouts converted to JSON.
+> **Last updated**: 2026-07-01
+> **Method**: filesystem snapshot plus targeted AS3/TS directory counts.
+> **Important**: this is **not** a member-level AS3 parity certification. A TS count greater than an AS3 count only means files exist; completion still requires reading the AS3 source and auditing public API, lifecycle, parser/composer behavior, and dispose paths.
 
 ---
 
-## Overview
+## Snapshot
 
-```
-Overall progress: ████████░░░░░░░░░░░░ ~35%
-```
+| Metric                           | Current value |
+|----------------------------------|---------------|
+| Primary WIN63 AS3 source files   | 4,783 `.as`   |
+| Secondary Flash AS3 source files | 7,159 `.as`   |
+| Engine TypeScript files          | 2,373 `.ts`   |
+| Client TypeScript files          | 16 `.ts`      |
+| Converted window layouts         | 1,045 `.json` |
+| Converted window skins           | 97 `.json`    |
+| Engine `AS3:` trace comments     | 1,727         |
 
-| Module                             | AS3 Total | TS Impl | %    | Status                                  |
-|------------------------------------|-----------|---------|------|-----------------------------------------|
-| **core/communication**             | 22        | 31      | 100% | ✅ Complete (obfuscated internals only) |
-| **core/assets**                    | 25        | 23      | 100% | ✅ Complete                             |
-| **core/runtime**                   | 32        | 22      | 69%  | 🔄 Advanced                             |
-| **configuration**                  | 2         | 8       | 100% | ✅ Complete                             |
-| **localization**                   | 3         | 7       | 100% | ✅ Complete                             |
-| **inventory**                      | 51        | 33      | 65%  | 🔄 Logic complete, display pending      |
-| **session**                        | 77        | 77      | 100% | ✅ Complete                             |
-| **navigator**                      | 70+       | 28      | 40%  | 🔄 Logic complete, display pending      |
-| **communication** (root/demo/enum) | 10        | 5       | 50%  | 🔄 Partial (WebApi=SKIP)                |
-| **communication/messages**         | 1150      | 407     | 35%  | 🔄 Partial                              |
-| **room** (total)                   | 313       | 330     | 100% | ✅ Complete                             |
-| **avatar**                         | 120       | 83      | 69%  | 🔄 Logic complete, display pending      |
-| **catalog**                        | 105       | 0       | 0%   | ❌ Not started                          |
-| **sound**                          | 28        | 0       | 0%   | ❌ Not started                          |
-| **friendlist**                     | 21        | 0       | 0%   | ❌ Not started                          |
-| **moderation**                     | 36        | 0       | 0%   | ❌ Not started                          |
-| **help**                           | 13        | 0       | 0%   | ❌ Not started                          |
-| **quest**                          | 21        | 0       | 0%   | ❌ Not started                          |
-| **tracking**                       | 10        | 10      | 100% | ✅ Complete                             |
-| **toolbar**                        | 12        | 12      | 100% | ✅ Purse area display wired             |
-| **groups**                         | 14        | 8       | 57%  | 🔄 In progress                          |
-| **game**                           | 58        | 0       | 0%   | ❌ Not started                          |
-| **notifications**                  | 6         | 13      | 100% | ✅ Complete                             |
-| **roomevents**                     | 5         | 0       | 0%   | ❌ Not started                          |
-| **messenger**                      | 5         | 6       | 100% | ✅ Complete                             |
-| **freeflowchat**                   | 3         | 13      | 100% | ✅ Complete                             |
-| **advertisement**                  | 3         | 6       | 100% | ✅ Complete                             |
-| **campaign**                       | 1         | 7       | 100% | ✅ Complete                             |
-| **friendbar**                      | 5         | 0       | 0%   | ❌ Not started                          |
-| **utils**                          | 19        | 14      | 74%  | 🔄 Advanced                             |
-| **nux**                            | 4         | 0       | 0%   | ❌ Not started                          |
-| **phonenumber**                    | 7         | 0       | 0%   | ❌ Not started                          |
-| **window**                         | 5         | 0       | 0%   | ❌ Not started                          |
-| **ui (window system)**             | 369       | 0       | 0%   | ❌ Not started                          |
-| **habbo/window (annotated)**       | ~40       | ~40     | 100% | ✅ AS3 annotations + behavioral fixes   |
+There is no reliable single global percentage right now. Raw file counts undercount converted JSON layouts, overcount `index.ts`/support files, and do not prove AS3 API parity. Use the module snapshot below as the working status.
 
 ---
 
-## 1. Complete Modules (✅)
+## Current Module Snapshot
 
-### 1.1 core/communication (100%)
-```
-Progress: ████████████████████ ~100%
-AS3: 22 files | TS: 31 files
-```
-> Only obfuscated internal files remain unported — the public API is 100% complete.
-
-| Status | Element                                          |
-|--------|--------------------------------------------------|
-| ✅     | SocketConnection (WebSocket + EventEmitter3)     |
-| ✅     | CoreCommunicationManager (connection pooling)    |
-| ✅     | Diffie-Hellman key exchange + ArcFour encryption |
-| ✅     | MessageDataWrapper (typed read methods)          |
-| ✅     | Message registry (ID → Event/Composer mapping)   |
-| ✅     | WireFormat encoding/decoding                     |
-| ✅     | Handshake protocol                               |
-
-### 1.2 core/assets (100%)
-```
-Progress: ████████████████████ ~100%
-AS3: 25 files | TS: 23 files
-```
-> DisplayAsset/TypeFaceAsset = Flash-specific (SKIP). Functionally 100%.
-
-| Status | Element                                  |
-|--------|------------------------------------------|
-| ✅     | AssetLibrary, loaders, sprite extraction |
-| ✅     | Asset data models                        |
-
-### 1.3 Configuration (100%)
-```
-Progress: ████████████████████ ~100%
-```
-
-| Status | Element                                                            |
-|--------|--------------------------------------------------------------------|
-| ✅     | HabboConfigurationManager + IHabboConfigurationManager             |
-| ✅     | Enums: HabboProperty, HabboConfigurationEvent, HabboComponentFlags |
-
-### 1.4 Localization (100%)
-```
-Progress: ████████████████████ ~100%
-```
-
-| Status | Element                                              |
-|--------|------------------------------------------------------|
-| ✅     | HabboLocalizationManager + IHabboLocalizationManager |
-| ✅     | BadgeBaseAndLevel, HabboLocalizationEvent            |
-
-### 1.5 Inventory — Logic (100%)
-```
-Progress (logic): ████████████████████ ~100%
-AS3 logic: 33 files | TS: 33 files
-Display: pending
-```
-
-| Status | Element                                                        |
-|--------|----------------------------------------------------------------|
-| ✅     | Full HabboInventory with all sub-models                        |
-| ✅     | FurniModel, PetsModel, BadgesModel, EffectsModel, TradingModel |
-| ✅     | Items: FurnitureItem, GroupItem, StuffData (12 types)          |
-| ✅     | UnseenItemTracker, Purse, MarketplaceModel                     |
-
-### 1.6 Session (100%)
-```
-Progress: ████████████████████ ~100%
-AS3: 77 files | TS: 77 files
-```
-
-| Status | Element                                                                                                                                                                     |
-|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ✅     | SessionDataManager, RoomSessionManager, RoomSession complete                                                                                                                |
-| ✅     | 12/12 handlers (Session, Users, Chat, Permissions, Data, GenericError, Poll, WordQuiz, Present, PetPackage, DimmerPresets, AvatarEffects)                                   |
-| ✅     | 24/24 events                                                                                                                                                                |
-| ✅     | 7/7 enums                                                                                                                                                                   |
-| ✅     | UserDataManager, PerkManager, IgnoredUsersManager, HabboGroupInfoManager                                                                                                    |
-| ✅     | PetInfo, IPetInfo                                                                                                                                                           |
-| ✅     | FurnitureData/ProductData delegated to GameDataManager (19 methods implemented)                                                                                             |
-| ✅     | 9 message listeners added (AccountSafetyLock, ChangeUserName, UserNameChanged, Email, RoomReady, UserChange, PetRespectFailed, AccountPreferences, NftChatStyles)           |
-| ✅     | Events dispatched: UserNameUpdateEvent, SessionDataPreferencesEvent, MysteryBoxKeysUpdateEvent                                                                              |
-| ✅     | SetUIFlagsMessageComposer wired in setUIFlag()                                                                                                                              |
-| ✅     | WhisperMessageComposer fixed (AS3: `[recipientName + " " + message, styleId]`)                                                                                              |
-| ✅     | RoomSession: 11 fixes (sendSignMessage guard, game session chat, lag detection, openConnectionComposer, playTestMode, classification messages, plantSeed, etc.)             |
-| ✅     | RoomSessionManager: handler order aligned to AS3, gotoRoomNetwork() uncommented, habboTracking propagated                                                                   |
-| ✅     | SessionDataManager: room actions via sendSpecialCommandMessage(), giveStarGem, credit vault, income reward, setRoomCameraFollowDisabled fix                                 |
-| ✅     | Room session messages: queue/spectator wired in RoomSessionHandler, and remaining incoming/parser room-session classes ported and registered in HabboMessages               |
-| ✅     | IgnoredUsersManager: IgnoreResult/IgnoredUsers events + Get/Ignore/Unignore composers ported and wired (AS3 flow restored)                                                  |
-| ✅     | Users messages batch: ApproveName/ChangeEmail/ExtendedProfile/HabboUserBadges/HandItem/RelationshipStatus/SCR user+kickback events+parsers and related composers ported     |
-| ✅     | UserDataManager + RoomUsersHandler: GetSelectedBadges composer call restored and HabboUserBadges event flow wired to RoomSessionUserBadgesEvent                             |
-| ✅     | Users/Guild batch: GroupDetails/GroupChanged/GroupDeactivated/JoinFailed events+parsers and GroupDetails/Join/Favorite composers ported + HabboGroupsManager wiring         |
-| ✅     | PerkAllowancesMessageEvent/PerkAllowancesMessageEventParser ported and registered (ID 2000); PerkManager now dispatches PUE_perks_updated through SessionDataManager events |
-
-### 1.7 Navigator — Logic (100%)
-```
-Progress (logic): ████████████████████ ~100%
-AS3 logic: 25 files | TS: 28 files
-Display: pending
-```
-
-| Status | Element                                                        |
-|--------|----------------------------------------------------------------|
-| ✅     | HabboNavigator, HabboNewNavigator complete                     |
-| ✅     | IncomingMessages, NewIncomingMessages                          |
-| ✅     | NavigatorData, NavigatorCache, SearchContext, ContextContainer |
-| ✅     | RoomSessionTags                                                |
-| ✅     | FriendEntryData, RoomSettingsFriendListManager                 |
-| ✅     | RoomEntryUtils (door mode, color modulation, favorite icons)   |
+| Area / module              | AS3 files | TS files | Current status                                                                                                                       |
+|----------------------------|-----------|----------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `core/`                    | 360       | 308      | Advanced. `core/window` is heavily ported; runtime/assets/communication still need targeted parity audits before being called final. |
+| `core/window`              | 244       | 212      | Advanced and active. Not "not started"; several AS3 parity passes landed recently.                                                   |
+| `iid/`                     | 52        | 52       | Structurally aligned by file count; still verify symbols against AS3 before marking complete.                                        |
+| `room/` root               | 81        | 63       | Advanced low-level room manager/renderer support.                                                                                    |
+| `habbo/room`               | 317       | 312      | Advanced. Room engine/object pipeline exists; visualization and edge behavior still require parity checks.                           |
+| `habbo/session`            | 82        | 89       | Advanced / likely near complete; keep auditing handlers and message wiring as new protocol gaps are found.                           |
+| `habbo/navigator`          | 83        | 98       | Advanced and active. Logic plus major UI/window flows are present; recent work focused on AS3 visual parity.                         |
+| `habbo/window`             | 106       | 85       | Advanced and active. Widgets/dialogs/resource management exist; do not describe this as unstarted.                                   |
+| `habbo/ui`                 | 375       | 11       | Mostly missing. Room desktop/widget shell exists, but the full Flash UI/widget layer is not ported.                                  |
+| `habbo/avatar`             | 138       | 85       | Partial/advanced. Rendering data and manager work exists; editor/display coverage is still incomplete.                               |
+| `habbo/inventory`          | 57        | 53       | Advanced logic. Display/user workflows still need parity checks.                                                                     |
+| `habbo/toolbar`            | 41        | 45       | Advanced. Purse/bottom-bar work exists; continue AS3 behavior validation.                                                            |
+| `habbo/communication`      | 1,913     | 1,001    | Partial. Large message backlog remains; see message section.                                                                         |
+| `habbo/catalog`            | 239       | 11       | Early partial. Purse/catalog shell exists, but catalog logic, UI, and most messages are missing.                                     |
+| `habbo/help`               | 34        | 27       | Partial/advanced. No longer zero; managers, CFH registry, and many help messages exist.                                              |
+| `habbo/moderation`         | 43        | 8        | Partial. Manager/message handler shell exists; moderation UI/tools are not complete.                                                 |
+| `habbo/quest`              | 39        | 15       | Partial. Some quest messages exist; full quest engine/UI remains incomplete.                                                         |
+| `habbo/groups`             | 21        | 8        | Partial.                                                                                                                             |
+| `habbo/friendlist`         | 40        | 3        | Early shell only; messages are more complete than the manager/UI.                                                                    |
+| `habbo/friendbar`          | 143       | 7        | Early partial. Landing view shell exists; friend bar data/view is mostly missing.                                                    |
+| `habbo/notifications`      | 33        | 16       | Partial. Several notification messages exist; manager/UI coverage is not complete.                                                   |
+| `habbo/messenger`          | 7         | 6        | Near aligned by file count; still requires behavior parity audit.                                                                    |
+| `habbo/freeflowchat`       | 32        | 13       | Partial, not full module parity.                                                                                                     |
+| `habbo/advertisement`      | 5         | 7        | Small module present; verify behavior before marking complete.                                                                       |
+| `habbo/campaign`           | 5         | 2        | Partial despite prior docs claiming complete.                                                                                        |
+| `habbo/tracking`           | 10        | 10       | Structurally aligned by file count.                                                                                                  |
+| `habbo/utils`              | 27        | 17       | Partial/advanced.                                                                                                                    |
+| `habbo/game`               | 63        | 0        | Not started.                                                                                                                         |
+| `habbo/sound`              | 29        | 0        | Not started.                                                                                                                         |
+| `habbo/roomevents`         | 347       | 0        | Not started. Wired/user-defined room event messages are also missing.                                                                |
+| `habbo/nux`                | 4         | 0        | Not started.                                                                                                                         |
+| `habbo/phonenumber`        | 7         | 0        | Not started.                                                                                                                         |
+| `habbo/userclassification` | 1         | 0        | Not started.                                                                                                                         |
 
 ---
 
-## 2. Communication Messages (~35%)
+## Communication Messages
 
-```
-Progress: ███████░░░░░░░░░░░░░ ~35%
-AS3: ~1150 (events + composers + parsers) | TS: ~404 files
-```
+The previous docs underreported the message port substantially. Current filesystem counts:
 
-### 2.1 Root + Demo + Enum
+| Message type       | AS3 files | TS files | Raw remaining delta |
+|--------------------|-----------|----------|---------------------|
+| Incoming events    | 700       | 341      | 359                 |
+| Outgoing composers | 547       | 283      | 264                 |
+| Parsers            | 630       | 339      | 291                 |
+| **Total**          | **1,877** | **963**  | **914**             |
 
-| AS3 File                                | Status         |
-|-----------------------------------------|----------------|
-| HabboCommunicationManager               | ✅ Complete    |
-| IHabboCommunicationManager              | ✅ Complete    |
-| HabboMessages                           | ✅ Registry    |
-| HabboCommunicationDemo                  | ✅ Complete    |
-| IncomingMessages                        | ✅ Complete    |
-| HabboLoginDemoScreen                    | ❌ Not started |
-| LoginEnvironmentsController             | ❌ Not started |
-| ApiRequest, WebApiRequest               | SKIP (WebApi)  |
-| HabboWebApiSession, IHabboWebApiSession | SKIP (WebApi)  |
+Top remaining gaps by category:
 
-**Enums (11/11):** ✅ All implemented
+| Category                | Incoming gap | Outgoing gap | Parser gap | Notes                                                           |
+|-------------------------|--------------|--------------|------------|-----------------------------------------------------------------|
+| `userdefinedroomevents` | 55           | 25           | 31         | Biggest missing protocol surface; blocks Wired/roomevents.      |
+| `catalog`               | 48           | 38           | 36         | Catalog remains an early partial module.                        |
+| `room`                  | 45           | 30           | 43         | Still a large protocol gap despite room engine progress.        |
+| `game`                  | 39           | 27           | 56         | SnowWar/game protocol mostly absent.                            |
+| `users`                 | 29           | 25           | 18         | Several batches exist, but profile/user flows are not complete. |
+| `inventory`             | 26           | 5            | 24         | Logic is advanced; incoming/parser gaps remain.                 |
+| `collectibles`          | 20           | 18           | 29         | Not started at module level.                                    |
+| `sound`                 | 10           | 9            | 8          | Not started.                                                    |
+| `marketplace`           | 9            | 10           | 8          | Missing as separate protocol area.                              |
+| `groupforums`           | 9            | 12           | 13         | Missing.                                                        |
 
-### 2.2 Incoming Events by category
+Notable corrections from stale docs:
 
-| Category              | AS3      | TS       | %       |
-|-----------------------|----------|----------|---------|
-| handshake             | 12       | 13       | ✅ 100% |
-| navigator             | 39       | 40       | ✅ 100% |
-| newnavigator          | 12       | 12       | ✅ 100% |
-| poll                  | 6        | 7        | ✅ 100% |
-| error                 | 1        | 2        | ✅ 100% |
-| room                  | 107      | 53       | ⚠️ 49%  |
-| inventory             | 53       | 25       | ⚠️ 47%  |
-| availability          | 6        | 4        | ⚠️ 66%  |
-| mysterybox            | 4        | 2        | ⚠️ 50%  |
-| avatar                | 5        | 2        | ⚠️ 40%  |
-| notifications         | 14       | 22       | ✅ 100% |
-| catalog               | 43       | 2        | ❌ 4%   |
-| users                 | 51       | 3        | ⚠️ 5%   |
-| game                  | 44       | 0        | ❌ 0%   |
-| help                  | 32       | 0        | ❌ 0%   |
-| moderation            | 25       | 0        | ❌ 0%   |
-| friendlist            | 24       | 27       | ✅ 100% |
-| roomsettings          | 18       | 0        | ❌ 0%   |
-| quest                 | 17       | 0        | ❌ 0%   |
-| collectibles          | 14       | 0        | ❌ 0%   |
-| sound                 | 10       | 0        | ❌ 0%   |
-| userdefinedroomevents | 44       | 0        | ❌ 0%   |
-| preferences           | 1        | 1        | ✅ 100% |
-| nft                   | 1        | 1        | ✅ 100% |
-| +9 other categories   | ~38      | 0        | ❌ 0%   |
-| **TOTAL**             | **~657** | **~180** | **27%** |
-
-### 2.3 Outgoing Composers by category
-
-| Category             | AS3      | TS       | %       |
-|----------------------|----------|----------|---------|
-| handshake            | 10       | 10       | ✅ 100% |
-| navigator            | 38       | 36       | ✅ 94%  |
-| newnavigator         | 7        | 8        | ✅ 100% |
-| poll                 | 3        | 4        | ✅ 100% |
-| room                 | 97       | 59       | ⚠️ 61%  |
-| inventory            | 26       | 17       | ⚠️ 65%  |
-| avatar               | 15       | 6        | ⚠️ 40%  |
-| tracking             | 5        | 6        | ✅ 100% |
-| friendlist           | 15       | 16       | ✅ 100% |
-| catalog              | 37       | 0        | ❌ 0%   |
-| users                | 40       | 0        | ❌ 0%   |
-| help                 | 32       | 0        | ❌ 0%   |
-| game                 | 27       | 1        | ⚠️ 3%   |
-| preferences          | 1        | 1        | ✅ 100% |
-| +14 other categories | ~140     | 5        | ⚠️ 3%   |
-| **TOTAL**            | **~493** | **~157** | **32%** |
-
-### 2.4 Detected Issues
-
-**ID Conflicts:**
-- `ID 1472` — RoomAdEventTabViewedComposer AND TogglePetRidingPermissionComposer (the 2nd overwrites the 1st)
-- ~~`ID 3698` — GetInterstitialMessageComposer AND OpenPetPackageMessageComposer~~ ✅ Resolved (GetInterstitialMessageComposer removed)
-
-**Note:** Cross-type conflicts (events vs composers) are NOT real conflicts since the maps are separate.
-
-~~**Existing composers not registered in HabboMessages.ts (15):**~~ ✅ All 15 are actually already registered in HabboMessages.ts (verified 2026-02-10).
-
-**Recently registered (Phase 0):** ✅ RespectUserMessageComposer (ID 2694), SetUIFlagsMessageComposer (ID 2209)
-
-**New composers (Phase 5):** ✅ UseFurnitureMessageComposer, NewUserExperienceScriptProceedComposer, RoomNetworkOpenConnectionMessageComposer, Game2GameChatMessageComposer, GiveStarGemToUserMessageComposer, CreditVaultStatusMessageComposer, WithdrawCreditVaultMessageComposer, IncomeRewardStatusMessageComposer, IncomeRewardClaimMessageComposer — all registered in HabboMessages.ts
+- `help` is not zero: incoming `33/32`, outgoing `23/34`, parser `33/33` by raw file count.
+- `moderation` is not zero: incoming `14/26`, parser `25/19`, plus manager shell files.
+- `quest` is not zero: incoming `12/20`, outgoing `15/18`, parser `19/16`.
+- `catalog` is not zero, but it is still early partial: `habbo/catalog` has 11 TS files and catalog messages remain mostly missing.
 
 ---
 
-## 3. Room Module (100%)
+## Current Priorities
 
-```
-Progress: ████████████████████ ~100%
-AS3: 313 files | TS: 321 files
-```
-
-### 3.1 By sub-module
-
-| Sub-module               | AS3 | TS | %    | Status           |
-|--------------------------|-----|----|------|------------------|
-| Enums                    | 6   | 6  | 100% | ✅ Complete      |
-| Messages (room objects)  | 40  | 40 | 100% | ✅ Complete      |
-| Object Data (StuffData)  | 13  | 12 | 92%  | ✅ Near-complete |
-| Rasterizer               | ~10 | 13 | 100% | ✅ Complete      |
-| Events                   | 31  | 31 | 100% | ✅ Complete      |
-| Object Logic (furniture) | 65  | 66 | 100% | ✅ Complete      |
-| Object Logic (other)     | 8   | 4  | 50%  | 🔄 Advanced      |
-| Object Visualization     | 109 | 96 | 88%  | 🔄 Advanced      |
-| Utilities                | 11  | 5  | 45%  | 🔄 Advanced      |
-| Root (RoomEngine, etc.)  | 20  | 58 | 100% | ✅ Complete      |
-
-### 3.2 Completed (Phase 1)
-- ✅ 22 room events created (RoomEngineZoomEvent, RoomEngineDimmerStateEvent, RoomObjectFloorHoleEvent, RoomObjectTileMouseEvent, etc.)
-- ✅ 13 room messages created (RoomObjectGroupBadgeUpdateMessage, RoomObjectRoomColorUpdateMessage, etc.)
-- ✅ 54 furniture logic classes created (total 66 out of 65 AS3 = 100%)
-- ✅ Missing constants added to RoomObjectWidgetRequestEvent (31), RoomObjectFurnitureActionEvent (13), RoomObjectStateChangeEvent (param + ROSCE_STATE_RANDOM)
-
-### 3.3 Completed (Visualization Phase)
-- ✅ GraphicAsset infrastructure (5 files: IGraphicAsset, GraphicAsset, IGraphicAssetCollection, GraphicAssetCollection, GraphicAssetPalette)
-- ✅ Visualization data classes (13 files: LayerData→AnimationSizeData)
-- ✅ Core furniture visualization (4 files: FurnitureVisualizationData, AnimatedFurnitureVisualizationData, FurnitureVisualization, AnimatedFurnitureVisualization)
-- ✅ Plane mask system (4 files: PlaneMaskBitmap, PlaneMaskVisualization, PlaneMask, PlaneMaskManager)
-- ✅ Room visualization additions (4 files: TileCursorVisualization, PlaneDrawingData, RoomPlaneBitmapMask, RoomPlaneRectangleMask)
-- ✅ 35 specialized furniture visualizations (trivial, medium, complex, particle system, stubs)
-- ✅ RoomObjectVisualizationEnum + RoomObjectFactory updated with all visualization type mappings
-
-### 3.4 Completed (Renderer Layer + Pipeline Phase)
-- ✅ room/renderer/ layer ported: IRoomRendererBase, IRoomRenderer, IRoomRenderingCanvas, IRoomRenderingCanvasMouseListener, IRoomSpriteCanvasContainer, IRoomRendererFactory (6 interfaces)
-- ✅ RoomRenderer (class_3447): object registry, canvas management, render/update pipeline
-- ✅ RoomRendererFactory (class_2015): Component-based factory creating RoomRenderer instances
-- ✅ RoomRenderingCanvas: implements IRoomRenderingCanvas, mouse listener interface extracted to room/renderer/
-- ✅ RoomInstance: setRenderer/getRenderer, auto feedRoomObject on createObjectInternal, auto removeRoomObject on dispose
-- ✅ RoomManager: content processing pipeline (40ms frame budget throttling), processLoadedContentTypes, updateObjectContents, onContentLoaded events, state machine aligned to AS3
-
-### 3.5 Completed (Rendering & Interaction Phase)
-- ✅ Textured plane rendering wired in RoomPlane.render() (getTexture→renderTexture pipeline)
-- ✅ RoomVisualization: updatePlaneTexturesAndVisibilities(), updateMasksAndColors(), updatePlaneMasks()
-- ✅ RoomPlaneBitmapMaskParser + RoomPlaneBitmapMaskData (door/window bitmap mask system)
-- ✅ LegacyWallGeometry (wall coordinate → 3D position conversion for wall items)
-- ✅ RoomLogic full implementation (message routing: types, masks, visibility, colors, floor holes)
-- ✅ RoomTileCursorLogic (tile cursor visibility, state management, height display)
-- ✅ RoomRenderingCanvas handleMouseEvent (sprite hit-testing, event buffering, roll-over/roll-out)
-- ✅ TileObjectMap (2D spatial index for room objects)
-- ✅ FurniStackingHeightMap (per-tile stacking heights, placement validation)
-- ✅ RoomCamera (smooth camera following with sinusoidal easing)
-- ✅ SelectedRoomObjectData (selected object state container)
-
-### 3.6 Completed (Rasterizer + Viz Phase)
-- ✅ Avatar visualization (15 files — AvatarVisualization, AvatarVisualizationData, 11 additions + barrel exports)
-- ✅ Animated / landscape rasterizers (5 files: AnimationItem, PlaneVisualizationAnimationLayer, LandscapePlane, LandscapeRasterizer, WallAdRasterizer)
-- ✅ FurnitureCuboidVisualization + FurniturePlane (2 files)
-- ✅ AnimatedPetVisualization + AnimatedPetVisualizationData (2 stubs for pet rendering)
-- ✅ PlaneVisualization updated with setAnimationLayer() and animated render() support
+1. **Make status updates part of every port batch**: update this file and `docs/MESSAGES_PORT_BACKLOG.md` when files are added, not weeks later.
+2. **Resolve the largest protocol gaps**: `userdefinedroomevents`, `catalog`, `room`, `game`, `users`, and `inventory`.
+3. **Do not label modules complete from file count alone**: mark complete only after AS3 member-level API/lifecycle/dispose parity is checked.
+4. **Continue core/window + habbo/window parity**: this area is active and advanced, but still needs targeted AS3 audits for remaining widgets and edge cases.
+5. **Catalog, sound, game, roomevents, and full `habbo/ui` remain major product gaps**.
 
 ---
 
-## 4. Core Runtime (~69%)
+## Recent Work Recorded
 
-```
-Progress: █████████████░░░░░░░ ~69%
-AS3: 32 files | TS: 22 files
+- ✅ **core/window dropdown compact text follow-up**: `WindowComposite` treats `_DROPLIST_TITLETEXT` and dropdown item `_BTN_TEXT` as compact Flash TextField content, with AS3-style metrics/clipping and baseline offset.
+- ✅ **Navigator dropdown/create-room input follow-up**: top-level navigator tabs select the AS3 matching search index, dropmenu title text uses compact Flash margins, create-room thumbnails use AS3 interpolated image URIs plus tile label colors, and `TextFieldManager` refocuses the browser input after placeholder clearing.
+- ✅ **Navigator create-room/search/dropdown tabs AS3 parity pass**: `RoomCreateViewCtrl` follows WIN63 prepare/refresh/thumbnail/dropdown/create composer flow; navigator tabs avoid converted Flash `y=-1` truncation; search input border clicks focus the text field.
+- ✅ **Navigator room usercount label AS3 follow-up**: `RoomEntryElementFactory.updateCommonEntryElements()` keeps the compact `room_usercount` label on the Flash visual baseline after caption updates.
+- ✅ **core/window TextField vertical AS3 parity fix**: `WindowComposite.compositeText()` applies the Flash `TextField` top gutter so purse currency numbers and other glyphs no longer render too high.
+- ✅ **Window ResourceManager pending asset wake-up**: `registerAssetUrl()` starts lazy loading for receivers that requested a static bitmap before the bundled image URL was registered.
+- ✅ **Configuration/localization/gamedata parity passes**: AS3 `external_texts`, `external_variables`, `furnidata`, `productdata`, avatar figuremap, and room content loading behavior were realigned over recent batches.
+
+---
+
+## Validation
+
+This documentation update is based on read-only filesystem counts. No TypeScript build was run for this docs-only change.
+
+To refresh the snapshot manually:
+
+```powershell
+(Get-ChildItem sources\win63_version -Recurse -Filter *.as -File).Count
+(Get-ChildItem sources\flash_version -Recurse -Filter *.as -File).Count
+(Get-ChildItem packages\helium-engine\src -Recurse -Filter *.ts -File).Count
+(Get-ChildItem packages\helium-client\src -Recurse -Filter *.ts -File).Count
 ```
 
-| Status | Element                                                          |
-|--------|------------------------------------------------------------------|
-| ✅     | Component (complete base class)                                  |
-| ✅     | ComponentContext, ComponentDependency                            |
-| ✅     | IContext, IDisposable, IID                                       |
-| ✅     | ICoreConfiguration                                               |
-| ✅     | CoreComponentContext (3-tier priority update loop)               |
-| ✅     | Core singleton (class_79 equivalent)                             |
-| ✅     | ICore, IIDCore                                                   |
-| ✅     | ICoreErrorReporter, ICoreErrorLogger                             |
-| ✅     | DefaultErrorReporter (class_516 equivalent)                      |
-| ✅     | Exception, InvalidComponentException, ComponentDisposedException |
-| ✅     | WarningEvent, ErrorEvent, LibraryProgressEvent                   |
-| ✅     | HotelViewEvent, ILinkEventTracker                                |
-| ✅     | ErrorReportStorage                                               |
-| ⏭️      | EventDispatcherWrapper (Flash-specific, uses EventEmitter3)      |
-| ⏭️      | InterfaceStruct/InterfaceStructList (simplified in TS with Map)  |
-| ⏭️      | Profiler/IProfiler (use browser DevTools instead)                |
-| ⏭️      | ComponentInterfaceQueue (simplified in ComponentContext)         |
-
----
-
-## 5. Not Started Modules (❌ 0%)
-
-### Tier 1 — Critical for gameplay
-
-| Module      | AS3 Total | Description                                                      | Status                         |
-|-------------|-----------|------------------------------------------------------------------|--------------------------------|
-| **avatar**  | ~120      | Avatar rendering, 3D geometry, animations, cache, figure data    | 🔄 Logic done, display pending |
-| **catalog** | ~105      | Commerce, offers, purchases, marketplace, club (logic + display) | ❌ 0%                          |
-| **sound**   | ~28       | Audio, TRAX sequencer, playlists, jukebox                        | ❌ 0%                          |
-| **ui**      | ~369      | Window system, display components (IWindow, IFrameWindow, etc.)  | ❌ 0%                          |
-
-### Tier 2 — Important features
-
-| Module         | AS3 Total  | Description                                        |
-|----------------|------------|----------------------------------------------------|
-| **friendlist** | ~21        | Friends, requests, relationships                   |
-| **help**       | ~13        | CFH, guide, safety booklet                         |
-| **moderation** | ~36        | Moderation tools, issues                           |
-| **quest**      | ~21        | Achievements, quests                               |
-| **toolbar**    | ~12        | Toolbar, icons                                     |
-
-### Tier 3 — Secondary
-
-| Module            | AS3 Total | Description                                         | Status            |
-|-------------------|-----------|-----------------------------------------------------|-------------------|
-| **tracking**      | 10        | Analytics, latency, FPS, performance                | ✅ 100%           |
-| **groups**        | ~14       | Guilds                                              | 🔄 In progress    |
-| **game**          | ~58       | SnowWar game manager                                | ❌ Not started    |
-| **notifications** | ~6        | Notification popups                                 | ✅ Implemented    |
-| **roomevents**    | 5         | Wired system                                        | ❌ Not started    |
-| **messenger**     | ~5        | Private messages                                    | ✅ Implemented    |
-| **utils**         | ~19       | StringUtil, CommunicationUtils, FigureDataContainer | ✅ Advanced (74%) |
-| **freeflowchat**  | ~3        | Chat bubbles                                        | ✅ Implemented    |
-| **advertisement** | 3         | Ads                                                 | ✅ Implemented    |
-| **campaign**      | 1         | Calendar                                            | ✅ Implemented    |
-| **friendbar**     | 5         | Friend bar                                          | ❌ Not started    |
-| **nux**           | 4         | New user experience                                 | ❌ Not started    |
-| **phonenumber**   | 7         | Phone verification                                  | ❌ Not started    |
-| **window**        | 5         | Window framework                                    | ❌ Not started    |
-
----
-
-## 6. Implementation Recommendations
-
-### Immediate priority
-1. ~~**Finish room events/messages/furniture logic**~~ ✅ Done (Phase 1: +89 files)
-2. ~~**Finish room visualizations**~~ ✅ Done (+65 files, 81% — avatar/pet viz deferred)
-3. ~~**Register the 15 orphan composers**~~ ✅ All already registered
-4. **Resolve ID 1472 conflict** (RoomAdEventTabViewedComposer vs TogglePetRidingPermissionComposer)
-5. **Port the UI window system** (IWindow, IFrameWindow, display components — foundation for all UI)
-
-### High priority (core features)
-6. ~~**avatar**~~ ✅ Logic done (~98 files) — display classes pending
-7. **catalog** — ~105 files (commerce = essential, logic + display)
-8. **sound** — ~28 files (audio/TRAX)
-9. **communication/messages** — Complete room, inventory, avatar categories
-
-### Medium priority (features)
-10. **friendlist + messenger** — Social
-11. **help + moderation** — Admin tools
-12. **quest** — Achievements
-13. **utils** — Shared utilities
-
-### Low priority (polish)
-14. **tracking, groups, game, notifications, roomevents, freeflowchat**
-15. **advertisement, campaign, toolbar, nux, phonenumber**
-
-### Recently completed
-- ✅ **core/window dropdown compact text follow-up**: `WindowComposite` now treats `_DROPLIST_TITLETEXT` and dropdown item `_BTN_TEXT` as compact Flash TextField content, using AS3 `TextSkinRenderer.draw()`-style metrics/clipping plus the Flash TextField inner baseline offset so dropdown labels sit correctly without rendering cut downward.
-- ✅ **Navigator dropdown/create-room input follow-up**: top-level navigator tabs now select the AS3 matching search index, dropmenu title text uses compact Flash margins, create-room thumbnails use AS3 interpolated image URIs plus AS3 tile label colors, and TextFieldManager refocuses the browser input after AS3 placeholder clearing.
-- ✅ **Navigator create-room/search/dropdown tabs AS3 parity pass**: RoomCreateViewCtrl now follows WIN63 prepare, refresh, thumbnail, dropdown, and create composer flow; navigator top tabs avoid the converted Flash y=-1 canvas truncation; search input border clicks focus the text field like AS3; and dropmenu title text no longer receives the generic Flash text-field gutter.
-- ✅ **Navigator room usercount label AS3 follow-up**: `RoomEntryElementFactory.updateCommonEntryElements()` now keeps the compact `room_usercount` label on the Flash visual baseline after caption updates, while preserving the converted XML positions for the border, icon, and item list.
-- ✅ **core/window TextField vertical AS3 parity fix**: `WindowComposite.compositeText()` now applies the Flash `TextField` top gutter when drawing canvas text, matching `TextSkinRenderer.draw()`/`TextController.refreshTextImage()` behavior so purse currency numbers and other text glyphs no longer render too high.
-- ✅ **Navigator collapse + toolbar purse visual AS3 follow-up**: `CategoryElementFactory.getOpenCategoryElement()` keeps the AS3 `category_collapse` control above the title hit region in the Pixi draw order, and `ExtensionView.refreshItemWindow()` now uses AS3 `arrangeListItems()` while clamping the AS3 purse offset at the canvas top edge to avoid visible top clipping.
-- ✅ **Window ResourceManager pending asset wake-up**: `registerAssetUrl()` now starts lazy loading for receivers that requested a static bitmap before the bundled image URL was registered, restoring Flash embedded-asset behavior for navigator category controls such as `category_collapse`.
-- ✅ **Navigator thumbnails layout AS3 parity fix**: `CategoryElementFactory.getOpenCategoryElement()` now uses arranged tile content height to size thumbnail categories/backgrounds, preserving collapse controls, and `RoomEntryElementFactory.updateCommonEntryElements()` re-arranges the AS3 `usercount` itemlist after caption updates so room player counts stay centered.
-- ✅ **core/window ItemList resize-on-update AS3 parity fix**: `ItemListController.updateScrollAreaRegion()` now ensures `resize_on_item_update` resizes the itemlist window itself when children change, preserving AS3 right-anchor behavior for navigator category thumbnail/row controls and other converted Flash itemlists.
-- ✅ **Session furnidata AS3 init parity**: `SessionDataManager.initFurnitureData()` now uses AS3 `furnidata.load.url`, `getFurniData()` returns `null` until floor furnidata exists, `FurnitureDataParser` loads text before parsing XML/lingo/converted JSON, and hash-derived `furnidata.url`/`productdata.url` overrides were removed.
-- ✅ **WIN63 gamedata/config/avatar URL parity pass**: `GameDataResources` now matches AS3 `class_2118` (`external_texts`, `external_variables`, `furnidata`, `productdata` only), `CoreLocalizationManager` loads only `external_texts`, `HabboConfigurationManager` reloads `external_variables` on localization `complete`, `SessionDataManager`/`AvatarRenderManager` listen to configuration `complete` through DI like AS3, `HeliumMain` no longer mutates config from hashes, and avatar figuremap uses `flash.dynamic.avatar.download.configuration` with no `avatar.figuremap.url`/asset-url fallback.
-- ✅ **Configuration bootstrap + room bundle AS3/Nitro parity fix**: `index.html` no longer forces `/gamedata/external_variables/1`, existing `window.HeliumConfig` overrides are preserved, AS3 hashes `external_texts` parsing is restored, missing config interpolation now resolves to empty like AS3, and `RoomEngine` no longer loads room content directly; AS3 `room`/placeholder content resolves only through `RoomContentLoader` using AS3 dynamic download keys, with the required `.swf` to `.nitro` asset-name translation.
-- ✅ **Avatar embedded AS3 XML parity pass**: `AvatarRenderManager` now follows `class_49.as`: `HabboAvatarGeometry`, `HabboAvatarPartSets`, `HabboAvatarAnimation`, `HabboAvatarFigure`, and action offsets load from embedded `AssetLibrary` XML, dynamic actions/effectmap use `flash.dynamic.avatar.download.url`, and `external.figurepartlist.txt` appends XML through `AvatarStructureDownload`; the invented `avatar.partsets.url`/geometry/animation/figuredata fetch paths are removed.
-- ✅ **Local dev Habbo gamedata proxy fix**: `gamedata.hashes.url` and hash-derived Habbo asset URLs now normalize to same-origin dev proxy routes on localhost, while production keeps AS3 absolute URLs; Nitro bundle parsing now rejects HTML responses with an explicit invalid-bundle error instead of `Invalid typed array length`.
-- ✅ **Cursor Nitro AS3 parity pass**: `SelectionArrowLogic` is now ported and wired, `selection_arrow`/`tile_cursor` visualization and logic types are resolved from Nitro content metadata instead of TS cursor fallbacks, `SelectionArrow.nitro` is used when `avatar.widget.enabled=false` like AS3, and Nitro spritesheet frame lookup now uses the bundle `name` as library prefix for assets such as `TileCursor.nitro`.
-- ✅ **Configuration/localization .txt AS3 parity pass**: client `common_configuration`/`localization_configuration` text assets are now parsed before external configuration download, `HabboProperty.EXTERNAL_VARIABLES` is restored to `external.variables.txt`, hash parsing uses the AS3 `external_texts`/`external_variables`/`furnidata`/`productdata` resource set, and localization loads `.txt` `key=value` flash texts through the AS3 parser instead of exposing raw `{key}={value}` content.
-- ✅ **core/window display AS3 parity follow-up**: `BitmapSkinRenderer.draw()` now matches Flash color-transform gating for all non-white colors including black, and `DefaultAttStruct` restores AS3 rect-limit defaults plus `useRectLimits`/`hasRectLimits()` semantics so zero minimum limits are not ignored.
-- ✅ **Toolbar bottom bar room AS3 parity fix**: restored `HabboToolbar.roomUI` dependency, injected `toolbar` into `RoomDesktop`, reintroduced AS3 `RoomUI.triggerbottomBarResize()` with `FriendBarResizeEvent` dispatch to desktops, and restored `BottomBarLeft` parent-resize/collapse resize behavior for room-view bottom bar updates.
-- ✅ **core/window BitmapSkinRenderer center-scale AS3 parity fix**: `BitmapSkinRenderer.draw()` now uses the WIN63 `scaleH == 8` / `scaleV == 8` center formula (`rect.width / 2 - width / 2`, `rect.height / 2 - height / 2`) instead of delta-based centering, matching `sources/win63_version/core/window/graphics/renderer/BitmapSkinRenderer.as` for centered skin entities.
-- ✅ **Authentication gate AS3 parity pass**: `Helium.connect()` now waits for `HABBO_CONNECTION_EVENT_AUTHENTICATED` before the client UI starts; emulator-off, handshake-fail, invalid SSO, missing SSO, disconnect, and auth timeout now reject instead of falling through to friendbar/toolbar/render startup. `AuthenticationOK` now parses `accountId`, `suggestedLoginActions`, `identityId`, and `IncomingMessages.onAuthenticationOK()` restores the AS3 `InfoRetrieve` → `EventLog` → `GetFurnitureAliases` flow.
-- ✅ **RoomContentLoader AS3 parity pass**: restored IRoomContentLoader XML/content APIs, insertObjectContent(), AS3 dynamic download configuration keys, visualization factory asset-collection creation, getPaletteXML(), pet palette/layer extraction, and RoomEngine/RoomManager getVisualizationXML() wiring; removed the TS-only visualization fallback path.
-- ✅ **Window ResourceManager local-dev asset loading fix**: `vortex-assets.local` image URLs now normalize to same-origin paths on localhost, `/c_images` and related asset roots are proxied by Vite, and `StaticBitmapWrapperController` URL assets can load without browser CORS failures.
-- ✅ **core/window frame layout AS3 sizing fix**: `WindowController` now reads internal layout dimensions from the returned `<layout width/height>` like `sources/win63_version/core/window/WindowController.as`, so frame/header layouts such as `habbo_window_layout_frame_3` build at their natural size before resizing and restore navigator close/header control placement.
-- ✅ **core/window parser IIterable AS3 alignment**: `WindowParser` now follows `sources/win63_version/core/window/utils/WindowParser.as` for item-list parents by creating parsed list children without a direct parent and appending them through the list insertion path, while `_INTERNAL` layout children still attach directly so `ScrollableItemListWindow` builds `_ITEMLIST`/`_SCROLLBAR` before navigator templates are inserted.
-- ✅ **Navigator category template AS3 extraction fix**: `NavigatorView.createMainWindow()` now clones the first three `block_results` items in sequence and removes index 0 after each clone, matching `sources/win63_version/habbo/navigator/view/NavigatorView.as` and preventing null templates in `CategoryElementFactory`.
-- ✅ **Navigator visual AS3 parity follow-up**: aligned `NavigatorView` top-tab template/removal and post-result tab selection with AS3, restored `CategoryElementFactory` `arrangeListItems()` calls for category header controls, and fixed the `ExtendedSprite` AS3 alpha-hit build typing (`getPixel32` equivalent path).
-- ✅ **Navigator/window AS3 parity pass**: restored `FrameController.menuButton/menuButtonVisible`, static `resizeToFitContent()` behavior, `ScrollableItemListWindow` scrollbar binding/auto-hide/delegations, `SelectorListController` child-removal refresh, and `NavigatorView.mainWindow`; removed non-AS3 popup/header/toolbar layout helpers.
-- ✅ **core/window IIterable AS3 null-ready parity fix**: `IIterable.iterator()` now allows the AS3 construction-time `null` result, `ScrollableItemListWindow`/`ScrollableItemGridWindow`/`TabContextController` return `null` before their internal AS3 children are ready, and `ScrollableItemGridWindow` uses a stable scrollbar listener reference for proper dispose cleanup.
-- ✅ **core/habbo window divergence audit fixes**: corrected `ThemeManager` clone-specific properties and `inverse_resize_on_item_update` default, restored `WindowController` typed default-property lookup, aligned `ItemListController` theme defaults/hit-test/inverse resize behavior, restored `AvatarImageWidget` renderer readiness/placeholder/greyscale flow, ported `ProgressIndicatorWidget` AS3 item-list refresh plus enums/interface, and fixed `HintManager` active-animation overwrite.
-- ✅ **core/window dropdown + toolbar purse AS3 parity pass**: `WindowController` now honors AS3 null-rectangle natural layout sizing, dynamic drop menu items use natural layout size and `_EXCLUDE` tags, item lists listen to child visibility with stable handlers, and `ExtensionView` restores the AS3 `"purse"` offset branch for `grid_purse`.
-- ✅ **Toolbar purse area (AS3 parity pass)**: `PurseAreaExtension`, `PurseClubArea`, `CurrencyIndicatorBase`, seasonal indicator wiring, credit/activity point protocol events, and inventory `Purse` balances wired to the top-left currency display
-- ✅ **Helium.ts/HeliumMain.ts aligned with HabboAir/HabboAirMain**: progression events (0.0-1.0), login step tracking, crash reporting, heartbeat SPA, unload handling, core component error/reboot events
-- ✅ **Session module fixed**: WhisperComposer, RoomSession (11 fixes), RoomSessionManager (3 fixes), SessionDataManager (4 groups)
-- ✅ **9 new composers**: UseFurniture, NewUserExperienceScriptProceed, RoomNetworkOpenConnection, Game2GameChat, GiveStarGem, CreditVaultStatus, WithdrawCreditVault, IncomeRewardStatus, IncomeRewardClaim
-- ✅ **Room viz complete**: AnimationItem, LandscapePlane, LandscapeRasterizer, WallAdRasterizer, FurniturePlane, FurnitureCuboidVisualization, AnimatedPetVisualization (stub), AnimatedPetVisualizationData (stub)
-- ✅ **Room renderer layer**: 8 files in room/renderer/ (6 interfaces + RoomRenderer + RoomRendererFactory), RoomInstance renderer management, RoomManager content processing pipeline (40ms throttle)
-- ✅ **Perk allowances event wired**: PerkAllowancesMessageEvent/PerkAllowancesMessageEventParser/Data ported, registered in HabboMessages with incoming ID 2000, and PerkManager now emits SessionDataManager PUE_perks_updated
-- ✅ **SSO handshake parity fix**: `HabboCommunicationDemo.sendConnectionParameters()` realigned with AS3 (`VersionCheck(401, flash.client.url, external.variables.txt)` → `UniqueID` → `SSOTicket`), and `SSOTicketMessageComposer` now sends an AS3-like timer value instead of `0`
-- ✅ **Handshake header parity fix**: incoming handshake/session IDs realigned with `class_1881.as` (`InitDiffieHandshake=2334`, `CompleteDiffieHandshake=3034`, `UniqueMachineID=836`, `UserObject=2305`, etc.) and pre-encryption send rules restored in `SocketConnection`
-- ✅ **core/window ItemGrid/TextLink win63 parity pass**: restored `ItemGridController.isScrollHorizontal` for wheel-scroll axis parity and initialized `TextLinkController` tooltip/cursor defaults from `ThemeManager`; win63 intentional `swapGridItems`/tooltip stubs preserved.
-- ✅ **core/window/graphics/WindowRenderer (win63 parity)**: dirty-region queue merge, parent clipping propagation, branch rendering recursion, purge/getDrawBuffer/register/remove behavior realigned with AS3 `sources/win63_version/core/window/graphics/WindowRenderer.as`
-- ✅ **WindowComposite extracted**: web canvas composition + hit-test bridge moved from `WindowRenderer` into `core/window/graphics/WindowComposite.ts` to keep `WindowRenderer` aligned to AS3 responsibilities
-- ✅ **HabboWindowManager AS3 parity pass**: restored AS3-compatible API surface (`buildFromXML/windowToXMLString`, alerts/confirms/simpleAlert, groupWindowsWithTag, input tracking callback), reintroduced Session/Room/Config dependencies and link/element-pointer handler lifecycle wiring in `habbo/window/HabboWindowManager.ts`
-- ✅ **habbo/window full annotation + fix pass (2026-06-30)**: Added `// AS3:` source trace comments to all members across 17 files (enums, HintTarget, Theme, ThemeManager, ResourceManager, ConfirmDialog, HabbletLinkHandler, HintManager, AlertDialog, SimpleAlertDialog, ModalDialog, ElementPointerHandler, AvatarImageWidget, BadgeImageWidget, RunningNumberWidget, HabboWindowManager, IHabboWindowManager). Behavioral fixes: ThemeManager 9× `addString()→addEnumeration()`, HabbletLinkHandler guard `<3→<2`, AlertDialog summary uses `.text` not `.caption`, AlertDialog `getButtonCaption` passes real `toolTipCaption`, ModalDialog constructor 5th param `0→1`, SimpleAlertDialog URL interpolation + link event via `context.createLinkEvent()`, HabboWindowManager `update()` wraps `TRACKING_EVENT_INPUT` in inputEventQueue length guard + calls `flush()` after contexts update.
-- ✅ **core/window/WindowContext + MouseEventProcessor (win63 parity)**: restored queued input processing (`process(state, queue)`), hover/down/click-away state tracking, `WME_UP_OUTSIDE`/cursor resolution flow, localization listener wiring in context, and localization propagation to all contexts from `HabboWindowManager`
-- ✅ **core/window/WindowController (win63 parity)**: restored missing AS3 behaviors for graphic-context lifecycle (`setupGraphicsContext/releaseGraphicsContext`), local/global alpha hit validation (`validate*PointIntersection`), immediate click routing (`immediateClickMode` + handler), child-context reindex/swap synchronization, and desktop mouse position usage
-
----
-
-## 7. Final Statistics
-
-| Metric                     | Value                                                                                                                                         |
-|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| Total AS3 files            | ~2,000+                                                                                                                                       |
-| TS files implemented       | ~710+                                                                                                                                         |
-| Missing files              | ~1,290+                                                                                                                                       |
-| Complete modules (100%)    | Configuration, Localization, Campaign, Advertisement, Notifications, Messenger, FreeFlowChat, Session, Room, core/comm, core/assets, Tracking |
-| Logic-complete modules     | Inventory, Navigator, Avatar, Toolbar (display pending)                                                                                       |
-| Advanced modules (50-90%)  | Groups (57%), Utils (74%)                                                                                                                     |
-| In-progress modules (<50%) | Communication messages (35%)                                                                                                                  |
-| Not started modules        | catalog, sound, help, moderation, quest, game, roomevents, friendbar, friendlist, nux, phonenumber, window, ui (window system)                |
-
----
-
-*Document updated — 2026-06-30 (core/window dropdown compact text follow-up.)*
