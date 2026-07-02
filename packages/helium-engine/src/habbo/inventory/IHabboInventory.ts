@@ -10,6 +10,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {InventoryMainView} from './InventoryMainView';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
 
 /**
  * Inventory categories
@@ -51,6 +52,9 @@ export interface IHabboInventory
 	// Room session state
 	hasRoomSession: boolean;
 
+	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get roomSession()
+	readonly roomSession: IRoomSession | null;
+
 	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::windowManager
 	readonly windowManager: IHabboWindowManager | null;
 
@@ -75,6 +79,9 @@ export interface IHabboInventory
 	// TS-only: exposed so InventoryMainView (a plain class, not a Component) can
 	// read configuration without its own IContext.
 	getBoolean(key: string): boolean;
+
+	// TS-only: same rationale as getBoolean() above.
+	getInteger(key: string, defaultValue: number): number;
 
 	/**
 	 * Initialize all models

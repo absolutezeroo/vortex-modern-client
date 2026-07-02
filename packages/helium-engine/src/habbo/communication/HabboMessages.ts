@@ -361,6 +361,7 @@ import {
 	GetFurnitureAliasesMessageComposer,
 	GetHeightMapMessageComposer,
 	MoveAvatarMessageComposer,
+	PlaceObjectMessageComposer,
 } from './messages/outgoing/room/engine';
 
 // Outgoing Composers - Room Chat
@@ -1058,6 +1059,7 @@ export class HabboMessages implements IMessageConfiguration
 		this._composers.set(205, GetFurnitureAliasesMessageComposer);
 		this._composers.set(1935, GetHeightMapMessageComposer);
 		this._composers.set(144, MoveAvatarMessageComposer);
+		this._composers.set(3258, PlaceObjectMessageComposer);
 
 		// === ROOM CHAT ===
 		this._composers.set(641, ChatMessageComposer);

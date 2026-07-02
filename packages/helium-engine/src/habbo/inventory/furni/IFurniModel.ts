@@ -1,6 +1,7 @@
 import type {GroupItem} from '../items/GroupItem';
 import type {FurnitureItem} from '../items/FurnitureItem';
 import type {FurnitureItemData} from '../items/FurnitureItemData';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 
 /**
  * Interface for FurniModel
@@ -117,4 +118,22 @@ export interface IFurniModel
 	 * Update unseen flags on items based on tracker
 	 */
 	updateUnseenItems(unseenIds: number[]): void;
+
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getWindowContainer()
+	getWindowContainer(): IWindowContainer | null;
+
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestInitialization()
+	requestInitialization(): void;
+
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
+	subCategorySwitch(category: string): void;
+
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::closingInventoryView()
+	closingInventoryView(): void;
+
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateView()
+	updateView(): void;
+
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::selectItemById()
+	selectItemById(itemId: string): void;
 }

@@ -95,9 +95,8 @@ export class AssetAliasCollection
 			const collection = new GraphicAssetCollection();
 
 			collection.defineFromSpritesheet(textures, jsonData.assets as Record<string, Record<string, unknown>>, libraryName);
-			this._collections.set(libraryName, collection);
 
-			log.debug(`Registered avatar library: ${libraryName} (${textures.size} textures)`);
+			this._collections.set(libraryName, collection);
 		}
 	}
 

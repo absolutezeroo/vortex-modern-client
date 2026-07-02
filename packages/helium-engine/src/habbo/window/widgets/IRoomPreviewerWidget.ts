@@ -1,4 +1,5 @@
 import type {IWidget} from './IWidget';
+import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 
 /**
  * Interface for the room previewer widget.
@@ -18,7 +19,7 @@ export interface IRoomPreviewerWidget extends IWidget
 	/**
 	 * The room previewer instance.
 	 */
-	readonly roomPreviewer: unknown;
+	readonly roomPreviewer: RoomPreviewer | null;
 	/**
 	 * The horizontal offset of the preview camera.
 	 */

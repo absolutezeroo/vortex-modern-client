@@ -211,6 +211,19 @@ export class WindowComposite
 			ctx.clip();
 		}
 
+		// display_object_wrapper windows (DisplayObjectWrapperController) hold no
+		// bitmap content of their own — they exist to let an externally-rendered
+		// PixiJS DisplayObject (e.g. a room preview canvas; see RoomPreviewerWidget)
+		// show through at this exact screen position. A transparent *background*
+		// fill isn't enough for that: fillRect with alpha 0 is a no-op blend, it
+		// doesn't erase whatever an ancestor window already painted at these same
+		// pixels. clearRect actually punches the hole through the composited
+		// buffer so the separately-rendered PixiJS layer underneath is visible.
+		if (window.type === WindowType.DISPLAY_OBJECT_WRAPPER)
+		{
+			ctx.clearRect(absX, absY, w, h);
+		}
+
 		// Apply blend (opacity)
 		const blend = window.blend;
 

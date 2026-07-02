@@ -9,8 +9,8 @@
  * IMPORTANT: RoomEngine depends on IRoomManager for room instance management.
  * It does NOT manage rooms directly - that's RoomManager's responsibility.
  */
-import type {Container} from 'pixi.js';
-import {Texture} from 'pixi.js';
+import type {Container, Ticker} from 'pixi.js';
+import {Sprite, Texture} from 'pixi.js';
 import {Component, ComponentDependency, type IContext, type IUpdateReceiver} from '@core/runtime';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IConnection} from '@core/communication/connection/IConnection';
@@ -44,6 +44,8 @@ import {RoomObjectVisualizationFactory} from './object/RoomObjectVisualizationFa
 import type {IRoomObjectVisualizationFactory} from '@room/object/IRoomObjectVisualizationFactory';
 import {RoomRenderingCanvas} from './renderer/RoomRenderingCanvas';
 import type {IStuffData} from './object/data/IStuffData';
+import type {IGetImageListener} from './IGetImageListener';
+import {ImageResult} from './ImageResult';
 
 // Messages
 import {RoomObjectMoveUpdateMessage} from './messages/RoomObjectMoveUpdateMessage';
@@ -78,6 +80,8 @@ import {RoomContentLoader} from './RoomContentLoader';
 import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
+import {PlaceObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
+import {RoomEngineObjectPlacedEvent} from './events/RoomEngineObjectPlacedEvent';
 import {RoomObjectRoomMaskUpdateMessage} from './messages/RoomObjectRoomMaskUpdateMessage';
 import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
@@ -100,7 +104,7 @@ interface RoomEngineRoomInstanceData
 	roomCamera: RoomCamera;
 }
 
-interface RoomEngineRectangle
+export interface RoomEngineRectangle
 {
 	left: number;
 	top: number;
@@ -400,9 +404,254 @@ export class RoomEngine extends Component implements IRoomEngine,
 		this.events.emit('objectsInitialized', type);
 	}
 
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::iconLoaded()
 	iconLoaded(typeId: number, type: string, success: boolean): void
 	{
 		this.events.emit('iconLoaded', typeId, type, success);
+
+		const listeners = this._pendingThumbnailListeners.get(type);
+
+		if(!listeners) return;
+
+		this._pendingThumbnailListeners.delete(type);
+
+		const asset = success ? this.assets?.getAssetByName(type) ?? null : null;
+		const texture = (asset?.content as Texture | undefined) ?? null;
+
+		this.deliverIconTexture(typeId, texture, listeners);
+	}
+
+	// TS-only: converts a loaded PixiJS Texture to an ImageBitmap (matching
+	// IBitmapWrapperWindow.bitmap) and delivers it to each waiting listener.
+	// See ImageResult.ts for why this is always asynchronous, unlike AS3.
+	private deliverIconTexture(id: number, texture: Texture | null, listeners: IGetImageListener[]): void
+	{
+		if(texture === null)
+		{
+			for(const listener of listeners) listener.imageFailed(id);
+
+			return;
+		}
+
+		const canvas = this.pixiTextureToCanvas(texture);
+
+		if(canvas === null)
+		{
+			for(const listener of listeners) listener.imageFailed(id);
+
+			return;
+		}
+
+		createImageBitmap(canvas)
+			.then((bitmap) =>
+			{
+				// Each listener gets its own ImageBitmap instance (matching AS3's
+				// BitmapData.clone() per-listener) so one owner closing its bitmap
+				// doesn't invalidate another listener's copy.
+				for(let i = 0; i < listeners.length; i++)
+				{
+					const copy = i === listeners.length - 1 ? bitmap : this.cloneImageBitmap(bitmap);
+
+					if(copy !== null) listeners[i].imageReady(id, copy);
+					else listeners[i].imageFailed(id);
+				}
+			})
+			.catch(() =>
+			{
+				for(const listener of listeners) listener.imageFailed(id);
+			});
+	}
+
+	private cloneImageBitmap(bitmap: ImageBitmap): ImageBitmap | null
+	{
+		try
+		{
+			const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+			const ctx = canvas.getContext('2d')!;
+
+			ctx.drawImage(bitmap, 0, 0);
+
+			return canvas.transferToImageBitmap();
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
+	getFurnitureType(type: number): string | null
+	{
+		return this._contentLoader?.getActiveObjectType(type) ?? null;
+	}
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
+	getWallItemType(type: number, param: string | null = null): string | null
+	{
+		return this._contentLoader?.getWallItemType(type, param) ?? null;
+	}
+
+	private _pendingPlacement: {itemId: number; category: number} | null = null;
+	private _moverIconSprite: Sprite | null = null;
+	private _moverIconCanvas: RoomRenderingCanvas | null = null;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
+	// TODO(AS3): only floor-item placement (category 10) is implemented; wall
+	// items (category 20) need the wallLocation string format (see
+	// PlaceObjectMessageComposer's TODO) and are not supported yet.
+	initializeRoomObjectInsert(
+		_source: string,
+		itemId: number,
+		category: number,
+		type: number,
+		extra: string,
+		stuffData: unknown = null
+	): boolean
+	{
+		if (category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+		{
+			log.warn('[RoomEngine] Wall item placement is not implemented yet');
+
+			return false;
+		}
+
+		this._pendingPlacement = {itemId, category};
+		this.setObjectMoverIconSprite(type, extra, stuffData);
+
+		return true;
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
+	cancelRoomObjectInsert(): void
+	{
+		this._pendingPlacement = null;
+		this.removeObjectMoverIconSprite();
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::setObjectMoverIconSprite()
+	// TS simplification: reuses the same cached furniture-icon lookup as the
+	// inventory grid thumbnails (getFurnitureIcon), instead of AS3's full
+	// temporary-room-object render (getGenericRoomObjectImage) — same visual
+	// result (the item's icon) without spinning up a real room object.
+	private setObjectMoverIconSprite(type: number, extra: string, stuffData: unknown): void
+	{
+		this.removeObjectMoverIconSprite();
+
+		// getFurnitureIcon() always resolves asynchronously via imageReady()
+		// (see ImageResult.ts) — result.data is never populated synchronously.
+		this.getFurnitureIcon(type, {
+			imageReady: (_id: number, data: ImageBitmap | null) =>
+			{
+				if (data === null || this._pendingPlacement === null) return;
+
+				this._moverIconSprite = new Sprite(Texture.from(data));
+				this._moverIconSprite.anchor.set(0.5);
+				this._moverIconSprite.eventMode = 'none';
+
+				if (this._moverIconCanvas)
+				{
+					this._moverIconCanvas.container.addChild(this._moverIconSprite);
+				}
+			},
+			imageFailed: () => {},
+		}, extra, stuffData);
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::removeObjectMoverIconSprite()
+	private removeObjectMoverIconSprite(): void
+	{
+		if (this._moverIconSprite)
+		{
+			this._moverIconSprite.removeFromParent();
+			this._moverIconSprite.destroy();
+			this._moverIconSprite = null;
+		}
+
+		this._moverIconCanvas = null;
+	}
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
+	// `stuffData` typed `unknown` because it's currently unused by
+	// getGenericRoomObjectThumbnail() (Phase 1), and callers may hold either
+	// of this codebase's two separate IStuffData interfaces (inventory vs room).
+	getFurnitureIcon(type: number, listener: IGetImageListener, param: string | null = null, stuffData: unknown = null): ImageResult
+	{
+		const activeType = this._contentLoader?.getActiveObjectType(type) ?? null;
+		const colorIndex = this._contentLoader ? String(this._contentLoader.getActiveObjectColorIndex(type)) : '';
+
+		return this.getGenericRoomObjectThumbnail(activeType, colorIndex, listener, param, stuffData);
+	}
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
+	getWallItemIcon(type: number, listener: IGetImageListener, param: string | null = null): ImageResult
+	{
+		const wallType = this._contentLoader?.getWallItemType(type, param) ?? null;
+		const colorIndex = this._contentLoader ? String(this._contentLoader.getWallItemColorIndex(type)) : '';
+
+		return this.getGenericRoomObjectThumbnail(wallType, colorIndex, listener, param, null);
+	}
+
+	private _pendingThumbnailListeners: Map<string, IGetImageListener[]> = new Map();
+	private _thumbnailIdCounter: number = 0;
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::_Str_22095() (getGenericRoomObjectThumbnail)
+	// TS simplification: uses a simple incrementing id counter instead of AS3's
+	// reserve/free NumberIdGenerator pool (no functional difference for callers,
+	// which only compare the returned id against 0/-1 or match it in imageReady()).
+	private getGenericRoomObjectThumbnail(
+		type: string | null,
+		param: string,
+		listener: IGetImageListener,
+		_extraData: string | null = null,
+		_stuffData: unknown = null
+	): ImageResult
+	{
+		const result = new ImageResult();
+		result.id = -1;
+
+		if(!this.assets || type === null) return result;
+
+		const assetName = [type, param].join('_');
+
+		if(!this.assets.hasAsset(assetName))
+		{
+			this._thumbnailIdCounter++;
+
+			const id = this._thumbnailIdCounter;
+
+			result.id = id;
+			result.data = null;
+
+			let pending = this._pendingThumbnailListeners.get(assetName);
+
+			if(!pending)
+			{
+				pending = [];
+				this._pendingThumbnailListeners.set(assetName, pending);
+				this._contentLoader?.loadThumbnailContent(id, type, param, this.events);
+			}
+
+			pending.push(listener);
+		}
+		else
+		{
+			// TS deviation: AS3 returns the bitmap synchronously here (id=0).
+			// Texture->ImageBitmap conversion is async in the browser, so this
+			// path also resolves via the id>0 pending callback (see ImageResult.ts).
+			this._thumbnailIdCounter++;
+
+			const id = this._thumbnailIdCounter;
+
+			result.id = id;
+			result.data = null;
+
+			const asset = this.assets.getAssetByName(assetName);
+			const texture = (asset?.content as Texture | undefined) ?? null;
+
+			this.deliverIconTexture(id, texture, [listener]);
+		}
+
+		return result;
 	}
 
 	createRoomInstance(roomId: number): IRoomInstance | null
@@ -1085,6 +1334,43 @@ export class RoomEngine extends Component implements IRoomEngine,
 		{
 			this.updateRoomVisualizations(this._activeRoomId, time);
 		}
+	}
+
+	private _ticker: Ticker | null = null;
+	private _canvasSyncCallbacks: Set<() => void> = new Set();
+
+	// TS-only: RoomEngine.update(time) is not actually driven by a running
+	// loop in this port (nothing calls it from helium-client) — the visible
+	// room rendering instead rides the shared PixiJS Application ticker set
+	// here, which does run continuously. Used to keep window-hosted room
+	// canvases (e.g. RoomPreviewerWidget) that createRoomCanvas() parents onto
+	// the root stage — not the window tree — synced to their host window's
+	// screen position/visibility every frame, matching how AS3's RoomPreviewer
+	// relies on a continuous per-frame tick (registerUpdateReceiver) rather
+	// than reacting to specific window events.
+	setTicker(ticker: Ticker): void
+	{
+		this._ticker?.remove(this.onTickerUpdate);
+		this._ticker = ticker;
+		this._ticker.add(this.onTickerUpdate);
+	}
+
+	private onTickerUpdate = (): void =>
+	{
+		for (const callback of this._canvasSyncCallbacks)
+		{
+			callback();
+		}
+	};
+
+	registerCanvasSyncCallback(callback: () => void): void
+	{
+		this._canvasSyncCallbacks.add(callback);
+	}
+
+	unregisterCanvasSyncCallback(callback: () => void): void
+	{
+		this._canvasSyncCallbacks.delete(callback);
 	}
 
 	initializeRoomVisuals(
@@ -2007,6 +2293,27 @@ export class RoomEngine extends Component implements IRoomEngine,
 
 		if(canvas)
 		{
+			// Positioned/hidden here, BEFORE dispatching the event below —
+			// handleMouseEvent() synchronously triggers handleTileMouseEvent()'s
+			// ROE_MOUSE_MOVE when a floor tile is hit, which sets visible=true;
+			// doing this after handleMouseEvent() would stomp that back to false.
+			if(this._pendingPlacement && (type === 'mouseMove' || type === 'rollOver'))
+			{
+				this._moverIconCanvas = canvas;
+
+				if(this._moverIconSprite)
+				{
+					this._moverIconSprite.x = x;
+					this._moverIconSprite.y = y;
+					this._moverIconSprite.visible = false;
+
+					if(this._moverIconSprite.parent !== canvas.container)
+					{
+						canvas.container.addChild(this._moverIconSprite);
+					}
+				}
+			}
+
 			if(!this.handleRoomDragging(canvas, x, y, type, altKey, ctrlKey, shiftKey))
 			{
 				canvas.handleMouseEvent(x, y, type, altKey, ctrlKey, shiftKey, buttonDown);
@@ -2452,10 +2759,37 @@ export class RoomEngine extends Component implements IRoomEngine,
 
 				tileCursor.getEventHandler()!.processUpdateMessage(cursorUpdate);
 			}
+
+			if (this._pendingPlacement && this._moverIconSprite)
+			{
+				this._moverIconSprite.visible = true;
+			}
 		}
 		else if (event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)
 		{
-			if (this._connection)
+			if (this._pendingPlacement && this._connection)
+			{
+				const {itemId} = this._pendingPlacement;
+
+				this._connection.send(new PlaceObjectMessageComposer(itemId, tileX, tileY, 0));
+				this._pendingPlacement = null;
+				this.removeObjectMoverIconSprite();
+
+				// TS deviation: dispatched optimistically on click rather than
+				// waiting for the server's room-object-added confirmation (AS3
+				// fires this from the incoming message handler instead) — the
+				// actual furniture only appears once the normal incoming message
+				// flow adds it to the room; this only drives FurniModel's
+				// "place next item from stack" follow-up UX.
+				this.events.emit(
+					'REOE_PLACED',
+					new RoomEngineObjectPlacedEvent(
+						'REOE_PLACED', this._activeRoomId, -itemId, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE,
+						'', tileX, tileY, tileZ, 0, true, true, false, null
+					)
+				);
+			}
+			else if (this._connection)
 			{
 				this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
 			}
@@ -2875,7 +3209,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 	}
 
 	// AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
-	private getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null
+	getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null
 	{
 		const canvas = this._renderingCanvases.get(roomId * 1000 + canvasId);
 		const geometry = canvas?.geometry ?? null;

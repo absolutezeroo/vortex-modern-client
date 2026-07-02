@@ -1,11 +1,15 @@
+import type {Container} from 'pixi.js';
 import type {IRoomPreviewerWidget} from './IRoomPreviewerWidget';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IDisplayObjectWrapper} from '@core/window/components/IDisplayObjectWrapper';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 
 /**
  * Room previewer widget.
@@ -34,9 +38,13 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 	private _windowManager: IHabboWindowManager | null = null;
 
 	private _root: IWindowContainer | null = null;
+	private _roomPreviewer: RoomPreviewer | null = null;
+	private _canvasWrapper: IWindow | null = null;
+	private _canvasDisplayObject: Container | null = null;
 
 	private _onClickRoomViewBound: Function;
 	private _onResizeCanvasBound: Function;
+	private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
 
 	constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
 	{
@@ -52,17 +60,69 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 		{
 			this._root = root;
 
-			// RoomPreviewer integration is complex - stub for now
-			// In AS3: creates RoomPreviewer with unique ROOM_ID_COUNTER
-			RoomPreviewerWidget._roomIdCounter++;
-
 			root.addEventListener(WindowMouseEvent.CLICK, this._onClickRoomViewBound);
 			root.addEventListener(WindowEvent.WE_RESIZE, this._onResizeCanvasBound);
 
 			this._widgetWindow.rootWindow = root as unknown as IWindow;
 			root.width = this._widgetWindow.width;
 			root.height = this._widgetWindow.height;
+
+			this.createRoomPreviewer(root);
 		}
+	}
+
+	private _roomEngine: IRoomEngine | null = null;
+
+	// AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as constructor
+	private createRoomPreviewer(root: IWindowContainer): void
+	{
+		const roomEngine = this._windowManager?.roomEngine;
+
+		if (!roomEngine) return;
+
+		RoomPreviewerWidget._roomIdCounter++;
+
+		const previewRoomId = RoomPreviewerWidget._roomIdCounter;
+
+		this._roomPreviewer = new RoomPreviewer(roomEngine, previewRoomId);
+		this._roomPreviewer.createRoomForPreviews();
+
+		const canvasWrapper = root.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
+
+		if (!canvasWrapper) return;
+
+		const canvas = this._roomPreviewer.getRoomCanvas(root.width, root.height);
+
+		if (canvas)
+		{
+			canvasWrapper.setDisplayObject(canvas);
+			this._canvasDisplayObject = canvas;
+			this._canvasWrapper = canvasWrapper as unknown as IWindow;
+			this._roomEngine = roomEngine;
+
+			// TS deviation: RoomEngine.createRoomCanvas() parents the canvas
+			// directly onto the root PixiJS stage (see RoomEngine.ts), not into
+			// this widget's own window tree — so its screen position/visibility
+			// has to be synced continuously to the wrapper window's global state
+			// (window events alone can't catch every case, e.g. an ancestor
+			// window being hidden), exactly like RoomDesktop does for the main
+			// room view via a per-frame position sync.
+			roomEngine.registerCanvasSyncCallback(this._syncCanvasPositionBound);
+			this.syncCanvasPosition();
+		}
+	}
+
+	private syncCanvasPosition(): void
+	{
+		if (!this._canvasDisplayObject || !this._canvasWrapper) return;
+
+		const globalPosition = {x: 0, y: 0};
+
+		this._canvasWrapper.getGlobalPosition(globalPosition);
+
+		this._canvasDisplayObject.x = globalPosition.x;
+		this._canvasDisplayObject.y = globalPosition.y;
+		this._canvasDisplayObject.visible = this._canvasWrapper.visible;
 	}
 
 	private _disposed: boolean = false;
@@ -120,9 +180,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 		this._zoom = value;
 	}
 
-	private _roomPreviewer: unknown = null;
-
-	public get roomPreviewer(): unknown
+	public get roomPreviewer(): RoomPreviewer | null
 	{
 		return this._roomPreviewer;
 	}
@@ -182,6 +240,11 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
 		this._disposed = true;
 
+		this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+		this._roomEngine = null;
+		this._canvasWrapper = null;
+		this._canvasDisplayObject = null;
+
 		if (this._root)
 		{
 			this._root.removeEventListener(WindowMouseEvent.CLICK, this._onClickRoomViewBound);
@@ -197,6 +260,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
 		this._widgetWindow = null;
 		this._windowManager = null;
+		this._roomPreviewer?.dispose();
 		this._roomPreviewer = null;
 	}
 
@@ -217,6 +281,10 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 	 */
 	private onResizeCanvas(): void
 	{
-		// TODO: Update RoomPreviewer dimensions when integrated
+		if (this._root && this._roomPreviewer)
+		{
+			this._roomPreviewer.modifyRoomCanvas(this._root.width, this._root.height);
+			this.syncCanvasPosition();
+		}
 	}
 }

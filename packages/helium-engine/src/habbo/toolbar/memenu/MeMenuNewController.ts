@@ -45,8 +45,6 @@ export class MeMenuNewController
 		{
 			// Collectibles hidden
 		}
-
-		log.debug('MeMenuNewController constructed');
 	}
 
 	private _toolbar: HabboToolbar | null;

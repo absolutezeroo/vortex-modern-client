@@ -5,16 +5,73 @@
  *
  * Main interface for the Habbo room engine.
  */
-import type {Container} from 'pixi.js';
+import type {Container, Ticker} from 'pixi.js';
 import type {EventEmitter} from 'eventemitter3';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IRoomInstance} from '@room/IRoomInstance';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IVector3d} from '@room/utils/IVector3d';
+import type {IGetImageListener} from './IGetImageListener';
+import type {ImageResult} from './ImageResult';
+import type {RoomPlaneParser} from './object/RoomPlaneParser';
+import type {RoomEngineRectangle} from './RoomEngine';
 
 export interface IRoomEngine extends IDisposable
 {
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
+	getFurnitureType(type: number): string | null;
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
+	getWallItemType(type: number, param?: string | null): string | null;
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
+	getFurnitureIcon(type: number, listener: IGetImageListener, param?: string | null, stuffData?: unknown): ImageResult;
+
+	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
+	getWallItemIcon(type: number, listener: IGetImageListener, param?: string | null): ImageResult;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
+	initializeRoomObjectInsert(
+		source: string,
+		itemId: number,
+		category: number,
+		type: number,
+		extra: string,
+		stuffData?: unknown
+	): boolean;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
+	cancelRoomObjectInsert(): void;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::initializeRoom()
+	initializeRoom(
+		roomId: number,
+		planeParser: RoomPlaneParser | null,
+		doorX?: number,
+		doorY?: number,
+		doorZ?: number,
+		doorDir?: number
+	): void;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectFurniture()
+	disposeObjectFurniture(roomId: number, id: number, pickerId?: number, refresh?: boolean): boolean;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectWallItem()
+	disposeObjectWallItem(roomId: number, id: number, pickerId?: number): boolean;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectUser()
+	disposeObjectUser(roomId: number, roomIndex: number): boolean;
+
+	// TS-only: see RoomEngine.ts for why this exists.
+	setTicker(ticker: Ticker): void;
+
+	// TS-only: see RoomEngine.ts for why this exists.
+	registerCanvasSyncCallback(callback: () => void): void;
+
+	// TS-only: see RoomEngine.ts for why this exists.
+	unregisterCanvasSyncCallback(callback: () => void): void;
+
 	// Event emitter
 	readonly events: EventEmitter;
 
@@ -163,6 +220,9 @@ export interface IRoomEngine extends IDisposable
 	 * Sets the screen offset of a room canvas.
 	 */
 	setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
+	getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null;
 
 	/**
 	 * Sets the scale of a room canvas, optionally centering on a point.

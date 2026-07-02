@@ -12,6 +12,10 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
+import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {FurniModel} from './furni/FurniModel';
 import {BadgesModel} from './badges/BadgesModel';
 import {EffectsModel} from './effects/EffectsModel';
@@ -26,6 +30,9 @@ import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
+import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
+import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {
 	GetBadgesComposer,
@@ -33,6 +40,17 @@ import {
 	GetPetInventoryComposer,
 	RequestFurniInventoryComposer,
 } from '../communication/messages/outgoing/inventory';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {FurniListMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListMessageEvent';
+import {FurniListAddOrUpdateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListAddOrUpdateMessageEvent';
+import {FurniListRemoveMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMessageEvent';
+import {FurniListInvalidateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListInvalidateMessageEvent';
+import {FurniListMessageParser} from '../communication/messages/parser/inventory/furni/FurniListMessageParser';
+import {FurniListAddOrUpdateMessageParser} from '../communication/messages/parser/inventory/furni/FurniListAddOrUpdateMessageParser';
+import {FurniListRemoveMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMessageParser';
+import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
+import type {FurnitureItemData} from './items/FurnitureItemData';
+import {FurnitureItem} from './items/FurnitureItem';
 
 const log = Logger.getLogger('Inventory');
 
@@ -49,6 +67,11 @@ export class HabboInventory extends Component implements IHabboInventory
 	private _windowManager: IHabboWindowManager | null = null;
 	private _catalog: IHabboCatalog | null = null;
 	private _toolbar: IHabboToolbar | null = null;
+	private _roomEngine: IRoomEngine | null = null;
+	private _roomSessionManager: IRoomSessionManager | null = null;
+	private _localization: IHabboLocalizationManager | null = null;
+	private _furniMessageEvents: IMessageEvent[] = [];
+	private _furniListFragments: Map<number, FurniListItemParser> = new Map();
 	private _initializedCategories: Set<string> = new Set();
 	private _view!: InventoryMainView;
 
@@ -60,6 +83,14 @@ export class HabboInventory extends Component implements IHabboInventory
 	get windowManager(): IHabboWindowManager | null
 	{
 		return this._windowManager;
+	}
+
+	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get roomSession()
+	get roomSession(): IRoomSession | null
+	{
+		if (!this._roomSessionManager || !this._roomEngine) return null;
+
+		return this._roomSessionManager.getSession(this._roomEngine.activeRoomId);
 	}
 
 	get catalog(): IHabboCatalog | null
@@ -207,6 +238,30 @@ export class HabboInventory extends Component implements IHabboInventory
 				false
 			),
 			new ComponentDependency(
+				IID_RoomEngine,
+				(roomEngine: IRoomEngine | null) =>
+				{
+					this._roomEngine = roomEngine;
+				},
+				true
+			),
+			new ComponentDependency(
+				IID_RoomSessionManager,
+				(manager: IRoomSessionManager | null) =>
+				{
+					this._roomSessionManager = manager;
+				},
+				false
+			),
+			new ComponentDependency(
+				IID_HabboLocalizationManager,
+				(localization: IHabboLocalizationManager | null) =>
+				{
+					this._localization = localization;
+				},
+				false
+			),
+			new ComponentDependency(
 				IID_HabboToolbar,
 				(toolbar: IHabboToolbar | null) =>
 				{
@@ -242,6 +297,13 @@ export class HabboInventory extends Component implements IHabboInventory
 		if (this.disposed) return;
 
 		this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
+
+		for (const event of this._furniMessageEvents)
+		{
+			this._communication?.removeMessageEvent(event);
+		}
+
+		this._furniMessageEvents = [];
 		this._furniModel?.dispose();
 		this._badgesModel?.dispose();
 		this._effectsModel?.dispose();
@@ -261,7 +323,14 @@ export class HabboInventory extends Component implements IHabboInventory
 	{
 		if (this._isInitialized) return;
 
-		this._furniModel = new FurniModel();
+		this._furniModel = new FurniModel(
+			this,
+			this._windowManager!,
+			this._roomEngine!,
+			this._communication!,
+			this._catalog!,
+			this._localization!
+		);
 		this._badgesModel = new BadgesModel();
 		this._effectsModel = new EffectsModel();
 		this._petsModel = new PetsModel();
@@ -330,11 +399,10 @@ export class HabboInventory extends Component implements IHabboInventory
 
 	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::closingInventoryView()
 	// TODO(AS3): AS3 calls closingInventoryView() on every registered IInventoryModel;
-	// only furni's equivalent effect (resetUnseenItems) is wired until the other
-	// categories implement the shared contract.
+	// only furni implements the shared contract until the other categories do.
 	closingInventoryView(): void
 	{
-		this._furniModel?.resetUnseenItems();
+		this._furniModel?.closingInventoryView();
 		this.events.emit('HABBO_INVENTORY_TRACKING_EVENT_CLOSED');
 	}
 
@@ -349,13 +417,7 @@ export class HabboInventory extends Component implements IHabboInventory
 
 			if (itemId !== null && category === 'furni')
 			{
-				// AS3: FurniModel.selectItemById() -> getItemById(-int(param1))
-				const groupItem = this._furniModel.getItemById(-parseInt(itemId, 10));
-
-				if (groupItem !== null)
-				{
-					this._furniModel.selectItem(groupItem);
-				}
+				this._furniModel.selectItemById(itemId);
 			}
 		}
 		else
@@ -394,13 +456,17 @@ export class HabboInventory extends Component implements IHabboInventory
 	}
 
 	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getCategoryWindowContainer()
-	// TODO(AS3): only per-category View classes can return a real container.
-	// FurniView/PetsView/BadgesView/BotsView/EffectsView/TradingView/CollectiblesView/
-	// MarketplaceView are not ported yet (see FurniView port task) — every category
-	// resolves to "no content" until its View lands, matching InventoryMainView's
-	// existing null-guard (setViewToCategory returns early when this is null).
-	getCategoryWindowContainer(_category: string): IWindowContainer | null
+	// TODO(AS3): only furni/rentables have a ported View so far. PetsView/
+	// BadgesView/BotsView/EffectsView/TradingView/CollectiblesView/MarketplaceView
+	// resolve to "no content" until ported, matching InventoryMainView's existing
+	// null-guard (setViewToCategory returns early when this is null).
+	getCategoryWindowContainer(category: string): IWindowContainer | null
 	{
+		if (category === 'furni' || category === 'rentables')
+		{
+			return this._furniModel.getWindowContainer();
+		}
+
 		return null;
 	}
 
@@ -411,10 +477,12 @@ export class HabboInventory extends Component implements IHabboInventory
 	}
 
 	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateView()
-	// TODO(AS3): FurniModel.updateView() forwards to FurniView (not ported yet).
-	updateView(_category: string): void
+	updateView(category: string): void
 	{
-		// Intentional no-op until per-category Views exist.
+		if (category === 'furni' || category === 'rentables')
+		{
+			this._furniModel.updateView();
+		}
 	}
 
 	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::isInventoryCategoryInit()
@@ -531,6 +599,72 @@ export class HabboInventory extends Component implements IHabboInventory
 	{
 		this._unseenItemTracker = new UnseenItemTracker(this._communication!);
 		this._view = new InventoryMainView(this);
+		this.registerFurniMessageEvents();
 		log.info('Inventory initialized');
 	}
+
+	// TS-only: AS3's message routing happens elsewhere in the engine and simply
+	// calls FurniModel.insertFurniture()/etc directly; this port wires the
+	// incoming messages here since HabboInventory owns the FurniModel lifecycle.
+	private registerFurniMessageEvents(): void
+	{
+		if (!this._communication) return;
+
+		this._furniMessageEvents.push(
+			this._communication.addMessageEvent(new FurniListMessageEvent(this.onFurniList)),
+			this._communication.addMessageEvent(new FurniListAddOrUpdateMessageEvent(this.onFurniListAddOrUpdate)),
+			this._communication.addMessageEvent(new FurniListRemoveMessageEvent(this.onFurniListRemove)),
+			this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate))
+		);
+	}
+
+	private onFurniList = (event: IMessageEvent): void =>
+	{
+		const parser = event.parser as FurniListMessageParser | null;
+
+		if (!parser) return;
+
+		for (const [itemId, item] of parser.items)
+		{
+			this._furniListFragments.set(itemId, item);
+		}
+
+		if (parser.fragmentNo < parser.totalFragments - 1) return;
+
+		const items = new Map<number, FurnitureItemData>();
+
+		for (const [itemId, item] of this._furniListFragments)
+		{
+			items.set(itemId, item.toFurnitureItemData());
+		}
+
+		this._furniListFragments.clear();
+		this._furniModel?.insertFurniture(items);
+	};
+
+	private onFurniListAddOrUpdate = (event: IMessageEvent): void =>
+	{
+		const parser = event.parser as FurniListAddOrUpdateMessageParser | null;
+
+		if (!parser || !this._furniModel) return;
+
+		for (const item of parser.items)
+		{
+			this._furniModel.addOrUpdateItem(new FurnitureItem(item.toFurnitureItemData()), false);
+		}
+	};
+
+	private onFurniListRemove = (event: IMessageEvent): void =>
+	{
+		const parser = event.parser as FurniListRemoveMessageParser | null;
+
+		if (!parser || !this._furniModel) return;
+
+		this._furniModel.removeFurni(parser.itemId);
+	};
+
+	private onFurniListInvalidate = (_event: IMessageEvent): void =>
+	{
+		this.requestFurni();
+	};
 }

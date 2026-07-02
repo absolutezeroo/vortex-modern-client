@@ -582,7 +582,14 @@ export class InventoryMainView
 		if (this._currentCategoryContainer)
 		{
 			mainContainer.removeChild(this._currentCategoryContainer);
+			this._currentCategoryContainer = null;
 		}
+
+		// Track the attempted category regardless of whether it has content yet
+		// (some categories don't have a ported View — see getCategoryWindowContainer).
+		// Otherwise switching away and back would think we're "already there" and
+		// never re-add the container.
+		this._currentCategory = category;
 
 		const categoryContainer = this._habboInventory.getCategoryWindowContainer(category);
 
@@ -593,7 +600,6 @@ export class InventoryMainView
 		categoryContainer.height = mainContainer.height;
 		this._habboInventory.updateView(category);
 		this._currentCategoryContainer = categoryContainer;
-		this._currentCategory = category;
 
 		const tabs = this._window?.findChildByName('tabs') as ITabContextWindow | null;
 
