@@ -1,90 +1,143 @@
+import {Rectangle} from 'pixi.js';
 import type {Container} from 'pixi.js';
 import type {IVector3d} from '@room/utils/IVector3d';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {RoomPlaneParser} from '@habbo/room/object/RoomPlaneParser';
-import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomId} from '@room/utils/RoomId';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import type {ImageResult} from '@habbo/room/ImageResult';
+import type {IStuffData} from '@habbo/inventory/items/IStuffData';
+import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
+import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
+
+interface IPoint
+{
+	x: number;
+	y: number;
+}
 
 /**
- * Renders a small, isolated room used to preview a single furniture item
- * (or, in AS3, an avatar/pet) outside of any real room the user is in.
+ * Renders a small, isolated room used to preview a single furniture item,
+ * wall item, pet or avatar outside of any real room the user is in.
  *
- * Based on AS3 com.sulake.habbo.room.preview.RoomPreviewer
+ * AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as
  *
- * TS simplifications (Phase 1 — see FurniView's class doc comment):
- * - No avatar/pet preview support (only addFurnitureIntoRoom/addWallItemIntoRoom).
- * - Camera centers on the preview object's actual bounding rectangle every
- *   frame, but skips AS3's auto-zoom scale switching
- *   (validatePreviewSize's SCALE_NORMAL/SCALE_SMALL flip based on how much of
- *   the canvas the object fills) — always renders at SCALE_NORMAL.
- * - updateRoomWallsAndFloorVisibility() is a TODO(AS3) no-op until
- *   RoomEngine.updateObjectRoomVisibilities() exists.
+ * TS notes:
+ * - Several IRoomEngine capabilities the AS3 previewer calls do not exist in
+ *   the ported engine yet (changeObjectState, updateObjectUserAction,
+ *   updateObjectRoomVisibilities, get*Image, runUpdate, isInitialized,
+ *   disableUpdate). Those members are still ported with an AS3-compatible
+ *   signature and flagged with an explicit TODO(AS3) so the behaviour is
+ *   visible rather than silently missing.
+ * - AS3 drives updatePreviewRoomView() from the engine's REOE_ADDED /
+ *   REOE_CONTENT_UPDATED / REE_INITIALIZED events. The equivalent
+ *   content-loaded event isn't fully available here, so the previewer also
+ *   registers a per-frame canvas-sync callback (registerCanvasSyncCallback)
+ *   to re-run the framing math, in addition to wiring the available engine
+ *   events.
  */
 export class RoomPreviewer
 {
-	private static readonly PREVIEW_OBJECT_ID = 1;
-	private static readonly PREVIEW_OBJECT_LOCATION_X = 2;
-	private static readonly PREVIEW_OBJECT_LOCATION_Y = 2;
-	private static readonly PREVIEW_TILE_MAP_SIZE = 7;
+	private static readonly PREVIEW_CANVAS_ID: number = 1;
+	private static readonly PREVIEW_OBJECT_ID: number = 1;
+	private static readonly PREVIEW_OBJECT_LOCATION_X: number = 2;
+	private static readonly PREVIEW_OBJECT_LOCATION_Y: number = 2;
+	private static readonly ALLOWED_IMAGE_CUT: number = 0.25;
 
-	public static readonly SCALE_NORMAL = 64;
-	public static readonly SCALE_SMALL = 32;
+	public static readonly SCALE_NORMAL: number = 64;
+	public static readonly SCALE_SMALL: number = 32;
 
+	private static readonly AUTOMATIC_STATE_CHANGE_INTERVAL: number = 2500;
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_roomEngine
 	private _roomEngine: IRoomEngine | null;
-	private _previewRoomId: number;
-	private _currentCategory: number = -2;
-	private _currentType: number = -1;
-	private _currentExtra: string = '';
-	private _scale: number = RoomPreviewer.SCALE_NORMAL;
-	private _canvasWidth: number = 0;
-	private _canvasHeight: number = 0;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_68
+	private _previewRoomId: number = 1;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1699
+	private _currentPreviewObjectType: number = 0;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_399
+	private _currentPreviewObjectCategory: number = 0;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1908
+	private _currentPreviewObjectData: string = '';
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_currentPreviewRectangle
+	private _currentPreviewRectangle: Rectangle | null = null;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_currentPreviewCanvasWidth
+	private _currentPreviewCanvasWidth: number = 0;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1478
+	private _currentPreviewCanvasHeight: number = 0;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_510
+	private _currentPreviewScale: number = 64;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1596
+	private _zoomChanged: boolean = false;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::var_1259
+	private _automaticStateChange: boolean = false;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_previousAutomaticStateChangeTime
+	private _previousAutomaticStateChangeTime: number = 0;
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_addViewOffset
+	private _addViewOffset: IPoint = {x: 0, y: 0};
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_disableUpdate
+	private _disableUpdate: boolean = false;
+
+	// Re-entrancy guard: the ported engine re-emits REE_INITIALIZED from
+	// initializeRoomVisuals() (which updateObjectRoom() maps onto), so without
+	// this flag onRoomInitialized() → updateObjectRoom() would recurse forever.
+	private _updatingObjectRoom: boolean = false;
 
 	private readonly _updatePreviewRoomViewBound = (): void => this.updatePreviewRoomView();
+	private readonly _onRoomObjectAddedBound = (event: RoomEngineObjectEvent): void =>
+		this.onRoomObjectAdded(event.roomId, event.objectId, event.category);
+	private readonly _onRoomInitializedBound = (event: RoomEngineEvent): void => this.onRoomInitialized(event);
 
-	constructor(roomEngine: IRoomEngine, previewRoomId: number)
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::RoomPreviewer()
+	constructor(roomEngine: IRoomEngine, previewRoomId: number = 1)
 	{
 		this._roomEngine = roomEngine;
-		this._previewRoomId = previewRoomId;
+		this._previewRoomId = RoomId.makeRoomPreviewerId(previewRoomId);
 
-		// TS deviation: AS3 recomputes the camera framing from a continuous
-		// per-frame tick (registerUpdateReceiver) plus REOE_ADDED/
-		// REOE_CONTENT_UPDATED listeners that invalidate the cached bounding
-		// rect (see class doc comment) — this port doesn't have that same
-		// content-loaded event, so it just re-centers every frame instead,
-		// reusing the same ticker RoomPreviewerWidget uses for canvas position.
-		roomEngine.registerCanvasSyncCallback(this._updatePreviewRoomViewBound);
+		if(this._roomEngine)
+		{
+			// AS3 listens to "REOE_ADDED"/"REOE_CONTENT_UPDATED"; the ported engine
+			// surfaces object placement through REOE_OBJECT_ADDED.
+			this._roomEngine.events.on(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this._onRoomObjectAddedBound);
+			this._roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, this._onRoomInitializedBound);
+
+			// TS deviation (see class doc comment): re-run the framing math every
+			// frame because the AS3 content-loaded event isn't fully available.
+			this._roomEngine.registerCanvasSyncCallback(this._updatePreviewRoomViewBound);
+		}
 	}
 
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::get previewRoomId()
 	get previewRoomId(): number
 	{
 		return this._previewRoomId;
 	}
 
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::get isRoomEngineReady()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::get isRoomEngineReady()
+	// AS3 also requires _roomEngine.isInitialized; IRoomEngine has no isInitialized
+	// accessor yet, so only the null check is enforced.
 	get isRoomEngineReady(): boolean
 	{
 		return this._roomEngine !== null;
 	}
 
-	dispose(): void
-	{
-		this.reset(true);
-		this._roomEngine?.unregisterCanvasSyncCallback(this._updatePreviewRoomViewBound);
-		this._roomEngine = null;
-	}
-
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::createRoomForPreviews()
 	createRoomForPreviews(): void
 	{
-		if (!this._roomEngine) return;
+		if(!this._roomEngine) return;
 
-		const size = RoomPreviewer.PREVIEW_TILE_MAP_SIZE;
+		const size = 7;
 		const parser = new RoomPlaneParser();
 
 		parser.initializeTileMap(size + 2, size + 2);
 
-		for (let y = 1; y < 1 + size; y++)
+		for(let y = 1; y < 1 + size; y++)
 		{
-			for (let x = 1; x < 1 + size; x++)
+			for(let x = 1; x < 1 + size; x++)
 			{
 				parser.setTileHeight(x, y, 0);
 			}
@@ -97,58 +150,68 @@ export class RoomPreviewer
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::reset()
 	reset(disposing: boolean): void
 	{
-		if (this._roomEngine)
+		if(this._roomEngine)
 		{
 			this._roomEngine.disposeObjectFurniture(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID);
 			this._roomEngine.disposeObjectWallItem(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID);
 			this._roomEngine.disposeObjectUser(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID);
 
-			if (!disposing)
+			if(!disposing)
 			{
 				this.updatePreviewRoomView();
 			}
 		}
 
-		this._currentCategory = -2;
+		this._currentPreviewObjectCategory = -2;
 	}
 
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addFurnitureIntoRoom()
-	addFurnitureIntoRoom(type: number, direction: IVector3d, stuffData: unknown = null, extra: string | null = null): number
+	addFurnitureIntoRoom(type: number, direction: IVector3d, stuffData: IStuffData | null = null, extra: string | null = null): number
 	{
-		if (!this.isRoomEngineReady) return -1;
+		const data: IStuffData = stuffData ?? new LegacyStuffData();
 
-		if (this._currentCategory === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE && this._currentType === type)
+		if(this.isRoomEngineReady)
 		{
-			return 1;
-		}
+			if(this._currentPreviewObjectCategory === 10 && this._currentPreviewObjectType === type)
+			{
+				return 1;
+			}
 
-		this.reset(false);
-		this._currentType = type;
-		this._currentCategory = RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
-		this._currentExtra = '';
+			this.reset(false);
+			this._currentPreviewObjectType = type;
+			this._currentPreviewObjectCategory = 10;
+			this._currentPreviewObjectData = '';
 
-		const legacyString = (stuffData as {getLegacyString?: () => string} | null)?.getLegacyString?.() ?? extra ?? '';
+			if(this._roomEngine!.addRoomObjectFurniture(
+				this._previewRoomId,
+				RoomPreviewer.PREVIEW_OBJECT_ID,
+				type,
+				new Vector3d(RoomPreviewer.PREVIEW_OBJECT_LOCATION_X, RoomPreviewer.PREVIEW_OBJECT_LOCATION_Y, 0),
+				direction,
+				0,
+				data.getLegacyString(),
+				Number.NaN,
+				-1,
+				0,
+				'',
+				true
+			))
+			{
+				this._previousAutomaticStateChangeTime = RoomPreviewer.getTimer();
+				this._automaticStateChange = true;
 
-		const success = this._roomEngine!.addRoomObjectFurniture(
-			this._previewRoomId,
-			RoomPreviewer.PREVIEW_OBJECT_ID,
-			type,
-			new Vector3d(RoomPreviewer.PREVIEW_OBJECT_LOCATION_X, RoomPreviewer.PREVIEW_OBJECT_LOCATION_Y, 0),
-			direction,
-			0,
-			legacyString,
-			-1,
-			0,
-			0,
-			null,
-			true
-		);
+				const object = this._roomEngine!.getRoomObject(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, this._currentPreviewObjectCategory);
 
-		if (success)
-		{
-			this.updatePreviewRoomView();
+				if(object)
+				{
+					if(extra !== null)
+					{
+						(object.getModel() as IRoomObjectModelController).setString('furniture_extras', extra);
+					}
+				}
 
-			return 1;
+				this.updatePreviewRoomView();
+			}
 		}
 
 		return -1;
@@ -157,32 +220,68 @@ export class RoomPreviewer
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addWallItemIntoRoom()
 	addWallItemIntoRoom(type: number, direction: IVector3d, legacyString: string): number
 	{
-		if (!this.isRoomEngineReady) return -1;
-
-		if (this._currentCategory === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL && this._currentType === type && this._currentExtra === legacyString)
+		if(this.isRoomEngineReady)
 		{
-			return 1;
+			if(this._currentPreviewObjectCategory === 20 && this._currentPreviewObjectType === type && this._currentPreviewObjectData === legacyString)
+			{
+				return 1;
+			}
+
+			this.reset(false);
+			this._currentPreviewObjectType = type;
+			this._currentPreviewObjectCategory = 20;
+			this._currentPreviewObjectData = legacyString;
+
+			if(this._roomEngine!.addRoomObjectWallItem(
+				this._previewRoomId,
+				RoomPreviewer.PREVIEW_OBJECT_ID,
+				type,
+				new Vector3d(0.5, 2.3, 1.8),
+				direction,
+				0,
+				legacyString,
+				0,
+				''
+			))
+			{
+				this._previousAutomaticStateChangeTime = RoomPreviewer.getTimer();
+				this._automaticStateChange = true;
+
+				return 1;
+			}
 		}
 
-		this.reset(false);
-		this._currentType = type;
-		this._currentCategory = RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
-		this._currentExtra = legacyString;
+		return -1;
+	}
 
-		const success = this._roomEngine!.addRoomObjectWallItem(
-			this._previewRoomId,
-			RoomPreviewer.PREVIEW_OBJECT_ID,
-			type,
-			new Vector3d(0.5, 2.3, 1.8),
-			direction,
-			0,
-			legacyString,
-			0,
-			null
-		);
-
-		if (success)
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
+	addAvatarIntoRoom(figure: string, effect: number): number
+	{
+		if(this.isRoomEngineReady)
 		{
+			this.reset(false);
+			this._currentPreviewObjectType = 1;
+			this._currentPreviewObjectCategory = 100;
+			this._currentPreviewObjectData = figure;
+
+			// AS3 passes headDirection 135 and ownerId 1; IRoomEngine.addRoomObjectUser
+			// only accepts location/direction/type, so those extra arguments are
+			// applied afterwards via updateUser* below.
+			if(this._roomEngine!.addRoomObjectUser(
+				this._previewRoomId,
+				RoomPreviewer.PREVIEW_OBJECT_ID,
+				new Vector3d(RoomPreviewer.PREVIEW_OBJECT_LOCATION_X, RoomPreviewer.PREVIEW_OBJECT_LOCATION_Y, 0),
+				new Vector3d(90, 0, 0),
+				figure
+			))
+			{
+				this._previousAutomaticStateChangeTime = RoomPreviewer.getTimer();
+				this._automaticStateChange = true;
+				this.updateUserGesture(1);
+				this.updateUserEffect(effect);
+				this.updateUserPosture('std');
+			}
+
 			this.updatePreviewRoomView();
 
 			return 1;
@@ -191,72 +290,596 @@ export class RoomPreviewer
 		return -1;
 	}
 
-	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectRoom()
-	updateObjectRoom(floorType: string | null = null, wallType: string | null = null, landscapeType: string | null = null): boolean
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateUserPosture()
+	updateUserPosture(posture: string, parameter: string = ''): void
 	{
-		if (!this.isRoomEngineReady) return false;
-
-		this._roomEngine!.initializeRoomVisuals(this._previewRoomId, floorType ?? '101', wallType ?? '101', landscapeType ?? '1.1', 0);
-
-		return true;
+		if(this.isRoomEngineReady)
+		{
+			this._roomEngine!.updateRoomObjectUserPosture(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, posture, parameter);
+		}
 	}
 
-	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomWallsAndFloorVisibility()
-	// TODO(AS3): needs RoomEngine.updateObjectRoomVisibilities() (not built yet) —
-	// walls/floor always stay visible in the preview for now.
-	updateRoomWallsAndFloorVisibility(_hideWalls: boolean, _hideFloor: boolean = true): void
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateUserGesture()
+	updateUserGesture(gesture: number): void
 	{
-		// Not wired yet.
+		if(this.isRoomEngineReady)
+		{
+			this._roomEngine!.updateRoomObjectUserGesture(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, gesture);
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateUserEffect()
+	updateUserEffect(effect: number): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			this._roomEngine!.updateRoomObjectUserEffect(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, effect);
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectUserFigure()
+	updateObjectUserFigure(figure: string, gender: string | null = null, clubLevel: string | null = null, isRiding: boolean = false): boolean
+	{
+		if(this.isRoomEngineReady)
+		{
+			return this._roomEngine!.updateRoomObjectUserFigure(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, figure, gender, clubLevel, isRiding);
+		}
+
+		return false;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectUserAction()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectUserAction()
+	// Should call _roomEngine.updateObjectUserAction(previewRoomId, 1, action, value, parameter);
+	// IRoomEngine has no updateObjectUserAction equivalent yet.
+	updateObjectUserAction(_action: string, _value: number, _parameter: string | null = null): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			// Not wired yet.
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::changeRoomObjectState()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::changeRoomObjectState()
+	// Should call _roomEngine.changeObjectState(previewRoomId, 1, category) for non-avatar
+	// previews; IRoomEngine has no changeObjectState equivalent yet.
+	changeRoomObjectState(): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			this._automaticStateChange = false;
+			if(this._currentPreviewObjectCategory !== 100)
+			{
+				// Not wired yet.
+			}
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::checkAutomaticRoomObjectStateChange()
+	private checkAutomaticRoomObjectStateChange(): void
+	{
+		if(this._automaticStateChange)
+		{
+			const now = RoomPreviewer.getTimer();
+			if(now > this._previousAutomaticStateChangeTime + RoomPreviewer.AUTOMATIC_STATE_CHANGE_INTERVAL)
+			{
+				this._previousAutomaticStateChangeTime = now;
+				if(this.isRoomEngineReady)
+				{
+					// TODO(AS3): _roomEngine.changeObjectState(previewRoomId, 1, category) — not wired yet.
+				}
+			}
+		}
 	}
 
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomCanvas()
 	getRoomCanvas(width: number, height: number): Container | null
 	{
-		if (!this._roomEngine) return null;
+		if(this._roomEngine)
+		{
+			const canvas = this._roomEngine.createRoomCanvas(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, width, height, this._currentPreviewScale);
 
-		const canvas = this._roomEngine.createRoomCanvas(this._previewRoomId, 1, width, height, this._scale);
+			this._roomEngine.setRoomCanvasMask(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, true);
 
-		this._roomEngine.setRoomCanvasMask(this._previewRoomId, 1, true);
-		this._canvasWidth = width;
-		this._canvasHeight = height;
+			const geometry = this._roomEngine.getRoomCanvasGeometry(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
+			if(geometry !== null)
+			{
+				geometry.adjustLocation(new Vector3d(2, 2, 0), 30);
+			}
 
-		return canvas;
+			this._currentPreviewCanvasWidth = width;
+			this._currentPreviewCanvasHeight = height;
+
+			return canvas;
+		}
+
+		return null;
 	}
 
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::modifyRoomCanvas()
 	modifyRoomCanvas(width: number, height: number): void
 	{
-		if (!this._roomEngine) return;
+		if(this._roomEngine)
+		{
+			this._currentPreviewCanvasWidth = width;
+			this._currentPreviewCanvasHeight = height;
+			this._roomEngine.modifyRoomCanvas(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, width, height);
+		}
+	}
 
-		this._canvasWidth = width;
-		this._canvasHeight = height;
-		this._roomEngine.modifyRoomCanvas(this._previewRoomId, 1, width, height);
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::set addViewOffset()
+	set addViewOffset(value: IPoint)
+	{
+		this._addViewOffset = value;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::get addViewOffset()
+	get addViewOffset(): IPoint
+	{
+		return this._addViewOffset;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updatePreviewObjectBoundingRectangle()
+	private updatePreviewObjectBoundingRectangle(offset: IPoint | null): void
+	{
+		const source = this._roomEngine!.getRoomObjectBoundingRectangle(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, this._currentPreviewObjectCategory, RoomPreviewer.PREVIEW_CANVAS_ID);
+
+		if(source !== null && offset !== null)
+		{
+			const rectangle = new Rectangle(source.left, source.top, source.width, source.height);
+
+			rectangle.x += -(this._currentPreviewCanvasWidth >> 1) - offset.x;
+			rectangle.y += -(this._currentPreviewCanvasHeight >> 1) - offset.y;
+
+			if(this._currentPreviewRectangle === null)
+			{
+				this._currentPreviewRectangle = rectangle;
+			}
+			else
+			{
+				const current = this._currentPreviewRectangle;
+				const union = current.clone();
+				union.enlarge(rectangle);
+
+				if(union.width - current.width > (this._currentPreviewCanvasWidth - current.width) >> 1
+					|| union.height - current.height > (this._currentPreviewCanvasHeight - current.height) >> 1
+					|| current.width < 1
+					|| current.height < 1)
+				{
+					this._currentPreviewRectangle = union;
+				}
+			}
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::validatePreviewSize()
+	private validatePreviewSize(point: IPoint): IPoint
+	{
+		const rectangle = this._currentPreviewRectangle;
+
+		if(rectangle === null || rectangle.width < 1 || rectangle.height < 1)
+		{
+			return point;
+		}
+
+		if(this.isRoomEngineReady)
+		{
+			const geometry = this._roomEngine!.getRoomCanvasGeometry(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
+			const maxWidth = this._currentPreviewCanvasWidth * (1 + RoomPreviewer.ALLOWED_IMAGE_CUT);
+			const maxHeight = this._currentPreviewCanvasHeight * (1 + RoomPreviewer.ALLOWED_IMAGE_CUT);
+
+			if(rectangle.width > maxWidth || rectangle.height > maxHeight)
+			{
+				if(this.isZoomEnabled())
+				{
+					if(this._roomEngine!.getRoomCanvasScale(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID) !== 0.5)
+					{
+						this._roomEngine!.setRoomCanvasScale(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, 0.5);
+						this._currentPreviewScale = 32;
+						this._zoomChanged = true;
+						point.x >>= 1;
+						point.y >>= 1;
+						RoomPreviewer.dividePreviewRectangleByFour(rectangle);
+					}
+				}
+				else if(geometry !== null && geometry.isZoomedIn())
+				{
+					geometry.performZoomOut();
+					this._currentPreviewScale = 32;
+					this._zoomChanged = true;
+					point.x >>= 1;
+					point.y >>= 1;
+					RoomPreviewer.dividePreviewRectangleByFour(rectangle);
+				}
+			}
+			else if((rectangle.width << 1) < maxWidth - 5 && (rectangle.height << 1) < maxHeight - 5)
+			{
+				if(this.isZoomEnabled())
+				{
+					if(this._roomEngine!.getRoomCanvasScale(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID) !== 1 && !this._zoomChanged)
+					{
+						this._roomEngine!.setRoomCanvasScale(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, 1);
+						this._currentPreviewScale = 64;
+						point.x <<= 1;
+						point.y <<= 1;
+					}
+				}
+				else if(geometry !== null && !geometry.isZoomedIn() && !this._zoomChanged)
+				{
+					geometry.performZoomIn();
+					this._currentPreviewScale = 64;
+					point.x <<= 1;
+					point.y <<= 1;
+				}
+			}
+		}
+
+		return point;
+	}
+
+	// AS3 counterpart: the ">>= 2" applied to every edge of _currentPreviewRectangle
+	// in validatePreviewSize() (divides each edge by four).
+	private static dividePreviewRectangleByFour(rectangle: Rectangle): void
+	{
+		const left = rectangle.left >> 2;
+		const right = rectangle.right >> 2;
+		const top = rectangle.top >> 2;
+		const bottom = rectangle.bottom >> 2;
+
+		rectangle.x = left;
+		rectangle.y = top;
+		rectangle.width = right - left;
+		rectangle.height = bottom - top;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::zoomIn()
+	zoomIn(): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			if(this.isZoomEnabled())
+			{
+				this._roomEngine!.setRoomCanvasScale(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, 1);
+			}
+
+			const geometry = this._roomEngine!.getRoomCanvasGeometry(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
+			if(!geometry)
+			{
+				return;
+			}
+
+			geometry.performZoomIn();
+		}
+
+		this._currentPreviewScale = 64;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::zoomOut()
+	zoomOut(): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			if(this.isZoomEnabled())
+			{
+				this._roomEngine!.setRoomCanvasScale(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, 0.5);
+			}
+			else
+			{
+				const geometry = this._roomEngine!.getRoomCanvasGeometry(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
+				if(!geometry)
+				{
+					return;
+				}
+
+				geometry.performZoomOut();
+			}
+		}
+
+		this._currentPreviewScale = 32;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateAvatarDirection()
+	updateAvatarDirection(direction: number, headDirection: number): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			this._roomEngine!.updateRoomObjectUser(
+				this._previewRoomId,
+				RoomPreviewer.PREVIEW_OBJECT_ID,
+				new Vector3d(2, 2, 0),
+				new Vector3d(2, 2, 0),
+				new Vector3d(direction * 45, 0, 0),
+				headDirection * 45,
+				false,
+				0
+			);
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectRoom()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateObjectRoom()
+	// AS3 calls _roomEngine.updateObjectRoom(previewRoomId, floor, wall, landscape, false),
+	// which only updates the room object's plane types. IRoomEngine has no
+	// updateObjectRoom, so this maps to initializeRoomVisuals with the AS3 default
+	// plane types. initializeRoomVisuals re-emits REE_INITIALIZED, hence the
+	// _updatingObjectRoom re-entrancy guard read by onRoomInitialized().
+	updateObjectRoom(floorType: string | null = null, wallType: string | null = null, landscapeType: string | null = null, _param: boolean = false): boolean
+	{
+		if(this.isRoomEngineReady)
+		{
+			this._updatingObjectRoom = true;
+			try
+			{
+				this._roomEngine!.initializeRoomVisuals(this._previewRoomId, floorType ?? '101', wallType ?? '101', landscapeType ?? '1.1', 0);
+			}
+			finally
+			{
+				this._updatingObjectRoom = false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomWallsAndFloorVisibility()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomWallsAndFloorVisibility()
+	// Should call _roomEngine.updateObjectRoomVisibilities(previewRoomId, hideWalls, hideFloor);
+	// IRoomEngine has no updateObjectRoomVisibilities equivalent yet.
+	updateRoomWallsAndFloorVisibility(_hideWalls: boolean, _hideFloor: boolean = true): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			// Not wired yet.
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getCanvasOffset()
+	private getCanvasOffset(point: IPoint): IPoint | null
+	{
+		const rectangle = this._currentPreviewRectangle;
+
+		if(rectangle === null || rectangle.width < 1 || rectangle.height < 1)
+		{
+			return point;
+		}
+
+		let x = -(rectangle.left + rectangle.right) >> 1;
+		let y = -(rectangle.top + rectangle.bottom) >> 1;
+		const verticalMargin = this._currentPreviewCanvasHeight - rectangle.height >> 1;
+
+		if(verticalMargin > 10)
+		{
+			y += Math.min(15, verticalMargin - 10);
+		}
+		else if(this._currentPreviewObjectCategory !== 100)
+		{
+			y += 5 - Math.max(0, verticalMargin / 2);
+		}
+		else
+		{
+			y -= 5 - Math.min(0, verticalMargin / 2);
+		}
+
+		y += this._addViewOffset.y;
+		x += this._addViewOffset.x;
+
+		const deltaX = (x - point.x) | 0;
+		const deltaY = (y - point.y) | 0;
+
+		if(deltaX !== 0 || deltaY !== 0)
+		{
+			const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+			if(distance > 10)
+			{
+				x = point.x + deltaX * 10 / distance;
+				y = point.y + deltaY * 10 / distance;
+			}
+
+			return {x, y};
+		}
+
+		return null;
 	}
 
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updatePreviewRoomView()
-	// TODO(AS3): skips the real auto-zoom math (validatePreviewSize's scale
-	// switching) — always centers at the current scale using the preview
-	// object's actual on-screen bounding rectangle instead of a fixed offset.
-	updatePreviewRoomView(): void
+	updatePreviewRoomView(force: boolean = false): void
 	{
-		if (!this.isRoomEngineReady || this._currentCategory < 0) return;
+		if(this._disableUpdate && !force)
+		{
+			return;
+		}
 
-		const bounds = this._roomEngine!.getRoomObjectBoundingRectangle(
-			this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, this._currentCategory, 1
-		);
+		this.checkAutomaticRoomObjectStateChange();
 
-		if (!bounds || (bounds.width <= 0 && bounds.height <= 0)) return;
+		if(this.isRoomEngineReady)
+		{
+			const screenOffset = this._roomEngine!.getRoomCanvasScreenOffset(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
 
-		const currentOffset = this._roomEngine!.getRoomCanvasScreenOffset(this._previewRoomId, 1) ?? {x: 0, y: 0};
+			if(screenOffset !== null)
+			{
+				let offset: IPoint = {x: screenOffset.x, y: screenOffset.y};
 
-		const objectCenterX = (bounds.left + bounds.right) / 2;
-		const objectCenterY = (bounds.top + bounds.bottom) / 2;
-		const canvasCenterX = this._canvasWidth / 2;
-		const canvasCenterY = this._canvasHeight / 2;
+				this.updatePreviewObjectBoundingRectangle(offset);
 
-		this._roomEngine!.setRoomCanvasScreenOffset(this._previewRoomId, 1, {
-			x: currentOffset.x + (canvasCenterX - objectCenterX),
-			y: currentOffset.y + (canvasCenterY - objectCenterY),
-		});
+				if(this._currentPreviewRectangle !== null)
+				{
+					const previousScale = this._currentPreviewScale;
+
+					offset = this.validatePreviewSize(offset);
+
+					const canvasOffset = this.getCanvasOffset(offset);
+					if(canvasOffset !== null)
+					{
+						this._roomEngine!.setRoomCanvasScreenOffset(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, canvasOffset);
+					}
+
+					if(this._currentPreviewScale !== previousScale)
+					{
+						this._currentPreviewRectangle = null;
+					}
+				}
+			}
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::set disableUpdate()
+	set disableUpdate(value: boolean)
+	{
+		this._disableUpdate = value;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::set disableRoomEngineUpdate()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::set disableRoomEngineUpdate()
+	// Should assign _roomEngine.disableUpdate = value; IRoomEngine exposes no
+	// disableUpdate accessor yet.
+	set disableRoomEngineUpdate(_value: boolean)
+	{
+		if(this.isRoomEngineReady)
+		{
+			// Not wired yet.
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::onRoomInitialized()
+	private onRoomInitialized(event: RoomEngineEvent): void
+	{
+		if(event === null)
+		{
+			return;
+		}
+
+		// Guard against the initializeRoomVisuals() re-emit of REE_INITIALIZED
+		// triggered by updateObjectRoom() below (see updateObjectRoom's comment).
+		if(this._updatingObjectRoom)
+		{
+			return;
+		}
+
+		if(event.type === RoomEngineEvent.REE_INITIALIZED)
+		{
+			if(event.roomId === this._previewRoomId)
+			{
+				if(this._roomEngine)
+				{
+					this.updateObjectRoom('110', '99999', null);
+				}
+			}
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::onRoomObjectAdded()
+	private onRoomObjectAdded(roomId: number, objectId: number, category: number): void
+	{
+		if(roomId === this._previewRoomId && objectId === RoomPreviewer.PREVIEW_OBJECT_ID && category === this._currentPreviewObjectCategory)
+		{
+			this._currentPreviewRectangle = null;
+			this._zoomChanged = false;
+			this._roomEngine!.getRoomObject(roomId, objectId, category);
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomEngine()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::updateRoomEngine()
+	// AS3 calls _roomEngine.runUpdate(); IRoomEngine exposes update(time) instead.
+	updateRoomEngine(): void
+	{
+		if(this.isRoomEngineReady)
+		{
+			this._roomEngine!.update(RoomPreviewer.getTimer());
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getGenericRoomObjectImage()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::getGenericRoomObjectImage()
+	// Should delegate to _roomEngine.getGenericRoomObjectImage(...); IRoomEngine has
+	// no getGenericRoomObjectImage equivalent yet.
+	getGenericRoomObjectImage(
+		_classType: string,
+		_imageType: string,
+		_direction: IVector3d,
+		_scale: number,
+		_listener: IGetImageListener | null,
+		_backgroundColor: number = 0,
+		_extras: string | null = null,
+		_stuffData: IStuffData | null = null,
+		_state: number = -1,
+		_frameCount: number = -1,
+		_objectData: string | null = null
+	): ImageResult | null
+	{
+		if(this.isRoomEngineReady)
+		{
+			// Not wired yet.
+		}
+
+		return null;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectImage()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectImage()
+	// Should delegate to _roomEngine.getRoomObjectImage(previewRoomId, 1, ...);
+	// IRoomEngine has no getRoomObjectImage equivalent yet.
+	getRoomObjectImage(_type: number, _direction: IVector3d, _scale: number, _listener: IGetImageListener | null, _backgroundColor: number = 0): ImageResult | null
+	{
+		if(this.isRoomEngineReady)
+		{
+			// Not wired yet.
+		}
+
+		return null;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectCurrentImage()
+	// TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectCurrentImage()
+	// AS3 returns visualization.getImage(0xFFFFFF, -1); IRoomObjectVisualization has
+	// no getImage equivalent yet.
+	getRoomObjectCurrentImage(): ImageBitmap | null
+	{
+		if(this.isRoomEngineReady)
+		{
+			const object = this._roomEngine!.getRoomObject(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, 100);
+			if(object)
+			{
+				const visualization = object.getVisualization();
+				if(visualization)
+				{
+					// Not wired yet.
+				}
+			}
+		}
+
+		return null;
+	}
+
+	// AS3 counterpart: flash.utils.getTimer()
+	private static getTimer(): number
+	{
+		return Math.floor(performance.now());
+	}
+
+	// TODO(AS3): AS3 reads (_roomEngine as class_17).getBoolean("zoom.enabled");
+	// IRoomEngine exposes no config accessor yet, so canvas-scale zooming (the
+	// path AS3 uses when the flag is on) is always selected.
+	private isZoomEnabled(): boolean
+	{
+		return true;
+	}
+
+	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::dispose()
+	dispose(): void
+	{
+		this.reset(true);
+
+		if(this._roomEngine)
+		{
+			this._roomEngine.events.off(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this._onRoomObjectAddedBound);
+			this._roomEngine.events.off(RoomEngineEvent.REE_INITIALIZED, this._onRoomInitializedBound);
+			this._roomEngine.unregisterCanvasSyncCallback(this._updatePreviewRoomViewBound);
+		}
+
+		this._roomEngine = null;
 	}
 }

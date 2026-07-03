@@ -39,11 +39,23 @@ export class BitmapFileLoader extends BinaryFileLoader
 	 */
 	override load(url: string): void
 	{
+		const previousUrl = this._url;
+
 		this._url = url;
 
 		if (this._texture)
 		{
-			this._texture.destroy(true);
+			// This texture is cached/refcounted by PixiJS Assets (loaded via
+			// Assets.load() below) — destroying it directly desyncs that cache
+			// and breaks the texture for every other consumer still using it
+			// (e.g. the same furniture icon shown elsewhere). Assets.unload()
+			// is the correct release path; it only frees the source once no
+			// other reference needs it.
+			if (previousUrl)
+			{
+				Assets.unload(previousUrl).catch(() => {});
+			}
+
 			this._texture = null;
 		}
 
@@ -56,7 +68,7 @@ export class BitmapFileLoader extends BinaryFileLoader
 			{
 				if (this._disposed)
 				{
-					texture.destroy(true);
+					Assets.unload(url).catch(() => {});
 					return;
 				}
 
@@ -81,9 +93,9 @@ export class BitmapFileLoader extends BinaryFileLoader
 	{
 		if (!this._disposed)
 		{
-			if (this._texture)
+			if (this._texture && this._url)
 			{
-				this._texture.destroy(true);
+				Assets.unload(this._url).catch(() => {});
 				this._texture = null;
 			}
 

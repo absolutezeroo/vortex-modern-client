@@ -122,7 +122,26 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
 		this._canvasDisplayObject.x = globalPosition.x;
 		this._canvasDisplayObject.y = globalPosition.y;
-		this._canvasDisplayObject.visible = this._canvasWrapper.visible;
+
+		// Flash semantics: a DisplayObject parented into the window is only
+		// shown when the window AND all its ancestors are visible. The canvas
+		// lives on the root PixiJS stage here, so replicate that by walking
+		// the wrapper's parent chain.
+		let window: IWindow | null = this._canvasWrapper;
+		let visible = true;
+
+		while (window)
+		{
+			if (!window.visible)
+			{
+				visible = false;
+				break;
+			}
+
+			window = window.parent;
+		}
+
+		this._canvasDisplayObject.visible = visible;
 	}
 
 	private _disposed: boolean = false;

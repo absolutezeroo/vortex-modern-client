@@ -2,6 +2,7 @@
 export {ColorConverter} from './ColorConverter';
 export {RoomGeometry} from './RoomGeometry';
 export {Vector3d} from './Vector3d';
+export {RoomId} from './RoomId';
 
 // Types
 export type {Point, IRoomGeometry,} from './IRoomGeometry';

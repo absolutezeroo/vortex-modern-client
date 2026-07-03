@@ -1321,18 +1321,32 @@ export class RoomEngine extends Component implements IRoomEngine,
 		return true;
 	}
 
+	// AS3: sources/win63_2023_version/com/sulake/habbo/room/RoomEngine.as::update()
 	update(time: number): void
 	{
-		// Delegate update to RoomManager
 		if (this._roomManager)
 		{
+			// TODO(AS3): RoomEngine.as::createRoomFurniture() — deferred furniture
+			// queue processing at the top of update() is not ported yet.
 			this._roomManager.update(time);
-		}
 
-		// Update visualizations for active room
-		if (this._activeRoomId >= 0)
-		{
-			this.updateRoomVisualizations(this._activeRoomId, time);
+			// AS3 iterates ALL room instances and updates each renderer —
+			// not only the active room. This is what drives rendering of
+			// window-hosted rooms such as the RoomPreviewer's preview room.
+			const count = this._roomManager.getRoomCount();
+
+			for (let i = 0; i < count; i++)
+			{
+				const room = this._roomManager.getRoomWithIndex(i);
+				const renderer = room?.getRenderer();
+
+				if (renderer)
+				{
+					renderer.update(time);
+				}
+			}
+
+			this.updateRoomCameras(time);
 		}
 	}
 
@@ -3243,23 +3257,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 			width,
 			height
 		};
-	}
-
-	/**
-	 * Update visualizations for a room.
-	 * Canvas.render() handles visualization updates and screen positioning.
-	 * Based on AS3: RoomSpriteCanvas.render() calling visualization.update() internally.
-	 */
-	private updateRoomVisualizations(roomId: number, time: number): void
-	{
-		const room = this.getRoomInstance(roomId);
-		const renderer = room?.getRenderer();
-
-		if(renderer !== null && renderer !== undefined)
-		{
-			this.updateRoomCameras(time);
-			renderer.update(time);
-		}
 	}
 
 	/**
