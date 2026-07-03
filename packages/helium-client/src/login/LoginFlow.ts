@@ -48,6 +48,8 @@ import type {ILoginViewer} from '@habbo/communication/login/ILoginViewer';
 import type {ILoginProvider} from '@habbo/communication/login/ILoginProvider';
 import {WebApiLoginProvider} from '@habbo/communication/login/WebApiLoginProvider';
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+import {Helium} from 'helium-engine';
 import {FakeContext} from './FakeContext';
 import type {ILoginContext} from './ILoginContext';
 import {Background} from './Background';
@@ -55,21 +57,16 @@ import {SsoTokenView} from './SsoTokenView';
 import {EnvironmentView} from './EnvironmentView';
 import {LoginView} from './LoginView';
 import {AvatarView} from './AvatarView';
+import {RegisterView} from './RegisterView';
+import {AvatarCreateView} from './AvatarCreateView';
 import {ImageLoader} from './ImageLoader';
 import type {ImageLoaderEvent} from './ImageLoaderEvent';
+import './login-ui.scss';
 
 // Import logo
 import habboLogoUrl from '../assets/images/habbo_logo.png';
 
 const log = Logger.getLogger('LoginFlow');
-
-/**
- * AS3 constants.
- *
- * @see sources/win63_2021_version/login/LoginFlow.as lines 41-48
- */
-const LOGO_AREA_HEIGHT = 50;
-const MAIN_AREA_MARGIN = 5;
 
 export class LoginFlow implements ILoginContext, ILoginViewer
 {
@@ -78,6 +75,8 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 	static readonly SCREEN_LOGIN = 2;
 	static readonly SCREEN_AVATARS = 3;
 	static readonly SCREEN_SSO_TOKEN = 4;
+	static readonly SCREEN_REGISTER = 5;
+	static readonly SCREEN_AVATAR_CREATE = 6;
 
 	private _events: EventEmitter = new EventEmitter();
 
@@ -111,9 +110,24 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 	/** AS3: _SafeStr_4562 */
 	private _avatarView: AvatarView | null = null;
 
+	/** AS3: _stepRegister — OnBoardingHcStepRegister (vortex-client onBoardingHc source) */
+	private _registerView: RegisterView | null = null;
+
+	/** AS3: _stepAvatarCreate — OnBoardingHcStepAvatarCreate (vortex-client onBoardingHc source) */
+	private _avatarCreateView: AvatarCreateView | null = null;
+
 	private _root: HTMLDivElement | null = null;
 
-	/** AS3: _SafeStr_4564 — main container */
+	/** Split-screen shell (.habbo-split) — not a literal AS3 element, see login-ui.scss header comment. */
+	private _splitRoot: HTMLDivElement | null = null;
+
+	/** Illustration column (.habbo-split__art) wrapping _heroImage. */
+	private _artWrap: HTMLDivElement | null = null;
+
+	/** AS3: _SafeStr_4567 — hero illustration, loaded from landing.view.background_right.uri */
+	private _heroImage: HTMLImageElement | null = null;
+
+	/** AS3: _SafeStr_4564 — main container (now the .habbo-split__content column) */
 	private _mainContainer: HTMLDivElement | null = null;
 
 	/** AS3: _SafeStr_4559 — view container */
@@ -127,12 +141,6 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
 	/** AS3: _closeButton — ColouredButton("red", "X") */
 	private _closeButton: HTMLButtonElement | null = null;
-
-	/** AS3: _SafeStr_4566 — left side image (Loader) */
-	private _SafeStr_4566: HTMLImageElement | null = null;
-
-	/** AS3: _SafeStr_4567 — right side image (Loader) */
-	private _SafeStr_4567: HTMLImageElement | null = null;
 
 	private _ssoToken: string | null = null;
 	private _disposed: boolean = false;
@@ -202,12 +210,76 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 	}
 
 	/**
+	 * AS3: registerAccount(email, password) — OnBoardingHc.as
+	 * Delegates to WebApiLoginProvider which calls POST /api/public/registration/new.
+	 */
+	public registerAccount(email: string, password: string): void
+	{
+		this._provider.register(email, password);
+	}
+
+	/**
+	 * AS3: createAvatar(name, figure, gender) — OnBoardingHc.as
+	 * Delegates to WebApiLoginProvider which calls POST /api/user/avatars.
+	 */
+	public createAvatar(name: string, figure: string, gender: string): void
+	{
+		this._provider.createAvatar(name, figure, gender);
+	}
+
+	/**
+	 * AS3: checkName(name) — OnBoardingHc.as
+	 * Delegates to WebApiLoginProvider which calls POST /api/newuser/name/check.
+	 */
+	public checkName(name: string): void
+	{
+		this._provider.checkName(name);
+	}
+
+	/**
+	 * AS3: get avatarRenderManager():IAvatarRenderManager — OnBoardingHc.as
+	 * The engine's avatar render manager is already bootstrapped before the login
+	 * flow is shown (see HeliumApp.init()), so we reuse it directly rather than
+	 * standing up a second onboarding-only renderer as AS3 does.
+	 */
+	public get avatarRenderManager(): IAvatarRenderManager | null
+	{
+		return Helium.instance.windowManager.avatarRenderer;
+	}
+
+	/**
+	 * AS3: showSelectAvatar(avatar:Object) — OnBoardingHc.as
+	 * Called by WebApiLoginProvider after a successful registration.
+	 */
+	public showSelectAvatar(_response: unknown): void
+	{
+		this.showScreen(LoginFlow.SCREEN_AVATAR_CREATE);
+	}
+
+	/**
+	 * AS3: nameCheckResponse(response:Object, isValid:Boolean) — OnBoardingHc.as
+	 * Forwards the name-check result to the AvatarCreate screen.
+	 */
+	public nameCheckResponse(response: unknown, isValid: boolean): void
+	{
+		this._avatarCreateView?.onNameCheckResult(response, isValid);
+	}
+
+	/**
 	 * AS3: showScreen(_arg_1:int)
 	 * Switches between login screens.
 	 */
 	public showScreen(screen: number): void
 	{
 		this.hideViews();
+
+		// The avatar creator is a wide 3-column editor (looks / colours / preview) that
+		// doesn't fit the split-screen form layout — give it the full width and drop the
+		// illustration; every other screen keeps the illustration + narrow form column.
+		if(this._splitRoot)
+		{
+			this._splitRoot.classList.toggle('habbo-split--full', screen === LoginFlow.SCREEN_AVATAR_CREATE);
+		}
 
 		switch(screen)
 		{
@@ -246,6 +318,25 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 					this._viewContainer.appendChild(this._avatarView.element);
 					this._avatarView.init();
 					this._avatarView.baseUrl = this.getProperty('web.api') ?? '';
+				}
+
+				this.layoutMainElements();
+				break;
+
+			case LoginFlow.SCREEN_REGISTER:
+				if(this._registerView && this._viewContainer)
+				{
+					this._viewContainer.appendChild(this._registerView.element);
+					this._registerView.init();
+				}
+
+				break;
+
+			case LoginFlow.SCREEN_AVATAR_CREATE:
+				if(this._avatarCreateView && this._viewContainer)
+				{
+					this._viewContainer.appendChild(this._avatarCreateView.element);
+					this._avatarCreateView.init();
 				}
 
 				this.layoutMainElements();
@@ -329,6 +420,23 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 	}
 
 	/**
+	 * AS3: isSsoTokenEnabled():Boolean — OnBoardingHc.as
+	 * Decides the default screen. common_configuration_txt.txt sets "use.sso=false",
+	 * so this normally resolves to false and the flow opens on Login, not SSO Token.
+	 */
+	private isSsoTokenEnabled(): boolean
+	{
+		if(!this._configuration) return false;
+
+		if(this._configuration.propertyExists('use.sso'))
+		{
+			return this._configuration.getBoolean('use.sso');
+		}
+
+		return this.getProperty('connection.info.login') === null;
+	}
+
+	/**
 	 * AS3: environmentReady()
 	 * Called when /api/public/info/hello succeeds — enables login button.
 	 */
@@ -370,26 +478,28 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 		}
 
 		// Create or reuse error balloon
+		// AS3: LoaderUI.createBalloon(...) tinted red + LoaderUI.addEtching(messageField, true)
 		if(!this._errorBalloon)
 		{
 			this._errorBalloon = document.createElement('div');
 			Object.assign(this._errorBalloon.style, {
-				position: 'absolute',
-				top: '50%',
+				position: 'fixed',
+				top: '30px',
 				left: '50%',
-				transform: 'translate(-50%, -50%)',
-				background: 'rgba(0, 0, 0, 0.85)',
-				color: '#FF5252',
-				padding: '16px 24px',
-				borderRadius: '8px',
-				fontSize: '16px',
+				transform: 'translateX(-50%)',
+				borderRadius: '10px',
+				background: '#A02942',
+				color: '#FFFFFF',
+				fontSize: '14px',
+				fontWeight: '700',
 				fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-				zIndex: '100',
+				zIndex: '20000',
 				maxWidth: '400px',
+				padding: '12px 20px',
 				textAlign: 'center',
-				boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
+				boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
 			} as Partial<CSSStyleDeclaration>);
-			this._mainContainer.appendChild(this._errorBalloon);
+			this._root?.appendChild(this._errorBalloon);
 		}
 
 		this._errorBalloon.textContent = message;
@@ -604,7 +714,7 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 	 */
 	public init(): void
 	{
-		// Root overlay
+		// Root overlay.
 		this._root = document.createElement('div');
 		Object.assign(this._root.style, {
 			position: 'absolute',
@@ -630,34 +740,6 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 		this._root.appendChild(this._background.element);
 		this._background.mount();
 
-		// AS3: _SafeStr_4566 = new Loader(); _SafeStr_4566.visible = false; _SafeStr_4566.alpha = 0
-		this._SafeStr_4566 = document.createElement('img');
-		Object.assign(this._SafeStr_4566.style, {
-			position: 'absolute',
-			bottom: '0',
-			left: '-50px',
-			zIndex: '0',
-			pointerEvents: 'none',
-			opacity: '0',
-			transition: 'opacity 1.2s',
-		} as Partial<CSSStyleDeclaration>);
-		this._SafeStr_4566.draggable = false;
-		this._root.appendChild(this._SafeStr_4566);
-
-		// AS3: _SafeStr_4567 = new Loader(); _SafeStr_4567.visible = false; _SafeStr_4567.alpha = 0
-		this._SafeStr_4567 = document.createElement('img');
-		Object.assign(this._SafeStr_4567.style, {
-			position: 'absolute',
-			bottom: '0',
-			right: '0',
-			zIndex: '0',
-			pointerEvents: 'none',
-			opacity: '0',
-			transition: 'opacity 1.2s',
-		} as Partial<CSSStyleDeclaration>);
-		this._SafeStr_4567.draggable = false;
-		this._root.appendChild(this._SafeStr_4567);
-
 		// AS3: _SafeStr_4565 = new Sprite(); habbo_logo_png at (40, 40)
 		this._logoArea = document.createElement('div');
 		Object.assign(this._logoArea.style, {
@@ -679,47 +761,52 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 		this._logoArea.appendChild(logoImg);
 		this._root.appendChild(this._logoArea);
 
-		// AS3: _SafeStr_4564 = new Sprite(); _SafeStr_4564.y = 50; _SafeStr_4564.x = 5
+		// Split-screen shell: illustration on the left, form content on the right.
+		// See login-ui.scss for why this replaced AS3's scattered absolute-positioned Sprites.
+		this._splitRoot = document.createElement('div');
+		this._splitRoot.className = 'habbo-split';
+		this._root.appendChild(this._splitRoot);
+
+		this._artWrap = document.createElement('div');
+		this._artWrap.className = 'habbo-split__art';
+		this._heroImage = document.createElement('img');
+		this._heroImage.alt = '';
+		this._heroImage.draggable = false;
+		this._artWrap.appendChild(this._heroImage);
+		this._splitRoot.appendChild(this._artWrap);
+
+		// AS3: _SafeStr_4564 = new Sprite() — the content column.
 		this._mainContainer = document.createElement('div');
-		Object.assign(this._mainContainer.style, {
-			position: 'absolute',
-			zIndex: '1',
-		} as Partial<CSSStyleDeclaration>);
-		this._root.appendChild(this._mainContainer);
+		this._mainContainer.className = 'habbo-split__content';
+		this._splitRoot.appendChild(this._mainContainer);
 
 		// AS3: _SafeStr_4559 = new Sprite(); y=50, visible=true
 		this._viewContainer = document.createElement('div');
-		Object.assign(this._viewContainer.style, {
-			position: 'relative',
-		} as Partial<CSSStyleDeclaration>);
+		this._viewContainer.style.width = '100%';
 		this._mainContainer.appendChild(this._viewContainer);
 
-		// AS3: Create all 4 views
+		// AS3: Create all views
 		this._environmentView = new EnvironmentView(this);
 		this._loginView = new LoginView(this);
 		this._avatarView = new AvatarView(this);
 		this._ssoTokenView = new SsoTokenView(this);
+		this._registerView = new RegisterView(this);
+		this._avatarCreateView = new AvatarCreateView(this);
 
 		// AS3: _closeButton = new ColouredButton("red", "X", new Rectangle(0, 0, 0, 40), true, onClose, 0xD8D8D8)
 		this._closeButton = document.createElement('button');
+		this._closeButton.className = 'habbo-btn habbo-btn--red';
 		Object.assign(this._closeButton.style, {
-			position: 'absolute',
+			position: 'fixed',
+			top: '30px',
+			right: '30px',
 			zIndex: '100',
-			minWidth: '44px',
+			minWidth: '0',
+			width: '44px',
 			height: '44px',
-			padding: '0 12px',
-			border: 'none',
-			borderRadius: '6px',
-			fontSize: '18px',
-			fontWeight: 'bold',
-			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-			cursor: 'pointer',
-			textAlign: 'center',
-			lineHeight: '44px',
-			background: '#E53935',
-			color: '#FFFFFF',
+			padding: '0',
 		} as Partial<CSSStyleDeclaration>);
-		this._closeButton.textContent = 'X';
+		this._closeButton.textContent = '✕';
 		this._closeButton.addEventListener('click', this._onClose);
 
 		// AS3: _SafeStr_4560.init(); — pre-init environment view
@@ -728,8 +815,8 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 		// AS3: loadImages()
 		this.loadImages();
 
-		// AS3: showScreen(4) — SSO Token is the default screen
-		this.showScreen(LoginFlow.SCREEN_SSO_TOKEN);
+		// AS3: init() — if(isSsoTokenEnabled()) showScreen(SCREEN_SSO_TOKEN); else showScreen(SCREEN_LOGIN);
+		this.showScreen(this.isSsoTokenEnabled() ? LoginFlow.SCREEN_SSO_TOKEN : LoginFlow.SCREEN_LOGIN);
 
 		// Layout
 		this.layoutMainElements();
@@ -740,21 +827,17 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
 	/**
 	 * AS3: loadImages()
-	 * Loads the left and right side background images from config.
+	 * Loads the hero illustration from config. AS3 loads a left AND right side image
+	 * (peeking in from both bottom corners); the split-screen redesign shows a single,
+	 * large illustration instead, so only the right one (the hotel building) is used.
 	 */
 	private loadImages(): void
 	{
-		const rightUri = this.getProperty('landing.view.background_right.uri');
-		const leftUri = this.getProperty('landing.view.background_left.uri');
+		const heroUri = this.getProperty('landing.view.background_right.uri');
 
-		if(rightUri && this._SafeStr_4567)
+		if(heroUri && this._heroImage)
 		{
-			ImageLoader.CreateLoader(this._SafeStr_4567, rightUri, this._onImageComplete);
-		}
-
-		if(leftUri && this._SafeStr_4566)
-		{
-			ImageLoader.CreateLoader(this._SafeStr_4566, leftUri, this._onImageComplete);
+			ImageLoader.CreateLoader(this._heroImage, heroUri, this._onImageComplete);
 		}
 	}
 
@@ -769,8 +852,6 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
 		// CSS transition handles the fade-in (opacity 0 -> 1 over 1.2s)
 		event.loader.style.opacity = '1';
-
-		this.layoutMainElements();
 	};
 
 	/**
@@ -803,69 +884,16 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
 	/**
 	 * AS3: layoutMainElements()
-	 * Centers the main container on screen and positions side images.
+	 * The split layout and close button are handled entirely by CSS (flexbox,
+	 * position:fixed) — nothing left to compute on resize besides the background,
+	 * which is itself a CSS no-op (see Background.resize()). Kept as a hook for
+	 * loadImages()/resize to call into without needing to know that.
 	 */
 	private layoutMainElements(): void
 	{
-		if(this._disposed || !this._mainContainer) return;
+		if(this._disposed) return;
 
-		if(this._background)
-		{
-			this._background.resize();
-		}
-
-		// Center the main content area
-		const stageW = window.innerWidth;
-		const stageH = window.innerHeight;
-		const contentWidth = this._mainContainer.offsetWidth + 20;
-
-		let xPos: number;
-
-		if(stageW > contentWidth)
-		{
-			xPos = Math.floor((stageW - contentWidth) / 2);
-
-			if(xPos < MAIN_AREA_MARGIN)
-			{
-				xPos = MAIN_AREA_MARGIN;
-			}
-		}
-		else
-		{
-			xPos = MAIN_AREA_MARGIN;
-		}
-
-		this._mainContainer.style.left = xPos + 'px';
-		this._mainContainer.style.top = (LOGO_AREA_HEIGHT + 50) + 'px';
-
-		// AS3: _closeButton.y = 30; _closeButton.x = (stage.stageWidth - _closeButton.width) - 30
-		if(this._closeButton && this._closeButton.parentNode)
-		{
-			this._closeButton.style.top = '30px';
-			this._closeButton.style.right = '30px';
-		}
-
-		// AS3: _SafeStr_4567.x = Math.max(400, (stage.stageWidth - _SafeStr_4567.width) + 50)
-		// AS3: _SafeStr_4567.y = (stage.stageHeight - _SafeStr_4567.height) + 50
-		if(this._SafeStr_4567)
-		{
-			const imgW = this._SafeStr_4567.naturalWidth || 0;
-			const imgH = this._SafeStr_4567.naturalHeight || 0;
-
-			this._SafeStr_4567.style.left = Math.max(400, (stageW - imgW) + 50) + 'px';
-			this._SafeStr_4567.style.top = ((stageH - imgH) + 50) + 'px';
-			this._SafeStr_4567.style.bottom = '';
-		}
-
-		// AS3: _SafeStr_4566.x = -50; _SafeStr_4566.y = (stage.stageHeight - _SafeStr_4566.height) + 50
-		if(this._SafeStr_4566)
-		{
-			const imgH = this._SafeStr_4566.naturalHeight || 0;
-
-			this._SafeStr_4566.style.left = '-50px';
-			this._SafeStr_4566.style.top = ((stageH - imgH) + 50) + 'px';
-			this._SafeStr_4566.style.bottom = '';
-		}
+		this._background?.resize();
 	}
 
 	/**
@@ -1006,6 +1034,18 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 			this._ssoTokenView = null;
 		}
 
+		if(this._registerView)
+		{
+			this._registerView.dispose();
+			this._registerView = null;
+		}
+
+		if(this._avatarCreateView)
+		{
+			this._avatarCreateView.dispose();
+			this._avatarCreateView = null;
+		}
+
 		if(this._background)
 		{
 			this._background.dispose();
@@ -1022,8 +1062,9 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 		this._viewContainer = null;
 		this._logoArea = null;
 		this._errorBalloon = null;
-		this._SafeStr_4566 = null;
-		this._SafeStr_4567 = null;
+		this._splitRoot = null;
+		this._artWrap = null;
+		this._heroImage = null;
 
 		// AS3: dispose context and managers
 		if(this._fakeContext)

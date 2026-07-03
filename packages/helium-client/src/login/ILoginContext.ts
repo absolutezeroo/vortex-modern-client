@@ -7,6 +7,7 @@
  * Views call these methods to trigger login actions and screen navigation.
  */
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 
 export interface ILoginContext
 {
@@ -55,4 +56,30 @@ export interface ILoginContext
 	 * @returns The property value or null
 	 */
 	getProperty(key: string): string | null;
+
+	/**
+	 * AS3: registerAccount(email, password)
+	 * Register a new account, then advance to avatar creation.
+	 */
+	registerAccount(email: string, password: string): void;
+
+	/**
+	 * AS3: createAvatar(name, figure, gender)
+	 * Create the first avatar for a freshly registered account.
+	 */
+	createAvatar(name: string, figure: string, gender: string): void;
+
+	/**
+	 * AS3: checkName(name)
+	 * Check whether an avatar name is available.
+	 */
+	checkName(name: string): void;
+
+	/**
+	 * AS3: get avatarRenderManager():IAvatarRenderManager
+	 * The shared avatar render manager, used by the AvatarCreate screen to render
+	 * live figure previews. Already bootstrapped by the time the login flow shows
+	 * (Helium.bootstrap() runs before showLoginFlow() in HeliumApp.init()).
+	 */
+	readonly avatarRenderManager: IAvatarRenderManager | null;
 }

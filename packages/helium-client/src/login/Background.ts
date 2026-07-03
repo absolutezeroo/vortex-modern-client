@@ -1,14 +1,19 @@
 /**
  * Background
  *
- * @see sources/win63_2021_version/login/Background.as
+ * @see vortex-client/src/onBoardingHc/Background.as
  *
  * Full-screen background for the login flow.
- * AS3: Gradient fill (two-tone) with a tiled bitmap overlay (_SafeStr_4553).
+ * AS3: Gradient fill (two-tone, colors 809599/801381 = #0C5A7F/#0C3A65) with a
+ * tiled bitmap overlay (_tileSprite, background_tiles_png).
  *
- * AS3 gradient: beginGradientFill("linear", [color1, color2], [1,1], [127,255], rotatedMatrix)
- * AS3 tile: beginBitmapFill(background_tiles_png) on _SafeStr_4553
+ * AS3 gradient: beginGradientFill("linear", [0x0C5A7F, 0x0C3A65], [1,1], [127,255], rotatedMatrix, "pad")
+ * — with ratio starting at 127/255 and spreadMethod "pad", the top ~50% renders as solid
+ * #0C5A7F before gradating to #0C3A65 at the bottom.
+ * AS3 tile: beginBitmapFill(background_tiles_png) on _tileSprite
  */
+import backgroundTilesUrl from '../assets/images/HabboBackground_background_tiles.png';
+
 export class Background
 {
 	private _root: HTMLDivElement;
@@ -29,9 +34,9 @@ export class Background
 			left: '0',
 			width: '100%',
 			height: '100%',
-			// AS3: beginGradientFill("linear", [color1, color2], [1,1], [127,255], rotated PI/2)
-			// Vertical gradient from warm beige to deep red
-			background: 'linear-gradient(180deg, #C4A48D 0%, #C23E1E 100%)',
+			// AS3: beginGradientFill("linear", [0x0C5A7F, 0x0C3A65], [1,1], [127,255], rotated PI/2, "pad")
+			// Vertical gradient — solid teal-blue for the top half, gradating to a darker navy at the bottom
+			background: 'linear-gradient(180deg, #0C5A7F 0%, #0C5A7F 50%, #0C3A65 100%)',
 			zIndex: '0',
 		} as Partial<CSSStyleDeclaration>);
 	}
@@ -73,6 +78,7 @@ export class Background
 				pointerEvents: 'none',
 			} as Partial<CSSStyleDeclaration>);
 			this._root.appendChild(this._tileOverlay);
+			this.setTileImage(backgroundTilesUrl);
 		}
 
 		this.resize();

@@ -40,4 +40,20 @@ export interface ILoginViewer
 	 * Switch to a login screen.
 	 */
 	showScreen(screen: number): void;
+
+	/**
+	 * AS3: showSelectAvatar(avatar:Object)
+	 * Called after successful registration — routes to the avatar creation screen.
+	 */
+	showSelectAvatar(response: unknown): void;
+
+	/**
+	 * AS3: nameCheckResponse(response:Object, isValid:Boolean)
+	 * Called with the result of a name-availability check.
+	 * Note (AS3 quirk, preserved for fidelity): `isValid` does not mean "the name is valid" —
+	 * it means "this response came from the /api/newuser/name/check endpoint" (always true for
+	 * our port, since we never call the /api/newuser/name/select endpoint). Actual validity is
+	 * read from `response.valid` by the caller.
+	 */
+	nameCheckResponse(response: unknown, isValid: boolean): void;
 }

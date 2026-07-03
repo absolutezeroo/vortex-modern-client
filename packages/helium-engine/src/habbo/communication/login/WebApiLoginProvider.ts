@@ -116,6 +116,46 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider
 		this.executeRequest('/api/user/avatars/select', 'POST', { uniqueId });
 	}
 
+	/**
+	 * AS3: register() → session.register(email, password, day, month, year, termsOfServiceAccepted, captchaToken)
+	 * Register a new account — POST /api/public/registration/new
+	 */
+	public register(email: string, password: string): void
+	{
+		this.executeRequest('/api/public/registration/new', 'POST', {
+			email,
+			password,
+			passwordRepeated: password,
+			birthdate: { day: 0, month: 0, year: 0 },
+			termsOfServiceAccepted: true,
+		});
+	}
+
+	/**
+	 * AS3: createAvatar() → session.createAvatar(name, figure, gender)
+	 * Create an avatar for the current account — POST /api/user/avatars
+	 */
+	public createAvatar(name: string, figure: string, gender: string): void
+	{
+		const body: Record<string, unknown> = { name, gender };
+
+		if(figure && figure.length > 0)
+		{
+			body.figure = figure;
+		}
+
+		this.executeRequest('/api/user/avatars', 'POST', body);
+	}
+
+	/**
+	 * AS3: checkName() → session.nameCheck(name)
+	 * Check avatar name availability — POST /api/newuser/name/check
+	 */
+	public checkName(name: string): void
+	{
+		this.executeRequest('/api/newuser/name/check', 'POST', { name });
+	}
+
 	public dispose(): void
 	{
 		if(this._disposed) return;
@@ -309,6 +349,16 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider
 
 				break;
 			}
+
+			case '/api/public/registration/new':
+				// AS3: showSelectAvatar(response) — routes to the avatar creation screen
+				this._viewer.showSelectAvatar(data);
+				break;
+
+			case '/api/newuser/name/check':
+				// AS3: nameCheckResponse(response, path == "/api/newuser/name/check")
+				this._viewer.nameCheckResponse(data, true);
+				break;
 		}
 	}
 
@@ -318,6 +368,16 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider
 	 */
 	private handleError(path: string, statusCode: number, data: Record<string, unknown>): void
 	{
+		// AS3: habboWebApiError() routes name-check failures back through nameCheckResponse()
+		// instead of the generic error balloon, so the AvatarCreate screen can show an
+		// inline "name taken" message.
+		if(path === '/api/newuser/name/check')
+		{
+			this._viewer.nameCheckResponse(data, true);
+
+			return;
+		}
+
 		// Extract error message from response
 		let errorMessage = 'Unknown error';
 
@@ -394,6 +454,12 @@ export class WebApiLoginProvider extends EventEmitter implements ILoginProvider
 		else if(Array.isArray(data.data))
 		{
 			avatarArray = data.data as Record<string, unknown>[];
+		}
+		else if(typeof data.uniqueId === 'string')
+		{
+			// POST /api/user/avatars (createAvatar) may return the created avatar as a
+			// single object rather than wrapped in an array.
+			avatarArray = [data];
 		}
 
 		for(const item of avatarArray)

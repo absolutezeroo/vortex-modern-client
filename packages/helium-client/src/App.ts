@@ -13,6 +13,7 @@ import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
 import type {HeliumLoadingScreen} from './HeliumLoadingScreen';
 import {AssetBundle} from './AssetBundle';
 import {LoginFlow} from './login/LoginFlow';
+import {ChangelogWindow} from './changelog/ChangelogWindow';
 import {
 	parseElementDescriptionXml,
 	parseSkinXml,
@@ -439,6 +440,7 @@ export class HeliumApp
 	private _loadingScreen: HeliumLoadingScreen | null;
 	private _imageBundle: AssetBundle | null = null;
 	private _xmlBundle: AssetBundle | null = null;
+	private _changelogWindow: ChangelogWindow | null = null;
 
 	/** Last hovered window for OVER/OUT tracking. */
 	private _lastHoveredWindow: IWindow | null = null;
@@ -515,6 +517,12 @@ export class HeliumApp
 
 		this._imageBundle = imageBundle;
 		this._xmlBundle = xmlBundle;
+
+		// Mount the "What's New" changelog button now, not after login/connect —
+		// it's an independent overlay (not a room/toolbar window) and should stay
+		// visible even while stuck on the login flow or waiting on the backend.
+		this._changelogWindow = new ChangelogWindow();
+		this._changelogWindow.mount();
 
 		// 2. Load element descriptions + atlas bitmaps from bundle
 		try
@@ -719,6 +727,12 @@ export class HeliumApp
 		if (this._disposed) return;
 
 		this._disposed = true;
+
+		if (this._changelogWindow)
+		{
+			this._changelogWindow.dispose();
+			this._changelogWindow = null;
+		}
 
 		// Stop render loop
 		if (this._animFrameId)

@@ -12,8 +12,6 @@
 <script type="module">
     const existingConfig = window.HeliumConfig ?? {};
     const existingConnection = existingConfig.connection ?? {};
-    const querySsoTicket = new URLSearchParams(window.location.search).get('ssoTicket') || null;
-    const ssoTicket = querySsoTicket ?? existingConnection.ssoTicket ?? null;
 
     window.HeliumConfig = {
         ...existingConfig,
@@ -21,8 +19,6 @@
             host: '127.0.0.1',
             ports: [30001],
             ...existingConnection,
-            ssoTicket: ssoTicket,
-            autoConnect: existingConnection.autoConnect ?? !!ssoTicket,
         }
     };
 </script>

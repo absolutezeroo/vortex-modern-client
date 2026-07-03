@@ -35,6 +35,25 @@ export interface ILoginProvider
 	selectAvatarUniqueid(uniqueId: string): void;
 
 	/**
+	 * AS3: register(email, password, day, month, year, termsOfServiceAccepted, captchaToken)
+	 * Register a new account. Our port omits the birthdate/captcha fields not surfaced
+	 * by the onboarding register step.
+	 */
+	register(email: string, password: string): void;
+
+	/**
+	 * AS3: createAvatar(name, figure, gender)
+	 * Create the first avatar for a freshly registered account.
+	 */
+	createAvatar(name: string, figure: string, gender: string): void;
+
+	/**
+	 * AS3: checkName(name)
+	 * Check whether an avatar name is available.
+	 */
+	checkName(name: string): void;
+
+	/**
 	 * Subscribe to events.
 	 */
 	on(event: string, fn: (...args: any[]) => void): this;

@@ -20,7 +20,6 @@
  * - _environmentName: TextField
  * - _SafeStr_4556: int (selected index)
  * - _loginButton: Button
- * - _loginWithCodeButton: Button
  * - _environmentImageContainers: Array (Sprite wrappers)
  * - _chosenIcon: Bitmap (flag_icon_selected_png)
  * - _SafeStr_4548: int = 10 (spacing)
@@ -58,6 +57,10 @@ const SPACING = 10;
 /**
  * Map of environment ID -> flag image URL.
  * Order matches AS3: en, pt, de, es, fi, fr, it, nl, tr, dev
+ *
+ * "s2" (Sandbox, see common_configuration_txt.txt's live.environment.list=en/s2) has no
+ * dedicated flag asset — there was never a country to represent, it's a test hotel — so
+ * it shares the "dev" icon rather than silently rendering with an empty src.
  */
 const FLAG_IMAGES: Record<string, string> = {
 	'en': flagEnUrl,
@@ -70,6 +73,7 @@ const FLAG_IMAGES: Record<string, string> = {
 	'nl': flagNlUrl,
 	'tr': flagTrUrl,
 	'dev': flagDevUrl,
+	's2': flagDevUrl,
 };
 
 export class EnvironmentView
@@ -91,9 +95,6 @@ export class EnvironmentView
 
 	/** AS3: _loginButton */
 	private _loginButton: HTMLButtonElement;
-
-	/** AS3: _loginWithCodeButton */
-	private _loginWithCodeButton: HTMLButtonElement;
 
 	/** AS3: _environmentImageContainers — array of Sprite wrappers */
 	private _environmentImageContainers: HTMLDivElement[] = [];
@@ -117,7 +118,6 @@ export class EnvironmentView
 		this._context = context;
 		this._root = document.createElement('div');
 		this._loginButton = document.createElement('button');
-		this._loginWithCodeButton = document.createElement('button');
 	}
 
 	get element(): HTMLDivElement
@@ -203,13 +203,32 @@ export class EnvironmentView
 		this._SafeStr_4555.style.display = 'none';
 		this._root.appendChild(this._SafeStr_4555);
 
+		// Grid container (relatively positioned so the absolute highlight below and
+		// the flag containers share the same coordinate space).
+		const gridContainer = document.createElement('div');
+
+		Object.assign(gridContainer.style, {
+			position: 'relative',
+			margin: '20px auto',
+		} as Partial<CSSStyleDeclaration>);
+
 		// AS3: _SafeStr_4558 = new Sprite(); _chosenIcon = new flag_icon_selected_png()
-		// Highlight overlay — positioned over the selected flag
+		// Highlight overlay — positioned behind the selected flag. Must be a child of
+		// gridContainer (not _root): chooseEnvironment() computes its left/top from the
+		// flag containers' own left/top, which are relative to gridContainer. Appending
+		// it to _root instead put it in the wrong coordinate space entirely (it would
+		// position relative to the nearest positioned ancestor, which is nowhere near
+		// the flag grid), and the image also needs object-fit: contain — the global
+		// `img { object-fit: none }` reset (_index.scss) otherwise renders this 226x225
+		// source at native size instead of scaled to the 80x80 box.
+		// No explicit z-index: it must paint *behind* the flag icons, and since this is
+		// appended to gridContainer before the flag containers loop below, plain DOM
+		// order already puts it behind them — z-index:10 here previously forced it in
+		// front of every flag regardless of DOM order.
 		this._SafeStr_4558 = document.createElement('div');
 		Object.assign(this._SafeStr_4558.style, {
 			position: 'absolute',
 			pointerEvents: 'none',
-			zIndex: '10',
 			display: 'none',
 		} as Partial<CSSStyleDeclaration>);
 
@@ -221,19 +240,11 @@ export class EnvironmentView
 		Object.assign(chosenIcon.style, {
 			width: (THUMB_SIZE * THUMB_SCALE) + 'px',
 			height: (THUMB_SIZE * THUMB_SCALE) + 'px',
+			objectFit: 'contain',
 			pointerEvents: 'none',
 		} as Partial<CSSStyleDeclaration>);
 		this._SafeStr_4558.appendChild(chosenIcon);
-		this._root.appendChild(this._SafeStr_4558);
-
-		// Grid container (relatively positioned for absolute highlight)
-		const gridContainer = document.createElement('div');
-
-		Object.assign(gridContainer.style, {
-			position: 'relative',
-			marginTop: '20px',
-			marginBottom: '20px',
-		} as Partial<CSSStyleDeclaration>);
+		gridContainer.appendChild(this._SafeStr_4558);
 
 		// AS3: while loop creating flag containers at scale 0.5
 		// _local_3 = 80 (thumb_size * scale), _local_2 = 5 (spacing/2)
@@ -297,7 +308,8 @@ export class EnvironmentView
 			fontWeight: 'bold',
 			color: '#FFFFFF',
 			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-			width: '260px',
+			textShadow: '0 1px 0 rgba(0, 0, 0, 0.35)',
+			textAlign: 'center',
 			marginBottom: '10px',
 		} as Partial<CSSStyleDeclaration>);
 		this._root.appendChild(this._environmentName);
@@ -305,41 +317,14 @@ export class EnvironmentView
 		// AS3: Buttons container
 		const buttons = document.createElement('div');
 
-		Object.assign(buttons.style, {
-			display: 'flex',
-			gap: '12px',
-			marginTop: '10px',
-		} as Partial<CSSStyleDeclaration>);
-
-		// Shared button styles
-		const btnStyle: Partial<CSSStyleDeclaration> = {
-			display: 'inline-block',
-			minWidth: '140px',
-			height: '44px',
-			padding: '0 24px',
-			border: 'none',
-			borderRadius: '6px',
-			fontSize: '18px',
-			fontWeight: 'bold',
-			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-			cursor: 'pointer',
-			textAlign: 'center',
-			lineHeight: '44px',
-			background: '#4CAF50',
-			color: '#FFFFFF',
-		};
+		buttons.className = 'habbo-btn-row';
+		buttons.style.marginTop = '10px';
 
 		// AS3: _loginButton = new ColouredButton("gfreen", "${connection.login.login}", ...)
-		Object.assign(this._loginButton.style, btnStyle);
+		this._loginButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
 		this._loginButton.textContent = 'Login';
 		this._loginButton.addEventListener('click', this._onButtonSelect);
 		buttons.appendChild(this._loginButton);
-
-		// AS3: _loginWithCodeButton = new ColouredButton("gfreen", "${connection.login.useTicket}", ...)
-		Object.assign(this._loginWithCodeButton.style, btnStyle);
-		this._loginWithCodeButton.textContent = 'Use Ticket';
-		this._loginWithCodeButton.addEventListener('click', this._onButtonSelectToken);
-		buttons.appendChild(this._loginWithCodeButton);
 
 		this._root.appendChild(buttons);
 
@@ -356,19 +341,16 @@ export class EnvironmentView
 		if(!this._SafeStr_4547)
 		{
 			this._SafeStr_4547 = document.createElement('div');
-			Object.assign(this._SafeStr_4547.style, {
-				fontSize: '40px',
-				fontWeight: 'bold',
-				color: '#FFFFFF',
-				fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-				width: '500px',
-				textAlign: 'left',
-				marginBottom: '0px',
-				textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-			} as Partial<CSSStyleDeclaration>);
+			this._SafeStr_4547.className = 'habbo-title';
 			// AS3: "${connection.login.environment.choose}"
 			this._SafeStr_4547.textContent = 'Choose your hotel';
 			this._root.appendChild(this._SafeStr_4547);
+
+			const subtitle = document.createElement('div');
+
+			subtitle.className = 'habbo-subtitle-line';
+			subtitle.textContent = 'Pick the hotel you want to visit.';
+			this._root.appendChild(subtitle);
 		}
 	}
 
@@ -437,20 +419,6 @@ export class EnvironmentView
 	};
 
 	/**
-	 * AS3: onButtonSelectToken(_arg_1:DisplayObject)
-	 * Commits environment selection and goes to SSO Token screen.
-	 */
-	private _onButtonSelectToken = (): void =>
-	{
-		if(this._SafeStr_4557)
-		{
-			this._context.updateEnvironment(this._SafeStr_4557[this._SafeStr_4556], false);
-		}
-
-		this._context.showScreen(4);
-	};
-
-	/**
 	 * AS3: updateDescription()
 	 * Updates the environment name label.
 	 */
@@ -497,7 +465,6 @@ export class EnvironmentView
 		}
 
 		this._loginButton.removeEventListener('click', this._onButtonSelect);
-		this._loginWithCodeButton.removeEventListener('click', this._onButtonSelectToken);
 		this._environmentImageContainers.length = 0;
 		this._root.remove();
 	}

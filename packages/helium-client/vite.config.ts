@@ -46,7 +46,18 @@ export default defineConfig({
 				target: 'http://vortex-assets.local',
 				changeOrigin: true,
 				secure: false,
-			}
+			},
+			// Local emulator web API (WebApiLoginProvider). The emulator doesn't send
+			// Access-Control-Allow-Origin, so a direct cross-origin fetch() from the
+			// Vite dev origin gets blocked by CORS. Proxying through the dev server
+			// keeps the browser request same-origin; see web.api.en/.s2 in
+			// common_configuration_txt.txt, which point at this prefix in dev.
+			'/webapi': {
+				target: 'http://localhost:8080',
+				changeOrigin: true,
+				secure: false,
+				rewrite: (path) => path.replace(/^\/webapi/, ''),
+			},
 		},
 	},
 	build: {

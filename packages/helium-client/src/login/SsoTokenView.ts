@@ -32,8 +32,8 @@ export class SsoTokenView
 	/** AS3: _cancelButton — ColouredButton("red", "${generic.cancel}") */
 	private _cancelButton: HTMLButtonElement;
 
-	/** AS3: _loginAreaWidth = 640 */
-	private _loginAreaWidth: number = 640;
+	/** AS3: _registerButton — ColouredButton("gfreen", "${connection.login.register}") (OnBoardingHcStepSsoToken.as) */
+	private _registerButton: HTMLButtonElement;
 
 	/** AS3: _SafeStr_4570 — InputField (token input) */
 	private _SafeStr_4570: HTMLInputElement;
@@ -53,6 +53,7 @@ export class SsoTokenView
 		this._SafeStr_4570 = document.createElement('input');
 		this._saveButton = document.createElement('button');
 		this._cancelButton = document.createElement('button');
+		this._registerButton = document.createElement('button');
 	}
 
 	get element(): HTMLDivElement
@@ -72,6 +73,7 @@ export class SsoTokenView
 
 		this.addTitleField();
 		this.addInputFields();
+		this.addHelpLinks();
 		this.addButtons();
 	}
 
@@ -85,20 +87,41 @@ export class SsoTokenView
 		if(!this._SafeStr_4547)
 		{
 			this._SafeStr_4547 = document.createElement('div');
-			Object.assign(this._SafeStr_4547.style, {
-				fontSize: '40px',
-				fontWeight: 'bold',
-				color: '#FFFFFF',
-				fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-				width: '500px',
-				textAlign: 'left',
-				marginBottom: '20px',
-				textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-			} as Partial<CSSStyleDeclaration>);
+			this._SafeStr_4547.className = 'habbo-title';
 			// AS3: "${connection.login.title}"
-			this._SafeStr_4547.textContent = 'Habbo Login';
+			this._SafeStr_4547.textContent = 'Login';
 			this._root.appendChild(this._SafeStr_4547);
+
+			const subtitle = document.createElement('div');
+
+			subtitle.className = 'habbo-subtitle-line';
+			subtitle.textContent = 'Paste your SSO ticket to jump back in.';
+			this._root.appendChild(subtitle);
 		}
+	}
+
+	/**
+	 * AS3: onRegister flow, surfaced as a "Need some help?" link instead of the
+	 * full-size ColouredButton AS3 uses — see login-ui.scss header comment.
+	 */
+	private addHelpLinks(): void
+	{
+		const heading = document.createElement('div');
+
+		heading.className = 'habbo-help-heading';
+		heading.textContent = 'Need some help?';
+		this._root.appendChild(heading);
+
+		const list = document.createElement('div');
+
+		list.className = 'habbo-link-list';
+
+		this._registerButton.className = 'habbo-link';
+		this._registerButton.textContent = "I don't have an account";
+		this._registerButton.addEventListener('click', this._onRegister);
+		list.appendChild(this._registerButton);
+
+		this._root.appendChild(list);
 	}
 
 	/**
@@ -110,41 +133,12 @@ export class SsoTokenView
 	{
 		const group = document.createElement('div');
 
-		Object.assign(group.style, {
-			marginBottom: '16px',
-		} as Partial<CSSStyleDeclaration>);
-
-		// Label — AS3: "${connection.login.code.prompt}"
-		const label = document.createElement('label');
-
-		Object.assign(label.style, {
-			display: 'block',
-			fontSize: '16px',
-			color: '#FFFFFF',
-			marginBottom: '6px',
-			fontWeight: 'bold',
-			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-		} as Partial<CSSStyleDeclaration>);
-		label.textContent = 'SSO Ticket';
-		group.appendChild(label);
+		group.className = 'habbo-field';
 
 		// Input — AS3: InputField with password=true, error="${connection.login.useTicket}"
-		Object.assign(this._SafeStr_4570.style, {
-			width: '100%',
-			maxWidth: this._loginAreaWidth + 'px',
-			height: '40px',
-			padding: '0 12px',
-			border: '2px solid rgba(255, 255, 255, 0.3)',
-			borderRadius: '6px',
-			background: 'rgba(0, 0, 0, 0.3)',
-			color: '#FFFFFF',
-			fontSize: '16px',
-			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-			outline: 'none',
-			boxSizing: 'border-box',
-		} as Partial<CSSStyleDeclaration>);
+		this._SafeStr_4570.className = 'habbo-input';
 		this._SafeStr_4570.type = 'password';
-		this._SafeStr_4570.placeholder = 'Enter your SSO ticket...';
+		this._SafeStr_4570.placeholder = 'SSO ticket';
 		this._SafeStr_4570.autocomplete = 'off';
 		this._SafeStr_4570.spellcheck = false;
 
@@ -198,51 +192,17 @@ export class SsoTokenView
 	{
 		const container = document.createElement('div');
 
-		Object.assign(container.style, {
-			display: 'flex',
-			gap: '12px',
-			marginTop: '24px',
-		} as Partial<CSSStyleDeclaration>);
+		container.className = 'habbo-btn-row';
 
 		// AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", new Rectangle(0, 300, 0, 40), true, onCancel, 0xD8D8D8)
-		Object.assign(this._cancelButton.style, {
-			display: 'inline-block',
-			minWidth: '140px',
-			height: '44px',
-			padding: '0 24px',
-			border: 'none',
-			borderRadius: '6px',
-			fontSize: '18px',
-			fontWeight: 'bold',
-			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-			cursor: 'pointer',
-			textAlign: 'center',
-			lineHeight: '44px',
-			background: '#E53935',
-			color: '#FFFFFF',
-		} as Partial<CSSStyleDeclaration>);
-		this._cancelButton.textContent = 'Cancel';
+		this._cancelButton.className = 'habbo-btn habbo-btn--red';
+		this._cancelButton.textContent = 'Back';
 		this._cancelButton.addEventListener('click', this._onCancel);
 		container.appendChild(this._cancelButton);
 
 		// AS3: _saveButton = new ColouredButton("gfreen", "${connection.login.play}", ..., true, onLogin, ...)
-		Object.assign(this._saveButton.style, {
-			display: 'inline-block',
-			minWidth: '140px',
-			height: '44px',
-			padding: '0 24px',
-			border: 'none',
-			borderRadius: '6px',
-			fontSize: '18px',
-			fontWeight: 'bold',
-			fontFamily: "'Ubuntu', Arial, Helvetica, sans-serif",
-			cursor: 'pointer',
-			textAlign: 'center',
-			lineHeight: '44px',
-			background: '#4CAF50',
-			color: '#FFFFFF',
-		} as Partial<CSSStyleDeclaration>);
-		this._saveButton.textContent = 'Play';
+		this._saveButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
+		this._saveButton.textContent = "Let's Go!";
 		// AS3: _saveButton.active = false
 		this._saveButton.disabled = true;
 		this._saveButton.addEventListener('click', this._onLogin);
@@ -250,6 +210,15 @@ export class SsoTokenView
 
 		this._root.appendChild(container);
 	}
+
+	/**
+	 * AS3: onRegister(registerButton:Button) — OnBoardingHcStepSsoToken.as
+	 * Go to the Register screen.
+	 */
+	private _onRegister = (): void =>
+	{
+		this._context.showScreen(5);
+	};
 
 	/**
 	 * AS3: onLogin(_arg_1:Button)
@@ -351,6 +320,7 @@ export class SsoTokenView
 		this._SafeStr_4570.removeEventListener('keydown', this._onInputKeyboardEvent);
 		this._cancelButton.removeEventListener('click', this._onCancel);
 		this._saveButton.removeEventListener('click', this._onLogin);
+		this._registerButton.removeEventListener('click', this._onRegister);
 		this._root.remove();
 	}
 }

@@ -1,0 +1,375 @@
+/*
+ * Habbo login/onboarding UI — modern flat redesign.
+ *
+ * Earlier passes tried to literally rebuild the Flash-era scale9Grid button/
+ * input bitmaps (ColouredButton.as / NineSplitSprite.as) as CSS border-image.
+ * That's genuinely how the 2011 client drew them, but reproduced verbatim on
+ * the web it read as unfinished, not authentic. The brief settled on a
+ * different, more current reference instead: modern habbo.com's own login
+ * screen — a plain two-column split (big isometric hotel/room illustration
+ * left, flat clean form right), pill-shaped flat buttons, and light rounded
+ * inputs directly on the navy background, no boxed panel at all.
+ *
+ * What's kept from the Habbo brand: the navy/teal palette, Ubuntu type, the
+ * green "go forward" / red "go back" color language, and the chunky-but-flat
+ * pill buttons. What's dropped: the pixel-bitmap button/input textures and
+ * the boxed "card" panel from the previous pass — the reference has neither.
+ */
+
+/* ── Split-screen shell (Login/Register/SsoToken/Environment/AvatarSelect) ── */
+
+/*
+ * Capped and centered, not stretched to the viewport. On a wide/2K/ultrawide
+ * monitor an uncapped flex row lets the illustration balloon to fill almost
+ * the whole screen while the (max-width'd) form column gets shoved out to the
+ * far edge — the two halves end up looking unrelated instead of paired.
+ * Above 1360px the extra space is just background on the sides, matching how
+ * the mockup's proportions actually read at a normal window size.
+ */
+.habbo-split {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-width: 1360px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+}
+
+.habbo-split__art {
+	flex: 1 1 55%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+	pointer-events: none;
+
+	img {
+		max-width: 100%;
+		/* Capped in px, not % of viewport height — on a tall monitor "90% of the
+		   viewport" is still an enormous illustration relative to the form next to it. */
+		max-height: min(600px, 70vh);
+		object-fit: contain;
+		opacity: 0;
+		transition: opacity 0.6s ease;
+	}
+}
+
+.habbo-split__content {
+	flex: 1 1 45%;
+	min-width: 340px;
+	max-width: 460px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 40px 48px;
+}
+
+/* Below this, the illustration would crush the form — drop it and let the
+   form take the full width instead of trying to shrink both halves forever. */
+@media (max-width: 860px) {
+	.habbo-split__art {
+		display: none;
+	}
+
+	.habbo-split__content {
+		flex: 1 1 100%;
+		max-width: 480px;
+		margin: 0 auto;
+	}
+}
+
+/* The avatar creator: a wide editor, not a form — drop the illustration and let
+   the content column take the full width instead. */
+.habbo-split--full {
+	.habbo-split__art {
+		display: none;
+	}
+
+	.habbo-split__content {
+		flex: 1 1 100%;
+		min-width: 0;
+		max-width: 960px;
+		max-height: 100%;
+		overflow-y: auto;
+		margin: 0 auto;
+		justify-content: flex-start;
+	}
+}
+
+/* ── Typography ── */
+
+.habbo-title {
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 34px;
+	line-height: 1.15;
+	color: #FFFFFF;
+	margin: 0 0 8px;
+}
+
+.habbo-subtitle-line {
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	color: rgba(255, 255, 255, 0.72);
+	margin: 0 0 28px;
+}
+
+/* AvatarCreate's three column headers ("Choose looks" / "Choose colour" / "This is your Habbo"). */
+.habbo-subtitle {
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 22px;
+	color: #FFFFFF;
+	margin: 0 0 8px;
+}
+
+/* AvatarCreate's name field label — the editor keeps field labels since, unlike the
+   split-screen forms, it has several distinct controls on screen at once. */
+.habbo-field__label {
+	display: block;
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 13px;
+	color: #FFFFFF;
+	margin-bottom: 4px;
+}
+
+.habbo-status {
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFD166;
+	min-height: 16px;
+}
+
+/* ── Inputs — flat, light, directly on the navy background ── */
+
+.habbo-field {
+	display: block;
+	margin-bottom: 16px;
+}
+
+.habbo-input {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	height: 46px;
+	padding: 0 16px;
+	border: 1px solid transparent;
+	border-radius: 10px;
+	background: #EEF3F7;
+	color: #26333D;
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	outline: none;
+	transition: box-shadow 0.15s ease, border-color 0.15s ease;
+
+	&::placeholder {
+		color: #8A97A3;
+	}
+
+	&:focus-visible {
+		border-color: #59C7DA;
+		box-shadow: 0 0 0 3px rgba(89, 199, 218, 0.45);
+	}
+
+	&.habbo-input--error {
+		box-shadow: 0 0 0 2px #E4667A inset;
+	}
+
+	&.habbo-input--valid {
+		box-shadow: 0 0 0 2px #4CC98A inset;
+	}
+}
+
+/* ── "Need some help?" secondary block — a teal heading over plain text links ── */
+
+.habbo-help-heading {
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 15px;
+	color: #5FD6E8;
+	margin: 4px 0 10px;
+}
+
+.habbo-link-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.habbo-link {
+	align-self: flex-start;
+	background: none;
+	border: none;
+	padding: 0;
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #8ECBE0;
+	text-decoration: underline;
+	cursor: pointer;
+
+	&:hover {
+		color: #B7E3F0;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #59C7DA;
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+}
+
+/*
+ * ── Buttons — chunky pill, not the bitmap scale9 style ──
+ *
+ * A single flat fill color read as generic "flat design", not Habbo — the
+ * brand's buttons (even in the modern reference mockups) are a gummier,
+ * tactile pill: a top-to-bottom gradient, a solid darker "lip" underneath
+ * standing in for the old bevel, and a press-down animation. This keeps that
+ * chunky, playful feel without going back to the literal bitmap textures.
+ */
+.habbo-btn {
+	--btn-color: #3D3D3D;
+	--btn-light: color-mix(in srgb, var(--btn-color) 100%, white 22%);
+	--btn-dark: color-mix(in srgb, var(--btn-color) 100%, black 35%);
+
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-width: 120px;
+	height: 48px;
+	padding: 0 26px;
+	border: none;
+	border-radius: 999px;
+	background: linear-gradient(180deg, var(--btn-light) 0%, var(--btn-color) 60%, var(--btn-color) 100%);
+	box-shadow:
+		0 4px 0 var(--btn-dark),
+		0 7px 14px rgba(0, 0, 0, 0.3);
+	color: #FFFFFF;
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 16px;
+	cursor: pointer;
+	user-select: none;
+	transition: filter 0.12s ease, transform 0.08s ease, box-shadow 0.08s ease;
+
+	&:hover:not(:disabled) { filter: brightness(1.06); }
+
+	&:active:not(:disabled) {
+		transform: translateY(3px);
+		box-shadow:
+			0 1px 0 var(--btn-dark),
+			0 2px 6px rgba(0, 0, 0, 0.25);
+	}
+
+	&:focus-visible {
+		outline: 3px solid rgba(255, 255, 255, 0.85);
+		outline-offset: 2px;
+	}
+
+	&:disabled {
+		cursor: default;
+		filter: grayscale(0.5) brightness(0.8);
+		opacity: 0.7;
+		box-shadow: 0 4px 0 var(--btn-dark);
+	}
+}
+
+.habbo-btn--green { --btn-color: #3AA655; }
+.habbo-btn--red { --btn-color: #A02942; }
+.habbo-btn--yellow { --btn-color: #E0A526; }
+
+/* Trailing chevron for forward actions ("Let's Go!", "Play!"). */
+.habbo-btn--arrow::after {
+	content: '';
+	width: 8px;
+	height: 8px;
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	transform: rotate(-45deg);
+	margin-left: 2px;
+}
+
+.habbo-btn-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-top: 40px;
+	width: 100%;
+}
+
+/* ── Avatar picker — a vertical list of rows, not a horizontal thumbnail strip ── */
+
+.habbo-char-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 300px;
+	overflow-y: auto;
+	margin-bottom: 8px;
+	padding-right: 4px;
+}
+
+.habbo-char-row {
+	appearance: none;
+	width: 100%;
+	box-sizing: border-box;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	height: 52px;
+	padding: 0 16px;
+	border-radius: 10px;
+	border: 1px solid transparent;
+	background: rgba(255, 255, 255, 0.08);
+	color: #FFFFFF;
+	font: inherit;
+	font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-weight: 700;
+	cursor: pointer;
+	text-align: left;
+
+	&:hover { background: rgba(255, 255, 255, 0.14); }
+
+	&:focus-visible {
+		outline: 2px solid #59C7DA;
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		background: rgba(89, 199, 218, 0.22);
+		border-color: #59C7DA;
+	}
+
+	&__thumb {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		object-fit: cover;
+		object-position: top center;
+		background: rgba(0, 0, 0, 0.2);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		flex: 1 1 auto;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__check {
+		width: 18px;
+		height: 18px;
+		flex-shrink: 0;
+		color: #4CC98A;
+	}
+}
+

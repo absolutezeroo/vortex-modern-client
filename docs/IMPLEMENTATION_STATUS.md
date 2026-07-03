@@ -1,6 +1,6 @@
 # Helium - Implementation Status
 
-> **Last updated**: 2026-07-01
+> **Last updated**: 2026-07-03
 > **Method**: filesystem snapshot plus targeted AS3/TS directory counts.
 > **Important**: this is **not** a member-level AS3 parity certification. A TS count greater than an AS3 count only means files exist; completion still requires reading the AS3 source and auditing public API, lifecycle, parser/composer behavior, and dispose paths.
 
@@ -13,7 +13,7 @@
 | Primary WIN63 AS3 source files   | 4,783 `.as`   |
 | Secondary Flash AS3 source files | 7,159 `.as`   |
 | Engine TypeScript files          | 2,373 `.ts`   |
-| Client TypeScript files          | 16 `.ts`      |
+| Client TypeScript files          | 18 `.ts`      |
 | Converted window layouts         | 1,045 `.json` |
 | Converted window skins           | 97 `.json`    |
 | Engine `AS3:` trace comments     | 1,727         |
@@ -59,6 +59,7 @@ There is no reliable single global percentage right now. Raw file counts underco
 | `habbo/nux`                | 4         | 0        | Not started.                                                                                                                         |
 | `habbo/phonenumber`        | 7         | 0        | Not started.                                                                                                                         |
 | `habbo/userclassification` | 1         | 0        | Not started.                                                                                                                         |
+| `helium-client/src/login`  | 6         | 10       | Advanced. Environment/Login/SsoToken/AvatarSelect/Register/AvatarCreate screens all present; ported from `vortex-client/src/onBoardingHc` (the actual vortex-client AS3 client source, not `sources/win63_version`, which has no onboarding module). AvatarCreate reuses the already-bootstrapped engine `avatarRenderManager` instead of AS3's separate onboarding-only renderer. Simplified: `RandomAvatarCloudsAnimation` cel animation not ported (CSS pulse flourish instead); AS3's granular `ILoginViewer` error callbacks (`showRegistrationError`/`showAccountError`/etc.) are collapsed into the existing `showErrorMessage()` pattern already used by this port. |
 
 ---
 

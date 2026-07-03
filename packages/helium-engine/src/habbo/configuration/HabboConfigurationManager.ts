@@ -419,7 +419,21 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::initEmbeddedConfigurations()
 	private initEmbeddedConfigurations(): void
 	{
-		const environment = this._environmentId || localStorage.getItem('helium_environment') || '';
+		let environment = this._environmentId || localStorage.getItem('helium_environment') || '';
+
+		// Nothing picked yet (fresh page load, no stored preference) — fall back to the
+		// first entry of live.environment.list ("en") instead of doing nothing. Without
+		// this, environment.id stays unset until the user manually visits the hotel
+		// picker, which means every ".en"-suffixed override below (web.api.en,
+		// url.prefix.en, etc.) never syncs into its base key on first load — leaving
+		// e.g. web.api empty, which sends WebApiLoginProvider down its url.prefix
+		// fallback path instead of the working local dev proxy.
+		if (!environment)
+		{
+			const liveList = this._configurationData.get('live.environment.list');
+
+			environment = liveList ? liveList.split('/')[0] : '';
+		}
 
 		if (!environment)
 		{
@@ -427,6 +441,12 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 		}
 
 		log.debug(`Default Environment: ${environment}`);
+
+		if (!this._environmentId)
+		{
+			this._environmentId = environment;
+			this.setProperty('environment.id', environment);
+		}
 
 		// Apply environment-specific overrides
 		for (const [key] of this._configurationData)
@@ -436,7 +456,13 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 			if (index !== -1 && index + 1 + environment.length === key.length)
 			{
 				const baseKey = key.substring(0, index);
-				const value = this.getProperty(key);
+				// Copy the raw, unprocessed value — not this.getProperty(key). Properties like
+				// "url.prefix.en" are template prefixes meant to be substituted into other values
+				// via "${url.prefix}" (interpolate() reads the raw map directly). Running a bare
+				// origin URL like "http://vortex-assets.local" through getProperty()'s dev-proxy
+				// normalization collapses it to just its pathname ("/"), which then corrupts every
+				// value built from "${url.prefix}/..." into a protocol-relative "//..." URL.
+				const value = this._configurationData.get(key) ?? '';
 
 				this.setProperty(baseKey, value);
 			}
