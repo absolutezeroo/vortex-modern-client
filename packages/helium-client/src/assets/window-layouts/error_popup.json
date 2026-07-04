@@ -1,0 +1,256 @@
+{
+  "name": "error_popup",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\250_error_popup.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "300",
+          "height": "328",
+          "params": "32769",
+          "style": "3",
+          "caption": "Title",
+          "color": "0x0d43d59",
+          "width_min": "300",
+          "width_max": "300"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "17",
+              "y": "10",
+              "width": "265",
+              "height": "271",
+              "params": "144",
+              "style": "3",
+              "name": "content_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "265",
+                  "height": "17",
+                  "params": "144",
+                  "style": "3",
+                  "name": "error_msg_text",
+                  "caption": "Error message"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "27",
+                  "width": "265",
+                  "height": "28",
+                  "params": "144",
+                  "style": "3",
+                  "name": "info_text",
+                  "caption": "${error_window.info}",
+                  "blend": "0.65"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "font_size": 17,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "65",
+                  "width": "265",
+                  "height": "136",
+                  "params": "144",
+                  "style": "105",
+                  "name": "error_info_border",
+                  "tags": "error_info"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "5",
+                      "y": "5",
+                      "width": "255",
+                      "height": "126",
+                      "params": "2177",
+                      "style": "3",
+                      "name": "error_info_contents",
+                      "background": "true"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_size": 17,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0,
+                      "editable": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "211",
+                  "width": "265",
+                  "height": "20",
+                  "params": "144",
+                  "style": "3",
+                  "name": "do_not_show_container"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "1",
+                      "width": "17",
+                      "height": "17",
+                      "params": "17",
+                      "style": "3",
+                      "name": "do_not_show_cbx"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "20",
+                      "y": "0",
+                      "width": "110",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${error_window.do_not_show}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "0",
+                  "y": "241",
+                  "width": "265",
+                  "height": "30",
+                  "params": "786640",
+                  "style": "3",
+                  "name": "button_row"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "125",
+                      "height": "30",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "ok_button",
+                      "caption": "${error_window.ok}",
+                      "width_min": "125"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "140",
+                      "y": "0",
+                      "width": "125",
+                      "height": "30",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "copy_button",
+                      "caption": "${error_window.copy}",
+                      "width_min": "125"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 15,
+                  "resize_on_item_update": true
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 10,
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 300,
+  "layoutHeight": 328
+}

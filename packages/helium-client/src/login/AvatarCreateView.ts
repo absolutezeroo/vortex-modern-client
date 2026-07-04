@@ -423,6 +423,7 @@ export class AvatarCreateView implements IAvatarImageListener
 		Object.assign(this._previewCanvas.style, {
 			background: 'radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%)',
 			borderRadius: '8px',
+			imageRendering: 'pixelated',
 		} as Partial<CSSStyleDeclaration>);
 		previewCol.appendChild(this._previewCanvas);
 
@@ -731,12 +732,22 @@ export class AvatarCreateView implements IAvatarImageListener
 		{
 			const row = document.createElement('div');
 
-			Object.assign(row.style, { display: 'flex', alignItems: 'center', gap: '10px' } as Partial<CSSStyleDeclaration>);
+			// 72px buttons don't all fit in the column's width at PART_BUTTON_LIMIT — rather
+			// than let the row overflow the whole page horizontally (which is what happened
+			// with plain flex + no wrap), only the button strip scrolls, and only within
+			// this row; the label stays fixed and never scrolls out of view.
+			Object.assign(row.style, {
+				display: 'flex',
+				alignItems: 'center',
+				gap: '10px',
+				minWidth: '0',
+			} as Partial<CSSStyleDeclaration>);
 
 			const label = document.createElement('div');
 
 			Object.assign(label.style, {
 				width: '70px',
+				flexShrink: '0',
 				fontSize: '12px',
 				color: this._activePartType === partType ? '#FFFFFF' : '#CDEAF4',
 				fontWeight: this._activePartType === partType ? 'bold' : 'normal',
@@ -745,13 +756,28 @@ export class AvatarCreateView implements IAvatarImageListener
 			label.textContent = PART_TYPE_LABELS[partType] ?? partType;
 			row.appendChild(label);
 
+			const strip = document.createElement('div');
+
+			Object.assign(strip.style, {
+				display: 'flex',
+				gap: '10px',
+				overflowX: 'auto',
+				overflowY: 'hidden',
+				minWidth: '0',
+				padding: '2px',
+			} as Partial<CSSStyleDeclaration>);
+
 			const sets = this.getSelectableSets(partType).slice(0, PART_BUTTON_LIMIT);
 
 			for(const partSet of sets)
 			{
-				row.appendChild(this.createPartButton(partType, partSet));
+				const button = this.createPartButton(partType, partSet);
+
+				button.style.flexShrink = '0';
+				strip.appendChild(button);
 			}
 
+			row.appendChild(strip);
 			this._partGrid.appendChild(row);
 		}
 	}
@@ -764,8 +790,8 @@ export class AvatarCreateView implements IAvatarImageListener
 		const active = partType === this._activePartType;
 
 		Object.assign(button.style, {
-			width: '50px',
-			height: '50px',
+			width: '72px',
+			height: '72px',
 			padding: '0',
 			border: `2px solid ${selected ? '#4CAF50' : active ? 'rgba(255,255,255,0.5)' : 'transparent'}`,
 			borderRadius: '6px',
@@ -776,8 +802,9 @@ export class AvatarCreateView implements IAvatarImageListener
 
 		const canvas = document.createElement('canvas');
 
-		canvas.width = 46;
-		canvas.height = 46;
+		canvas.width = 68;
+		canvas.height = 68;
+		canvas.style.imageRendering = 'pixelated';
 		button.appendChild(canvas);
 		this.renderPartPreview(partType, partSet, canvas);
 
@@ -845,7 +872,10 @@ export class AvatarCreateView implements IAvatarImageListener
 		image.setDirection('full', 4);
 
 		const setType = (partType === AvatarFigurePartType.HAIR || partType === AvatarFigurePartType.HEAD) ? 'head' : 'full';
-		const texture = image.getImage(setType, true, 0.5);
+		// AS3 used scale=0.5 here (matching a much bigger 96x96+ button in the Flash
+		// layout); ours renders into a smaller button, so scale=1 keeps actual pixel
+		// detail instead of just stretching an already-tiny bitmap.
+		const texture = image.getImage(setType, true, 1);
 
 		this.drawToCanvas(texture, canvas);
 		image.dispose();
@@ -884,6 +914,10 @@ export class AvatarCreateView implements IAvatarImageListener
 
 		if(!ctx) return;
 
+		// Avatar sprites are pixel art at native resolution — the default smoothed
+		// scaling blurs them badly whenever drawImage() scales up (which it does
+		// here, since getImage() is called with scale=0.5 to keep composition cheap).
+		ctx.imageSmoothingEnabled = false;
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		const source = extractCanvasSource(texture);

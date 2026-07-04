@@ -11,12 +11,14 @@
  * login-ui.scss header comment for why this replaced AS3's horizontal
  * thumbnail strip with glow/halo highlight bitmaps.
  *
- * Row thumbnails are rendered with the client's own avatarRenderManager
- * (same mechanism as AvatarCreateView's preview) instead of AS3's
- * habbo-imaging HTTP endpoint — that endpoint is an external image-generation
- * service the emulator may not implement at all, whereas the render manager
- * is already loaded client-side and needs no server support beyond the
- * figure/asset data every other avatar-rendering feature already depends on.
+ * Row thumbnails use AS3's original approach — a habbo-imaging HTTP endpoint
+ * fetched via <img> — rather than client-side rendering through
+ * avatarRenderManager. This was briefly replaced with client-side canvas
+ * rendering because the emulator had no working habbo-imaging endpoint at
+ * all; now that one exists (nitro-imager, proxied through the assets host —
+ * see habbo.imaging.avatar.url in common_configuration_txt.txt), the
+ * AS3-faithful approach is back and is simpler and lighter than composing a
+ * full avatar client-side just for a 32px list icon.
  *
  * AS3 properties:
  * - _context: ILoginContext
@@ -30,22 +32,8 @@
  */
 import type {ILoginContext} from './ILoginContext';
 import type {AvatarData} from '@habbo/communication/login/AvatarData';
-import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 
-/** Extracts a drawable canvas source from an engine avatar image (a PixiJS Texture backed by an OffscreenCanvas). */
-function extractCanvasSource(image: unknown): CanvasImageSource | null
-{
-	const source = (image as {source?: {resource?: unknown}} | null)?.source?.resource;
-
-	if(source && typeof (source as {width?: unknown}).width === 'number')
-	{
-		return source as CanvasImageSource;
-	}
-
-	return null;
-}
-
-export class AvatarView implements IAvatarImageListener
+export class AvatarView
 {
 	private _context: ILoginContext;
 	private _root: HTMLDivElement;
@@ -71,18 +59,7 @@ export class AvatarView implements IAvatarImageListener
 	private _listElement: HTMLDivElement | null = null;
 	private _rowElements: HTMLButtonElement[] = [];
 
-	/** Canvas per row, keyed by figure string, so avatarImageReady() knows what to redraw. */
-	private _canvasByFigure: Map<string, HTMLCanvasElement> = new Map();
-
-	/**
-	 * Avatar images still waiting on an async part download — kept alive so their
-	 * avatarImageReady() callback still fires, disposed on the next populateAvatars()
-	 * pass. Same leak/cascade concern as AvatarCreateView._pendingImages: an early
-	 * return without dispose() here would leave the listener registered forever.
-	 */
-	private _pendingImages: any[] = [];
-
-	public disposed: boolean = false;
+	private _disposed: boolean = false;
 
 	/**
 	 * AS3: AvatarView(_arg_1:ILoginContext)
@@ -184,9 +161,7 @@ export class AvatarView implements IAvatarImageListener
 			row.removeEventListener('click', this._onAvatarClick);
 		}
 
-		this.disposePendingImages();
 		this._rowElements = [];
-		this._canvasByFigure.clear();
 		this._listElement.innerHTML = '';
 		this._SafeStr_1672 = avatars;
 
@@ -197,14 +172,13 @@ export class AvatarView implements IAvatarImageListener
 			row.className = 'habbo-char-row';
 			row.dataset.index = String(index);
 
-			const thumb = document.createElement('canvas');
+			const thumb = document.createElement('img');
 
 			thumb.className = 'habbo-char-row__thumb';
-			thumb.width = 64;
-			thumb.height = 64;
+			thumb.alt = '';
+			thumb.draggable = false;
+			thumb.src = this.getAvatarUrl(avatar);
 			row.appendChild(thumb);
-			this._canvasByFigure.set(avatar.figure, thumb);
-			this.renderRowThumbnail(avatar, thumb);
 
 			const name = document.createElement('span');
 
@@ -227,83 +201,6 @@ export class AvatarView implements IAvatarImageListener
 		this._SafeStr_4550 = 0;
 		this._saveButton.disabled = avatars.length === 0;
 		this.updateSelection();
-	}
-
-	/**
-	 * Renders a head-only avatar icon into `canvas` using the client's own
-	 * avatarRenderManager (AS3: getAvatarUrl() + habbo-imaging HTTP fetch).
-	 */
-	private renderRowThumbnail(avatar: AvatarData, canvas: HTMLCanvasElement): void
-	{
-		const renderManager = this._context.avatarRenderManager;
-
-		if(!renderManager || !avatar.figure) return;
-
-		const image = renderManager.createAvatarImage(avatar.figure, 'h', avatar.gender, this, null);
-
-		if(!image) return;
-
-		if(image.isPlaceholder())
-		{
-			// Not downloaded yet — keep it alive so avatarImageReady() fires once it is;
-			// tracked so the *next* populateAvatars() pass disposes it instead of leaking it.
-			this._pendingImages.push(image);
-
-			return;
-		}
-
-		image.setDirection('head', 2);
-
-		const texture = image.getImage('head', true, 0.5);
-		const ctx = canvas.getContext('2d');
-		const source = ctx ? extractCanvasSource(texture) : null;
-
-		if(ctx && source)
-		{
-			const srcW = (source as {width: number}).width;
-			const srcH = (source as {height: number}).height;
-
-			if(srcW > 0 && srcH > 0)
-			{
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-				const scale = Math.min(canvas.width / srcW, canvas.height / srcH);
-				const drawW = srcW * scale;
-				const drawH = srcH * scale;
-
-				ctx.drawImage(source, (canvas.width - drawW) / 2, (canvas.height - drawH) / 2, drawW, drawH);
-			}
-		}
-
-		image.dispose();
-	}
-
-	/**
-	 * AS3: avatarImageReady(figure:String) — IAvatarImageListener
-	 * Called when an async-downloaded figure part becomes available; redraws
-	 * just the row(s) whose figure matches instead of rebuilding the whole list.
-	 */
-	public avatarImageReady(figureString: string): void
-	{
-		if(this.disposed) return;
-
-		const canvas = this._canvasByFigure.get(figureString);
-		const avatar = this._SafeStr_1672.find((a) => a.figure === figureString);
-
-		if(canvas && avatar)
-		{
-			this.renderRowThumbnail(avatar, canvas);
-		}
-	}
-
-	private disposePendingImages(): void
-	{
-		for(const image of this._pendingImages)
-		{
-			image.dispose();
-		}
-
-		this._pendingImages = [];
 	}
 
 	/**
@@ -337,6 +234,30 @@ export class AvatarView implements IAvatarImageListener
 				check.style.visibility = selected ? 'visible' : 'hidden';
 			}
 		});
+	}
+
+	/**
+	 * AS3: getAvatarUrl(_arg_1:AvatarData):String
+	 * Builds the habbo-imaging URL for a small head-only avatar icon.
+	 *
+	 * AS3 branched on baseUrl containing "local"/"127.0.0.1" to fall back to
+	 * real habbo.com, and used a "user="-keyed lookup against the live
+	 * production imaging service otherwise. Neither branch applies here: our
+	 * imaging service (nitro-imager) doesn't do server-side username lookups,
+	 * so this always builds a "figure="-keyed URL against our own endpoint.
+	 */
+	private getAvatarUrl(avatar: AvatarData): string
+	{
+		const baseUrl = this._context.getProperty('habbo.imaging.avatar.url') ?? '/habbo-imaging/avatarimage';
+		const params = new URLSearchParams({
+			figure: avatar.figure,
+			gender: avatar.gender || 'M',
+			direction: '2',
+			headonly: '1',
+			size: 's',
+		});
+
+		return `${baseUrl}?${params.toString()}`;
 	}
 
 	/**
@@ -374,21 +295,19 @@ export class AvatarView implements IAvatarImageListener
 	 */
 	public dispose(): void
 	{
-		if(this.disposed) return;
+		if(this._disposed) return;
 
-		this.disposed = true;
+		this._disposed = true;
 
 		for(const row of this._rowElements)
 		{
 			row.removeEventListener('click', this._onAvatarClick);
 		}
 
-		this.disposePendingImages();
 		this._cancelButton.removeEventListener('click', this._onCancel);
 		this._saveButton.removeEventListener('click', this._onChooseAvatar);
 		this._createButton.removeEventListener('click', this._onCreateAvatar);
 		this._rowElements = [];
-		this._canvasByFigure.clear();
 		this._SafeStr_1672.length = 0;
 		this._root.remove();
 	}

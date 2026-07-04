@@ -1,0 +1,29 @@
+{
+  "name": "container_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\48_container_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "0",
+          "height": "0",
+          "params": "16",
+          "style": "3",
+          "name": "container"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

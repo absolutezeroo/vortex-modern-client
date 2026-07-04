@@ -1,0 +1,78 @@
+{
+  "name": "variable_value_info_bubble",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\45_variable_value_info_bubble.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bubble",
+        "typeId": 45,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "60",
+          "height": "39",
+          "params": "0",
+          "style": "5",
+          "name": "border",
+          "color": "0x0ade6ff"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "2",
+              "y": "4",
+              "width": "16",
+              "height": "14",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "11",
+              "y": "3",
+              "width": "22",
+              "height": "16",
+              "params": "4194320",
+              "style": "0",
+              "name": "value",
+              "caption": "505"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 17,
+              "text_color": 16777215,
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 8,
+          "margin_top": 8,
+          "margin_right": 8,
+          "margin_bottom": 8
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 60,
+  "layoutHeight": 39
+}

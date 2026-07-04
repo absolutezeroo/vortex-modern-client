@@ -47,6 +47,11 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
+			'/habbo-imaging': {
+				target: 'http://vortex-assets.local',
+				changeOrigin: true,
+				secure: false,
+			},
 			// Local emulator web API (WebApiLoginProvider). The emulator doesn't send
 			// Access-Control-Allow-Origin, so a direct cross-origin fetch() from the
 			// Vite dev origin gets blocked by CORS. Proxying through the dev server

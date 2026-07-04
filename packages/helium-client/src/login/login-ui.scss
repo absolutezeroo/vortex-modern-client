@@ -352,8 +352,11 @@
 		width: 32px;
 		height: 32px;
 		border-radius: 50%;
+		object-fit: cover;
+		object-position: top center;
 		background: rgba(0, 0, 0, 0.2);
 		flex-shrink: 0;
+		image-rendering: pixelated;
 	}
 
 	&__name {

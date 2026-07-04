@@ -1,0 +1,938 @@
+{
+  "name": "recyclerWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\129_recyclerWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "208",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "208",
+              "params": "2192",
+              "style": "0",
+              "name": "normal"
+            },
+            "children": [
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "19",
+                  "y": "7",
+                  "width": "42",
+                  "height": "30",
+                  "params": "786448",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "6",
+                      "width": "17",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "ducket_cost",
+                      "caption": "50"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "17",
+                      "y": "0",
+                      "width": "2",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3",
+                      "name": "spacer"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "icon",
+                    "typeId": 1,
+                    "attributes": {
+                      "x": "19",
+                      "y": "4",
+                      "width": "23",
+                      "height": "21",
+                      "params": "16",
+                      "style": "32",
+                      "name": "ducket_icon"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "42",
+                      "y": "0",
+                      "width": "10",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3",
+                      "name": "spacer",
+                      "visible": "false"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "19",
+                  "y": "41",
+                  "width": "194",
+                  "height": "30",
+                  "params": "131089",
+                  "style": "6",
+                  "name": "recycler_recycle",
+                  "caption": "${catalog.recycler.button.recycle}",
+                  "color": "0x0aa00"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "button_shiny_regular"
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "16",
+                  "y": "85",
+                  "width": "185",
+                  "height": "156",
+                  "params": "1168",
+                  "style": "3",
+                  "name": "slots_wrapper"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "185",
+                      "height": "115",
+                      "params": "144",
+                      "style": "3",
+                      "name": "layout"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "15",
+                          "height": "115",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_container_left",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "15",
+                          "y": "0",
+                          "width": "158",
+                          "height": "115",
+                          "params": "144",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_container_slice"
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "172",
+                          "y": "0",
+                          "width": "13",
+                          "height": "115",
+                          "params": "80",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_container_right",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "21",
+                      "y": "16",
+                      "width": "145",
+                      "height": "124",
+                      "params": "16",
+                      "style": "3",
+                      "name": "slots"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_1"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "37",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_2"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "74",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_3"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "111",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_4"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_1"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "37",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_2"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "74",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_3"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "111",
+                          "y": "0",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_4"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_5"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "37",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_6"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "74",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_7"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "111",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_8"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_5"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "37",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_6"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "74",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_7"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "111",
+                          "y": "44",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_8"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_9"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "37",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_10"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "74",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_11"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "111",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_bg_12"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_9"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "37",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_10"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "74",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_11"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "111",
+                          "y": "90",
+                          "width": "34",
+                          "height": "34",
+                          "params": "17",
+                          "style": "0",
+                          "name": "slot_img_12"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "214",
+                  "y": "85",
+                  "width": "123",
+                  "height": "115",
+                  "params": "1168",
+                  "style": "3",
+                  "name": "indicator_wrapper",
+                  "width_min": "123",
+                  "width_max": "123",
+                  "height_min": "115",
+                  "height_max": "115"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "123",
+                      "height": "115",
+                      "params": "144",
+                      "style": "3",
+                      "name": "layout"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "15",
+                          "height": "115",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_container_left",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "15",
+                          "y": "0",
+                          "width": "96",
+                          "height": "115",
+                          "params": "144",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_container_slice"
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "110",
+                          "y": "0",
+                          "width": "13",
+                          "height": "115",
+                          "params": "80",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_container_right",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "123",
+                      "height": "115",
+                      "params": "16",
+                      "style": "3",
+                      "name": "indicator"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "122",
+                          "height": "115",
+                          "params": "16",
+                          "style": "3",
+                          "name": "indicator"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "recycler_furnimatic_indicator",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "37",
+                          "y": "43",
+                          "width": "50",
+                          "height": "50",
+                          "params": "16",
+                          "style": "3",
+                          "name": "indicator_pointer"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "50",
+                              "height": "50",
+                              "params": "16",
+                              "style": "3",
+                              "name": "pointer_arrow"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "recycler_furnimatic_indicator_pointer_arrow",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "50",
+                              "height": "50",
+                              "params": "16",
+                              "style": "3",
+                              "name": "pointer_base"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "recycler_furnimatic_indicator_pointer_base",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "29",
+                          "y": "91",
+                          "width": "65",
+                          "height": "17",
+                          "params": "934097",
+                          "style": "3",
+                          "name": "abort_region",
+                          "visible": "false",
+                          "treshold": "0",
+                          "height_min": "17",
+                          "height_max": "17"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "65",
+                              "height": "15",
+                              "params": "16",
+                              "style": "3",
+                              "caption": "${catalog.recycler.button.abort}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "font_size": 16,
+                              "mouse_wheel_enabled": false,
+                              "underline": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "208",
+              "params": "2192",
+              "style": "3",
+              "name": "disabled_border",
+              "color": "0x0888888",
+              "blend": "0.7",
+              "visible": "false",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "235",
+                  "y": "99",
+                  "width": "118",
+                  "height": "176",
+                  "params": "1040",
+                  "style": "3"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "image_frank_dont_know",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "bubble",
+                "typeId": 45,
+                "attributes": {
+                  "x": "107",
+                  "y": "98",
+                  "width": "155",
+                  "height": "81",
+                  "params": "1025",
+                  "style": "7"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "4",
+                      "y": "4",
+                      "width": "107",
+                      "height": "57",
+                      "params": "8388624",
+                      "style": "3",
+                      "caption": "${recycler.broken}",
+                      "width_min": "107",
+                      "width_max": "107"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "115",
+                      "y": "5",
+                      "width": "20",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3",
+                      "name": "emoji_1"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "franks_emotions_sad",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "margin_left": 8,
+                  "margin_top": 8,
+                  "margin_right": 8,
+                  "margin_bottom": 8,
+                  "direction": "right"
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "235",
+                  "y": "11",
+                  "width": "115",
+                  "height": "30",
+                  "params": "393233",
+                  "style": "3",
+                  "name": "pat_frank_btn",
+                  "caption": "${recycler.pat_frank}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "button_shiny_regular"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "32",
+                  "y": "210",
+                  "width": "40",
+                  "height": "40",
+                  "params": "1040",
+                  "style": "3",
+                  "name": "emoji_2_template"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "franks_emotions_heart"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 208
+}

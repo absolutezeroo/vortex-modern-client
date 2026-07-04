@@ -1,0 +1,354 @@
+{
+  "name": "chest_wired_upgrade",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\42_chest_wired_upgrade.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "11",
+          "y": "9",
+          "width": "353",
+          "height": "287",
+          "params": "32769",
+          "style": "3",
+          "caption": "${wiredchests.upgrade.title}",
+          "color": "0xff418db0",
+          "width_min": "275",
+          "height_min": "150"
+        },
+        "children": [
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "8",
+              "width": "351",
+              "height": "241",
+              "params": "8538256",
+              "style": "0",
+              "name": "content"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "349",
+                  "height": "164",
+                  "params": "144",
+                  "style": "0",
+                  "caption": "Confirm purchase"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "10",
+                      "y": "12",
+                      "width": "126",
+                      "height": "152",
+                      "params": "16",
+                      "style": "0",
+                      "caption": "Confirm purchase",
+                      "color": "0x0f1f1f1"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "1",
+                          "y": "1",
+                          "width": "126",
+                          "height": "152",
+                          "params": "16",
+                          "style": "0",
+                          "name": "product_image",
+                          "caption": "Confirm purchase"
+                        },
+                        "children": [],
+                        "vars": {
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "89",
+                          "y": "7",
+                          "width": "30",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3",
+                          "name": "wired_icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "${image.library.url}catalogue/icon_80.png",
+                          "pivot_point": "top right",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "itemlist",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "143",
+                      "y": "15",
+                      "width": "197",
+                      "height": "67",
+                      "params": "144",
+                      "style": "0",
+                      "name": "properties_itemlist"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "197",
+                          "height": "19",
+                          "params": "16528",
+                          "style": "0",
+                          "name": "product_name",
+                          "caption": "${wiredchests.upgrade.wired.info}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "font_size": 20,
+                          "text_style": "u_bold",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "html",
+                        "typeId": 11,
+                        "attributes": {
+                          "x": "0",
+                          "y": "23",
+                          "width": "197",
+                          "height": "44",
+                          "params": "1",
+                          "style": "3",
+                          "name": "warning",
+                          "caption": "${wiredchests.big_fat_warning}",
+                          "width_min": "197"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0,
+                          "editable": false,
+                          "selectable": false
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 4,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "142",
+                      "y": "137",
+                      "width": "307",
+                      "height": "22",
+                      "params": "16400",
+                      "style": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "1",
+                          "width": "268",
+                          "height": "19",
+                          "params": "16",
+                          "style": "0",
+                          "caption": "${catalog.purchase.confirmation.dialog.cost}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "font_size": 20,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "268",
+                          "y": "1",
+                          "width": "39",
+                          "height": "19",
+                          "params": "16",
+                          "style": "3",
+                          "name": "free",
+                          "caption": "${wiredchests.upgrade.wired.cost}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "font_size": 20,
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "12",
+                  "y": "174",
+                  "width": "327",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "error_text",
+                  "caption": "Purchase not possible: A starters chest can not be upgraded to a Wired Chest.",
+                  "color": "0x00"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 12857149,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "13",
+                  "y": "214",
+                  "width": "341",
+                  "height": "27",
+                  "params": "131216",
+                  "style": "3",
+                  "name": "buttons",
+                  "caption": "Confirm purchase"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "110",
+                      "height": "27",
+                      "params": "132113",
+                      "style": "3",
+                      "name": "cancel_button",
+                      "caption": "${catalog.purchase_confirmation.cancel}",
+                      "width_min": "110",
+                      "width_max": "110",
+                      "height_min": "27",
+                      "height_max": "27"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "215",
+                      "y": "0",
+                      "width": "110",
+                      "height": "27",
+                      "params": "132113",
+                      "style": "5",
+                      "name": "buy_button",
+                      "caption": "${catalog.purchase_confirmation.buy}",
+                      "color": "0x0aa00",
+                      "width_min": "110",
+                      "width_max": "110",
+                      "height_min": "27",
+                      "height_max": "27"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 105
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 10
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 25,
+          "margin_right": 1,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 353,
+  "layoutHeight": 287
+}
