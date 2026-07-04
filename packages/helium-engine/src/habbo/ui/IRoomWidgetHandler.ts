@@ -18,7 +18,7 @@ export interface IRoomWidgetHandler extends IDisposable
 	/**
 	 * Sets the container providing services to this handler.
 	 */
-	set container(value: IRoomWidgetHandlerContainer);
+	set container(value: IRoomWidgetHandlerContainer | null);
 
 	/**
 	 * Gets the list of widget message types this handler processes.

@@ -120,6 +120,15 @@ export interface IRoomEngine extends IDisposable
 
 	disposeRoomObject(roomId: number, objectId: number, category: number): boolean;
 
+	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObject()
+	modifyRoomObject(objectId: number, category: number, action: string): boolean;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::useRoomObjectInActiveRoom()
+	useRoomObjectInActiveRoom(objectId: number, category: number): boolean;
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
+	modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean;
+
 	// User updates
 	updateRoomObjectUser(
 		roomId: number,

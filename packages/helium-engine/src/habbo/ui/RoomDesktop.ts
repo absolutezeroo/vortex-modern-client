@@ -27,6 +27,13 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
+import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
+import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
+import type {IRoomObject} from '@room/object/IRoomObject';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import type {IRoomDesktop} from './IRoomDesktop';
 import type {IRoomWidgetMessageListener} from './IRoomWidgetMessageListener';
@@ -36,7 +43,10 @@ import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 import {RoomDesktopLayoutManager} from './RoomDesktopLayoutManager';
 import {ColorTransitioner} from '@room/utils/ColorTransitioner';
 import type {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
-import type {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObjectUpdateEvent';
+import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
+import type {IRoomWidget} from './widget/IRoomWidget';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 
 const log = Logger.getLogger('RoomDesktop');
@@ -64,6 +74,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toolbar
 	private _toolbar: IHabboToolbar | null = null;
 	private _widgetFactory: IRoomWidgetFactory | null = null;
+	private _catalog: IHabboCatalog | null = null;
+	private _habboTracking: IHabboTracking | null = null;
+	private _habboGroupsManager: IHabboGroupsManager | null = null;
 
 	// Widget management
 	private _widgets: Map<string, unknown> = new Map();
@@ -201,10 +214,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 		}
 	}
 
-	public processWidgetMessage(_message: unknown): unknown
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processWidgetMessage()
+	public processWidgetMessage(message: unknown): unknown
 	{
-		// Route to appropriate widget handler (stub for now)
-		return null;
+		const messageType = (message as { type?: string } | null)?.type;
+
+		if(!messageType) return null;
+
+		const handler = this._widgetMessageHandlers.get(messageType);
+
+		return handler ? handler.processWidgetMessage(message) : null;
 	}
 
 	public get sessionDataManager(): ISessionDataManager | null
@@ -246,6 +265,60 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	public get toolbar(): IHabboToolbar | null
 	{
 		return this._toolbar;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
+	public get catalog(): IHabboCatalog | null
+	{
+		return this._catalog;
+	}
+
+	public set catalog(value: IHabboCatalog | null)
+	{
+		this._catalog = value;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
+	public get config(): IHabboConfigurationManager | null
+	{
+		return this._config;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
+	public get habboTracking(): IHabboTracking | null
+	{
+		return this._habboTracking;
+	}
+
+	public set habboTracking(value: IHabboTracking | null)
+	{
+		this._habboTracking = value;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
+	public get habboGroupsManager(): IHabboGroupsManager | null
+	{
+		return this._habboGroupsManager;
+	}
+
+	public set habboGroupsManager(value: IHabboGroupsManager | null)
+	{
+		this._habboGroupsManager = value;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
+	// TODO(AS3): no concrete implementation exists yet, see IHabboUserDefinedRoomEvents.ts.
+	public get userDefinedRoomEvents(): IHabboUserDefinedRoomEvents | null
+	{
+		return null;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
+	public isOwnerOfFurniture(object: IRoomObject): boolean
+	{
+		const ownerId = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID);
+
+		return ownerId > 0 && ownerId === this._sessionDataManager?.userId;
 	}
 
 	public get layoutManager(): RoomDesktopLayoutManager
@@ -473,7 +546,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
 	/**
 	 * Creates a widget by type code.
-	 * Widget creation is stubbed — actual widgets will be implemented later.
+	 *
+	 * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createWidget()
+	 * TODO(AS3): only "RWE_INFOSTAND" is wired up so far; other widget types
+	 * (chat, me-menu, room tools, etc.) still fall through to the stub log.
 	 */
 	public createWidget(type: string): void
 	{
@@ -484,9 +560,54 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 			return;
 		}
 
-		// For now, just log the request. Full widget creation requires
-		// the widget factory and handler registry to be implemented.
-		log.debug(`Widget creation requested: ${type} (stub)`);
+		let handler: IRoomWidgetHandler | null = null;
+
+		switch(type)
+		{
+			case 'RWE_INFOSTAND':
+				handler = new InfoStandWidgetHandler(null);
+				break;
+			default:
+				log.debug(`Widget creation requested: ${type} (stub)`);
+
+				return;
+		}
+
+		handler.container = this;
+
+		for(const messageType of handler.getWidgetMessages())
+		{
+			this._widgetMessageHandlers.set(messageType, handler);
+		}
+
+		for(const eventType of [...handler.getProcessedEvents(), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET'])
+		{
+			this._widgetEventHandlers.set(eventType, handler);
+		}
+
+		const widget = this._widgetFactory?.createWidget(type, handler) as IRoomWidget | null | undefined;
+
+		if(!widget)
+		{
+			handler.dispose();
+
+			return;
+		}
+
+		widget.messageListener = this;
+		widget.registerUpdateEvents(this._desktopEvents);
+		widget.reusable = false;
+		widget.widgetType = type;
+
+		this._widgets.set(type, widget);
+		this.addUpdateListener(handler);
+
+		if(widget.mainWindow)
+		{
+			this._layoutManager.addWidgetWindow(type, widget.mainWindow);
+		}
+
+		log.debug(`Widget created: ${type}`);
 	}
 
 	public disposeWidget(type: string): void
@@ -589,12 +710,46 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	}
 
 	/**
-	 * Handles room object events and dispatches to widget handlers.
+	 * Translates room-engine object events (REOE_*) into widget-facing
+	 * RoomWidgetRoomObjectUpdateEvents (RWROUE_*) and dispatches them on
+	 * `desktopEvents`, where widgets (e.g. InfoStandWidget) listen for them.
+	 *
+	 * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
 	 */
 	public roomObjectEventHandler(event: RoomEngineObjectEvent): void
 	{
-		const eventType = event.type;
-		const handler = this._widgetEventHandlers.get(eventType);
+		let translatedType: string | null = null;
+
+		switch(event.type)
+		{
+			case RoomEngineObjectEvent.REOE_OBJECT_SELECTED:
+				translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
+				break;
+			case RoomEngineObjectEvent.REOE_OBJECT_DESELECTED:
+				translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
+				break;
+			case RoomEngineObjectEvent.REOE_OBJECT_ADDED:
+				translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+					? RoomWidgetRoomObjectUpdateEvent.USER_ADDED
+					: RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED;
+				break;
+			case RoomEngineObjectEvent.REOE_OBJECT_REMOVED:
+				translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+					? RoomWidgetRoomObjectUpdateEvent.USER_REMOVED
+					: RoomWidgetRoomObjectUpdateEvent.FURNI_REMOVED;
+				break;
+		}
+
+		if(translatedType)
+		{
+			const translated = new RoomWidgetRoomObjectUpdateEvent(translatedType, event.objectId, event.category, event.roomId);
+
+			this._desktopEvents.emit(translated.type, translated);
+
+			return;
+		}
+
+		const handler = this._widgetEventHandlers.get(event.type);
 
 		if(handler)
 		{

@@ -1,15 +1,16 @@
 /**
  * RoomWidgetFactory
  *
- * @see sources/source_as_win63/habbo/ui/widget/RoomWidgetFactory.as
+ * @see sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as
  *
- * Stub factory that returns null for all widget types.
- * Full widget creation will be implemented when individual widgets are ported.
+ * TODO(AS3): only "RWE_INFOSTAND" is implemented so far; the AS3 factory
+ * constructs ~35 other widget types (chat, me-menu, room tools, etc.).
  */
 import {Logger} from '@core/utils/Logger';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 import type {RoomUI} from './RoomUI';
+import {InfoStandWidget} from './widget/infostand/InfoStandWidget';
 
 const log = Logger.getLogger('RoomWidgetFactory');
 
@@ -23,11 +24,23 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
 		this._roomUI = roomUI;
 	}
 
+	// AS3: sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as::createWidget()
 	public createWidget(type: string, handler: IRoomWidgetHandler): unknown | null
 	{
-		log.debug(`Widget creation requested: ${type} (stub — returning null)`);
+		if(!this._roomUI || !this._roomUI.windowManager) return null;
 
-		return null;
+		switch(type)
+		{
+			case 'RWE_INFOSTAND':
+				return new InfoStandWidget(
+					handler, this._roomUI.windowManager, this._roomUI.assets,
+					this._roomUI.localization, this._roomUI.config, this._roomUI.catalog
+				);
+			default:
+				log.debug(`Widget creation requested: ${type} (stub — returning null)`);
+
+				return null;
+		}
 	}
 
 	public get disposed(): boolean

@@ -23,6 +23,7 @@ import type {IRoomManager} from '@room/IRoomManager';
 import type {IRoomManagerListener} from '@room/IRoomManagerListener';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomObjectController} from '@room/object/IRoomObjectController';
+import type {IRoomObjectEventHandler} from '@room/object/logic/IRoomObjectEventHandler';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomRenderer} from '@room/renderer/IRoomRenderer';
 import type {IRoomRendererFactory} from '@room/renderer/IRoomRendererFactory';
@@ -986,6 +987,51 @@ export class RoomEngine extends Component implements IRoomEngine,
 		}
 
 		return success;
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObject()
+	// TODO(AS3): OBJECT_MOVE/OBJECT_ROTATE_POSITIVE need a "move mode" interaction
+	// state machine plus outgoing composers that don't exist yet in the engine —
+	// deferred (shared with the furniture-context-menu widget, not infostand-specific).
+	modifyRoomObject(objectId: number, category: number, action: string): boolean
+	{
+		switch (action)
+		{
+			case 'OBJECT_PICKUP':
+				return this.disposeRoomObject(this._activeRoomId, objectId, category);
+			case 'OBJECT_EJECT':
+				return this.disposeRoomObject(this._activeRoomId, objectId, category);
+			default:
+				log.warn(`modifyRoomObject: action not implemented yet: ${action}`);
+
+				return false;
+		}
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::useRoomObjectInActiveRoom()
+	useRoomObjectInActiveRoom(objectId: number, category: number): boolean
+	{
+		const object = this.getRoomObject(this._activeRoomId, objectId, category);
+		const handler = object?.getMouseHandler() as IRoomObjectEventHandler | null;
+
+		if (handler?.useObject)
+		{
+			handler.useObject();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
+	// TODO(AS3): ad-furni branding save — needs SetObjectDataMessageComposer, which
+	// doesn't exist yet. Low value without the branding widget itself.
+	modifyRoomObjectDataWithMap(_objectId: number, _category: number, _action: string, _data: Map<string, string>): boolean
+	{
+		log.warn('modifyRoomObjectDataWithMap: not implemented yet');
+
+		return false;
 	}
 
 	updateRoomObjectUser(
@@ -2806,12 +2852,17 @@ export class RoomEngine extends Component implements IRoomEngine,
 			else if (this._connection)
 			{
 				this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
+				this.deselectRoomObject();
 			}
 		}
 	}
 
 	/**
-	 * Handle object mouse events - debug logging for furniture clicks.
+	 * Handle object mouse events - selects the clicked object (furniture/user)
+	 * so widgets (e.g. infostand) can react, and logs the click for debugging.
+	 *
+	 * AS3: sources/win63_version/habbo/room/class_34.as — object click handling
+	 * that leads to RoomEngineObjectEvent.REOE_SELECTED being dispatched.
 	 */
 	private handleObjectMouseEvent(event: RoomObjectMouseEvent): void
 	{
@@ -2830,6 +2881,82 @@ export class RoomEngine extends Component implements IRoomEngine,
 		const loc = obj.getLocation();
 
 		log.info(`[CLICK] Object id=${objId} type="${objType}" pos=(${loc?.x?.toFixed(1)}, ${loc?.y?.toFixed(1)}, ${loc?.z?.toFixed(1)})`);
+
+		if (this._activeRoomId < 0) return;
+
+		const category = this.findObjectCategory(this._activeRoomId, obj);
+
+		if (category !== null)
+		{
+			this.selectRoomObject(this._activeRoomId, objId, category);
+		}
+	}
+
+	/**
+	 * Resolves the category (FURNITURE/WALL/USER) a room object was created under.
+	 * Objects don't self-report a category, so this probes each category's manager
+	 * for the same object reference at this id.
+	 */
+	private findObjectCategory(roomId: number, obj: IRoomObject): number | null
+	{
+		const id = obj.getId();
+		const candidates = [
+			RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE,
+			RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL,
+			RoomObjectCategoryEnum.OBJECT_CATEGORY_USER,
+		];
+
+		for (const category of candidates)
+		{
+			if (this.getRoomObject(roomId, id, category) === obj)
+			{
+				return category;
+			}
+		}
+
+		return null;
+	}
+
+	private _selectedObject: {roomId: number; id: number; category: number} | null = null;
+
+	/**
+	 * Selects a room object and dispatches REOE_OBJECT_SELECTED, deselecting
+	 * whatever was previously selected in that room first.
+	 *
+	 * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
+	 * ("REOE_SELECTED" case) is what ultimately consumes this on the UI side.
+	 */
+	private selectRoomObject(roomId: number, id: number, category: number): void
+	{
+		if (this._selectedObject && (this._selectedObject.id !== id || this._selectedObject.category !== category))
+		{
+			this.deselectRoomObject();
+		}
+
+		this._selectedObject = {roomId, id, category};
+
+		this.events.emit(
+			RoomEngineObjectEvent.REOE_OBJECT_SELECTED,
+			new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_SELECTED, roomId, id, category)
+		);
+	}
+
+	/**
+	 * Deselects the currently selected room object (if any) and dispatches
+	 * REOE_OBJECT_DESELECTED.
+	 */
+	private deselectRoomObject(): void
+	{
+		if (!this._selectedObject) return;
+
+		const {roomId, id, category} = this._selectedObject;
+
+		this._selectedObject = null;
+
+		this.events.emit(
+			RoomEngineObjectEvent.REOE_OBJECT_DESELECTED,
+			new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_DESELECTED, roomId, id, category)
+		);
 	}
 
 	/**

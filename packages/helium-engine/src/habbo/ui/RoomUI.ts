@@ -21,6 +21,9 @@ import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
+import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {IID_HabboTracking} from '@iid/IIDHabboTracking';
+import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
 
 // Interfaces
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -30,6 +33,9 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
+import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {FriendBarResizeEvent} from '@habbo/friendbar/events/FriendBarResizeEvent';
 import type {IHabboLandingView} from '@habbo/friendbar/IHabboLandingView';
@@ -38,7 +44,7 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 // Events
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
-import type {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
@@ -60,6 +66,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 	private _localization: IHabboLocalizationManager | null = null;
 	private _toolbar: IHabboToolbar | null = null;
 	private _landingView: IHabboLandingView | null = null;
+	private _catalog: IHabboCatalog | null = null;
+	private _habboTracking: IHabboTracking | null = null;
+	private _habboGroupsManager: IHabboGroupsManager | null = null;
 	private _widgetFactory: RoomWidgetFactory;
 	private _desktops: Map<string, RoomDesktop> = new Map();
 	private _isInRoom: boolean = false;
@@ -99,6 +108,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 						engine.events.on('RERCE_ROOM_COLOR', this.roomEventHandler, this);
 						engine.events.on('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
 						engine.events.on('REE_ROOM_ZOOM', this.roomEventHandler, this);
+						engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_SELECTED, this.roomObjectEventHandler, this);
+						engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_DESELECTED, this.roomObjectEventHandler, this);
+						engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this.roomObjectEventHandler, this);
+						engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_REMOVED, this.roomObjectEventHandler, this);
 					}
 				},
 				true
@@ -163,7 +176,78 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 				},
 				false
 			),
+			new ComponentDependency(
+				IID_HabboCatalog,
+				(catalog: IHabboCatalog | null) =>
+				{
+					this._catalog = catalog;
+
+					for(const desktop of this._desktops.values())
+					{
+						desktop.catalog = catalog;
+					}
+				},
+				false
+			),
+			new ComponentDependency(
+				IID_HabboTracking,
+				(tracking: IHabboTracking | null) =>
+				{
+					this._habboTracking = tracking;
+
+					for(const desktop of this._desktops.values())
+					{
+						desktop.habboTracking = tracking;
+					}
+				},
+				false
+			),
+			new ComponentDependency(
+				IID_HabboGroupsManager,
+				(groupsManager: IHabboGroupsManager | null) =>
+				{
+					this._habboGroupsManager = groupsManager;
+
+					for(const desktop of this._desktops.values())
+					{
+						desktop.habboGroupsManager = groupsManager;
+					}
+				},
+				false
+			),
 		];
+	}
+
+	/**
+	 * The catalog manager, used to construct widgets that need it (e.g. infostand).
+	 */
+	public get catalog(): IHabboCatalog | null
+	{
+		return this._catalog;
+	}
+
+	/**
+	 * The config manager, used to construct widgets that need it (e.g. infostand).
+	 */
+	public get config(): IHabboConfigurationManager | null
+	{
+		return this._config;
+	}
+
+	/**
+	 * The window manager, used by RoomWidgetFactory to construct widgets.
+	 */
+	public get windowManager(): IHabboWindowManager | null
+	{
+		return this._windowManager;
+	}
+
+	/**
+	 * The localization manager, used by RoomWidgetFactory to construct widgets.
+	 */
+	public get localization(): IHabboLocalizationManager | null
+	{
+		return this._localization;
 	}
 
 	protected override initComponent(): void
@@ -197,6 +281,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 		desktop.localization = this._localization;
 		desktop.toolbar = this._toolbar;
 		desktop.roomWidgetFactory = this._widgetFactory;
+		desktop.catalog = this._catalog;
+		desktop.habboTracking = this._habboTracking;
+		desktop.habboGroupsManager = this._habboGroupsManager;
 
 		// Set the layout
 		desktop.layout = 'room_desktop_layout';
