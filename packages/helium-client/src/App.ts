@@ -515,6 +515,14 @@ export class HeliumApp
 		};
 		const helium = await Helium.bootstrap(heliumConfig, this._loadingScreen ?? undefined);
 
+		if (import.meta.env.DEV)
+		{
+			// Dev-only console access, e.g. Helium.instance.configuration.getProperty('...').
+			// Helium is only ever ES-module-imported elsewhere, so without this the class
+			// (and its `instance` singleton getter) isn't reachable from the browser console.
+			(window as unknown as {Helium: typeof Helium}).Helium = Helium;
+		}
+
 		this._imageBundle = imageBundle;
 		this._xmlBundle = xmlBundle;
 

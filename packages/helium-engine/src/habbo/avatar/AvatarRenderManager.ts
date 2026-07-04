@@ -69,6 +69,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 	}
 
 	private _isReady: boolean = false;
+	private _configurationCompleteHandled: boolean = false;
 
 	public get isReady(): boolean
 	{
@@ -90,19 +91,43 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 				(config: IHabboConfigurationManager | null) =>
 				{
 					this._configuration = config;
+					this.tryOnConfigurationComplete();
 				},
 				true,
-				[{type: 'complete', callback: this.onConfigurationComplete.bind(this)}]
+				[{type: 'complete', callback: () => this.tryOnConfigurationComplete()}]
 			),
 			new ComponentDependency(
 				IID_AssetLibrary,
 				(assets: IAssetLibrary | null) =>
 				{
 					this._assetLibrary = assets;
+					this.tryOnConfigurationComplete();
 				},
 				true
 			),
 		];
+	}
+
+	/**
+	 * Component's dependency injection resolves IID_HabboConfigurationManager and
+	 * IID_AssetLibrary independently and in no guaranteed order, and only attaches
+	 * the 'complete' listener once the *configuration* dependency resolves — so
+	 * relying on that listener alone breaks two ways: (1) if configuration already
+	 * finished loading (and already emitted 'complete') before this component's
+	 * dependency on it resolved, the listener is attached after the fact and never
+	 * fires again since 'complete' is one-shot, and (2) even accounting for that,
+	 * onConfigurationComplete() also needs _assetLibrary, which is a *separate*
+	 * dependency that can resolve before or after configuration with no ordering
+	 * guarantee — initDownloadManagers() would otherwise silently bail out
+	 * ("AssetLibrary not available for download managers") if it ran first. So:
+	 * check both conditions from every point either one could become satisfied,
+	 * and let onConfigurationComplete()'s own guard make repeat calls a no-op.
+	 */
+	private tryOnConfigurationComplete(): void
+	{
+		if (!this._assetLibrary || !this._configuration?.isInitialized()) return;
+
+		this.onConfigurationComplete();
 	}
 
 	// AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
@@ -286,6 +311,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
 	public onConfigurationComplete(): void
 	{
+		// Can now be invoked twice (the immediate isInitialized() check above, and
+		// the 'complete' event handler) if configuration finishes loading between
+		// those two — make sure the actual work only happens once.
+		if (this._configurationCompleteHandled) return;
+
+		this._configurationCompleteHandled = true;
+
 		void this.loadActions();
 		this.loadFigureData();
 		this.initDownloadManagers();

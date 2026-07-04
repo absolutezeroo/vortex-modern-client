@@ -317,7 +317,6 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 				{
 					this._viewContainer.appendChild(this._avatarView.element);
 					this._avatarView.init();
-					this._avatarView.baseUrl = this.getProperty('web.api') ?? '';
 				}
 
 				this.layoutMainElements();

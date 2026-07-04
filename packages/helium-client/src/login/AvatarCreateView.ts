@@ -24,6 +24,7 @@
  */
 import type {ILoginContext} from './ILoginContext';
 import {AvatarFigurePartType} from '@habbo/avatar/enum/AvatarFigurePartType';
+import {AvatarRenderEvent} from '@habbo/avatar/enum/AvatarRenderEvent';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IFigureData} from '@habbo/avatar/structure/IFigureData';
 import type {ISetType} from '@habbo/avatar/structure/figure/ISetType';
@@ -162,6 +163,27 @@ export class AvatarCreateView implements IAvatarImageListener
 	/** AS3: _nameValid */
 	private _nameValid: boolean = false;
 
+	/**
+	 * Avatar images still waiting on an async part download (isPlaceholder() was true
+	 * when created), kept alive so their avatarImageReady() callback still fires.
+	 * Not AS3 — the AS3 render manager races through this synchronously in one place;
+	 * ours downloads over the network, so every render pass can leave several of
+	 * these pending and they must be tracked and disposed on the *next* pass, or
+	 * every render leaks the previous pass's pending images and their listener
+	 * registrations, which then all fire together and re-render again — a cascade
+	 * that gets worse every pass and eventually locks up the tab.
+	 */
+	private _pendingImages: any[] = [];
+
+	/** Coalesces bursts of avatarImageReady() callbacks into a single re-render. */
+	private _rerenderScheduled: boolean = false;
+
+	/** Whether we're currently subscribed to AvatarRenderEvent.AVATAR_RENDER_READY. */
+	private _waitingForRenderer: boolean = false;
+
+	/** Diagnostic timeout so "Loading looks..." doesn't hang silently forever. */
+	private _renderTimeoutId: number = 0;
+
 	public disposed: boolean = false;
 
 	/**
@@ -175,8 +197,12 @@ export class AvatarCreateView implements IAvatarImageListener
 			display: 'flex',
 			flexDirection: 'column',
 			gap: '16px',
-			width: '960px',
-			maxWidth: '90vw',
+			// AS3-fidelity note: this used to be a hardcoded width:960px, wider than what
+			// .habbo-split--full .habbo-split__content actually has left after its own
+			// 40px/48px padding (960 - 96 = 864px content-box) — the extra ~96px is
+			// exactly what forced the horizontal scrollbar. Just fill the parent instead.
+			width: '100%',
+			boxSizing: 'border-box',
 		} as Partial<CSSStyleDeclaration>);
 
 		this._nameField = document.createElement('input');
@@ -209,13 +235,32 @@ export class AvatarCreateView implements IAvatarImageListener
 		this._selectedSets = new Map();
 		this._selectedColors = new Map();
 
+		this.buildLayout();
+		this.loadFigureData();
+	}
+
+	/**
+	 * getFigureData() reads embedded figuredata that AvatarRenderManager populates
+	 * synchronously in onConfigurationReady() (called from initComponent(), i.e.
+	 * during Helium.bootstrap() — well before the login flow even shows). isReady
+	 * is a *different*, broader flag: it additionally waits on network-dependent
+	 * asset/effect library downloads and the figurepartlist/figuremap fetches,
+	 * none of which the clothing picker actually needs to list available looks.
+	 *
+	 * Gating this screen on isReady (an earlier version of this method did) meant
+	 * a server that never finishes those downloads — e.g. because
+	 * external.figurepartlist.txt or flash.dynamic.avatar.download.* isn't in its
+	 * external_variables response — blocked the *entire* editor forever, even
+	 * though the actual figuredata had been available the whole time. So: read
+	 * getFigureData() directly, and only fall back to waiting on
+	 * AvatarRenderEvent.AVATAR_RENDER_READY if it's genuinely still empty (a
+	 * startup race condition), not as the primary gate.
+	 */
+	private loadFigureData(): void
+	{
 		const renderManager = this._context.avatarRenderManager;
 
-		this._figureData = renderManager ? renderManager.getFigureData() : null;
-
-		this.buildLayout();
-
-		if(!this._figureData)
+		if(!renderManager)
 		{
 			this._statusField.textContent = 'Avatar editor unavailable — something went wrong.';
 			this._createButton.disabled = true;
@@ -223,11 +268,83 @@ export class AvatarCreateView implements IAvatarImageListener
 			return;
 		}
 
+		const figureData = renderManager.getFigureData();
+		const hasAnySets = !!figureData
+			&& PART_TYPES.some((partType) => (figureData.getSetType(partType)?.partSets.size ?? 0) > 0);
+
+		if(!hasAnySets)
+		{
+			this._statusField.textContent = 'Loading looks...';
+
+			if(!this._waitingForRenderer)
+			{
+				this._waitingForRenderer = true;
+				renderManager.events.once(AvatarRenderEvent.AVATAR_RENDER_READY, this._onAvatarRendererReady);
+
+				// Diagnostic only at this point — if figuredata is still empty even after
+				// this fires (or times out), something is genuinely missing server-side;
+				// see AvatarRenderManager.checkReady()'s 8 required flags.
+				window.clearTimeout(this._renderTimeoutId);
+				this._renderTimeoutId = window.setTimeout(() =>
+				{
+					if(this.disposed) return;
+
+					const stillEmpty = !this._figureData
+						|| !PART_TYPES.some((pt) => (this._figureData!.getSetType(pt)?.partSets.size ?? 0) > 0);
+
+					if(stillEmpty)
+					{
+						this._statusField.textContent =
+							"Still loading avatar assets — this can mean the server didn't send "
+							+ 'everything AvatarRenderManager needs (check the console for warnings '
+							+ 'from AvatarRenderManager/AvatarAssetDownloadManager).';
+					}
+				}, 8000);
+			}
+
+			return;
+		}
+
+		window.clearTimeout(this._renderTimeoutId);
+		this._figureData = figureData;
+		this._statusField.textContent = '';
 		this.resetFigure();
+		this.refreshEditor();
+		this.updateCreateButtonState();
+	}
+
+	private _onAvatarRendererReady = (): void =>
+	{
+		this._waitingForRenderer = false;
+
+		if(this.disposed) return;
+
+		this.loadFigureData();
+	};
+
+	/**
+	 * Disposes every avatar image left over from the previous render pass that was
+	 * still waiting on a download (see _pendingImages), then re-renders the part
+	 * grid, color grid and main preview. Every place that used to call
+	 * renderPartGrid() + renderColorGrid() + updateFigurePreview() together now
+	 * goes through here instead, so pending images never accumulate across passes.
+	 */
+	private refreshEditor(): void
+	{
+		this.disposePendingImages();
 		this.renderPartGrid();
 		this.renderColorGrid();
 		this.updateFigurePreview();
-		this.updateCreateButtonState();
+	}
+
+	private disposePendingImages(): void
+	{
+		for(const image of this._pendingImages)
+		{
+			image.dispose();
+		}
+
+		this._pendingImages = [];
 	}
 
 	/**
@@ -714,7 +831,16 @@ export class AvatarCreateView implements IAvatarImageListener
 		const figure = this.getFigureString(partType, partSet.id);
 		const image = renderManager.createAvatarImage(figure, 'h', this._selectedGender, this, null);
 
-		if(!image || image.isPlaceholder()) return;
+		if(!image) return;
+
+		if(image.isPlaceholder())
+		{
+			// Not downloaded yet — keep it alive so avatarImageReady() fires once it is,
+			// but track it so the *next* render pass disposes it instead of leaking it.
+			this._pendingImages.push(image);
+
+			return;
+		}
 
 		image.setDirection('full', 4);
 
@@ -734,13 +860,20 @@ export class AvatarCreateView implements IAvatarImageListener
 
 		const image = renderManager.createAvatarImage(this.currentFigure, 'h', this._selectedGender, this, null);
 
-		if(!image || image.isPlaceholder()) return;
+		if(!image) return;
+
+		if(image.isPlaceholder())
+		{
+			this._pendingImages.push(image);
+
+			return;
+		}
 
 		image.setDirection('full', 4);
 
 		const texture = image.getImage('full', true);
 
-		this.drawToCanvas(texture, this._previewCanvas, 0.5);
+		this.drawToCanvas(texture, this._previewCanvas);
 		image.dispose();
 	}
 
@@ -836,9 +969,7 @@ export class AvatarCreateView implements IAvatarImageListener
 			this._selectedColors.set(partType, this.getDefaultColorIds(partType));
 		}
 
-		this.renderPartGrid();
-		this.renderColorGrid();
-		this.updateFigurePreview();
+		this.refreshEditor();
 	}
 
 	/** AS3: onColorClick(button:_Str_951) */
@@ -852,9 +983,7 @@ export class AvatarCreateView implements IAvatarImageListener
 			currentColors && currentColors.length > 1 ? [String(colorId), currentColors[1]] : [String(colorId)]
 		);
 
-		this.renderPartGrid();
-		this.renderColorGrid();
-		this.updateFigurePreview();
+		this.refreshEditor();
 	}
 
 	/** AS3: changeGender(gender:String) */
@@ -865,9 +994,7 @@ export class AvatarCreateView implements IAvatarImageListener
 		this._selectedGender = gender;
 		this.updateGenderButtonState();
 		this.resetFigure();
-		this.renderPartGrid();
-		this.renderColorGrid();
-		this.updateFigurePreview();
+		this.refreshEditor();
 	}
 
 	/** AS3: onRandomize(button:_Str_951) */
@@ -878,9 +1005,7 @@ export class AvatarCreateView implements IAvatarImageListener
 			this.resetFigure();
 		}
 
-		this.renderPartGrid();
-		this.renderColorGrid();
-		this.updateFigurePreview();
+		this.refreshEditor();
 	};
 
 	/** AS3: onNameChange(changeEvent:Event) */
@@ -951,13 +1076,28 @@ export class AvatarCreateView implements IAvatarImageListener
 	/**
 	 * AS3: avatarImageReady(figure:String) — IAvatarImageListener
 	 * Called when an async-downloaded figure part becomes available.
+	 *
+	 * Debounced via queueMicrotask: several pending images (see _pendingImages)
+	 * routinely finish downloading within the same tick, and re-rendering once per
+	 * callback instead of once per burst is what turns "a few parts finished
+	 * loading" into an ever-growing cascade of re-renders (see _pendingImages doc).
 	 */
 	public avatarImageReady(_figureString: string): void
 	{
-		if(this.disposed) return;
+		if(this.disposed || this._rerenderScheduled) return;
 
-		this.renderPartGrid();
-		this.updateFigurePreview();
+		this._rerenderScheduled = true;
+
+		queueMicrotask(() =>
+		{
+			this._rerenderScheduled = false;
+
+			if(this.disposed) return;
+
+			this.disposePendingImages();
+			this.renderPartGrid();
+			this.updateFigurePreview();
+		});
 	}
 
 	/**
@@ -969,6 +1109,14 @@ export class AvatarCreateView implements IAvatarImageListener
 
 		this.disposed = true;
 
+		if(this._waitingForRenderer)
+		{
+			this._context.avatarRenderManager?.events.off(AvatarRenderEvent.AVATAR_RENDER_READY, this._onAvatarRendererReady);
+			this._waitingForRenderer = false;
+		}
+
+		window.clearTimeout(this._renderTimeoutId);
+		this.disposePendingImages();
 		this._nameField.removeEventListener('input', this._onNameChange);
 		this._randomizeButton.removeEventListener('click', this._onRandomize);
 		this._createButton.removeEventListener('click', this._onCreate);
