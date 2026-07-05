@@ -1,7 +1,11 @@
 /**
  * RoomDesktopLayoutManager
  *
- * @see sources/source_as_win63/habbo/ui/class_3604.as
+ * @see sources/win63_version/habbo/ui/class_3019.as
+ * @see sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as (clean
+ *      cross-reference — win63_version's setLayout()/getWidgetContainer() are corrupted
+ *      by decompiler artifacts: a `null.`-ref infinite loop and a dropped final
+ *      return statement respectively)
  *
  * Manages the window layout for a room desktop. Builds the layout window tree
  * from JSON and provides access to named containers for widget placement.
@@ -9,6 +13,8 @@
 import {Logger} from '@core/utils/Logger';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowParam} from '@core/window/enum/WindowParam';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 
@@ -16,7 +22,6 @@ const log = Logger.getLogger('RoomDesktopLayoutManager');
 
 const ROOM_VIEW = 'room_view';
 const ROOM_NEW_CHAT = 'room_new_chat';
-const ROOM_WIDGET = 'room_widget';
 const BOTTOM_MARGIN = 47;
 
 export class RoomDesktopLayoutManager
@@ -32,8 +37,9 @@ export class RoomDesktopLayoutManager
 	 *
 	 * @param layoutName - The registered layout asset name (e.g. "room_desktop_layout")
 	 * @param windowManager - The window manager to build the layout with
-	 * @param config - Configuration manager (unused for now, matches AS3 signature)
+	 * @param _config - Configuration manager (unused for now, matches AS3 signature)
 	 */
+	// AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::setLayout()
 	public setLayout(layoutName: string, windowManager: IHabboWindowManager, _config: IHabboConfigurationManager | null): void
 	{
 		if(this._layoutContainer)
@@ -54,14 +60,13 @@ export class RoomDesktopLayoutManager
 		this._layoutContainer = root as IWindowContainer;
 
 		const desktop = this._layoutContainer.desktop;
+
 		if(desktop)
 		{
 			this._layoutContainer.width = desktop.width;
 			this._layoutContainer.height = desktop.height;
 		}
 
-		// AS3: sources/win63_version/habbo/ui/class_3019.as::setLayout()
-		// _layoutContainer.findChildByTag("room_widget_infostand").y -= 47
 		const infostandContainer = this._layoutContainer.findChildByTag('room_widget_infostand');
 
 		if(infostandContainer)
@@ -69,61 +74,83 @@ export class RoomDesktopLayoutManager
 			infostandContainer.y -= BOTTOM_MARGIN;
 		}
 
+		for(let i = 0; i < this._layoutContainer.numChildren; i++)
+		{
+			const child = this._layoutContainer.getChildAt(i);
+
+			if(child && child.testParamFlag(WindowParam.ON_ACCOMMODATE_ALIGN_BOTTOM))
+			{
+				child.addEventListener(WindowEvent.WE_CHILD_RESIZED, this.trimContainer);
+			}
+		}
+
 		log.debug(`Layout built: ${layoutName}`);
 	}
 
 	/**
-	 * Gets the widget container for a given widget name.
-	 * Maps widget names to container tags in the layout.
+	 * Shrink-wraps a single-child widget slot container to match its child's
+	 * size whenever that child resizes.
 	 */
-	private getWidgetContainer(name: string, _window: IWindow): IWindowContainer | null
+	// AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::trimContainer()
+	private trimContainer = (event: WindowEvent): void =>
 	{
-		if(!this._layoutContainer) return null;
+		const window = event.window as IWindowContainer | null;
 
-		// Map widget names to layout tags
-		let tag: string;
+		if(!window) return;
 
-		if(name.indexOf('chat') >= 0 || name === ROOM_NEW_CHAT)
+		if(window.numChildren !== 1) return;
+
+		const child = window.getChildAt(0);
+
+		if(!child) return;
+
+		window.width = child.width;
+		window.height = child.height;
+	};
+
+	/**
+	 * Gets the widget container for a given widget name.
+	 */
+	// AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::getWidgetContainer()
+	private getWidgetContainer(name: string, window: IWindow): IWindowContainer | null
+	{
+		if(!this._layoutContainer || !window) return null;
+
+		if(name === 'RWE_HIGH_SCORE_DISPLAY' || name === 'RWE_WORD_QUIZZ')
 		{
-			tag = 'room_widget_chat';
-		}
-		else if(name.indexOf('infostand') >= 0)
-		{
-			tag = 'room_widget_infostand';
-		}
-		else if(name.indexOf('toolbar') >= 0)
-		{
-			tag = 'room_widget_toolbar';
-		}
-		else if(name.indexOf('me_menu') >= 0)
-		{
-			tag = 'room_widget_me_menu';
-		}
-		else if(name.indexOf('doorbell') >= 0)
-		{
-			tag = 'room_widget_doorbell';
-		}
-		else
-		{
-			tag = ROOM_WIDGET;
+			return this._layoutContainer.getChildByTag('background_widgets') as IWindowContainer | null;
 		}
 
-		const container = this._layoutContainer.findChildByTag(tag) as IWindowContainer | null;
-
-		if(!container)
+		if(name === 'RWE_CHAT_INPUT_WIDGET')
 		{
-			// Fall back to the background_widgets container
-			return this._layoutContainer.findChildByTag('background_widgets') as IWindowContainer | null;
+			return window.desktop as IWindowContainer | null;
 		}
 
-		return container;
+		let tag: string | null = null;
+
+		for(const t of window.tags)
+		{
+			if(t.indexOf('room_widget') === 0)
+			{
+				tag = t;
+
+				break;
+			}
+		}
+
+		if(!tag) return null;
+
+		return this._layoutContainer.getChildByTag(tag) as IWindowContainer | null;
 	}
 
 	/**
 	 * Adds a widget window to the appropriate container in the layout.
 	 */
+	// AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::addWidgetWindow()
 	public addWidgetWindow(name: string, window: IWindow): boolean
 	{
+		if(!window) return false;
+
 		const container = this.getWidgetContainer(name, window);
 
 		if(!container)
@@ -133,7 +160,18 @@ export class RoomDesktopLayoutManager
 			return false;
 		}
 
+		if(name === 'RWE_CHAT_INPUT_WIDGET')
+		{
+			container.addChild(window);
+
+			return true;
+		}
+
+		window.x = 0;
+		window.y = 0;
 		container.addChild(window);
+		container.width = window.width;
+		container.height = window.height;
 
 		return true;
 	}

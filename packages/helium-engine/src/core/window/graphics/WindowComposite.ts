@@ -4,6 +4,7 @@ import type {IWindowContainer} from '../IWindowContainer';
 import {WindowParam} from '../enum/WindowParam';
 import {PivotPoint} from '../enum/PivotPoint';
 import {WindowType} from '../enum/WindowType';
+import {quoteFontFamilyList} from '../utils/CanvasFontString';
 
 type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
 
@@ -894,7 +895,7 @@ export class WindowComposite
 
 		if (isItalic) fontStr += 'italic ';
 		if (isBold) fontStr += 'bold ';
-		fontStr += `${fontSize}px ${fontFace}`;
+		fontStr += `${fontSize}px ${quoteFontFamilyList(fontFace)}`;
 
 		ctx.font = fontStr;
 		ctx.fillStyle = `rgb(${r},${g},${b})`;

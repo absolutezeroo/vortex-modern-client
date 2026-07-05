@@ -303,6 +303,55 @@ function serializeWindowLayoutToXml(layout: IWindowLayoutJson): string
 	return `${xml}</layout>`;
 }
 
+/**
+ * Registers the bundled webfonts with the browser's FontFace API.
+ *
+ * The .ttf files are bundled (they land in the "xml"/other-binary bundle
+ * alongside XML/text assets — anything that isn't an image extension), but
+ * nothing was ever loading them: `TextStyleManager.mapFontFace()` emits CSS
+ * `font-family: "Volter (Goldfish)", Ubuntu, Arial, sans-serif` (and plain
+ * "Ubuntu"), expecting those families to already be registered. Without this,
+ * every window/button caption silently falls back to Arial/sans-serif — no
+ * console warning, since an unregistered CSS font-family is just skipped.
+ */
+const WEBFONT_FACES: Array<{family: string; file: string; weight?: string; style?: string}> = [
+	{family: 'Volter (Goldfish)', file: 'webfonts/Volter.ttf', weight: 'normal'},
+	{family: 'Volter (Goldfish)', file: 'webfonts/Volter Bold.ttf', weight: 'bold'},
+	{family: 'Ubuntu', file: 'webfonts/Ubuntu.ttf', weight: 'normal', style: 'normal'},
+	{family: 'Ubuntu', file: 'webfonts/Ubuntu-b.ttf', weight: 'bold'},
+	{family: 'Ubuntu', file: 'webfonts/Ubuntu-i.ttf', style: 'italic'},
+	{family: 'Ubuntu', file: 'webfonts/Ubuntu-ib.ttf', weight: 'bold', style: 'italic'},
+	{family: 'Ubuntu Condensed', file: 'webfonts/Ubuntu-C.ttf', weight: 'normal'},
+];
+
+async function loadWebFonts(bundle: AssetBundle): Promise<void>
+{
+	await Promise.all(WEBFONT_FACES.map(async ({family, file, weight, style}) =>
+	{
+		const bytes = bundle.getBytes(file);
+
+		if (!bytes)
+		{
+			console.warn(`[HeliumApp] Webfont not found in bundle: ${file}`);
+
+			return;
+		}
+
+		try
+		{
+			const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+			const face = new FontFace(family, buffer, {weight, style});
+
+			await face.load();
+			document.fonts.add(face);
+		}
+		catch (error)
+		{
+			console.warn(`[HeliumApp] Failed to load webfont ${file}:`, error);
+		}
+	}));
+}
+
 function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, string>
 {
 	const assets: Record<string, string> = {};
@@ -525,6 +574,10 @@ export class HeliumApp
 
 		this._imageBundle = imageBundle;
 		this._xmlBundle = xmlBundle;
+
+		// Register bundled webfonts (Volter/Ubuntu) before anything renders text —
+		// see loadWebFonts() for why this was previously silently missing.
+		await loadWebFonts(xmlBundle);
 
 		// Mount the "What's New" changelog button now, not after login/connect —
 		// it's an independent overlay (not a room/toolbar window) and should stay

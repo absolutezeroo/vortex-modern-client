@@ -6,6 +6,7 @@ import {WindowEvent} from '../events/WindowEvent';
 import {PropertyStruct} from '../utils/PropertyStruct';
 import {TextStyleManager} from '../utils/TextStyleManager';
 import {resolveLocalizationTokens} from '../utils/WindowParser';
+import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
 
 /**
  * Controller for label windows.
@@ -278,6 +279,24 @@ export class TextLabelController extends WindowController implements ILabelWindo
 				case 'margin_bottom':
 					this._marginBottom = prop.value as number;
 					break;
+				case 'margins':
+				{
+					// JSON layouts commonly declare a single nested `margins: {left,top,right,bottom}`
+					// var (serialized to XML as a Map) rather than 4 flat margin_* vars — without
+					// this case, that whole var was silently dropped and every label rendered with
+					// 0 margins, which shrink-wraps buttons/labels tight enough to clip descenders.
+					const margins = prop.value as {left?: number; top?: number; right?: number; bottom?: number} | null;
+
+					if (margins)
+					{
+						if (typeof margins.left === 'number') this._marginLeft = margins.left;
+						if (typeof margins.top === 'number') this._marginTop = margins.top;
+						if (typeof margins.right === 'number') this._marginRight = margins.right;
+						if (typeof margins.bottom === 'number') this._marginBottom = margins.bottom;
+					}
+
+					break;
+				}
 				case 'vertical':
 					this._vertical = !!prop.value;
 					break;
@@ -336,12 +355,12 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
 		if (this._italic) fontStr += 'italic ';
 		if (this._bold) fontStr += 'bold ';
-		fontStr += `${this._fontSize}px ${this._fontFace || 'Ubuntu, Arial, sans-serif'}`;
+		fontStr += `${this._fontSize}px ${quoteFontFamilyList(this._fontFace || 'Ubuntu, Arial, sans-serif')}`;
 		ctx.font = fontStr;
 
 		const metrics = ctx.measureText(this._text);
 		const measuredWidth = Math.ceil(metrics.width + (Math.max(0, this._text.length - 1) * this._spacing));
-		const measuredHeight = Math.ceil(this._fontSize + Math.max(0, this._leading));
+		const measuredHeight = measureFontLineHeight(ctx, this._fontSize, this._leading);
 
 		this._textWidth = measuredWidth;
 		this._textHeight = measuredHeight;

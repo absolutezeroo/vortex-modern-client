@@ -8,6 +8,7 @@ import {PropertyStruct} from '../utils/PropertyStruct';
 import {TextStyleManager} from '../utils/TextStyleManager';
 import {TextStyle} from '../utils/TextStyle';
 import {TextMargins} from '../utils/TextMargins';
+import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
 
 type MeasureContext = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
@@ -1055,14 +1056,18 @@ export class TextController extends WindowController implements ITextWindow
 
 		if (this._italic) font += 'italic ';
 		if (this._bold) font += 'bold ';
-		font += `${this._fontSize}px ${this._fontFace || 'Ubuntu, Arial, sans-serif'}`;
+		font += `${this._fontSize}px ${quoteFontFamilyList(this._fontFace || 'Ubuntu, Arial, sans-serif')}`;
 
 		return font;
 	}
 
 	protected getLineHeight(): number
 	{
-		return Math.max(1, Math.ceil(this._fontSize + 2 + this._leading));
+		const ctx = TextController.getMeasureContext();
+
+		ctx.font = this.buildCanvasFontString();
+
+		return Math.max(1, measureFontLineHeight(ctx, this._fontSize, this._leading));
 	}
 
 	protected replaceNonRenderableCharacters(value: string): string
@@ -1233,6 +1238,23 @@ export class TextController extends WindowController implements ITextWindow
 			'margin_bottom': (ctrl, v) =>
 			{
 				ctrl._marginBottom = Number(v);
+				ctrl.refreshTextImage();
+			},
+			// JSON layouts commonly declare a single nested `margins: {left,top,right,bottom}`
+			// var (serialized to XML as a Map) rather than 4 flat margin_* vars — without this
+			// entry, that whole var was silently dropped and text rendered with 0 margins.
+			'margins': (ctrl, v) =>
+			{
+				const margins = v as {left?: number; top?: number; right?: number; bottom?: number} | null;
+
+				if (margins)
+				{
+					if (typeof margins.left === 'number') ctrl._marginLeft = margins.left;
+					if (typeof margins.top === 'number') ctrl._marginTop = margins.top;
+					if (typeof margins.right === 'number') ctrl._marginRight = margins.right;
+					if (typeof margins.bottom === 'number') ctrl._marginBottom = margins.bottom;
+				}
+
 				ctrl.refreshTextImage();
 			},
 			'max_chars': (ctrl, v) =>

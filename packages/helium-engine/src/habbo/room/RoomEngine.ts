@@ -2852,7 +2852,6 @@ export class RoomEngine extends Component implements IRoomEngine,
 			else if (this._connection)
 			{
 				this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
-				this.deselectRoomObject();
 			}
 		}
 	}
