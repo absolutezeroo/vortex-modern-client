@@ -520,6 +520,12 @@ export class RoomEngine extends Component implements IRoomEngine,
 	private _moverIconSprite: Sprite | null = null;
 	private _moverIconCanvas: RoomRenderingCanvas | null = null;
 
+	// AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::SelectedRoomObjectData
+	// Only category 10 (floor furniture) is tracked here — see modifyRoomObject()'s
+	// OBJECT_MOVE case for the same wall-item scope cut already made by
+	// initializeRoomObjectInsert().
+	private _pendingMove: {objectId: number; category: number; originalLocation: IVector3d; originalDirection: IVector3d} | null = null;
+
 	// AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
 	// TODO(AS3): only floor-item placement (category 10) is implemented; wall
 	// items (category 20) need the wallLocation string format (see
@@ -539,6 +545,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
 			return false;
 		}
+
+		this.cancelPendingMove();
 
 		this._pendingPlacement = {itemId, category};
 		this.setObjectMoverIconSprite(type, extra, stuffData);
@@ -1014,10 +1022,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 	}
 
 	// AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::modifyRoomObject()
-	// TODO(AS3): OBJECT_MOVE (drag-to-relocate) needs a full interaction state
-	// machine (selected-object tracking, ghost/alpha rendering, floor-tile click
-	// handling, OBJECT_MOVE_TO follow-up) that doesn't exist in the engine yet —
-	// deferred, shared with the furniture-context-menu widget.
+	// TODO(AS3): OBJECT_MOVE only covers floor furniture (category 10), matching
+	// the existing wall-item scope cut in initializeRoomObjectInsert(). It also
+	// skips FurniStackingHeightMap validateFurnitureLocation() (every hovered
+	// tile is treated as valid client-side, same simplification already made by
+	// the catalog-placement flow above — the server is authoritative and would
+	// reject an illegal spot), and there's no cancel/right-click binding yet
+	// (shared gap with the unbuilt furniture-context-menu widget).
 	// Rotation here also skips AS3's `furniture_allowed_directions` validation
 	// (some furniture only rotates through a subset of the 8 compass directions)
 	// — this always cycles through the 4 cardinal directions.
@@ -1056,11 +1067,73 @@ export class RoomEngine extends Component implements IRoomEngine,
 
 				return this.disposeRoomObject(this._activeRoomId, objectId, category);
 			}
+			case 'OBJECT_MOVE':
+			{
+				if (category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return false;
+				if (!object) return false;
+
+				const controller = object as IRoomObjectController;
+				const model = controller.getModelController();
+
+				if (!model) return false;
+
+				this.cancelPendingMove();
+				this.cancelRoomObjectInsert();
+
+				this._pendingMove = {
+					objectId,
+					category,
+					originalLocation: controller.getLocation(),
+					originalDirection: controller.getDirection(),
+				};
+
+				model.setNumber('furniture_alpha_multiplier', 0.5);
+
+				return true;
+			}
 			default:
 				log.warn(`modifyRoomObject: action not implemented yet: ${action}`);
 
 				return false;
 		}
+	}
+
+	// AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::resetSelectedObjectData()
+	// Reverts the semi-transparent preview back to its pre-move location/alpha
+	// without notifying the server — used when a move is abandoned by starting
+	// a different OBJECT_MOVE before confirming this one.
+	private cancelPendingMove(): void
+	{
+		if (!this._pendingMove) return;
+
+		const {objectId, category, originalLocation, originalDirection} = this._pendingMove;
+		const object = this.getRoomObject(this._activeRoomId, objectId, category) as IRoomObjectController | null;
+
+		if (object)
+		{
+			object.setLocation(originalLocation);
+			object.setDirection(originalDirection);
+			object.getModelController()?.setNumber('furniture_alpha_multiplier', 1);
+		}
+
+		this._pendingMove = null;
+	}
+
+	// AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::modifyRoomObject() OBJECT_MOVE_TO branch
+	// Unlike cancelPendingMove(), leaves the object at the tile the player just
+	// clicked — MoveObjectMessageComposer was already sent, and the server's own
+	// echoed move-update message (see RoomObjectMoveUpdateMessage/MovingObjectLogic)
+	// takes over the object's position from here.
+	private confirmPendingMove(): void
+	{
+		if (!this._pendingMove) return;
+
+		const {objectId, category} = this._pendingMove;
+		const object = this.getRoomObject(this._activeRoomId, objectId, category) as IRoomObjectController | null;
+
+		object?.getModelController()?.setNumber('furniture_alpha_multiplier', 1);
+
+		this._pendingMove = null;
 	}
 
 	// AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
@@ -2959,6 +3032,19 @@ export class RoomEngine extends Component implements IRoomEngine,
 			{
 				this._moverIconSprite.visible = true;
 			}
+
+			// AS3: RoomObjectEventHandler.as::handleObjectMove()/handleFurnitureMove()
+			// Snaps the semi-transparent object to whichever tile the mouse is
+			// over; keeps the object's original z rather than recomputing a
+			// FurniStackingHeightMap height (see modifyRoomObject()'s OBJECT_MOVE
+			// TODO(AS3)).
+			if (this._pendingMove)
+			{
+				const {objectId, category, originalLocation} = this._pendingMove;
+				const object = this.getRoomObject(this._activeRoomId, objectId, category) as IRoomObjectController | null;
+
+				object?.setLocation(new Vector3d(tileX + 0.5, tileY + 0.5, originalLocation.z));
+			}
 		}
 		else if (event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)
 		{
@@ -2983,6 +3069,16 @@ export class RoomEngine extends Component implements IRoomEngine,
 						'', tileX, tileY, tileZ, 0, true, true, false, null
 					)
 				);
+			}
+			// AS3: RoomObjectEventHandler.as::handleRoomObjectMouseClick() OBJECT_MOVE case
+			else if (this._pendingMove && this._connection)
+			{
+				const {objectId, category} = this._pendingMove;
+				const object = this.getRoomObject(this._activeRoomId, objectId, category) as IRoomObjectController | null;
+				const direction = object?.getDirection().x ?? 0;
+
+				this._connection.send(new MoveObjectMessageComposer(objectId, tileX, tileY, direction / 45));
+				this.confirmPendingMove();
 			}
 			else if (this._connection)
 			{
