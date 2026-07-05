@@ -12,9 +12,17 @@ import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
  * talent, etc.) to the DI context. Each sub-component manages its own dependencies
  * and lifecycle.
  *
- * Currently only the HabboLandingView is implemented. Other sub-components
- * (HabboFriendBarData, HabboFriendBarView, HabboTalent, HabboEpicPopupView,
- * GroupForumController) will be added as needed.
+ * TODO(AS3): only HabboLandingView (hotel-view background promo widgets) is
+ * implemented. The actual friends list/requests UI is entirely unported:
+ *   - HabboFriendBarData — sources/win63_version/habbo/friendbar/data/HabboFriendBarData.as
+ *     plus data/FriendEntity.as, data/FriendRequest.as and related message parsing.
+ *   - HabboFriendBarView — sources/win63_version/habbo/friendbar/view/HabboFriendBarView.as
+ *     (the docked, collapsible, drag-resizable friends/requests panel itself)
+ *     plus view/tabs/ (FriendEntityTab.as, FriendRequestTab.as, and messenger/
+ *     achievements/games token tabs).
+ *   - HabboTalent — sources/win63_version/habbo/friendbar/talent/ (citizenship/talent track).
+ *   - HabboEpicPopupView, GroupForumController — sources/win63_version/habbo/friendbar/groupforums/.
+ * This is the "friends list" gap — see docs/IMPLEMENTATION_STATUS.md.
  *
  * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
  */

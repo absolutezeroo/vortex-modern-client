@@ -26,6 +26,12 @@ import {HabboToolbarEnum} from './HabboToolbarEnum';
 import {HabboToolbarIconEnum} from './HabboToolbarIconEnum';
 import {PurseAreaExtension} from './extensions/PurseAreaExtension';
 import {SeasonalCurrencyIndicator} from './extensions/purse/indicators/SeasonalCurrencyIndicator';
+import {SettingsExtension} from './extensions/SettingsExtension';
+import {ClubDiscountPromoExtension} from './extensions/ClubDiscountPromoExtension';
+import {CitizenshipVipDiscountPromoExtension} from './extensions/CitizenshipVipDiscountPromoExtension';
+import {CitizenshipVipQuestsPromoExtension} from './extensions/CitizenshipVipQuestsPromoExtension';
+import {VideoOfferExtension} from './extensions/VideoOfferExtension';
+import {OfferExtension} from './offers/OfferExtension';
 import {EventLogMessageComposer} from '../communication/messages/outgoing/tracking/EventLogMessageComposer';
 import {PurseEvent} from '../catalog/purse/PurseEvent';
 import type {Motion} from '@core/window/motion/Motion';
@@ -73,6 +79,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	private _extensionView: ExtensionView | null = null;
 	private _purseAreaExtension: PurseAreaExtension | null = null;
 	private _seasonalCurrencyIndicator: SeasonalCurrencyIndicator | null = null;
+	private _settingsExtension: SettingsExtension | null = null;
+	private _clubDiscountPromoExtension: ClubDiscountPromoExtension | null = null;
+	private _citizenshipVipDiscountPromoExtension: CitizenshipVipDiscountPromoExtension | null = null;
+	private _citizenshipVipQuestsPromoExtension: CitizenshipVipQuestsPromoExtension | null = null;
+	private _videoOfferExtension: VideoOfferExtension | null = null;
+	private _offerExtension: OfferExtension | null = null;
 
 	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::roomUI
 	private _roomUI: IRoomUI | null = null;
@@ -409,6 +421,17 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 * Dispatches the appropriate toolbar event when an icon is clicked.
 	 * Also sends an event log to the server for tracking.
 	 *
+	 * TODO(AS3): this only emits the click event — matching AS3, where a
+	 * separate module subscribes and reacts. NAVIGATOR/ROOMINFO/HOME/INVENTORY/
+	 * MEMENU/GAMES already have subscribers (HabboNavigator/HabboInventory/
+	 * MeMenuController). CATALOGUE, QUESTS, ACHIEVEMENTS, HELP, and CAMERA have
+	 * no subscriber yet (habbo/catalog, habbo/quest, habbo/help are partial
+	 * modules that don't listen to TOOLBAR_CLICK; there is no camera widget).
+	 * WIRED_MENU has no subscriber either but is also force-hidden already
+	 * (BottomBarLeft.ts). GUIDE/BUILDER/STORIES/RECEPTION have no module at all
+	 * (no habbo/guide, habbo/builder, habbo/stories, habbo/reception directory).
+	 * See docs/IMPLEMENTATION_STATUS.md.
+	 *
 	 * @param iconName Icon name to toggle
 	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as toggleWindowVisibility()
 	 */
@@ -622,6 +645,42 @@ export class HabboToolbar extends Component implements IHabboToolbar
 			this._purseAreaExtension = null;
 		}
 
+		if(this._settingsExtension)
+		{
+			this._settingsExtension.dispose();
+			this._settingsExtension = null;
+		}
+
+		if(this._offerExtension)
+		{
+			this._offerExtension.dispose();
+			this._offerExtension = null;
+		}
+
+		if(this._clubDiscountPromoExtension)
+		{
+			this._clubDiscountPromoExtension.dispose();
+			this._clubDiscountPromoExtension = null;
+		}
+
+		if(this._citizenshipVipQuestsPromoExtension)
+		{
+			this._citizenshipVipQuestsPromoExtension.dispose();
+			this._citizenshipVipQuestsPromoExtension = null;
+		}
+
+		if(this._citizenshipVipDiscountPromoExtension)
+		{
+			this._citizenshipVipDiscountPromoExtension.dispose();
+			this._citizenshipVipDiscountPromoExtension = null;
+		}
+
+		if(this._videoOfferExtension)
+		{
+			this._videoOfferExtension.dispose();
+			this._videoOfferExtension = null;
+		}
+
 		if(this._extensionView)
 		{
 			this._extensionView.dispose();
@@ -689,6 +748,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
 		{
 			this.initPurseAreaExtension();
 			this.initSeasonalCurrencyExtension();
+			this.initVipExtendExtension();
+			this.initCitizenshipVipExtendExtension();
+			this.initCitizenshipVipQuestsExtension();
+			this.initVideoOfferExtension();
+			this.initOfferExtension();
+			this.initSettingsExtension();
 
 			this._extensionsInitialized = true;
 
@@ -727,6 +792,69 @@ export class HabboToolbar extends Component implements IHabboToolbar
 		this._seasonalCurrencyIndicator.onBalance(
 			new PurseEvent(PurseEvent.ACTIVITY_POINT_BALANCE, balance, displayedType)
 		);
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initVipExtendExtension()
+	private initVipExtendExtension(): void
+	{
+		if(this._clubDiscountPromoExtension) return;
+		if(!this.getBoolean('club.membership.extend.vip.promotion.enabled')) return;
+
+		this._clubDiscountPromoExtension = new ClubDiscountPromoExtension(this);
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initCitizenshipVipExtendExtension()
+	private initCitizenshipVipExtendExtension(): void
+	{
+		if(this._citizenshipVipDiscountPromoExtension) return;
+		if(!this.getBoolean('club.membership.extend.vip.promotion.enabled')) return;
+
+		this._citizenshipVipDiscountPromoExtension = new CitizenshipVipDiscountPromoExtension(this);
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initCitizenshipVipQuestsExtension()
+	private initCitizenshipVipQuestsExtension(): void
+	{
+		if(this._citizenshipVipQuestsPromoExtension) return;
+		if(!this.getBoolean('citizenship.vip.quest.promotion.enabled')) return;
+
+		this._citizenshipVipQuestsPromoExtension = new CitizenshipVipQuestsPromoExtension(this);
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initVideoOfferExtension()
+	private initVideoOfferExtension(): void
+	{
+		if(this._videoOfferExtension || !this._catalog) return;
+
+		const identityGate = !this.isNewIdentity() || !this.getBoolean('new.identity.hide.ui');
+
+		if(!this._catalog.videoOffers.enabled) return;
+		if(!this.getBoolean('toolbar.extension.video.promo.enabled')) return;
+		if(!identityGate) return;
+
+		this._videoOfferExtension = new VideoOfferExtension(this);
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initOfferExtension()
+	private initOfferExtension(): void
+	{
+		if(this._offerExtension) return;
+
+		const identityGate = !this.isNewIdentity() || !this.getBoolean('new.identity.hide.ui');
+
+		if(!this.getBoolean('offers.enabled')) return;
+		if(!identityGate) return;
+		if(this.getBoolean('offers.habboclub.enabled')) return;
+
+		this._offerExtension = new OfferExtension(this);
+	}
+
+	// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initSettingsExtension()
+	private initSettingsExtension(): void
+	{
+		if(this._settingsExtension) return;
+
+		this._settingsExtension = new SettingsExtension(this);
 	}
 
 	/**
