@@ -76,12 +76,16 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
+import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import {EventEmitter} from 'eventemitter3';
 import {RoomContentLoader} from './RoomContentLoader';
 import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
 import {PlaceObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
+import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
+import {PickupObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PickupObjectMessageComposer';
 import {RoomEngineObjectPlacedEvent} from './events/RoomEngineObjectPlacedEvent';
 import {RoomObjectRoomMaskUpdateMessage} from './messages/RoomObjectRoomMaskUpdateMessage';
 import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
@@ -134,6 +138,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 	private _roomVisualizationData: RoomVisualizationData | null = null;
 	private _configurationManager: IHabboConfigurationManager | null = null;
 	private _sessionDataManager: ISessionDataManager | null = null;
+	private _toolbar: IHabboToolbar | null = null;
 	private _contentLoader: RoomContentLoader;
 	private _contentLoaderEvents: EventEmitter = new EventEmitter();
 	private _roomInstanceData: Map<number, RoomEngineRoomInstanceData>;
@@ -283,6 +288,14 @@ export class RoomEngine extends Component implements IRoomEngine,
 					this._visualizationFactory.avatarRenderManager = avatarRenderer;
 				},
 				false // Optional - needed for avatar visualization
+			),
+			new ComponentDependency(
+				IID_HabboToolbar,
+				(toolbar: IHabboToolbar | null) =>
+				{
+					this._toolbar = toolbar;
+				},
+				false // Optional - needed for the pickup-to-inventory icon animation
 			),
 		];
 	}
@@ -989,22 +1002,119 @@ export class RoomEngine extends Component implements IRoomEngine,
 		return success;
 	}
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObject()
-	// TODO(AS3): OBJECT_MOVE/OBJECT_ROTATE_POSITIVE need a "move mode" interaction
-	// state machine plus outgoing composers that don't exist yet in the engine —
-	// deferred (shared with the furniture-context-menu widget, not infostand-specific).
+	// AS3: sources/win63_client/com/sulake/habbo/room/RoomObjectEventHandler.as::modifyRoomObject()
+	// TODO(AS3): OBJECT_MOVE (drag-to-relocate) needs a full interaction state
+	// machine (selected-object tracking, ghost/alpha rendering, floor-tile click
+	// handling, OBJECT_MOVE_TO follow-up) that doesn't exist in the engine yet —
+	// deferred, shared with the furniture-context-menu widget.
+	// Rotation here also skips AS3's `furniture_allowed_directions` validation
+	// (some furniture only rotates through a subset of the 8 compass directions)
+	// — this always cycles through the 4 cardinal directions.
 	modifyRoomObject(objectId: number, category: number, action: string): boolean
 	{
+		const object = this.getRoomObject(this._activeRoomId, objectId, category);
+
 		switch (action)
 		{
+			case 'OBJECT_ROTATE_POSITIVE':
+			case 'OBJECT_ROTATE_NEGATIVE':
+			{
+				if (!object || !this._connection) return false;
+
+				const location = object.getLocation();
+				const currentDirection = object.getDirection().x;
+				const delta = action === 'OBJECT_ROTATE_POSITIVE' ? 90 : -90;
+				const nextDirection = ((currentDirection + delta) % 360 + 360) % 360;
+
+				this._connection.send(new MoveObjectMessageComposer(objectId, location.x, location.y, nextDirection / 45));
+
+				return true;
+			}
 			case 'OBJECT_PICKUP':
-				return this.disposeRoomObject(this._activeRoomId, objectId, category);
 			case 'OBJECT_EJECT':
+			{
+				if (this._connection)
+				{
+					this._connection.send(new PickupObjectMessageComposer(objectId, category));
+				}
+
+				if (object && (category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE || category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL))
+				{
+					this.animatePickupToInventory(objectId, category, object);
+				}
+
 				return this.disposeRoomObject(this._activeRoomId, objectId, category);
+			}
 			default:
 				log.warn(`modifyRoomObject: action not implemented yet: ${action}`);
 
 				return false;
+		}
+	}
+
+	// AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
+	private getRoomObjectScreenLocation(roomId: number, objectId: number, category: number, canvasId: number = 1): { x: number; y: number } | null
+	{
+		const geometry = this.getRoomCanvasGeometry(roomId, canvasId);
+
+		if (!geometry) return null;
+
+		const object = this.getRoomObject(roomId, objectId, category);
+
+		if (!object) return null;
+
+		const point = geometry.getScreenPoint(object.getLocation());
+
+		if (!point) return null;
+
+		const canvas = this._renderingCanvases.get(roomId * 1000 + canvasId);
+
+		if (canvas)
+		{
+			point.x *= canvas.scale;
+			point.y *= canvas.scale;
+			point.x += canvas.width / 2 + canvas.screenOffsetX;
+			point.y += canvas.height / 2 + canvas.screenOffsetY;
+		}
+
+		return point;
+	}
+
+	// AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::disposeObjectFurniture()/disposeObjectWallItem()
+	// TODO(AS3): skips the `furniture_disable_picking_animation` model flag check
+	// and AS3's stuff-data-wrapper lookup for the icon param — uses the plain
+	// furniture_type_id icon, which is correct for the common case but won't
+	// reflect item-specific customization (e.g. a poster's chosen image) in the
+	// flying icon.
+	private animatePickupToInventory(objectId: number, category: number, object: IRoomObject): void
+	{
+		if (!this._toolbar) return;
+
+		const screenLocation = this.getRoomObjectScreenLocation(this._activeRoomId, objectId, category);
+
+		if (!screenLocation) return;
+
+		const model = object.getModel();
+		const typeId = model.getNumber('furniture_type_id');
+		const extras = category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL
+			? model.getString('furniture_data')
+			: model.getString('furniture_extras');
+
+		const listener: IGetImageListener = {
+			imageReady: (_id: number, data: ImageBitmap | null) =>
+			{
+				if (data) this._toolbar?.createTransitionToIcon('HTIE_ICON_INVENTORY', data, screenLocation.x, screenLocation.y);
+			},
+			imageFailed: () => {}
+		};
+
+		const result = category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL
+			? this.getWallItemIcon(typeId, listener, extras)
+			: this.getFurnitureIcon(typeId, listener, extras);
+
+		if (result.id === 0 && result.data)
+		{
+			this._toolbar.createTransitionToIcon('HTIE_ICON_INVENTORY', result.data, screenLocation.x, screenLocation.y);
 		}
 	}
 

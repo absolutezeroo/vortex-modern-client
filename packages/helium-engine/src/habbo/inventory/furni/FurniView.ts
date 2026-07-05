@@ -12,6 +12,8 @@ import type {FurniModel} from './FurniModel';
 import type {GroupItem} from '../items/GroupItem';
 import type {FurnitureItem} from '../items/FurnitureItem';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {ILimitedItemPreviewOverlayWidget} from '@habbo/window/widgets/ILimitedItemPreviewOverlayWidget';
+import type {IRarityItemPreviewOverlayWidget} from '@habbo/window/widgets/IRarityItemPreviewOverlayWidget';
 import type {IRoomPreviewerWidget} from '@habbo/window/widgets/IRoomPreviewerWidget';
 import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 import {Vector3d} from '@room/utils/Vector3d';
@@ -268,11 +270,68 @@ export class FurniView
 
 			if (!item) item = groupItem.peek();
 
+			if (!item) return;
+
 			hasSelection = true;
 
 			const previewWidget = this._window.findChildByName('furni_preview_widget');
 
 			if (previewWidget) previewWidget.visible = true;
+
+			// AS3: sources/win63_client/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
+			// nextItemButton/viewItemButton only apply to "external image" wall items
+			// (photo/moodlight-style frames with cyclable custom images) — hidden for
+			// every other item. Previously never set, so they always showed.
+			const wallItemType = this._model.roomEngine.getWallItemType(item.type);
+			const isExternalImageWallItem = wallItemType !== null && wallItemType.indexOf('external_image_wallitem') !== -1;
+			const viewItemButton = this._window.findChildByName('viewItemButton');
+			const nextItemButton = this._window.findChildByName('nextItemButton');
+
+			if (viewItemButton) viewItemButton.visible = isExternalImageWallItem;
+			if (nextItemButton) nextItemButton.visible = isExternalImageWallItem;
+
+			// AS3: sources/win63_client/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
+			// Limited/rarity preview badges — same data GroupItem already shows on the
+			// grid thumbnail (updateItemImageVisual()), but for the big preview panel's
+			// own overlay widgets, which were never given visibility/data at all.
+			const limitedOverlay = this._window.findChildByName('unique_limited_item_overlay_widget') as IWidgetWindow | null;
+			const rarityOverlay = this._window.findChildByName('rarity_item_overlay_widget') as IWidgetWindow | null;
+
+			if (limitedOverlay)
+			{
+				if (item.stuffData && item.stuffData.uniqueSerialNumber > 0)
+				{
+					const widget = limitedOverlay.widget as ILimitedItemPreviewOverlayWidget | null;
+
+					if (widget)
+					{
+						widget.serialNumber = item.stuffData.uniqueSerialNumber;
+						widget.seriesSize = item.stuffData.uniqueSeriesSize;
+					}
+
+					limitedOverlay.visible = true;
+				}
+				else
+				{
+					limitedOverlay.visible = false;
+				}
+			}
+
+			if (rarityOverlay)
+			{
+				if (item.stuffData && item.stuffData.rarityLevel >= 0)
+				{
+					const widget = rarityOverlay.widget as IRarityItemPreviewOverlayWidget | null;
+
+					if (widget) widget.rarityLevel = item.stuffData.rarityLevel;
+
+					rarityOverlay.visible = true;
+				}
+				else
+				{
+					rarityOverlay.visible = false;
+				}
+			}
 
 			if (this._roomPreviewer && item)
 			{
@@ -300,6 +359,12 @@ export class FurniView
 			const previewWidget = this._window.findChildByName('furni_preview_widget');
 
 			if (previewWidget) previewWidget.visible = false;
+
+			const viewItemButton = this._window.findChildByName('viewItemButton');
+			const nextItemButton = this._window.findChildByName('nextItemButton');
+
+			if (viewItemButton) viewItemButton.visible = false;
+			if (nextItemButton) nextItemButton.visible = false;
 		}
 
 		this.updateActionButtons(hasSelection);

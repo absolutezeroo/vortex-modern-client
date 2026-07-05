@@ -50,6 +50,7 @@ import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObj
 import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
+import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 
@@ -614,6 +615,15 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 			case 'RWE_CHAT_INPUT_WIDGET':
 				handler = new ChatInputWidgetHandler();
 				break;
+			case 'RWE_CHAT_WIDGET':
+			{
+				// AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
+				const chatHandler = new ChatWidgetHandler();
+
+				chatHandler.connection = this._connection;
+				handler = chatHandler;
+				break;
+			}
 			default:
 				log.debug(`Widget creation requested: ${type} (stub)`);
 

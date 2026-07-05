@@ -13,6 +13,7 @@ import type {RoomUI} from './RoomUI';
 import {InfoStandWidget} from './widget/infostand/InfoStandWidget';
 import {RoomToolsWidget} from './widget/roomtools/RoomToolsWidget';
 import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
+import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 
 const log = Logger.getLogger('RoomWidgetFactory');
 
@@ -20,6 +21,8 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
 {
 	private _roomUI: RoomUI;
 	private _disposed: boolean = false;
+	// AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::var_3743 (chat widget id counter)
+	private _chatWidgetIdCounter: number = 0;
 
 	constructor(roomUI: RoomUI)
 	{
@@ -44,6 +47,11 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
 				return new RoomChatInputWidget(
 					handler, this._roomUI.windowManager, this._roomUI.assets,
 					this._roomUI.localization, this._roomUI, this._roomUI.desktop
+				);
+			case 'RWE_CHAT_WIDGET':
+				return new RoomChatWidget(
+					handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization,
+					this._roomUI.config!, this._chatWidgetIdCounter++, this._roomUI
 				);
 			default:
 				log.debug(`Widget creation requested: ${type} (stub — returning null)`);

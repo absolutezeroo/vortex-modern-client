@@ -362,6 +362,8 @@ import {
 	GetHeightMapMessageComposer,
 	MoveAvatarMessageComposer,
 	PlaceObjectMessageComposer,
+	MoveObjectMessageComposer,
+	PickupObjectMessageComposer,
 } from './messages/outgoing/room/engine';
 
 // Outgoing Composers - Room Chat
@@ -939,7 +941,10 @@ export class HabboMessages implements IMessageConfiguration
 		// === ROOM SESSION ===
 		this._composers.set(329, OpenFlatConnectionMessageComposer);
 		this._composers.set(1047, ChangeQueueMessageComposer);
-		this._composers.set(2722, QuitMessageComposer);
+		// AS3: sources/win63_version/habbo/communication/class_1881.as:628 — was incorrectly
+		// registered as 2722 (that ID actually belongs to the unported groupforums
+		// PostMessageMessageComposer, per class_1881.as:747).
+		this._composers.set(1949, QuitMessageComposer);
 		this._composers.set(2407, RoomNetworkOpenConnectionMessageComposer);
 
 		// === ROOM AVATAR ===
@@ -1060,6 +1065,8 @@ export class HabboMessages implements IMessageConfiguration
 		this._composers.set(1935, GetHeightMapMessageComposer);
 		this._composers.set(144, MoveAvatarMessageComposer);
 		this._composers.set(3258, PlaceObjectMessageComposer);
+		this._composers.set(2828, MoveObjectMessageComposer);
+		this._composers.set(443, PickupObjectMessageComposer);
 
 		// === ROOM CHAT ===
 		this._composers.set(641, ChatMessageComposer);
