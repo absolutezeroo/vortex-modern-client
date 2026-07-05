@@ -23,7 +23,7 @@ import type {ILoginContext} from './ILoginContext';
 export class RegisterView
 {
 	private _context: ILoginContext;
-	private _root: HTMLDivElement;
+	private _root: HTMLFormElement;
 
 	/** AS3: _emailField */
 	private _emailField: HTMLInputElement;
@@ -54,7 +54,9 @@ export class RegisterView
 	constructor(context: ILoginContext)
 	{
 		this._context = context;
-		this._root = document.createElement('div');
+		this._root = document.createElement('form');
+		this._root.autocomplete = 'on';
+		this._root.addEventListener('submit', this._onSubmit);
 		this._emailField = document.createElement('input');
 		this._passwordField = document.createElement('input');
 		this._confirmField = document.createElement('input');
@@ -63,7 +65,7 @@ export class RegisterView
 		this._cancelButton = document.createElement('button');
 	}
 
-	get element(): HTMLDivElement
+	get element(): HTMLFormElement
 	{
 		return this._root;
 	}
@@ -135,7 +137,6 @@ export class RegisterView
 		this._confirmField.type = 'password';
 		this._confirmField.placeholder = 'Confirm password';
 		this._confirmField.autocomplete = 'new-password';
-		this._confirmField.addEventListener('keydown', this._onKeydown);
 		confirmGroup.appendChild(this._confirmField);
 		this._root.appendChild(confirmGroup);
 
@@ -153,27 +154,26 @@ export class RegisterView
 		container.className = 'habbo-btn-row';
 
 		// AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", ...)
+		this._cancelButton.type = 'button';
 		this._cancelButton.className = 'habbo-btn habbo-btn--red';
 		this._cancelButton.textContent = 'Back';
 		this._cancelButton.addEventListener('click', this._onCancel);
 		container.appendChild(this._cancelButton);
 
 		// AS3: _registerButton = new ColouredButton("gfreen", "${connection.login.register.submit}", ...)
+		this._registerButton.type = 'submit';
 		this._registerButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
 		this._registerButton.textContent = 'Create account';
-		this._registerButton.addEventListener('click', this._onRegister);
 		container.appendChild(this._registerButton);
 
 		this._root.appendChild(container);
 	}
 
-	/** Enter key in the confirm-password field submits the form. */
-	private _onKeydown = (e: KeyboardEvent): void =>
+	/** Native form submission (Enter key or Create-account button) validates and registers. */
+	private _onSubmit = (e: SubmitEvent): void =>
 	{
-		if(e.key === 'Enter')
-		{
-			this._onRegister();
-		}
+		e.preventDefault();
+		this._onRegister();
 	};
 
 	/**
@@ -236,9 +236,8 @@ export class RegisterView
 
 		this._disposed = true;
 
-		this._confirmField.removeEventListener('keydown', this._onKeydown);
+		this._root.removeEventListener('submit', this._onSubmit);
 		this._cancelButton.removeEventListener('click', this._onCancel);
-		this._registerButton.removeEventListener('click', this._onRegister);
 		this._root.remove();
 	}
 }

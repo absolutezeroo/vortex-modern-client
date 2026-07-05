@@ -24,7 +24,7 @@ import type {ILoginContext} from './ILoginContext';
 export class LoginView
 {
 	private _context: ILoginContext;
-	private _root: HTMLDivElement;
+	private _root: HTMLFormElement;
 
 	/** AS3: _SafeStr_4568 — InputField (email) */
 	private _SafeStr_4568: HTMLInputElement;
@@ -52,7 +52,9 @@ export class LoginView
 	constructor(context: ILoginContext)
 	{
 		this._context = context;
-		this._root = document.createElement('div');
+		this._root = document.createElement('form');
+		this._root.autocomplete = 'on';
+		this._root.addEventListener('submit', this._onSubmit);
 		this._SafeStr_4568 = document.createElement('input');
 		this._SafeStr_4569 = document.createElement('input');
 		this._saveButton = document.createElement('button');
@@ -60,7 +62,7 @@ export class LoginView
 		this._registerButton = document.createElement('button');
 	}
 
-	get element(): HTMLDivElement
+	get element(): HTMLFormElement
 	{
 		return this._root;
 	}
@@ -131,7 +133,6 @@ export class LoginView
 		this._SafeStr_4569.type = 'password';
 		this._SafeStr_4569.placeholder = 'Password';
 		this._SafeStr_4569.autocomplete = 'current-password';
-		this._SafeStr_4569.addEventListener('keydown', this._onKeydown);
 		pwdGroup.appendChild(this._SafeStr_4569);
 		this._root.appendChild(pwdGroup);
 	}
@@ -152,6 +153,7 @@ export class LoginView
 
 		list.className = 'habbo-link-list';
 
+		this._registerButton.type = 'button';
 		this._registerButton.className = 'habbo-link';
 		this._registerButton.textContent = "I don't have an account";
 		this._registerButton.addEventListener('click', this._onRegister);
@@ -170,28 +172,31 @@ export class LoginView
 		container.className = 'habbo-btn-row';
 
 		// AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", ...)
+		this._cancelButton.type = 'button';
 		this._cancelButton.className = 'habbo-btn habbo-btn--red';
 		this._cancelButton.textContent = 'Back';
 		this._cancelButton.addEventListener('click', this._onCancel);
 		container.appendChild(this._cancelButton);
 
 		// AS3: _saveButton = new ColouredButton("gfreen", "${connection.login.play}", ...)
+		this._saveButton.type = 'submit';
 		this._saveButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
 		this._saveButton.textContent = "Let's Go!";
 		// AS3: _saveButton.active = false
 		this._saveButton.disabled = true;
-		this._saveButton.addEventListener('click', this._onLogin);
 		container.appendChild(this._saveButton);
 
 		this._root.appendChild(container);
 	}
 
 	/**
-	 * Enter key in password field triggers login.
+	 * Native form submission (Enter key or Play button) triggers login.
 	 */
-	private _onKeydown = (e: KeyboardEvent): void =>
+	private _onSubmit = (e: SubmitEvent): void =>
 	{
-		if(e.key === 'Enter' && !this._saveButton.disabled)
+		e.preventDefault();
+
+		if(!this._saveButton.disabled)
 		{
 			this._onLogin();
 		}
@@ -259,9 +264,8 @@ export class LoginView
 
 		this._disposed = true;
 
-		this._SafeStr_4569.removeEventListener('keydown', this._onKeydown);
+		this._root.removeEventListener('submit', this._onSubmit);
 		this._cancelButton.removeEventListener('click', this._onCancel);
-		this._saveButton.removeEventListener('click', this._onLogin);
 		this._registerButton.removeEventListener('click', this._onRegister);
 		this._root.remove();
 	}

@@ -21,7 +21,7 @@ import type {ILoginContext} from './ILoginContext';
 export class SsoTokenView
 {
 	private _context: ILoginContext;
-	private _root: HTMLDivElement;
+	private _root: HTMLFormElement;
 
 	/** AS3: _SafeStr_4547 — title TextField */
 	private _SafeStr_4547: HTMLDivElement | null = null;
@@ -49,14 +49,15 @@ export class SsoTokenView
 	constructor(context: ILoginContext)
 	{
 		this._context = context;
-		this._root = document.createElement('div');
+		this._root = document.createElement('form');
+		this._root.addEventListener('submit', this._onSubmit);
 		this._SafeStr_4570 = document.createElement('input');
 		this._saveButton = document.createElement('button');
 		this._cancelButton = document.createElement('button');
 		this._registerButton = document.createElement('button');
 	}
 
-	get element(): HTMLDivElement
+	get element(): HTMLFormElement
 	{
 		return this._root;
 	}
@@ -116,6 +117,7 @@ export class SsoTokenView
 
 		list.className = 'habbo-link-list';
 
+		this._registerButton.type = 'button';
 		this._registerButton.className = 'habbo-link';
 		this._registerButton.textContent = "I don't have an account";
 		this._registerButton.addEventListener('click', this._onRegister);
@@ -143,8 +145,9 @@ export class SsoTokenView
 		this._SafeStr_4570.spellcheck = false;
 
 		// AS3: addEventListener("change", onInputChange) + addEventListener("keyDown", onInputKeyboardEvent)
+		// Enter-triggers-login (the AS3 keyDown behavior) is now handled by the
+		// form's native "submit" event (see constructor + _onSubmit) instead.
 		this._SafeStr_4570.addEventListener('input', this._onInputChange);
-		this._SafeStr_4570.addEventListener('keydown', this._onInputKeyboardEvent);
 
 		group.appendChild(this._SafeStr_4570);
 
@@ -154,11 +157,13 @@ export class SsoTokenView
 
 	/**
 	 * AS3: onInputKeyboardEvent(_arg_1:KeyboardEvent)
-	 * Enter key (charCode 13) triggers login if button is active.
+	 * Native form submission (Enter key or Play button) triggers login if button is active.
 	 */
-	private _onInputKeyboardEvent = (e: KeyboardEvent): void =>
+	private _onSubmit = (e: SubmitEvent): void =>
 	{
-		if(e.key === 'Enter' && !this._saveButton.disabled)
+		e.preventDefault();
+
+		if(!this._saveButton.disabled)
 		{
 			this._onLogin();
 		}
@@ -195,17 +200,18 @@ export class SsoTokenView
 		container.className = 'habbo-btn-row';
 
 		// AS3: _cancelButton = new ColouredButton("red", "${generic.cancel}", new Rectangle(0, 300, 0, 40), true, onCancel, 0xD8D8D8)
+		this._cancelButton.type = 'button';
 		this._cancelButton.className = 'habbo-btn habbo-btn--red';
 		this._cancelButton.textContent = 'Back';
 		this._cancelButton.addEventListener('click', this._onCancel);
 		container.appendChild(this._cancelButton);
 
 		// AS3: _saveButton = new ColouredButton("gfreen", "${connection.login.play}", ..., true, onLogin, ...)
+		this._saveButton.type = 'submit';
 		this._saveButton.className = 'habbo-btn habbo-btn--green habbo-btn--arrow';
 		this._saveButton.textContent = "Let's Go!";
 		// AS3: _saveButton.active = false
 		this._saveButton.disabled = true;
-		this._saveButton.addEventListener('click', this._onLogin);
 		container.appendChild(this._saveButton);
 
 		this._root.appendChild(container);
@@ -317,9 +323,8 @@ export class SsoTokenView
 		this._disposed = true;
 
 		this._SafeStr_4570.removeEventListener('input', this._onInputChange);
-		this._SafeStr_4570.removeEventListener('keydown', this._onInputKeyboardEvent);
+		this._root.removeEventListener('submit', this._onSubmit);
 		this._cancelButton.removeEventListener('click', this._onCancel);
-		this._saveButton.removeEventListener('click', this._onLogin);
 		this._registerButton.removeEventListener('click', this._onRegister);
 		this._root.remove();
 	}
