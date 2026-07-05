@@ -39,19 +39,22 @@ function isAs3PortedFile(file)
 const FILE_HEADER_RE = /^\+\+\+ b\/(.+)$/;
 const HUNK_RE = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/;
 
-// One batched `git diff` call for every matched file instead of one process per file —
+// One batched `git diff` call for the whole commit instead of one process per file —
 // spawning a subprocess per file made this unusable on commits touching hundreds of files.
-function getAddedLineNumbersBatch(files)
+// The file list is passed as a filter Set, not as pathspec argv (thousands of paths as
+// individual arguments can exceed the OS command-line length limit on Windows).
+function getAddedLineNumbersBatch(wantedFiles)
 {
     const result = new Map();
 
-    if(files.length === 0)
+    if(wantedFiles.size === 0)
     {
         return result;
     }
 
-    const diff = git(['diff', '--cached', '-U0', '--diff-filter=ACMR', '--', ...files]);
+    const diff = git(['diff', '--cached', '-U0', '--diff-filter=ACMR']);
     let currentFile = null;
+    let currentSet = null;
 
     for(const line of diff.split('\n'))
     {
@@ -60,10 +63,11 @@ function getAddedLineNumbersBatch(files)
         if(fileMatch)
         {
             currentFile = fileMatch[1];
+            currentSet = wantedFiles.has(currentFile) ? result.get(currentFile) ?? new Set() : null;
 
-            if(!result.has(currentFile))
+            if(currentSet !== null)
             {
-                result.set(currentFile, new Set());
+                result.set(currentFile, currentSet);
             }
 
             continue;
@@ -71,15 +75,14 @@ function getAddedLineNumbersBatch(files)
 
         const hunkMatch = HUNK_RE.exec(line);
 
-        if(hunkMatch && currentFile)
+        if(hunkMatch && currentSet !== null)
         {
             const start = parseInt(hunkMatch[1], 10);
             const count = hunkMatch[2] !== undefined ? parseInt(hunkMatch[2], 10) : 1;
-            const set = result.get(currentFile);
 
             for(let n = start; n < start + count; n++)
             {
-                set.add(n);
+                currentSet.add(n);
             }
         }
     }
@@ -265,7 +268,7 @@ function main()
         process.exit(0);
     }
 
-    const addedLinesByFile = getAddedLineNumbersBatch(files);
+    const addedLinesByFile = getAddedLineNumbersBatch(new Set(files));
     const allFindings = files.flatMap((file) => checkFile(file, addedLinesByFile.get(file)));
 
     if(allFindings.length > 0)
