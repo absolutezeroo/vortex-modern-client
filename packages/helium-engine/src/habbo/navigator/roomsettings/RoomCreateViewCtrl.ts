@@ -532,8 +532,8 @@ export class RoomCreateViewCtrl
         const desktop = this._navigator.windowManager?.getDesktop(1) ?? this._content.parent;
         const rect = Util.getLocationRelativeTo(desktop, this._content.width, this._content.height);
 
-        this._content.x = Math.round(rect.x);
-        this._content.y = Math.round(rect.y);
+        this._content.x = Math.trunc(rect.x);
+        this._content.y = Math.trunc(rect.y);
     }
 
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::resolveLocalization()

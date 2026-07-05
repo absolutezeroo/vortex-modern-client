@@ -62,7 +62,7 @@ export class PurseClubArea extends CurrencyIndicatorBase
         const purse = this._toolbar.inventory.purse;
         const totalDays = purse.clubPeriods * 31 + purse.clubDays;
         const minutes = purse.minutesUntilExpiration;
-        const clubLevel = this._toolbar.sessionDataManager?.clubLevel ?? (purse.isVIP ? 2 : (purse.hasClub ? 1 : 0));
+        const clubLevel = this._toolbar.inventory.clubLevel;
 
         this._clubLevel = clubLevel;
 

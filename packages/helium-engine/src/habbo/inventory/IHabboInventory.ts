@@ -47,6 +47,7 @@ export interface IHabboInventory
 
 	// Purse & Tracking
 	readonly purse: IPurse;
+	readonly clubLevel: number;
 	readonly unseenItemTracker: UnseenItemTracker;
 
 	// Room session state

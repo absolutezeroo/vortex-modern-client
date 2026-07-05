@@ -203,6 +203,22 @@ export class HabboInventory extends Component implements IHabboInventory
 		return this._purse;
 	}
 
+	// AS3: sources/win63_version/habbo/inventory/HabboInventory.as::get clubLevel()
+	get clubLevel(): number
+	{
+		if (this._purse.clubDays === 0 && this._purse.clubPeriods === 0)
+		{
+			return 0;
+		}
+
+		if (this._purse.isVIP)
+		{
+			return 2;
+		}
+
+		return 1;
+	}
+
 	private _unseenItemTracker: UnseenItemTracker | null = null;
 
 	get unseenItemTracker(): UnseenItemTracker
