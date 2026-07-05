@@ -608,12 +608,11 @@ export class FurniView
 				case 'offertotrade_btn':
 				{
 					const countText = this._offerInTradingCountButton?.text ?? '1';
-					let count = Math.max(1, parseInt(countText, 10) || 1);
+					const count = Math.max(1, parseInt(countText, 10) || 1);
 
 					if (String(count) !== countText && this._offerInTradingCountButton)
 					{
-						this._offerInTradingCountButton.text = '0';
-						count = 0;
+						this._offerInTradingCountButton.text = String(count);
 					}
 
 					this._model.requestSelectedFurniToTrading(count, this._offerInTradingCountButton);

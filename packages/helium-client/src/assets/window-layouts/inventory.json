@@ -659,8 +659,7 @@
                               "style": "3",
                               "name": "furni_preview_region",
                               "treshold": "0",
-                              "height_min": "130",
-                              "height_max": "130"
+                              "height_min": "50"
                             },
                             "children": []
                           },
@@ -675,8 +674,7 @@
                               "params": "2192",
                               "style": "3",
                               "name": "furni_preview_widget",
-                              "height_min": "130",
-                              "height_max": "130"
+                              "height_min": "50"
                             },
                             "children": [],
                             "vars": {

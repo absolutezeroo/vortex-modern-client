@@ -87,7 +87,7 @@ export class MeMenuSoundSettingsSlider
 	 */
 	public getSliderPosition(value: number): number
 	{
-		return Math.round(this._referenceWidth * ((value - this._minValue) / (this._maxValue - this._minValue)));
+		return Math.trunc(this._referenceWidth * ((value - this._minValue) / (this._maxValue - this._minValue)));
 	}
 
 	/**

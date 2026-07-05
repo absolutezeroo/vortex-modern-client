@@ -714,7 +714,8 @@ export class RoomPlane
 			this._textureOffsetU,
 			this._textureOffsetV,
 			this._textureMaxU,
-			this._textureMaxV
+			this._textureMaxV,
+			time
 		);
 
 		if (result !== null)

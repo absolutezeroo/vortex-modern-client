@@ -1354,7 +1354,7 @@ export class RoomPlaneParser
 					rectWidth++;
 				}
 
-				const hasRightEdge = rectWidth === width || tiles[y][rectWidth] !== tileHeight;
+				let hasRightEdge = rectWidth === width || tiles[y][rectWidth] !== tileHeight;
 
 				// Find height of same-height rectangle
 				let done = false;
@@ -1390,6 +1390,10 @@ export class RoomPlaneParser
 				{
 					hasBottomEdge = rectHeight === height;
 				}
+
+				// rectWidth may have shrunk during the height scan (line ~1380), so hasRightEdge
+				// must be recomputed against the final rectWidth (AS3: RoomPlaneParser.as:1673)
+				hasRightEdge = rectWidth === width || tiles[y][rectWidth] !== tileHeight;
 
 				// Mark tiles as processed
 				for (let py = y; py < rectHeight; py++)

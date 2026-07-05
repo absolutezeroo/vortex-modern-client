@@ -1098,8 +1098,9 @@ export class RoomSettingsCtrl
         const chatScrollEl = this._window.findChildByName('chat_scroll_speed') as unknown as IPopulatable | null;
         if(chatScrollEl) builder.chatScrollUpFrequency = chatScrollEl.selection;
 
-        const hearRangeText = this._chatFullHearRangeInput?.getText() ?? '14';
-        builder.chatFullHearRange = Math.max(0, parseInt(hearRangeText, 10) || 14);
+        const hearRangeText = this._chatFullHearRangeInput?.getText() ?? '';
+        const parsedHearRange = parseInt(hearRangeText, 10);
+        builder.chatFullHearRange = Number.isNaN(parsedHearRange) ? 0 : parsedHearRange;
 
         const floodEl = this._window.findChildByName('chat_flood_sensitivity') as unknown as IPopulatable | null;
         if(floodEl) builder.chatFloodSensitivity = floodEl.selection;

@@ -120,8 +120,12 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
 		this._canvasWrapper.getGlobalPosition(globalPosition);
 
-		this._canvasDisplayObject.x = globalPosition.x;
-		this._canvasDisplayObject.y = globalPosition.y;
+		// AS3 sets the canvas's own x/y to offsetX/offsetY (RoomPreviewerWidget.as::refresh()),
+		// which works there because the canvas is a child of this widget's window. Here it's
+		// parented directly onto the root stage (see deviation note below), so the offset has
+		// to be folded into the same global-position assignment instead of applied separately.
+		this._canvasDisplayObject.x = globalPosition.x + this._offsetX;
+		this._canvasDisplayObject.y = globalPosition.y + this._offsetY;
 
 		// TS deviation: this canvas and the main room view's canvas both get
 		// parented directly onto the same shared PixiJS stage (see file header
@@ -195,6 +199,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 	public set scale(value: number)
 	{
 		this._scale = value;
+		this.refresh();
 	}
 
 	private _offsetX: number = 0;
@@ -207,6 +212,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 	public set offsetX(value: number)
 	{
 		this._offsetX = value;
+		this.refresh();
 	}
 
 	private _offsetY: number = 0;
@@ -219,6 +225,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 	public set offsetY(value: number)
 	{
 		this._offsetY = value;
+		this.refresh();
 	}
 
 	private _zoom: number = 1;
@@ -231,6 +238,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 	public set zoom(value: number)
 	{
 		this._zoom = value;
+		this.refresh();
 	}
 
 	public get roomPreviewer(): RoomPreviewer | null
@@ -317,14 +325,35 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 		this._roomPreviewer = null;
 	}
 
-	/**
-	 * Handle click on the room preview canvas.
-	 *
-	 * In AS3, forwards click coordinates to the RoomPreviewer.
-	 */
+	// AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::refresh()
+	private refresh(): void
+	{
+		if (!this._roomPreviewer || !this._roomPreviewer.isRoomEngineReady) return;
+
+		if (this._scale === 64)
+		{
+			this._roomPreviewer.zoomIn();
+		}
+		else
+		{
+			this._roomPreviewer.zoomOut();
+		}
+
+		this._roomPreviewer.addViewOffset = {x: this._offsetX, y: this._offsetY};
+
+		if (this._canvasDisplayObject)
+		{
+			this._canvasDisplayObject.scale.x = this._zoom;
+			this._canvasDisplayObject.scale.y = this._zoom;
+		}
+
+		this.syncCanvasPosition();
+	}
+
+	// AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::onClickRoomView()
 	private onClickRoomView(): void
 	{
-		// TODO: Forward click to RoomPreviewer when integrated
+		this._roomPreviewer?.changeRoomObjectState();
 	}
 
 	/**

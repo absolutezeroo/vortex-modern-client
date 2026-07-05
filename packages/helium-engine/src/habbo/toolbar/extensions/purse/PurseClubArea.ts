@@ -70,10 +70,6 @@ export class PurseClubArea extends CurrencyIndicatorBase
         {
             this.setAmount(totalDays, minutes);
         }
-        else if(clubLevel === 0)
-        {
-            this.setAmount(0, minutes);
-        }
 
         this._previousDays = totalDays;
         this._previousMinutes = minutes;
