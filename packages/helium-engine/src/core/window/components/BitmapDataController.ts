@@ -210,6 +210,36 @@ export class BitmapDataController extends WindowController
         this._wrapY = value;
     }
 
+    private _flipX: boolean = false;
+
+    /**
+	 * Whether the bitmap is flipped horizontally.
+	 */
+    public get flipX(): boolean
+    {
+        return this._flipX;
+    }
+
+    public set flipX(value: boolean)
+    {
+        this._flipX = value;
+    }
+
+    private _flipY: boolean = false;
+
+    /**
+	 * Whether the bitmap is flipped vertically.
+	 */
+    public get flipY(): boolean
+    {
+        return this._flipY;
+    }
+
+    public set flipY(value: boolean)
+    {
+        this._flipY = value;
+    }
+
     private _rotation: number = 0;
 
     /**
@@ -247,6 +277,8 @@ export class BitmapDataController extends WindowController
         props.push(this.createProperty('stretched_y', this._stretchedY));
         props.push(this.createProperty('wrap_x', this._wrapX));
         props.push(this.createProperty('wrap_y', this._wrapY));
+        props.push(this.createProperty('flip_x', this._flipX));
+        props.push(this.createProperty('flip_y', this._flipY));
         props.push(this.createProperty('zoom_x', this._zoomX));
         props.push(this.createProperty('zoom_y', this._zoomY));
         props.push(this.createProperty('greyscale', this._greyscale));
@@ -286,6 +318,12 @@ export class BitmapDataController extends WindowController
                 case 'wrap_y':
                     this._wrapY = this.readBoolean(prop.value);
                     break;
+                case 'flip_x':
+                    this._flipX = this.readBoolean(prop.value);
+                    break;
+                case 'flip_y':
+                    this._flipY = this.readBoolean(prop.value);
+                    break;
                 case 'greyscale':
                     this._greyscale = this.readBoolean(prop.value);
                     break;
@@ -321,6 +359,8 @@ export class BitmapDataController extends WindowController
         cloned._etchingPointY = this._etchingPointY;
         cloned._wrapX = this._wrapX;
         cloned._wrapY = this._wrapY;
+        cloned._flipX = this._flipX;
+        cloned._flipY = this._flipY;
         cloned._rotation = this._rotation;
 
         return cloned;

@@ -46,6 +46,10 @@ import {DropListItemController} from './components/DropListItemController';
 import {ScalerController} from './components/ScalerController';
 import {ScrollBarController} from './components/ScrollBarController';
 import {ScrollBarLiftController} from './components/ScrollBarLiftController';
+import {ShapeController} from './components/ShapeController';
+import {GradientController} from './components/GradientController';
+import {StrokeController} from './components/StrokeController';
+import {BitmapFillController} from './components/BitmapFillController';
 
 /**
  * Registry mapping window type IDs to their controller constructors.
@@ -97,8 +101,11 @@ export class Classes
         // ── Display wrappers ────────────────────────────────────────
         Classes.register(WindowType.DISPLAY_OBJECT_WRAPPER, DisplayObjectWrapperController as any);
         Classes.register(WindowType.BITMAP_WRAPPER, BitmapWrapperController as any);
-        Classes.register(WindowType.SHAPE_WRAPPER, WindowController as any);
+        Classes.register(WindowType.SHAPE_WRAPPER, ShapeController as any);
         Classes.register(WindowType.STATIC_BITMAP_WRAPPER, StaticBitmapWrapperController as any);
+        Classes.register(WindowType.GRADIENT, GradientController as any);
+        Classes.register(WindowType.STROKE, StrokeController as any);
+        Classes.register(WindowType.BITMAP_FILL, BitmapFillController as any);
 
         // ── Borders ─────────────────────────────────────────────────
         Classes.registerMultiple([

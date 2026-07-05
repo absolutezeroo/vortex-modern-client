@@ -4,6 +4,7 @@ import type {IHabboWindowManager} from './IHabboWindowManager';
 import {AvatarImageWidget} from './widgets/AvatarImageWidget';
 import {BadgeImageWidget} from './widgets/BadgeImageWidget';
 import {BalloonWidget} from './widgets/BalloonWidget';
+import {ChestItemGridOverlayWidget} from './widgets/ChestItemGridOverlayWidget';
 import {CountdownWidget} from './widgets/CountdownWidget';
 import {FurnitureImageWidget} from './widgets/FurnitureImageWidget';
 import {HoverBitmapWidget} from './widgets/HoverBitmapWidget';
@@ -68,6 +69,7 @@ export class HabboWidgetFactory implements IWidgetFactory
         registry.set('avatar_image', AvatarImageWidget);
         registry.set('badge_image', BadgeImageWidget);
         registry.set('balloon', BalloonWidget);
+        registry.set('chest_overlay_grid', ChestItemGridOverlayWidget);
         registry.set('countdown', CountdownWidget);
         registry.set('furniture_image', FurnitureImageWidget);
         registry.set('hover_bitmap', HoverBitmapWidget);

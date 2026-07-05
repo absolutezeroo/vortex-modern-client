@@ -31,6 +31,10 @@ import {WindowComposite} from '@core/window/graphics/WindowComposite';
 import {WindowRenderer} from '@core/window/graphics/WindowRenderer';
 import {FillSkinRenderer} from '@core/window/graphics/renderer/FillSkinRenderer';
 import {NullSkinRenderer} from '@core/window/graphics/renderer/NullSkinRenderer';
+import {ShapeSkinRenderer} from '@core/window/graphics/renderer/ShapeSkinRenderer';
+import {GradientSkinRenderer} from '@core/window/graphics/renderer/GradientSkinRenderer';
+import {StrokeSkinRenderer} from '@core/window/graphics/renderer/StrokeSkinRenderer';
+import {BitmapFillSkinRenderer} from '@core/window/graphics/renderer/BitmapFillSkinRenderer';
 import type {ISkinRenderer} from '@core/window/graphics/renderer/ISkinRenderer';
 import type {ISkinData} from '@core/window/graphics/renderer/BitmapSkinParser';
 import {BitmapSkinParser} from '@core/window/graphics/renderer/BitmapSkinParser';
@@ -280,6 +284,34 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
+	 * Constructs the non-asset-backed skin renderer for an element descriptor's
+	 * `renderer` attribute (asset-backed "skin" renderers are created later by
+	 * {@link loadSkinAssets} via {@link BitmapSkinParser}, replacing the
+	 * `NullSkinRenderer` placeholder built here).
+	 *
+	 * AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
+	 * (renderer name → class Dictionary)
+	 */
+    private static createRendererForType(rendererType: string, rendererName: string): ISkinRenderer
+    {
+        switch(rendererType)
+        {
+            case 'fill':
+                return new FillSkinRenderer(rendererName);
+            case 'shape':
+                return new ShapeSkinRenderer(rendererName);
+            case 'gradient':
+                return new GradientSkinRenderer(rendererName);
+            case 'stroke':
+                return new StrokeSkinRenderer(rendererName);
+            case 'bitmap_fill':
+                return new BitmapFillSkinRenderer(rendererName);
+            default:
+                return new NullSkinRenderer(rendererName);
+        }
+    }
+
+    /**
 	 * Load element description data into the registry.
 	 */
     loadElementDescription(data: IElementDescriptionData): void
@@ -304,9 +336,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
             const rendererType = element.renderer || 'null';
             const rendererName = `${element.typeId}_${element.style}`;
-            const renderer = rendererType === 'fill'
-                ? new FillSkinRenderer(rendererName)
-                : new NullSkinRenderer(rendererName);
+            const renderer = HabboWindowManager.createRendererForType(rendererType, rendererName);
 
             this._skinContainer.addSkinRenderer(
                 element.typeId,

@@ -119,9 +119,10 @@ export class ThemeManager implements IThemeManager
         properties.addBoolean('interactive_cursor_disabled', false);
         properties.addBoolean('vertical', false);
         // AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("widget_type","",class_2086.WIDGET_TYPES)
-        // class_2086 = sources/win63_version/habbo/window/widgets/class_2086.as — WIDGET_TYPES is sorted alphabetically
+        // class_2086 = sources/win63_version/habbo/window/widgets/class_2086.as (renamed WidgetClasses.as in the
+        // 2026 source, which adds "chest_overlay_grid") — WIDGET_TYPES is sorted alphabetically
         properties.addEnumeration('widget_type', '', [
-            'avatar_image', 'badge_image', 'balloon', 'countdown',
+            'avatar_image', 'badge_image', 'balloon', 'chest_overlay_grid', 'countdown',
             'furniture_image', 'hover_bitmap', 'illumina_border',
             'illumina_chat_bubble', 'illumina_input',
             'limited_item_overlay_grid', 'limited_item_overlay_preview', 'limited_item_overlay_supply',
