@@ -1,4 +1,4 @@
-import {Rectangle} from 'pixi.js';
+import {Rectangle, Graphics} from 'pixi.js';
 import type {Container} from 'pixi.js';
 import type {IVector3d} from '@room/utils/IVector3d';
 import {Vector3d} from '@room/utils/Vector3d';
@@ -80,6 +80,20 @@ export class RoomPreviewer
 	private _addViewOffset: IPoint = {x: 0, y: 0};
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_disableUpdate
 	private _disableUpdate: boolean = false;
+
+	// TS-only: AS3 renders this preview onto the same unified Flash display
+	// list as the surrounding window chrome, so wherever the room scene has
+	// no geometry, the inventory window's own background naturally shows
+	// through underneath. Here the room preview is a separate PixiJS canvas
+	// layered as a DisplayObject behind a "hole" punched in the UI canvas
+	// (see WindowComposite.ts's clearRect for WindowType.DISPLAY_OBJECT_WRAPPER)
+	// — so an area with no room geometry has nothing to fall back to and
+	// shows through to whatever is behind the browser page entirely. Paint a
+	// flat fill matching the classic inventory body colour behind the scene
+	// so growth of the preview area (a legitimate stretch — see
+	// RoomPreviewerWidget.ts) reveals this colour instead of see-through.
+	private static readonly PREVIEW_BACKGROUND_COLOR = 0xeceae0;
+	private _backgroundFill: Graphics | null = null;
 
 	// Re-entrancy guard: the ported engine re-emits REE_INITIALIZED from
 	// initializeRoomVisuals() (which updateObjectRoom() maps onto), so without
@@ -391,10 +405,27 @@ export class RoomPreviewer
 			this._currentPreviewCanvasWidth = width;
 			this._currentPreviewCanvasHeight = height;
 
+			if(canvas)
+			{
+				this._backgroundFill = new Graphics();
+				this.redrawBackgroundFill(width, height);
+				canvas.addChildAt(this._backgroundFill, 0);
+			}
+
 			return canvas;
 		}
 
 		return null;
+	}
+
+	private redrawBackgroundFill(width: number, height: number): void
+	{
+		if(!this._backgroundFill) return;
+
+		this._backgroundFill
+			.clear()
+			.rect(0, 0, Math.max(1, width), Math.max(1, height))
+			.fill(RoomPreviewer.PREVIEW_BACKGROUND_COLOR);
 	}
 
 	// AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::modifyRoomCanvas()
@@ -405,6 +436,7 @@ export class RoomPreviewer
 			this._currentPreviewCanvasWidth = width;
 			this._currentPreviewCanvasHeight = height;
 			this._roomEngine.modifyRoomCanvas(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID, width, height);
+			this.redrawBackgroundFill(width, height);
 		}
 	}
 
@@ -880,6 +912,8 @@ export class RoomPreviewer
 			this._roomEngine.unregisterCanvasSyncCallback(this._updatePreviewRoomViewBound);
 		}
 
+		this._backgroundFill?.destroy();
+		this._backgroundFill = null;
 		this._roomEngine = null;
 	}
 }
