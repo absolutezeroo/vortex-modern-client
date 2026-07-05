@@ -36,4 +36,7 @@ export interface IRoomDesktop
 	 * Processes an event.
 	 */
 	processEvent(event: unknown): void;
+
+	// AS3: sources/win63_version/habbo/ui/IRoomDesktop.as::getWidget()
+	getWidget(type: string): unknown | null;
 }

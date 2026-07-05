@@ -24,6 +24,8 @@ import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
+import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
+import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 
 // Interfaces
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -36,6 +38,8 @@ import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
+import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
+import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {FriendBarResizeEvent} from '@habbo/friendbar/events/FriendBarResizeEvent';
 import type {IHabboLandingView} from '@habbo/friendbar/IHabboLandingView';
@@ -69,8 +73,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 	private _catalog: IHabboCatalog | null = null;
 	private _habboTracking: IHabboTracking | null = null;
 	private _habboGroupsManager: IHabboGroupsManager | null = null;
+	private _navigator: IHabboNavigator | null = null;
+	private _communicationManager: IHabboCommunicationManager | null = null;
 	private _widgetFactory: RoomWidgetFactory;
 	private _desktops: Map<string, RoomDesktop> = new Map();
+	private _currentDesktop: RoomDesktop | null = null;
 	private _isInRoom: boolean = false;
 
 	constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
@@ -215,6 +222,32 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 				},
 				false
 			),
+			new ComponentDependency(
+				IID_HabboNavigator,
+				(navigator: IHabboNavigator | null) =>
+				{
+					this._navigator = navigator;
+
+					for(const desktop of this._desktops.values())
+					{
+						desktop.navigator = navigator;
+					}
+				},
+				false
+			),
+			new ComponentDependency(
+				IID_HabboCommunicationManager,
+				(communicationManager: IHabboCommunicationManager | null) =>
+				{
+					this._communicationManager = communicationManager;
+
+					for(const desktop of this._desktops.values())
+					{
+						desktop.communicationManager = communicationManager;
+					}
+				},
+				false
+			),
 		];
 	}
 
@@ -232,6 +265,30 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 	public get config(): IHabboConfigurationManager | null
 	{
 		return this._config;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomUI.as::get navigator()
+	public get navigator(): IHabboNavigator | null
+	{
+		return this._navigator;
+	}
+
+	/**
+	 * The communication manager, used to construct widgets that need it (e.g. room tools).
+	 */
+	public get communicationManager(): IHabboCommunicationManager | null
+	{
+		return this._communicationManager;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomUI.as::get desktop()
+	// AS3 tracks a single active room desktop (var_22); the TS port keys desktops
+	// by room identifier in a Map to support the underlying multi-session
+	// architecture, so this exposes "the most recently created desktop" as the
+	// AS3-equivalent single current desktop.
+	public get desktop(): IRoomDesktop | null
+	{
+		return this._currentDesktop;
 	}
 
 	/**
@@ -284,6 +341,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 		desktop.catalog = this._catalog;
 		desktop.habboTracking = this._habboTracking;
 		desktop.habboGroupsManager = this._habboGroupsManager;
+		desktop.navigator = this._navigator;
+		desktop.communicationManager = this._communicationManager;
 
 		// Set the layout
 		desktop.layout = 'room_desktop_layout';
@@ -293,6 +352,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
 		// Store in desktops map
 		this._desktops.set(identifier, desktop);
+		this._currentDesktop = desktop;
 
 		log.info(`Desktop created for room ${session.roomId} (identifier: ${identifier})`);
 
@@ -310,6 +370,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
 		desktop.dispose();
 		this._desktops.delete(identifier);
+
+		if(this._currentDesktop === desktop)
+		{
+			this._currentDesktop = null;
+		}
 
 		log.info(`Desktop disposed: ${identifier}`);
 	}

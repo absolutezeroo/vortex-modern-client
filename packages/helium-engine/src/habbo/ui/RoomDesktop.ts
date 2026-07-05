@@ -30,6 +30,8 @@ import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
+import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
+import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
@@ -46,10 +48,17 @@ import type {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
+import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 
 const log = Logger.getLogger('RoomDesktop');
+
+// AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627)
+const REUSABLE_WIDGET_TYPES = new Set([
+	'RWE_INFOSTAND', 'RWE_CHAT_INPUT_WIDGET', 'RWE_ME_MENU', 'RWE_CHAT_WIDGET',
+	'RWE_EXTERNAL_IMAGE', 'RWE_CAMERA', 'RWE_ROOM_TOOLS', 'RWE_FURNITURE_CONTEXT_MENU',
+]);
 
 export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IRoomWidgetHandlerContainer
 {
@@ -77,6 +86,8 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	private _catalog: IHabboCatalog | null = null;
 	private _habboTracking: IHabboTracking | null = null;
 	private _habboGroupsManager: IHabboGroupsManager | null = null;
+	private _navigator: IHabboNavigator | null = null;
+	private _communicationManager: IHabboCommunicationManager | null = null;
 
 	// Widget management
 	private _widgets: Map<string, unknown> = new Map();
@@ -293,6 +304,28 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 	public set habboTracking(value: IHabboTracking | null)
 	{
 		this._habboTracking = value;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_navigator (private field, not part of IRoomWidgetHandlerContainer)
+	public set navigator(value: IHabboNavigator | null)
+	{
+		this._navigator = value;
+	}
+
+	public get navigator(): IHabboNavigator | null
+	{
+		return this._navigator;
+	}
+
+	// AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_communicationManager (private field, not part of IRoomWidgetHandlerContainer)
+	public set communicationManager(value: IHabboCommunicationManager | null)
+	{
+		this._communicationManager = value;
+	}
+
+	public get communicationManager(): IHabboCommunicationManager | null
+	{
+		return this._communicationManager;
 	}
 
 	// AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
@@ -567,6 +600,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 			case 'RWE_INFOSTAND':
 				handler = new InfoStandWidgetHandler(null);
 				break;
+			case 'RWE_ROOM_TOOLS':
+			{
+				// AS3: sources/win63_version/habbo/ui/RoomDesktop.as:885-890
+				const roomToolsHandler = new RoomToolsWidgetHandler();
+
+				roomToolsHandler.communicationManager = this._communicationManager;
+				roomToolsHandler.navigator = this._navigator;
+				handler = roomToolsHandler;
+				break;
+			}
 			default:
 				log.debug(`Widget creation requested: ${type} (stub)`);
 
@@ -596,7 +639,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
 		widget.messageListener = this;
 		widget.registerUpdateEvents(this._desktopEvents);
-		widget.reusable = false;
+		// AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627) marks these widget
+		// types reusable across room transitions via a caller-side instance cache in
+		// RoomUI.createDesktopWidget() (var_1358) that calls widget.reuse(newDesktop)
+		// instead of reconstructing. That cross-room caching isn't ported yet — this
+		// only sets the flag correctly per AS3 (currently inert since nothing reads it
+		// besides this assignment) so it's ready when that follow-up lands.
+		widget.reusable = REUSABLE_WIDGET_TYPES.has(type);
 		widget.widgetType = type;
 
 		this._widgets.set(type, widget);
