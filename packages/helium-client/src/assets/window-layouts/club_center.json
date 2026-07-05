@@ -147,8 +147,8 @@
                     },
                     "children": [
                       {
-                        "tag": "bitmap",
-                        "typeId": 21,
+                        "tag": "widget",
+                        "typeId": 16,
                         "attributes": {
                           "x": "0",
                           "y": "0",
@@ -160,9 +160,10 @@
                         },
                         "children": [],
                         "vars": {
-                          "pivot_point": "center",
-                          "stretched_x": false,
-                          "stretched_y": false
+                          "widget_type": "badge_image",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
                         }
                       }
                     ]

@@ -7,6 +7,7 @@ import {HabboNavigator} from '@habbo/navigator/HabboNavigator';
 import {HabboNewNavigator} from '@habbo/navigator/HabboNewNavigator';
 import {HabboInventory} from '@habbo/inventory/HabboInventory';
 import {HabboCatalog} from '@habbo/catalog/HabboCatalog';
+import {HabboClubCenter} from '@habbo/catalog/clubcenter/HabboClubCenter';
 import {RoomEngine, RoomMessageHandler} from '@habbo/room';
 import {HabboRoomRendererFactory} from '@habbo/room/renderer/HabboRoomRendererFactory';
 import {RoomManager} from '@room/RoomManager';
@@ -57,8 +58,10 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboClubCenter} from '@habbo/catalog/clubcenter/IHabboClubCenter';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
 import {IHeliumMain} from "./IHeliumMain";
@@ -176,6 +179,7 @@ export class HeliumMain implements IHeliumMain
 	private _freeFlowChat: HabboFreeFlowChat | null = null;
 	private _friendBar: HabboFriendBar | null = null;
 	private _catalog: HabboCatalog | null = null;
+	private _clubCenter: HabboClubCenter | null = null;
 
 	/**
 	 * AS3: HabboAirMain(_arg_1:IHabboLoadingScreen, _arg_2:Dictionary)
@@ -288,6 +292,16 @@ export class HeliumMain implements IHeliumMain
 		}
 
 		return this._catalog;
+	}
+
+	get clubCenter(): IHabboClubCenter
+	{
+		if (!this._clubCenter)
+		{
+			throw new Error('[HabboMain] Not initialized');
+		}
+
+		return this._clubCenter;
 	}
 
 	private _configurationManager: HabboConfigurationManager | null = null;
@@ -453,6 +467,7 @@ export class HeliumMain implements IHeliumMain
 		this._roomMessageHandler = null;
 
 		// Nullify Habbo manager refs (inverse init order)
+		this._clubCenter = null;
 		this._friendBar = null;
 		this._roomUI = null;
 		this._windowManager = null;
@@ -687,6 +702,10 @@ export class HeliumMain implements IHeliumMain
 		// 12k. Room UI
 		this._roomUI = new RoomUI(ctx, 0, this._assets);
 		ctx.attachComponent(this._roomUI, [IID_RoomUI]);
+
+		// 12l. Habbo Club Center
+		this._clubCenter = new HabboClubCenter(ctx);
+		ctx.attachComponent(this._clubCenter, [IID_HabboClubCenter]);
 
 		// Set PixiJS stage on room engine for rendering
 		this._roomEngine.setStage(this._application!.stage);
