@@ -20,6 +20,7 @@ import type {IHabboCatalog} from '../catalog/IHabboCatalog';
 import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {BottomBarLeft} from './BottomBarLeft';
+import {BottomBackgroundBorder} from './BottomBackgroundBorder';
 import {ExtensionView} from './ExtensionView';
 import {HabboToolbarEvent} from './events/HabboToolbarEvent';
 import {HabboToolbarEnum} from './HabboToolbarEnum';
@@ -331,6 +332,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	}
 
 	private _bottomBarLeft: BottomBarLeft | null = null;
+	private _backgroundBorder: BottomBackgroundBorder | null = null;
 	private _pendingIconVisibility: Map<string, boolean> = new Map();
 
 	/**
@@ -347,6 +349,16 @@ export class HabboToolbar extends Component implements IHabboToolbar
 		{
 			try
 			{
+				// AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::initComponent()
+				// constructs BottomBackgroundBorder alongside BottomBarLeft — the TS port
+				// never constructed it at all, so the toolbar's background panel never
+				// rendered (icons floated over whatever was behind them, e.g. the room
+				// canvas going transparent/black once in a room).
+				if (!this._backgroundBorder)
+				{
+					this._backgroundBorder = new BottomBackgroundBorder(this);
+				}
+
 				this._bottomBarLeft = new BottomBarLeft(this, this._windowManager);
 
 				if (this._bottomBarLeft.window)
@@ -631,6 +643,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
 		{
 			this._bottomBarLeft.dispose();
 			this._bottomBarLeft = null;
+		}
+
+		if (this._backgroundBorder)
+		{
+			this._backgroundBorder.dispose();
+			this._backgroundBorder = null;
 		}
 
 		if(this._seasonalCurrencyIndicator)

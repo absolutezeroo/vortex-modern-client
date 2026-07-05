@@ -11,6 +11,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IMessageComposer} from '@core/communication/messages/IMessageComposer';
+import {QuitMessageComposer} from '@habbo/communication/messages/outgoing/room/session/QuitMessageComposer';
 import type {IHabboLandingView} from '../IHabboLandingView';
 import {AbstractView} from '../view/AbstractView';
 import {WidgetContainerLayout} from './layout/WidgetContainerLayout';
@@ -370,11 +371,23 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 		switch (event.iconId)
 		{
 			case 'HTIE_ICON_RECEPTION':
-				if (this._roomSessionManager?.getSession(-1))
+			{
+				// AS3 keys every room session under the same hard-coded slot, so its
+				// `getSession(-1)`/`disposeSession(-1)` really mean "the current
+				// session, whichever it is". This port keys sessions by their real
+				// room id (`room_${roomId}`, to support multiple concurrent sessions),
+				// so -1 never matches anything — use the room engine's active room
+				// id instead to find the actual current session.
+				const activeRoomId = this._roomEngine?.activeRoomId ?? -1;
+
+				if (this._roomSessionManager?.getSession(activeRoomId))
 				{
-					this._roomSessionManager.disposeSession(-1);
+					this.send(new QuitMessageComposer());
+					this._roomSessionManager.disposeSession(activeRoomId);
 				}
+
 				break;
+			}
 		}
 	};
 }
