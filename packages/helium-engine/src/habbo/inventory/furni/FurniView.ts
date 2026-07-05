@@ -375,22 +375,21 @@ export class FurniView
 		if (groupItem && item)
 		{
 			if (nameText) nameText.text = groupItem.name;
-			if (descText) descText.text = groupItem.description;
+
+			if (descText)
+			{
+				const wallItemType = item ? this._model.roomEngine.getWallItemType(item.type) : null;
+
+				descText.text = wallItemType === 'external_image_wallitem'
+					? String(item.stuffData?.getJSONValue('m') ?? '')
+					: groupItem.description;
+			}
 		}
 		else
 		{
 			if (nameText) nameText.text = '';
 			if (descText) descText.text = '';
 		}
-
-		// TS deviation: setting .text invalidates only that window's own render
-		// buffer; ancestor containers (the item list stacking furni_name/
-		// furni_description alongside the action buttons) don't automatically
-		// recomposite unless they're independently marked dirty. Force the
-		// containing list to redraw so the new text actually appears — it was
-		// otherwise computed correctly (confirmed via live debugging) but never
-		// visually rendered.
-		this._window.findChildByName('preview_element_list')?.invalidate();
 
 		this.updateRentedItem();
 	}
@@ -402,6 +401,7 @@ export class FurniView
 
 		if (!this._window) return;
 
+		this._window.enableLookupCache();
 		this._window.visible = false;
 		this._window.procedure = this.windowEventProc;
 

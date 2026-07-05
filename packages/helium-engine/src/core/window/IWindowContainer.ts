@@ -30,6 +30,8 @@ export interface IWindowContainer extends IWindow, IIterable
 
 	findChildByName(name: string): IWindow | null;
 
+	enableLookupCache(): void;
+
 	removeChild(child: IWindow): IWindow | null;
 
 	removeChildAt(index: number): IWindow | null;

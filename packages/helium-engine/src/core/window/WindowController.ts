@@ -483,6 +483,9 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
 	protected _children: IWindow[] | null = null;
 
+	// AS3: sources/win63_version/core/window/WindowController.as::_lookupCache
+	private _lookupCache: Map<string, IWindow> | null = null;
+
 	/** Direct access to the children array. */
 	public get children(): IWindow[] | null
 	{
@@ -3366,12 +3369,22 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 	 */
 	public findChildByName(name: string): IWindow | null
 	{
+		if (this._lookupCache && this._lookupCache.has(name))
+		{
+			return this._lookupCache.get(name) ?? null;
+		}
+
 		if (this._children)
 		{
 			// First pass: direct children
 			for (const child of this._children)
 			{
-				if (child.name === name) return child;
+				if (child.name === name)
+				{
+					if (this._lookupCache) this._lookupCache.set(name, child);
+
+					return child;
+				}
 			}
 
 			// Second pass: recurse
@@ -3379,11 +3392,22 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 			{
 				const found = (child as WindowController).findChildByName(name);
 
-				if (found) return found;
+				if (found)
+				{
+					if (this._lookupCache) this._lookupCache.set(name, found);
+
+					return found;
+				}
 			}
 		}
 
 		return null;
+	}
+
+	// AS3: sources/win63_version/core/window/WindowController.as::enableLookupCache()
+	public enableLookupCache(): void
+	{
+		if (!this._lookupCache) this._lookupCache = new Map();
 	}
 
 	/**

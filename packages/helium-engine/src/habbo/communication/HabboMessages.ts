@@ -110,7 +110,7 @@ import {
 import {MysteryBoxKeysMessageEvent,} from './messages/incoming/mysterybox';
 
 // Incoming Events - Catalog
-import {BonusRareInfoMessageEvent, BuildersClubSubscriptionStatusMessageEvent,} from './messages/incoming/catalog';
+import {BonusRareInfoMessageEvent, BuildersClubSubscriptionStatusMessageEvent, ClubGiftInfoEvent,} from './messages/incoming/catalog';
 
 // Incoming Events - Landing View
 import {PromoArticlesMessageEvent,} from './messages/incoming/landingview';
@@ -467,7 +467,7 @@ import {PollAnswerComposer, PollRejectComposer, PollStartComposer,} from './mess
 import {GetPromoArticlesComposer,} from './messages/outgoing/landingview';
 
 // Outgoing Composers - Catalog
-import {GetBonusRareInfoMessageComposer,} from './messages/outgoing/catalog';
+import {GetBonusRareInfoMessageComposer, GetClubGiftMessageComposer,} from './messages/outgoing/catalog';
 
 // Outgoing Composers - Quest (hall of fame)
 import {GetCommunityGoalHallOfFameMessageComposer,} from './messages/outgoing/quest';
@@ -857,6 +857,7 @@ export class HabboMessages implements IMessageConfiguration
 
 		// === CATALOG (bonus rare) ===
 		this._events.set(1984, BonusRareInfoMessageEvent);
+		this._events.set(3771, ClubGiftInfoEvent);
 
 		// === QUEST (hall of fame) ===
 		this._events.set(2134, CommunityGoalHallOfFameMessageEvent);
@@ -1094,6 +1095,7 @@ export class HabboMessages implements IMessageConfiguration
 
 		// === CATALOG (bonus rare) ===
 		this._composers.set(957, GetBonusRareInfoMessageComposer);
+		this._composers.set(1604, GetClubGiftMessageComposer);
 
 		// === QUEST (hall of fame) ===
 		this._composers.set(1034, GetCommunityGoalHallOfFameMessageComposer);

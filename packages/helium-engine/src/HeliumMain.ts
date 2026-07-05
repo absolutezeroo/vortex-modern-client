@@ -68,34 +68,6 @@ import type {Application, Ticker} from 'pixi.js';
 const log = Logger.getLogger('HabboMain');
 
 /**
- * Ratio of progress bar dedicated to core/SWF loading (0.0 to CORE_RATIO).
- * The remaining (CORE_RATIO to 1.0) is for initialization steps.
- *
- * @see sources/win63_2021_version/HabboAirMain.as line 31
- */
-const CORE_RATIO = 0.6;
-
-/**
- * Number of initialization steps for progress tracking in the [CORE_RATIO - 1.0] range:
- * 1. Configuration loaded
- * 2. Localization loaded
- * 3. All components ready (core running / COMPONENT_EVENT_RUNNING)
- *
- * @see sources/win63_2021_version/HabboAirMain.as line 32
- */
-const INIT_STEPS = 3;
-
-const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
-	'action_offset_lay',
-	'action_offset_swim',
-	'HabboAvatarAnimation',
-	'HabboAvatarFigure',
-	'HabboAvatarGeometry',
-	'HabboAvatarPartSets',
-];
-
-
-/**
  * HabboMain
  *
  * Engine orchestrator for the Habbo client.
@@ -108,6 +80,37 @@ const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
  */
 export class HeliumMain implements IHeliumMain
 {
+	/**
+	 * Ratio of progress bar dedicated to core/SWF loading (0.0 to CORE_RATIO).
+	 * The remaining (CORE_RATIO to 1.0) is for initialization steps.
+	 *
+	 * @see sources/win63_2021_version/HabboAirMain.as::CORE_RATIO
+	 */
+	private static readonly CORE_RATIO: number = 0.6;
+
+	/**
+	 * Number of initialization steps for progress tracking in the [CORE_RATIO - 1.0] range:
+	 * 1. Configuration loaded
+	 * 2. Localization loaded
+	 * 3. All components ready (core running / COMPONENT_EVENT_RUNNING)
+	 *
+	 * @see sources/win63_2021_version/HabboAirMain.as::INIT_STEPS
+	 */
+	private static readonly INIT_STEPS: number = 3;
+
+	/**
+	 * Embedded avatar XML assets registered from IHeliumConfig.embeddedConfigurations.
+	 * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset bundling.
+	 */
+	private static readonly EMBEDDED_AVATAR_XML_ASSET_NAMES: string[] = [
+		'action_offset_lay',
+		'action_offset_swim',
+		'HabboAvatarAnimation',
+		'HabboAvatarFigure',
+		'HabboAvatarGeometry',
+		'HabboAvatarPartSets',
+	];
+
 	/**
 	 * PixiJS Application reference.
 	 * Passed in from Helium shell (which owns the Application).
@@ -155,6 +158,13 @@ export class HeliumMain implements IHeliumMain
 	 * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_413
 	 */
 	private _coreRunning: boolean = false;
+
+	/**
+	 * Guards onExitFrame()'s cleanup so it only runs once.
+	 *
+	 * @see sources/flash_version/src/HabboMain.as::dispose() (called once from onExitFrame)
+	 */
+	private _bootFinalized: boolean = false;
 
 	private _habboCommunicationManager: HabboCommunicationManager | null = null;
 	private _localizationManager: HabboLocalizationManager | null = null;
@@ -482,7 +492,7 @@ export class HeliumMain implements IHeliumMain
 		const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
 			?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
 
-		for (const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES)
+		for (const assetName of HeliumMain.EMBEDDED_AVATAR_XML_ASSET_NAMES)
 		{
 			const content = config.embeddedConfigurations[assetName];
 
@@ -748,6 +758,34 @@ export class HeliumMain implements IHeliumMain
 			ctx.update(ticker.deltaMS);
 		}
 
+		this.onExitFrame();
+	}
+
+	/**
+	 * Once both the room engine and the core are up and running, the
+	 * loading screen has done its job and can be freed.
+	 *
+	 * AS3's bootstrap Sprite (HabboMain/HabboAirMain) never holds the running
+	 * managers itself — they live independently under `_core` — so its own
+	 * `dispose()` here only detaches its init-tracking listeners and frees the
+	 * loading screen. HeliumMain also owns the manager lifecycle (for real
+	 * shutdown via `dispose()`), so only that loading-screen cleanup is mirrored
+	 * here; the rest of AS3's `dispose()` has no TS equivalent to tear down.
+	 *
+	 * @see sources/flash_version/src/HabboMain.as::onExitFrame()
+	 * @see sources/win63_2023_version/HabboAirMain.as::onExitFrame()
+	 */
+	private onExitFrame(): void
+	{
+		if (this._bootFinalized || !this._roomEngineReady || !this._coreRunning) return;
+
+		this._bootFinalized = true;
+
+		if (this._loadingScreen)
+		{
+			this._loadingScreen.dispose();
+			this._loadingScreen = null;
+		}
 	}
 
 	/**
@@ -797,7 +835,7 @@ export class HeliumMain implements IHeliumMain
 	{
 		if (this._loadingScreen != null)
 		{
-			const progress = CORE_RATIO + ((this._completedInitSteps / INIT_STEPS) * (1 - CORE_RATIO));
+			const progress = HeliumMain.CORE_RATIO + ((this._completedInitSteps / HeliumMain.INIT_STEPS) * (1 - HeliumMain.CORE_RATIO));
 
 			this._loadingScreen.updateLoadingBar(progress);
 		}
