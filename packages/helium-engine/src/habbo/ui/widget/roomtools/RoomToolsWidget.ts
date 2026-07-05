@@ -241,11 +241,17 @@ export class RoomToolsWidget extends RoomWidgetBase
 		return this._currentRoomName;
 	}
 
-	// AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::get mainWindow()
-	public override get mainWindow(): IWindow | null
-	{
-		return this._toolbarCtrl?.window ?? null;
-	}
+	// AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as has no
+	// `mainWindow` override (unlike InfoStandWidget, which explicitly tags its main
+	// container "room_widget_infostand" for slot-based attachment). RoomToolsWidget
+	// positions itself directly via RoomToolsToolbarCtrl.updatePosition() (absolute
+	// coordinates relative to `_window.desktop`), so it doesn't need — and never had —
+	// a layout-slot container to attach into. Falls through to RoomWidgetBase's
+	// `mainWindow` (always null), which correctly skips the addWidgetWindow() call in
+	// RoomDesktop.createWidget(). An earlier version of this port incorrectly added an
+	// override here (copying the infostand pattern), causing a harmless but noisy
+	// "No container found for widget: RWE_ROOM_TOOLS" warning since no
+	// "room_widget_toolbar"-tagged slot exists anywhere.
 
 	// AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::release()
 	public override release(): void

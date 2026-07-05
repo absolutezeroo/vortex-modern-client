@@ -49,6 +49,7 @@ import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
+import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 
@@ -610,6 +611,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 				handler = roomToolsHandler;
 				break;
 			}
+			case 'RWE_CHAT_INPUT_WIDGET':
+				handler = new ChatInputWidgetHandler();
+				break;
 			default:
 				log.debug(`Widget creation requested: ${type} (stub)`);
 

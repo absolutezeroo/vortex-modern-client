@@ -12,6 +12,7 @@ import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 import type {RoomUI} from './RoomUI';
 import {InfoStandWidget} from './widget/infostand/InfoStandWidget';
 import {RoomToolsWidget} from './widget/roomtools/RoomToolsWidget';
+import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
 
 const log = Logger.getLogger('RoomWidgetFactory');
 
@@ -39,6 +40,11 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
 				);
 			case 'RWE_ROOM_TOOLS':
 				return new RoomToolsWidget(handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI);
+			case 'RWE_CHAT_INPUT_WIDGET':
+				return new RoomChatInputWidget(
+					handler, this._roomUI.windowManager, this._roomUI.assets,
+					this._roomUI.localization, this._roomUI, this._roomUI.desktop
+				);
 			default:
 				log.debug(`Widget creation requested: ${type} (stub — returning null)`);
 
