@@ -246,16 +246,6 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 		return this._roomPreviewer;
 	}
 
-	private _previewImageUrl: string = '';
-
-	/**
-	 * The static preview image URL, if set via showPreview().
-	 */
-	public get previewImageUrl(): string
-	{
-		return this._previewImageUrl;
-	}
-
 	public get properties(): PropertyStruct[]
 	{
 		if (this._disposed) return [];
@@ -290,9 +280,46 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 		}
 	}
 
-	public showPreview(imageUrl: string): void
+	// AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::showPreview()
+	public showPreview(image: HTMLCanvasElement): void
 	{
-		this._previewImageUrl = imageUrl;
+		const wrapper = this._root?.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
+
+		if (!wrapper) return;
+
+		// The live room canvas is parented directly onto the shared root
+		// PixiJS stage rather than into the window tree (see
+		// createRoomPreviewer()), and needs continuous per-frame position
+		// syncing to track its host window on screen. A static preview needs
+		// neither: WindowComposite draws a plain bitmap display object
+		// straight into the window's own composited buffer at the right
+		// position automatically, so once we're showing one, the live canvas
+		// and its sync callback can go entirely.
+		if (this._canvasDisplayObject)
+		{
+			this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+			this._canvasDisplayObject.parent?.removeChild(this._canvasDisplayObject);
+			this._canvasDisplayObject = null;
+			this._canvasWrapper = null;
+		}
+
+		// AS3: new Bitmap(param1) with scaleX = scaleY = 2. Baked into a
+		// pre-scaled canvas here since this now goes through the normal
+		// drawImage() compositing path (see WindowComposite.ts) rather than
+		// a PixiJS Sprite.
+		const scaled = document.createElement('canvas');
+
+		scaled.width = image.width * 2;
+		scaled.height = image.height * 2;
+
+		const ctx = scaled.getContext('2d');
+
+		if (!ctx) return;
+
+		ctx.imageSmoothingEnabled = false;
+		ctx.drawImage(image, 0, 0, scaled.width, scaled.height);
+
+		wrapper.setDisplayObject(scaled);
 	}
 
 	public dispose(): void

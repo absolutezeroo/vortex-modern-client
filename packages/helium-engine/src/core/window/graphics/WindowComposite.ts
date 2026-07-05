@@ -66,6 +66,17 @@ export class WindowComposite
     // AS3: sources/win63_version/core/window/components/TextController.as::_field
     private static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
 
+    // TS-only: distinguishes a plain pre-rendered bitmap (drawable straight
+    // into the composite) from an externally-managed PixiJS DisplayObject
+    // (needs the clearRect hole-punch instead — see compositeWindow()).
+    private static isDrawableImage(value: unknown): value is CanvasImageSource
+    {
+        return value instanceof HTMLCanvasElement
+            || value instanceof OffscreenCanvas
+            || value instanceof HTMLImageElement
+            || value instanceof ImageBitmap;
+    }
+
     private _compositeBuffer: OffscreenCanvas | null = null;
     private _compositeCtx: OffscreenCanvasRenderingContext2D | null = null;
     // See BitmapWrapperCacheEntry doc comment above — perf-critical, keyed by
@@ -213,16 +224,34 @@ export class WindowComposite
 		}
 
 		// display_object_wrapper windows (DisplayObjectWrapperController) hold no
-		// bitmap content of their own — they exist to let an externally-rendered
-		// PixiJS DisplayObject (e.g. a room preview canvas; see RoomPreviewerWidget)
-		// show through at this exact screen position. A transparent *background*
-		// fill isn't enough for that: fillRect with alpha 0 is a no-op blend, it
-		// doesn't erase whatever an ancestor window already painted at these same
-		// pixels. clearRect actually punches the hole through the composited
-		// buffer so the separately-rendered PixiJS layer underneath is visible.
+		// bitmap content of their own by default — they exist to let an
+		// externally-rendered PixiJS DisplayObject (e.g. a live room preview
+		// canvas; see RoomPreviewerWidget) show through at this exact screen
+		// position. A transparent *background* fill isn't enough for that:
+		// fillRect with alpha 0 is a no-op blend, it doesn't erase whatever an
+		// ancestor window already painted at these same pixels. clearRect
+		// actually punches the hole through the composited buffer so the
+		// separately-rendered PixiJS layer underneath is visible.
+		//
+		// A plain drawable (HTMLCanvasElement/ImageBitmap/etc, e.g. a static
+		// avatar snapshot set via RoomPreviewerWidget.showPreview()) needs the
+		// opposite treatment: it has no separate PIXI layer to show through
+		// to, so punching a transparent hole here would just erase whatever
+		// an ancestor already painted (e.g. the cover art behind it) without
+		// anything replacing it. Draw it straight into the composite instead,
+		// same as any other bitmap window.
 		if (window.type === WindowType.DISPLAY_OBJECT_WRAPPER)
 		{
-			ctx.clearRect(absX, absY, w, h);
+			const displayObject = (window as unknown as {getDisplayObject?: () => unknown}).getDisplayObject?.();
+
+			if (WindowComposite.isDrawableImage(displayObject))
+			{
+				ctx.drawImage(displayObject, absX, absY);
+			}
+			else
+			{
+				ctx.clearRect(absX, absY, w, h);
+			}
 		}
 
 		// Apply blend (opacity)

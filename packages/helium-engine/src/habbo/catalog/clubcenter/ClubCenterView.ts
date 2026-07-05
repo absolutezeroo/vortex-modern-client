@@ -212,11 +212,11 @@ export class ClubCenterView implements IAvatarImageListener
 
 		avatarImage.setDirection('full', 4);
 
-		const dataUrl = ClubCenterView.textureToDataUrl(avatarImage);
+		const snapshot = ClubCenterView.snapshotCroppedImage(avatarImage);
 
-		if (dataUrl)
+		if (snapshot)
 		{
-			this._avatarWidget.showPreview(dataUrl);
+			this._avatarWidget.showPreview(snapshot);
 		}
 
 		avatarImage.dispose();
@@ -225,9 +225,10 @@ export class ClubCenterView implements IAvatarImageListener
 	// TS-only: AvatarImage.getCroppedImage() returns a PixiJS Texture backed
 	// directly by an OffscreenCanvas (no GPU render pass involved — see
 	// AvatarImage.ts::getCroppedImage()), so it can be drawn straight onto a
-	// plain <canvas> and read back as a data URL without needing a PixiJS
-	// Renderer instance.
-	private static textureToDataUrl(avatarImage: IAvatarImage): string | null
+	// plain <canvas> without needing a PixiJS Renderer instance. Copying it
+	// into an independent canvas (rather than handing out the texture itself)
+	// keeps the preview valid after avatarImage.dispose() runs right below.
+	private static snapshotCroppedImage(avatarImage: IAvatarImage): HTMLCanvasElement | null
 	{
 		const texture = avatarImage.getCroppedImage('full') as {
 			width: number;
@@ -250,7 +251,7 @@ export class ClubCenterView implements IAvatarImageListener
 
 		ctx.drawImage(resource, 0, 0);
 
-		return canvas.toDataURL();
+		return canvas;
 	}
 
 	private onInput = (event: WindowEvent, window: IWindow): void =>

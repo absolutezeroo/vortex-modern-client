@@ -1,10 +1,12 @@
 # Habbo Client-Server Architecture
 
-How Arcturus-Community (server) and habbo-client-clean (client) work together.
+How **Turbo Cloud** (`vortex-emulator`, the server) and **vortex-client** (the client, package name `com.sulake.habbo` — "habbo-client-clean") work together.
 
-**Server:** Arcturus Morningstar 4.0.3-beta — Java 21, Netty 4.1, MySQL
-**Client:** PRODUCTION-201611291003-338511768 — ActionScript 3 / Flash Player 25
-**Protocol:** Binary TCP with EvaWireFormat framing, optional RC4 encryption
+**Server:** Turbo Cloud — .NET 9/10, Microsoft Orleans (virtual actors), SuperSocket networking, EF Core (Pomelo MySQL)
+**Client:** vortex-client — ActionScript 3 / Flash Player, protocol revision `WIN63-202601121721-391685409`
+**Protocol:** Binary TCP **and** WebSocket with the classic length+header framing, optional RC4 encryption
+
+> This document replaces an earlier draft that assumed a Java/Netty "Arcturus"-style server. That draft's protocol details, packet IDs, and bug list did not apply to this project's actual server and have been discarded rather than patched. Every fact below is sourced from `vortex-emulator` and `vortex-client` directly (file paths cited throughout), plus the emulator's own status docs (`ROADMAP.md`, `TODO.md`, `CONSOLIDATION.md`, `DATA-MODEL.md`, `PETS-DESIGN.md`, `docs/walkthroughs/request-lifecycle.md`).
 
 ---
 
@@ -22,7 +24,7 @@ How Arcturus-Community (server) and habbo-client-clean (client) work together.
 10. [Inventory](#10-inventory)
 11. [Navigator](#11-navigator)
 12. [Messenger and Friends](#12-messenger-and-friends)
-13. [Trading](#13-trading)
+13. [Trading and Marketplace](#13-trading-and-marketplace)
 14. [Groups and Guilds](#14-groups-and-guilds)
 15. [Avatar System](#15-avatar-system)
 16. [Moderation](#16-moderation)
@@ -42,13 +44,9 @@ How Arcturus-Community (server) and habbo-client-clean (client) work together.
 
 ### What Each Side Does
 
-The **server** (Arcturus-Community) is the authoritative game state manager. It owns all
-persistent data (users, rooms, items, currencies), enforces game rules, validates every
-action, and broadcasts state changes to connected clients. It never trusts the client.
+The **server** (Turbo Cloud) is the authoritative game state manager. It owns all persistent data (players, rooms, items, currencies) in MySQL via EF Core, enforces game rules inside Orleans grains, validates every action, and fans state changes back out to connected clients over Orleans streams. It never trusts the client.
 
-The **client** (habbo-client-clean) is a Flash-based rendering and input layer. It presents
-the hotel visually, captures user input, sends requests to the server, and applies the
-server's responses to the local display. It has no authority over game state.
+The **client** (vortex-client) is a Flash-based rendering and input layer. It presents the hotel visually, captures user input, sends requests to the server, and applies the server's responses to the local display. It has no authority over game state.
 
 ### Technology Stack
 
@@ -56,165 +54,134 @@ server's responses to the local display. It has no authority over game state.
 ┌─────────────────────────────────────────────────────────────┐
 │                      BROWSER / FLASH PLAYER                 │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  habbo-client-clean (ActionScript 3)                  │  │
-│  │  ├─ Habbo.as              Entry point & preloader     │  │
-│  │  ├─ HabboMain.as          Component bootstrap         │  │
-│  │  ├─ com/sulake/core/       Core framework             │  │
-│  │  │   └─ communication/     SocketConnection, codecs   │  │
-│  │  └─ com/sulake/habbo/      Game modules               │  │
-│  │      ├─ communication/     Protocol, messages          │  │
-│  │      ├─ room/              Room engine & rendering     │  │
-│  │      ├─ catalog/           Shop UI                     │  │
-│  │      ├─ inventory/         Inventory UI                │  │
-│  │      ├─ navigator/         Room browser UI             │  │
-│  │      ├─ avatar/            Figure rendering            │  │
-│  │      └─ [20+ subsystems]                               │  │
+│  │  vortex-client (ActionScript 3)                        │  │
+│  │  ├─ HabboAir.as           Entry point / app shell      │  │
+│  │  ├─ HabboAirMain.as       Component bootstrap          │  │
+│  │  ├─ com/sulake/core/       Core framework               │  │
+│  │  │   └─ communication/     SocketConnection, EvaWireFormat │
+│  │  └─ com/sulake/habbo/      Game modules                 │  │
+│  │      ├─ communication/     HabboMessages, protocol       │  │
+│  │      ├─ room/              Room engine & rendering       │  │
+│  │      ├─ catalog/           Shop UI                       │  │
+│  │      ├─ inventory/         Inventory UI                  │  │
+│  │      ├─ navigator/         Room browser UI                │  │
+│  │      ├─ avatar/            Figure rendering                │  │
+│  │      └─ [20+ subsystems]                                  │  │
 │  └───────────────────────────────────────────────────────┘  │
-│                           │ TCP Socket                      │
+│                           │ TCP or WebSocket                 │
 └───────────────────────────┼─────────────────────────────────┘
                             │
               ══════════════╪══════════════  Network
                             │
 ┌───────────────────────────┼─────────────────────────────────┐
-│  Arcturus-Community (Java 21)                               │
+│  Turbo Cloud (Turbo.Cloud.sln, .NET 9/10 + Orleans)         │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  Emulator.java            Service locator & main()    │  │
-│  │  ├─ networking/            Netty server & pipeline     │  │
-│  │  │   └─ GameServer         TCP listener on :30000     │  │
-│  │  ├─ messages/              Packet dispatch             │  │
-│  │  │   ├─ PacketManager      Handler registry            │  │
-│  │  │   ├─ incoming/          ~500 MessageHandler classes │  │
-│  │  │   └─ outgoing/          ~500 MessageComposer classes│  │
-│  │  ├─ habbohotel/            Domain logic                │  │
-│  │  │   ├─ GameEnvironment    Composition root            │  │
-│  │  │   ├─ rooms/             Room state & cycle          │  │
-│  │  │   ├─ users/             Habbo, HabboInfo, stats     │  │
-│  │  │   ├─ items/             Item definitions            │  │
-│  │  │   ├─ catalog/           Purchase logic              │  │
-│  │  │   └─ [15+ managers]                                 │  │
-│  │  ├─ crypto/                DH + RC4 encryption         │  │
-│  │  └─ database/              HikariCP → MySQL            │  │
+│  │  Turbo.Main               Host composition root        │  │
+│  │  ├─ Turbo.Networking       SuperSocket TCP + WS, session│  │
+│  │  ├─ Turbo.Crypto            DH + RSA + RC4              │  │
+│  │  ├─ Turbo.Pipeline/Messages Generic envelope dispatch    │  │
+│  │  ├─ Turbo.Revisions         Protocol def (Headers,       │  │
+│  │  │   /Revision20260112      Parsers/, Serializers/)      │  │
+│  │  ├─ Turbo.PacketHandlers    Orchestration-only handlers  │  │
+│  │  ├─ Turbo.Rooms             RoomGrain (modules+systems)  │  │
+│  │  ├─ Turbo.Players           PlayerGrain, PlayerPresence, │  │
+│  │  │                          Messenger, Groups            │  │
+│  │  ├─ Turbo.Catalog           CatalogPurchaseGrain, LTD     │  │
+│  │  ├─ Turbo.Inventory         InventoryGrain                │  │
+│  │  ├─ Turbo.Marketplace       Auction-style listings        │  │
+│  │  ├─ Turbo.Navigator         Room search/categories         │  │
+│  │  ├─ Turbo.Authentication    SSO ticket resolution           │  │
+│  │  ├─ Turbo.Plugins           Assembly scan / hot reload      │  │
+│  │  └─ [Furniture, Events, Observability, WebApi, ...]        │  │
 │  └───────────────────────────────────────────────────────┘  │
 │                           │                                 │
 │                    ┌──────┴──────┐                          │
-│                    │   MySQL DB  │                          │
+│                    │  MySQL (EF  │                          │
+│                    │  Core/Pomelo)│                         │
 │                    └─────────────┘                          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
+Everything under a domain project (`Turbo.Rooms`, `Turbo.Catalog`, `Turbo.Players`, ...) is implemented as one or more **Orleans grains** — virtual actors, not singleton manager classes. There is no `Emulator`-style static service locator.
+
 ### Data Flow Summary
 
-Every interaction follows the same pattern:
-
-1. User performs an action in the client (click, type, drag)
-2. Client constructs a `MessageComposer` and sends it over the socket
-3. Server's Netty pipeline decodes the bytes into a `ClientMessage`
-4. `PacketManager` looks up the header ID and instantiates the matching `MessageHandler`
-5. Handler executes business logic (DB queries, state mutations, validation)
-6. Handler sends one or more `MessageComposer` responses back to the client (or broadcasts to a room)
-7. Client receives, decodes, and dispatches each response to the appropriate `MessageEvent`
-8. `MessageParser` extracts fields; callback updates UI/room state
+1. User performs an action in the client (click, type, drag).
+2. Client builds a message via `HabboMessages.as`'s composer registry and sends it over the socket via `EvaWireFormat`.
+3. Server's `ClientPacketDecoder` (`Turbo.Networking/Package`) decodes the frame into a typed message using the active `IRevision`'s parser table.
+4. `MessageSystem`/`MessageRegistry` (`Turbo.Messages`) dispatch the message to every registered `IMessageHandler<T>` for that type (assembly-scanned at boot, not hand-registered).
+5. The handler is orchestration-only — it resolves an Orleans grain (a room, player, catalog, etc.) and calls a method on it. All actual game logic and persistence lives in the grain.
+6. The grain mutates state and — for room broadcasts — publishes an outgoing composer onto an **Orleans stream**, never writing to a socket directly.
+7. Each affected player's `PlayerPresenceGrain` (subscribed to the relevant stream(s)) receives the composer and hands it to the session layer (`SessionObserver`), which serializes it via the revision's serializer table and writes the framed bytes to that player's actual socket.
+8. Client receives the frame, `EvaWireFormat` decodes it, looks up the registered `MessageEvent` class by header, its parser extracts fields, and the registered callback updates UI/room state.
 
 ---
 
 ## 2. Connection Lifecycle
 
-### Phase 1: TCP Connection
+### Phase 1: Host Startup
 
-The client reads connection parameters from its SWF loader:
+`Turbo.Main/Program.cs` builds the host in a fixed order:
 
-```
-connection.info.host = "127.0.0.1"
-connection.info.port = "30000,3000,30001"  // fallback ports
-```
+1. `builder.AddOrleans()` (`Turbo.Main/Extensions/HostApplicationBuilderExtensions.cs`) — configures a single-silo, localhost-clustered Orleans runtime (`UseLocalhostClustering()`, in-memory grain storage for player/room/pub-sub state, in-memory stream providers for the default and room stream providers). In non-Development environments this logs an explicit warning that this clustering configuration won't survive restarts or scale across nodes.
+2. `AddTurboLogging → AddTurboNetworking → AddTurboPlugins → AddTurboDatabaseContext → AddTurboEventSystem → AddTurboMessageSystem → AddTurboCrypto → AddTurboRevisions`.
+3. Domain plugin modules registered via `AddHostPlugin<TModule>`: `ObservabilityModule, AuthenticationModule, FurnitureModule, CatalogModule, PlayerModule, InventoryModule, MarketplaceModule, DashboardApiModule, NavigatorModule, RoomModule, PacketHandlersModule, WebApiModule`. Each module's assembly gets scanned later for message handlers.
+4. `AddHostedService<TurboEmulator>()` — registered **last**, so it starts after `PluginBootstrapper` (which does the assembly scanning) and any hot-reload service.
 
-`HabboCommunicationManager` attempts to connect via `SocketConnection` (a `flash.net.Socket`
-wrapper). If the first port fails within 10 seconds, it tries the next port. After exhausting
-all ports, it retries the cycle 2-3 times before giving up.
+`TurboEmulator.StartAsync` (`Turbo.Main/TurboEmulator.cs`): registers the embedded `Revision20260112` with `IRevisionManager`, sequentially reloads every static-data provider (furniture definitions, catalog/club-offer/club-gift snapshots, currency types, group badge parts, pet palettes/commands/levels, navigator contexts, room models), and only then calls `INetworkManager.StartAsync` — so TCP/WS sockets don't open until the revision and all data providers are warm.
 
-On the server side, `GameServer` (extending Netty's `ServerBootstrap`) listens on
-`game.host:game.port` (default `0.0.0.0:30000`). When a connection arrives, Netty fires
-`channelRegistered` in `GameMessageHandler`, which calls `GameClientManager.addClient()` to
-create a new `GameClient` instance bound to that channel.
+### Phase 2: Transport
 
-### Phase 2: Flash Policy (Legacy)
-
-Flash Player requires a socket policy file before allowing cross-domain connections. The
-first bytes the client sends may be `<policy-file-request/>`. The server's
-`GamePolicyDecoder` (first handler in the Netty pipeline) intercepts this, responds with an
-XML policy granting access, and removes itself from the pipeline.
+`NetworkManager` (`Turbo.Networking/NetworkManager.cs`) starts **two independent SuperSocket hosts concurrently** — a TCP host and a WebSocket host — both listening from the same process. This is a real architectural difference from a TCP-only classic server: vortex-client can (depending on build/config) connect over either transport, and both funnel into the same `PackageHandler`/`MessageSystem` dispatch stack (see §6).
 
 ### Phase 3: Handshake
 
 ```
 Client                                          Server
   │                                                │
-  │──── ClientHelloMessageComposer ───────────────>│  "PRODUCTION-201611291003...", "FLASH"
-  │     (header from HabboMessages.as)             │
-  │                                                │  ReleaseVersionEvent handler (header 4000)
-  │                                                │  Stores client version string
+  │──── ClientHelloMessageEvent (4000) ───────────>│  version string
+  │──── UniqueIDMessageEvent (2920) ──────────────>│  machine/device id
+  │──── VersionCheckMessageEvent (3517) ──────────>│
   │                                                │
-  │──── UniqueIDMessageComposer ──────────────────>│  Machine ID / device fingerprint
-  │                                                │  MachineIDEvent handler (header 2490)
-  │                                                │  Stores in GameClient.machineId
+  │──── InitDiffieHandshakeMessageEvent (3644) ───>│  request DH parameters
+  │<─── InitDiffieHandshakeComposer (2334) ────────│  RSA-signed prime, generator, server pubkey
   │                                                │
-  │──── InitDiffieHandshakeMessageComposer ───────>│  Request encryption parameters
-  │                                                │  InitDiffieHandshakeEvent (header 3110)
+  │  (Client verifies signature, generates DH pair)│
   │                                                │
-  │<─── InitDiffieHandshakeComposer ──────────────│  RSA-encrypted DH prime, generator, server pubkey
+  │──── CompleteDiffieHandshakeMessageEvent (1517)>│  RSA-encrypted client DH public key
+  │                                                │  Server computes shared secret,
+  │                                                │  validates client key in range [2, p-2]
+  │<─── CompleteDiffieHandshakeComposer (3034) ───│  server DH public key, sent in PLAINTEXT
+  │                                                │  Server arms CryptoIn now, CryptoOut only if
+  │                                                │  EnableServerToClientEncryption is true
   │                                                │
-  │  (Client decrypts with RSA, generates DH pair) │
+  │  ════ FURTHER CLIENT→SERVER PACKETS ARE RC4-ENCRYPTED ════
   │                                                │
-  │──── CompleteDiffieHandshakeMessageComposer ──>│  Client's DH public key
-  │                                                │  CompleteDiffieHandshakeEvent (header 773)
+  │──── SSOTicketMessageEvent (749) ──────────────>│  SSO token from web login
   │                                                │
-  │  (Both compute shared secret → RC4 key)        │  Server inserts RC4 encoder/decoder into pipeline
-  │                                                │
-  │<─── CompleteDiffieHandshakeComposer ──────────│  Handshake confirmed
-  │                                                │
-  │  ════ ALL SUBSEQUENT PACKETS ARE RC4 ENCRYPTED ════
-  │                                                │
-  │──── SSOTicketMessageComposer ─────────────────>│  SSO token from web login
-  │                                                │  SecureLoginEvent handler
-  │                                                │
-  │<─── AuthenticationOKMessageComposer ──────────│  Login successful
-  │<─── UserRightsMessageComposer ──────────────────│  Rank & permissions
-  │<─── UserEffectsListMessageComposer ──────────────────│  Active effects
-  │<─── UserHomeRoomComposer ─────────────────────│  Home room ID
-  │<─── ... (20+ initialization composers) ───────│  Full session bootstrap
+  │<─── AuthenticationOKMessageComposer (3014) ────│  ~15 more composers follow (see §5)
   │                                                │
 ```
 
+Note the asymmetry versus a "sign the DH params, encrypt the reply" model some servers use: Turbo's handshake **signs** (not encrypts) the prime/generator/server-pubkey with RSA (so the client can verify authenticity without needing to decrypt anything expensive), and only the client's own DH public key is RSA-**encrypted** on the wire (§4 has the full detail, including why the DH prime is only 384 bits).
+
 ### Phase 4: Session
 
-After authentication, the client is fully connected. The user sees the hotel view and can
-navigate rooms, chat, trade, shop, etc. Each action generates outgoing packets; each server
-response triggers UI updates.
+After authentication, `ISessionGateway.AddSessionToPlayerAsync` binds the session to the player id, displacing any stale session for that player (so a reconnect kicks the old connection), registers an Orleans-callback `ISessionContextObserver` reference with `PlayerPresenceGrain`, and publishes a `PlayerConnectedEvent`. The user is now fully connected and can navigate rooms, chat, shop, etc.
 
 ### Phase 5: Disconnect
 
-When the socket closes (user closes browser, network drop, or server kick):
+**Client side:** the socket closes; the client shows a disconnection overlay and may retry.
 
-**Client side:** `SocketConnection` fires `Event.CLOSE`. The client shows a disconnection
-overlay and may attempt reconnection.
-
-**Server side:** Netty fires `channelUnregistered` in `GameMessageHandler`, which calls
-`GameClientManager.disposeClient()`:
-1. Sets `habbo.online = false`
-2. Removes habbo from current room (if any)
-3. Persists final state to database
-4. Fires `UserDisconnectEvent` for plugins
-5. Removes `GameClient` from the client manager
+**Server side:** whichever transport (TCP `SessionContext` or `WebSocketSessionContext`) detects the close calls `ISessionGateway.RemoveSessionAsync`, which unbinds the player↔session mapping. Grain-side cleanup (removing the avatar from any active room, persisting final state) happens through the normal `PlayerPresenceGrain`/`RoomGrain` deactivation paths rather than a single global "dispose client" routine — there is no equivalent of a `GameClientManager.disposeClient()` god-method.
 
 ---
 
 ## 3. Wire Protocol
 
-Both sides use the same binary format, called **EvaWireFormat** on the client side.
+The frame format is **the same classic shape** you'd expect from any Habbo-derived protocol — this part of the old draft was actually correct in spirit, just wrongly attributed to Netty.
 
 ### Frame Structure
-
-Every message on the wire has this layout:
 
 ```
 ┌──────────────┬──────────────┬──────────────────────────┐
@@ -233,70 +200,26 @@ Length = size of (Header + Body), NOT including the 4 length bytes themselves
 | int     | 4 bytes   | Big-endian signed 32-bit |
 | short   | 2 bytes   | Big-endian signed 16-bit |
 | boolean | 1 byte    | `0x00` = false, `0x01` = true |
-| string  | 2 + N     | 2-byte UTF-8 length prefix, then N bytes of UTF-8 |
-| byte[]  | 4 + N     | 4-byte length prefix, then N raw bytes |
+| string  | 2 + N     | 2-byte big-endian length prefix, then N bytes of UTF-8 |
 
 ### Server Side: Encoding and Decoding
 
-The Netty pipeline processes packets in stages:
+`Turbo.Networking/Package/ClientPacketDecoder.cs` (incoming):
+1. Peek 4 bytes for the length. If RC4 is active on this session (`ctx.CryptoIn`), those 4 bytes are decrypted via `Rc4Engine.Peek(...)` — a clone-and-simulate read that does **not** consume real keystream — because with encryption on, the length prefix itself is encrypted and has to be read before the decoder knows how many more bytes to wait for.
+2. Reject (`InvalidDataException`, connection closed) if `length < 0` or `length > MaxPacketBodyBytes` (default **65536**, `Turbo.Networking/Configuration/NetworkingConfig.cs` — not the 417,792 figure from the old draft).
+3. Wait for `length + 4` bytes to be buffered; once available, decrypt the whole frame for real via `ctx.CryptoIn.Process(...)`, then read the 2-byte big-endian header immediately following the (now-discarded) length.
 
-**Inbound (client → server):**
-```
-Raw bytes
-  → GameByteFrameDecoder    Reads 4-byte length, waits for full frame
-  → GameByteDecoder          Reads 2-byte header, wraps remainder as ClientMessage
-  → GameMessageRateLimit     Checks per-handler rate limits
-  → GameMessageHandler       Routes to PacketManager.handlePacket()
-```
+`Turbo.Primitives/Packets/AbstractSerializer.cs` (outgoing): writes a placeholder 4-byte length, then the 2-byte header, then the body; goes back and overwrites the length field with the real body+header length once serialization is complete.
 
-**Outbound (server → client):**
-```
-MessageComposer.compose()
-  → ServerMessage            Writes [4B length placeholder][2B header][body fields]
-  → GameServerMessageEncoder Encrypts body with RC4 (if enabled), finalizes length
-  → Channel.writeAndFlush()  Sends bytes
-```
-
-`ClientMessage` provides sequential read methods:
-```java
-packet.readInt()       // read 4 bytes as int
-packet.readShort()     // read 2 bytes as short
-packet.readBoolean()   // read 1 byte as boolean
-packet.readString()    // read 2-byte length + UTF-8 string
-```
-
-`ServerMessage` provides sequential write methods:
-```java
-response.appendInt(42)
-response.appendShort((short) 1)
-response.appendBoolean(true)
-response.appendString("Hello")
-```
+`ClientPacket`'s primitive readers (`PopInt`, `PopShort`, `PopString`, ...) all use `BinaryPrimitives.Read*BigEndian`; the outgoing side's writers are the fluent `WriteInteger`/`WriteShort`/`WriteString`/`WriteBoolean` equivalents.
 
 ### Client Side: Encoding and Decoding
 
-`EvaWireFormat.as` mirrors the server's logic:
-
-**Sending (outgoing):**
-1. `MessageComposer.getMessageArray()` returns an `Array` of typed values
-2. `EvaWireFormat.encode(headerId, array)` serializes to `ByteArray`
-3. If post-handshake, `ArcFour.encipher()` encrypts the payload
-4. `Socket.writeBytes()` sends the frame
-
-**Receiving (incoming):**
-1. `Socket.SOCKET_DATA` fires, raw bytes appended to `_dataBuffer`
-2. `processReceivedData()` runs each frame tick (30 FPS)
-3. `EvaWireFormat.decode()` reads 4-byte length, waits for full frame
-4. Decrypts if encryption active
-5. Reads 2-byte header, creates `EvaMessageDataWrapper(id, data)`
-6. Header ID looked up in `HabboMessages.INCOMING_PACKETS` → `MessageEvent` class
-7. `MessageEvent.parser.parse(wrapper)` extracts typed fields
-8. Callback handler invoked (e.g., `RoomMessageHandler.onRoomUsers()`)
+`EvaWireFormat.as` (`vortex-client/src/com/sulake/core/communication/wireformat/EvaWireFormat.as`) mirrors the server's logic: encodes a composer's field array into the same length+header+body frame, encrypting via `ArcFour` if the handshake has completed; on receive, reads the frame, decrypts, looks up the header in `HabboMessages.as`'s `_events` map to get the right `MessageEvent` subclass, and hands the payload to its parser.
 
 ### Maximum Packet Size
 
-Server enforces `MAX_PACKET_LENGTH = 417,792 bytes` in `GameByteFrameDecoder`. Packets
-exceeding this are rejected and the connection is closed.
+`NetworkingConfig.MaxPacketBodyBytes` = **65536 bytes** (config section `Turbo:Networking`), enforced identically for both the TCP and WebSocket transports since both funnel through the same decoder.
 
 ---
 
@@ -304,62 +227,38 @@ exceeding this are rejected and the connection is closed.
 
 ### Overview
 
-Encryption is optional (controlled by `enc.enabled` in server config) but expected by this
-client revision. The scheme uses RSA to protect a Diffie-Hellman key exchange, which produces
-a shared secret used as an RC4 stream cipher key.
+`Turbo:Crypto` config (`Turbo.Crypto/Configuration/CryptoConfig.cs`) controls whether encryption runs at all (`EnableServerToClientEncryption` gates the *server→client* direction specifically — client→server RC4 is always armed once the handshake completes). The scheme is Diffie-Hellman (secured by RSA signing/encryption) producing a shared secret used as an RC4 stream-cipher key — same overall shape as classic Habbo servers, different concrete implementation.
 
 ### Step-by-Step
 
-**1. Client requests DH parameters** (`InitDiffieHandshakeMessageComposer`)
-- Sends an empty or minimal packet to header 3110
+**1. Client requests DH parameters** — `InitDiffieHandshakeMessageEvent` (header 3644), essentially an empty request.
 
-**2. Server generates DH parameters** (`InitDiffieHandshakeEvent`)
-- Generates a 128-bit DH prime `p` and generator `g`
-- Generates server keypair: private `a`, public `A = g^a mod p`
-- RSA-encrypts `p`, `g`, and `A` using the server's RSA public key
-- Sends all three encrypted values to the client
+**2. Server generates/serves DH parameters** — `Turbo.Crypto/DiffieService.cs`:
+- Uses a **fixed, hard-coded 384-bit safe prime** (`p = 2q+1` form, generator `2`) rather than generating a fresh prime per boot. This is a deliberate, documented trade-off: the client can only RSA-decrypt a DH public key up to the ~117-byte block size of a 1024-bit RSA key, which caps the DH prime size — the code comment explicitly calls this "an accepted residual risk imposed by the legacy client handshake," below the ≥2048-bit modern recommendation.
+- Server's own DH keypair (`DH_PRIVATE_BIT_SIZE = 380` random bits, top bit forced set) is generated fresh via `SecureRandom` **once per process start**, not per session.
+- The prime, generator, and server public key are each **RSA-signed** (`RsaService.Sign` — really a raw private-key PKCS#1 encryption of the decimal string form, chunked; not a padded verifiable signature scheme) and returned as lowercase hex via `InitDiffieHandshakeComposer` (header 2334).
 
-**3. Client processes DH parameters**
-- Decrypts `p`, `g`, `A` using the RSA public key (embedded in client SWF)
-- Generates client keypair: private `b`, public `B = g^b mod p`
-- Computes shared secret: `S = A^b mod p`
-- Derives RC4 key from `S`
-- Initializes two `ArcFour` instances (one for encrypt, one for decrypt)
+**3. Client processes DH parameters** — verifies/uses the values, generates its own DH keypair, computes the shared secret, derives an RC4 key.
 
-**4. Client sends its public key** (`CompleteDiffieHandshakeMessageComposer`)
-- Sends `B` (client's DH public key) to header 773
+**4. Client sends its public key** — `CompleteDiffieHandshakeMessageEvent` (header 1517), RSA-**encrypted** (not signed) hex string.
 
-**5. Server completes handshake** (`CompleteDiffieHandshakeEvent`)
-- Computes shared secret: `S = B^a mod p`
-- Derives RC4 key from `S` (same derivation as client → identical key)
-- Inserts `GameByteEncryption` (outgoing RC4) and `GameByteDecryption` (incoming RC4)
-  into the Netty pipeline
-- Sends `CompleteDiffieHandshakeComposer` confirmation
+**5. Server completes the handshake** — `Turbo.PacketHandlers/Handshake/CompleteDiffieHandshakeMessageHandler.cs`:
+- `DiffieService.GetSharedKey(...)` hex-decodes and RSA-decrypts the client's public key, parses it as a decimal `BigInteger`, **validates it's in range `[2, p-2]`** (rejects trivial/small-subgroup values — a real security check the legacy protocol shape doesn't strictly require but this implementation adds anyway), computes `clientPubKey^serverPrivate mod p`, and uses the unsigned byte representation as the RC4 key.
+- Replies with `CompleteDiffieHandshakeComposer` (header 3034, containing the server's own DH public key) — **sent in plaintext**, *then* calls `ISessionContext.SetupEncryption(sharedKey, enableServerToClientEncryption)` to arm the RC4 engines. `CryptoIn` (client→server) is always armed; `CryptoOut` (server→client) only if the config flag is set.
 
-**6. All subsequent traffic is RC4-encrypted**
-- The 4-byte length prefix is encrypted
-- The header and body are encrypted
-- Both sides maintain synchronized RC4 stream state
+**6. All subsequent client→server traffic is RC4-encrypted** (and server→client too, if `EnableServerToClientEncryption`). Both the length prefix and the body are covered.
 
 ### RSA Key Configuration
 
-Server `config.ini`:
-```ini
-enc.enabled=true
-enc.e=65537                    # RSA public exponent
-enc.n=<2048-bit modulus>       # RSA modulus (shared between client and server)
-enc.d=<RSA private exponent>   # Server's RSA private key
-```
+`Turbo:Crypto` config keys (`CryptoConfig`): `KeySize` (actually the RSA public **exponent** hex, not a byte length — a slightly confusing name inherited from the field's role), `PublicKey` (modulus hex), `PrivateKey` (private exponent hex, server-only), `EnableServerToClientEncryption` (bool). `RsaService` builds BouncyCastle `RsaKeyParameters` from these and does PKCS#1 encrypt/decrypt via `Pkcs1Encoding(RsaEngine)`.
 
-The client has the matching RSA public key (`e`, `n`) embedded in its SWF binary via the
-`com/hurlant/crypto/rsa/` library.
+The client has the matching public exponent/modulus embedded in its own crypto classes; if these don't match the server's `PublicKey`, the DH handshake will fail (the client can't correctly verify/decrypt).
 
 ### Security Notes
 
-- RC4 is a weak cipher by modern standards (biased keystream bytes)
-- No message authentication codes — integrity is not verified
-- No forward secrecy — compromising the RSA private key exposes all sessions
-- This was standard for Flash-era Habbo; modern clients (Nitro) use WebSocket + TLS
+- RC4 is a weak cipher by modern standards; this is accepted as inherent to supporting the legacy Flash client, not a Turbo-specific oversight.
+- The 384-bit DH prime is well below modern recommendations — again, a deliberate, documented legacy-client constraint (see step 2), not an accidental bug.
+- `Rc4Engine` (`Turbo.Crypto/Rc4Engine.cs`) is a standard KSA+PRGA implementation with a `Peek` mode (clone-and-simulate without consuming keystream) specifically to support reading the still-encrypted length prefix in the decoder (§3) — a small but important implementation detail that a naive RC4 port would miss.
 
 ---
 
@@ -367,342 +266,219 @@ The client has the matching RSA public key (`e`, `n`) embedded in its SWF binary
 
 ### SSO Token Flow
 
-Authentication does not happen directly between client and server. Instead:
+There is no separate password-based login packet — authentication is **exclusively SSO-ticket based**:
 
-1. User logs into the **web application** (PHP/CMS) via username + password
-2. Web app generates a one-time **SSO ticket** (random string) and stores it in the
-   `users` table alongside the user's IP
-3. Web app passes the SSO ticket to the Flash client via FlashVars or JavaScript
-4. Client sends the SSO ticket to the server via `SSOTicketMessageComposer`
-5. Server's `SecureLoginEvent` handler:
-   - Queries the database for a user with that SSO ticket
-   - Validates the IP matches (if configured)
-   - Clears the ticket (one-time use)
-   - Creates a `Habbo` object and binds it to the `GameClient`
-   - Sends the login response batch
+1. User logs into a **web application** outside this repo, which mints a ticket and stores it as a `SecurityTicketEntity` row (`Turbo.Database.Entities.Security`).
+2. The client sends that ticket via `SSOTicketMessageEvent` (header 749).
+3. `Turbo.PacketHandlers/Handshake/SSOTicketMessageHandler.cs` calls `IAuthenticationService.GetPlayerIdFromTicketAsync` (`Turbo.Authentication/AuthenticationService.cs`):
+   - Looks up the ticket row via `IDbContextFactory<TurboDbContext>`.
+   - Missing ticket → publishes `PlayerLoginFailedEvent` (with an HMAC-SHA256 hash of the remote IP, never the raw IP) and fails.
+   - Expired (past `entity.ExpiresAt`, or `CreatedAt + TicketTtlSeconds` if unset) and not locked → deletes the ticket and fails.
+   - Otherwise **refreshes the ticket's expiry** on every successful use (bounded replay window, allows reconnect without a fresh ticket) and returns the resolved player id, publishing `PlayerLoggedInEvent`.
+4. The handler checks `IPlayerGrain.GetActiveBanExpiryAsync` **before** registering the session — a banned account gets `UserBannedMessageComposer` and the connection is closed without ever being added to `ISessionGateway`.
+5. On success, `ISessionGateway.AddSessionToPlayerAsync` binds the session, and the handler fires off the login response burst.
 
-### Login Response Batch
+### Login Response Burst
 
-After successful authentication, the server sends 20+ packets to initialize the client
-session:
+`SSOTicketMessageHandler` sends roughly 15 composers in sequence after a successful login (exact set depends on account state — moderator bootstrap composers are conditional on rank): `AuthenticationOKMessageComposer`, avatar effects, navigator settings, favourite rooms, figure set ids, noobness level, user rights, club/gift info, credit balance, activity points, availability status, achievement score (always 0 — see §20), first-login-of-day flag, mystery box keys, builders club status, perk allowances, and (if the account has moderator rank) `ModeratorInitMessageComposer`/`CfhTopicsInitMessageComposer`.
 
-| Composer | Purpose |
-|----------|---------|
-| `AuthenticationOKMessageComposer` | Confirms authentication |
-| `UserRightsMessageComposer` | Rank and permission flags |
-| `UserHomeRoomComposer` | Home room ID |
-| `UserEffectsListMessageComposer` | Active avatar effects |
-| `UserClothesComposer` | Owned clothing items |
-| `NewNavigatorMetaDataComposer` | Navigator categories |
-| `FavoriteRoomsCountComposer` | Favorite room IDs |
-| `AchievementScoreComposer` | Total achievement points |
-| `IsFirstLoginOfDayComposer` | Daily login bonus flag |
-| `BuildersClubExpiredComposer` | Subscription status |
-| `CfhTopicsInitComposer` | Help/report categories |
-| `FavoriteRoomsCountComposer` | Favorite room list |
-| `AvailabilityStatusComposer` | Hotel open/closed status |
-| `CreditsComposer` | Current credit balance |
-| `ActivityPointsComposer` | Duckets, diamonds, etc. |
-| `SubscriptionStatusComposer` | HC/VIP status |
-| `MysteryBoxKeysComposer` | Mystery box inventory |
-| `... and more` | |
+### Permissions
 
-### Authentication Boundary
-
-The server enforces an authentication boundary in `PacketManager.handlePacket()`:
-
-```java
-if (client.getHabbo() == null && !handlerClass.isAnnotationPresent(NoAuthMessage.class)) {
-    return; // Silently drop — not yet authenticated
-}
-```
-
-Only handlers annotated `@NoAuthMessage` are allowed before login:
-- `ReleaseVersionEvent` (4000)
-- `MachineIDEvent` (2490)
-- `InitDiffieHandshakeEvent` (3110)
-- `CompleteDiffieHandshakeEvent` (773)
-- `SecureLoginEvent`
-- `PingEvent`
-
-All other packets require a valid `Habbo` on the `GameClient`.
+`Turbo.Authentication/Permissions/PermissionService.cs` (`IPermissionService.ResolveForPlayerAsync`) resolves the player's `PermissionSet` from `RoleEntity`/`RolePermissionEntity`/`PlayerAccountRoleEntity` — this is what gates moderator-tool bootstrap and every `Capabilities.Moderation.*`-checked handler (§16). See §24 for a real, currently-open gap in how new accounts get their initial role.
 
 ---
 
 ## 6. Packet System In Depth
 
-### How Packet IDs Are Mapped
+### How Packets Map to Code
 
-Both sides maintain independent registries of packet ID → class mappings. These must agree
-for communication to work.
+Packet IDs and their handling code are defined in exactly **one place**: `Turbo.Revisions/Revision20260112/Headers.cs`, two `internal static class`es of `public const int` fields —
 
-**Server — `Incoming.java`** (client → server packet IDs):
-```java
-public static final int ClientHelloMessageEvent = 4000;
-public static final int UniqueIDMessageEvent = 2490;
-public static final int InitDiffieHandshake = 3110;
-public static final int CompleteDiffieHandshake = 773;
-public static final int GetCatalogIndexEvent = 1195;
-public static final int MoveAvatarMessageEvent = 3320;
-public static final int ChatMessageEvent = 1314;
-// ... ~500 entries
+```csharp
+// Headers.cs
+internal static class MessageEvent      // client → server (incoming to the server)
+{
+    #region Incoming
+    public const int MoveAvatarMessageEvent = 144;
+    public const int ChatMessageEvent = 641;
+    public const int SSOTicketMessageEvent = 749;
+    // ... ~525 entries
+}
+
+internal static class MessageComposer   // server → client (outgoing from the server)
+{
+    #region Outgoing
+    public const int ChatMessageComposer = 1264;
+    public const int OpenConnectionMessageComposer = 1915;
+    public const int AuthenticationOKMessageComposer = 3014;
+    // ... ~538 entries
+}
 ```
 
-**Server — `Outgoing.java`** (server → client packet IDs):
-```java
-public static final int AuthenticationOKMessageComposer = 2491;
-public static final int OpenConnectionMessageComposer = 758;
-public static final int UsersMessageComposer = 374;
-public static final int ObjectsMessageComposer = 1778;
-public static final int ChatMessageComposer = 1446;
-// ... ~503+ entries
-```
+`Turbo.Revisions/Revision20260112/Revision20260112.cs` (3480 lines) builds the actual `IRevision` from these constants: `Parsers` is `IDictionary<int, IParser>` keyed by the `MessageEvent` ids; `Serializers` is `IDictionary<Type, ISerializer>` keyed by the **composer's CLR type** (each serializer's constructor is handed its header id from `MessageComposer`). Both dictionaries are hand-built object initializers, grouped into `#region`s by domain (Room, Catalog, Inventory, Navigator, FriendList, Moderator, Handshake, Game, Wired, ...).
 
-**Client — `HabboMessages.as`** (~2,038 lines):
+`Turbo.Networking/Revisions/RevisionManager.cs` (`IRevisionManager`) holds a `Dictionary<string, IRevision>` keyed by the revision's build string (`"WIN63-202601121721-391685409"` for the embedded default). This is the plugin extension point: additional client revisions can be registered by a separate plugin without touching core code — see `CONTEXT.md`'s note that `Revision<id>/Parsers|Serializers` trees for *other* revisions belong in a plugin repo, not in `turbo-cloud` itself.
+
+### Client — `HabboMessages.as` (~1,996 lines)
+
 ```actionscript
-// OUTGOING (client sends to server)
-OUTGOING_PACKETS[ClientHelloMessageComposer] = 4000;
-OUTGOING_PACKETS[UniqueIDMessageComposer] = 2490;
-OUTGOING_PACKETS[SSOTicketMessageComposer] = ...;
-OUTGOING_PACKETS[MoveAvatarMessageComposer] = 3320;
+// vortex-client/src/com/sulake/habbo/communication/HabboMessages.as
+_composers[144] = MoveAvatarMessageComposer;   // client sends this to header 144
+_composers[641] = ChatMessageComposer;
 
-// INCOMING (client receives from server)
-INCOMING_PACKETS[2491] = AuthenticationOKMessageEvent;
-INCOMING_PACKETS[758]  = RoomReadyMessageEvent;
-INCOMING_PACKETS[374]  = UsersMessageEvent;
-INCOMING_PACKETS[1778] = ObjectsMessageEvent;
-INCOMING_PACKETS[1446] = ChatMessageEvent;
-// ... ~501 entries
+_events[1264] = ChatMessageEvent;              // client receives this from header 1264
+_events[1915] = OpenConnectionMessageEvent;
 ```
 
-### Naming Conventions
-
-The two sides use different naming for the same packets. This is normal — they were developed
-independently.
-
-| Server (Outgoing.java) | Client (HabboMessages.as) | Header |
-|------------------------|---------------------------|--------|
-| `AuthenticationOKMessageComposer` | `AuthenticationOKMessageEvent` | 2491 |
-| `OpenConnectionMessageComposer` | `OpenConnectionMessageEvent` | 758 |
-| `UsersMessageComposer` | `UsersEvent` | 374 |
-| `ObjectsMessageComposer` | `ObjectsMessageEvent` | 1778 |
-| `ChatMessageComposer` | `ChatMessageEvent` | 1446 |
-| `UserObjectMessageComposer` | `UserObjectEvent` | 2725 |
-
-What matters is that the **header IDs match** and the **field order and types match**.
+Note the naming convention is **side-relative**: the same logical "chat" packet is `ChatMessageEvent`/`ChatMessageComposer` on the server (event = server receives, composer = server sends) and `ChatMessageComposer`/`ChatMessageEvent` on the client (composer = client sends, event = client receives) — mirror images of each other. What has to match between the two codebases is the **numeric header id** and the **field order/types**, not the class name.
 
 ### Handler Instantiation (Server)
 
-When a packet arrives, `PacketManager` creates a fresh handler instance via reflection:
+There is no manual registration file to edit. `Turbo.Plugins/PluginBootstrapper.cs` (an `IHostedService` that runs before `TurboEmulator`) iterates every `IHostPluginModule` registered in `Program.cs` and calls `AssemblyProcessor.ProcessAsync` on each module's assembly. For `PacketHandlersModule` (assembly = `Turbo.PacketHandlers`), this uses reflection (`AssemblyExplorer.FindClosedImplementations`) to find every class implementing `IMessageHandler<TMessage>` and registers it — activator + invoker delegates — on the shared `MessageRegistry`. **Dropping a new `IMessageHandler<T>` class into `Turbo.PacketHandlers/<Domain>/` is the entire registration step.**
 
-```java
-Class<? extends MessageHandler> handlerClass = incoming.get(packet.getMessageId());
-MessageHandler handler = handlerClass.getDeclaredConstructor().newInstance();
-handler.client = client;
-handler.packet = packet;
-handler.handle();
+Dispatch (`Turbo.Messages/MessageSystem.cs` → `Turbo.Messages/Registry/MessageRegistry.cs`, both built on the generic `Turbo.Pipeline` envelope-dispatch engine also reused by `Turbo.Events` for domain events):
+- Resolves the acting player id and active room id from `ISessionGateway`/`IPlayerPresenceGrain`.
+- Runs every matching handler for a message type **in parallel** (`Task.WhenAll`, `HandlerExecutionMode.Parallel`, unbounded degree of parallelism) — not sequentially like a single-dispatch classic server.
+- Handler/behavior errors are caught, logged, and reported to an `IErrorGroupingSink` — a bad handler doesn't take down the connection.
+
+Representative real handlers:
+
+```csharp
+// Turbo.PacketHandlers/Room/Engine/MoveAvatarMessageHandler.cs
+public class MoveAvatarMessageHandler(IRoomService roomService) : IMessageHandler<MoveAvatarMessage>
+{
+    public async ValueTask HandleAsync(MoveAvatarMessage message, MessageContext ctx, CancellationToken ct) =>
+        await roomService.ClickTileAsync(ctx.AsActionContext(), message.TargetX, message.TargetY, ct);
+}
 ```
 
-Each handler reads fields from the packet in the exact order the client wrote them:
-
-```java
-// Server: PurchaseFromCatalogEvent.handle()
-int pageId = this.packet.readInt();
-int itemId = this.packet.readInt();
-String extraData = this.packet.readString();
-int amount = this.packet.readInt();
-```
-
-```actionscript
-// Client: CatalogPagePurchaseMessageComposer.getMessageArray()
-return [pageId, itemId, extraData, amount];
-```
-
-If the field order or types don't match, the packet is misread — there is no schema
-validation, only sequential binary reads.
-
-### Composer Pattern (Server → Client)
-
-Outgoing packets are built by `MessageComposer` subclasses:
-
-```java
-public class UsersMessageComposer extends MessageComposer {
-    public UsersMessageComposer(Room room) {
-        this.response.init(Outgoing.UsersMessageComposer);   // header 374
-        this.response.appendInt(this.habbos.size());       // count
-        for (Habbo habbo : this.habbos) {
-            this.response.appendInt(habbo.getHabboInfo().getId());
-            this.response.appendString(habbo.getHabboInfo().getUsername());
-            this.response.appendString(habbo.getHabboInfo().getMotto());
-            this.response.appendString(habbo.getHabboInfo().getLook());
-            // ... more fields
-        }
-        return this.response;
+```csharp
+// Turbo.PacketHandlers/Room/Chat/ChatMessageHandler.cs
+public class ChatMessageHandler(IGrainFactory grainFactory) : IMessageHandler<ChatMessage>
+{
+    public async ValueTask HandleAsync(ChatMessage message, MessageContext ctx, CancellationToken ct)
+    {
+        if (ctx.PlayerId <= 0 || ctx.RoomId <= 0) return;
+        await grainFactory.GetRoomGrain(ctx.RoomId)
+            .SendChatFromPlayerAsync(ctx.PlayerId, message.Text, 0, message.StyleId, [], message.TrackingId)
+            .ConfigureAwait(false);
     }
 }
 ```
 
-The client's parser reads the same fields in the same order:
+Handlers are **orchestration-only** — guard the context, resolve one grain, delegate, return. This is a hard architectural rule stated in the emulator's own `CONTEXT.md`: no persistence, no business logic, no direct socket access inside a handler.
 
-```actionscript
-// Client: UsersMessageParser.parse()
-var count:int = wrapper.readInteger();
-for (var i:int = 0; i < count; i++) {
-    var id:int = wrapper.readInteger();
-    var name:String = wrapper.readString();
-    var motto:String = wrapper.readString();
-    var look:String = wrapper.readString();
-    // ... same fields, same order
-}
+### Field Read/Write Convention
+
+Parsers and serializers under `Turbo.Revisions/Revision20260112/{Parsers,Serializers}/**` use the same `Pop*`/`Write*` idiom as the classic protocol shape:
+
+```csharp
+// Turbo.Revisions/Revision20260112/Parsers/Room/Engine/MoveAvatarMessageParser.cs
+public IMessageEvent Parse(IClientPacket packet) =>
+    new MoveAvatarMessage { TargetX = packet.PopInt(), TargetY = packet.PopInt() };
+
+// Turbo.Revisions/Revision20260112/Parsers/Room/Chat/ChatMessageParser.cs
+public IMessageEvent Parse(IClientPacket packet) =>
+    new ChatMessage { Text = packet.PopString(), StyleId = packet.PopInt(), TrackingId = packet.PopInt() };
 ```
+
+```csharp
+// Turbo.Revisions/Revision20260112/Serializers/Room/Chat/ChatMessageComposerSerializer.cs (shape)
+packet.WriteInteger(message.ObjectId).WriteString(message.Text).WriteInteger(message.Gesture)...
+```
+
+If the field order or types diverge between a Turbo parser and vortex-client's matching composer (or vice versa), the packet is misread — there is no schema validation on the wire, only sequential binary reads, same as any classic Habbo-derived protocol.
 
 ### Broadcast Patterns
 
-The server uses several broadcast strategies:
+| Pattern | Mechanism | Use Case |
+|---------|-----------|----------|
+| **Room broadcast** | `RoomGrain.SendComposerToRoomAsync` publishes to the room's Orleans stream (`RoomOutbound`); every subscribed `PlayerPresenceGrain` delivers to its own session(s) | Chat, movement, item state |
+| **Target player** | `MessageContext.SendComposerAsync` / `PlayerPresenceGrain.SendComposerAsync` directly | Login response, inventory, personal data |
+| **Friends** | Iterate the target's `MessengerGrain` friend list, resolve each friend's presence | Online status changes |
+| **Group members** | Iterate group membership via `GroupGrain`/`GroupDirectoryGrain` | Guild announcements |
 
-| Pattern | Method | Use Case |
-|---------|--------|----------|
-| **Room broadcast** | `room.sendComposer(composer)` | Chat, movement, item state — all users in room |
-| **Target user** | `client.sendResponse(composer)` | Login response, inventory, personal data |
-| **All online** | Iterate `habboManager.getOnlineHabbos()` | Hotel alerts, maintenance warnings |
-| **Friends** | Iterate `messenger.getFriends()` | Online status changes |
-| **Group members** | Iterate guild member list | Guild announcements |
+The critical architectural point (see the full walkthrough in §7 and §25): **a room grain never touches a socket.** It only ever publishes to a stream; delivery is entirely the presence grain's responsibility. This is what lets a room deactivate, rehydrate, or (in a real multi-silo deployment) migrate without any socket-handling code needing to know or care.
 
 ---
 
 ## 7. Room System
 
-The room system is the core of the hotel experience. It involves the tightest coordination
-between client and server.
-
 ### Entering a Room
+
+`Turbo.PacketHandlers/Room/Session/OpenFlatConnectionMessageHandler.cs` → `IRoomService.OpenRoomForPlayerIdAsync` (`Turbo.Rooms/RoomService.cs`):
 
 ```
 Client                                          Server
   │                                                │
-  │──── GoToFlatMessageComposer ──────────────────>│  roomId
-  │     (or follow/teleport/doorbell variants)     │
+  │──── RoomNetworkOpenConnectionMessageEvent ────>│  roomId (header 2407)
   │                                                │
-  │  [Server validates access: owner? open? locked? banned?]
+  │<─── OpenConnectionMessageComposer (1915) ──────│  sent immediately
   │                                                │
-  │<─── FlatAccessibleMessageComposer (3783) ──────────────────│  "You may enter"
+  │  [room.EnsureRoomActiveAsync() — activates the RoomGrain if needed]
+  │  [Rights/full/locked/password check — owners/rights-holders bypass all three;
+  │   on rejection: CantConnectMessageComposer + RoomConnectionErrorType, and stop]
   │                                                │
-  │──── OpenFlatConnectionMessageComposer ────────>│  roomId, password (if locked)
+  │<─── RoomReadyMessageComposer (2244) ──────────│  Batch 1: map/entry state
+  │<─── RoomRatingMessageComposer ────────────────│  (hardcoded Rating=0 — see §24)
+  │<─── RoomEntryTileMessageComposer ─────────────│  door X/Y/rotation
+  │<─── HeightMapMessageComposer ──────────────────│  tile-encoded heights
+  │<─── FloorHeightMapMessageComposer ─────────────│  scale type, wall height, model
   │                                                │
-  │<─── RoomReadyMessageComposer (2031) ──────────────────│  Room model name, room ID
-  │<─── RoomPaintComposer ────────────────────────│  Floor/wall colors and thickness
-  │<─── FloorHeightMapComposer ───────────────────│  Height map string (tile heights)
-  │<─── RoomRelativeMapComposer ──────────────────│  Relative height map
+  │<─── RoomEntryInfoMessageComposer ─────────────│  Batch 2: contents/rights
+  │<─── ObjectsMessageComposer (3997) ─────────────│  floor items + owner names
+  │<─── ItemsMessageComposer ──────────────────────│  wall items + owner names
+  │<─── UsersMessageComposer (1835) ───────────────│  avatar snapshots
+  │<─── UserUpdateMessageComposer ─────────────────│
+  │<─── YouAreControllerMessageComposer ──────────│  real resolved rights (fixed 2026-07-05)
+  │<─── WiredPermissionsEventMessageComposer ─────│  gated on rights
   │                                                │
-  │  [Client builds room geometry from height map] │
+  │<─── YouAreOwnerMessageComposer ────────────────│  only if owner
+  │<─── DanceMessageComposer (per dancing avatar) ─│
   │                                                │
-  │<─── ObjectsMessageComposer (1778) ────────────────│  All floor furniture (id, type, x, y, z, rotation, state)
-  │<─── WallItemsComposer ────────────────────────│  All wall items (id, type, position, state)
-  │<─── UsersMessageComposer (374) ──────────────────│  All users in room (id, name, look, position)
-  │<─── RoomUserStatusComposer ───────────────────│  User states (sitting, walking, effects)
-  │<─── RoomThicknessComposer ────────────────────│  Wall/floor thickness settings
-  │<─── RoomRightsComposer ───────────────────────│  Your permission level in this room
-  │<─── RoomScoreComposer ────────────────────────│  Room rating
-  │<─── RoomPromotionComposer ────────────────────│  Active event/promotion (if any)
-  │                                                │
-  │  [Client renders room with all objects]        │
+  │  [playerPresence.SetActiveRoomAsync(roomId) — subscribes to the room's stream]
   │                                                │
 ```
 
-### Room Heightmap
+`YouAreControllerMessageComposer` sending the *real* resolved `RoomControllerType` (rather than a hardcoded owner-or-none value) was fixed 2026-07-05 (`ROADMAP.md` Story 1.2). Doorbell/queue UX for locked rooms (a request-to-enter flow) is explicitly out of scope for the current build — only the flat reject ships.
 
-The server stores room layouts as ASCII heightmaps where each character represents the tile
-height at that position. Characters `0`-`9` and `a`-`z` represent heights 0-35. `x` marks
-blocked tiles (walls, void).
+### Room Grain Architecture
 
-```
-xxxxxxxxxxxx
-x222211110xx
-x222211110xx
-x222211110xx
-x222222220xx
-x222222220xx
-xxxxxxxxxxxx
-```
+`Turbo.Rooms/Grains/RoomGrain.cs` is a `sealed partial class` split across 9 files by concern (`.Security`, `.Map`, `.Settings`, `.Avatar`, `.Pets`, `.Furni`, `.Furni.Floor`, `.Furni.Wall`, `.Moderation`). It composes:
 
-The server sends this via `FloorHeightMapComposer`. The client parses it in
-`RoomMessageHandler.onFloorHeightMap()` and constructs the isometric tile grid used for
-rendering and pathfinding.
+- **Modules** (own a slice of state + operations on it): `RoomActionModule`, `RoomAvatarModule`, `RoomEventModule`, `RoomFurniModule`, `RoomMapModule`, `RoomObjectModule`, `RoomSecurityModule`.
+- **Systems** (behavioral engines over that state): `RoomPathingSystem`, `RoomAvatarTickSystem`, `RoomPetSystem`, `RoomRollerSystem`, `RoomWiredSystem`, `RoomChatSystem`.
+
+Both are plain classes holding a back-reference to the grain, constructed once when the grain activates — calling them is an in-process method call, not an Orleans round-trip.
+
+**The room tick** is a single Orleans `RegisterGrainTimer` firing every `RoomConfig.RoomTickMs` = **50ms**, which internally gates each sub-system against its own independent boundary:
+
+| Sub-system | Interval (`RoomConfig`) |
+|---|---|
+| Avatar movement step | `AvatarTickMs` = 500ms (the direct analog of the classic ~500ms Habbo walk tick) |
+| Roller movement | `RollerTickMs` = 2000ms |
+| WIRED evaluation | `WiredTickMs` = 50ms |
+| Dirty item/tile persistence flush | `DirtyItemsTickMs` = 2000ms |
+
+Boundaries are computed against a per-room `EpochMs` set at first activation, so each sub-system only does real work once its own interval has elapsed even though the outer timer fires every 50ms. `RoomGrain.OnDeactivateAsync` flushes dirty state and deregisters from `RoomDirectoryGrain` before Orleans deactivates the grain (idle timeout `RoomDeactivationDelayMs` = 1,800,000ms / 30 minutes, or explicit deactivation).
+
+There is no `RoomUnit` grain — avatars, pets, and bots-as-a-concept are plain in-memory objects (`IRoomAvatar` et al., `Turbo.Primitives.Rooms.Object.Avatars`) living in the room grain's own dictionaries.
 
 ### Movement
 
-```
-Client                                          Server
-  │                                                │
-  │  [User clicks tile at (5, 8)]                  │
-  │                                                │
-  │──── MoveAvatarMessageComposer (3320) ───────>│  targetX=5, targetY=8
-  │                                                │
-  │  [Server runs A* pathfinding from current pos] │
-  │  [Validates: tile walkable? not blocked?]       │
-  │  [Stores path in RoomUnit]                     │
-  │                                                │
-  │  [Room cycle tick (every ~500ms):]             │
-  │  [  - Advances unit 1 tile along path]         │
-  │  [  - Calculates new Z (stacking)]             │
-  │                                                │
-  │<─── RoomUserStatusComposer ───────────────────│  unitId, x, y, z, direction, action
-  │     (broadcast to all room users)              │
-  │                                                │
-  │  [Client animates avatar walking to new tile]  │
-  │                                                │
-```
+`MoveAvatarMessageHandler` → `IRoomService.ClickTileAsync` → `RoomGrain.ClickTileAsync` (fires wired click-tile triggers) + `WalkAvatarToAsync` (kicks off pathing). Pathfinding is a real **A\*** (`Turbo.Rooms/Grains/Systems/RoomPathingSystem.cs`): 8-directional, cardinal cost 10 / diagonal cost 14 (classic Habbo-style costs), capped at `MaxPathNodes` = 4096, walkability delegated to `RoomMapModule` (height-diff limited by `MaxStepHeight`, diagonal-corner checking configurable via `EnableDiagonalChecking`).
 
-The server's `RoomCycleManager` runs at approximately 500ms intervals (configurable). Each
-tick, it processes all room units: advances movement, evaluates item triggers (step-on
-effects, teleporters), and broadcasts position updates.
-
-The client receives `RoomUserStatusComposer` and smoothly animates the avatar between tiles
-using interpolation at 30 FPS.
+Per-tick advancement (`RoomAvatarTickSystem`, gated at the 500ms avatar boundary): pops one tile off the path, validates the step, fires floor-item walk-on/walk-off hooks, updates position/rotation, and **batches all changed avatars into one `UserUpdateMessageComposer` broadcast per tick** rather than one packet per avatar.
 
 ### Furniture Interaction
 
-```
-Client                                          Server
-  │                                                │
-  │  [User double-clicks a lamp (item ID 4821)]   │
-  │                                                │
-  │──── UseFurnitureMessageComposer (99) ─────────>│  itemId=4821, state=0
-  │                                                │
-  │  [Server finds item in RoomItemManager]        │
-  │  [Checks user has rights to interact]          │
-  │  [Calls item.onClick() — toggles state 0↔1]   │
-  │  [Persists new state to database]              │
-  │                                                │
-  │<─── ObjectUpdateMessageComposer (3776) ───────────│  itemId=4821, newState=1
-  │     (broadcast to all room users)              │
-  │                                                │
-  │  [Client updates furniture sprite animation]   │
-  │                                                │
-```
+Dispatch chain: `UseFurnitureMessageHandler` → `IRoomService.UseItemInRoomAsync` → `RoomGrain.UseItemByIdAsync` → `RoomActionModule` (permission check via `RoomSecurityModule.CanUseFurniAsync`, with a rentable-space fallback) → `RoomFurniModule.UseItemByIdAsync` → `item.Logic.OnUseAsync(...)`.
 
-Different item types have different interaction classes on the server:
-- `InteractionDefault` — simple state toggle (lamps, chairs)
-- `InteractionTeleport` — teleporter pairs
-- `InteractionDice` — random number generation
-- `InteractionRoller` — moves items/users periodically
-- `InteractionWired*` — programmable WIRED triggers/effects
-- `InteractionGate` — passage control
-- `InteractionVendingMachine` — gives hand items
-- And ~100 more interaction types
+Interaction behavior is **not** a classic `InteractionDefault`/`InteractionTeleport` class hierarchy — it's a string-keyed **`RoomObjectLogic`** registry (`Turbo.Rooms/Providers/RoomObjectLogicProvider.cs`), populated at startup by scanning for a `[RoomObjectLogic("key")]` attribute, falling back to `"default_floor"` for any furniture whose logic-type string has no registered class. Real non-wired logic types that exist: `default_floor`, `default_wall`, `default_avatar`, `dice`, `fireworks`, `roller`, `wheel_of_fortune`, `gate`, `room_invisible_click_tile`, `pet_food`/`pet_nest`/`pet_drink`, `monsterplant_seed`. This is a smaller set than classic Habbo's `InteractionType` zoo (no dedicated teleport/vending/trophy-specific classes) — most special furniture is handled more generically. WIRED itself is implemented as ~90 additional `RoomObjectLogic` subclasses (§17).
 
-### Room Unit Types
+### The Golden Rule: Rooms Don't Touch Sockets
 
-The room unit system handles multiple entity types:
-
-| Type | Server Class | Purpose |
-|------|-------------|---------|
-| Habbo | `RoomHabbo` via `RoomUnit` | Human player avatars |
-| Bot | `RoomBot` via `RoomUnit` | NPC bots placed by room owner |
-| Pet | `RoomPet` via `RoomUnit` | Player-owned pets |
-
-All unit types share the same movement system, position tracking, and are serialized
-identically in `UsersMessageComposer` — the client distinguishes them by a type field.
+The single most important correction versus a classic single-process server design: **a `RoomGrain` never writes to a socket.** It calls `SendComposerToRoomAsync`, which publishes to an Orleans stream (`RoomOutbound`, keyed by room id). Every player currently in that room has a `PlayerPresenceGrain` subscribed to the stream; each one receives the composer independently and hands it to its own `SessionObserver` for the actual socket write. See the full traced example in §25 — this is exactly how a chat message actually reaches the screen.
 
 ---
 
@@ -715,119 +491,68 @@ Client                                          Server
   │                                                │
   │  [User types "Hello!" and presses Enter]       │
   │                                                │
-  │──── ChatMessageComposer (1314) ───────────────>│  message="Hello!", bubbleType=0
-  │     (for shout: header 2085)                   │
-  │     (for whisper: header 1543)                 │
+  │──── ChatMessageEvent (641) ───────────────────>│  text, styleId, trackingId
+  │     (shout: ShoutMessageEvent 2286)             │
+  │     (whisper: WhisperMessageEvent)              │
   │                                                │
-  │  [Server: ChatMessageEvent handler]            │
-  │  [  1. Word filter check]                      │
-  │  [  2. Flood/mute check]                       │
-  │  [  3. Command check (starts with :)]          │
-  │  [  4. Fire ChatMessageEvent for plugins]      │
-  │  [  5. Log to chat_log table]                  │
-  │  [  6. Broadcast to room]                      │
+  │  [RoomChatSystem.SendChatFromPlayerAsync]      │
+  │  [  Resolve player → avatar in this room;      │
+  │     drop silently if none]                     │
+  │  [  Mute check (RemainingMutePeriodMessageComposer if muted)]
+  │  [  Persist to RoomChatlogEntity, truncated to 100 chars]
   │                                                │
-  │<─── ChatMessageComposer (1446) ───────────────│  unitId, message, emotion, bubbleType
-  │     (whisper: only sent to target + sender)    │
-  │     (shout: sent to all in room)               │
-  │     (say: sent to users within hearing range)  │
-  │                                                │
-  │  [Client shows chat bubble above avatar]       │
+  │<─── ChatMessageComposer (1264) ────────────────│  broadcast to room via stream
+  │     (shout: ShoutMessageComposer 3310)          │
+  │     (whisper: WhisperMessageComposer, sender+target only) │
   │                                                │
 ```
 
 ### Chat Variants
 
-| Client Composer | Server Handler | Server Broadcast | Scope |
-|----------------|----------------|-----------------|-------|
-| `ChatMessageComposer` (1314) | `ChatMessageEvent` | `ChatMessageComposer` (1446) | Users within range |
-| `ShoutMessageComposer` (2085) | `ShoutMessageEvent` | `ShoutMessageComposer` | All users in room |
-| `WhisperMessageComposer` (1543) | `WhisperMessageEvent` | `WhisperMessageComposer` | Sender + target only |
+| Client sends | Header | Server system | Broadcast scope |
+|---|---|---|---|
+| `ChatMessageEvent` | 641 | `RoomChatSystem` | Room-wide |
+| `ShoutMessageEvent` | 2286 | `RoomChatSystem` | Room-wide |
+| `WhisperMessageEvent` | — (see §21) | `RoomChatSystem` | Sender + target only |
 
-### Word Filter
+### Real Gaps (not present in this server today)
 
-The server's `WordFilter` checks all chat messages against a database of filtered words.
-Depending on configuration, it can:
-- Replace the word with `*` characters (bobba filter)
-- Mute the user
-- Report the message to moderators
-- Block the message entirely
+- **No word/profanity filter.** There is no filtering, substitution, or blocking logic anywhere in the chat path.
+- **No flood control is enforced.** `RoomEntity.ChatFloodType` (`ChatSettingsSnapshot.FloodSensitivity`) is a real, persisted per-room setting — readable and settable via `SaveRoomSettingsMessageHandler` — but `RoomChatSystem` never reads it. It is dead configuration today. Per-room custom word-filter handlers (`GetCustomRoomFilterMessageHandler`/`UpdateRoomFilterMessageHandler`) are the one remaining stub in the RoomSettings area (`ROADMAP.md` Story 1.4).
 
-### Commands
-
-If a chat message starts with `:` (configurable prefix), the server routes it to the
-`CommandHandler` instead of broadcasting it. Commands like `:kick username`,
-`:give credits 1000`, `:broadcast message` are handled server-side. The client never sees
-command text — it receives either a command response or nothing.
+Do not assume either protection exists when reasoning about client behavior — messages of any content and any rate reach the room as sent.
 
 ---
 
 ## 9. Catalog and Purchasing
 
-### Loading the Catalog
-
-```
-Client                                          Server
-  │                                                │
-  │  [User clicks Shop button]                     │
-  │                                                │
-  │──── GetCatalogIndexComposer (2529) ───────────>│  type="NORMAL"
-  │                                                │
-  │<─── CatalogIndexComposer ─────────────────────│  Tree of pages (id, name, icon, children)
-  │                                                │
-  │  [Client renders catalog navigation tree]      │
-  │  [User clicks a page]                          │
-  │                                                │
-  │──── GetCatalogPageComposer (412) ─────────────>│  pageId=42
-  │                                                │
-  │<─── CatalogPageComposer ──────────────────────│  Page layout, items, prices, descriptions
-  │                                                │
-  │  [Client renders page with items and prices]   │
-  │                                                │
-```
-
 ### Purchasing an Item
 
-```
-Client                                          Server
-  │                                                │
-  │  [User clicks Buy on a Habbo Lamp, 25 credits]│
-  │                                                │
-  │──── PurchaseFromCatalogComposer (3492) ───────>│  pageId, itemId, extraData, amount=1
-  │                                                │
-  │  [Server: PurchaseFromCatalogEvent handler]         │
-  │  [  1. Validate page & item exist]             │
-  │  [  2. Check user can afford (credits/duckets)]│
-  │  [  3. Check club requirement]                 │
-  │  [  4. Deduct currency]                        │
-  │  [  5. Create item(s) in database]             │
-  │  [  6. Add to user's inventory]                │
-  │  [  7. Fire CatalogItemPurchasedEvent]         │
-  │                                                │
-  │<─── PurchaseOKComposer (2307) ────────────────│  Purchase confirmed
-  │<─── CreditsComposer ─────────────────────────│  Updated credit balance
-  │<─── ActivityPointsComposer ───────────────────│  Updated ducket/diamond balance
-  │<─── InventoryRefreshComposer ─────────────────│  "Your inventory has new items"
-  │                                                │
-  │  [Client updates currency display]             │
-  │  [Client shows purchase confirmation]          │
-  │  [Client marks inventory as needing refresh]   │
-  │                                                │
+`PurchaseFromCatalogMessageHandler` → the per-player **`CatalogPurchaseGrain`** (`Turbo.Catalog/Grains/CatalogPurchaseGrain.cs`, `ICatalogPurchaseGrain.PurchaseOfferFromCatalogAsync`):
+
+1. Looks up the offer in the in-memory `CatalogSnapshot` (built/reloaded by `CatalogSnapshotProvider`, DB-backed).
+2. Resolves club level/discount via `IPlayerGrain.GetClubSubscriptionAsync`.
+3. Builds a list of `WalletDebitRequest`s covering the credits/silver/activity-point cost.
+4. Calls `IPlayerWalletGrain.ExecutePurchaseAsync(debitRequests, grantCallback, ...)` — an **atomic debit-then-grant** pattern: the grant callback only runs if every debit succeeds, and if the grant itself throws, the wallet is refunded (`CreditBackAsync`) rather than left in a charged-but-ungranted state.
+5. The grant callback calls `IInventoryGrain.GrantCatalogOfferAsync`, tracks spend for kickback purposes, and publishes a `CatalogPurchasedEvent`.
+
+**Limited-edition items** get their own dedicated grain, `LtdRaffleGrain` (keyed per LTD series) — batches raffle entries; a losing entry's refund is awaited (`Task.WhenAll`), not fire-and-forget (a real fix logged in `CONSOLIDATION.md`).
+
+Other catalog grains: `VoucherGrain` (redeem-code grain), a room-ad purchase path in `CatalogPurchaseGrain.RoomAd.cs` (marked partial — needs more room/furniture orchestration per `ROADMAP.md` Story 4.2). Builders Club subscription tiers are tracked in `Turbo.Players/BuildersClubService.cs`, but placing a Builders-Club-gifted item directly into a room (`BuildersClubPlaceRoomItemMessageHandler`/`...WallItemMessageHandler`) is explicitly deferred.
+
+### Currencies
+
+`CurrencyType` (`Turbo.Primitives/Players/Enums/Wallet/CurrencyType.cs`):
+
+```csharp
+public enum CurrencyType { Credits = 1, Silver = 2, Emeralds = 3, ActivityPoints = 4 }
 ```
 
-### Currency Types
+**Named seasonal currencies (classic "Duckets"/"Diamonds") are not hardcoded enum values** — they're modeled generically as `ActivityPoints` with an `ActivityPointType` int discriminator, resolved against a DB-seeded `currency_types` table. There is no committed seed data naming any specific seasonal currency; that's an admin/DB-seeding concern, not a code concern. Don't assume a specific currency name maps to a specific enum member — check the seeded `CurrencyTypeEntity` rows instead.
 
-The server manages multiple currencies, each with separate schedulers:
+### Explicitly Deferred
 
-| Currency | Config Key | Scheduler | Client Display |
-|----------|-----------|-----------|---------------|
-| Credits | `habbo.credits` | `CreditsScheduler` | Gold coins |
-| Duckets | `seasonal.types` | `PixelScheduler` | Purple diamonds |
-| Diamonds | `seasonal.types` | `PointsScheduler` | Blue diamonds |
-| Seasonal | `seasonal.types` | `PointsScheduler` | Various icons |
-
-Schedulers periodically award currency and send `CreditsComposer` / `ActivityPointsComposer`
-to keep the client display updated.
+Targeted offers (`GetTargetedOffer`/`PurchaseTargetedOffer` etc.), the seasonal-calendar daily offer, and full gift-flow completeness are open work per `ROADMAP.md` Story 4.2/4.4 — not present yet.
 
 ---
 
@@ -835,244 +560,84 @@ to keep the client display updated.
 
 ### Loading Inventory
 
-The client does not load the full inventory at login. Instead, it requests items on demand:
-
-```
-Client                                          Server
-  │                                                │
-  │  [User opens inventory panel]                  │
-  │                                                │
-  │──── RequestFurniInventoryComposer ────────────>│
-  │                                                │
-  │<─── FurniListComposer ────────────────────────│  Paginated item list
-  │     (may send multiple pages)                  │  (id, type, spriteId, category, stuffData)
-  │                                                │
-  │  [Client renders inventory grid]               │
-  │                                                │
-```
+Per-player **`InventoryGrain`** (`Turbo.Inventory/Grains/InventoryGrain.cs` + `.Furni.cs`/`.Pets.cs` partials), hydrated from DB via `InventoryFurnitureLoader`. The client requests furniture inventory on demand (`RequestFurniInventoryMessageHandler`) → `IPlayerPresenceGrain.OpenFurnitureInventoryAsync` (`Turbo.Players/Grains/Modules/PlayerInventoryModule.cs`) fetches all item snapshots from the grain and **fragments** them into `FurniListEventMessageComposer` packets, sized by a config value (`PlayerPresenceConfig.FurniInventoryFragmentSize` — no longer a hardcoded 100, per `CONSOLIDATION.md`).
 
 ### Placing Furniture
 
-```
-Client                                          Server
-  │                                                │
-  │  [User drags lamp from inventory to room]      │
-  │                                                │
-  │──── PlaceObjectMessageComposer ───────────────>│  itemId, x, y, direction
-  │                                                │
-  │  [Server validates:]                           │
-  │  [  - User owns item]                          │
-  │  [  - Has room rights]                         │
-  │  [  - Tile is valid and stackable]             │
-  │  [  - Calculates Z height (stacking)]          │
-  │                                                │
-  │<─── ObjectUpdateMessageComposer (3776) ───────────│  Full item data at placed position
-  │     (broadcast to room)                        │
-  │                                                │
-  │<─── FurniListRemoveMessageComposer (159) ────────│  Remove item from inventory display
-  │     (sent only to placing user)                │
-  │                                                │
-```
+Real flow, a clean two-grain cross-call matching the "one grain per responsibility" rule in `CONTEXT.md`:
 
-### Picking Up Furniture
+1. `IInventoryGrain.GetItemSnapshotAsync(itemId)` on the **player's** inventory grain — validates ownership/product type.
+2. `IRoomGrain.PlaceFloorItemAsync`/`PlaceWallItemInRoomAsync` on the **room's** grain — the actual world-state mutation, gated by `RoomSecurityModule.CanPlaceFurniAsync`.
 
-```
-Client                                          Server
-  │                                                │
-  │──── ObjectRemoveMessageComposer (2703) ───────>│  itemId
-  │                                                │
-  │  [Server removes item from room]               │
-  │  [Adds item back to user inventory]            │
-  │                                                │
-  │<─── RemoveFloorItemComposer ──────────────────│  itemId (broadcast: remove from room view)
-  │<─── InventoryAddItemComposer ─────────────────│  item data (to owner: add to inventory)
-  │                                                │
-```
+Handler: `Turbo.PacketHandlers/Room/Engine/PlaceObjectMessageHandler.cs` (parses wall vs. floor coordinate strings) → `IRoomService.PlaceFloorItemInRoomAsync`/`PlaceWallItemInRoomAsync` (`Turbo.Rooms/RoomService.Floor.cs`/`.Wall.cs`).
+
+The place/move/pickup/use core furniture loop is complete for the literal verbs (`ROADMAP.md` Epic 1: "100%"); peripheral extras (gift/mystery-trophy consumables, dimmer, mannequin figure display, YouTube display furni, rent/buyout flows, bot placement, pet mounting UX) remain partial — the underlying furniture stuff-data types (`Turbo.Furniture/StuffData/*.cs`) exist, the surrounding UX flows for some of them don't.
 
 ---
 
 ## 11. Navigator
 
-### Searching for Rooms
+Core classes: `Turbo.Navigator/NavigatorService.cs` (`INavigatorService`), `Turbo.Navigator/NavigatorProvider.cs` (`INavigatorProvider`, DB-backed cache).
 
-```
-Client                                          Server
-  │                                                │
-  │  [User opens navigator]                        │
-  │                                                │
-  │──── NewNavigatorSearchComposer ───────────────>│  category="hotel_view", filter=""
-  │                                                │
-  │<─── NavigatorSearchResultSetComposer ─────────│  List of result blocks:
-  │                                                │  [{category, rooms: [{id, name, owner,
-  │                                                │    userCount, maxUsers, description}]}]
-  │                                                │
-  │  [Client renders room list with user counts]   │
-  │                                                │
-  │  [User types "chill" in search box]            │
-  │                                                │
-  │──── NewNavigatorSearchComposer ───────────────>│  category="hotel_view", filter="chill"
-  │                                                │
-  │<─── NavigatorSearchResultSetComposer ─────────│  Filtered results
-  │                                                │
-```
+Categories and quick-links are **entirely data-driven**, not one-hardcoded-handler-per-feature: `NavigatorProvider.ReloadAsync` loads `NavigatorTopLevelContextEntity`/`NavigatorFlatCategoryEntity` rows, each carrying a `SearchCode` string mapped to a `NavigatorQueryType` enum value via a dictionary built from that DB data. `NavigatorService.FetchRoomsAsync` dispatches on the resolved query type:
 
-### Room Categories
+- `MyRooms` → rooms owned by the player.
+- `MyFavorites` → joins `PlayerFavouriteRooms`.
+- `ByFlatCategory` → category-filtered.
+- `RoomAds` → advertised rooms.
+- default (covers "official"/"popular"/anything else unmapped) → all rooms, **sorted by live population** (`OrderByDescending(x => x.UsersNow)`) — there is no separate "official rooms" curation list or "popularity" scoring algorithm; `Score`/`Ranking` fields are hardcoded to 0 in the underlying query extension.
 
-The navigator organizes rooms into categories loaded at server startup:
-- **Official Rooms** — Server-owned public rooms
-- **Popular Rooms** — Highest current user count
-- **My Rooms** — Rooms owned by the user
-- **My Favorites** — User's bookmarked rooms
-- **My Friends' Rooms** — Rooms where friends are online
-- **Rooms with Groups** — Guild-associated rooms
-- **Promoted Rooms** — Rooms with active events
+`GetRoomsByTagAsync` is a stub returning an empty list — tag search does not work. "My rooms"/favorites/search/room creation (`NewNavigatorInitMessageHandler`, `NewNavigatorSearchMessageHandler`, `CreateFlatMessageHandler`, `GetGuestRoomMessageHandler`) are real. `ROADMAP.md` puts `NewNavigator` at 100% and the legacy `Navigator` handler set at ~64% (the remaining stubs are peripheral: room-events, room-ads-catalog tie-in, staff-pick/tags/popular-tags/home-room/rate-flat).
 
 ---
 
 ## 12. Messenger and Friends
 
-### Friend Request Flow
+No separate "Messenger" project — it's a set of grains on **`Turbo.Players/Grains/`**, split by concern:
 
-```
-Client                                          Server
-  │                                                │
-  │──── RequestBuddyMessageComposer ──────────────>│  targetUsername="Bob"
-  │                                                │
-  │  [Server creates pending request in DB]        │
-  │                                                │
-  │  [If Bob is online:]                           │
-  │  ────────────────────── Bob's Client ──────────│
-  │                    FriendRequestComposer ──────>│  "Alice wants to be friends"
-  │                                                │
-  │  [Bob clicks Accept]                           │
-  │                                                │
-  │  Bob ── AcceptBuddyMessageComposer ───────────>│  requesterId=Alice.id
-  │                                                │
-  │  [Server creates friend relationship in DB]    │
-  │                                                │
-  │<─── FriendListUpdateComposer ─────────────────│  Bob added to Alice's friend list
-  │  Bob <── FriendListUpdateComposer ────────────│  Alice added to Bob's friend list
-  │                                                │
-```
+- `MessengerGrain.cs` — lifecycle/hydration, per-player grain.
+- `MessengerGrain.Friends.cs` — friend list, requests, accept/decline, blocking.
+- `MessengerGrain.Messaging.cs` — instant messages, including an **offline delivery queue**: undelivered `MessengerMessageEntity` rows are read and flushed on a timer (the same "queue dirty state, flush via `RegisterGrainTimer`, flush on deactivate" pattern used elsewhere for housekeeping writes).
+- `MessengerGrain.Presence.cs` — online/offline fan-out to friends.
 
-### Private Messaging
-
-```
-Client                                          Server
-  │                                                │
-  │──── SendMsgMessageEvent (3567) ────────────────>│  friendId=42, message="Hey!"
-  │                                                │
-  │  [Server validates friendship exists]          │
-  │  [Logs message to database]                    │
-  │                                                │
-  │  [If friend online:]                           │
-  │  ──── NewConsoleMessageComposer ──────────────>│  Friend's client receives message
-  │                                                │
-  │  [If friend offline:]                          │
-  │  [  Message stored, delivered on next login]   │
-  │                                                │
-```
-
-### Online Status
-
-When a user logs in or out, the server notifies all online friends:
-
-```java
-// On login:
-for (MessengerBuddy buddy : habbo.getMessenger().getFriends().values()) {
-    Habbo friend = Emulator.getGameEnvironment().getHabboManager().getHabbo(buddy.getId());
-    if (friend != null) {
-        friend.getClient().sendResponse(new FriendListUpdateComposer(habbo));  // "Alice is now online"
-    }
-}
-```
+All the expected handlers exist and are real (not stubs): friend request/accept/decline/remove, friend-request list, messenger init, send/get message history, follow-friend, room invites, Habbo search, relationship status, visit-user. `ROADMAP.md` lists Epic 5 ("Social") as **Partial** overall, but friends/messenger specifically are the functionally-complete part of that epic.
 
 ---
 
-## 13. Trading
+## 13. Trading and Marketplace
 
-### Trade Flow
+These are **two entirely separate systems** — treat them as unrelated features, not two names for the same thing.
 
-```
-Client                                          Server
-  │                                                │
-  │  [Alice clicks Bob's avatar → Trade]           │
-  │                                                │
-  │──── OpenTradingComposer ──────────────────────>│  targetUserId=Bob.id
-  │                                                │
-  │  [Server validates: both in room, trades allowed, not self-trade]
-  │  [Creates RoomTrade instance]                  │
-  │                                                │
-  │<─── TradingOpenComposer ──────────────────────│  Trade window opens (both users)
-  │  Bob <── TradingOpenComposer ─────────────────│
-  │                                                │
-  │  [Alice offers items]                          │
-  │──── TradingOfferItemComposer ─────────────────>│  itemId
-  │                                                │
-  │<─── TradingItemListComposer ──────────────────│  Updated offer lists (both users)
-  │  Bob <── TradingItemListComposer ─────────────│
-  │                                                │
-  │  [Both users click Accept]                     │
-  │──── TradingAcceptComposer ────────────────────>│
-  │  Bob ── TradingAcceptComposer ────────────────>│
-  │                                                │
-  │<─── TradingAcceptComposer ────────────────────│  Show accept status
-  │                                                │
-  │  [Both users click Confirm]                    │
-  │──── TradingConfirmComposer ───────────────────>│
-  │  Bob ── TradingConfirmComposer ───────────────>│
-  │                                                │
-  │  [Server executes trade:]                      │
-  │  [  - Transfer items in database]              │
-  │  [  - Update both inventories]                 │
-  │  [  - Log trade for moderation]                │
-  │                                                │
-  │<─── TradingCompleteComposer ──────────────────│  Trade successful
-  │  Bob <── TradingCompleteComposer ─────────────│
-  │<─── InventoryRefreshComposer ─────────────────│  Refresh inventory
-  │  Bob <── InventoryRefreshComposer ────────────│
-  │                                                │
+### Trading (classic two-player room exchange) — Does Not Exist
+
+Every handler under `Turbo.PacketHandlers/Inventory/Trading/` is a **100% empty stub**:
+
+```csharp
+// e.g. OpenTradingMessageHandler.cs, AddItemToTradeMessageHandler.cs, and 8 others
+public async ValueTask HandleAsync(...) { await ValueTask.CompletedTask.ConfigureAwait(false); }
 ```
 
-### Trade Safety
+Confirmed by `TODO.md` ("Trading … are stubs"), `ROADMAP.md` (Epic 6: **Stub**), and `DATA-MODEL.md` §7 (describes the *intended*, not-yet-built design: a transient offer/lock/confirmation flow, no persistent state table). One related piece already exists ahead of the feature itself: `ModTradingLockMessageHandler.cs` lets staff lock a user's trading ability, even though trading itself can't be used yet.
 
-The server enforces:
-- Both users must be in the same room
-- Both must have trading enabled (not trade-banned)
-- Items must exist in the offerer's inventory
-- Double-confirm prevents accidental trades
-- All trades are logged for moderation review
+### Marketplace (async listing/auction) — Real and Working
+
+`Turbo.Marketplace/Grains/MarketplacePurchaseGrain.cs` (`IMarketplacePurchaseGrain`): `MakeOfferAsync(itemId, price)` validates ownership via the seller's `InventoryGrain`, takes a flat commission (`COMMISSION_PERCENT = 1`), and lists for a fixed `OFFER_DURATION` (3 days). `BuyOfferAsync` atomically claims the offer (`ExecuteUpdate` guarded on `State == Active`) and re-lists it if the inventory grant fails after payment — closing a real "sold but ungranted" bug (`CONSOLIDATION.md` R6). `MarketplaceSearchGrain` handles search/stats queries. Handlers: `Turbo.PacketHandlers/Marketplace/*` (`MakeOfferMessageHandler`, `GetMarketplaceOffersMessageHandler`, `BuyMarketplaceOfferMessageHandler`, `CancelMarketplaceOfferMessageHandler`, `GetMarketplaceItemStatsMessageHandler`, `RedeemMarketplaceOfferCreditsMessageHandler`, `BuyMarketplaceTokensMessageHandler`).
+
+In short: **Marketplace** = list an item for sale, any other player buys it asynchronously, no direct negotiation. **Trading** = synchronous two-player item-for-item exchange in a room — unimplemented.
 
 ---
 
 ## 14. Groups and Guilds
 
-### Creating a Guild
+Fully implemented — a real subsystem, not a stub. Lives in `Turbo.Players/Grains/`:
 
-```
-Client                                          Server
-  │                                                │
-  │──── CreateGuildMessageComposer ───────────────>│  name, description, roomId, colorA, colorB, badgeParts
-  │                                                │
-  │  [Server validates:]                           │
-  │  [  - User owns the room]                      │
-  │  [  - Room not already assigned to a guild]    │
-  │  [  - User can afford guild creation cost]     │
-  │                                                │
-  │  [Creates guild in database]                   │
-  │  [Sets user as guild admin]                    │
-  │  [Assigns room to guild]                       │
-  │                                                │
-  │<─── GuildCreatedComposer ─────────────────────│  guildId
-  │<─── GuildInfoComposer ────────────────────────│  Full guild details
-  │                                                │
-```
+- `GroupDirectoryGrain.cs` (singleton grain) — creation wizard data, **group creation** (validates room ownership, room-not-already-a-guild-base, publishes a cancellable `GroupCreatingEvent`, debits creation cost via `IPlayerWalletGrain.TryDebitAsync`, creates the group + enrolls the owner as admin, publishes `GroupCreatedEvent`), memberships, favouriting, badge editor data, forums listing.
+- `GroupGrain.cs` — per-group member management; `AdminOnlyDecoration`/`MembersCanDecorate` are real DB-backed columns (re-verified per `CONSOLIDATION.md` P2, not hardcoded).
+- `GroupForumGrain.cs` — thread/post CRUD, config-bound page-size caps.
+- Badge system: part/color/position triples assembled into a badge code (`GuildBadgeLibrary`, `GroupBadgePartProvider`).
+- A real production event hook, `GroupNameValidationBehavior` (`IEventBehavior<GroupCreatingEvent>`), rejects empty/too-long guild names — proof the event-behavior extension point (`Turbo.Events`) is exercised in production, not just scaffolding.
 
-### Guild Badges
-
-Guild badges are composed from parts selected during creation. The badge string is stored on
-the server and sent to the client for rendering. The client has embedded badge part assets
-and composes them into the final badge image.
+DB: `DATA-MODEL.md` §2 labels Groups **IMPLEMENTED** (migration `20260619035829_AddGroups.cs` onward — tables `groups`, `group_members`, `group_membership_requests`, `group_forum_settings`, `group_forum_threads`, `group_forum_posts`). Known gaps: unread-forum-post counts aren't persisted (always reports 0, documented inline as a deliberate simplification); `CanChangeSettings`/`IsStaff` forum fields are hardcoded `false`; real `isGroupRoom`/`canGroupDecorate` wiring into `RoomSecurityModule` is still open (`ROADMAP.md` Epic 2.2).
 
 ---
 
@@ -1080,469 +645,251 @@ and composes them into the final badge image.
 
 ### Figure String
 
-Avatars are represented as a **figure string** — a dot-separated list of body part codes:
+Same format as classic Habbo — a dot-separated list of part codes, each `<part>-<type>-<color>`:
 
 ```
 hd-180-1.ch-255-92.lg-285-82.sh-290-92.hr-100-61.ha-1003-92
-│         │         │         │         │         │
-│         │         │         │         │         └─ Hair accessory
-│         │         │         │         └─ Hair
-│         │         │         └─ Shoes
-│         │         └─ Legs
-│         └─ Chest/torso
-└─ Head
 ```
 
-Each segment: `<part>-<type>-<color>`
+### Server-Side Handling
 
-### Avatar Rendering
+`UpdateFigureDataMessageHandler` (`Turbo.PacketHandlers/Register/`) → `IPlayerGrain.SetFigureAsync(figure, gender)` in `Turbo.Players/Grains/PlayerGrain.cs`. This method **stores the raw figure string verbatim, with zero server-side validation** — no check on part ownership, valid part/color combinations, or gender-appropriateness anywhere in the repo (confirmed by grep: no `ValidateFigure`/`FigureValidator`-shaped call exists at all). After persisting, it notifies `PlayerPresenceGrain.OnFigureUpdatedAsync`, which sends `FigureUpdateEventMessageComposer` to the owning client and broadcasts `UserChangeMessageComposer` (figure + gender + motto + achievement score) to the player's current room.
 
-**Server:** Stores figure strings in database. Sends them in `UsersMessageComposer` and user
-info packets. Never renders avatars — only stores and transmits the string.
+This confirms the expected division of responsibility: **the server never renders or interprets figure/avatar visuals** — it's a string that gets stored and relayed; all rendering is 100% client-side (`AvatarRenderManager.as` and friends in vortex-client). The lack of any server-side figure validation is a real, if deliberate-looking, gap worth knowing about if reasoning about trust boundaries.
 
-**Client:** The `AvatarRenderManager` and `AvatarAssetDownloadManager` handle rendering:
-1. Parse figure string into body parts
-2. Load required SWF assets (`hh_human_body.swf`, clothing SWFs)
-3. Compose sprites for each body part, direction (8 directions), and animation frame
-4. Layer sprites in correct Z-order
-5. Cache rendered BitmapData for reuse
-
-### Avatar Editor
-
-```
-Client                                          Server
-  │                                                │
-  │  [User opens avatar editor]                    │
-  │  [Modifies look locally — client-side preview] │
-  │  [Clicks Save]                                 │
-  │                                                │
-  │──── UpdateFigureDataMessageEvent (2730) ────────>│  newFigure="hd-180-1.ch-...", gender="M"
-  │                                                │
-  │  [Server validates figure string]              │
-  │  [Updates database]                            │
-  │  [If in room: broadcasts to room]              │
-  │                                                │
-  │<─── UserChangeComposer ───────────────────────│  Updated figure (broadcast to room)
-  │                                                │
-```
+Related, separate: `SetMannequinFigureMessageHandler` (a furniture-level figure string, same no-validation story), avatar-effect activation/selection handlers (a full effects subsystem is deliberately deferred — see §20 for the same deferral pattern with achievements).
 
 ---
 
 ## 16. Moderation
 
-### Reporting a User
+Real and, per `ROADMAP.md` Epic 2.3, **"Done (2026-07-05)"** for the core loop:
 
-```
-Client                                          Server
-  │                                                │
-  │──── CallForHelpMessageComposer ───────────────>│  category, reportedUserId, roomId, chatMessages[]
-  │                                                │
-  │  [Server creates ModToolIssue]                 │
-  │  [Stores in ticket queue]                      │
-  │  [Notifies online moderators]                  │
-  │                                                │
-  │  Moderator <── ModToolIssueInfoComposer ──────│  New ticket notification
-  │                                                │
-  │  [Moderator reviews and takes action]          │
-  │  Mod ── ModToolSanctionComposer ──────────────>│  userId, sanctionType, duration
-  │                                                │
-  │  [Server applies sanction: mute/ban/kick]      │
-  │  [If kicked:]                                  │
-  │  Target <── GenericErrorComposer ─────────────│  "You have been kicked"
-  │  [Server closes target's connection]           │
-  │                                                │
-```
+- All 24 files under `Turbo.PacketHandlers/Moderator/` are real handlers, gated by `Capabilities.Moderation.*` permission checks (`IPermissionService`).
+- **Bans**: `ModBanMessageHandler` resolves a `SanctionPresetSnapshot` (real DB-backed `SanctionPresetEntity`), computes ban duration (or permanent), calls `IPlayerGrain.ApplyAccountBanAsync`, force-disconnects the live session via `ISessionGateway`, and sends `UserBannedMessageComposer`. Every action goes through `ModToolActionHelper.IsAuthorizedAsync` (a staff member can't sanction someone of equal or higher rank) and emits an audit event.
+- **Mutes/kicks/alerts/trading-locks**: `ModMuteMessageHandler`, `ModKickMessageHandler`, `ModAlertMessageHandler`, `ModTradingLockMessageHandler` — same authorization pattern.
+- **CFH (Call For Help) ticket system**: real DB entities (`CfhTicketEntity`, `CfhTopicEntity`). Full lifecycle: player-side report (`CallForHelpMessageHandler`, `GetCfhStatusMessageHandler`) and staff pick/close/default-sanction (`PickIssuesMessageHandler`, `CloseIssuesMessageHandler`, `ReleaseIssuesMessageHandler`, `CloseIssueDefaultActionMessageHandler`, `DefaultSanctionMessageHandler`, `GetCfhChatlogMessageHandler`).
+- **Chat/room-visit logs**: `GetRoomChatlogMessageHandler`, `GetUserChatlogMessageHandler`, `GetRoomVisitsMessageHandler` — backed by real room-entry logging.
+- Moderation is orchestrated at the **service/handler level** (`ISanctionPresetService`, direct grain calls) — there is no dedicated `ModerationGrain`/`CfhGrain`.
 
-### Moderation Tools
-
-The mod tool system provides moderators with:
-
-| Feature          | Packets Involved                                              |
-|------------------|---------------------------------------------------------------|
-| **Chat logs**    | `ModToolRoomChatlogComposer`, `ModToolUserChatlogComposer`    |
-| **User info**    | `ModToolUserInfoComposer` (IP, registration date, bans, etc.) |
-| **Room info**    | `ModToolRoomInfoComposer`                                     |
-| **Ticket queue** | `ModToolIssueInfoComposer`, `ModToolIssueHandlerComposer`     |
-| **Sanctions**    | Mute, kick, ban (IP/machine/account), trade lock              |
-| **Room admin**   | Lock room, kick all users, change settings                    |
+Not yet done: `ModToolPreferencesMessageHandler` (cosmetic, per-staff window geometry), moderator room/user-info lookups, room-wide staff broadcast tools (`ModerateRoomMessageHandler`/`ModeratorActionMessageHandler`/`ModMessageMessageHandler`) — none block the core ban/mute/CFH loop.
 
 ---
 
 ## 17. WIRED
 
-WIRED is the in-game visual programming system. Players place special furniture items that
-act as triggers, conditions, and effects to create interactive room experiences.
+Real and extensive — this is one of the more sophisticated subsystems in the codebase, implemented as `Turbo.Rooms/Grains/Systems/RoomWiredSystem.cs` plus ~90 `RoomObjectLogic` subclasses under `Turbo.Rooms/Object/Logic/Furniture/Floor/Wired/**`.
 
-### How WIRED Works Across Client and Server
+### Shape
 
-```
-Client                                          Server
-  │                                                │
-  │  [Room owner places WIRED trigger on tile]     │
-  │  [Double-clicks to configure]                  │
-  │                                                │
-  │──── WiredTriggerSaveDataComposer ─────────────>│  triggerId, config (delay, params)
-  │                                                │
-  │  [Server stores WIRED configuration]           │
-  │                                                │
-  │  [Later: a user walks on the trigger tile]     │
-  │                                                │
-  │  [Server evaluates WIRED chain:]               │
-  │  [  1. Trigger fires (user walked on tile)]    │
-  │  [  2. Check conditions (is it nighttime?)]    │
-  │  [  3. Execute effects (teleport user)]        │
-  │                                                │
-  │<─── RoomUserStatusComposer ───────────────────│  User teleported to new position
-  │     (broadcast to room)                        │
-  │                                                │
-```
+Six kinds, all registered under `wf_*`-prefixed logic keys (matching modern-client wired codes, not classic 1.0 wired):
 
-**WIRED types:**
+| Kind | Leaf count | Examples |
+|---|---|---|
+| Triggers | 22 | click furni/tile, walk on/off, Habbo says keyword, collision, join/leave room, at-time, periodically, score achieved, game starts/ends, bot reaches habbo/item, receive signal, variable changed, item state updated, counter reaches time |
+| Conditions | 30 (incl. `Negative*` variants) | furni state/type match, habbo has effect/handitem/badge, group membership, team rank/score, room user count, timer more/less-than |
+| Selectors | 21 | by type/name/action/area/neighborhood/group/team/signal/on-item/with-variable/with-handitem, remote/selected selection |
+| Addons | 8 | execution limit, random actions, unseen actions, movement physics, carry users, animation time controls, OR-mode condition evaluation |
+| **Actions** | **only 4 implemented** (`ChaseHabbo`, `GiveVariable`, `MoveRotateFurni`, `ToggleItemState`) against a `WiredActionType` enum defining **44** codes (teleport, kick, mute, give score, bot teleport/move/talk/follow, move-furni-to-user, freeze user, and more) | — |
+| Variables | — | durable, cross-item: `wf_var_user`/`_room`/`_furni`/`_quest`/`_quest_chain`/`_reference`/`_context` |
 
-| Category       | Examples                                                                   |
-|----------------|----------------------------------------------------------------------------|
-| **Triggers**   | User walks on tile, user says keyword, item state changes, timer fires     |
-| **Conditions** | User has badge, time between X-Y, user count in room, furni has state      |
-| **Effects**    | Teleport user, toggle furniture, give reward, show message, move furniture |
+**The real, precise gap: only 4 of 44 `WiredActionType` values have a working implementation.** Triggers/conditions/selectors/addons/variables are comparatively complete — actions are the bottleneck.
 
-All WIRED logic runs server-side. The client only provides the configuration UI and renders
-the results of WIRED actions (which arrive as normal room update packets).
+### Evaluation Engine
+
+Each room has a tile-stack index rebuilt lazily when marked dirty. Every `WiredTickMs` (50ms) boundary: dequeue a budgeted number of room events (`WiredMaxEventsPerTick` = 64) → match triggers by supported event type → run selectors → run addons → evaluate conditions (`None`/`Any`/`All` mode) → if the trigger fires, **schedule** (not immediately run) the action chain on a priority-queue-based scheduler (supports per-action delays, `WiredMaxScheduledPerTick` = 64 budget/tick) → execute in order, honoring each action's configured delay and rescheduling mid-chain if needed. `WiredEffectModeType` controls how many actions in the stack actually fire (`FirstOnly`/`Random`/all).
+
+This delay-aware, budgeted, dirty-tracked scheduler is a meaningfully more sophisticated engine than a classic synchronous wired-stack executor.
+
+### Persistence
+
+Wired configuration (selected items, params, variable ids) is stored per-item as JSON (`ExtraDataSectionType.WIRED`), classified `Persistent` — it survives room unload/reboot. Only the ephemeral "already triggered this window" counters live in in-memory `RoomWiredSystem` state.
 
 ---
 
 ## 18. Pets and Bots
 
-### Pets
+### Pets — Fully Implemented
 
-```
-Client                                          Server
-  │                                                │
-  │  [User places pet from inventory]              │
-  │                                                │
-  │──── PlacePetMessageComposer ──────────────────>│  petId, x, y
-  │                                                │
-  │  [Server creates pet RoomUnit]                 │
-  │                                                │
-  │<─── UsersMessageComposer ────────────────────────│  Pet appears as room unit (type=2)
-  │     (broadcast to room)                        │
-  │                                                │
-  │  [Pet moves autonomously via server AI]        │
-  │  [Server sends position updates each cycle]    │
-  │                                                │
-  │<─── RoomUserStatusComposer ───────────────────│  Pet movement updates
-  │                                                │
-```
+`RoomPetSystem` (`Turbo.Rooms/Grains/Systems/RoomPetSystem*.cs`, split into `.Placement`/`.Motion`/`.Care`/`.Breeding` partials) is a **room-scoped system, deliberately not a separate grain** — `PETS-DESIGN.md` explains the rationale directly: pets need continuous access to room-state for navigation, and a separate `PetGrain` would add a cross-grain-call round trip on every movement step. It reuses the same `RoomPathingSystem` A* as avatars, and runs its own needs-driven state machine (Idle → Wander → Hungry → Eat → Sleep → Command) with nutrition/energy decay over real time, XP/leveling, and learned commands.
 
-Pets have server-side AI that handles:
-- Random wandering within the room
-- Responding to owner commands (sit, stay, follow)
-- Energy/happiness/experience systems
-- Breeding (two pets of same type produce offspring)
+Backed by real DB entities (`PetEntity`, `PetFoodEntity`, `PetCommandEntity`, `PetLevelEntity`, `PetPaletteEntity`) with a substantial migration history (breeding fields, monsterplant fields, energy/max-uses). Handlers cover placement, feeding, commands, riding/mounting, breeding, respect. `ROADMAP.md` marks "Room/Pets: 100%". Pet position writes deliberately ride the existing dirty-flush timer rather than writing on every move (a real optimization, `CONSOLIDATION.md` O5) — but `CONSOLIDATION.md` also flags most of `RoomPetSystem`'s logic beyond feeding as having no test coverage yet.
 
-### Bots
+### Bots — Do Not Exist
 
-Bots are similar to pets but are simpler NPCs:
-- Room owner places them
-- Can be configured with chat lines (server sends them periodically)
-- Walk on configurable paths
-- Serve as decorative or interactive elements
+`DATA-MODEL.md` §5 explicitly heads this "**Bots — TO CREATE**" — no `BotEntity`, no migration, no bot AI anywhere. What exists is purely the **wire protocol surface**: message classes (`PlaceBotMessage`, `CommandBotMessage`, `RemoveBotFromFlatMessage`, etc.) and their parsers/serializers — inherited from the protocol/revision definitions, not built out. Every handler is a genuine no-op, identical in shape to the Trading stubs in §13. `GetBotInventoryMessageHandler` truthfully returns an empty inventory rather than faking data. Do not describe bots as a working feature anywhere derived from this doc.
 
 ---
 
 ## 19. Games
 
-### SnowStorm (and other minigames)
-
-The server supports in-room games like SnowStorm, Freeze, and BattleBall:
-
-```
-Client                                          Server
-  │                                                │
-  │  [User clicks game start tile]                 │
-  │                                                │
-  │──── GameStartComposer ────────────────────────>│  gameType
-  │                                                │
-  │  [Server creates Game instance]                │
-  │  [Assigns teams, initializes state]            │
-  │                                                │
-  │<─── GameStartedComposer ──────────────────────│  Game parameters, teams
-  │                                                │
-  │  [Game runs on server tick cycle]              │
-  │  [Player actions → game state updates]         │
-  │                                                │
-  │<─── GameStatusComposer ───────────────────────│  Score updates, effects
-  │                                                │
-  │  [Game ends]                                   │
-  │                                                │
-  │<─── GameEndedComposer ────────────────────────│  Final scores, winners
-  │                                                │
-```
-
-Game logic is entirely server-authoritative. The client renders game state and sends player
-inputs (movement, actions).
+No `Turbo.Games` project exists in the solution at all (confirmed against the full 28-project `.sln` list). The entire `Turbo.PacketHandlers/Game/{Arena,Directory,Ingame,Lobby,Score}/*Handler.cs` tree — game-directory join/leave/status, arena chat/exit/play-again, in-game snowball throw/move/status, leaderboard queries — is **100% no-op protocol stubs**, inherited purely from the revision's parser/serializer scaffolding (`Turbo.Revisions/.../Parsers/Game/**`). There is no game-room grain, no team/score state, no collision logic, no lobby matchmaking. This was never scheduled work (not even listed as an epic in `ROADMAP.md`) — treat SnowStorm/Freeze/BattleBall-style minigames as entirely unbuilt, not "partially built."
 
 ---
 
 ## 20. Achievements
 
-### Achievement Progress
-
-```
-Client                                          Server
-  │                                                │
-  │  [User performs an action that counts toward    │
-  │   an achievement (e.g., "Chat 100 times")]     │
-  │                                                │
-  │  [Server increments achievement progress]      │
-  │                                                │
-  │  [If threshold reached:]                       │
-  │<─── AchievementUnlockedComposer ──────────────│  Achievement details, badge earned
-  │                                                │
-  │  [Client shows achievement popup]              │
-  │                                                │
-  │  [User opens achievements panel]               │
-  │                                                │
-  │──── RequestAchievementsComposer ──────────────>│
-  │                                                │
-  │<─── AchievementsComposer ─────────────────────│  All achievements with progress
-  │                                                │
-```
-
-Achievement definitions are loaded from the database at server startup. Progress is tracked
-per-user in the `achievements` table. The server increments progress automatically when
-relevant events occur (chat, login, room visits, etc.).
+Does not exist as a system. `Inventory/Achievements/GetAchievementsMessageHandler.cs` is a fully empty stub (same no-op shape as Trading/Bots/Games). `PlayerGrain.cs` **hardcodes `AchievementScore = 0`** on every login — that field is read/serialized in several places (`PlayerSummarySnapshot`, `UserChangeMessageComposer`, extended profile) but never incremented anywhere in the codebase. No `AchievementEntity`, no progress-tracking grain or logic exists. `ROADMAP.md` Story 4.1 explicitly defers this: *"Achievements and Avatar Effects both need a full subsystem (DB entity + grain + progress logic) built from zero, not just wiring."* Badge-request handlers (`RequestABadgeMessageHandler`, `GetIsBadgeRequestFulfilledMessageHandler`) truthfully always report "not fulfilled" for exactly this reason — a greenfield gap, not a bug to fix in existing code.
 
 ---
 
 ## 21. Packet Alignment Audit
 
-This section documents the protocol alignment between the server's `Outgoing.java` (503+
-constants) and the client's `HabboMessages.as` (501 `INCOMING_PACKETS` entries).
+This section replaces the old draft's fabricated Arcturus-vs-client numbers with a real diff, generated by parsing `Turbo.Revisions/Revision20260112/Headers.cs` (`MessageEvent`/`MessageComposer` constants) against `vortex-client/src/com/sulake/habbo/communication/HabboMessages.as` (`_composers`/`_events` registration maps), matched by numeric header id per direction.
 
 ### Summary
 
-| Category                                     | Count |
-|----------------------------------------------|-------|
-| Shared headers (working correctly)           | 465+  |
-| Server headers not in client (dropped)       | 5     |
-| Client headers not in server (unimplemented) | 27    |
-| Unused `Outgoing` constants (dead code)      | 61    |
-| Confirmed semantic mismatches                | 1     |
-| Hardcoded header bypassing constant          | 1     |
-| Naming-only mismatches (functionally OK)     | ~10   |
+| Direction | Turbo entries | Client entries | Shared ids | Turbo-only | Client-only |
+|---|---|---|---|---|---|
+| Client → Server (`MessageEvent` vs. client `_composers`) | 525 | 471 | 430 | 95 | 41 |
+| Server → Client (`MessageComposer` vs. client `_events`) | 538 | 479 | 460 | 78 | 19 |
 
-### Confirmed Semantic Mismatch: OneWayGate
+Of the 430 shared client→server ids, 419 have clearly-matching class-name stems on both sides (high confidence they're the same logical packet); 11 have same-id-but-different-looking names and are worth double-checking before relying on them. Of the 460 shared server→client ids, 457 match cleanly and 3 look mismatched.
 
-`InteractionOneWayGate.java` sends `ItemIntStateComposer` (header 3431), which the client
-routes to `DiceValueMessageEvent` → `onDiceValue()`. The correct header is 2376
-(`ItemStateComposer`), which routes to `OneWayDoorStatusMessageEvent`. Both handlers call
-identical code, so it works by accident, but the routing is semantically wrong.
+### "Turbo-only" and "Client-only" — mostly explained by feature scope, not bugs
 
-### Dropped Packets (Server Sends, Client Ignores)
+The bulk of the "Turbo-only" ids on both sides are packets for features vortex-client's build genuinely doesn't send/expect at all: NFT/collectibles (`ClaimNftClaimsMessageEvent`, `GetNftCreditsMessageEvent`, ...), the treasure-hunt/seasonal-quest system, marketplace tokens, and — on the server→client side — packets for features described elsewhere in this doc as unimplemented-but-protocol-scaffolded (`WiredFurniSelectorComposer`, `FurniListRemoveMultipleComposer`, `BlockListMessageComposer`, `LtdRaffleResultMessageComposer`, etc. — several of these correspond to real Turbo features whose composer just isn't in this particular client build's registry, which is a client-coverage gap rather than a protocol bug).
 
-| Header | Server Constant                       | Issue                                                               |
-|--------|---------------------------------------|---------------------------------------------------------------------|
-| 2830   | `UpdateStackHeightTileHeightComposer` | Client has no handler — packet silently dropped                     |
-| 3786   | `RoomFloorThicknessUpdatedComposer`   | Client has no handler                                               |
-| 3128   | `UnknownTradeComposer` (misuse)       | Server sends this but client expects `TradingCompletedEvent` (1001) |
+The "Client-only" ids (client can send/expects to receive a packet with no Turbo counterpart at that id) are the more actionable half — these represent either client UI paths with literally no server handler (e.g. `SearchFaqsMessageComposer`, `GetWeeklyCompetitiveLeaderboardComposer`, `GetUserGameAchievementsMessageComposer`, `IgnoreUserIdMessageComposer`, `GetGiftMessageComposer`, `GiveStarGemToUserMessageComposer` — clicking these UI elements sends a packet the server silently drops as unknown, per `PackageHandler`'s "Incoming Unknown {Header}" warning-and-drop behavior) or client-expected server events that never arrive (`HotelMergeNameChangeEvent`, `AvailabilityTimeMessageEvent`, `CameraSnapshotMessageEvent`, `WeeklyCompetitiveLeaderboardEvent`, the whole FAQ-related event family, `BotReceivedMessageEvent` — several of these map directly onto features this doc already covers as unbuilt: FAQ system, weekly competitive leaderboards, camera, bots).
 
-### Unimplemented Client Features (27 headers)
+### Candidate Semantic Mismatches (same id, different-looking name — not yet manually verified)
 
-These are packet IDs the client expects but the server never sends. They represent newer
-Habbo features not yet implemented in Arcturus:
+These are **candidates for investigation**, not confirmed bugs — flagged by the diff's name-stem heuristic, not by reading both implementations side-by-side:
 
-- Camera/photo system (6 packets)
-- Crafting system updates (3 packets)
-- Competition/voting (3 packets)
-- Group forum enhancements (2 packets)
-- Targeted offers (2 packets)
-- Various UI features (11 packets)
+| Id | Direction | Turbo name | Client name |
+|---|---|---|---|
+| 991 | C→S | `SetMannequinFigureEvent` | `GetTargetedOfferComposer` |
+| 2932 | C→S | `ReleaseIssuesMessageEvent` | `GetHabboBasicMembershipExtendOfferComposer` |
+| 398 | S→C | `MarketplaceConfigurationComposer` | `RoomThumbnailUpdateResultEvent` |
+| 611 | S→C | `PostItPlacedComposer` | `CatalogPageExpirationEvent` |
+| 866 | S→C | `NavigatorSavedSearchesComposer` | `IsOfferGiftableMessageEvent` |
 
-### Notable Composer Issues
-
-| Composer                         | Header | Problem                                                                            |
-|----------------------------------|--------|------------------------------------------------------------------------------------|
-| `ObjectUpdateMessageComposer`    | 3776   | Always sends `usability=0` instead of correct interaction type                     |
-| `EffectsListAddMessageComposer`  | 2867   | Sends 4 fields; client expects 6 (missing `remainingQuantity`, `secondsRemaining`) |
-| `UserEffectsListMessageComposer` | 340    | Inverted time formula: sends `elapsed + duration` instead of `duration - elapsed`  |
+If any of these ids are ever hit in practice, the payload will misparse on one side or the other silently (no schema validation on this wire format — see §3/§6). A handful of the 11+3 total flagged mismatches are almost certainly false positives from naming-convention differences rather than real bugs (e.g. ids where both sides clearly describe the same feature but the name-stem heuristic didn't strip a differing prefix like `Get`/`Request`) — this table intentionally shows only the ones that look genuinely unrelated by name. Treat this whole section as a solid starting point for a focused audit, not an exhaustive, manually-verified bug list.
 
 ---
 
 ## 22. Configuration and Deployment
 
-### Server Configuration (`config.ini`)
+### Server Configuration
 
-```ini
-# Network
-game.host=0.0.0.0
-game.port=30000
-rcon.host=127.0.0.1
-rcon.port=30001
+Turbo uses the standard .NET configuration system (`appsettings.json` + environment variables prefixed `TURBO__`), not an `.ini` file. Key sections:
 
-# Database
-db.hostname=localhost
-db.port=3306
-db.database=habbo
-db.username=root
-db.password=secret
-db.params=?useSSL=false&serverTimezone=UTC
+```jsonc
+// Turbo:Networking
+{ "PingIntervalMilliseconds": 10000, "MaxPacketBodyBytes": 65536 }
 
-# Encryption (must match client's embedded RSA public key)
-enc.enabled=true
-enc.e=65537
-enc.n=<modulus matching client>
-enc.d=<private exponent>
+// Turbo:Crypto
+{ "KeySize": "<RSA public exponent hex>", "PublicKey": "<RSA modulus hex>",
+  "PrivateKey": "<RSA private exponent hex>", "EnableServerToClientEncryption": true }
 
-# Runtime
-runtime.threads=16
-console.mode=true
-debug.mode=false
+// Turbo:Database
+{ "ConnectionString": "...", "LoggingEnabled": false }
+
+// Turbo:Orleans
+{ "AdvertisedIp": "127.0.0.1", "SiloPort": 11111, "GatewayPort": 3000 }
+
+// Turbo:Rooms
+{ "RoomTickMs": 50, "AvatarTickMs": 500, /* ...see §7 for the full list... */ }
 ```
 
-### Client Configuration
+### RSA/DH Key Alignment
 
-The client receives its configuration through **SWF FlashVars** set by the web CMS:
-
-```html
-<param name="flashvars" value="
-  connection.info.host=127.0.0.1&
-  connection.info.port=30000&
-  sso.ticket=abc123def456&
-  url.prefix=http://localhost&
-  client.starting=Starting...&
-"/>
-```
-
-Additional configuration is loaded from XML files served by the web layer and from the
-server itself via configuration packets sent after login.
-
-### RSA Key Alignment
-
-The RSA keys must match between server and client:
-- **Server** stores `e`, `n`, `d` in `config.ini`
-- **Client** has `e`, `n` embedded in its SWF (in the `com/hurlant/crypto/rsa/` classes)
-- If these don't match, the DH handshake fails and encryption cannot be established
-
-To change keys, you must both update the server config AND recompile the client SWF with
-matching keys.
+Same requirement as any Habbo-derived protocol: the server's `Turbo:Crypto.PublicKey`/`KeySize` (modulus/exponent) must match whatever RSA public key is embedded in vortex-client's crypto classes, or the handshake in §4 fails at the signature-verification/encryption step.
 
 ### Database
 
-The server uses MySQL with ~200+ tables covering:
+EF Core with the **Pomelo MySQL** provider (`Turbo.Database/Extensions/ServiceCollectionExtensions.cs`, `UseMySql(...)`), accessed via `IDbContextFactory<TurboDbContext>` (factory pattern — a fresh, short-lived context per operation, not one long-lived scoped context). `Turbo.Database/Context/TurboDbContext.cs` exposes ~60 `DbSet<>`s, grouped by domain folder under `Entities/`:
 
-| Category     | Example Tables                                                     |
-|--------------|--------------------------------------------------------------------|
-| Users        | `users`, `users_settings`, `users_clothing`, `users_wardrobe`      |
-| Rooms        | `rooms`, `room_models`, `room_bans`, `room_rights`, `room_votes`   |
-| Items        | `items`, `items_base`, `items_crackable`, `items_highscores`       |
-| Catalog      | `catalog_pages`, `catalog_items`, `catalog_clothing`               |
-| Messenger    | `messenger_friendships`, `messenger_requests`, `messenger_offline` |
-| Guilds       | `guilds`, `guilds_members`, `guilds_elements`                      |
-| Moderation   | `bans`, `chat_logs`, `modtool_issues`, `sanctions`                 |
-| Achievements | `achievements`, `users_achievements`                               |
-| Pets         | `users_pets`, `pet_commands`, `pet_breeding`                       |
-| Misc         | `emulator_settings`, `permissions`, `wordfilter`                   |
+| Category | Example Tables |
+|----------|---------------|
+| Players/Auth | `PlayerEntity`, `PlayerAccountEntity`, `AccountBanEntity`, `SecurityTicketEntity`, `PlayerCurrencyEntity`, `PlayerBadgeEntity`, `PlayerKickbackEntity`, `PlayerSubscriptionEntity` |
+| Rooms | `RoomEntity`, `RoomModelEntity`, `RoomBanEntity`, `RoomMuteEntity`, `RoomRightEntity`, `RoomEntryLogEntity`, `RoomChatlogEntity` |
+| Furniture | `FurnitureDefinitionEntity`, `FurnitureEntity`, `FurnitureTeleportLinkEntity` |
+| Catalog/Economy | `CatalogPageEntity`, `CatalogOfferEntity`, `CurrencyTypeEntity`, `VoucherEntity`, `MarketplaceOfferEntity`, `EconomyLedgerEntity` |
+| Groups/Forums | `GroupEntity`, `GroupMemberEntity`, `GroupForumThreadEntity`, `GroupForumPostEntity` |
+| Moderation | `RoleEntity`, `RolePermissionEntity`, `SanctionPresetEntity`, `CfhTicketEntity` |
+| Navigator/Messenger | `NavigatorTopLevelContextEntity`, `PlayerFavoriteRoomsEntity`, `MessengerFriendEntity`, `MessengerMessageEntity` |
+| Pets | `PetEntity`, `PetCommandEntity`, `PetLevelEntity`, `PetPaletteEntity` |
 
-SQL migration scripts are stored in `sqlupdates/` tracking schema changes from version 1.0.0
-through 3.5.5.
+Notable relationship design: most FKs use `DeleteBehavior.Restrict`/`SetNull` rather than cascade (explicit per-relationship decisions, e.g. `GroupEntity`↔`RoomEntity` is modeled as two independent one-directional FKs rather than a true inverse pair, to avoid a MySQL cascade cycle).
 
 ---
 
 ## 23. Threading and Performance
 
-### Server Threading Model
+### Server Concurrency Model
+
+Turbo's concurrency model is **Orleans virtual actors**, not a Netty-style boss/worker thread-pool:
 
 ```
-Main Thread
-  └─ Emulator.main() → startup sequence
-
-Netty Boss Group (1 thread)
-  └─ Accepts TCP connections
-
-Netty Worker Group (CPU cores × 2 threads)
-  └─ Reads/writes socket data
-  └─ Decodes packets
-  └─ Routes to PacketManager
-
-ScheduledExecutorService (runtime.threads, default CPU × 2)
-  ├─ Packet handlers (if MULTI_THREADED_PACKET_HANDLING enabled)
-  ├─ Room cycle ticks (~500ms per room)
-  ├─ HabboStats persistence (periodic)
-  ├─ CreditsScheduler (periodic currency awards)
-  ├─ PixelScheduler (periodic ducket awards)
-  ├─ PointsScheduler (periodic diamond awards)
-  └─ Delayed tasks (WIRED delays, welcome messages, etc.)
-
-HikariCP Connection Pool (runtime.threads × 2 connections)
-  └─ MySQL queries from any thread
+Host process
+  ├─ SuperSocket TCP listener + SuperSocket WebSocket listener (concurrent)
+  ├─ Orleans silo (single-node, localhost clustering in this deployment)
+  │   ├─ Grain activations (Room, Player, Catalog, Messenger, Group, ...)
+  │   │   — each grain is single-threaded by the Orleans turn-based execution model,
+  │   │     so no manual locks are needed inside grain code
+  │   ├─ Per-room 50ms RegisterGrainTimer (§7) — replaces a shared "room cycle" thread pool
+  │   └─ GrainCollectionOptions.CollectionAge = 2 minutes — idle grains deactivate automatically
+  ├─ EF Core / Pomelo MySQL — via IDbContextFactory, short-lived contexts per operation
+  └─ Handler dispatch — parallel (Task.WhenAll) across all handlers matching one message type
 ```
+
+Everything is **in-memory / single-silo today**: grain storage, pub-sub, and both stream providers use Orleans' memory providers, and the silo uses `UseLocalhostClustering()`. The host logs an explicit warning in non-Development environments that this won't survive a restart or scale across multiple nodes — a real, acknowledged limitation of the current deployment shape, not an oversight to "fix" casually (multi-silo clustering is a deliberate follow-on piece of work, not a bug).
 
 ### Client Threading Model
 
-Flash Player is single-threaded. The client runs on a frame loop at 30 FPS:
-
-```
-Frame Tick (33ms)
-  ├─ Process socket buffer (read all available packets)
-  ├─ Dispatch message events
-  ├─ Update room engine (avatar interpolation, animations)
-  ├─ Render stage
-  └─ Process user input events
-```
-
-All network I/O is asynchronous via Flash's event-driven `Socket` class. Heavy operations
-(like loading SWF assets) use Flash's built-in async loader.
+Flash Player is single-threaded; vortex-client runs its usual frame-tick loop (socket buffer processing, message dispatch, room engine update, render, input) — this side of the architecture is unchanged from any Flash-era Habbo client and wasn't part of this rewrite's research scope; treat prior assumptions about the client's own frame loop as still valid unless directly contradicted by reading `vortex-client` source.
 
 ### Performance Characteristics
 
-| Concern               | How It's Handled                                              |
-|-----------------------|---------------------------------------------------------------|
-| **Packet throughput** | Rate limiting per handler type in `GameMessageRateLimit`      |
-| **Room ticks**        | Each active room runs its own cycle on the thread pool        |
-| **Database**          | HikariCP pools connections; domain objects do direct JDBC     |
-| **Memory**            | Rooms unload after all users leave; items lazy-loaded         |
-| **Client FPS**        | Stage quality set to LOW; avatar sprites cached as BitmapData |
+| Concern | How It's Handled |
+|---------|-----------------|
+| **Packet dispatch** | Handlers for one message type run in parallel (`Task.WhenAll`), not sequentially |
+| **Room ticks** | Each active room is its own Orleans grain with its own 50ms timer — no shared thread pool to contend over |
+| **Database** | `IDbContextFactory` short-lived contexts; batch operations use single `WHERE ... IN (...)` queries rather than per-entity loops (an explicit `CONTEXT.md` rule) |
+| **Idle cleanup** | Rooms/players deactivate automatically after `RoomDeactivationDelayMs` (30 min) / Orleans' 2-minute collection age, unless `[KeepAlive]` |
+| **Batched writes** | Dirty item/tile state flushes on a timer (2s) rather than per-mutation, per room |
 
 ---
 
 ## 24. Known Issues
 
-### Server Bugs
+All items below are sourced directly from the emulator's own status docs (`ROADMAP.md`, `TODO.md`, `CONSOLIDATION.md`, `DATA-MODEL.md`) — nothing here is speculative.
 
-| #  | Bug                                                                              | Impact                                                                                     |
-|----|----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| 1  | `GuildMember.compareTo()` always returns 0                                       | Guild member lists unsorted                                                                |
-| 2  | `GuardianTicket.calculateVerdict()` hardcoded                                    | Guide/guardian system broken                                                               |
-| 3  | `GuideTour.finish()` is a stub                                                   | Guide tours never complete                                                                 |
-| 4  | Guild member paging uses `LIMIT offset, pageSize` where offset grows incorrectly | Later pages return too many rows                                                           |
-| 5  | `SearchResultList.serialize()` mutates the underlying list                       | Navigator results shrink on repeated views                                                 |
-| 6  | `ModToolManager.createOfflineUserBan()` uses wrong JDBC call                     | Offline bans may silently fail                                                             |
-| 7  | `WordFilter.filter()` has regex bugs                                             | Profanity filter misses some words                                                         |
-| 8  | `PacketManager.unregisterCallables(header)` clears all headers                   | Plugin packet hooks break globally                                                         |
-| 9  | `RoomTile.copy()` shares the units set reference                                 | Pathfinding can corrupt room occupancy data                                                |
-| 10 | `Game.onEnd()` awards XP to room owner instead of game winner                    | Wrong player gets achievement progress                                                     |
-| 11 | Packet naming refactored to match client conventions                             | All `*Composer` classes renamed in commits `bbb8d64c` (outgoing) and `c8fd8212` (incoming) |
+### Unimplemented Systems (entire feature areas, not bugs in existing code)
 
-### Protocol Bugs
+| System | Status |
+|---|---|
+| Trading (classic room-to-room) | 100% stub handlers (§13) |
+| Achievements | 100% stub, `AchievementScore` hardcoded 0 (§20) |
+| Bots | Protocol scaffolding only, no entity/AI (§18) |
+| Games (SnowStorm/Freeze/BattleBall-style) | 100% stub, no `Turbo.Games` project exists (§19) |
+| Avatar effects | Deferred alongside Achievements — needs a full subsystem from zero |
 
-| Issue                                                              | Impact                                               |
-|--------------------------------------------------------------------|------------------------------------------------------|
-| `ObjectUpdateMessageComposer` sends `usability=0` always           | Client may not show interactive cursors on furniture |
-| `FlatAccessibleMessageComposer` sends empty body                   | Doorbell/banned users may not get proper response    |
-| `TradingCompletedMessageComposer` uses wrong header (3128 vs 2369) | Trade completion packet silently dropped by client   |
-| `EffectsListAddMessageComposer` missing fields                     | Client may crash or show wrong effect data           |
-| `UserEffectsListMessageComposer` inverted time formula             | Effect durations display incorrectly                 |
-| `RoomTrade.java:138` sends roomUnitId instead of userId            | Trade partner identification breaks in edge cases    |
+### Real, Precise Gaps in Otherwise-Implemented Systems
 
-### Architectural Concerns
+| Gap | Detail |
+|---|---|
+| WIRED actions | Only 4 of 44 `WiredActionType` values implemented (§17) — triggers/conditions/selectors are comparatively complete |
+| Chat safety | No word filter, no flood control enforced despite a stored (but unread) `ChatFloodType` room setting (§8) |
+| Room rating | `RoomRatingMessageComposer` hardcodes `Rating = 0, CanRate = false` — permanent stub |
+| Navigator "popular rooms" | No real ranking algorithm — falls back to a plain population sort; `Score`/`Ranking` fields hardcoded 0 |
+| Navigator tag search | `GetRoomsByTagAsync` returns an empty list unconditionally |
+| Group forum unread counts | Not persisted — `GetUnreadForumsCountAsync` always returns 0 (documented simplification) |
+| Avatar figure validation | Zero server-side validation of figure strings — stored and relayed verbatim (§15) |
+| Staff role assignment | `TODO.md`: new accounts get rank hardcoded to Administrator at login — no rank persistence/default-role logic yet. This is a real, currently-open security-relevant gap, not fixed by the 2026-07-05 moderation completion pass (that pass was about the moderation *tools*, not initial role assignment). |
 
-| Concern                              | Detail                                                                                      |
-|--------------------------------------|---------------------------------------------------------------------------------------------|
-| **Global singleton**                 | `Emulator` class is a static service locator used everywhere — hard to test, tight coupling |
-| **No dependency injection**          | All managers created manually in `GameEnvironment` constructor                              |
-| **Direct SQL in domain objects**     | `HabboStats`, `Habbo`, etc. do their own JDBC — no repository layer                         |
-| **Reflective handler instantiation** | `PacketManager` creates handlers via `newInstance()` on every packet — allocation pressure  |
-| **Implicit thread safety**           | Relies on `ConcurrentHashMap` but rarely uses explicit synchronization                      |
+### Overall Completeness Caveat
+
+`CONSOLIDATION.md` notes that a large fraction of packet handlers by raw count are still empty stubs (its own snapshots range from "~300 of ~501" to an older, now-superseded "393 of 498 (78%)" figure — the two numbers reflect different points in time, not a contradiction to resolve). The correct read is: **coverage is highly uneven by design, not uniformly ~X% done** — core gameplay (room/chat/furniture placement, catalog purchasing, moderation, groups, navigator, messenger) is genuinely solid per `ROADMAP.md`'s 2026-07-05 table, while several whole feature areas (trading, achievements, bots, games) are simply not started. Don't average these into one blended "% complete" number when reasoning about what will actually work.
+
+### Architectural Notes (not bugs — deliberate current trade-offs)
+
+| Note | Detail |
+|---|---|
+| Single-silo, in-memory Orleans clustering | Explicitly logged as non-production-grade outside Development (§23) — a known, accepted deployment limitation, not an oversight |
+| 384-bit DH prime | A deliberate legacy-client constraint (RSA block-size limit), not an accidental weak default (§4) |
+| No per-grain manual locking | Not needed — Orleans' turn-based single-threaded grain execution model provides this; do not "fix" by adding locks inside grain code |
 
 ---
 
@@ -1550,264 +897,203 @@ All network I/O is asynchronous via Flash's event-driven `Socket` class. Heavy o
 
 ### Full Request-Response Flow
 
+The emulator's own `vortex-emulator/docs/walkthroughs/request-lifecycle.md` traces one real chat packet end-to-end in more depth than a diagram can — read it directly for the fullest picture. Condensed:
+
 ```
-USER ACTION (click, type, drag)
-         │
-         ▼
-┌─────────────────────────┐
-│  Client UI Component    │  (catalog, room, inventory, etc.)
-│  (ActionScript 3)       │
-└──────────┬──────────────┘
-           │ Creates MessageComposer
-           ▼
-┌─────────────────────────┐
-│  HabboCommunicationMgr  │  Looks up header ID from HabboMessages.as
-│  + EvaWireFormat.encode  │  Serializes fields to ByteArray
-│  + ArcFour.encipher     │  Encrypts (if post-handshake)
-└──────────┬──────────────┘
-           │ Socket.writeBytes()
-           ▼
-    ═══ TCP NETWORK ═══
-           │
-           ▼
-┌─────────────────────────┐
-│  Netty Pipeline          │
-│  GameByteFrameDecoder   │  Reads 4-byte length, buffers until complete
-│  GameByteDecoder        │  Decrypts, reads 2-byte header → ClientMessage
-│  GameMessageRateLimit   │  Rate limit check
-│  GameMessageHandler     │  Routes to PacketManager
-└──────────┬──────────────┘
-           │
-           ▼
-┌─────────────────────────┐
-│  PacketManager           │
-│  incoming[headerId]     │  Looks up MessageHandler class
-│  → handler.handle()     │  Instantiates and executes
-└──────────┬──────────────┘
-           │
-           ▼
-┌─────────────────────────┐
-│  MessageHandler          │  (e.g., PurchaseFromCatalogEvent)
-│  1. Read packet fields  │  packet.readInt(), readString(), etc.
-│  2. Validate & execute  │  Business logic, DB queries
-│  3. Build response(s)   │  new PurchaseOKComposer(...)
-│  4. Send to client(s)   │  client.sendResponse(composer)
-└──────────┬──────────────┘
-           │
-           ▼
-┌─────────────────────────┐
-│  MessageComposer         │
-│  .compose()             │  Serializes to ServerMessage
-│  ServerMessage           │  [4B len][2B header][body]
-│  GameServerMsgEncoder   │  RC4 encrypts, writes to channel
-└──────────┬──────────────┘
-           │
-    ═══ TCP NETWORK ═══
-           │
-           ▼
-┌─────────────────────────┐
-│  SocketConnection        │  flash.net.Socket receives bytes
-│  processReceivedData()  │  Called each frame (30 FPS)
-│  EvaWireFormat.decode   │  Read length, decrypt, extract header
-│  ArcFour.decipher       │  Decrypt payload
-└──────────┬──────────────┘
-           │
-           ▼
-┌─────────────────────────┐
-│  Message Dispatch        │
-│  INCOMING_PACKETS[id]   │  Look up MessageEvent class
-│  parser.parse(wrapper)  │  Extract typed fields
-│  callback(event)        │  Invoke registered handler
-└──────────┬──────────────┘
-           │
-           ▼
-┌─────────────────────────┐
-│  Client Handler          │  (e.g., RoomMessageHandler.onRoomUsers)
-│  Update local state     │  Add avatars to room, update UI
-│  Render changes         │  Sprite updates, animations
-└─────────────────────────┘
-         │
-         ▼
-    VISUAL UPDATE ON SCREEN
+client socket
+   │  raw bytes
+   ▼
+ClientPacketDecoder                 (Turbo.Networking/Package)
+   │  decrypt (RC4, if active) → typed IMessageEvent via the active IRevision's parser
+   ▼
+PackageHandler → MessageSystem.PublishAsync   (Turbo.Networking / Turbo.Messages)
+   │  resolves PlayerId/RoomId from ISessionGateway, builds MessageContext
+   ▼
+MessageRegistry → IMessageHandler<T>.HandleAsync   (Turbo.PacketHandlers/<Domain>)
+   │  orchestration only: guard ctx, resolve ONE grain, delegate, return
+   ▼
+Domain Grain (e.g. RoomGrain, PlayerGrain, CatalogPurchaseGrain, ...)
+   │  real business logic + persistence live here (modules/systems for RoomGrain)
+   ▼
+   ├─ Direct reply: MessageContext.SendComposerAsync → this player's PlayerPresenceGrain → socket
+   │
+   └─ Room broadcast: RoomGrain.SendComposerToRoomAsync
+        │  publishes to an Orleans stream (RoomOutbound) — NOT a direct socket write
+        ▼
+      Each in-room player's PlayerPresenceGrain (subscribed to the stream)
+        │  receives independently, resolves its own live session(s)
+        ▼
+      SessionObserver.SendComposerAsync → serialize via IRevision's serializer → client socket
 ```
+
+**The single most important architectural fact, repeated because it's easy to miss coming from a classic-server mental model: a room grain never writes to a socket.** It publishes a composer to a stream; every player's own presence grain is responsible for delivering to that player. This is what lets a room deactivate, rehydrate, or (in a real multi-silo deployment) migrate without any socket-handling code needing to change.
 
 ### Subsystem Communication Map
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                           CLIENT SUBSYSTEMS                             │
-│                                                                         │
+│                           CLIENT SUBSYSTEMS (vortex-client)              │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    │
 │  │  Room     │ │ Catalog  │ │Navigator │ │Inventory │ │Messenger │    │
 │  │  Engine   │ │  Shop    │ │  Search  │ │  Panel   │ │ Friends  │    │
 │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘    │
 │       │            │            │            │            │            │
 │  ┌────┴────────────┴────────────┴────────────┴────────────┴─────┐     │
-│  │                 HabboCommunicationManager                     │     │
-│  │              (EvaWireFormat + ArcFour encryption)              │     │
+│  │            HabboCommunicationManager + EvaWireFormat + ArcFour │     │
 │  └───────────────────────────┬───────────────────────────────────┘     │
 └──────────────────────────────┼────────────────────────────────────────┘
                                │
-                        TCP / RC4 Stream
+                     TCP or WebSocket, optional RC4
                                │
 ┌──────────────────────────────┼────────────────────────────────────────┐
 │  ┌───────────────────────────┴───────────────────────────────────┐     │
-│  │                    Netty Pipeline + PacketManager              │     │
-│  │                 (GameServer on port 30000)                     │     │
+│  │   SuperSocket (TCP + WS) → ClientPacketDecoder → PackageHandler │     │
+│  │              → MessageSystem/MessageRegistry (Turbo Cloud)      │     │
 │  └────┬────────────┬────────────┬────────────┬────────────┬──────┘     │
 │       │            │            │            │            │            │
 │  ┌────┴─────┐ ┌────┴─────┐ ┌────┴─────┐ ┌────┴─────┐ ┌────┴─────┐    │
-│  │  Room    │ │ Catalog  │ │Navigator │ │  Item    │ │Messenger │    │
-│  │ Manager  │ │ Manager  │ │ Manager  │ │ Manager  │ │ (per-user│    │
+│  │  Room    │ │ Catalog  │ │Navigator │ │Inventory │ │ Messenger │    │
+│  │  Grain   │ │ Grains   │ │ Service  │ │  Grain   │ │  Grains   │    │
 │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘    │
 │       │            │            │            │            │            │
 │  ┌────┴────────────┴────────────┴────────────┴────────────┴─────┐     │
-│  │                     MySQL Database (HikariCP)                 │     │
+│  │             MySQL (EF Core / Pomelo, IDbContextFactory)        │     │
 │  └───────────────────────────────────────────────────────────────┘     │
 │                                                                        │
-│                           SERVER SUBSYSTEMS                            │
+│                     SERVER SUBSYSTEMS (Turbo Cloud, Orleans grains)   │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Room Tick Cycle
 
 ```
-Every ~500ms per active room:
+Every 50ms per active room (Orleans RegisterGrainTimer), boundary-gated per sub-system:
 
-RoomCycleManager.run()
+RoomGrain's timer callback
   │
-  ├─ Process unit movement
-  │   ├─ For each RoomUnit with active path:
-  │   │   ├─ Advance 1 tile along A* path
-  │   │   ├─ Calculate Z from tile stack height
-  │   │   ├─ Check step-on triggers (WIRED, teleporters, rollers)
-  │   │   └─ Add to status update batch
-  │   └─ Broadcast RoomUserStatusComposer (all changed units)
+  ├─ [every 500ms] RoomAvatarTickSystem.ProcessAvatarsAsync
+  │   ├─ Advance one A*-path tile per avatar with pending movement
+  │   ├─ Fire walk-off/walk-on furniture hooks
+  │   └─ Batch all changed avatars into one UserUpdateMessageComposer broadcast
   │
-  ├─ Process item cycles
-  │   ├─ Roller movement (items + users on rollers)
-  │   ├─ Effect expiry
-  │   └─ Timed item state changes
+  ├─ [every 50ms] RoomWiredSystem.ProcessWiredAsync
+  │   ├─ Process dirty tile stacks
+  │   ├─ Dequeue up to WiredMaxEventsPerTick (64) room events
+  │   ├─ Match triggers → run selectors → run addons → evaluate conditions
+  │   └─ Schedule (not immediately run) matching action chains, honoring per-action delays
   │
-  ├─ Process WIRED
-  │   ├─ Evaluate pending triggers
-  │   ├─ Check conditions
-  │   └─ Execute effects (with configured delays)
+  ├─ [every 2000ms] RoomRollerSystem.ProcessRollersAsync
+  │   └─ Move items/avatars riding active rollers
   │
-  ├─ Process games (if active)
-  │   ├─ Update game state
-  │   ├─ Check win conditions
-  │   └─ Broadcast score updates
+  ├─ [pet system, its own internal cadence] RoomPetSystem
+  │   └─ Needs-driven state machine: wander/hungry/eat/sleep/command, XP/leveling
   │
-  └─ Cleanup
-      ├─ Remove expired effects
-      ├─ Check idle users (kick after timeout)
-      └─ Persist changed items to database
+  └─ [every 2000ms] FlushDirtyTilesAsync / FlushDirtyItemsAsync
+      └─ Persist accumulated tile-height and item-state changes to MySQL,
+         capped at MaxDirtyItemsPerFlush (100) / MaxTileHeightsPerFlush (200) per flush
 ```
 
 ---
 
 ## Appendix A: Key File Locations
 
-### Server (Arcturus-Community)
+### Server (`vortex-emulator`, solution `Turbo.Cloud.sln`)
 
-| File                                                                                      | Purpose                           |
-|-------------------------------------------------------------------------------------------|-----------------------------------|
-| `src/main/java/com/eu/habbo/Emulator.java`                                                | Main entry point, service locator |
-| `src/main/java/com/eu/habbo/habbohotel/GameEnvironment.java`                              | Composition root for all managers |
-| `src/main/java/com/eu/habbo/messages/PacketManager.java`                                  | Packet registry and dispatch      |
-| `src/main/java/com/eu/habbo/messages/incoming/Incoming.java`                              | Client→server packet IDs          |
-| `src/main/java/com/eu/habbo/messages/outgoing/Outgoing.java`                              | Server→client packet IDs          |
-| `src/main/java/com/eu/habbo/messages/incoming/MessageHandler.java`                        | Handler base class                |
-| `src/main/java/com/eu/habbo/messages/outgoing/MessageComposer.java`                       | Composer base class               |
-| `src/main/java/com/eu/habbo/messages/ClientMessage.java`                                  | Inbound packet wrapper            |
-| `src/main/java/com/eu/habbo/messages/ServerMessage.java`                                  | Outbound packet builder           |
-| `src/main/java/com/eu/habbo/networking/gameserver/GameServer.java`                        | Netty bootstrap                   |
-| `src/main/java/com/eu/habbo/networking/gameserver/decoders/GameMessageHandler.java`       | Netty inbound router              |
-| `src/main/java/com/eu/habbo/networking/gameserver/decoders/GameByteFrameDecoder.java`     | Frame delimiter                   |
-| `src/main/java/com/eu/habbo/networking/gameserver/decoders/GameByteDecoder.java`          | Packet decoder                    |
-| `src/main/java/com/eu/habbo/networking/gameserver/encoders/GameServerMessageEncoder.java` | Outgoing encoder                  |
-| `src/main/java/com/eu/habbo/crypto/HabboDiffieHellman.java`                               | DH key exchange                   |
-| `src/main/java/com/eu/habbo/crypto/HabboEncryption.java`                                  | RC4 cipher wrapper                |
-| `src/main/java/com/eu/habbo/habbohotel/rooms/Room.java`                                   | Room entity                       |
-| `src/main/java/com/eu/habbo/habbohotel/rooms/RoomManager.java`                            | Room lifecycle                    |
-| `src/main/java/com/eu/habbo/habbohotel/rooms/RoomCycleManager.java`                       | Room tick loop                    |
-| `src/main/java/com/eu/habbo/habbohotel/users/Habbo.java`                                  | User entity                       |
-| `src/main/java/com/eu/habbo/habbohotel/users/HabboInfo.java`                              | Persistent user data              |
-| `src/main/java/com/eu/habbo/habbohotel/catalog/CatalogManager.java`                       | Shop logic                        |
-| `src/main/java/com/eu/habbo/habbohotel/items/ItemManager.java`                            | Item definitions                  |
-| `src/main/java/com/eu/habbo/habbohotel/modtool/ModToolManager.java`                       | Moderation                        |
-| `src/main/java/com/eu/habbo/core/ConfigurationManager.java`                               | Config loading                    |
-| `src/main/java/com/eu/habbo/database/Database.java`                                       | HikariCP wrapper                  |
+| File | Purpose |
+|------|---------|
+| `Turbo.Main/Program.cs` | Host entry point, service registration order |
+| `Turbo.Main/TurboEmulator.cs` | Hosted service: revision registration, data-provider warm-up, network start |
+| `Turbo.Main/Extensions/HostApplicationBuilderExtensions.cs` | Orleans silo configuration |
+| `Turbo.Networking/NetworkManager.cs` | TCP + WebSocket SuperSocket host setup |
+| `Turbo.Networking/Package/ClientPacketDecoder.cs` | Frame decode (length/header/RC4-peek) |
+| `Turbo.Networking/Package/PackageHandler.cs` | Parser lookup + dispatch into `MessageSystem` |
+| `Turbo.Networking/Session/SessionGateway.cs` | Session↔player mapping, session/observer registration |
+| `Turbo.Crypto/DiffieService.cs` | DH parameter generation, shared-key derivation |
+| `Turbo.Crypto/RsaService.cs` | RSA sign/encrypt/decrypt for the handshake |
+| `Turbo.Crypto/Rc4Engine.cs` | RC4 stream cipher, incl. non-consuming `Peek` |
+| `Turbo.Messages/MessageSystem.cs` | Incoming packet publish entry point |
+| `Turbo.Messages/Registry/MessageRegistry.cs` | Handler/behavior registry + dispatch (parallel execution) |
+| `Turbo.Plugins/PluginBootstrapper.cs` | Assembly scan that registers all `IMessageHandler<T>`s |
+| `Turbo.Revisions/Revision20260112/Headers.cs` | The packet ID registry (`MessageEvent`/`MessageComposer`) |
+| `Turbo.Revisions/Revision20260112/Revision20260112.cs` | Parser/serializer dictionaries for the embedded revision |
+| `Turbo.Authentication/AuthenticationService.cs` | SSO ticket → player id resolution |
+| `Turbo.Rooms/Grains/RoomGrain.cs` (+ 9 partials) | Room grain: state, modules, systems, tick timer |
+| `Turbo.Rooms/Grains/Systems/RoomPathingSystem.cs` | A* pathfinding |
+| `Turbo.Rooms/Grains/Systems/RoomChatSystem.cs` | Say/shout/whisper, mute, chatlog |
+| `Turbo.Rooms/Grains/Systems/RoomWiredSystem.cs` | WIRED evaluation/scheduling engine |
+| `Turbo.Rooms/Grains/Systems/RoomPetSystem.cs` (+ partials) | Pet AI/movement/breeding |
+| `Turbo.Rooms/Providers/RoomObjectLogicProvider.cs` | Furniture interaction-logic registry |
+| `Turbo.Catalog/Grains/CatalogPurchaseGrain.cs` | Purchase debit/grant/refund flow |
+| `Turbo.Catalog/Grains/LtdRaffleGrain.cs` | Limited-edition raffle purchasing |
+| `Turbo.Inventory/Grains/InventoryGrain.cs` (+ partials) | Per-player furniture/pet inventory |
+| `Turbo.Marketplace/Grains/MarketplacePurchaseGrain.cs` | Auction-style listing/buying |
+| `Turbo.Navigator/NavigatorService.cs` | Room search/category dispatch |
+| `Turbo.Players/Grains/MessengerGrain.cs` (+ partials) | Friends, messaging, presence fan-out |
+| `Turbo.Players/Grains/PlayerPresenceGrain.cs` | Session delivery, active-room stream subscription |
+| `Turbo.Players/Grains/GroupDirectoryGrain.cs`, `GroupGrain.cs` | Guild creation/membership |
+| `Turbo.Database/Context/TurboDbContext.cs` | EF Core DbContext (Pomelo MySQL) |
+| `docs/walkthroughs/request-lifecycle.md` | Full traced example of one chat packet, socket to socket |
+| `CONTEXT.md`, `ROADMAP.md`, `TODO.md`, `CONSOLIDATION.md`, `DATA-MODEL.md`, `PETS-DESIGN.md` | Living architecture/status docs — check these before assuming a feature's state |
 
-### Client (habbo-client-clean)
+### Client (`vortex-client`)
 
-| File                                                               | Purpose                           |
-|--------------------------------------------------------------------|-----------------------------------|
-| `src/Habbo.as`                                                     | SWF entry point, preloader        |
-| `src/HabboMain.as`                                                 | Component bootstrap sequence      |
-| `src/com/sulake/core/communication/connection/SocketConnection.as` | TCP socket wrapper                |
-| `src/com/sulake/core/communication/formatter/EvaWireFormat.as`     | Binary serialization              |
-| `src/com/sulake/habbo/communication/HabboCommunicationManager.as`  | Protocol manager                  |
-| `src/com/sulake/habbo/communication/HabboMessages.as`              | Packet ID registry (~2,038 lines) |
-| `src/com/sulake/habbo/communication/encryption/ArcFour.as`         | RC4 implementation                |
-| `src/com/sulake/habbo/communication/encryption/DiffieHellman.as`   | DH key exchange                   |
-| `src/com/sulake/habbo/room/RoomEngine.as`                          | Room rendering engine (199KB)     |
-| `src/com/sulake/habbo/room/RoomMessageHandler.as`                  | Room message handlers (64KB)      |
-| `src/com/sulake/habbo/avatar/AvatarRenderManager.as`               | Avatar rendering                  |
-| `src/com/sulake/habbo/catalog/HabboCatalogCom.as`                  | Catalog UI                        |
-| `src/com/sulake/habbo/inventory/HabboInventoryCom.as`              | Inventory UI                      |
-| `src/com/sulake/habbo/navigator/HabboNavigatorCom.as`              | Navigator UI                      |
-| `src/com/sulake/habbo/friendlist/HabboFriendListCom.as`            | Friends UI                        |
-| `src/com/sulake/habbo/messenger/HabboMessengerCom.as`              | Messaging UI                      |
-| `src/com/hurlant/crypto/rsa/`                                      | RSA crypto library                |
+| File | Purpose |
+|------|---------|
+| `src/HabboAir.as` | Application shell / entry point |
+| `src/HabboAirMain.as` | Component bootstrap sequence |
+| `src/com/sulake/core/communication/connection/SocketConnection.as` | TCP socket wrapper |
+| `src/com/sulake/core/communication/wireformat/EvaWireFormat.as` | Binary frame encode/decode |
+| `src/com/sulake/habbo/communication/HabboCommunicationManager.as` | Protocol manager |
+| `src/com/sulake/habbo/communication/HabboMessages.as` | Packet ID registry (`_composers`/`_events`, ~1,996 lines) |
+| `src/com/sulake/habbo/communication/encryption/ArcFour.as` | RC4 implementation |
+| `src/com/sulake/habbo/communication/encryption/DiffieHellman.as` | DH key exchange |
+| `src/com/sulake/habbo/room/RoomEngine.as` | Room rendering engine |
+| `src/com/sulake/habbo/room/RoomMessageHandler.as` | Room message handlers |
+| `src/com/sulake/habbo/avatar/AvatarRenderManager.as` | Avatar rendering |
 
 ---
 
 ## Appendix B: Packet ID Quick Reference
 
+All values below are read directly from `Turbo.Revisions/Revision20260112/Headers.cs` — grep it yourself for anything not listed here rather than assuming a value.
+
 ### Handshake Sequence
 
-| Step | Direction | Header | Server Name                              | Client Name                              |
-|------|-----------|--------|------------------------------------------|------------------------------------------|
-| 1    | C→S       | 4000   | `ClientHelloMessageEvent`                | `ClientHelloMessageComposer`             |
-| 2    | C→S       | 2490   | `UniqueIDMessageEvent`                   | `UniqueIDMessageComposer`                |
-| 3    | C→S       | 3110   | `InitDiffieHandshake`                    | `InitDiffieHandshakeMessageComposer`     |
-| 4    | S→C       | 1347   | `InitDiffieHandshakeMessageComposer`     | `InitDiffieHandshakeEvent`               |
-| 5    | C→S       | 773    | `CompleteDiffieHandshake`                | `CompleteDiffieHandshakeMessageComposer` |
-| 6    | S→C       | 3885   | `CompleteDiffieHandshakeMessageComposer` | `CompleteDiffieHandshakeEvent`           |
-| 7    | C→S       | 2419   | `SSOTicketMessageEvent`                  | `SSOTicketMessageComposer`               |
-| 8    | S→C       | 2491   | `AuthenticationOKMessageComposer`        | `AuthenticationOKMessageEvent`           |
+| Step | Direction | Constant | Header |
+|------|-----------|----------|--------|
+| 1 | C→S | `MessageEvent.ClientHelloMessageEvent` | 4000 |
+| 2 | C→S | `MessageEvent.UniqueIDMessageEvent` | 2920 |
+| 3 | C→S | `MessageEvent.VersionCheckMessageEvent` | 3517 |
+| 4 | C→S | `MessageEvent.InitDiffieHandshakeMessageEvent` | 3644 |
+| 5 | S→C | `MessageComposer.InitDiffieHandshakeComposer` | 2334 |
+| 6 | C→S | `MessageEvent.CompleteDiffieHandshakeMessageEvent` | 1517 |
+| 7 | S→C | `MessageComposer.CompleteDiffieHandshakeComposer` | 3034 |
+| 8 | C→S | `MessageEvent.SSOTicketMessageEvent` | 749 |
+| 9 | S→C | `MessageComposer.AuthenticationOKMessageComposer` | 3014 |
+| — | S→C | `MessageComposer.UniqueMachineIDComposer` | 836 |
 
 ### Common Room Packets
 
-| Direction | Header | Server Name                     | Client Name                   | Purpose                |
-|-----------|--------|---------------------------------|-------------------------------|------------------------|
-| S→C       | 758    | `OpenConnectionMessageComposer` | `OpenConnectionMessageEvent`  | Connection opened      |
-| S→C       | 2031   | `RoomReadyMessageComposer`      | `RoomReadyMessageEvent`       | Room model loaded      |
-| S→C       | 1778   | `ObjectsMessageComposer`        | `ObjectsMessageEvent`         | Floor furniture list   |
-| S→C       | 374    | `UsersMessageComposer`          | `UsersEvent`                  | Users in room          |
-| C→S       | 3320   | `MoveAvatarMessageEvent`        | `MoveAvatarMessageComposer`   | Walk request           |
-| S→C       | 1640   | `UserUpdateMessageComposer`     | `UserUpdateEvent`             | Movement updates       |
-| C→S       | 1314   | `ChatMessageEvent`              | `ChatMessageComposer`         | Say chat               |
-| S→C       | 1446   | `ChatMessageComposer`           | `ChatMessageEvent`            | Chat broadcast         |
-| C→S       | 99     | `UseFurnitureMessageEvent`      | `UseFurnitureMessageComposer` | Click furniture        |
-| S→C       | 3776   | `ObjectUpdateMessageComposer`   | `ObjectUpdateMessageEvent`    | Furniture state change |
+| Direction | Header | Constant | Purpose |
+|-----------|--------|----------|---------|
+| C→S | 2407 | `MessageEvent.RoomNetworkOpenConnectionMessageEvent` | Enter room request |
+| S→C | 1915 | `MessageComposer.OpenConnectionMessageComposer` | Connection opened |
+| S→C | 2244 | `MessageComposer.RoomReadyMessageComposer` | Room model loaded |
+| S→C | 3997 | `MessageComposer.ObjectsMessageComposer` | Floor furniture list |
+| S→C | 1835 | `MessageComposer.UsersMessageComposer` | Users in room |
+| C→S | 144 | `MessageEvent.MoveAvatarMessageEvent` | Walk request |
+| C→S | 641 | `MessageEvent.ChatMessageEvent` | Say chat |
+| S→C | 1264 | `MessageComposer.ChatMessageComposer` | Chat broadcast |
+| C→S | 2286 | `MessageEvent.ShoutMessageEvent` | Shout chat |
+| S→C | 3310 | `MessageComposer.ShoutMessageComposer` | Shout broadcast |
+| C→S | 2317 | `MessageEvent.WhisperMessageEvent` | Whisper chat |
+| S→C | 492 | `MessageComposer.WhisperMessageComposer` | Whisper broadcast |
 
-### Common User Packets
+### Common User/Economy Packets
 
-| Direction | Header | Server Name                     | Client Name                  | Purpose           |
-|-----------|--------|---------------------------------|------------------------------|-------------------|
-| S→C       | 2725   | `UserObjectMessageComposer`     | `UserObjectEvent`            | User profile data |
-| S→C       | 3475   | `CreditBalanceMessageComposer`  | `CreditBalanceEvent`         | Credit balance    |
-| S→C       | 2018   | `ActivityPointsMessageComposer` | `ActivityPointsMessageEvent` | Duckets/diamonds  |
-| S→C       | 411    | `UserRightsMessageComposer`     | `UserRightsMessageEvent`     | Rank/rights       |
+| Direction | Header | Constant | Purpose |
+|-----------|--------|----------|---------|
+| S→C | 3337 | `MessageComposer.UserRightsMessageComposer` | Rank/rights |
+| S→C | 118 | `MessageComposer.CreditBalanceComposer` | Credit balance |
 
-### Common Catalog Packets
-
-| Direction | Header | Server Name                 | Client Name                   | Purpose            |
-|-----------|--------|-----------------------------|-------------------------------|--------------------|
-| C→S       | 1195   | `GetCatalogIndexEvent`      | `GetCatalogIndexComposer`     | Open catalog       |
-| C→S       | 412    | `GetCatalogPageEvent`       | `GetCatalogPageComposer`      | Load page          |
-| C→S       | 3492   | `PurchaseFromCatalogEvent`  | `PurchaseFromCatalogComposer` | Buy item           |
-| S→C       | 869    | `PurchaseOKMessageComposer` | `PurchaseOKMessageEvent`      | Purchase confirmed |
+Extend this table by grepping `Headers.cs` directly for anything you need that isn't listed — the full set is ~525 incoming + ~538 outgoing constants, far too many to usefully enumerate here.

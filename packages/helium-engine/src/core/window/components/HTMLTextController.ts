@@ -107,14 +107,48 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 		return super.text;
 	}
 
+	// AS3: sources/win63_version/core/window/components/HTMLTextController.as::set text()
 	public override set text(value: string)
 	{
 		if (value == null) return;
 
-		this._htmlContent = value;
+		if (this._localized)
+		{
+			this.removeLocalizationListenerForCaption();
+			this._localized = false;
+		}
+
 		this._caption = value;
-		this._text = value;
-		this._context.invalidate(this, null, 1);
+
+		if (!this._displayRaw && this.isLocalizationKey(this._caption))
+		{
+			this._localized = true;
+			this.registerLocalizationListenerForCaption();
+
+			return;
+		}
+
+		this._htmlContent = value;
+
+		const plainText = HTMLTextController.convertHtmlToPlainText(HTMLTextController.convertLinksToEvents(value));
+
+		this._text = plainText;
+		this._htmlText = plainText;
+		this.refreshTextImage();
+	}
+
+	// AS3: sources/win63_version/core/window/components/HTMLTextController.as::set localization()
+	public override set localization(value: string)
+	{
+		if (value == null) return;
+
+		this._htmlContent = value;
+
+		const plainText = HTMLTextController.convertHtmlToPlainText(HTMLTextController.convertLinksToEvents(this.limitStringLength(value)));
+
+		this._text = plainText;
+		this._htmlText = plainText;
+		this.refreshTextImage();
 	}
 
 	public override get properties(): unknown[]
@@ -160,5 +194,17 @@ export class HTMLTextController extends TextFieldController implements IHTMLText
 		html = html.replace(/<a[^>]+(https:\/\/[^"']+)['"][^>]*>(.*?)<\/a>/gi, "<a href='event:$1'>$2</a>");
 
 		return html;
+	}
+
+	// TS-only: in AS3, `_field.htmlText = ...` hands the markup to Flash's
+	// native TextField, which renders <br>/<b>/<a> as real rich text. Our
+	// TextController only lays out plain strings (splitting on literal "\n" —
+	// see TextController.ts::buildMeasureLines()), so HTML has to be reduced
+	// to that before it reaches _text, or tags show up as literal characters.
+	private static convertHtmlToPlainText(html: string): string
+	{
+		return html
+			.replace(/<br\s*\/?>/gi, '\n')
+			.replace(/<[^>]+>/g, '');
 	}
 }

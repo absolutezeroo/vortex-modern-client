@@ -746,6 +746,12 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 		const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
 		const ctx = offscreen.getContext('2d')!;
 
+		// AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage()
+		// tracks the union of each drawn part's rect as it goes, then crops the
+		// final bitmap down to that bounding box — this is what makes the
+		// result "cropped" rather than the full (mostly empty) render canvas.
+		let bounds: {x: number; y: number; width: number; height: number} | null = null;
+
 		for (let i = bodyParts.length - 1; i >= 0; i--)
 		{
 			const partId = bodyParts[i];
@@ -771,12 +777,46 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 							frame.x, frame.y, frame.width, frame.height,
 							destX, destY, frame.width, frame.height
 						);
+
+						const partRect = {x: destX, y: destY, width: frame.width, height: frame.height};
+
+						bounds = bounds ? AvatarImage.unionRect(bounds, partRect) : partRect;
 					}
 				}
 			}
 		}
 
-		return Texture.from({resource: offscreen, alphaMode: 'premultiply-alpha-on-upload'});
+		if (!bounds)
+		{
+			bounds = {x: 0, y: 0, width: 1, height: 1};
+		}
+
+		const cropWidth = Math.max(1, Math.round(bounds.width));
+		const cropHeight = Math.max(1, Math.round(bounds.height));
+		const cropped = new OffscreenCanvas(cropWidth, cropHeight);
+		const croppedCtx = cropped.getContext('2d')!;
+
+		croppedCtx.drawImage(
+			offscreen,
+			Math.round(bounds.x), Math.round(bounds.y), cropWidth, cropHeight,
+			0, 0, cropWidth, cropHeight
+		);
+
+		return Texture.from({resource: cropped, alphaMode: 'premultiply-alpha-on-upload'});
+	}
+
+	// AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() — Rectangle.union()
+	private static unionRect(
+		a: {x: number; y: number; width: number; height: number},
+		b: {x: number; y: number; width: number; height: number}
+	): {x: number; y: number; width: number; height: number}
+	{
+		const x = Math.min(a.x, b.x);
+		const y = Math.min(a.y, b.y);
+		const right = Math.max(a.x + a.width, b.x + b.width);
+		const bottom = Math.max(a.y + a.height, b.y + b.height);
+
+		return {x, y, width: right - x, height: bottom - y};
 	}
 
 	/**

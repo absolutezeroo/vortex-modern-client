@@ -34,10 +34,14 @@ export interface IRoomPreviewerWidget extends IWidget
 	zoom: number;
 
 	/**
-	 * Show a static bitmap preview.
+	 * Show a static bitmap preview, replacing the live room canvas.
 	 *
-	 * @param imageUrl - The URL or data of the preview image
+	 * AS3: showPreview(param1:BitmapData) wraps the given BitmapData in a
+	 * Bitmap and swaps it into the room canvas wrapper. HTMLCanvasElement is
+	 * the closest TS equivalent to a raw, already-rendered BitmapData buffer.
+	 *
+	 * @param image - The pre-rendered bitmap to display
 	 */
-	showPreview(imageUrl: string): void;
+	showPreview(image: HTMLCanvasElement): void;
 }
 
