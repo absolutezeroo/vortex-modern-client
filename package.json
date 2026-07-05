@@ -6,11 +6,29 @@
   "scripts": {
     "dev": "pnpm --filter helium-client dev",
     "build": "pnpm --filter helium-client build",
-    "preview": "pnpm --filter helium-client preview"
+    "preview": "pnpm --filter helium-client preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "sync:agents": "node scripts/sync-agent-docs.mjs --write",
+    "prepare": "husky"
   },
   "author": "Clayton",
   "license": "GPL-3.0",
   "dependencies": {
     "vite": "^6.4.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "typescript-eslint": "^8.62.1"
+  },
+  "lint-staged": {
+    "packages/*/src/**/*.ts": [
+      "eslint --fix"
+    ]
   }
 }

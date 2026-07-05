@@ -2,6 +2,8 @@
 
 Universal instructions for all AI assistants (Cursor, Windsurf, Codex, Copilot, Claude, etc.)
 
+> The section between the `BEGIN:GENERATED-RULES` / `END:GENERATED-RULES` markers below is generated from `.claude/rules/*.md` by `scripts/sync-agent-docs.mjs`. Do not hand-edit that section — edit the source file under `.claude/rules/` and run `pnpm run sync:agents`.
+
 ## Project
 
 Helium: Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. pnpm monorepo with `helium-engine` (engine) and `helium-client` (display, UI). The entire Flash client is ported — both logic and display — with original XML layouts converted to JSON.
@@ -9,18 +11,17 @@ Helium: Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. pnpm mon
 ```bash
 pnpm install && pnpm dev    # Dev server
 pnpm build                   # Production build
+pnpm lint                    # ESLint over both packages
 ```
 
-## The fundamental rule
+## AS3 sources
 
-**Read the AS3 source code before writing ANY implementation.**
+| Directory                | Priority  | Package roots       | Files  |
+|--------------------------|-----------|---------------------|--------|
+| `sources/win63_version/` | PRIMARY   | `habbo/`, `room/`   | ~4,465 |
+| `sources/flash_version/` | Secondary | `com/sulake/habbo/` | ~7,160 |
 
-- Primary: `sources/win63_version/habbo/<module>/<Class>.as`
-- Secondary: `sources/flash_version/com/sulake/habbo/<module>/<Class>.as`
-
-No AS3 source read = invalid implementation. Period.
-
-We fully reuse the lifecycle system from the original AS3 source. The class hierarchy, dispose patterns, flush/parse cycles, object management, and display system must match the AS3 architecture. ALL AS3 files are ported — both logic and display. The original Flash XML layouts are converted to JSON. The only divergences allowed are JS-specific performance optimizations documented in `docs/STYLEGUIDE.md` section **Performance**.
+ALL AS3 files are to be ported — both logic and display classes. See `docs/architectures/<module>-architecture.md` for per-module deep-dives (created on demand).
 
 ## Work protocol (mandatory phases)
 
@@ -56,12 +57,7 @@ Until this phase is complete, writing code is FORBIDDEN.
 - [ ] Client code → `packages/helium-client/src/`
 - [ ] Preserve AS3 class names, method names, interfaces, and inheritance chains
 - [ ] Preserve the complete AS3 public API: every public method, accessor, interface member, implemented interface, constructor contract, and dispose contract must exist in TypeScript
-- [ ] Every TypeScript class, method, accessor, property, interface member, handler, parser, composer, or event ported from AS3 MUST include an `AS3:` source trace comment immediately above the declaration
-- [ ] The `AS3:` source trace comment MUST use this exact format: `// AS3: sources/win63_version/<path>/<Class>.as::<memberName>()`
-- [ ] For AS3 accessors and properties, use the exact AS3 member name: `// AS3: sources/win63_version/<path>/<Class>.as::get propertyName()` or `// AS3: sources/win63_version/<path>/<Class>.as::propertyName`
-- [ ] If the primary source does not contain the member and the secondary Flash source is used, the trace MUST point to `sources/flash_version/...`
-- [ ] If a member cannot be fully implemented immediately, still add the AS3-compatible TypeScript signature and an explicit `TODO(AS3)` comment with the AS3 source path, class/member name, and exact behavior that remains to port
-- [ ] Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface
+- [ ] Every TypeScript class, method, accessor, property, interface member, handler, parser, composer, or event ported from AS3 MUST include an `AS3:` source trace comment immediately above the declaration (see AS3 traceability section below)
 - [ ] Flash XML layouts → JSON format
 
 ### Phase 4 — Validation
@@ -75,65 +71,117 @@ Until this phase is complete, writing code is FORBIDDEN.
   - No `getImageData`/`putImageData` for color transforms → use GPU
   - All listeners have a matching `removeEventListener`/`off()` in `dispose()`
 
-## Architecture boundaries
+<!-- BEGIN:GENERATED-RULES -->
+## Mandatory: read before coding
+
+Before writing any implementation code, you MUST complete these steps IN ORDER:
+
+1. **Read the AS3 source file** — Find and read the corresponding AS3 file IN ITS ENTIRETY
+   - Primary: `sources/win63_version/habbo/<module>/<Class>.as`
+   - Secondary: `sources/flash_version/com/sulake/habbo/<module>/<Class>.as`
+2. **Read the AS3 interface** — `I<Class>.as` + `handler/` directory if present
+3. **Check `docs/PATTERNS.md`** if implementing a Composer, Parser, Event, Manager, or UI Window
+4. **Check `docs/IMPLEMENTATION_STATUS.md`** for the current module status
+5. **Read `docs/CLIENT-SERVER-ARCHITECTURE.md`** if touching anything in `habbo/communication/` (composers, parsers, message events/IDs) or any feature that sends/receives network messages — it documents how this client is expected to talk to a real Arcturus-Community-style server: the wire protocol, handshake/encryption sequence, message ID conventions, full per-system request/response flows (room, chat, catalog, inventory, trading, etc.), and a list of **known real-server bugs and protocol mismatches**. Some AS3 behavior that looks wrong may actually be a deliberate workaround for a documented server-side bug — check this doc before "fixing" wire-format code in `habbo/communication/`.
+
+If you haven't read the AS3 source, your implementation is invalid. No exceptions.
+
+## Conventions
+
+| Rule            | Convention                                       |
+|-----------------|--------------------------------------------------|
+| Braces          | **Allman** (opening brace on its own line)       |
+| Classes         | PascalCase                                       |
+| Interfaces      | `I` + PascalCase (`IRoomSession`)                |
+| Private fields  | `_` + camelCase (`_roomId`)                      |
+| Constants       | UPPER_SNAKE_CASE                                 |
+| Methods         | camelCase                                        |
+| Imports         | `import type` for type-only imports              |
+| Exports         | Named only (never `export default`)              |
+| `dispose()`     | Always last method, checks `_disposed`           |
+| Null safety     | `| null` (never `| undefined`)                   |
+| Spacing         | `if(condition)` not `if (condition)`             |
+| Logger          | `Logger.getLogger('Name')` (never `console.log`) |
+
+Full reference: `docs/STYLEGUIDE.md`
+
+## Path aliases
+
+**Engine** (`helium-engine`): `@core/` → `src/core/` | `@habbo/` → `src/habbo/` | `@room/` → `src/room/` | `@iid/` → `src/iid/`
+
+**Client** (`helium-client`): `@core/` `@habbo/` `@room/` `@iid/` → engine src | `@ui/` `@/` → `src/`
+
+## Architecture and critical rules
 
 ```
 helium-engine                                   helium-client (depends on engine)
 ├── core/    Low-level, communication          ├── ui/          Flash UI classes (ported)
 ├── habbo/   Game logic                        ├── window/      Window system (from Flash)
 ├── room/    Room engine                       ├── display/     Display components (PixiJS)
-└── iid/     DI symbols                        └── layouts/     JSON layouts (converted from XML)
+└── iid/     DI symbols                        └── layouts/     JSON layouts (from Flash XML)
 ```
 
-**CRITICAL**: The engine must NEVER import from the client. The flow is strictly client → engine.
+Data flow: `Engine emits event → Client display class listens and updates`
 
-Data pattern: `Engine emits event → Client display class listens and updates`
+## Critical rules
 
-## Display system
+1. **AS3 is the source of truth** — Never invent code. Read `sources/win63_version/` first
+2. **Never simplify AS3 architecture** — If AS3 has handlers/interfaces/delegation, implement them exactly
+3. **Engine must NEVER import from client** — `helium-engine` has zero UI knowledge
+4. **Never override `get events()`** in Component subclasses — breaks the DI event system; use a different property name (e.g. `sessionEvents`)
+5. **Use `createObjectInternal()`** not `createRoomObject()` from container (infinite recursion)
+6. **Update `docs/IMPLEMENTATION_STATUS.md`** after every significant implementation
+7. **Performance**: `Set`/`Map` for lookups, no allocations in render loops, cache textures, viewport culling (see `docs/STYLEGUIDE.md` Performance section and `docs/PATTERNS.md` section 0)
+8. **Full port**: ALL AS3 files are ported — both logic AND display. Flash XML → JSON. No ENGINE/VIEW distinction
+9. **Managers**: DI Component with IID registration, one `I<Manager>` interface per manager (see `docs/PATTERNS.md` → Manager template)
 
-The entire Flash display system is ported to TypeScript/PixiJS:
+## AS3 traceability
 
-- **Flash XML layouts** are converted to **JSON** and loaded at runtime
-- **Flash UI windows/dialogs** (IWindow, IFrameWindow, etc.) are ported as TypeScript classes using PixiJS
-- **Flash display components** (buttons, text fields, scrollbars, etc.) are ported as PixiJS display objects
-- The original AS3 class hierarchy for UI is preserved
+Every TypeScript class, method, accessor, property, interface member, handler, parser, composer, or event ported from AS3 MUST include an `AS3:` source trace comment immediately above the declaration.
 
-## Code style (summary)
+Required format:
 
-- **Allman** braces (opening brace on its own line)
-- Interfaces: `I` + PascalCase (`IRoomSession`)
-- Private fields: `_` + camelCase (`_roomId`)
-- Constants: UPPER_SNAKE_CASE
-- Named exports only (never `export default`)
-- `import type` for type-only imports
-- `dispose()` always last method, checks `_disposed`
+```ts
+// AS3: sources/win63_version/<path>/<Class>.as::<memberName>()
+```
 
-Full reference: `docs/STYLEGUIDE.md`
+For AS3 accessors and properties:
 
-## AS3 sources
+```ts
+// AS3: sources/win63_version/<path>/<Class>.as::get propertyName()
+// AS3: sources/win63_version/<path>/<Class>.as::propertyName
+```
 
-| Directory                | Priority  | Package roots       | Files  |
-|--------------------------|-----------|---------------------|--------|
-| `sources/win63_version/` | PRIMARY   | `habbo/`, `room/`   | ~4,465 |
-| `sources/flash_version/` | Secondary | `com/sulake/habbo/` | ~7,160 |
+If the primary source does not contain the member and the secondary Flash source is used, the trace MUST point to `sources/flash_version/...`.
 
-ALL AS3 files are to be ported — both logic and display classes.
+Incomplete members still require a compatible TypeScript signature and a `TODO(AS3)` comment with source path, class/member name, and exact remaining behavior. Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface.
 
-See `docs/architectures/<module>-architecture.md` for per-file details.
+## Communication rules (`core/communication/`, `habbo/communication/`)
 
-## Key patterns
+You are editing wire-protocol code (`core/communication/`, `habbo/communication/`).
 
-See `docs/PATTERNS.md` for full templates with code examples.
+1. Read `docs/CLIENT-SERVER-ARCHITECTURE.md` in full for the system you are touching (handshake/encryption, or the specific composer/parser's request-response flow) before changing anything here.
+2. Check that document's "known real-server bugs and protocol mismatches" list first. AS3 code that looks wrong (odd byte order, a seemingly redundant field, a workaround-looking branch) may be a deliberate compensation for a real Arcturus-Community server bug — verify before "fixing" it.
+3. `Parser.parse()` read order and `Composer.getMessageArray()` field order MUST match the AS3 exactly; reordering silently breaks the wire format.
+4. See `docs/PATTERNS.md` → MessageComposer / MessageParser / MessageEvent templates before adding a new message type. Quick shape reminder:
+   - **Composer**: `extends MessageComposer<TupleType>` with `_data` and `getMessageArray()`
+   - **Parser**: `implements IMessageParser` with `flush()` + `parse(wrapper)`
+   - **Event**: `extends MessageEvent implements IMessageEvent` with `callback` parameter in constructor
 
-- **Composers**: `extends MessageComposer<TupleType>` with `_data` and `getMessageArray()`
-- **Parsers**: `implements IMessageParser` with `flush()` + `parse(wrapper)`
-- **Events**: `extends MessageEvent implements IMessageEvent` with `callback` parameter in constructor
-- **Managers**: DI Component with IID registration
-- **UI Windows**: Ported from AS3 IWindow/IFrameWindow hierarchy using PixiJS + JSON layouts
+## Window/UI rules (`core/window/`, `habbo/window/`, `**/widgets/**`)
 
-## Known pitfalls
+You are editing the ported Flash UI/window system (`core/window/`, `habbo/window/`, `habbo/*/widgets/`, client `window/`).
 
-1. **Never override `get events()`** in Component subclasses (breaks the DI event system — use a different property name like `sessionEvents`)
-2. **Use `createObjectInternal()`** not `createRoomObject()` from container classes (infinite recursion)
-3. **The engine ↔ client boundary is strict**: the engine has ZERO UI knowledge
-4. **Performance**: `Set`/`Map` for lookups, no allocation in render loops, cache textures, viewport culling. See `docs/STYLEGUIDE.md` section Performance and `docs/PATTERNS.md` section 0
+1. See `docs/PATTERNS.md` → "UI Window (ported from Flash)" and "Component Lifecycle" for the expected class shape. Quick shape reminder: UI Windows are ported from the AS3 `IWindow`/`IFrameWindow` hierarchy using PixiJS + JSON layouts.
+2. Never override `get events()` in a Component subclass — it breaks the DI event system. Use a differently named property (e.g. `sessionEvents`).
+3. Flash XML layouts are converted to JSON and loaded at runtime (`helium-client/src/assets/window-layouts`, `window-skins`) — do not reintroduce XML parsing.
+4. Flash UI windows/dialogs (`IWindow`, `IFrameWindow`, etc.) are ported as TypeScript classes using PixiJS; Flash display components (buttons, text fields, scrollbars, etc.) are ported as PixiJS display objects. Preserve the original AS3 class hierarchy for UI — do not collapse it into a simplified component model.
+
+## Room engine rules (`room/`, `habbo/room/`)
+
+`room/` (generic engine primitives: `data`, `events`, `object`, `renderer`, `utils`) and `habbo/room/` (Habbo-specific room game logic) are different layers — do not confuse them.
+
+1. Use `createObjectInternal()`, never `createRoomObject()`, when creating room objects from a container (the latter recurses infinitely).
+2. `renderer/` is a render-loop hot path: no allocations per frame, cache textures by content key, cull objects outside the viewport. See `docs/STYLEGUIDE.md` → Performance.
+3. See `docs/PATTERNS.md` for Manager/Handler patterns before adding new room object types.
+<!-- END:GENERATED-RULES -->

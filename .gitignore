@@ -1,4 +1,6 @@
-.claude/
+.claude/*
+!.claude/rules/
+!.claude/rules/**
 .idea/
 .idea/**
 _bmad/

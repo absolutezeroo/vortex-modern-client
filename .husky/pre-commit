@@ -1,0 +1,4 @@
+npx lint-staged
+node scripts/sync-agent-docs.mjs
+node scripts/check-as3-trace.mjs
+node scripts/check-status-doc.mjs
