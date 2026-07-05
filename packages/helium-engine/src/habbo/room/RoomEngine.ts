@@ -403,8 +403,19 @@ export class RoomEngine extends Component implements IRoomEngine,
 		}
 	}
 
+	// AS3: sources/win63_version/habbo/room/class_34.as::contentLoaded()
 	contentLoaded(type: string, success: boolean): void
 	{
+		// The "room" bundle (floor/wall/landscape rasterizer data) is only ever
+		// loaded through RoomManager's own placeholder-type preload
+		// (RoomManager.initialize() -> getPlaceHolderTypes()), which reports back
+		// exclusively through this IRoomManagerListener callback — never through
+		// _contentLoaderEvents (that path is furniture-only, see loadFurnitureContent()).
+		if (success && type === OBJECT_TYPE_ROOM)
+		{
+			this.onRoomContentReady();
+		}
+
 		this.events.emit('contentLoaded', type, success);
 	}
 
@@ -2787,9 +2798,18 @@ export class RoomEngine extends Component implements IRoomEngine,
 		this._roomVisualizationData = new RoomVisualizationData();
 		this._roomVisualizationData.initialize(vizData);
 
-		// Convert PixiJS textures to HTMLCanvasElement for the rasterizer system
+		// Convert PixiJS textures to HTMLCanvasElement for the rasterizer system.
+		//
+		// Nitro bundle spritesheet frames are prefixed with the library name
+		// (e.g. frame "room_floor_texture_64_0_floor_basic"), while the
+		// roomVisualization JSON's bitmap "assetName" references omit that
+		// prefix (e.g. "floor_texture_64_0_floor_basic") — same convention
+		// GraphicAssetCollection.defineAssets() already resolves for
+		// avatars/furniture. Register both forms so PlaneRasterizer's
+		// direct-name lookup resolves regardless of which form it sees.
 		const canvasTextures = new Map<string, HTMLCanvasElement>();
 		const textures: Map<string, Texture> = asset.textures;
+		const libraryPrefix = `${OBJECT_TYPE_ROOM}_`;
 
 		if (textures)
 		{
@@ -2800,6 +2820,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 				if (canvas !== null)
 				{
 					canvasTextures.set(name, canvas);
+
+					if (name.startsWith(libraryPrefix))
+					{
+						canvasTextures.set(name.slice(libraryPrefix.length), canvas);
+					}
 				}
 			}
 		}
@@ -3621,14 +3646,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
 	/**
 	 * Called when a furniture content bundle has finished loading.
+	 *
+	 * Furniture/tile-cursor content is requested via loadFurnitureContent(), which
+	 * always uses _contentLoaderEvents — the "room" type is never loaded through
+	 * this path (it's preloaded by RoomManager and reported via contentLoaded()).
 	 */
 	private onContentLoaded(type: string): void
 	{
-		if(type === OBJECT_TYPE_ROOM)
-		{
-			this.onRoomContentReady();
-		}
-
 		// Create visualizations for all pending objects of this type
 		const pending = this._pendingFurnitureViz.get(type);
 

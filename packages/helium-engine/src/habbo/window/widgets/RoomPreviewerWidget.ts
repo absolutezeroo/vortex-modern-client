@@ -123,12 +123,40 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 		this._canvasDisplayObject.x = globalPosition.x;
 		this._canvasDisplayObject.y = globalPosition.y;
 
+		// TS deviation: this canvas and the main room view's canvas both get
+		// parented directly onto the same shared PixiJS stage (see file header
+		// comment / RoomEngine.createRoomCanvas()), so their relative stacking
+		// depends purely on PixiJS child order, not window z-order. If the main
+		// room view's canvas is (re)created after this one — e.g. entering a
+		// room while the inventory/preview is already open — it ends up on top
+		// and visually covers the preview wherever their screen rects overlap.
+		// Since this widget is always logically a floating UI element above the
+		// room view, re-assert front-of-stage every frame here.
+		const stage = this._canvasDisplayObject.parent;
+
+		if (stage && stage.children[stage.children.length - 1] !== this._canvasDisplayObject)
+		{
+			stage.setChildIndex(this._canvasDisplayObject, stage.children.length - 1);
+		}
+
 		// Flash semantics: a DisplayObject parented into the window is only
 		// shown when the window AND all its ancestors are visible. The canvas
 		// lives on the root PixiJS stage here, so replicate that by walking
 		// the wrapper's parent chain.
+		//
+		// Bug fix: switching inventory tabs detaches the inactive tab's whole
+		// container via removeChild() (InventoryMainView.setViewToCategory())
+		// rather than setting .visible = false on it. Walking upward from a
+		// detached subtree hits a null parent without ever finding a
+		// window.visible === false, so this used to always conclude "visible"
+		// — leaving the 3D preview floating on screen for a tab that's no
+		// longer attached anywhere. Require the walk to actually reach the
+		// real desktop root; stopping short of it means the window is
+		// detached, which is exactly the invisible case Flash semantics need.
+		const desktop = this._windowManager?.getDesktop(1) ?? null;
 		let window: IWindow | null = this._canvasWrapper;
 		let visible = true;
+		let reachedDesktop = false;
 
 		while (window)
 		{
@@ -138,10 +166,16 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 				break;
 			}
 
+			if (window === desktop)
+			{
+				reachedDesktop = true;
+				break;
+			}
+
 			window = window.parent;
 		}
 
-		this._canvasDisplayObject.visible = visible;
+		this._canvasDisplayObject.visible = visible && reachedDesktop;
 	}
 
 	private _disposed: boolean = false;

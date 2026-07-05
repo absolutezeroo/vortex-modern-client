@@ -1347,7 +1347,7 @@ export class RoomPlaneParser
 				{
 					if (tiles[y][rectWidth] !== tileHeight ||
 						processed[y][rectWidth] ||
-						(y > 0 && (tiles[y - 1][rectWidth] === tileHeight) !== hasTopEdge))
+						(y > 0 && (tiles[y - 1][rectWidth] === tileHeight) === hasTopEdge))
 					{
 						break;
 					}

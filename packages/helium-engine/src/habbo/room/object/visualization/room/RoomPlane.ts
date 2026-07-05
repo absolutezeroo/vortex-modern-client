@@ -209,7 +209,15 @@ export class RoomPlane
 
 	set canBeVisible(value: boolean)
 	{
-		this._canBeVisible = value;
+		if (value !== this._canBeVisible)
+		{
+			if (!this._canBeVisible)
+			{
+				this.resetTextureCache();
+			}
+
+			this._canBeVisible = value;
+		}
 	}
 
 	private _hasTexture: boolean = true;
@@ -346,8 +354,7 @@ export class RoomPlane
 			this._bitmapDataTexture = null;
 		}
 		this._bitmapData = null;
-		this._cachedTextureBitmap = null;
-		this._textureCache.clear();
+		this.resetTextureCache();
 		this._outputCanvas = null;
 		this._bitmapMasks = [];
 		this._rectangleMasks = [];
@@ -443,7 +450,7 @@ export class RoomPlane
 		}
 
 		// Render the plane
-		this.render(geometry);
+		this.render(geometry, time);
 
 		return true;
 	}
@@ -593,24 +600,110 @@ export class RoomPlane
 	}
 
 	/**
-	 * Get texture bitmap from rasterizer.
+	 * Resolve the cache key for the currently rendered texture.
+	 * Based on AS3 RoomPlane.getTextureIdentifier()
+	 */
+	private getTextureIdentifier(scale: number): string
+	{
+		if (this._rasterizer !== null)
+		{
+			return this._rasterizer.getTextureIdentifier(scale, this._normal);
+		}
+
+		return String(scale);
+	}
+
+	/**
+	 * Whether the cached texture bitmap must be recomputed.
+	 * Based on AS3 RoomPlane.needsNewTexture()
+	 *
+	 * A plane's texture is rendered once and reused indefinitely — the rasterizer
+	 * pipeline (tiling/compositing every material cell across the whole plane) is
+	 * expensive and must not run every frame. It only needs to run again if there
+	 * is no cached bitmap yet, if door/window masks changed, or if the cached
+	 * bitmap predates a floor-hole update.
+	 *
+	 * TODO(AS3): sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::updateMaskChangeStatus()
+	 * AS3 also rolls _maskChanged back to false when the current mask set is
+	 * identical to the previous one (e.g. removed then re-added in the same
+	 * frame), avoiding one redundant recompute. Not ported — requires snapshotting
+	 * the previous mask arrays, which don't otherwise exist in this port.
+	 */
+	private needsNewTexture(time: number): boolean
+	{
+		if (!this._canBeVisible)
+		{
+			return false;
+		}
+
+		const cached = this._cachedTextureBitmap;
+
+		return cached === null
+			|| (cached.timeStamp >= 0 && time > cached.timeStamp)
+			|| this._maskChanged;
+	}
+
+	/**
+	 * Store the rendered texture in the per-identifier cache and as the
+	 * "last rendered" bitmap.
+	 * Based on AS3 RoomPlane.cacheTexture()
+	 */
+	private cacheTexture(identifier: string, data: PlaneBitmapData): void
+	{
+		const previous = this._textureCache.get(identifier);
+
+		if (previous !== undefined && previous !== data)
+		{
+			previous.dispose();
+		}
+
+		this._cachedTextureBitmap = data;
+		this._textureCache.set(identifier, data);
+	}
+
+	/**
+	 * Discard the cached texture(s), forcing the next getTexture() call to
+	 * re-render from the rasterizer.
+	 * Based on AS3 RoomPlane.resetTextureCache()
+	 */
+	private resetTextureCache(): void
+	{
+		for (const data of this._textureCache.values())
+		{
+			data.dispose();
+		}
+
+		this._textureCache.clear();
+		this._cachedTextureBitmap = null;
+	}
+
+	/**
+	 * Get texture bitmap from rasterizer, reusing the cached bitmap when
+	 * nothing that would affect it has changed.
 	 * Based on AS3 RoomPlane.getTexture()
 	 */
-	private getTexture(geometry: IRoomGeometry): PlaneBitmapData | null
+	private getTexture(geometry: IRoomGeometry, time: number): PlaneBitmapData | null
 	{
 		if (this._rasterizer === null || !this._hasTexture)
 		{
 			return null;
 		}
 
-		const id = this._id ?? 'default';
 		const scale = geometry.scale;
+		const identifier = this.getTextureIdentifier(scale);
+
+		if (!this.needsNewTexture(time))
+		{
+			return this._cachedTextureBitmap ?? this._textureCache.get(identifier) ?? null;
+		}
+
+		const id = this._id ?? 'default';
 		const leftLen = this._leftSide.length * scale;
 		const rightLen = this._rightSide.length * scale;
 
 		Randomizer.setSeed(this._randomSeed);
 
-		return this._rasterizer.render(
+		const result = this._rasterizer.render(
 			null,
 			id,
 			leftLen,
@@ -623,6 +716,15 @@ export class RoomPlane
 			this._textureMaxU,
 			this._textureMaxV
 		);
+
+		if (result !== null)
+		{
+			this.cacheTexture(identifier, result);
+		}
+
+		this._maskChanged = false;
+
+		return result;
 	}
 
 	/**
@@ -729,7 +831,7 @@ export class RoomPlane
 	 *
 	 * @see sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as
 	 */
-	private render(geometry: IRoomGeometry): void
+	private render(geometry: IRoomGeometry, time: number): void
 	{
 		if (!this.visible)
 		{
@@ -768,7 +870,7 @@ export class RoomPlane
 		ctx.clearRect(0, 0, this._width, this._height);
 
 		// Try textured rendering first
-		const textureBitmapData = this.getTexture(geometry);
+		const textureBitmapData = this.getTexture(geometry, time);
 
 		if (textureBitmapData?.bitmap)
 		{
