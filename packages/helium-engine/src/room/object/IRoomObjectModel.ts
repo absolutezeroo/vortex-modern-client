@@ -8,25 +8,25 @@
  */
 export interface IRoomObjectModel
 {
-	hasNumber(key: string): boolean;
+    hasNumber(key: string): boolean;
 
-	hasNumberArray(key: string): boolean;
+    hasNumberArray(key: string): boolean;
 
-	hasString(key: string): boolean;
+    hasString(key: string): boolean;
 
-	hasStringArray(key: string): boolean;
+    hasStringArray(key: string): boolean;
 
-	getNumber(key: string): number;
+    getNumber(key: string): number;
 
-	getString(key: string): string;
+    getString(key: string): string;
 
-	getNumberArray(key: string): readonly number[] | null;
+    getNumberArray(key: string): readonly number[] | null;
 
-	getStringArray(key: string): readonly string[] | null;
+    getStringArray(key: string): readonly string[] | null;
 
-	getStringToStringMap(key: string): Map<string, string>;
+    getStringToStringMap(key: string): Map<string, string>;
 
-	getObject(key: string): unknown;
+    getObject(key: string): unknown;
 
-	getUpdateID(): number;
+    getUpdateID(): number;
 }

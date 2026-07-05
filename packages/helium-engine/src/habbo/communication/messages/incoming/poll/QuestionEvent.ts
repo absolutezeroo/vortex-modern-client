@@ -9,8 +9,8 @@ import {QuestionEventParser} from '../../parser/poll/QuestionEventParser';
  */
 export class QuestionEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, QuestionEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, QuestionEventParser);
+    }
 }

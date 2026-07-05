@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GuideSessionMessageMessageComposer extends MessageComposer<ConstructorParameters<typeof GuideSessionMessageMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GuideSessionMessageMessageComposer>;
+    private _data: ConstructorParameters<typeof GuideSessionMessageMessageComposer>;
 
-	constructor(message: string)
-	{
-		super();
-		this._data = [message];
-	}
+    constructor(message: string)
+    {
+        super();
+        this._data = [message];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

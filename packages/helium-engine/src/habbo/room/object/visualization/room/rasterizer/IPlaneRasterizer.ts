@@ -10,26 +10,26 @@ import type {PlaneBitmapData} from '../utils/PlaneBitmapData';
 
 export interface IPlaneRasterizer
 {
-	initializeDimensions(width: number, height: number): boolean;
+    initializeDimensions(width: number, height: number): boolean;
 
-	render(
-		canvas: HTMLCanvasElement | null,
-		id: string,
-		leftLen: number,
-		rightLen: number,
-		scale: number,
-		normal: IVector3d,
-		hasTexture: boolean,
-		offsetU?: number,
-		offsetV?: number,
-		maxU?: number,
-		maxV?: number,
-		time?: number
-	): PlaneBitmapData | null;
+    render(
+        canvas: HTMLCanvasElement | null,
+        id: string,
+        leftLen: number,
+        rightLen: number,
+        scale: number,
+        normal: IVector3d,
+        hasTexture: boolean,
+        offsetU?: number,
+        offsetV?: number,
+        maxU?: number,
+        maxV?: number,
+        time?: number
+    ): PlaneBitmapData | null;
 
-	getTextureIdentifier(scale: number, normal: IVector3d): string;
+    getTextureIdentifier(scale: number, normal: IVector3d): string;
 
-	getLayers(id: string): (unknown | null)[];
+    getLayers(id: string): (unknown | null)[];
 
-	reinitialize(): void;
+    reinitialize(): void;
 }

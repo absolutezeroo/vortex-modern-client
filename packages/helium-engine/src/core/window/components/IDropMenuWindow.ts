@@ -7,12 +7,12 @@ import type {IInteractiveWindow} from './IInteractiveWindow';
  */
 export interface IDropMenuWindow extends IInteractiveWindow
 {
-	selection: number;
-	readonly numMenuItems: number;
+    selection: number;
+    readonly numMenuItems: number;
 
-	populate(items: unknown[]): void;
+    populate(items: unknown[]): void;
 
-	populateWithStrings(items: string[]): void;
+    populateWithStrings(items: string[]): void;
 
-	enumerateSelection(): string[];
+    enumerateSelection(): string[];
 }

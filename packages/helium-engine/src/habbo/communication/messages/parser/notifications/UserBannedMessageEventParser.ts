@@ -10,25 +10,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class UserBannedMessageEventParser implements IMessageParser
 {
-	private _message: string = '';
+    private _message: string = '';
 
-	get message(): string
-	{
-		return this._message;
-	}
+    get message(): string
+    {
+        return this._message;
+    }
 
-	flush(): boolean
-	{
-		this._message = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._message = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._message = wrapper.readString();
+        this._message = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

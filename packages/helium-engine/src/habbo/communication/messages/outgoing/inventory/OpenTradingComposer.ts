@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class OpenTradingComposer extends MessageComposer<ConstructorParameters<typeof OpenTradingComposer>>
 {
-	private _data: ConstructorParameters<typeof OpenTradingComposer>;
+    private _data: ConstructorParameters<typeof OpenTradingComposer>;
 
-	constructor(userId: number)
-	{
-		super();
+    constructor(userId: number)
+    {
+        super();
 
-		this._data = [userId];
-	}
+        this._data = [userId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

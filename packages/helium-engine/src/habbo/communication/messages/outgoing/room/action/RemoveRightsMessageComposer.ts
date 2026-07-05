@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RemoveRightsMessageComposer extends MessageComposer<unknown[]>
 {
-	private _userIds: number[];
+    private _userIds: number[];
 
-	constructor(userIds: number[])
-	{
-		super();
-		this._userIds = userIds;
-	}
+    constructor(userIds: number[])
+    {
+        super();
+        this._userIds = userIds;
+    }
 
-	getMessageArray(): unknown[]
-	{
-		return [this._userIds.length, ...this._userIds];
-	}
+    getMessageArray(): unknown[]
+    {
+        return [this._userIds.length, ...this._userIds];
+    }
 }

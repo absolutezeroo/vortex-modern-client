@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ReplenishRespectMessageComposer extends MessageComposer<ConstructorParameters<typeof ReplenishRespectMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ReplenishRespectMessageComposer>;
+    private _data: ConstructorParameters<typeof ReplenishRespectMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

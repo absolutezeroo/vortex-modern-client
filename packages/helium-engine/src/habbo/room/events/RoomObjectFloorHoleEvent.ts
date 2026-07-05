@@ -10,11 +10,11 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 
 export class RoomObjectFloorHoleEvent extends RoomObjectEvent
 {
-	public static readonly ADD_HOLE = 'ROFHO_ADD_HOLE';
-	public static readonly REMOVE_HOLE = 'ROFHO_REMOVE_HOLE';
+    public static readonly ADD_HOLE = 'ROFHO_ADD_HOLE';
+    public static readonly REMOVE_HOLE = 'ROFHO_REMOVE_HOLE';
 
-	constructor(type: string, object: IRoomObject)
-	{
-		super(type, object);
-	}
+    constructor(type: string, object: IRoomObject)
+    {
+        super(type, object);
+    }
 }

@@ -10,37 +10,37 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class ItemRemoveMessageParser implements IMessageParser
 {
-	private _itemId: number = 0;
+    private _itemId: number = 0;
 
-	get itemId(): number
-	{
-		return this._itemId;
-	}
+    get itemId(): number
+    {
+        return this._itemId;
+    }
 
-	private _pickerId: number = -1;
+    private _pickerId: number = -1;
 
-	get pickerId(): number
-	{
-		return this._pickerId;
-	}
+    get pickerId(): number
+    {
+        return this._pickerId;
+    }
 
-	flush(): boolean
-	{
-		this._itemId = 0;
-		this._pickerId = -1;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._itemId = 0;
+        this._pickerId = -1;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._itemId = parseInt(wrapper.readString(), 10);
-		this._pickerId = wrapper.readInt();
+        this._itemId = parseInt(wrapper.readString(), 10);
+        this._pickerId = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

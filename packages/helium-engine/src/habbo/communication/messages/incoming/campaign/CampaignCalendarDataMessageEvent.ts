@@ -9,8 +9,8 @@ import {CampaignCalendarDataMessageParser} from '../../parser/campaign/CampaignC
  */
 export class CampaignCalendarDataMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CampaignCalendarDataMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CampaignCalendarDataMessageParser);
+    }
 }

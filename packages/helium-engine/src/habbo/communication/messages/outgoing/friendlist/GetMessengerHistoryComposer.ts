@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetMessengerHistoryComposer extends MessageComposer<ConstructorParameters<typeof GetMessengerHistoryComposer>>
 {
-	private _data: ConstructorParameters<typeof GetMessengerHistoryComposer>;
+    private _data: ConstructorParameters<typeof GetMessengerHistoryComposer>;
 
-	constructor(chatId: number, messageId: string)
-	{
-		super();
-		this._data = [chatId, messageId];
-	}
+    constructor(chatId: number, messageId: string)
+    {
+        super();
+        this._data = [chatId, messageId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

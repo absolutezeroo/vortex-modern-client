@@ -8,31 +8,31 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class FurniListRemoveMultipleMessageParser implements IMessageParser
 {
-	private _stripIds: number[] = [];
+    private _stripIds: number[] = [];
 
-	get stripIds(): number[]
-	{
-		return this._stripIds;
-	}
+    get stripIds(): number[]
+    {
+        return this._stripIds;
+    }
 
-	flush(): boolean
-	{
-		this._stripIds = [];
+    flush(): boolean
+    {
+        this._stripIds = [];
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._stripIds = [];
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._stripIds = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._stripIds.push(wrapper.readInt());
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._stripIds.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

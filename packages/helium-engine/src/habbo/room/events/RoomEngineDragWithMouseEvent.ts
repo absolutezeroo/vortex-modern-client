@@ -9,11 +9,11 @@ import {RoomEngineEvent} from './RoomEngineEvent';
 
 export class RoomEngineDragWithMouseEvent extends RoomEngineEvent
 {
-	public static readonly DRAG_START = 'REDWME_DRAG_START';
-	public static readonly DRAG_END = 'REDWME_DRAG_END';
+    public static readonly DRAG_START = 'REDWME_DRAG_START';
+    public static readonly DRAG_END = 'REDWME_DRAG_END';
 
-	constructor(type: string, roomId: number)
-	{
-		super(type, roomId);
-	}
+    constructor(type: string, roomId: number)
+    {
+        super(type, roomId);
+    }
 }

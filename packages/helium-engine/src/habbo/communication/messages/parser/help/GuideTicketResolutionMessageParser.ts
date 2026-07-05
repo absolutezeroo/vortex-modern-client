@@ -9,40 +9,40 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideTicketResolutionMessageParser implements IMessageParser
 {
-	private static readonly RESOLUTION_VALID_CLOSED: number = 0;
-	private static readonly RESOLUTION_VALID_RESOLVED: number = 1;
-	private static readonly RESOLUTION_INVALID: number = 2;
+    private static readonly RESOLUTION_VALID_CLOSED: number = 0;
+    private static readonly RESOLUTION_VALID_RESOLVED: number = 1;
+    private static readonly RESOLUTION_INVALID: number = 2;
 
-	private _resultCode: number = -1;
+    private _resultCode: number = -1;
 
-	get resultCode(): number
-	{
-		return this._resultCode;
-	}
+    get resultCode(): number
+    {
+        return this._resultCode;
+    }
 
-	get localizationCode(): string
-	{
-		if (this._resultCode === GuideTicketResolutionMessageParser.RESOLUTION_VALID_CLOSED ||
+    get localizationCode(): string
+    {
+        if(this._resultCode === GuideTicketResolutionMessageParser.RESOLUTION_VALID_CLOSED ||
 			this._resultCode === GuideTicketResolutionMessageParser.RESOLUTION_VALID_RESOLVED)
-		{
-			return 'valid';
-		}
+        {
+            return 'valid';
+        }
 
-		return 'invalid';
-	}
+        return 'invalid';
+    }
 
-	flush(): boolean
-	{
-		this._resultCode = -1;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._resultCode = -1;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._resultCode = wrapper.readInt();
+        this._resultCode = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

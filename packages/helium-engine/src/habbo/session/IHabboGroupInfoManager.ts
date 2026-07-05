@@ -6,8 +6,8 @@ import type {IDisposable} from '@core/runtime';
  */
 export interface IHabboGroupInfoManager extends IDisposable
 {
-	/**
+    /**
 	 * Get the badge ID for a group
 	 */
-	getBadgeId(groupId: number): string | null;
+    getBadgeId(groupId: number): string | null;
 }

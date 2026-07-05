@@ -7,25 +7,24 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetActivatedBadgesComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(...badgeIds: string[])
-	{
-		super();
+    constructor(...badgeIds: string[])
+    {
+        super();
 
-		this._data = [];
+        this._data = [];
 
-		// Build the data array in constructor: slot1, badge1, slot2, badge2, ...
-		for (let i = 0; i < 5; i++)
-		{
-			this._data.push(i + 1); // slot number (1-5)
-			this._data.push(badgeIds[i] ?? ''); // badge id or empty
-		}
-	}
+        // Build the data array in constructor: slot1, badge1, slot2, badge2, ...
+        for(let i = 0; i < 5; i++)
+        {
+            this._data.push(i + 1); // slot number (1-5)
+            this._data.push(badgeIds[i] ?? ''); // badge id or empty
+        }
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

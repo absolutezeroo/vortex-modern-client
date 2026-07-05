@@ -8,8 +8,8 @@ import {BonusRareInfoMessageParser} from '../../parser/catalog/BonusRareInfoMess
  */
 export class BonusRareInfoMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, BonusRareInfoMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, BonusRareInfoMessageParser);
+    }
 }

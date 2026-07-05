@@ -10,13 +10,13 @@ import {ExtendedProfileMessageParser} from '../../parser/users/ExtendedProfileMe
  */
 export class ExtendedProfileMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ExtendedProfileMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ExtendedProfileMessageParser);
+    }
 
-	get data(): ExtendedProfileData | null
-	{
-		return (this._parser as ExtendedProfileMessageParser).data;
-	}
+    get data(): ExtendedProfileData | null
+    {
+        return (this._parser as ExtendedProfileMessageParser).data;
+    }
 }

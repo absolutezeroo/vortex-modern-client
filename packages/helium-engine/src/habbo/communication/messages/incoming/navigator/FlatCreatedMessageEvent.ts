@@ -7,8 +7,8 @@ import {FlatCreatedMessageParser} from '../../parser/navigator/FlatCreatedMessag
  */
 export class FlatCreatedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FlatCreatedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FlatCreatedMessageParser);
+    }
 }

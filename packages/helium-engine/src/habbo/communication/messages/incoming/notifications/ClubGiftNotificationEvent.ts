@@ -9,8 +9,8 @@ import {ClubGiftNotificationEventParser} from '../../parser/notifications/ClubGi
  */
 export class ClubGiftNotificationEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ClubGiftNotificationEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ClubGiftNotificationEventParser);
+    }
 }

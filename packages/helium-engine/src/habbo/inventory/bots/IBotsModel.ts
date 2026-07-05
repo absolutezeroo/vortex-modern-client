@@ -7,74 +7,74 @@ import type {Bot} from './Bot';
  */
 export interface IBotsModel
 {
-	readonly disposed: boolean;
-	readonly isListInitialized: boolean;
-	readonly bots: Map<number, Bot>;
+    readonly disposed: boolean;
+    readonly isListInitialized: boolean;
+    readonly bots: Map<number, Bot>;
 
-	dispose(): void;
+    dispose(): void;
 
-	/**
+    /**
 	 * Add a single bot
 	 * Returns true if added (new), false if already exists
 	 */
-	addBot(bot: Bot): boolean;
+    addBot(bot: Bot): boolean;
 
-	/**
+    /**
 	 * Update bots from full list
 	 * Returns info about what changed
 	 */
-	updateBots(bots: Map<number, Bot>): {
-		added: number[];
-		removed: number[];
-	};
+    updateBots(bots: Map<number, Bot>): {
+        added: number[];
+        removed: number[];
+    };
 
-	/**
+    /**
 	 * Remove a bot by ID
 	 * Returns the removed bot or null
 	 */
-	removeBot(id: number): Bot | null;
+    removeBot(id: number): Bot | null;
 
-	/**
+    /**
 	 * Get bot by ID
 	 */
-	getBotById(id: number): Bot | null;
+    getBotById(id: number): Bot | null;
 
-	/**
+    /**
 	 * Get all bots as array
 	 */
-	getBotsArray(): Bot[];
+    getBotsArray(): Bot[];
 
-	/**
+    /**
 	 * Get selected bot
 	 */
-	getSelectedBot(): Bot | null;
+    getSelectedBot(): Bot | null;
 
-	/**
+    /**
 	 * Select bot by ID
 	 */
-	selectBot(id: number): void;
+    selectBot(id: number): void;
 
-	/**
+    /**
 	 * Remove all selections
 	 */
-	removeSelections(): void;
+    removeSelections(): void;
 
-	/**
+    /**
 	 * Reset unseen flags
 	 * Returns IDs that were marked as unseen
 	 */
-	resetUnseenItems(): number[];
+    resetUnseenItems(): number[];
 
-	/**
+    /**
 	 * Mark bots as unseen based on IDs
 	 */
-	updateUnseenItems(unseenIds: number[]): void;
+    updateUnseenItems(unseenIds: number[]): void;
 
-	/**
+    /**
 	 * Check if bot is unseen
 	 */
-	isUnseen(id: number): boolean;
+    isUnseen(id: number): boolean;
 
-	// AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::updateView()
-	updateView(): void;
+    // AS3: sources/win63_version/habbo/inventory/bots/BotsModel.as::updateView()
+    updateView(): void;
 }

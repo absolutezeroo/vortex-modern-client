@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SignMessageComposer extends MessageComposer<[number]>
 {
-	private _data: [number];
+    private _data: [number];
 
-	constructor(signId: number)
-	{
-		super();
-		this._data = [signId];
-	}
+    constructor(signId: number)
+    {
+        super();
+        this._data = [signId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

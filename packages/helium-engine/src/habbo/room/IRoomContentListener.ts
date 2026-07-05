@@ -7,8 +7,8 @@
  */
 export interface IRoomContentListener
 {
-	/**
+    /**
 	 * Called when an icon has been loaded.
 	 */
-	iconLoaded(typeId: number, type: string, success: boolean): void;
+    iconLoaded(typeId: number, type: string, success: boolean): void;
 }

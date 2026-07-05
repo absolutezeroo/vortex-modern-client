@@ -9,25 +9,25 @@ import {CampaignCalendarData} from './CampaignCalendarData';
  */
 export class CampaignCalendarDataMessageParser implements IMessageParser
 {
-	private _data: CampaignCalendarData | null = null;
+    private _data: CampaignCalendarData | null = null;
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new CampaignCalendarData();
-		this._data.parse(wrapper);
-		return true;
-	}
+        this._data = new CampaignCalendarData();
+        this._data.parse(wrapper);
+        return true;
+    }
 
-	cloneData(): CampaignCalendarData | null
-	{
-		return this._data ? this._data.clone() : null;
-	}
+    cloneData(): CampaignCalendarData | null
+    {
+        return this._data ? this._data.clone() : null;
+    }
 }

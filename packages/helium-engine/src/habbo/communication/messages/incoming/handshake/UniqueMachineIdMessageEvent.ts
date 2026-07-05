@@ -10,8 +10,8 @@ import {UniqueMachineIdMessageParser} from '../../parser/handshake/UniqueMachine
  */
 export class UniqueMachineIdMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UniqueMachineIdMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UniqueMachineIdMessageParser);
+    }
 }

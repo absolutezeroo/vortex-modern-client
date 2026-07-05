@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class AmbassadorAlertMessageComposer extends MessageComposer<ConstructorParameters<typeof AmbassadorAlertMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof AmbassadorAlertMessageComposer>;
+    private _data: ConstructorParameters<typeof AmbassadorAlertMessageComposer>;
 
-	constructor(userId: number)
-	{
-		super();
-		this._data = [userId];
-	}
+    constructor(userId: number)
+    {
+        super();
+        this._data = [userId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

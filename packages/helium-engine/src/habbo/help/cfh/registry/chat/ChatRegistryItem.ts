@@ -8,75 +8,75 @@
  */
 export class ChatRegistryItem
 {
-	constructor(index: number, roomId: number, roomName: string, userId: number, userName: string, text: string)
-	{
-		this._index = index;
-		this._roomId = roomId;
-		this._roomName = roomName;
-		this._userId = userId;
-		this._userName = userName;
-		this._text = text;
-		this._chatTime = new Date();
-	}
+    constructor(index: number, roomId: number, roomName: string, userId: number, userName: string, text: string)
+    {
+        this._index = index;
+        this._roomId = roomId;
+        this._roomName = roomName;
+        this._userId = userId;
+        this._userName = userName;
+        this._text = text;
+        this._chatTime = new Date();
+    }
 
-	private _index: number;
+    private _index: number;
 
-	get index(): number
-	{
-		return this._index;
-	}
+    get index(): number
+    {
+        return this._index;
+    }
 
-	private _userId: number;
+    private _userId: number;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _userName: string;
+    private _userName: string;
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 
-	private _text: string;
+    private _text: string;
 
-	get text(): string
-	{
-		return this._text;
-	}
+    get text(): string
+    {
+        return this._text;
+    }
 
-	private _roomId: number;
+    private _roomId: number;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	private _roomName: string;
+    private _roomName: string;
 
-	get roomName(): string
-	{
-		return this._roomName;
-	}
+    get roomName(): string
+    {
+        return this._roomName;
+    }
 
-	private _selected: boolean = false;
+    private _selected: boolean = false;
 
-	get selected(): boolean
-	{
-		return this._selected;
-	}
+    get selected(): boolean
+    {
+        return this._selected;
+    }
 
-	set selected(value: boolean)
-	{
-		this._selected = value;
-	}
+    set selected(value: boolean)
+    {
+        this._selected = value;
+    }
 
-	private _chatTime: Date;
+    private _chatTime: Date;
 
-	get chatTime(): Date
-	{
-		return this._chatTime;
-	}
+    get chatTime(): Date
+    {
+        return this._chatTime;
+    }
 }

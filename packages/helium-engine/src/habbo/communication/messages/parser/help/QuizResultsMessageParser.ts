@@ -8,40 +8,40 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class QuizResultsMessageParser implements IMessageParser
 {
-	private _quizCode: string = '';
+    private _quizCode: string = '';
 
-	get quizCode(): string
-	{
-		return this._quizCode;
-	}
+    get quizCode(): string
+    {
+        return this._quizCode;
+    }
 
-	private _questionIdsForWrongAnswers: Array<number> = [];
+    private _questionIdsForWrongAnswers: Array<number> = [];
 
-	get questionIdsForWrongAnswers(): Array<number>
-	{
-		return this._questionIdsForWrongAnswers;
-	}
+    get questionIdsForWrongAnswers(): Array<number>
+    {
+        return this._questionIdsForWrongAnswers;
+    }
 
-	flush(): boolean
-	{
-		this._quizCode = '';
-		this._questionIdsForWrongAnswers = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._quizCode = '';
+        this._questionIdsForWrongAnswers = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._quizCode = wrapper.readString();
-		this._questionIdsForWrongAnswers = [];
+        this._quizCode = wrapper.readString();
+        this._questionIdsForWrongAnswers = [];
 
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._questionIdsForWrongAnswers.push(wrapper.readInt());
-		}
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._questionIdsForWrongAnswers.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

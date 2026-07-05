@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetMOTDMessageComposer extends MessageComposer<[]>
 {
-	private _data: [] = [];
+    private _data: [] = [];
 
-	constructor()
-	{
-		super();
-		this._data = [];
-	}
+    constructor()
+    {
+        super();
+        this._data = [];
+    }
 
-	getMessageArray(): []
-	{
-		return this._data;
-	}
+    getMessageArray(): []
+    {
+        return this._data;
+    }
 }

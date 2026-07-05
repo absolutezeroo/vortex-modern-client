@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UnignoreUserMessageComposer extends MessageComposer<ConstructorParameters<typeof UnignoreUserMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof UnignoreUserMessageComposer>;
+    private _data: ConstructorParameters<typeof UnignoreUserMessageComposer>;
 
-	constructor(userId: number)
-	{
-		super();
+    constructor(userId: number)
+    {
+        super();
 
-		this._data = [userId];
-	}
+        this._data = [userId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

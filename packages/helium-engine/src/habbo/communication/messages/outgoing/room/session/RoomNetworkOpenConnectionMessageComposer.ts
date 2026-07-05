@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomNetworkOpenConnectionMessageComposer extends MessageComposer<[number, number]>
 {
-	private _data: [number, number];
+    private _data: [number, number];
 
-	constructor(roomId: number, homeRoomId: number)
-	{
-		super();
-		this._data = [roomId, homeRoomId];
-	}
+    constructor(roomId: number, homeRoomId: number)
+    {
+        super();
+        this._data = [roomId, homeRoomId];
+    }
 
-	getMessageArray(): [number, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, number]
+    {
+        return this._data;
+    }
 }

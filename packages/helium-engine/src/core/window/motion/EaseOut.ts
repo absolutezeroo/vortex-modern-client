@@ -11,13 +11,13 @@ import type {Interval} from './Interval';
  */
 export class EaseOut extends EaseRate
 {
-	constructor(inner: Interval, rate: number)
-	{
-		super(inner, rate);
-	}
+    constructor(inner: Interval, rate: number)
+    {
+        super(inner, rate);
+    }
 
-	public override update(progress: number): void
-	{
-		this._inner.update(Math.pow(progress, 1 / this._rate));
-	}
+    public override update(progress: number): void
+    {
+        this._inner.update(Math.pow(progress, 1 / this._rate));
+    }
 }

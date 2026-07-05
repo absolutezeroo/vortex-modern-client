@@ -6,13 +6,13 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	AvatarEffectMessageEventParser
+    AvatarEffectMessageEventParser
 } from '@habbo/communication/messages/parser/room/action/AvatarEffectMessageEventParser';
 
 export class AvatarEffectMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AvatarEffectMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AvatarEffectMessageEventParser);
+    }
 }

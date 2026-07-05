@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CallForHelpFromPhotoMessageComposer extends MessageComposer<ConstructorParameters<typeof CallForHelpFromPhotoMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof CallForHelpFromPhotoMessageComposer>;
+    private _data: ConstructorParameters<typeof CallForHelpFromPhotoMessageComposer>;
 
-	constructor(message: string, topicId: number, reportedUserId: number, roomId: number, photoItemId: number)
-	{
-		super();
-		this._data = [message, topicId, reportedUserId, roomId, photoItemId];
-	}
+    constructor(message: string, topicId: number, reportedUserId: number, roomId: number, photoItemId: number)
+    {
+        super();
+        this._data = [message, topicId, reportedUserId, roomId, photoItemId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

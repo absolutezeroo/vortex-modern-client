@@ -9,24 +9,24 @@ import {AchievementData} from '../../quest/AchievementData';
  */
 export class AchievementEventParser implements IMessageParser
 {
-	private _achievement: AchievementData | null = null;
+    private _achievement: AchievementData | null = null;
 
-	get achievement(): AchievementData | null
-	{
-		return this._achievement;
-	}
+    get achievement(): AchievementData | null
+    {
+        return this._achievement;
+    }
 
-	flush(): boolean
-	{
-		this._achievement = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._achievement = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._achievement = new AchievementData(wrapper);
-		return true;
-	}
+        this._achievement = new AchievementData(wrapper);
+        return true;
+    }
 }

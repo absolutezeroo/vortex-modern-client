@@ -9,8 +9,8 @@ import {UserChatlogMessageParser} from '../../parser/moderation/UserChatlogMessa
  */
 export class UserChatlogMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserChatlogMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserChatlogMessageParser);
+    }
 }

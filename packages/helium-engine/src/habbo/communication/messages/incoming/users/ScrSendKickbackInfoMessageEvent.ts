@@ -10,13 +10,13 @@ import {ScrSendKickbackInfoMessageParser} from '../../parser/users/ScrSendKickba
  */
 export class ScrSendKickbackInfoMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ScrSendKickbackInfoMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ScrSendKickbackInfoMessageParser);
+    }
 
-	get data(): ScrKickbackData | null
-	{
-		return (this._parser as ScrSendKickbackInfoMessageParser).data;
-	}
+    get data(): ScrKickbackData | null
+    {
+        return (this._parser as ScrSendKickbackInfoMessageParser).data;
+    }
 }

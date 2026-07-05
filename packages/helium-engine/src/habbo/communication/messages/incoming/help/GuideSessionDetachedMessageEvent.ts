@@ -10,8 +10,8 @@ import {GuideSessionDetachedMessageParser} from '../../parser/help/GuideSessionD
  */
 export class GuideSessionDetachedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideSessionDetachedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideSessionDetachedMessageParser);
+    }
 }

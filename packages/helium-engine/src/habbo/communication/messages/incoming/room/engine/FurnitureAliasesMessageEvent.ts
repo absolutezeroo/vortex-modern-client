@@ -6,13 +6,13 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	FurnitureAliasesMessageParser
+    FurnitureAliasesMessageParser
 } from '@habbo/communication/messages/parser/room/engine/FurnitureAliasesMessageParser';
 
 export class FurnitureAliasesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FurnitureAliasesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FurnitureAliasesMessageParser);
+    }
 }

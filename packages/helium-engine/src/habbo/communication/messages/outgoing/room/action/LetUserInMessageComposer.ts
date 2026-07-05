@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class LetUserInMessageComposer extends MessageComposer<[string, boolean]>
 {
-	private _data: [string, boolean];
+    private _data: [string, boolean];
 
-	constructor(userName: string, allow: boolean)
-	{
-		super();
-		this._data = [userName, allow];
-	}
+    constructor(userName: string, allow: boolean)
+    {
+        super();
+        this._data = [userName, allow];
+    }
 
-	getMessageArray(): [string, boolean]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string, boolean]
+    {
+        return this._data;
+    }
 }

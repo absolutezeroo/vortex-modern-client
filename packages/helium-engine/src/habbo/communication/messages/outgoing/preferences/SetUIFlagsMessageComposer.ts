@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetUIFlagsMessageComposer extends MessageComposer<ConstructorParameters<typeof SetUIFlagsMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof SetUIFlagsMessageComposer>;
+    private _data: ConstructorParameters<typeof SetUIFlagsMessageComposer>;
 
-	constructor(flags: number)
-	{
-		super();
+    constructor(flags: number)
+    {
+        super();
 
-		this._data = [flags];
-	}
+        this._data = [flags];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

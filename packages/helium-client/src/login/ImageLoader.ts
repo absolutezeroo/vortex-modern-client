@@ -14,52 +14,52 @@ const log = Logger.getLogger('ImageLoader');
 
 export class ImageLoader extends EventEmitter
 {
-	private _loader: HTMLImageElement;
-	private _url: string;
+    private _loader: HTMLImageElement;
+    private _url: string;
 
-	/**
+    /**
 	 * AS3: ImageLoader(_arg_1:Loader, _arg_2:String)
 	 * Loads the image immediately.
 	 */
-	constructor(loader: HTMLImageElement, url: string)
-	{
-		super();
+    constructor(loader: HTMLImageElement, url: string)
+    {
+        super();
 
-		this._loader = loader;
-		this._url = url;
+        this._loader = loader;
+        this._url = url;
 
-		loader.addEventListener('load', this._onComplete);
-		loader.addEventListener('error', this._onError);
-		loader.src = url;
-	}
+        loader.addEventListener('load', this._onComplete);
+        loader.addEventListener('error', this._onError);
+        loader.src = url;
+    }
 
-	/**
+    /**
 	 * AS3: CreateLoader(_arg_1:Loader, _arg_2:String, _arg_3:Function):ImageLoader
 	 * Factory method — creates a loader and registers the callback.
 	 */
-	public static CreateLoader(img: HTMLImageElement, url: string, callback: (event: ImageLoaderEvent) => void): ImageLoader
-	{
-		const loader = new ImageLoader(img, url);
+    public static CreateLoader(img: HTMLImageElement, url: string, callback: (event: ImageLoaderEvent) => void): ImageLoader
+    {
+        const loader = new ImageLoader(img, url);
 
-		loader.on('complete', callback);
+        loader.on('complete', callback);
 
-		return loader;
-	}
+        return loader;
+    }
 
-	/**
+    /**
 	 * AS3: avatarImageLoadCompleteHandler(_arg_1:Event):void
 	 */
-	private _onComplete = (): void =>
-	{
-		log.info('Loaded image ' + this._url);
-		this.emit('complete', new ImageLoaderEvent(this._loader, this._url));
-	};
+    private _onComplete = (): void =>
+    {
+        log.info('Loaded image ' + this._url);
+        this.emit('complete', new ImageLoaderEvent(this._loader, this._url));
+    };
 
-	/**
+    /**
 	 * AS3: onImageError(_arg_1:ErrorEvent):void
 	 */
-	private _onError = (): void =>
-	{
-		log.info('Failed to load image ' + this._url);
-	};
+    private _onError = (): void =>
+    {
+        log.info('Failed to load image ' + this._url);
+    };
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ChangeQueueMessageComposer extends MessageComposer<ConstructorParameters<typeof ChangeQueueMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ChangeQueueMessageComposer>;
+    private _data: ConstructorParameters<typeof ChangeQueueMessageComposer>;
 
-	constructor(targetQueue: number)
-	{
-		super();
-		this._data = [targetQueue];
-	}
+    constructor(targetQueue: number)
+    {
+        super();
+        this._data = [targetQueue];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

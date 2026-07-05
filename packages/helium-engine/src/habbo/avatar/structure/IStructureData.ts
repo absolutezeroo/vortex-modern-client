@@ -5,11 +5,11 @@
  */
 export interface IStructureData
 {
-	// AS3: sources/win63_version/habbo/avatar/structure/IStructureData.as::parse()
-	parse(data: any): boolean;
+    // AS3: sources/win63_version/habbo/avatar/structure/IStructureData.as::parse()
+    parse(data: any): boolean;
 
-	// AS3: sources/win63_version/habbo/avatar/structure/IStructureData.as::appendXML()
-	appendXML(data: any): boolean;
+    // AS3: sources/win63_version/habbo/avatar/structure/IStructureData.as::appendXML()
+    appendXML(data: any): boolean;
 
-	appendJSON(data: any): boolean;
+    appendJSON(data: any): boolean;
 }

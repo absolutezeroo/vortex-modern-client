@@ -12,12 +12,12 @@ import type {IDisposable} from "../../../runtime/IDisposable";
  */
 export interface ISkinRenderer extends IDisposable
 {
-	/**
+    /**
 	 * The renderer name.
 	 */
-	readonly name: string;
+    readonly name: string;
 
-	/**
+    /**
 	 * Draws the window skin onto the given canvas context.
 	 *
 	 * @param window - The window to render
@@ -26,19 +26,19 @@ export interface ISkinRenderer extends IDisposable
 	 * @param state - The resolved window state
 	 * @param colorize - Whether to apply colorization
 	 */
-	draw(
-		window: IWindow,
-		ctx: OffscreenCanvasRenderingContext2D,
-		rect: { x: number; y: number; width: number; height: number },
-		state: number,
-		colorize: boolean
-	): void;
+    draw(
+        window: IWindow,
+        ctx: OffscreenCanvasRenderingContext2D,
+        rect: { x: number; y: number; width: number; height: number },
+        state: number,
+        colorize: boolean
+    ): void;
 
-	/**
+    /**
 	 * Tests whether a given state has drawable content.
 	 *
 	 * @param state - The window state flags
 	 * @returns True if the state can be drawn
 	 */
-	isStateDrawable(state: number): boolean;
+    isStateDrawable(state: number): boolean;
 }

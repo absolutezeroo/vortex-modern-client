@@ -7,8 +7,8 @@ import {GuestRoomSearchResultMessageParser} from '../../parser/navigator/GuestRo
  */
 export class GuestRoomSearchResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuestRoomSearchResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuestRoomSearchResultMessageParser);
+    }
 }

@@ -7,10 +7,10 @@ import type {IWindow} from '../IWindow';
  */
 export interface IMouseListenerService
 {
-	readonly eventTypes: string[];
-	areaLimit: number;
+    readonly eventTypes: string[];
+    areaLimit: number;
 
-	begin(window: IWindow): void;
+    begin(window: IWindow): void;
 
-	end(window: IWindow): void;
+    end(window: IWindow): void;
 }

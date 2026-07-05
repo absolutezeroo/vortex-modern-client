@@ -9,13 +9,13 @@ import {HabboGroupJoinFailedMessageParser} from '../../parser/users/HabboGroupJo
  */
 export class HabboGroupJoinFailedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboGroupJoinFailedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboGroupJoinFailedMessageParser);
+    }
 
-	get reason(): number
-	{
-		return (this._parser as HabboGroupJoinFailedMessageParser).reason;
-	}
+    get reason(): number
+    {
+        return (this._parser as HabboGroupJoinFailedMessageParser).reason;
+    }
 }

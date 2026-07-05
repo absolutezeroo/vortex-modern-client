@@ -15,120 +15,120 @@ const log = Logger.getLogger('OfferExtension');
  */
 export class OfferExtension
 {
-	private _toolbar: HabboToolbar | null;
-	private _showingVideo: boolean = false;
+    private _toolbar: HabboToolbar | null;
+    private _showingVideo: boolean = false;
 
-	constructor(toolbar: HabboToolbar)
-	{
-		this._toolbar = toolbar;
-		this._visible = false;
+    constructor(toolbar: HabboToolbar)
+    {
+        this._toolbar = toolbar;
+        this._visible = false;
 
-		log.debug('OfferExtension constructed');
-	}
+        log.debug('OfferExtension constructed');
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	/**
+    /**
 	 * Whether the extension is disposed
 	 */
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	private _visible: boolean = false;
+    private _visible: boolean = false;
 
-	/**
+    /**
 	 * Whether the extension is visible
 	 */
-	get visible(): boolean
-	{
-		return this._visible;
-	}
+    get visible(): boolean
+    {
+        return this._visible;
+    }
 
-	private _videoAvailable: boolean = false;
+    private _videoAvailable: boolean = false;
 
-	/**
+    /**
 	 * Whether a video offer is available
 	 */
-	get videoAvailable(): boolean
-	{
-		return this._videoAvailable;
-	}
+    get videoAvailable(): boolean
+    {
+        return this._videoAvailable;
+    }
 
-	private _rewardsAvailable: boolean = false;
+    private _rewardsAvailable: boolean = false;
 
-	/**
+    /**
 	 * Whether rewards are available
 	 */
-	get rewardsAvailable(): boolean
-	{
-		return this._rewardsAvailable;
-	}
+    get rewardsAvailable(): boolean
+    {
+        return this._rewardsAvailable;
+    }
 
-	/**
+    /**
 	 * Handle a button click
 	 *
 	 * @param buttonName The button name
 	 */
-	public onButtonClick(buttonName: string): void
-	{
-		switch (buttonName)
-		{
-			case 'start_video':
-				// In AS3: _offerCenter.showVideo()
-				break;
-			case 'check_rewards':
-				// In AS3: _offerCenter.showRewards()
-				break;
-		}
-	}
+    public onButtonClick(buttonName: string): void
+    {
+        switch(buttonName)
+        {
+            case 'start_video':
+                // In AS3: _offerCenter.showVideo()
+                break;
+            case 'check_rewards':
+                // In AS3: _offerCenter.showRewards()
+                break;
+        }
+    }
 
-	/**
+    /**
 	 * Indicate that rewards are available to check
 	 */
-	public indicateRewards(): void
-	{
-		this._rewardsAvailable = true;
-		this._visible = true;
-		this.refresh();
-	}
+    public indicateRewards(): void
+    {
+        this._rewardsAvailable = true;
+        this._visible = true;
+        this.refresh();
+    }
 
-	/**
+    /**
 	 * Indicate whether a video is available to watch
 	 *
 	 * @param available Whether a video is available
 	 */
-	public indicateVideoAvailable(available: boolean): void
-	{
-		this._videoAvailable = available;
+    public indicateVideoAvailable(available: boolean): void
+    {
+        this._videoAvailable = available;
 
-		if (available)
-		{
-			this._visible = true;
-		}
+        if(available)
+        {
+            this._visible = true;
+        }
 
-		this.refresh();
-	}
+        this.refresh();
+    }
 
-	/**
+    /**
 	 * Dispose of this extension
 	 */
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._toolbar = null;
-		this._disposed = true;
-	}
+        this._toolbar = null;
+        this._disposed = true;
+    }
 
-	private refresh(): void
-	{
-		this._visible = this._videoAvailable || this._rewardsAvailable;
+    private refresh(): void
+    {
+        this._visible = this._videoAvailable || this._rewardsAvailable;
 
-		if (this._toolbar?.extensionView)
-		{
-			this._toolbar.extensionView.refreshItemWindow();
-		}
-	}
+        if(this._toolbar?.extensionView)
+        {
+            this._toolbar.extensionView.refreshItemWindow();
+        }
+    }
 }

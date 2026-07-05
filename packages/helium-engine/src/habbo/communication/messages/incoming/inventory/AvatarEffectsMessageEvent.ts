@@ -9,8 +9,8 @@ import {AvatarEffectsMessageParser} from '../../parser/inventory/AvatarEffectsMe
  */
 export class AvatarEffectsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AvatarEffectsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AvatarEffectsMessageParser);
+    }
 }

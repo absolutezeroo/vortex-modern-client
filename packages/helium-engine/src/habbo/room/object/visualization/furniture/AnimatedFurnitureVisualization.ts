@@ -16,449 +16,449 @@ import {FurnitureVisualization} from './FurnitureVisualization';
 
 export class AnimatedFurnitureVisualization extends FurnitureVisualization
 {
-	public static readonly DEFAULT_ANIMATION_ID: number = 0;
+    public static readonly DEFAULT_ANIMATION_ID: number = 0;
 
-	protected _needsAnimationUpdate: boolean = false;
+    protected _needsAnimationUpdate: boolean = false;
 
-	private _animData: AnimatedFurnitureVisualizationData | null = null;
-	private _lastState: number = -1;
-	private _animationState: AnimationStateData;
-	private _animationChangeTime: number = 0;
-	private _animScale: number = 0;
-	private _animLayerCount: number = 0;
+    private _animData: AnimatedFurnitureVisualizationData | null = null;
+    private _lastState: number = -1;
+    private _animationState: AnimationStateData;
+    private _animationChangeTime: number = 0;
+    private _animScale: number = 0;
+    private _animLayerCount: number = 0;
 
-	constructor()
-	{
-		super();
-		this._animationState = new AnimationStateData();
-	}
+    constructor()
+    {
+        super();
+        this._animationState = new AnimationStateData();
+    }
 
-	get animationId(): number
-	{
-		return this._animationState.animationId;
-	}
+    get animationId(): number
+    {
+        return this._animationState.animationId;
+    }
 
-	private _frameIncrease: number = 1;
+    private _frameIncrease: number = 1;
 
-	protected get frameIncrease(): number
-	{
-		return this._frameIncrease;
-	}
+    protected get frameIncrease(): number
+    {
+        return this._frameIncrease;
+    }
 
-	protected get animatedLayerCount(): number
-	{
-		return this._animLayerCount;
-	}
+    protected get animatedLayerCount(): number
+    {
+        return this._animLayerCount;
+    }
 
-	override dispose(): void
-	{
-		super.dispose();
+    override dispose(): void
+    {
+        super.dispose();
 
-		this._animData = null;
+        this._animData = null;
 
-		if (this._animationState !== null)
-		{
-			this._animationState.dispose();
-		}
-	}
+        if(this._animationState !== null)
+        {
+            this._animationState.dispose();
+        }
+    }
 
-	override initialize(data: IRoomObjectVisualizationData): boolean
-	{
-		if (!(data instanceof AnimatedFurnitureVisualizationData))
-		{
-			return false;
-		}
+    override initialize(data: IRoomObjectVisualizationData): boolean
+    {
+        if(!(data instanceof AnimatedFurnitureVisualizationData))
+        {
+            return false;
+        }
 
-		this._animData = data;
+        this._animData = data;
 
-		return super.initialize(data);
-	}
+        return super.initialize(data);
+    }
 
-	protected override updateObject(scale: number, geometryDirection: number): boolean
-	{
-		if (super.updateObject(scale, geometryDirection))
-		{
-			const roomObject = this.object;
+    protected override updateObject(scale: number, geometryDirection: number): boolean
+    {
+        if(super.updateObject(scale, geometryDirection))
+        {
+            const roomObject = this.object;
 
-			if (roomObject === null)
-			{
-				return false;
-			}
+            if(roomObject === null)
+            {
+                return false;
+            }
 
-			const state = roomObject.getState(0);
+            const state = roomObject.getState(0);
 
-			if (state !== this._lastState)
-			{
-				this.setAnimation(state);
-				this._lastState = state;
+            if(state !== this._lastState)
+            {
+                this.setAnimation(state);
+                this._lastState = state;
 
-				const model = roomObject.getModel();
+                const model = roomObject.getModel();
 
-				if (model !== null)
-				{
-					this._animationChangeTime = model.getNumber('furniture_state_update_time') || 0;
-				}
-			}
+                if(model !== null)
+                {
+                    this._animationChangeTime = model.getNumber('furniture_state_update_time') || 0;
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	protected override updateModel(scale: number): boolean
-	{
-		if (super.updateModel(scale))
-		{
-			const roomObject = this.object;
+    protected override updateModel(scale: number): boolean
+    {
+        if(super.updateModel(scale))
+        {
+            const roomObject = this.object;
 
-			if (roomObject !== null)
-			{
-				const model = roomObject.getModel();
+            if(roomObject !== null)
+            {
+                const model = roomObject.getModel();
 
-				if (model !== null)
-				{
-					if (this.usesAnimationResetting())
-					{
-						const stateUpdateTime = model.getNumber('furniture_state_update_time') || 0;
+                if(model !== null)
+                {
+                    if(this.usesAnimationResetting())
+                    {
+                        const stateUpdateTime = model.getNumber('furniture_state_update_time') || 0;
 
-						if (stateUpdateTime > this._animationChangeTime)
-						{
-							this._animationChangeTime = stateUpdateTime;
-							this.setAnimation(this._lastState);
-						}
-					}
+                        if(stateUpdateTime > this._animationChangeTime)
+                        {
+                            this._animationChangeTime = stateUpdateTime;
+                            this.setAnimation(this._lastState);
+                        }
+                    }
 
-					const autoStateIndex = model.getNumber('furniture_automatic_state_index');
+                    const autoStateIndex = model.getNumber('furniture_automatic_state_index');
 
-					if (!isNaN(autoStateIndex) && this._animData !== null)
-					{
-						const animId = this._animData.getAnimationId(this._animScale, autoStateIndex);
-						this.setAnimation(animId);
-					}
-				}
-			}
+                    if(!isNaN(autoStateIndex) && this._animData !== null)
+                    {
+                        const animId = this._animData.getAnimationId(this._animScale, autoStateIndex);
+                        this.setAnimation(animId);
+                    }
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	protected override updateAnimation(scale: number): number
-	{
-		if (this._animData === null)
-		{
-			return 0;
-		}
+    protected override updateAnimation(scale: number): number
+    {
+        if(this._animData === null)
+        {
+            return 0;
+        }
 
-		if (scale !== this._animScale)
-		{
-			this._animScale = scale;
-			this._animLayerCount = this._animData.getLayerCount(scale);
-			this.resetAllAnimationFrames();
-		}
+        if(scale !== this._animScale)
+        {
+            this._animScale = scale;
+            this._animLayerCount = this._animData.getLayerCount(scale);
+            this.resetAllAnimationFrames();
+        }
 
-		const result = this.updateAnimations(scale);
-		this._needsAnimationUpdate = false;
+        const result = this.updateAnimations(scale);
+        this._needsAnimationUpdate = false;
 
-		return result;
-	}
+        return result;
+    }
 
-	protected override getFrameNumber(scale: number, layerIndex: number): number
-	{
-		const frame = this._animationState.getFrame(layerIndex);
+    protected override getFrameNumber(scale: number, layerIndex: number): number
+    {
+        const frame = this._animationState.getFrame(layerIndex);
 
-		if (frame !== null)
-		{
-			return frame.id;
-		}
+        if(frame !== null)
+        {
+            return frame.id;
+        }
 
-		return super.getFrameNumber(scale, layerIndex);
-	}
+        return super.getFrameNumber(scale, layerIndex);
+    }
 
-	protected override getSpriteXOffset(scale: number, direction: number, layerIndex: number): number
-	{
-		let offset = super.getSpriteXOffset(scale, direction, layerIndex);
-		const frame = this._animationState.getFrame(layerIndex);
+    protected override getSpriteXOffset(scale: number, direction: number, layerIndex: number): number
+    {
+        let offset = super.getSpriteXOffset(scale, direction, layerIndex);
+        const frame = this._animationState.getFrame(layerIndex);
 
-		if (frame !== null)
-		{
-			offset += frame.x;
-		}
+        if(frame !== null)
+        {
+            offset += frame.x;
+        }
 
-		return offset;
-	}
+        return offset;
+    }
 
-	protected override getSpriteYOffset(scale: number, direction: number, layerIndex: number): number
-	{
-		let offset = super.getSpriteYOffset(scale, direction, layerIndex);
-		const frame = this._animationState.getFrame(layerIndex);
+    protected override getSpriteYOffset(scale: number, direction: number, layerIndex: number): number
+    {
+        let offset = super.getSpriteYOffset(scale, direction, layerIndex);
+        const frame = this._animationState.getFrame(layerIndex);
 
-		if (frame !== null)
-		{
-			offset += frame.y;
-		}
+        if(frame !== null)
+        {
+            offset += frame.y;
+        }
 
-		return offset;
-	}
+        return offset;
+    }
 
-	protected getAnimationId(_stateData: AnimationStateData): number
-	{
-		const id = this.animationId;
+    protected getAnimationId(_stateData: AnimationStateData): number
+    {
+        const id = this.animationId;
 
-		if (id !== 0 && this._animData !== null && this._animData.hasAnimation(this._animScale, id))
-		{
-			return id;
-		}
+        if(id !== 0 && this._animData !== null && this._animData.hasAnimation(this._animScale, id))
+        {
+            return id;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	protected setAnimation(animationId: number): void
-	{
-		if (this._animData !== null)
-		{
-			this.setSubAnimation(this._animationState, animationId, this._lastState >= 0);
-		}
-	}
+    protected setAnimation(animationId: number): void
+    {
+        if(this._animData !== null)
+        {
+            this.setSubAnimation(this._animationState, animationId, this._lastState >= 0);
+        }
+    }
 
-	protected setSubAnimation(stateData: AnimationStateData, animationId: number, hasOldAnimation: boolean = true): boolean
-	{
-		const oldAnimationId = stateData.animationId;
+    protected setSubAnimation(stateData: AnimationStateData, animationId: number, hasOldAnimation: boolean = true): boolean
+    {
+        const oldAnimationId = stateData.animationId;
 
-		if (hasOldAnimation && this._animData !== null)
-		{
-			if (this.isPlayingTransition(stateData, animationId))
-			{
-				return false;
-			}
+        if(hasOldAnimation && this._animData !== null)
+        {
+            if(this.isPlayingTransition(stateData, animationId))
+            {
+                return false;
+            }
 
-			const currentState = this.getCurrentState(stateData);
+            const currentState = this.getCurrentState(stateData);
 
-			if (animationId !== currentState)
-			{
-				if (!this._animData.isImmediateChange(this._animScale, animationId, currentState))
-				{
-					let transitionId = AnimationData.getTransitionFromAnimationId(currentState);
+            if(animationId !== currentState)
+            {
+                if(!this._animData.isImmediateChange(this._animScale, animationId, currentState))
+                {
+                    let transitionId = AnimationData.getTransitionFromAnimationId(currentState);
 
-					if (this._animData.hasAnimation(this._animScale, transitionId))
-					{
-						stateData.animationAfterTransitionId = animationId;
-						animationId = transitionId;
-					}
-					else
-					{
-						transitionId = AnimationData.getTransitionToAnimationId(animationId);
+                    if(this._animData.hasAnimation(this._animScale, transitionId))
+                    {
+                        stateData.animationAfterTransitionId = animationId;
+                        animationId = transitionId;
+                    }
+                    else
+                    {
+                        transitionId = AnimationData.getTransitionToAnimationId(animationId);
 
-						if (this._animData.hasAnimation(this._animScale, transitionId))
-						{
-							stateData.animationAfterTransitionId = animationId;
-							animationId = transitionId;
-						}
-					}
-				}
-			}
-			else if (AnimationData.isTransitionFromAnimation(oldAnimationId))
-			{
-				const transitionId = AnimationData.getTransitionToAnimationId(animationId);
+                        if(this._animData.hasAnimation(this._animScale, transitionId))
+                        {
+                            stateData.animationAfterTransitionId = animationId;
+                            animationId = transitionId;
+                        }
+                    }
+                }
+            }
+            else if(AnimationData.isTransitionFromAnimation(oldAnimationId))
+            {
+                const transitionId = AnimationData.getTransitionToAnimationId(animationId);
 
-				if (this._animData.hasAnimation(this._animScale, transitionId))
-				{
-					stateData.animationAfterTransitionId = animationId;
-					animationId = transitionId;
-				}
-			}
-			else if (!AnimationData.isTransitionToAnimation(oldAnimationId))
-			{
-				if (this.usesAnimationResetting())
-				{
-					let transitionId = AnimationData.getTransitionFromAnimationId(currentState);
+                if(this._animData.hasAnimation(this._animScale, transitionId))
+                {
+                    stateData.animationAfterTransitionId = animationId;
+                    animationId = transitionId;
+                }
+            }
+            else if(!AnimationData.isTransitionToAnimation(oldAnimationId))
+            {
+                if(this.usesAnimationResetting())
+                {
+                    let transitionId = AnimationData.getTransitionFromAnimationId(currentState);
 
-					if (this._animData.hasAnimation(this._animScale, transitionId))
-					{
-						stateData.animationAfterTransitionId = animationId;
-						animationId = transitionId;
-					}
-					else
-					{
-						transitionId = AnimationData.getTransitionToAnimationId(animationId);
+                    if(this._animData.hasAnimation(this._animScale, transitionId))
+                    {
+                        stateData.animationAfterTransitionId = animationId;
+                        animationId = transitionId;
+                    }
+                    else
+                    {
+                        transitionId = AnimationData.getTransitionToAnimationId(animationId);
 
-						if (this._animData.hasAnimation(this._animScale, transitionId))
-						{
-							stateData.animationAfterTransitionId = animationId;
-							animationId = transitionId;
-						}
-					}
-				}
-			}
-		}
+                        if(this._animData.hasAnimation(this._animScale, transitionId))
+                        {
+                            stateData.animationAfterTransitionId = animationId;
+                            animationId = transitionId;
+                        }
+                    }
+                }
+            }
+        }
 
-		if (oldAnimationId !== animationId)
-		{
-			stateData.animationId = animationId;
-			return true;
-		}
+        if(oldAnimationId !== animationId)
+        {
+            stateData.animationId = animationId;
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	protected getLastFramePlayed(layerIndex: number): boolean
-	{
-		return this._animationState.getLastFramePlayed(layerIndex);
-	}
+    protected getLastFramePlayed(layerIndex: number): boolean
+    {
+        return this._animationState.getLastFramePlayed(layerIndex);
+    }
 
-	protected resetAllAnimationFrames(): void
-	{
-		if (this._animationState !== null)
-		{
-			this._animationState.setLayerCount(this._animLayerCount);
-		}
-	}
+    protected resetAllAnimationFrames(): void
+    {
+        if(this._animationState !== null)
+        {
+            this._animationState.setLayerCount(this._animLayerCount);
+        }
+    }
 
-	protected updateAnimations(scale: number): number
-	{
-		let result = 0;
+    protected updateAnimations(scale: number): number
+    {
+        let result = 0;
 
-		if (!this._animationState.animationOver || this._needsAnimationUpdate)
-		{
-			result = this.updateFramesForAnimation(this._animationState, scale);
+        if(!this._animationState.animationOver || this._needsAnimationUpdate)
+        {
+            result = this.updateFramesForAnimation(this._animationState, scale);
 
-			if (this._animationState.animationOver)
-			{
-				if (AnimationData.isTransitionFromAnimation(this._animationState.animationId) ||
+            if(this._animationState.animationOver)
+            {
+                if(AnimationData.isTransitionFromAnimation(this._animationState.animationId) ||
 					AnimationData.isTransitionToAnimation(this._animationState.animationId))
-				{
-					this.setAnimation(this._animationState.animationAfterTransitionId);
-					this._animationState.animationOver = false;
-				}
-			}
-		}
+                {
+                    this.setAnimation(this._animationState.animationAfterTransitionId);
+                    this._animationState.animationOver = false;
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	protected updateFramesForAnimation(stateData: AnimationStateData, scale: number): number
-	{
-		if (stateData.animationOver && !this._needsAnimationUpdate)
-		{
-			return 0;
-		}
+    protected updateFramesForAnimation(stateData: AnimationStateData, scale: number): number
+    {
+        if(stateData.animationOver && !this._needsAnimationUpdate)
+        {
+            return 0;
+        }
 
-		let frameCounter = stateData.frameCounter;
-		const animationId = this.getAnimationId(stateData);
+        let frameCounter = stateData.frameCounter;
+        const animationId = this.getAnimationId(stateData);
 
-		if (frameCounter === 0 && this._animData !== null)
-		{
-			frameCounter = this._animData.getStartFrame(scale, animationId, this.direction);
-		}
+        if(frameCounter === 0 && this._animData !== null)
+        {
+            frameCounter = this._animData.getStartFrame(scale, animationId, this.direction);
+        }
 
-		frameCounter += this._frameIncrease;
-		stateData.frameCounter = frameCounter;
+        frameCounter += this._frameIncrease;
+        stateData.frameCounter = frameCounter;
 
-		let result = 0;
-		stateData.animationOver = true;
-		let layerMask = 1 << (this._animLayerCount - 1);
+        let result = 0;
+        stateData.animationOver = true;
+        let layerMask = 1 << (this._animLayerCount - 1);
 
-		for (let layer = this._animLayerCount - 1; layer >= 0; layer--)
-		{
-			const animPlayed = stateData.getAnimationPlayed(layer);
-			let lastFramePlayed = stateData.getLastFramePlayed(layer);
-			let currentPlayed = animPlayed;
+        for(let layer = this._animLayerCount - 1; layer >= 0; layer--)
+        {
+            const animPlayed = stateData.getAnimationPlayed(layer);
+            let lastFramePlayed = stateData.getLastFramePlayed(layer);
+            let currentPlayed = animPlayed;
 
-			if (!animPlayed || this._needsAnimationUpdate)
-			{
-				let frame: AnimationFrame | null = stateData.getFrame(layer);
+            if(!animPlayed || this._needsAnimationUpdate)
+            {
+                let frame: AnimationFrame | null = stateData.getFrame(layer);
 
-				if (frame !== null)
-				{
-					if (frame.isLastFrame && frame.remainingFrameRepeats <= this._frameIncrease)
-					{
-						lastFramePlayed = true;
-					}
-				}
+                if(frame !== null)
+                {
+                    if(frame.isLastFrame && frame.remainingFrameRepeats <= this._frameIncrease)
+                    {
+                        lastFramePlayed = true;
+                    }
+                }
 
-				if (this._needsAnimationUpdate || frame === null ||
+                if(this._needsAnimationUpdate || frame === null ||
 					(frame.remainingFrameRepeats >= 0 && (frame.remainingFrameRepeats -= this._frameIncrease) <= 0))
-				{
-					let activeSequence = -1;
+                {
+                    let activeSequence = -1;
 
-					if (frame !== null)
-					{
-						activeSequence = frame.activeSequence;
-					}
+                    if(frame !== null)
+                    {
+                        activeSequence = frame.activeSequence;
+                    }
 
-					if (this._animData !== null)
-					{
-						if (activeSequence === -1)
-						{
-							frame = this._animData.getFrame(scale, animationId, this.direction, layer, frameCounter);
-						}
-						else
-						{
-							frame = this._animData.getFrameFromSequence(
-								scale, animationId, this.direction, layer,
-								activeSequence, frame!.activeSequenceOffset + frame!.repeats, frameCounter
-							);
-						}
-					}
+                    if(this._animData !== null)
+                    {
+                        if(activeSequence === -1)
+                        {
+                            frame = this._animData.getFrame(scale, animationId, this.direction, layer, frameCounter);
+                        }
+                        else
+                        {
+                            frame = this._animData.getFrameFromSequence(
+                                scale, animationId, this.direction, layer,
+                                activeSequence, frame!.activeSequenceOffset + frame!.repeats, frameCounter
+                            );
+                        }
+                    }
 
-					stateData.setFrame(layer, frame!);
-					result |= layerMask;
-				}
+                    stateData.setFrame(layer, frame!);
+                    result |= layerMask;
+                }
 
-				if (frame === null || frame.remainingFrameRepeats === -1)
-				{
-					lastFramePlayed = true;
-					currentPlayed = true;
-				}
-				else
-				{
-					stateData.animationOver = false;
-				}
+                if(frame === null || frame.remainingFrameRepeats === -1)
+                {
+                    lastFramePlayed = true;
+                    currentPlayed = true;
+                }
+                else
+                {
+                    stateData.animationOver = false;
+                }
 
-				stateData.setLastFramePlayed(layer, lastFramePlayed);
-				stateData.setAnimationPlayed(layer, currentPlayed);
-			}
+                stateData.setLastFramePlayed(layer, lastFramePlayed);
+                stateData.setAnimationPlayed(layer, currentPlayed);
+            }
 
-			layerMask >>= 1;
-		}
+            layerMask >>= 1;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	protected usesAnimationResetting(): boolean
-	{
-		return false;
-	}
+    protected usesAnimationResetting(): boolean
+    {
+        return false;
+    }
 
-	private isPlayingTransition(stateData: AnimationStateData, targetAnimationId: number): boolean
-	{
-		const currentId = stateData.animationId;
+    private isPlayingTransition(stateData: AnimationStateData, targetAnimationId: number): boolean
+    {
+        const currentId = stateData.animationId;
 
-		if (AnimationData.isTransitionFromAnimation(currentId) || AnimationData.isTransitionToAnimation(currentId))
-		{
-			if (targetAnimationId === stateData.animationAfterTransitionId)
-			{
-				if (!stateData.animationOver)
-				{
-					return true;
-				}
-			}
-		}
+        if(AnimationData.isTransitionFromAnimation(currentId) || AnimationData.isTransitionToAnimation(currentId))
+        {
+            if(targetAnimationId === stateData.animationAfterTransitionId)
+            {
+                if(!stateData.animationOver)
+                {
+                    return true;
+                }
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private getCurrentState(stateData: AnimationStateData): number
-	{
-		const currentId = stateData.animationId;
+    private getCurrentState(stateData: AnimationStateData): number
+    {
+        const currentId = stateData.animationId;
 
-		if (AnimationData.isTransitionFromAnimation(currentId) || AnimationData.isTransitionToAnimation(currentId))
-		{
-			return stateData.animationAfterTransitionId;
-		}
+        if(AnimationData.isTransitionFromAnimation(currentId) || AnimationData.isTransitionToAnimation(currentId))
+        {
+            return stateData.animationAfterTransitionId;
+        }
 
-		return currentId;
-	}
+        return currentId;
+    }
 }

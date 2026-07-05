@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MoveAvatarMessageComposer extends MessageComposer<[number, number]>
 {
-	private _data: [number, number];
+    private _data: [number, number];
 
-	constructor(x: number, y: number)
-	{
-		super();
-		this._data = [x, y];
-	}
+    constructor(x: number, y: number)
+    {
+        super();
+        this._data = [x, y];
+    }
 
-	getMessageArray(): [number, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, number]
+    {
+        return this._data;
+    }
 }

@@ -7,13 +7,13 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  */
 export interface IPropertyMap
 {
-	getValue(key: string): unknown;
+    getValue(key: string): unknown;
 
-	get(key: string): PropertyStruct | null;
+    get(key: string): PropertyStruct | null;
 
-	setValue(key: string, value: unknown): void;
+    setValue(key: string, value: unknown): void;
 
-	hasValue(key: string): boolean;
+    hasValue(key: string): boolean;
 
-	getKeys(): string[];
+    getKeys(): string[];
 }

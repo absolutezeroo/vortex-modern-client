@@ -10,23 +10,23 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 
 export class FurnitureMannequinLogic extends FurnitureMultiStateLogic
 {
-	constructor()
-	{
-		super();
-		this.widgetType = 'mannequin';
-	}
+    constructor()
+    {
+        super();
+        this.widgetType = 'mannequin';
+    }
 
-	override useObject(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    override useObject(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		// Open mannequin widget
-		this.eventDispatcher.emit(
-			RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
-			new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
-		);
-	}
+        // Open mannequin widget
+        this.eventDispatcher.emit(
+            RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
+            new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
+        );
+    }
 }

@@ -10,45 +10,45 @@ import {HabboSearchResultData} from './HabboSearchResultData';
  */
 export class HabboSearchResultMessageParser implements IMessageParser
 {
-	private _friends: HabboSearchResultData[] = [];
+    private _friends: HabboSearchResultData[] = [];
 
-	get friends(): HabboSearchResultData[]
-	{
-		return this._friends;
-	}
+    get friends(): HabboSearchResultData[]
+    {
+        return this._friends;
+    }
 
-	private _others: HabboSearchResultData[] = [];
+    private _others: HabboSearchResultData[] = [];
 
-	get others(): HabboSearchResultData[]
-	{
-		return this._others;
-	}
+    get others(): HabboSearchResultData[]
+    {
+        return this._others;
+    }
 
-	flush(): boolean
-	{
-		this._friends = [];
-		this._others = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._friends = [];
+        this._others = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const friendCount = wrapper.readInt();
+        const friendCount = wrapper.readInt();
 
-		for (let i = 0; i < friendCount; i++)
-		{
-			this._friends.push(new HabboSearchResultData(wrapper));
-		}
+        for(let i = 0; i < friendCount; i++)
+        {
+            this._friends.push(new HabboSearchResultData(wrapper));
+        }
 
-		const otherCount = wrapper.readInt();
+        const otherCount = wrapper.readInt();
 
-		for (let i = 0; i < otherCount; i++)
-		{
-			this._others.push(new HabboSearchResultData(wrapper));
-		}
+        for(let i = 0; i < otherCount; i++)
+        {
+            this._others.push(new HabboSearchResultData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

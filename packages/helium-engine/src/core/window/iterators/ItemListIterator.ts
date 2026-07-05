@@ -13,31 +13,31 @@ import type {IIterator} from '../utils/IIterator';
  */
 export class ItemListIterator implements IIterator
 {
-	private _children: IWindow[];
-	private _index: number = 0;
+    private _children: IWindow[];
+    private _index: number = 0;
 
-	constructor(children: IWindow[])
-	{
-		this._children = children;
-	}
+    constructor(children: IWindow[])
+    {
+        this._children = children;
+    }
 
-	public next(): IWindow | null
-	{
-		if (this._index < this._children.length)
-		{
-			return this._children[this._index++];
-		}
+    public next(): IWindow | null
+    {
+        if(this._index < this._children.length)
+        {
+            return this._children[this._index++];
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public reset(): void
-	{
-		this._index = 0;
-	}
+    public reset(): void
+    {
+        this._index = 0;
+    }
 
-	public count(): number
-	{
-		return this._children.length;
-	}
+    public count(): number
+    {
+        return this._children.length;
+    }
 }

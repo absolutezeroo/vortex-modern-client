@@ -8,14 +8,14 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomEventCancelMessageParser implements IMessageParser
 {
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(_wrapper: IMessageDataWrapper): boolean
-	{
-		// No data to parse
-		return true;
-	}
+    parse(_wrapper: IMessageDataWrapper): boolean
+    {
+        // No data to parse
+        return true;
+    }
 }

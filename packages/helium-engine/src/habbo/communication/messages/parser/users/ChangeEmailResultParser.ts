@@ -10,25 +10,25 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class ChangeEmailResultParser implements IMessageParser
 {
-	public static readonly EMAIL_STATUS_OK = 0;
+    public static readonly EMAIL_STATUS_OK = 0;
 
-	private _result: number = 0;
+    private _result: number = 0;
 
-	get result(): number
-	{
-		return this._result;
-	}
+    get result(): number
+    {
+        return this._result;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._result = wrapper.readInt();
-		return true;
-	}
+        this._result = wrapper.readInt();
+        return true;
+    }
 }

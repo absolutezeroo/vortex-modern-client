@@ -8,5 +8,5 @@ import type {IWindow} from './IWindow';
  */
 export interface IInputEventTracker
 {
-	eventReceived(event: WindowEvent, window: IWindow): void;
+    eventReceived(event: WindowEvent, window: IWindow): void;
 }

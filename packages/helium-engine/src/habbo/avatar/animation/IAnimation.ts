@@ -7,15 +7,15 @@ import type {ISpriteDataContainer} from './ISpriteDataContainer';
  */
 export interface IAnimation
 {
-	readonly id: string;
-	readonly spriteData: ISpriteDataContainer[];
-	readonly removeData: string[];
-	readonly addData: { id: string; align: string; base: string; ink: string; blend: number }[];
-	readonly resetOnToggle: boolean;
+    readonly id: string;
+    readonly spriteData: ISpriteDataContainer[];
+    readonly removeData: string[];
+    readonly addData: { id: string; align: string; base: string; ink: string; blend: number }[];
+    readonly resetOnToggle: boolean;
 
-	hasAvatarData(): boolean;
+    hasAvatarData(): boolean;
 
-	hasDirectionData(): boolean;
+    hasDirectionData(): boolean;
 
-	hasAddData(): boolean;
+    hasAddData(): boolean;
 }

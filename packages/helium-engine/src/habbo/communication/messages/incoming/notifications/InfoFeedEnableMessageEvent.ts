@@ -9,8 +9,8 @@ import {InfoFeedEnableMessageParser} from '../../parser/notifications/InfoFeedEn
  */
 export class InfoFeedEnableMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, InfoFeedEnableMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, InfoFeedEnableMessageParser);
+    }
 }

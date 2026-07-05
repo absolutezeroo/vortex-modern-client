@@ -8,26 +8,26 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PickIssuesMessageComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(issueIds: number[], retryEnabled: boolean, retryCount: number, pickerName: string)
-	{
-		super();
-		this._data = [];
-		this._data.push(issueIds.length);
+    constructor(issueIds: number[], retryEnabled: boolean, retryCount: number, pickerName: string)
+    {
+        super();
+        this._data = [];
+        this._data.push(issueIds.length);
 
-		for (const issueId of issueIds)
-		{
-			this._data.push(issueId);
-		}
+        for(const issueId of issueIds)
+        {
+            this._data.push(issueId);
+        }
 
-		this._data.push(retryEnabled);
-		this._data.push(retryCount);
-		this._data.push(pickerName);
-	}
+        this._data.push(retryEnabled);
+        this._data.push(retryCount);
+        this._data.push(pickerName);
+    }
 
-	getMessageArray(): unknown[]
-	{
-		return this._data;
-	}
+    getMessageArray(): unknown[]
+    {
+        return this._data;
+    }
 }

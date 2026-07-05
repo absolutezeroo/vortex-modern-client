@@ -7,54 +7,54 @@ import type {NavigatorMetaDataMessageParser} from '../../communication/messages/
  */
 export class ContextContainer
 {
-	private readonly _navigator: unknown | null;
-	private _topLevelContexts: Map<string, NavigatorSavedSearch[]> | null = null;
+    private readonly _navigator: unknown | null;
+    private _topLevelContexts: Map<string, NavigatorSavedSearch[]> | null = null;
 
-	constructor(navigator: unknown | null = null)
-	{
-		this._navigator = navigator;
-		void this._navigator;
-	}
+    constructor(navigator: unknown | null = null)
+    {
+        this._navigator = navigator;
+        void this._navigator;
+    }
 
-	private _savedSearches: NavigatorSavedSearch[] = [];
+    private _savedSearches: NavigatorSavedSearch[] = [];
 
-	get savedSearches(): NavigatorSavedSearch[]
-	{
-		return this._savedSearches;
-	}
+    get savedSearches(): NavigatorSavedSearch[]
+    {
+        return this._savedSearches;
+    }
 
-	set savedSearches(value: NavigatorSavedSearch[])
-	{
-		this._savedSearches = value;
-	}
+    set savedSearches(value: NavigatorSavedSearch[])
+    {
+        this._savedSearches = value;
+    }
 
-	hasContextFor(searchCode: string): boolean
-	{
-		return this._topLevelContexts !== null && this._topLevelContexts.has(searchCode);
-	}
+    hasContextFor(searchCode: string): boolean
+    {
+        return this._topLevelContexts !== null && this._topLevelContexts.has(searchCode);
+    }
 
-	initialize(parser: NavigatorMetaDataMessageParser): void
-	{
-		this._topLevelContexts = new Map();
+    initialize(parser: NavigatorMetaDataMessageParser): void
+    {
+        this._topLevelContexts = new Map();
 
-		for (const context of parser.topLevelContexts)
-		{
-			this._topLevelContexts.set(context.searchCode, context.quickLinks);
-		}
-	}
+        for(const context of parser.topLevelContexts)
+        {
+            this._topLevelContexts.set(context.searchCode, context.quickLinks);
+        }
+    }
 
-	getTopLevelSearches(): string[]
-	{
-		if (this._topLevelContexts === null)
-		{
-			return [];
-		}
+    getTopLevelSearches(): string[]
+    {
+        if(this._topLevelContexts === null)
+        {
+            return [];
+        }
 
-		return Array.from(this._topLevelContexts.keys());
-	}
+        return Array.from(this._topLevelContexts.keys());
+    }
 
-	isReady(): boolean
-	{
-		return this._topLevelContexts !== null;
-	}
+    isReady(): boolean
+    {
+        return this._topLevelContexts !== null;
+    }
 }

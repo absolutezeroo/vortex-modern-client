@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class TogglePetBreedingPermissionComposer extends MessageComposer<ConstructorParameters<typeof TogglePetBreedingPermissionComposer>>
 {
-	private _data: ConstructorParameters<typeof TogglePetBreedingPermissionComposer>;
+    private _data: ConstructorParameters<typeof TogglePetBreedingPermissionComposer>;
 
-	constructor(petId: number)
-	{
-		super();
-		this._data = [petId];
-	}
+    constructor(petId: number)
+    {
+        super();
+        this._data = [petId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

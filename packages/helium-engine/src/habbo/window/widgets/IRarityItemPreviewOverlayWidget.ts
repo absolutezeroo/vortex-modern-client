@@ -11,4 +11,3 @@ import type {IRarityItemOverlayWidget} from './IRarityItemOverlayWidget';
 export interface IRarityItemPreviewOverlayWidget extends IRarityItemOverlayWidget
 {
 }
-

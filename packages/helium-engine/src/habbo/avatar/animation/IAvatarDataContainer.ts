@@ -5,16 +5,16 @@
  */
 export interface IAvatarDataContainer
 {
-	readonly ink: number;
-	readonly colorTransform: {
-		redMultiplier: number;
-		greenMultiplier: number;
-		blueMultiplier: number;
-		alphaMultiplier: number
-	};
-	readonly paletteIsGrayscale: boolean;
-	readonly reds: number[];
-	readonly greens: number[];
-	readonly blues: number[];
-	readonly alphas: number[];
+    readonly ink: number;
+    readonly colorTransform: {
+        redMultiplier: number;
+        greenMultiplier: number;
+        blueMultiplier: number;
+        alphaMultiplier: number
+    };
+    readonly paletteIsGrayscale: boolean;
+    readonly reds: number[];
+    readonly greens: number[];
+    readonly blues: number[];
+    readonly alphas: number[];
 }

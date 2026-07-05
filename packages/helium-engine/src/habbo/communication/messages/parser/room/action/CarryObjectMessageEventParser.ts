@@ -8,37 +8,37 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class CarryObjectMessageEventParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _itemType: number = 0;
+    private _itemType: number = 0;
 
-	get itemType(): number
-	{
-		return this._itemType;
-	}
+    get itemType(): number
+    {
+        return this._itemType;
+    }
 
-	flush(): boolean
-	{
-		this._userId = 0;
-		this._itemType = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = 0;
+        this._itemType = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._userId = wrapper.readInt();
-		this._itemType = wrapper.readInt();
+        this._userId = wrapper.readInt();
+        this._itemType = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

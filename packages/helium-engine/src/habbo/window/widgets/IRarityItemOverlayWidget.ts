@@ -9,9 +9,8 @@ import type {IWidget} from './IWidget';
  */
 export interface IRarityItemOverlayWidget extends IWidget
 {
-	/**
+    /**
 	 * The rarity level of the item.
 	 */
-	rarityLevel: number;
+    rarityLevel: number;
 }
-

@@ -10,8 +10,8 @@ import {GenericErrorMessageParser} from '../../parser/handshake/GenericErrorMess
  */
 export class GenericErrorMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GenericErrorMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GenericErrorMessageParser);
+    }
 }

@@ -13,9 +13,9 @@ export {TextFileLoader} from './TextFileLoader';
 // Types
 export type {IAssetLoader} from './IAssetLoader';
 export type {
-	IAssetData,
-	ISpritesheetData,
-	IFrameInfo,
-	IAssetInfo,
-	IAssetAlias,
+    IAssetData,
+    ISpritesheetData,
+    IFrameInfo,
+    IAssetInfo,
+    IAssetAlias,
 } from './NitroBundleLoader';

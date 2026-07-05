@@ -8,43 +8,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export interface IStuffData
 {
-	/**
+    /**
 	 * Flags for the stuff data
 	 */
-	flags: number;
+    flags: number;
 
-	/**
+    /**
 	 * Unique serial number for limited items
 	 */
-	uniqueSerialNumber: number;
+    uniqueSerialNumber: number;
 
-	/**
+    /**
 	 * Total series size for limited items
 	 */
-	uniqueSeriesSize: number;
+    uniqueSeriesSize: number;
 
-	/**
+    /**
 	 * Rarity level (0 = common, higher = rarer)
 	 */
-	readonly rarityLevel: number;
+    readonly rarityLevel: number;
 
-	/**
+    /**
 	 * Initialize from incoming server message
 	 */
-	initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void;
+    initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void;
 
-	/**
+    /**
 	 * Get the legacy string representation
 	 */
-	getLegacyString(): string;
+    getLegacyString(): string;
 
-	/**
+    /**
 	 * Get a JSON value by key
 	 */
-	getJSONValue(key: string): string | null;
+    getJSONValue(key: string): string | null;
 
-	/**
+    /**
 	 * Compare with another stuff data
 	 */
-	compare(other: IStuffData): boolean;
+    compare(other: IStuffData): boolean;
 }

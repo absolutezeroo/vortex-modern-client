@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class HarvestPetComposer extends MessageComposer<ConstructorParameters<typeof HarvestPetComposer>>
 {
-	private _data: ConstructorParameters<typeof HarvestPetComposer>;
+    private _data: ConstructorParameters<typeof HarvestPetComposer>;
 
-	constructor(petId: number)
-	{
-		super();
-		this._data = [petId];
-	}
+    constructor(petId: number)
+    {
+        super();
+        this._data = [petId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

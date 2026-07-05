@@ -7,17 +7,17 @@
  * @see sources/flash_version/com/sulake/core/window/enum/WindowState.as
  */
 export const WindowState =
-	{
-		DEFAULT: 0,
-		ACTIVE: 1 << 0,
-		FOCUSED: 1 << 1,
-		HOVERING: 1 << 2,
-		SELECTED: 1 << 3,
-		PRESSED: 1 << 4,
-		DISABLED: 1 << 5,
-		LOCKED: 1 << 6,
-		DISPOSED: 1 << 30,
-	} as const;
+    {
+        DEFAULT: 0,
+        ACTIVE: 1 << 0,
+        FOCUSED: 1 << 1,
+        HOVERING: 1 << 2,
+        SELECTED: 1 << 3,
+        PRESSED: 1 << 4,
+        DISABLED: 1 << 5,
+        LOCKED: 1 << 6,
+        DISPOSED: 1 << 30,
+    } as const;
 
 export type WindowStateValue = typeof WindowState[keyof typeof WindowState];
 
@@ -28,28 +28,28 @@ export type WindowStateValue = typeof WindowState[keyof typeof WindowState];
  * @see sources/flash_version/com/sulake/core/window/graphics/SkinContainer.as
  */
 export const STATE_PRIORITY: readonly number[] = [
-	WindowState.LOCKED,
-	WindowState.DISABLED,
-	WindowState.PRESSED,
-	WindowState.SELECTED,
-	WindowState.HOVERING,
-	WindowState.FOCUSED,
-	WindowState.ACTIVE,
-	WindowState.DEFAULT,
+    WindowState.LOCKED,
+    WindowState.DISABLED,
+    WindowState.PRESSED,
+    WindowState.SELECTED,
+    WindowState.HOVERING,
+    WindowState.FOCUSED,
+    WindowState.ACTIVE,
+    WindowState.DEFAULT,
 ];
 
 /**
  * Map state name to state value.
  */
 export const STATE_NAME_TO_VALUE: Record<string, number> =
-	{
-		'default': WindowState.DEFAULT,
-		'active': WindowState.ACTIVE,
-		'focused': WindowState.FOCUSED,
-		'hovering': WindowState.HOVERING,
-		'selected': WindowState.SELECTED,
-		'pressed': WindowState.PRESSED,
-		'disabled': WindowState.DISABLED,
-		'locked': WindowState.LOCKED,
-		'disposed': WindowState.DISPOSED,
-	};
+    {
+        'default': WindowState.DEFAULT,
+        'active': WindowState.ACTIVE,
+        'focused': WindowState.FOCUSED,
+        'hovering': WindowState.HOVERING,
+        'selected': WindowState.SELECTED,
+        'pressed': WindowState.PRESSED,
+        'disabled': WindowState.DISABLED,
+        'locked': WindowState.LOCKED,
+        'disposed': WindowState.DISPOSED,
+    };

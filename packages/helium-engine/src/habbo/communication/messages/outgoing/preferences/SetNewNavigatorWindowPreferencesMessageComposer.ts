@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetNewNavigatorWindowPreferencesMessageComposer extends MessageComposer<ConstructorParameters<typeof SetNewNavigatorWindowPreferencesMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof SetNewNavigatorWindowPreferencesMessageComposer>;
+    private _data: ConstructorParameters<typeof SetNewNavigatorWindowPreferencesMessageComposer>;
 
-	constructor(x: number, y: number, width: number, height: number, leftPaneHidden: boolean, resultsMode: number)
-	{
-		super();
+    constructor(x: number, y: number, width: number, height: number, leftPaneHidden: boolean, resultsMode: number)
+    {
+        super();
 
-		this._data = [x, y, width, height, leftPaneHidden, resultsMode];
-	}
+        this._data = [x, y, width, height, leftPaneHidden, resultsMode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

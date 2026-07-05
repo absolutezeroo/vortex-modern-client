@@ -11,24 +11,24 @@ import {HabboGroupDetailsData} from '../../incoming/users/HabboGroupDetailsData'
  */
 export class HabboGroupDetailsMessageParser implements IMessageParser
 {
-	private _data: HabboGroupDetailsData | null = null;
+    private _data: HabboGroupDetailsData | null = null;
 
-	get data(): HabboGroupDetailsData | null
-	{
-		return this._data;
-	}
+    get data(): HabboGroupDetailsData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new HabboGroupDetailsData(wrapper);
-		return true;
-	}
+        this._data = new HabboGroupDetailsData(wrapper);
+        return true;
+    }
 }

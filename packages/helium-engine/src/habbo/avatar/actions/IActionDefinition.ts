@@ -5,25 +5,25 @@
  */
 export interface IActionDefinition
 {
-	readonly id: string;
-	readonly state: string;
-	readonly precedence: number;
-	readonly activePartSet: string;
-	readonly isMain: boolean;
-	readonly isDefault: boolean;
-	readonly assetPartDefinition: string;
-	readonly lay: string;
-	readonly geometryType: string;
-	readonly isAnimation: boolean;
-	readonly startFromFrameZero: boolean;
+    readonly id: string;
+    readonly state: string;
+    readonly precedence: number;
+    readonly activePartSet: string;
+    readonly isMain: boolean;
+    readonly isDefault: boolean;
+    readonly assetPartDefinition: string;
+    readonly lay: string;
+    readonly geometryType: string;
+    readonly isAnimation: boolean;
+    readonly startFromFrameZero: boolean;
 
-	isAnimated(part: string): boolean;
+    isAnimated(part: string): boolean;
 
-	getPrevents(id?: string): string[];
+    getPrevents(id?: string): string[];
 
-	getPreventHeadTurn(id?: string): boolean;
+    getPreventHeadTurn(id?: string): boolean;
 
-	setOffsets(setType: string, direction: number, offsets: number[]): void;
+    setOffsets(setType: string, direction: number, offsets: number[]): void;
 
-	getOffsets(setType: string, direction: number): number[] | null;
+    getOffsets(setType: string, direction: number): number[] | null;
 }

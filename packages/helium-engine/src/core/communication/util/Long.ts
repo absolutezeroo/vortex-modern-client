@@ -5,40 +5,40 @@
  */
 export class Long
 {
-	public readonly value: number;
+    public readonly value: number;
 
-	constructor(value: number)
-	{
-		this.value = value;
-	}
+    constructor(value: number)
+    {
+        this.value = value;
+    }
 
-	/**
+    /**
 	 * Get the high 32 bits
 	 */
-	get high(): number
-	{
-		return Math.floor(this.value / 0x100000000);
-	}
+    get high(): number
+    {
+        return Math.floor(this.value / 0x100000000);
+    }
 
-	/**
+    /**
 	 * Get the low 32 bits
 	 */
-	get low(): number
-	{
-		return this.value >>> 0;
-	}
+    get low(): number
+    {
+        return this.value >>> 0;
+    }
 
-	/**
+    /**
 	 * Create from high and low 32-bit parts
 	 */
-	static fromParts(high: number, low: number): Long
-	{
-		const value = high * 0x100000000 + (low >>> 0);
-		return new Long(value);
-	}
+    static fromParts(high: number, low: number): Long
+    {
+        const value = high * 0x100000000 + (low >>> 0);
+        return new Long(value);
+    }
 
-	toString(): string
-	{
-		return `Long(${this.value})`;
-	}
+    toString(): string
+    {
+        return `Long(${this.value})`;
+    }
 }

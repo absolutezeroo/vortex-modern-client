@@ -10,8 +10,8 @@ import {FigureUpdateMessageParser} from '../../parser/avatar/FigureUpdateMessage
  */
 export class FigureUpdateMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FigureUpdateMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FigureUpdateMessageParser);
+    }
 }

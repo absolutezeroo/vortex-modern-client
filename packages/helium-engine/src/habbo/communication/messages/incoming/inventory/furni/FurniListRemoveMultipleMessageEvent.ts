@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	FurniListRemoveMultipleMessageParser
+    FurniListRemoveMultipleMessageParser
 } from '@habbo/communication/messages/parser/inventory/furni/FurniListRemoveMultipleMessageParser';
 
 /**
@@ -9,8 +9,8 @@ import {
  */
 export class FurniListRemoveMultipleMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FurniListRemoveMultipleMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FurniListRemoveMultipleMessageParser);
+    }
 }

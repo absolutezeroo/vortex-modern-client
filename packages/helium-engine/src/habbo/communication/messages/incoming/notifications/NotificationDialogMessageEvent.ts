@@ -9,8 +9,8 @@ import {NotificationDialogMessageEventParser} from '../../parser/notifications/N
  */
 export class NotificationDialogMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NotificationDialogMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NotificationDialogMessageEventParser);
+    }
 }

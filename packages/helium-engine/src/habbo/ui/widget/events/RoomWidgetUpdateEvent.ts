@@ -8,19 +8,19 @@
  */
 export class RoomWidgetUpdateEvent
 {
-	// AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetUpdateEvent.as::WIDGET_UPDATE_EVENT_TEST
-	public static readonly WIDGET_UPDATE_EVENT_TEST: string = 'RWUE_EVENT_TEST';
+    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetUpdateEvent.as::WIDGET_UPDATE_EVENT_TEST
+    public static readonly WIDGET_UPDATE_EVENT_TEST: string = 'RWUE_EVENT_TEST';
 
-	private _type: string;
+    private _type: string;
 
-	// AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetUpdateEvent.as::RoomWidgetUpdateEvent()
-	constructor(type: string)
-	{
-		this._type = type;
-	}
+    // AS3: sources/win63_version/habbo/ui/widget/events/RoomWidgetUpdateEvent.as::RoomWidgetUpdateEvent()
+    constructor(type: string)
+    {
+        this._type = type;
+    }
 
-	public get type(): string
-	{
-		return this._type;
-	}
+    public get type(): string
+    {
+        return this._type;
+    }
 }

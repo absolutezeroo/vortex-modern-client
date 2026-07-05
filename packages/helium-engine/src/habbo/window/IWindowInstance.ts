@@ -7,24 +7,24 @@ import type {IWindowLayoutNode} from './IWindowLayout';
  */
 export interface IWindowInstance
 {
-	/** Unique window instance ID */
-	readonly id: number;
+    /** Unique window instance ID */
+    readonly id: number;
 
-	/** Layout name used to create this window */
-	readonly layoutName: string;
+    /** Layout name used to create this window */
+    readonly layoutName: string;
 
-	/** Context layer (0=background, 1=default, 2=dialogs, 3=tooltips) */
-	readonly layer: number;
+    /** Context layer (0=background, 1=default, 2=dialogs, 3=tooltips) */
+    readonly layer: number;
 
-	/** Resolved layout tree root node */
-	readonly layoutTree: IWindowLayoutNode;
+    /** Resolved layout tree root node */
+    readonly layoutTree: IWindowLayoutNode;
 
-	/** Whether the window is currently visible */
-	visible: boolean;
+    /** Whether the window is currently visible */
+    visible: boolean;
 
-	/** Z-order within its layer (higher = on top) */
-	zOrder: number;
+    /** Z-order within its layer (higher = on top) */
+    zOrder: number;
 
-	/** Variable overrides passed at open time */
-	readonly vars: Record<string, unknown>;
+    /** Variable overrides passed at open time */
+    readonly vars: Record<string, unknown>;
 }

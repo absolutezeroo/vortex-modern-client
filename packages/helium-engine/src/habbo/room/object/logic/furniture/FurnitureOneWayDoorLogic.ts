@@ -9,9 +9,9 @@ import {FurnitureLogic} from './FurnitureLogic';
 
 export class FurnitureOneWayDoorLogic extends FurnitureLogic
 {
-	override useObject(): void
-	{
-		// One-way doors handle entry differently
-		// The server manages the state
-	}
+    override useObject(): void
+    {
+        // One-way doors handle entry differently
+        // The server manages the state
+    }
 }

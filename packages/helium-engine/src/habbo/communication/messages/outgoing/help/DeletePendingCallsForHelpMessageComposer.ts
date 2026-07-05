@@ -7,8 +7,8 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class DeletePendingCallsForHelpMessageComposer extends MessageComposer<[]>
 {
-	getMessageArray(): []
-	{
-		return [];
-	}
+    getMessageArray(): []
+    {
+        return [];
+    }
 }

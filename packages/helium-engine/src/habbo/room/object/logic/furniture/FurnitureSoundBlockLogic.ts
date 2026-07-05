@@ -13,141 +13,141 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureSoundBlockLogic extends FurnitureMultiStateLogic
 {
-	private static readonly HIGHEST_SEMITONE = 12;
-	private static readonly LOWEST_SEMITONE = -12;
-	private static readonly STATE_UNINITIALIZED = -1;
+    private static readonly HIGHEST_SEMITONE = 12;
+    private static readonly LOWEST_SEMITONE = -12;
+    private static readonly STATE_UNINITIALIZED = -1;
 
-	private _state: number = -1;
-	private _sampleId: number = -1;
-	private _noPitch: boolean = false;
-	private _lastLocZ: number = 0;
+    private _state: number = -1;
+    private _sampleId: number = -1;
+    private _noPitch: boolean = false;
+    private _lastLocZ: number = 0;
 
-	override dispose(): void
-	{
-		if (this._state !== FurnitureSoundBlockLogic.STATE_UNINITIALIZED && this.object !== null)
-		{
-			this.eventDispatcher?.emit(
-				RoomObjectSamplePlaybackEvent.ROOM_OBJECT_DISPOSED,
-				new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.ROOM_OBJECT_DISPOSED, this.object, this._sampleId)
-			);
-		}
+    override dispose(): void
+    {
+        if(this._state !== FurnitureSoundBlockLogic.STATE_UNINITIALIZED && this.object !== null)
+        {
+            this.eventDispatcher?.emit(
+                RoomObjectSamplePlaybackEvent.ROOM_OBJECT_DISPOSED,
+                new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.ROOM_OBJECT_DISPOSED, this.object, this._sampleId)
+            );
+        }
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectSamplePlaybackEvent.PLAY_SAMPLE,
-			RoomObjectSamplePlaybackEvent.ROOM_OBJECT_DISPOSED,
-			RoomObjectSamplePlaybackEvent.ROOM_OBJECT_INITIALIZED
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectSamplePlaybackEvent.PLAY_SAMPLE,
+            RoomObjectSamplePlaybackEvent.ROOM_OBJECT_DISPOSED,
+            RoomObjectSamplePlaybackEvent.ROOM_OBJECT_INITIALIZED
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override initialize(data: unknown): void
-	{
-		super.initialize(data);
+    override initialize(data: unknown): void
+    {
+        super.initialize(data);
 
-		if (data === null)
-		{
-			return;
-		}
+        if(data === null)
+        {
+            return;
+        }
 
-		const config = data as { sound?: { sample?: { id?: number; nopitch?: string } } };
+        const config = data as { sound?: { sample?: { id?: number; nopitch?: string } } };
 
-		if (!config.sound?.sample)
-		{
-			return;
-		}
+        if(!config.sound?.sample)
+        {
+            return;
+        }
 
-		this._sampleId = config.sound.sample.id ?? -1;
-		this._noPitch = config.sound.sample.nopitch === 'true';
+        this._sampleId = config.sound.sample.id ?? -1;
+        this._noPitch = config.sound.sample.nopitch === 'true';
 
-		this.object?.getModelController()?.setNumber(
-			RoomObjectVariableEnum.FURNITURE_SOUNDBLOCK_RELATIVE_ANIMATION_SPEED,
-			1
-		);
-	}
+        this.object?.getModelController()?.setNumber(
+            RoomObjectVariableEnum.FURNITURE_SOUNDBLOCK_RELATIVE_ANIMATION_SPEED,
+            1
+        );
+    }
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		super.processUpdateMessage(message);
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        super.processUpdateMessage(message);
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		const location = this.object.getLocation();
-		const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+        const location = this.object.getLocation();
+        const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-		if ('state' in message && 'data' in message && typeof dataMessage.state === 'number')
-		{
-			if (this._state === FurnitureSoundBlockLogic.STATE_UNINITIALIZED &&
+        if('state' in message && 'data' in message && typeof dataMessage.state === 'number')
+        {
+            if(this._state === FurnitureSoundBlockLogic.STATE_UNINITIALIZED &&
 				this.object.getModelController()?.getNumber(RoomObjectVariableEnum.FURNITURE_REAL_ROOM_OBJECT) === 1)
-			{
-				this._lastLocZ = location.z;
+            {
+                this._lastLocZ = location.z;
 
-				this.eventDispatcher?.emit(
-					RoomObjectSamplePlaybackEvent.ROOM_OBJECT_INITIALIZED,
-					new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.ROOM_OBJECT_INITIALIZED, this.object, this._sampleId, this.calculatePitch(location.z))
-				);
-			}
+                this.eventDispatcher?.emit(
+                    RoomObjectSamplePlaybackEvent.ROOM_OBJECT_INITIALIZED,
+                    new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.ROOM_OBJECT_INITIALIZED, this.object, this._sampleId, this.calculatePitch(location.z))
+                );
+            }
 
-			if (this._state !== FurnitureSoundBlockLogic.STATE_UNINITIALIZED && location !== null)
-			{
-				if (this._lastLocZ !== location.z)
-				{
-					this.eventDispatcher?.emit(
-						RoomObjectSamplePlaybackEvent.CHANGE_PITCH,
-						new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.CHANGE_PITCH, this.object, this._sampleId, this.calculatePitch(location.z))
-					);
+            if(this._state !== FurnitureSoundBlockLogic.STATE_UNINITIALIZED && location !== null)
+            {
+                if(this._lastLocZ !== location.z)
+                {
+                    this.eventDispatcher?.emit(
+                        RoomObjectSamplePlaybackEvent.CHANGE_PITCH,
+                        new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.CHANGE_PITCH, this.object, this._sampleId, this.calculatePitch(location.z))
+                    );
 
-					this._lastLocZ = location.z;
-				}
-			}
+                    this._lastLocZ = location.z;
+                }
+            }
 
-			if (this._state !== FurnitureSoundBlockLogic.STATE_UNINITIALIZED &&
+            if(this._state !== FurnitureSoundBlockLogic.STATE_UNINITIALIZED &&
 				dataMessage.state !== this._state && location !== null)
-			{
-				this.playSample(location.z);
-			}
+            {
+                this.playSample(location.z);
+            }
 
-			this._state = dataMessage.state;
-		}
-	}
+            this._state = dataMessage.state;
+        }
+    }
 
-	private playSample(height: number): void
-	{
-		if (this.object === null)
-		{
-			return;
-		}
+    private playSample(height: number): void
+    {
+        if(this.object === null)
+        {
+            return;
+        }
 
-		const pitch = this.calculatePitch(height);
+        const pitch = this.calculatePitch(height);
 
-		this.object.getModelController()?.setNumber(
-			RoomObjectVariableEnum.FURNITURE_SOUNDBLOCK_RELATIVE_ANIMATION_SPEED,
-			pitch
-		);
+        this.object.getModelController()?.setNumber(
+            RoomObjectVariableEnum.FURNITURE_SOUNDBLOCK_RELATIVE_ANIMATION_SPEED,
+            pitch
+        );
 
-		this.eventDispatcher?.emit(
-			RoomObjectSamplePlaybackEvent.PLAY_SAMPLE,
-			new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.PLAY_SAMPLE, this.object, this._sampleId, pitch)
-		);
-	}
+        this.eventDispatcher?.emit(
+            RoomObjectSamplePlaybackEvent.PLAY_SAMPLE,
+            new RoomObjectSamplePlaybackEvent(RoomObjectSamplePlaybackEvent.PLAY_SAMPLE, this.object, this._sampleId, pitch)
+        );
+    }
 
-	private calculatePitch(height: number): number
-	{
-		let semitone = Math.trunc(height * 2);
+    private calculatePitch(height: number): number
+    {
+        let semitone = Math.trunc(height * 2);
 
-		if (semitone > FurnitureSoundBlockLogic.HIGHEST_SEMITONE)
-		{
-			semitone = Math.min(0, FurnitureSoundBlockLogic.LOWEST_SEMITONE + (semitone - FurnitureSoundBlockLogic.HIGHEST_SEMITONE) - 1);
-		}
+        if(semitone > FurnitureSoundBlockLogic.HIGHEST_SEMITONE)
+        {
+            semitone = Math.min(0, FurnitureSoundBlockLogic.LOWEST_SEMITONE + (semitone - FurnitureSoundBlockLogic.HIGHEST_SEMITONE) - 1);
+        }
 
-		return this._noPitch ? 1 : Math.pow(2, semitone / 12);
-	}
+        return this._noPitch ? 1 : Math.pow(2, semitone / 12);
+    }
 }

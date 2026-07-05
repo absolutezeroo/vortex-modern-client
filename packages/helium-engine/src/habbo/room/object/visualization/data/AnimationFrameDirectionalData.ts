@@ -10,45 +10,45 @@ import type {DirectionalOffsetData} from './DirectionalOffsetData';
 
 export class AnimationFrameDirectionalData extends AnimationFrameData
 {
-	private _directionalOffsets: DirectionalOffsetData;
+    private _directionalOffsets: DirectionalOffsetData;
 
-	constructor(
-		id: number,
-		x: number,
-		y: number,
-		randomX: number,
-		randomY: number,
-		directionalOffsets: DirectionalOffsetData,
-		repeats: number
-	)
-	{
-		super(id, x, y, randomX, randomY, repeats);
+    constructor(
+        id: number,
+        x: number,
+        y: number,
+        randomX: number,
+        randomY: number,
+        directionalOffsets: DirectionalOffsetData,
+        repeats: number
+    )
+    {
+        super(id, x, y, randomX, randomY, repeats);
 
-		this._directionalOffsets = directionalOffsets;
-	}
+        this._directionalOffsets = directionalOffsets;
+    }
 
-	override hasDirectionalOffsets(): boolean
-	{
-		return this._directionalOffsets !== null;
-	}
+    override hasDirectionalOffsets(): boolean
+    {
+        return this._directionalOffsets !== null;
+    }
 
-	override getX(direction: number): number
-	{
-		if (this._directionalOffsets !== null)
-		{
-			return this._directionalOffsets.getOffsetX(direction, super.getX(direction));
-		}
+    override getX(direction: number): number
+    {
+        if(this._directionalOffsets !== null)
+        {
+            return this._directionalOffsets.getOffsetX(direction, super.getX(direction));
+        }
 
-		return super.getX(direction);
-	}
+        return super.getX(direction);
+    }
 
-	override getY(direction: number): number
-	{
-		if (this._directionalOffsets !== null)
-		{
-			return this._directionalOffsets.getOffsetY(direction, super.getY(direction));
-		}
+    override getY(direction: number): number
+    {
+        if(this._directionalOffsets !== null)
+        {
+            return this._directionalOffsets.getOffsetY(direction, super.getY(direction));
+        }
 
-		return super.getY(direction);
-	}
+        return super.getY(direction);
+    }
 }

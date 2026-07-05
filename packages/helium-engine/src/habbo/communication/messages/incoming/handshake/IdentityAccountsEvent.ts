@@ -9,8 +9,8 @@ import {IdentityAccountsEventParser} from '../../parser/handshake/IdentityAccoun
  */
 export class IdentityAccountsEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IdentityAccountsEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IdentityAccountsEventParser);
+    }
 }

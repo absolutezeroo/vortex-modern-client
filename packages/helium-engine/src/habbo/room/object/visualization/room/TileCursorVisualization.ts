@@ -9,32 +9,32 @@ import {AnimatedFurnitureVisualization} from '../furniture/AnimatedFurnitureVisu
 
 export class TileCursorVisualization extends AnimatedFurnitureVisualization
 {
-	private _tileHeight: number = 0;
+    private _tileHeight: number = 0;
 
-	get tileHeight(): number
-	{
-		return this._tileHeight;
-	}
+    get tileHeight(): number
+    {
+        return this._tileHeight;
+    }
 
-	set tileHeight(value: number)
-	{
-		this._tileHeight = value;
-	}
+    set tileHeight(value: number)
+    {
+        this._tileHeight = value;
+    }
 
-	protected override getSpriteYOffset(scale: number, direction: number, layerIndex: number): number
-	{
-		if (layerIndex === 1)
-		{
-			const model = this.object?.getModel();
+    protected override getSpriteYOffset(scale: number, direction: number, layerIndex: number): number
+    {
+        if(layerIndex === 1)
+        {
+            const model = this.object?.getModel();
 
-			if (model !== null && model !== undefined)
-			{
-				this._tileHeight = model.getNumber('tile_cursor_height') || 0;
-			}
+            if(model !== null && model !== undefined)
+            {
+                this._tileHeight = model.getNumber('tile_cursor_height') || 0;
+            }
 
-			return -this._tileHeight * (scale / 2);
-		}
+            return -this._tileHeight * (scale / 2);
+        }
 
-		return super.getSpriteYOffset(scale, direction, layerIndex);
-	}
+        return super.getSpriteYOffset(scale, direction, layerIndex);
+    }
 }

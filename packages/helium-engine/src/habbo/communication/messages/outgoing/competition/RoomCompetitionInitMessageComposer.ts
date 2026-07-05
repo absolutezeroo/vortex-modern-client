@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomCompetitionInitMessageComposer extends MessageComposer<ConstructorParameters<typeof RoomCompetitionInitMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RoomCompetitionInitMessageComposer>;
+    private _data: ConstructorParameters<typeof RoomCompetitionInitMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

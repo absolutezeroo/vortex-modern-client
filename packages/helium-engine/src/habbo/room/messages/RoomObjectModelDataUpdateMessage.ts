@@ -9,24 +9,24 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectModelDataUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(numberKey: string, numberValue: number)
-	{
-		super(null, null);
-		this._numberKey = numberKey;
-		this._numberValue = numberValue;
-	}
+    constructor(numberKey: string, numberValue: number)
+    {
+        super(null, null);
+        this._numberKey = numberKey;
+        this._numberValue = numberValue;
+    }
 
-	private _numberKey: string;
+    private _numberKey: string;
 
-	get numberKey(): string
-	{
-		return this._numberKey;
-	}
+    get numberKey(): string
+    {
+        return this._numberKey;
+    }
 
-	private _numberValue: number;
+    private _numberValue: number;
 
-	get numberValue(): number
-	{
-		return this._numberValue;
-	}
+    get numberValue(): number
+    {
+        return this._numberValue;
+    }
 }

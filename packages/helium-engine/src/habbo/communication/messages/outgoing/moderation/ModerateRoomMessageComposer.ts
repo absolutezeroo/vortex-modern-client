@@ -8,16 +8,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ModerateRoomMessageComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(roomId: number, lockDoor: boolean, changeTitle: boolean, kickAll: boolean)
-	{
-		super();
-		this._data = [roomId, lockDoor ? 1 : 0, changeTitle ? 1 : 0, kickAll ? 1 : 0];
-	}
+    constructor(roomId: number, lockDoor: boolean, changeTitle: boolean, kickAll: boolean)
+    {
+        super();
+        this._data = [roomId, lockDoor ? 1 : 0, changeTitle ? 1 : 0, kickAll ? 1 : 0];
+    }
 
-	getMessageArray(): unknown[]
-	{
-		return this._data;
-	}
+    getMessageArray(): unknown[]
+    {
+        return this._data;
+    }
 }

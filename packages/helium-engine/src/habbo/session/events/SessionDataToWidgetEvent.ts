@@ -5,13 +5,13 @@
  */
 export class SessionDataToWidgetEvent
 {
-	static readonly PURCHASABLE_STYLES_UPDATED: string = 'SDTWE_PURCHASABLE_STYLES_UPDATED';
+    static readonly PURCHASABLE_STYLES_UPDATED: string = 'SDTWE_PURCHASABLE_STYLES_UPDATED';
 
-	constructor(
-		public readonly type: string,
-		public readonly bubbles: boolean = false,
-		public readonly cancelable: boolean = false
-	)
-	{
-	}
+    constructor(
+        public readonly type: string,
+        public readonly bubbles: boolean = false,
+        public readonly cancelable: boolean = false
+    )
+    {
+    }
 }

@@ -8,8 +8,8 @@ import {CommunityGoalHallOfFameMessageParser} from '../../parser/quest/Community
  */
 export class CommunityGoalHallOfFameMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CommunityGoalHallOfFameMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CommunityGoalHallOfFameMessageParser);
+    }
 }

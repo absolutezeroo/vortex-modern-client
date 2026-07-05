@@ -10,8 +10,8 @@ import {MessengerInitParser} from '../../parser/friendlist/MessengerInitParser';
  */
 export class MessengerInitEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, MessengerInitParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, MessengerInitParser);
+    }
 }

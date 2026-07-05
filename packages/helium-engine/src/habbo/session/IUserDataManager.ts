@@ -8,100 +8,100 @@ import type {IUserData} from './IUserData';
  */
 export interface IUserDataManager extends IDisposable
 {
-	set connection(connection: IConnection | null);
+    set connection(connection: IConnection | null);
 
-	/**
+    /**
 	 * Get user data by webID (user type only)
 	 */
-	getUserData(webId: number): IUserData | null;
+    getUserData(webId: number): IUserData | null;
 
-	/**
+    /**
 	 * Get user data by webID and type
 	 */
-	getUserDataByType(webId: number, type: number): IUserData | null;
+    getUserDataByType(webId: number, type: number): IUserData | null;
 
-	/**
+    /**
 	 * Get user data by room object index
 	 */
-	getUserDataByIndex(roomIndex: number): IUserData | null;
+    getUserDataByIndex(roomIndex: number): IUserData | null;
 
-	/**
+    /**
 	 * Get user data by name
 	 */
-	getUserDataByName(name: string): IUserData | null;
+    getUserDataByName(name: string): IUserData | null;
 
-	/**
+    /**
 	 * Get pet user data by webID
 	 */
-	getPetUserData(webId: number): IUserData | null;
+    getPetUserData(webId: number): IUserData | null;
 
-	/**
+    /**
 	 * Get rentable bot user data by webID
 	 */
-	getRentableBotUserData(webId: number): IUserData | null;
+    getRentableBotUserData(webId: number): IUserData | null;
 
-	/**
+    /**
 	 * Get user badges (requests from server if needed)
 	 */
-	getUserBadges(userId: number): string[];
+    getUserBadges(userId: number): string[];
 
-	/**
+    /**
 	 * Set user data
 	 */
-	setUserData(userData: IUserData): void;
+    setUserData(userData: IUserData): void;
 
-	/**
+    /**
 	 * Set user badges
 	 */
-	setUserBadges(userId: number, badges: string[]): void;
+    setUserBadges(userId: number, badges: string[]): void;
 
-	/**
+    /**
 	 * Remove user data by room index
 	 */
-	removeUserDataByRoomIndex(roomIndex: number): void;
+    removeUserDataByRoomIndex(roomIndex: number): void;
 
-	/**
+    /**
 	 * Update user figure
 	 */
-	updateFigure(roomIndex: number, figure: string, sex: string, hasSaddle: boolean, isRiding: boolean): void;
+    updateFigure(roomIndex: number, figure: string, sex: string, hasSaddle: boolean, isRiding: boolean): void;
 
-	/**
+    /**
 	 * Update pet level
 	 */
-	updatePetLevel(roomIndex: number, level: number): void;
+    updatePetLevel(roomIndex: number, level: number): void;
 
-	/**
+    /**
 	 * Update pet breeding status
 	 */
-	updatePetBreedingStatus(roomIndex: number, canBreed: boolean, canHarvest: boolean, canRevive: boolean, hasBreedingPermission: boolean): void;
+    updatePetBreedingStatus(roomIndex: number, canBreed: boolean, canHarvest: boolean, canRevive: boolean, hasBreedingPermission: boolean): void;
 
-	/**
+    /**
 	 * Update custom data (motto)
 	 */
-	updateCustom(roomIndex: number, custom: string): void;
+    updateCustom(roomIndex: number, custom: string): void;
 
-	/**
+    /**
 	 * Update achievement score
 	 */
-	updateAchievementScore(roomIndex: number, score: number): void;
+    updateAchievementScore(roomIndex: number, score: number): void;
 
-	/**
+    /**
 	 * Update name by room index
 	 */
-	updateNameByIndex(roomIndex: number, name: string): void;
+    updateNameByIndex(roomIndex: number, name: string): void;
 
-	/**
+    /**
 	 * Mark user data as blocked/unblocked by room index
 	 */
-	markAsBlocked(roomIndex: number, blocked?: boolean): void;
+    markAsBlocked(roomIndex: number, blocked?: boolean): void;
 
-	/**
+    /**
 	 * Request pet info from server
 	 */
-	requestPetInfo(webId: number): void;
+    requestPetInfo(webId: number): void;
 
-	/**
+    /**
 	 * Get all user IDs in the room
 	 */
-	getAllUserIds(): number[];
+    getAllUserIds(): number[];
 }

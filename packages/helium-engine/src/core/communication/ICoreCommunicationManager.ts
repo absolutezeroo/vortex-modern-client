@@ -9,21 +9,21 @@ import type {IConnectionCallback} from './connection/IConnectionCallback';
  */
 export interface ICoreCommunicationManager extends IDisposable
 {
-	/**
+    /**
 	 * Get all active connections
 	 */
-	readonly connections: IConnection[];
+    readonly connections: IConnection[];
 
-	/**
+    /**
 	 * Create a new connection
 	 * @param callback Optional callback for connection events
 	 * @returns The created connection
 	 */
-	createConnection(callback?: IConnectionCallback): IConnection;
+    createConnection(callback?: IConnectionCallback): IConnection;
 
-	/**
+    /**
 	 * Update all connections (process received data)
 	 * Call this from the main update loop
 	 */
-	update(deltaTime: number): void;
+    update(deltaTime: number): void;
 }

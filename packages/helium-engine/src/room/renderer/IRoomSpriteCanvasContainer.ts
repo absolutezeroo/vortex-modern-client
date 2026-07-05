@@ -12,15 +12,15 @@ import type {IRoomObject} from '../object/IRoomObject';
 
 export interface IRoomSpriteCanvasContainer
 {
-	readonly roomObjectVariableAccurateZ: string | null;
+    readonly roomObjectVariableAccurateZ: string | null;
 
-	getRoomObject(id: string): IRoomObject | null;
+    getRoomObject(id: string): IRoomObject | null;
 
-	getRoomObjectWithIndex(index: number): IRoomObject | null;
+    getRoomObjectWithIndex(index: number): IRoomObject | null;
 
-	getRoomObjectIdWithIndex(index: number): string | null;
+    getRoomObjectIdWithIndex(index: number): string | null;
 
-	getRoomObjectCount(): number;
+    getRoomObjectCount(): number;
 
-	getRoomObjectIdentifier(object: IRoomObject): string | null;
+    getRoomObjectIdentifier(object: IRoomObject): string | null;
 }

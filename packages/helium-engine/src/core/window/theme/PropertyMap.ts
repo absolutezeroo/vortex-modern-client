@@ -12,184 +12,184 @@ import {PropertyStruct} from '../utils/PropertyStruct';
  */
 export class PropertyMap implements IPropertyMap
 {
-	private _properties: Map<string, PropertyStruct> = new Map();
+    private _properties: Map<string, PropertyStruct> = new Map();
 
-	/**
+    /**
 	 * Retrieves the value for the given key.
 	 *
 	 * @param key - The property key
 	 * @returns The property value, or undefined if not found
 	 */
-	public getValue(key: string): unknown
-	{
-		const prop = this._properties.get(key);
+    public getValue(key: string): unknown
+    {
+        const prop = this._properties.get(key);
 
-		return prop ? prop.value : undefined;
-	}
+        return prop ? prop.value : undefined;
+    }
 
-	/**
+    /**
 	 * Sets the value for the given key.
 	 *
 	 * @param key - The property key
 	 * @param value - The value to set
 	 */
-	public setValue(key: string, value: unknown): void
-	{
-		const existing = this._properties.get(key);
+    public setValue(key: string, value: unknown): void
+    {
+        const existing = this._properties.get(key);
 
-		if (existing)
-		{
-			existing.value = value;
-		}
-		else
-		{
-			this._properties.set(key, new PropertyStruct(key, value));
-		}
-	}
+        if(existing)
+        {
+            existing.value = value;
+        }
+        else
+        {
+            this._properties.set(key, new PropertyStruct(key, value));
+        }
+    }
 
-	/**
+    /**
 	 * Checks whether a property with the given key exists.
 	 *
 	 * @param key - The property key
 	 * @returns True if the key exists
 	 */
-	public hasValue(key: string): boolean
-	{
-		return this._properties.has(key);
-	}
+    public hasValue(key: string): boolean
+    {
+        return this._properties.has(key);
+    }
 
-	/**
+    /**
 	 * Returns all property keys.
 	 *
 	 * @returns Array of key strings
 	 */
-	public getKeys(): string[]
-	{
-		return Array.from(this._properties.keys());
-	}
+    public getKeys(): string[]
+    {
+        return Array.from(this._properties.keys());
+    }
 
-	/**
+    /**
 	 * Returns the PropertyStruct for the given key.
 	 *
 	 * @param key - The property key
 	 * @returns The PropertyStruct, or null if not found
 	 */
-	public get(key: string): PropertyStruct | null
-	{
-		return this._properties.get(key) ?? null;
-	}
+    public get(key: string): PropertyStruct | null
+    {
+        return this._properties.get(key) ?? null;
+    }
 
-	/**
+    /**
 	 * Adds a boolean property.
 	 *
 	 * @param key - The property key
 	 * @param value - The boolean value
 	 */
-	public addBoolean(key: string, value: boolean): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.BOOLEAN));
-	}
+    public addBoolean(key: string, value: boolean): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.BOOLEAN));
+    }
 
-	/**
+    /**
 	 * Adds an integer property.
 	 *
 	 * @param key - The property key
 	 * @param value - The integer value
 	 */
-	public addInt(key: string, value: number): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.INT));
-	}
+    public addInt(key: string, value: number): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.INT));
+    }
 
-	/**
+    /**
 	 * Adds an unsigned integer property.
 	 *
 	 * @param key - The property key
 	 * @param value - The uint value
 	 */
-	public addUint(key: string, value: number): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.UINT));
-	}
+    public addUint(key: string, value: number): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.UINT));
+    }
 
-	/**
+    /**
 	 * Adds a hex-encoded unsigned integer property.
 	 *
 	 * @param key - The property key
 	 * @param value - The hex value
 	 */
-	public addHex(key: string, value: number): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.HEX));
-	}
+    public addHex(key: string, value: number): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.HEX));
+    }
 
-	/**
+    /**
 	 * Adds a floating-point number property.
 	 *
 	 * @param key - The property key
 	 * @param value - The number value
 	 */
-	public addNumber(key: string, value: number): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.NUMBER));
-	}
+    public addNumber(key: string, value: number): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.NUMBER));
+    }
 
-	/**
+    /**
 	 * Adds a string property.
 	 *
 	 * @param key - The property key
 	 * @param value - The string value
 	 */
-	public addString(key: string, value: string): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.STRING));
-	}
+    public addString(key: string, value: string): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.STRING));
+    }
 
-	/**
+    /**
 	 * Adds an array property.
 	 *
 	 * @param key - The property key
 	 * @param value - The array value
 	 */
-	public addArray(key: string, value: unknown[]): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.ARRAY));
-	}
+    public addArray(key: string, value: unknown[]): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.ARRAY));
+    }
 
-	/**
+    /**
 	 * Adds a string enumeration property with a set of allowed values.
 	 *
 	 * @param key - The property key
 	 * @param value - The initial value
 	 * @param range - The allowed values
 	 */
-	public addEnumeration(key: string, value: string, range: string[]): void
-	{
-		this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.STRING, false, range));
-	}
+    public addEnumeration(key: string, value: string, range: string[]): void
+    {
+        this._properties.set(key, new PropertyStruct(key, value, PropertyStruct.STRING, false, range));
+    }
 
-	/**
+    /**
 	 * Creates a shallow clone of this PropertyMap.
 	 *
 	 * @returns A new PropertyMap with the same entries
 	 */
-	public clone(): PropertyMap
-	{
-		const copy = new PropertyMap();
+    public clone(): PropertyMap
+    {
+        const copy = new PropertyMap();
 
-		for (const [key, prop] of this._properties)
-		{
-			copy._properties.set(key, prop);
-		}
+        for(const [key, prop] of this._properties)
+        {
+            copy._properties.set(key, prop);
+        }
 
-		return copy;
-	}
+        return copy;
+    }
 
-	/**
+    /**
 	 * Disposes all properties in this map.
 	 */
-	public dispose(): void
-	{
-		this._properties.clear();
-	}
+    public dispose(): void
+    {
+        this._properties.clear();
+    }
 }

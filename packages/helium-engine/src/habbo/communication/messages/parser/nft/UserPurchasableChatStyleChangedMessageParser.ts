@@ -8,32 +8,32 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class UserPurchasableChatStyleChangedMessageParser implements IMessageParser
 {
-	private _added: boolean = false;
-	private _styleId: number = 0;
+    private _added: boolean = false;
+    private _styleId: number = 0;
 
-	get added(): boolean
-	{
-		return this._added;
-	}
+    get added(): boolean
+    {
+        return this._added;
+    }
 
-	get styleId(): number
-	{
-		return this._styleId;
-	}
+    get styleId(): number
+    {
+        return this._styleId;
+    }
 
-	flush(): boolean
-	{
-		this._added = false;
-		this._styleId = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._added = false;
+        this._styleId = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._added = wrapper.readBoolean();
-		this._styleId = wrapper.readInt();
-		return true;
-	}
+        this._added = wrapper.readBoolean();
+        this._styleId = wrapper.readInt();
+        return true;
+    }
 }

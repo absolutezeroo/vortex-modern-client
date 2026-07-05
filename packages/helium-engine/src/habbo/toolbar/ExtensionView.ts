@@ -20,288 +20,288 @@ const log = Logger.getLogger('ExtensionView');
 // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::ExtensionView
 export class ExtensionView implements IExtensionView
 {
-	// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::MARGIN
-	private static readonly MARGIN: number = 3;
-	// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::PURSE_EXTENSION_OFFSET
-	private static readonly PURSE_EXTENSION_OFFSET: number = -8;
+    // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::MARGIN
+    private static readonly MARGIN: number = 3;
+    // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::PURSE_EXTENSION_OFFSET
+    private static readonly PURSE_EXTENSION_OFFSET: number = -8;
 
-	private _toolbar: HabboToolbar | null;
-	private _var104: IItemListWindow | null = null;
-	private _items: Map<string, IWindow> = new Map();
-	private _orderedItems: IWindow[] = [];
-	private _disposed: boolean = false;
-	private _landingView: boolean = false;
-	private _extraMargin: number = 0;
+    private _toolbar: HabboToolbar | null;
+    private _var104: IItemListWindow | null = null;
+    private _items: Map<string, IWindow> = new Map();
+    private _orderedItems: IWindow[] = [];
+    private _disposed: boolean = false;
+    private _landingView: boolean = false;
+    private _extraMargin: number = 0;
 
-	constructor(windowManager: IHabboWindowManager, toolbar: HabboToolbar)
-	{
-		this._toolbar = toolbar;
+    constructor(windowManager: IHabboWindowManager, toolbar: HabboToolbar)
+    {
+        this._toolbar = toolbar;
 
-		const container = windowManager.buildWidgetLayout('extension_grid', 1);
+        const container = windowManager.buildWidgetLayout('extension_grid', 1);
 
-		if(container)
-		{
-			this._var104 = container as unknown as IItemListWindow;
-			this._var104.clipping = false;
-			const desktop = this._var104.desktop;
+        if(container)
+        {
+            this._var104 = container as unknown as IItemListWindow;
+            this._var104.clipping = false;
+            const desktop = this._var104.desktop;
 
-			if(desktop)
-			{
-				this._var104.x = desktop.width - this._var104.width - ExtensionView.MARGIN - this._extraMargin;
-				this._var104.y = ExtensionView.MARGIN;
-				this._var104.visible = true;
-			}
-		}
-		else
-		{
-			log.error('Unable to initialize Toolbar Extension view window from xml asset');
-		}
-	}
+            if(desktop)
+            {
+                this._var104.x = desktop.width - this._var104.width - ExtensionView.MARGIN - this._extraMargin;
+                this._var104.y = ExtensionView.MARGIN;
+                this._var104.visible = true;
+            }
+        }
+        else
+        {
+            log.error('Unable to initialize Toolbar Extension view window from xml asset');
+        }
+    }
 
-	public get visible(): boolean
-	{
-		return this._var104 !== null && this._var104.visible;
-	}
+    public get visible(): boolean
+    {
+        return this._var104 !== null && this._var104.visible;
+    }
 
-	public set visible(value: boolean)
-	{
-		if(this._var104)
-		{
-			this._var104.visible = value;
-		}
-	}
+    public set visible(value: boolean)
+    {
+        if(this._var104)
+        {
+            this._var104.visible = value;
+        }
+    }
 
-	public get screenHeight(): number
-	{
-		if(!this._var104) return 0;
+    public get screenHeight(): number
+    {
+        if(!this._var104) return 0;
 
-		return this._var104.height + this._var104.y;
-	}
+        return this._var104.height + this._var104.y;
+    }
 
-	public get landingView(): boolean
-	{
-		return this._landingView;
-	}
+    public get landingView(): boolean
+    {
+        return this._landingView;
+    }
 
-	public set landingView(value: boolean)
-	{
-		this._landingView = value;
-		this.refreshItemWindow();
-	}
+    public set landingView(value: boolean)
+    {
+        this._landingView = value;
+        this.refreshItemWindow();
+    }
 
-	public get extraMargin(): number
-	{
-		return this._extraMargin;
-	}
+    public get extraMargin(): number
+    {
+        return this._extraMargin;
+    }
 
-	public set extraMargin(value: number)
-	{
-		this._extraMargin = value;
+    public set extraMargin(value: number)
+    {
+        this._extraMargin = value;
 
-		if(this._var104)
-		{
-			const desktop = this._var104.desktop;
+        if(this._var104)
+        {
+            const desktop = this._var104.desktop;
 
-			if(desktop)
-			{
-				this._var104.x = desktop.width - this._var104.width - ExtensionView.MARGIN - this._extraMargin;
-			}
-		}
-	}
+            if(desktop)
+            {
+                this._var104.x = desktop.width - this._var104.width - ExtensionView.MARGIN - this._extraMargin;
+            }
+        }
+    }
 
-	public attachExtension(id: string, element: unknown, index: number = -1, params: unknown[] | null = null): void
-	{
-		if(this._disposed) return;
+    public attachExtension(id: string, element: unknown, index: number = -1, params: unknown[] | null = null): void
+    {
+        if(this._disposed) return;
 
-		if(this._items.has(id)) return;
+        if(this._items.has(id)) return;
 
-		const window = element as IWindow;
+        const window = element as IWindow;
 
-		this._items.set(id, window);
+        this._items.set(id, window);
 
-		if(params !== null)
-		{
-			index = this.resolveIndex(params as string[]);
-		}
+        if(params !== null)
+        {
+            index = this.resolveIndex(params as string[]);
+        }
 
-		if(index === -1)
-		{
-			this._orderedItems.push(window);
-		}
-		else
-		{
-			this._orderedItems.splice(index, 0, window);
-		}
+        if(index === -1)
+        {
+            this._orderedItems.push(window);
+        }
+        else
+        {
+            this._orderedItems.splice(index, 0, window);
+        }
 
-		if(this._var104)
-		{
-			this.refreshItemWindow();
-		}
+        if(this._var104)
+        {
+            this.refreshItemWindow();
+        }
 
-		this.queueResizeEvent();
-	}
+        this.queueResizeEvent();
+    }
 
-	public hasExtension(id: string): boolean
-	{
-		return this._items.has(id);
-	}
+    public hasExtension(id: string): boolean
+    {
+        return this._items.has(id);
+    }
 
-	// AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::refreshItemWindow()
-	public refreshItemWindow(): void
-	{
-		if(!this._var104) return;
+    // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::refreshItemWindow()
+    public refreshItemWindow(): void
+    {
+        if(!this._var104) return;
 
-		this._var104.removeListItems();
+        this._var104.removeListItems();
 
-		for(const window of this._orderedItems)
-		{
-			const key = this.getKeyForWindow(window);
+        for(const window of this._orderedItems)
+        {
+            const key = this.getKeyForWindow(window);
 
-			if(key.indexOf('new_feature') === 0)
-			{
-				this._var104.addListItem(window);
-				continue;
-			}
+            if(key.indexOf('new_feature') === 0)
+            {
+                this._var104.addListItem(window);
+                continue;
+            }
 
-			switch(key)
-			{
-				case 'logout_tools':
-				case 'purse_credits':
-				case 'purse_engagement_currency':
-				case 'purse_habbo_club':
-				case 'purse_seasonal_currency':
-				case 'talent_promo':
-				case 'club_promo':
-				case 'vip_quests':
-				case 'video_offers':
-				case 'settings':
-				case 'phone_number':
-				case 'verification_code':
-				case 'return_gift':
-				case 'new_feature':
-				case 'targeted_offer':
-					this._var104.addListItem(window);
-					break;
-				case 'purse':
-					this._var104.addListItem(window);
-					{
-						const targetY = ExtensionView.MARGIN + ExtensionView.PURSE_EXTENSION_OFFSET;
+            switch(key)
+            {
+                case 'logout_tools':
+                case 'purse_credits':
+                case 'purse_engagement_currency':
+                case 'purse_habbo_club':
+                case 'purse_seasonal_currency':
+                case 'talent_promo':
+                case 'club_promo':
+                case 'vip_quests':
+                case 'video_offers':
+                case 'settings':
+                case 'phone_number':
+                case 'verification_code':
+                case 'return_gift':
+                case 'new_feature':
+                case 'targeted_offer':
+                    this._var104.addListItem(window);
+                    break;
+                case 'purse':
+                    this._var104.addListItem(window);
+                    {
+                        const targetY = ExtensionView.MARGIN + ExtensionView.PURSE_EXTENSION_OFFSET;
 
-						// AS3 target is -5; keep the offset calculation but avoid clipping outside the Pixi canvas.
-						this._var104.y = Math.max(0, targetY);
-					}
-					break;
-				default:
-					if(!this._landingView)
-					{
-						this._var104.addListItem(window);
-					}
-			}
-		}
+                        // AS3 target is -5; keep the offset calculation but avoid clipping outside the Pixi canvas.
+                        this._var104.y = Math.max(0, targetY);
+                    }
+                    break;
+                default:
+                    if(!this._landingView)
+                    {
+                        this._var104.addListItem(window);
+                    }
+            }
+        }
 
-		this._var104.arrangeListItems();
-		this._var104.invalidate();
-	}
+        this._var104.arrangeListItems();
+        this._var104.invalidate();
+    }
 
-	public detachExtension(id: string): void
-	{
-		if(this._disposed) return;
+    public detachExtension(id: string): void
+    {
+        if(this._disposed) return;
 
-		this._items.delete(id);
-		this.queueResizeEvent();
-	}
+        this._items.delete(id);
+        this.queueResizeEvent();
+    }
 
-	public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null
-	{
-		if(iconId === 'HTIE_EXT_GROUP')
-		{
-			const window = this._items.get('room_group_info') ?? null;
+    public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null
+    {
+        if(iconId === 'HTIE_EXT_GROUP')
+        {
+            const window = this._items.get('room_group_info') ?? null;
 
-			if(window !== null && window.visible)
-			{
-				const rect = {x: 0, y: 0, width: 0, height: 0};
-				window.getGlobalRectangle(rect);
-				return rect;
-			}
-		}
+            if(window !== null && window.visible)
+            {
+                const rect = {x: 0, y: 0, width: 0, height: 0};
+                window.getGlobalRectangle(rect);
+                return rect;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public removeDimmers(): void
-	{
-		// Dimmer management is a Flash-specific concept not ported to Helium
-	}
+    public removeDimmers(): void
+    {
+        // Dimmer management is a Flash-specific concept not ported to Helium
+    }
 
-	public getOrderedExtensionIds(): string[]
-	{
-		const result: string[] = [];
+    public getOrderedExtensionIds(): string[]
+    {
+        const result: string[] = [];
 
-		for(const window of this._orderedItems)
-		{
-			const key = this.getKeyForWindow(window);
+        for(const window of this._orderedItems)
+        {
+            const key = this.getKeyForWindow(window);
 
-			if(key !== '') result.push(key);
-		}
+            if(key !== '') result.push(key);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public dispose(): void
-	{
-		if(this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		const keys = Array.from(this._items.keys());
+        const keys = Array.from(this._items.keys());
 
-		for(const key of keys)
-		{
-			this.detachExtension(key);
-		}
+        for(const key of keys)
+        {
+            this.detachExtension(key);
+        }
 
-		if(this._var104)
-		{
-			(this._var104 as unknown as { dispose(): void }).dispose();
-			this._var104 = null;
-		}
+        if(this._var104)
+        {
+            (this._var104 as unknown as { dispose(): void }).dispose();
+            this._var104 = null;
+        }
 
-		this._orderedItems = [];
-		this._toolbar = null;
-		this._items.clear();
-		this._disposed = true;
-	}
+        this._orderedItems = [];
+        this._toolbar = null;
+        this._items.clear();
+        this._disposed = true;
+    }
 
-	private getKeyForWindow(window: IWindow): string
-	{
-		for(const [key, value] of this._items)
-		{
-			if(value === window) return key;
-		}
+    private getKeyForWindow(window: IWindow): string
+    {
+        for(const [key, value] of this._items)
+        {
+            if(value === window) return key;
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	private resolveIndex(params: string[]): number
-	{
-		for(let i = 0; i < this._orderedItems.length; i++)
-		{
-			if(params.indexOf(this._orderedItems[i].name) > -1)
-			{
-				return i;
-			}
-		}
+    private resolveIndex(params: string[]): number
+    {
+        for(let i = 0; i < this._orderedItems.length; i++)
+        {
+            if(params.indexOf(this._orderedItems[i].name) > -1)
+            {
+                return i;
+            }
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	private queueResizeEvent(): void
-	{
-		setTimeout(() =>
-		{
-			if(this._toolbar)
-			{
-				const event = new ExtensionViewEvent(ExtensionViewEvent.EXTENSION_VIEW_RESIZED);
-				this._toolbar.toolbarEvents.emit(ExtensionViewEvent.EXTENSION_VIEW_RESIZED, event);
-			}
-		}, 25);
-	}
+    private queueResizeEvent(): void
+    {
+        setTimeout(() =>
+        {
+            if(this._toolbar)
+            {
+                const event = new ExtensionViewEvent(ExtensionViewEvent.EXTENSION_VIEW_RESIZED);
+                this._toolbar.toolbarEvents.emit(ExtensionViewEvent.EXTENSION_VIEW_RESIZED, event);
+            }
+        }, 25);
+    }
 }

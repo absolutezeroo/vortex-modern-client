@@ -10,11 +10,11 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 
 export class RoomObjectDataRequestEvent extends RoomObjectEvent
 {
-	public static readonly CURRENT_USER_ID = 'RODRE_CURRENT_USER_ID';
-	public static readonly URL_PREFIX = 'RODRE_URL_PREFIX';
+    public static readonly CURRENT_USER_ID = 'RODRE_CURRENT_USER_ID';
+    public static readonly URL_PREFIX = 'RODRE_URL_PREFIX';
 
-	constructor(type: string, object: IRoomObject)
-	{
-		super(type, object);
-	}
+    constructor(type: string, object: IRoomObject)
+    {
+        super(type, object);
+    }
 }

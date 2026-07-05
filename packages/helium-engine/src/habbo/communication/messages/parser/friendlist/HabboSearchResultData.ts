@@ -8,72 +8,72 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class HabboSearchResultData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._avatarId = wrapper.readInt();
-		this._avatarName = wrapper.readString();
-		this._avatarMotto = wrapper.readString();
-		this._isAvatarOnline = wrapper.readBoolean();
-		this._canFollow = wrapper.readBoolean();
-		wrapper.readString(); // lastOnlineDate (unused/discarded in AS3)
-		this._avatarGender = wrapper.readInt();
-		this._avatarFigure = wrapper.readString();
-		this._realName = wrapper.readString();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._avatarId = wrapper.readInt();
+        this._avatarName = wrapper.readString();
+        this._avatarMotto = wrapper.readString();
+        this._isAvatarOnline = wrapper.readBoolean();
+        this._canFollow = wrapper.readBoolean();
+        wrapper.readString(); // lastOnlineDate (unused/discarded in AS3)
+        this._avatarGender = wrapper.readInt();
+        this._avatarFigure = wrapper.readString();
+        this._realName = wrapper.readString();
+    }
 
-	private _avatarId: number;
+    private _avatarId: number;
 
-	get avatarId(): number
-	{
-		return this._avatarId;
-	}
+    get avatarId(): number
+    {
+        return this._avatarId;
+    }
 
-	private _avatarName: string;
+    private _avatarName: string;
 
-	get avatarName(): string
-	{
-		return this._avatarName;
-	}
+    get avatarName(): string
+    {
+        return this._avatarName;
+    }
 
-	private _avatarMotto: string;
+    private _avatarMotto: string;
 
-	get avatarMotto(): string
-	{
-		return this._avatarMotto;
-	}
+    get avatarMotto(): string
+    {
+        return this._avatarMotto;
+    }
 
-	private _isAvatarOnline: boolean;
+    private _isAvatarOnline: boolean;
 
-	get isAvatarOnline(): boolean
-	{
-		return this._isAvatarOnline;
-	}
+    get isAvatarOnline(): boolean
+    {
+        return this._isAvatarOnline;
+    }
 
-	private _canFollow: boolean;
+    private _canFollow: boolean;
 
-	get canFollow(): boolean
-	{
-		return this._canFollow;
-	}
+    get canFollow(): boolean
+    {
+        return this._canFollow;
+    }
 
-	private _avatarGender: number;
+    private _avatarGender: number;
 
-	get avatarGender(): number
-	{
-		return this._avatarGender;
-	}
+    get avatarGender(): number
+    {
+        return this._avatarGender;
+    }
 
-	private _avatarFigure: string;
+    private _avatarFigure: string;
 
-	get avatarFigure(): string
-	{
-		return this._avatarFigure;
-	}
+    get avatarFigure(): string
+    {
+        return this._avatarFigure;
+    }
 
-	private _realName: string;
+    private _realName: string;
 
-	get realName(): string
-	{
-		return this._realName;
-	}
+    get realName(): string
+    {
+        return this._realName;
+    }
 }

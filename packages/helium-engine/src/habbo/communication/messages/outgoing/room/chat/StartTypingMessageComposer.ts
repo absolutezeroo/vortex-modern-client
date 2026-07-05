@@ -7,13 +7,13 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class StartTypingMessageComposer extends MessageComposer<[]>
 {
-	constructor()
-	{
-		super();
-	}
+    constructor()
+    {
+        super();
+    }
 
-	getMessageArray(): []
-	{
-		return [];
-	}
+    getMessageArray(): []
+    {
+        return [];
+    }
 }

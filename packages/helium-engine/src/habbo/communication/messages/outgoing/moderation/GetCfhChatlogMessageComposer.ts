@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetCfhChatlogMessageComposer extends MessageComposer<ConstructorParameters<typeof GetCfhChatlogMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetCfhChatlogMessageComposer>;
+    private _data: ConstructorParameters<typeof GetCfhChatlogMessageComposer>;
 
-	constructor(issueId: number)
-	{
-		super();
-		this._data = [issueId];
-	}
+    constructor(issueId: number)
+    {
+        super();
+        this._data = [issueId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

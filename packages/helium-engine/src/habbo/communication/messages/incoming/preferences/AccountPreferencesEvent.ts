@@ -9,8 +9,8 @@ import {AccountPreferencesParser} from '../../parser/preferences/AccountPreferen
  */
 export class AccountPreferencesEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AccountPreferencesParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AccountPreferencesParser);
+    }
 }

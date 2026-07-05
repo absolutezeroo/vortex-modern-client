@@ -9,8 +9,8 @@ import {InterstitialMessageParser} from '../../parser/advertisement/Interstitial
  */
 export class InterstitialMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, InterstitialMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, InterstitialMessageParser);
+    }
 }

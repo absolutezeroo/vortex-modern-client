@@ -9,25 +9,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FindFriendsProcessResultMessageParser implements IMessageParser
 {
-	private _success: boolean = false;
+    private _success: boolean = false;
 
-	get success(): boolean
-	{
-		return this._success;
-	}
+    get success(): boolean
+    {
+        return this._success;
+    }
 
-	flush(): boolean
-	{
-		this._success = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._success = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._success = wrapper.readBoolean();
+        this._success = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -3,8 +3,8 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 
 export interface BadgeData
 {
-	badgeId: string;
-	slotId: number;
+    badgeId: string;
+    slotId: number;
 }
 
 /**
@@ -14,61 +14,61 @@ export interface BadgeData
  */
 export class BadgesMessageParser implements IMessageParser
 {
-	private _totalFragments: number = 1;
+    private _totalFragments: number = 1;
 
-	get totalFragments(): number
-	{
-		return this._totalFragments;
-	}
+    get totalFragments(): number
+    {
+        return this._totalFragments;
+    }
 
-	private _fragmentNo: number = 0;
+    private _fragmentNo: number = 0;
 
-	get fragmentNo(): number
-	{
-		return this._fragmentNo;
-	}
+    get fragmentNo(): number
+    {
+        return this._fragmentNo;
+    }
 
-	private _badges: BadgeData[] = [];
+    private _badges: BadgeData[] = [];
 
-	get badges(): BadgeData[]
-	{
-		return this._badges;
-	}
+    get badges(): BadgeData[]
+    {
+        return this._badges;
+    }
 
-	private _activeBadgeIds: string[] = [];
+    private _activeBadgeIds: string[] = [];
 
-	get activeBadgeIds(): string[]
-	{
-		return this._activeBadgeIds;
-	}
+    get activeBadgeIds(): string[]
+    {
+        return this._activeBadgeIds;
+    }
 
-	flush(): boolean
-	{
-		this._badges = [];
-		this._activeBadgeIds = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._badges = [];
+        this._activeBadgeIds = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._totalFragments = wrapper.readInt();
-		this._fragmentNo = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._totalFragments = wrapper.readInt();
+        this._fragmentNo = wrapper.readInt();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const slotId = wrapper.readInt();
-			const badgeId = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const slotId = wrapper.readInt();
+            const badgeId = wrapper.readString();
 
-			this._badges.push({badgeId, slotId});
+            this._badges.push({badgeId, slotId});
 
-			if (slotId > 0)
-			{
-				this._activeBadgeIds.push(badgeId);
-			}
-		}
+            if(slotId > 0)
+            {
+                this._activeBadgeIds.push(badgeId);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

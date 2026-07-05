@@ -24,423 +24,423 @@ import {RoomObjectAvatarExperienceUpdateMessage} from '../../messages/RoomObject
 
 export class PetLogic extends MovingObjectLogic
 {
-	// Timed actions
-	private _talkEndTime = 0;
-	private _gestureEndTime = 0;
-	private _expressionEndTime = 0;
+    // Timed actions
+    private _talkEndTime = 0;
+    private _gestureEndTime = 0;
+    private _expressionEndTime = 0;
 
-	// Selection state
-	private _selected = false;
-	private _lastLocation: Vector3d | null = null;
+    // Selection state
+    private _selected = false;
+    private _lastLocation: Vector3d | null = null;
 
-	// Debug mode
-	private _debugMode = false;
-	private _debugPostureIndex = 0;
-	private _debugGestureIndex = 0;
-	private _headDirectionDelta = 0;
-	private _directionIndex = 0;
+    // Debug mode
+    private _debugMode = false;
+    private _debugPostureIndex = 0;
+    private _debugGestureIndex = 0;
+    private _headDirectionDelta = 0;
+    private _directionIndex = 0;
 
-	// Allowed directions for this pet type
-	private _directions: number[] = [];
+    // Allowed directions for this pet type
+    private _directions: number[] = [];
 
-	constructor()
-	{
-		super();
-	}
+    constructor()
+    {
+        super();
+    }
 
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectMouseEvent.ROE_MOUSE_CLICK,
-			RoomObjectMoveEvent.ROME_POSITION_CHANGED
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectMouseEvent.ROE_MOUSE_CLICK,
+            RoomObjectMoveEvent.ROME_POSITION_CHANGED
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override dispose(): void
-	{
-		if (this._selected && this.object !== null)
-		{
-			if (this.eventDispatcher !== null)
-			{
-				const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_OBJECT_REMOVED, this.object);
-				this.eventDispatcher.emit(event.type, event);
-			}
-		}
+    override dispose(): void
+    {
+        if(this._selected && this.object !== null)
+        {
+            if(this.eventDispatcher !== null)
+            {
+                const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_OBJECT_REMOVED, this.object);
+                this.eventDispatcher.emit(event.type, event);
+            }
+        }
 
-		this._directions = [];
-		super.dispose();
-		this._lastLocation = null;
-	}
+        this._directions = [];
+        super.dispose();
+        this._lastLocation = null;
+    }
 
-	override initialize(data: unknown): void
-	{
-		super.initialize(data);
+    override initialize(data: unknown): void
+    {
+        super.initialize(data);
 
-		this._directions = [];
+        this._directions = [];
 
-		// Parse allowed directions from pet data
-		const config = data as {
-			model?: {
-				directions?: {
-					direction?: Array<{ id: number }>;
-				};
-			};
-		};
+        // Parse allowed directions from pet data
+        const config = data as {
+            model?: {
+                directions?: {
+                    direction?: Array<{ id: number }>;
+                };
+            };
+        };
 
-		if (config?.model?.directions?.direction)
-		{
-			for (const dir of config.model.directions.direction)
-			{
-				if (typeof dir.id === 'number')
-				{
-					this._directions.push(dir.id);
-				}
-			}
-		}
+        if(config?.model?.directions?.direction)
+        {
+            for(const dir of config.model.directions.direction)
+            {
+                if(typeof dir.id === 'number')
+                {
+                    this._directions.push(dir.id);
+                }
+            }
+        }
 
-		// Sort directions numerically
-		this._directions.sort((a, b) => a - b);
+        // Sort directions numerically
+        this._directions.sort((a, b) => a - b);
 
-		// Store in model
-		const model = this.object?.getModelController();
-		if (model)
-		{
-			model.setNumberArray('pet_allowed_directions', this._directions, true);
-		}
-	}
+        // Store in model
+        const model = this.object?.getModelController();
+        if(model)
+        {
+            model.setNumberArray('pet_allowed_directions', this._directions, true);
+        }
+    }
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		if (message === null || this.object === null)
-		{
-			return;
-		}
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        if(message === null || this.object === null)
+        {
+            return;
+        }
 
-		const model = this.object.getModelController();
-		if (model === null)
-		{
-			return;
-		}
+        const model = this.object.getModelController();
+        if(model === null)
+        {
+            return;
+        }
 
-		// When not in debug mode, process movement messages
-		if (!this._debugMode)
-		{
-			super.processUpdateMessage(message);
+        // When not in debug mode, process movement messages
+        if(!this._debugMode)
+        {
+            super.processUpdateMessage(message);
 
-			// Posture
-			if (message instanceof RoomObjectAvatarPostureUpdateMessage)
-			{
-				model.setString('figure_posture', message.postureType);
-				return;
-			}
+            // Posture
+            if(message instanceof RoomObjectAvatarPostureUpdateMessage)
+            {
+                model.setString('figure_posture', message.postureType);
+                return;
+            }
 
-			// Head direction from avatar update
-			if (message instanceof RoomObjectAvatarUpdateMessage)
-			{
-				model.setNumber('head_direction', message.dirHead);
-				return;
-			}
+            // Head direction from avatar update
+            if(message instanceof RoomObjectAvatarUpdateMessage)
+            {
+                model.setNumber('head_direction', message.dirHead);
+                return;
+            }
 
-			// Head direction only
-			if (message instanceof RoomObjectAvatarDirectionUpdateMessage)
-			{
-				model.setNumber('head_direction', message.dirHead);
-				return;
-			}
+            // Head direction only
+            if(message instanceof RoomObjectAvatarDirectionUpdateMessage)
+            {
+                model.setNumber('head_direction', message.dirHead);
+                return;
+            }
 
-			// Chat (bark animation)
-			if (message instanceof RoomObjectAvatarChatUpdateMessage)
-			{
-				model.setNumber('figure_talk', 1);
-				this._talkEndTime = Date.now() + message.numberOfWords * 1000;
-				return;
-			}
+            // Chat (bark animation)
+            if(message instanceof RoomObjectAvatarChatUpdateMessage)
+            {
+                model.setNumber('figure_talk', 1);
+                this._talkEndTime = Date.now() + message.numberOfWords * 1000;
+                return;
+            }
 
-			// Pet gesture
-			if (message instanceof RoomObjectAvatarPetGestureUpdateMessage)
-			{
-				model.setString('figure_gesture', message.gesture);
-				this._gestureEndTime = Date.now() + 3000;
-				return;
-			}
+            // Pet gesture
+            if(message instanceof RoomObjectAvatarPetGestureUpdateMessage)
+            {
+                model.setString('figure_gesture', message.gesture);
+                this._gestureEndTime = Date.now() + 3000;
+                return;
+            }
 
-			// Sleep
-			if (message instanceof RoomObjectAvatarSleepUpdateMessage)
-			{
-				model.setNumber('figure_sleep', message.isSleeping ? 1 : 0);
-				return;
-			}
-		}
+            // Sleep
+            if(message instanceof RoomObjectAvatarSleepUpdateMessage)
+            {
+                model.setNumber('figure_sleep', message.isSleeping ? 1 : 0);
+                return;
+            }
+        }
 
-		// Selection state (always processed)
-		if (message instanceof RoomObjectAvatarSelectedMessage)
-		{
-			this._selected = message.selected;
-			this._lastLocation = null;
-			return;
-		}
+        // Selection state (always processed)
+        if(message instanceof RoomObjectAvatarSelectedMessage)
+        {
+            this._selected = message.selected;
+            this._lastLocation = null;
+            return;
+        }
 
-		// Experience gain
-		if (message instanceof RoomObjectAvatarExperienceUpdateMessage)
-		{
-			model.setNumber('figure_experience_timestamp', Date.now());
-			model.setNumber('figure_gained_experience', message.gainedExperience);
-			return;
-		}
+        // Experience gain
+        if(message instanceof RoomObjectAvatarExperienceUpdateMessage)
+        {
+            model.setNumber('figure_experience_timestamp', Date.now());
+            model.setNumber('figure_gained_experience', message.gainedExperience);
+            return;
+        }
 
-		// Figure update
-		if (message instanceof RoomObjectAvatarFigureUpdateMessage)
-		{
-			model.setString('figure', message.figure);
-			model.setString('race', message.race);
+        // Figure update
+        if(message instanceof RoomObjectAvatarFigureUpdateMessage)
+        {
+            model.setString('figure', message.figure);
+            model.setString('race', message.race);
 
-			// Parse pet figure data
-			const petData = this.parsePetFigure(message.figure);
-			if (petData)
-			{
-				model.setNumber('pet_palette_index', petData.paletteId);
-				model.setNumber('pet_color', petData.color);
-				model.setNumber('pet_type', petData.typeId);
-				model.setNumberArray('pet_custom_layer_ids', petData.customLayerIds);
-				model.setNumberArray('pet_custom_part_ids', petData.customPartIds);
-				model.setNumberArray('pet_custom_palette_ids', petData.customPaletteIds);
-			}
+            // Parse pet figure data
+            const petData = this.parsePetFigure(message.figure);
+            if(petData)
+            {
+                model.setNumber('pet_palette_index', petData.paletteId);
+                model.setNumber('pet_color', petData.color);
+                model.setNumber('pet_type', petData.typeId);
+                model.setNumberArray('pet_custom_layer_ids', petData.customLayerIds);
+                model.setNumberArray('pet_custom_part_ids', petData.customPartIds);
+                model.setNumberArray('pet_custom_palette_ids', petData.customPaletteIds);
+            }
 
-			model.setNumber('pet_is_riding', message.isRiding ? 1 : 0);
-			return;
-		}
-	}
+            model.setNumber('pet_is_riding', message.isRiding ? 1 : 0);
+            return;
+        }
+    }
 
-	override mouseEvent(event: {
-		type: string;
-		eventId?: string;
-		altKey?: boolean;
-		ctrlKey?: boolean;
-		shiftKey?: boolean;
-		buttonDown?: boolean
-	}, geometry: IRoomGeometry | null): void
-	{
-		if (this.object === null || event === null)
-		{
-			return;
-		}
+    override mouseEvent(event: {
+        type: string;
+        eventId?: string;
+        altKey?: boolean;
+        ctrlKey?: boolean;
+        shiftKey?: boolean;
+        buttonDown?: boolean
+    }, geometry: IRoomGeometry | null): void
+    {
+        if(this.object === null || event === null)
+        {
+            return;
+        }
 
-		const model = this.object.getModelController();
-		let eventType: string | null = null;
+        const model = this.object.getModelController();
+        let eventType: string | null = null;
 
-		switch (event.type)
-		{
-			case 'click':
-				eventType = RoomObjectMouseEvent.ROE_MOUSE_CLICK;
-				if (this._debugMode)
-				{
-					this.debugMouseEvent(event);
-				}
-				break;
+        switch(event.type)
+        {
+            case 'click':
+                eventType = RoomObjectMouseEvent.ROE_MOUSE_CLICK;
+                if(this._debugMode)
+                {
+                    this.debugMouseEvent(event);
+                }
+                break;
 
-			case 'doubleClick':
-				// No action
-				break;
+            case 'doubleClick':
+                // No action
+                break;
 
-			case 'mouseDown':
-				if (!this._debugMode)
-				{
-					// Pet type 16 (horse?) has special mouse down handling
-					const petType = model?.getNumber('pet_type') ?? 0;
-					if (petType === 16)
-					{
-						if (this.eventDispatcher !== null)
-						{
-							const mouseEvent = new RoomObjectMouseEvent(
-								RoomObjectMouseEvent.ROE_MOUSE_DOWN,
-								this.object,
-								event.eventId ?? '',
-								event.altKey ?? false,
-								event.ctrlKey ?? false,
-								event.shiftKey ?? false,
-								event.buttonDown ?? false
-							);
-							this.eventDispatcher.emit(mouseEvent.type, mouseEvent);
-						}
-					}
-				}
-				break;
-		}
+            case 'mouseDown':
+                if(!this._debugMode)
+                {
+                    // Pet type 16 (horse?) has special mouse down handling
+                    const petType = model?.getNumber('pet_type') ?? 0;
+                    if(petType === 16)
+                    {
+                        if(this.eventDispatcher !== null)
+                        {
+                            const mouseEvent = new RoomObjectMouseEvent(
+                                RoomObjectMouseEvent.ROE_MOUSE_DOWN,
+                                this.object,
+                                event.eventId ?? '',
+                                event.altKey ?? false,
+                                event.ctrlKey ?? false,
+                                event.shiftKey ?? false,
+                                event.buttonDown ?? false
+                            );
+                            this.eventDispatcher.emit(mouseEvent.type, mouseEvent);
+                        }
+                    }
+                }
+                break;
+        }
 
-		if (eventType !== null && this.eventDispatcher !== null)
-		{
-			const mouseEvent = new RoomObjectMouseEvent(
-				eventType,
-				this.object,
-				event.eventId ?? '',
-				event.altKey ?? false,
-				event.ctrlKey ?? false,
-				event.shiftKey ?? false,
-				event.buttonDown ?? false
-			);
-			this.eventDispatcher.emit(mouseEvent.type, mouseEvent);
-		}
-	}
+        if(eventType !== null && this.eventDispatcher !== null)
+        {
+            const mouseEvent = new RoomObjectMouseEvent(
+                eventType,
+                this.object,
+                event.eventId ?? '',
+                event.altKey ?? false,
+                event.ctrlKey ?? false,
+                event.shiftKey ?? false,
+                event.buttonDown ?? false
+            );
+            this.eventDispatcher.emit(mouseEvent.type, mouseEvent);
+        }
+    }
 
-	override update(time: number): void
-	{
-		super.update(time);
+    override update(time: number): void
+    {
+        super.update(time);
 
-		// Track position changes when selected
-		if (this._selected && this.object !== null)
-		{
-			if (this.eventDispatcher !== null)
-			{
-				const location = this.object.getLocation();
+        // Track position changes when selected
+        if(this._selected && this.object !== null)
+        {
+            if(this.eventDispatcher !== null)
+            {
+                const location = this.object.getLocation();
 
-				if (this._lastLocation === null ||
+                if(this._lastLocation === null ||
 					this._lastLocation.x !== location.x ||
 					this._lastLocation.y !== location.y ||
 					this._lastLocation.z !== location.z)
-				{
-					if (this._lastLocation === null)
-					{
-						this._lastLocation = new Vector3d();
-					}
+                {
+                    if(this._lastLocation === null)
+                    {
+                        this._lastLocation = new Vector3d();
+                    }
 
-					this._lastLocation.assign(location);
+                    this._lastLocation.assign(location);
 
-					const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_POSITION_CHANGED, this.object);
-					this.eventDispatcher.emit(event.type, event);
-				}
-			}
-		}
+                    const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_POSITION_CHANGED, this.object);
+                    this.eventDispatcher.emit(event.type, event);
+                }
+            }
+        }
 
-		// Update timed actions
-		if (this.object !== null)
-		{
-			const model = this.object.getModelController();
-			if (model !== null)
-			{
-				this.updateActions(time, model);
-			}
-		}
-	}
+        // Update timed actions
+        if(this.object !== null)
+        {
+            const model = this.object.getModelController();
+            if(model !== null)
+            {
+                this.updateActions(time, model);
+            }
+        }
+    }
 
-	private updateActions(time: number, model: IRoomObjectModelController): void
-	{
-		const now = Date.now();
+    private updateActions(time: number, model: IRoomObjectModelController): void
+    {
+        const now = Date.now();
 
-		// Gesture timeout
-		if (this._gestureEndTime > 0 && now > this._gestureEndTime)
-		{
-			model.setString('figure_gesture', '');
-			this._gestureEndTime = 0;
-		}
+        // Gesture timeout
+        if(this._gestureEndTime > 0 && now > this._gestureEndTime)
+        {
+            model.setString('figure_gesture', '');
+            this._gestureEndTime = 0;
+        }
 
-		// Talk timeout
-		if (this._talkEndTime > 0)
-		{
-			if (now > this._talkEndTime)
-			{
-				model.setNumber('figure_talk', 0);
-				this._talkEndTime = 0;
-			}
-		}
+        // Talk timeout
+        if(this._talkEndTime > 0)
+        {
+            if(now > this._talkEndTime)
+            {
+                model.setNumber('figure_talk', 0);
+                this._talkEndTime = 0;
+            }
+        }
 
-		// Expression timeout
-		if (this._expressionEndTime > 0 && now > this._expressionEndTime)
-		{
-			model.setNumber('figure_expression', 0);
-			this._expressionEndTime = 0;
-		}
-	}
+        // Expression timeout
+        if(this._expressionEndTime > 0 && now > this._expressionEndTime)
+        {
+            model.setNumber('figure_expression', 0);
+            this._expressionEndTime = 0;
+        }
+    }
 
-	private debugMouseEvent(event: { altKey?: boolean; ctrlKey?: boolean }): void
-	{
-		const model = this.object?.getModelController();
-		if (!model)
-		{
-			return;
-		}
+    private debugMouseEvent(event: { altKey?: boolean; ctrlKey?: boolean }): void
+    {
+        const model = this.object?.getModelController();
+        if(!model)
+        {
+            return;
+        }
 
-		if (!event.altKey && !event.ctrlKey)
-		{
-			// Cycle through directions
-			const direction = this._directions[this._directionIndex] ?? 0;
-			this.object?.setDirection(new Vector3d(direction));
-			model.setNumber('head_direction', direction + this._headDirectionDelta);
+        if(!event.altKey && !event.ctrlKey)
+        {
+            // Cycle through directions
+            const direction = this._directions[this._directionIndex] ?? 0;
+            this.object?.setDirection(new Vector3d(direction));
+            model.setNumber('head_direction', direction + this._headDirectionDelta);
 
-			this._directionIndex++;
-			if (this._directionIndex >= this._directions.length)
-			{
-				this._directionIndex = 0;
-			}
-		}
-		else if (event.altKey && !event.ctrlKey)
-		{
-			// Cycle postures
-			this._debugPostureIndex++;
-			model.setNumber('figure_posture', this._debugPostureIndex);
-			model.setNumber('figure_gesture', NaN);
-		}
-		else if (event.ctrlKey && !event.altKey)
-		{
-			// Cycle gestures
-			this._debugGestureIndex++;
-			model.setNumber('figure_gesture', this._debugGestureIndex);
-		}
-		else
-		{
-			// Adjust head direction delta
-			this._headDirectionDelta += 45;
-			if (this._headDirectionDelta > 45)
-			{
-				this._headDirectionDelta = -45;
-			}
+            this._directionIndex++;
+            if(this._directionIndex >= this._directions.length)
+            {
+                this._directionIndex = 0;
+            }
+        }
+        else if(event.altKey && !event.ctrlKey)
+        {
+            // Cycle postures
+            this._debugPostureIndex++;
+            model.setNumber('figure_posture', this._debugPostureIndex);
+            model.setNumber('figure_gesture', NaN);
+        }
+        else if(event.ctrlKey && !event.altKey)
+        {
+            // Cycle gestures
+            this._debugGestureIndex++;
+            model.setNumber('figure_gesture', this._debugGestureIndex);
+        }
+        else
+        {
+            // Adjust head direction delta
+            this._headDirectionDelta += 45;
+            if(this._headDirectionDelta > 45)
+            {
+                this._headDirectionDelta = -45;
+            }
 
-			const currentDir = this.object?.getDirection().x ?? 0;
-			model.setNumber('head_direction', currentDir + this._headDirectionDelta);
-		}
-	}
+            const currentDir = this.object?.getDirection().x ?? 0;
+            model.setNumber('head_direction', currentDir + this._headDirectionDelta);
+        }
+    }
 
-	private parsePetFigure(figure: string): {
-		typeId: number;
-		paletteId: number;
-		color: number;
-		customLayerIds: number[];
-		customPartIds: number[];
-		customPaletteIds: number[];
-	} | null
-	{
-		// Pet figure format: typeId paletteId color customParts...
-		// Example: "17 1 ffffff 2 3 4 5 6 7 8"
-		const parts = figure.split(' ');
-		if (parts.length < 3)
-		{
-			return null;
-		}
+    private parsePetFigure(figure: string): {
+        typeId: number;
+        paletteId: number;
+        color: number;
+        customLayerIds: number[];
+        customPartIds: number[];
+        customPaletteIds: number[];
+    } | null
+    {
+        // Pet figure format: typeId paletteId color customParts...
+        // Example: "17 1 ffffff 2 3 4 5 6 7 8"
+        const parts = figure.split(' ');
+        if(parts.length < 3)
+        {
+            return null;
+        }
 
-		const typeId = parseInt(parts[0]) || 0;
-		const paletteId = parseInt(parts[1]) || 0;
-		const color = parseInt(parts[2], 16) || 0;
+        const typeId = parseInt(parts[0]) || 0;
+        const paletteId = parseInt(parts[1]) || 0;
+        const color = parseInt(parts[2], 16) || 0;
 
-		const customLayerIds: number[] = [];
-		const customPartIds: number[] = [];
-		const customPaletteIds: number[] = [];
+        const customLayerIds: number[] = [];
+        const customPartIds: number[] = [];
+        const customPaletteIds: number[] = [];
 
-		// Parse custom parts (triplets: layer, part, palette)
-		for (let i = 3; i + 2 < parts.length; i += 3)
-		{
-			customLayerIds.push(parseInt(parts[i]) || 0);
-			customPartIds.push(parseInt(parts[i + 1]) || 0);
-			customPaletteIds.push(parseInt(parts[i + 2]) || 0);
-		}
+        // Parse custom parts (triplets: layer, part, palette)
+        for(let i = 3; i + 2 < parts.length; i += 3)
+        {
+            customLayerIds.push(parseInt(parts[i]) || 0);
+            customPartIds.push(parseInt(parts[i + 1]) || 0);
+            customPaletteIds.push(parseInt(parts[i + 2]) || 0);
+        }
 
-		return {
-			typeId,
-			paletteId,
-			color,
-			customLayerIds,
-			customPartIds,
-			customPaletteIds
-		};
-	}
+        return {
+            typeId,
+            paletteId,
+            color,
+            customLayerIds,
+            customPartIds,
+            customPaletteIds
+        };
+    }
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GuideSessionOnDutyUpdateMessageComposer extends MessageComposer<ConstructorParameters<typeof GuideSessionOnDutyUpdateMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GuideSessionOnDutyUpdateMessageComposer>;
+    private _data: ConstructorParameters<typeof GuideSessionOnDutyUpdateMessageComposer>;
 
-	constructor(onDuty: boolean, guideDuty: boolean, helpDuty: boolean, bullyDuty: boolean)
-	{
-		super();
-		this._data = [onDuty, guideDuty, helpDuty, bullyDuty];
-	}
+    constructor(onDuty: boolean, guideDuty: boolean, helpDuty: boolean, bullyDuty: boolean)
+    {
+        super();
+        this._data = [onDuty, guideDuty, helpDuty, bullyDuty];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

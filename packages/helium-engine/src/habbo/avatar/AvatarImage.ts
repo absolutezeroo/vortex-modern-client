@@ -31,350 +31,350 @@ const log = Logger.getLogger('AvatarImage');
  */
 export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 {
-	private static readonly DEFAULT_ACTION: string = 'Default';
-	private static readonly DEFAULT_DIR: number = 2;
-	private static readonly DEFAULT_AVATAR_SET: string = 'full';
+    private static readonly DEFAULT_ACTION: string = 'Default';
+    private static readonly DEFAULT_DIR: number = 2;
+    private static readonly DEFAULT_AVATAR_SET: string = 'full';
 
-	protected _structure: AvatarStructure;
-	protected _scale: string;
-	protected _mainDirection: number = 0;
-	protected _headDirection: number = 0;
-	protected _canvasOffsets: number[] = [];
-	protected _assets: AssetAliasCollection;
-	protected _cache: AvatarImageCache | null = null;
-	protected _figure: AvatarFigureContainer;
-	protected _avatarDataContainer: IAvatarDataContainer | null = null;
-	protected _actions: IActiveActionData[] = [];
-	protected _image: Texture | null = null;
-	protected _fullImageFromCache: boolean = false;
-	private _defaultAction: IActiveActionData;
-	private _frameCounter: number = 0;
-	private _directionOffset: number = 0;
-	private _needsUpdate: boolean = true;
-	private _animationSpriteData: ISpriteDataContainer[] = [];
-	private _isAnimating: boolean = false;
-	private _sortedActions: IActiveActionData[] | null = null;
-	private _lastActionsString: string = '';
-	private _currentActionsString: string = '';
-	private _fullImageCache: Map<string, Texture>;
-	private _useFullImageCache: boolean = false;
-	private _effectId: number = -1;
-	private _animFrameCount: number = 0;
-	private _actionsSorted: boolean = false;
-	private _effectManager: EffectAssetDownloadManager | null;
-	private _effectListener: IAvatarEffectListener | null;
-	private _cachedBodyPartsDirection: number = -1;
-	private _cachedBodyPartsGeometry: string | null = null;
-	private _cachedBodyPartsSetType: string | null = null;
-	private _cachedBodyParts: string[] = [];
+    protected _structure: AvatarStructure;
+    protected _scale: string;
+    protected _mainDirection: number = 0;
+    protected _headDirection: number = 0;
+    protected _canvasOffsets: number[] = [];
+    protected _assets: AssetAliasCollection;
+    protected _cache: AvatarImageCache | null = null;
+    protected _figure: AvatarFigureContainer;
+    protected _avatarDataContainer: IAvatarDataContainer | null = null;
+    protected _actions: IActiveActionData[] = [];
+    protected _image: Texture | null = null;
+    protected _fullImageFromCache: boolean = false;
+    private _defaultAction: IActiveActionData;
+    private _frameCounter: number = 0;
+    private _directionOffset: number = 0;
+    private _needsUpdate: boolean = true;
+    private _animationSpriteData: ISpriteDataContainer[] = [];
+    private _isAnimating: boolean = false;
+    private _sortedActions: IActiveActionData[] | null = null;
+    private _lastActionsString: string = '';
+    private _currentActionsString: string = '';
+    private _fullImageCache: Map<string, Texture>;
+    private _useFullImageCache: boolean = false;
+    private _effectId: number = -1;
+    private _animFrameCount: number = 0;
+    private _actionsSorted: boolean = false;
+    private _effectManager: EffectAssetDownloadManager | null;
+    private _effectListener: IAvatarEffectListener | null;
+    private _cachedBodyPartsDirection: number = -1;
+    private _cachedBodyPartsGeometry: string | null = null;
+    private _cachedBodyPartsSetType: string | null = null;
+    private _cachedBodyParts: string[] = [];
 
-	constructor(
-		structure: AvatarStructure,
-		aliasCollection: AssetAliasCollection,
-		figure: AvatarFigureContainer,
-		scale: string,
-		effectManager: EffectAssetDownloadManager | null = null,
-		effectListener: IAvatarEffectListener | null = null
-	)
-	{
-		this._canvasOffsets = [];
-		this._actions = [];
-		this._structure = structure;
-		this._assets = aliasCollection;
-		this._scale = scale;
-		this._effectManager = effectManager;
-		this._effectListener = effectListener;
-		this._needsUpdate = true;
-		this._fullImageCache = new Map();
+    constructor(
+        structure: AvatarStructure,
+        aliasCollection: AssetAliasCollection,
+        figure: AvatarFigureContainer,
+        scale: string,
+        effectManager: EffectAssetDownloadManager | null = null,
+        effectListener: IAvatarEffectListener | null = null
+    )
+    {
+        this._canvasOffsets = [];
+        this._actions = [];
+        this._structure = structure;
+        this._assets = aliasCollection;
+        this._scale = scale;
+        this._effectManager = effectManager;
+        this._effectListener = effectListener;
+        this._needsUpdate = true;
+        this._fullImageCache = new Map();
 
-		if (this._scale == null)
-		{
-			this._scale = AvatarScaleType.LARGE;
-		}
-		else if (this._scale === AvatarScaleType.LARGE_TO_SMALL)
-		{
-			this._scale = AvatarScaleType.SMALL;
-		}
+        if(this._scale == null)
+        {
+            this._scale = AvatarScaleType.LARGE;
+        }
+        else if(this._scale === AvatarScaleType.LARGE_TO_SMALL)
+        {
+            this._scale = AvatarScaleType.SMALL;
+        }
 
-		if (figure == null)
-		{
-			// Fallback handled by caller; keep reference as-is
-		}
+        if(figure == null)
+        {
+            // Fallback handled by caller; keep reference as-is
+        }
 
-		this._figure = figure;
+        this._figure = figure;
 
-		this._cache = new AvatarImageCache(this._structure, this, this._assets, this._scale);
+        this._cache = new AvatarImageCache(this._structure, this, this._assets, this._scale);
 
-		this.setDirection(AvatarImage.DEFAULT_AVATAR_SET, AvatarImage.DEFAULT_DIR);
+        this.setDirection(AvatarImage.DEFAULT_AVATAR_SET, AvatarImage.DEFAULT_DIR);
 
-		this._actions = [];
-		this._defaultAction = new ActiveActionData(AvatarAction.POSTURE_STAND);
-		this._defaultAction.definition = this._structure.getActionDefinition(AvatarImage.DEFAULT_ACTION)!;
+        this._actions = [];
+        this._defaultAction = new ActiveActionData(AvatarAction.POSTURE_STAND);
+        this._defaultAction.definition = this._structure.getActionDefinition(AvatarImage.DEFAULT_ACTION)!;
 
-		this.resetActions();
-		this._fullImageCache = new Map();
-	}
+        this.resetActions();
+        this._fullImageCache = new Map();
+    }
 
-	protected _mainAction: IActiveActionData | null = null;
+    protected _mainAction: IActiveActionData | null = null;
 
-	/**
+    /**
 	 * The main action type string, or empty if no main action.
 	 */
-	public get mainAction(): string
-	{
-		if (this._mainAction)
-		{
-			return this._mainAction.actionType;
-		}
+    public get mainAction(): string
+    {
+        if(this._mainAction)
+        {
+            return this._mainAction.actionType;
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	protected _disposed: boolean = false;
+    protected _disposed: boolean = false;
 
-	/**
+    /**
 	 * Whether the avatar image has been disposed.
 	 */
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	private _animationHasResetOnToggle: boolean = false;
+    private _animationHasResetOnToggle: boolean = false;
 
-	/**
+    /**
 	 * Whether the current animation resets when toggled.
 	 */
-	public get animationHasResetOnToggle(): boolean
-	{
-		return this._animationHasResetOnToggle;
-	}
+    public get animationHasResetOnToggle(): boolean
+    {
+        return this._animationHasResetOnToggle;
+    }
 
-	/**
+    /**
 	 * The avatar data container with color transforms for effects.
 	 */
-	public get avatarSpriteData(): IAvatarDataContainer | null
-	{
-		return this._avatarDataContainer;
-	}
+    public get avatarSpriteData(): IAvatarDataContainer | null
+    {
+        return this._avatarDataContainer;
+    }
 
-	/**
+    /**
 	 * Collects server-side render data by pre-rendering all body parts.
 	 *
 	 * @returns An array of render data entries
 	 */
-	public getServerRenderData(): any[]
-	{
-		this.getAvatarPartsForCamera(AvatarImage.DEFAULT_AVATAR_SET);
+    public getServerRenderData(): any[]
+    {
+        this.getAvatarPartsForCamera(AvatarImage.DEFAULT_AVATAR_SET);
 
-		if (this._cache)
-		{
-			return this._cache.getServerRenderData();
-		}
+        if(this._cache)
+        {
+            return this._cache.getServerRenderData();
+        }
 
-		return [];
-	}
+        return [];
+    }
 
-	/**
+    /**
 	 * Gets the avatar figure container.
 	 *
 	 * @returns The figure container
 	 */
-	public getFigure(): IAvatarFigureContainer
-	{
-		return this._figure;
-	}
+    public getFigure(): IAvatarFigureContainer
+    {
+        return this._figure;
+    }
 
-	/**
+    /**
 	 * Gets the current rendering scale identifier.
 	 *
 	 * @returns The scale string
 	 */
-	public getScale(): string
-	{
-		return this._scale;
-	}
+    public getScale(): string
+    {
+        return this._scale;
+    }
 
-	/**
+    /**
 	 * Gets the part color for a given part type from the figure data.
 	 *
 	 * @param partType - The part type identifier
 	 * @returns The part color, or null if not found
 	 */
-	public getPartColor(partType: string): IPartColor | null
-	{
-		return this._structure.getPartColor(this._figure, partType);
-	}
+    public getPartColor(partType: string): IPartColor | null
+    {
+        return this._structure.getPartColor(this._figure, partType);
+    }
 
-	/**
+    /**
 	 * Sets the direction for a given avatar set, applying the direction offset.
 	 * Handles head direction independently when the set is "head" or "full".
 	 *
 	 * @param setType - The avatar set type (e.g. "full", "head")
 	 * @param direction - The direction index (0-7)
 	 */
-	public setDirection(setType: string, direction: number): void
-	{
-		direction += this._directionOffset;
+    public setDirection(setType: string, direction: number): void
+    {
+        direction += this._directionOffset;
 
-		if (direction < 0)
-		{
-			direction = 7 + (direction + 1);
-		}
+        if(direction < 0)
+        {
+            direction = 7 + (direction + 1);
+        }
 
-		if (direction > 7)
-		{
-			direction -= 7 + 1;
-		}
+        if(direction > 7)
+        {
+            direction -= 7 + 1;
+        }
 
-		if (this._structure.isMainAvatarSet(setType))
-		{
-			this._mainDirection = direction;
-		}
+        if(this._structure.isMainAvatarSet(setType))
+        {
+            this._mainDirection = direction;
+        }
 
-		if (setType === 'head' || setType === 'full')
-		{
-			if (setType === 'head' && this.isHeadTurnPreventedByAction())
-			{
-				direction = this._mainDirection;
-			}
+        if(setType === 'head' || setType === 'full')
+        {
+            if(setType === 'head' && this.isHeadTurnPreventedByAction())
+            {
+                direction = this._mainDirection;
+            }
 
-			this._headDirection = direction;
-		}
+            this._headDirection = direction;
+        }
 
-		if (this._cache)
-		{
-			this._cache.setDirection(setType, direction);
-		}
+        if(this._cache)
+        {
+            this._cache.setDirection(setType, direction);
+        }
 
-		this._needsUpdate = true;
-	}
+        this._needsUpdate = true;
+    }
 
-	/**
+    /**
 	 * Sets the direction from an angle by converting degrees to a direction index.
 	 *
 	 * @param setType - The avatar set type
 	 * @param angle - The angle in degrees
 	 */
-	public setDirectionAngle(setType: string, angle: number): void
-	{
-		let direction = 0;
+    public setDirectionAngle(setType: string, angle: number): void
+    {
+        let direction = 0;
 
-		direction = Math.trunc(angle / 45);
-		this.setDirection(setType, direction);
-	}
+        direction = Math.trunc(angle / 45);
+        this.setDirection(setType, direction);
+    }
 
-	/**
+    /**
 	 * Gets the current animation sprite data containers.
 	 *
 	 * @returns The sprite data containers array
 	 */
-	public getSprites(): ISpriteDataContainer[]
-	{
-		return this._animationSpriteData;
-	}
+    public getSprites(): ISpriteDataContainer[]
+    {
+        return this._animationSpriteData;
+    }
 
-	/**
+    /**
 	 * Gets the current canvas offsets for this avatar's actions.
 	 *
 	 * @returns The canvas offset array
 	 */
-	public getCanvasOffsets(): number[]
-	{
-		return this._canvasOffsets;
-	}
+    public getCanvasOffsets(): number[]
+    {
+        return this._canvasOffsets;
+    }
 
-	/**
+    /**
 	 * Gets animation layer data for a given sprite data container.
 	 *
 	 * @param sprite - The sprite data container to look up
 	 * @returns The animation layer data, or null if not found
 	 */
-	public getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null
-	{
-		return this._structure.getBodyPartData(sprite.animation.id, this._frameCounter, sprite.id);
-	}
+    public getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null
+    {
+        return this._structure.getBodyPartData(sprite.animation.id, this._frameCounter, sprite.id);
+    }
 
-	/**
+    /**
 	 * Advances the frame counter by the given number of frames.
 	 *
 	 * @param frames - The number of frames to advance (defaults to 1)
 	 */
-	public updateAnimationByFrames(frames: number = 1): void
-	{
-		this._frameCounter += frames;
-		this._needsUpdate = true;
-	}
+    public updateAnimationByFrames(frames: number = 1): void
+    {
+        this._frameCounter += frames;
+        this._needsUpdate = true;
+    }
 
-	/**
+    /**
 	 * Resets the animation frame counter to zero.
 	 */
-	public resetAnimationFrameCounter(): void
-	{
-		this._frameCounter = 0;
-		this._needsUpdate = true;
-	}
+    public resetAnimationFrameCounter(): void
+    {
+        this._frameCounter = 0;
+        this._needsUpdate = true;
+    }
 
-	/**
+    /**
 	 * Looks up an asset by name from the alias collection.
 	 *
 	 * @param name - The asset name to look up
 	 * @returns The asset, or null if not found
 	 */
-	public getAsset(name: string): any
-	{
-		return this._assets.getAssetName(name);
-	}
+    public getAsset(name: string): any
+    {
+        return this._assets.getAssetName(name);
+    }
 
-	/**
+    /**
 	 * Gets the current main body direction index.
 	 *
 	 * @returns The direction index (0-7)
 	 */
-	public getDirection(): number
-	{
-		return this._mainDirection;
-	}
+    public getDirection(): number
+    {
+        return this._mainDirection;
+    }
 
-	/**
+    /**
 	 * Begins a batch of action appends. Clears pending actions and resets state.
 	 */
-	public initActionAppends(): void
-	{
-		this._actions = [];
-		this._actionsSorted = false;
-		this._currentActionsString = '';
-		this._useFullImageCache = false;
-	}
+    public initActionAppends(): void
+    {
+        this._actions = [];
+        this._actionsSorted = false;
+        this._currentActionsString = '';
+        this._useFullImageCache = false;
+    }
 
-	/**
+    /**
 	 * Finalizes the current batch of appended actions. Sorts them, resolves effects,
 	 * resets internal state, and applies actions to body parts.
 	 */
-	public endActionAppends(): void
-	{
-		if (this.sortActions())
-		{
-			if (this._sortedActions)
-			{
-				for (const action of this._sortedActions)
-				{
-					if (action.actionType === AvatarAction.EFFECT)
-					{
-						if (this._effectManager && !this._effectManager.isReady(parseInt(action.actionParameter)))
-						{
-							this._effectManager.loadEffectData(parseInt(action.actionParameter), this);
-						}
-					}
-				}
-			}
+    public endActionAppends(): void
+    {
+        if(this.sortActions())
+        {
+            if(this._sortedActions)
+            {
+                for(const action of this._sortedActions)
+                {
+                    if(action.actionType === AvatarAction.EFFECT)
+                    {
+                        if(this._effectManager && !this._effectManager.isReady(parseInt(action.actionParameter)))
+                        {
+                            this._effectManager.loadEffectData(parseInt(action.actionParameter), this);
+                        }
+                    }
+                }
+            }
 
-			this.resetActions();
-			this.setActionsToParts();
-		}
-	}
+            this.resetActions();
+            this.setActionsToParts();
+        }
+    }
 
-	/**
+    /**
 	 * Appends an action to the pending queue. Handles posture, gesture, effect,
 	 * dance, talk, carry/use objects, and expression actions.
 	 *
@@ -382,202 +382,202 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param args - Additional arguments (typically the action parameter)
 	 * @returns True if the action was accepted
 	 */
-	public appendAction(actionType: string, ...args: any[]): boolean
-	{
-		let param: string | null = null;
+    public appendAction(actionType: string, ...args: any[]): boolean
+    {
+        let param: string | null = null;
 
-		this._actionsSorted = false;
+        this._actionsSorted = false;
 
-		if (args != null && args.length > 0)
-		{
-			param = String(args[0]);
-		}
+        if(args != null && args.length > 0)
+        {
+            param = String(args[0]);
+        }
 
-		switch (actionType)
-		{
-			case AvatarAction.POSTURE:
-				switch (param)
-				{
-					case AvatarAction.POSTURE_LAY:
-						if (this._mainDirection === 0)
-						{
-							this.setDirection('full', 4);
-						}
-						else
-						{
-							this.setDirection('full', 2);
-						}
-					// fall through
-					case AvatarAction.POSTURE_WALK:
-					case AvatarAction.POSTURE_STAND:
-					case AvatarAction.POSTURE_SIT:
-						this._useFullImageCache = true;
-						this.addActionData(param!);
-						break;
+        switch(actionType)
+        {
+            case AvatarAction.POSTURE:
+                switch(param)
+                {
+                    case AvatarAction.POSTURE_LAY:
+                        if(this._mainDirection === 0)
+                        {
+                            this.setDirection('full', 4);
+                        }
+                        else
+                        {
+                            this.setDirection('full', 2);
+                        }
+                        // fall through
+                    case AvatarAction.POSTURE_WALK:
+                    case AvatarAction.POSTURE_STAND:
+                    case AvatarAction.POSTURE_SIT:
+                        this._useFullImageCache = true;
+                        this.addActionData(param!);
+                        break;
 
-					case AvatarAction.POSTURE_SWIM:
-					case AvatarAction.POSTURE_FLOAT:
-					case AvatarAction.SNOWWAR_RUN:
-					case AvatarAction.SNOWWAR_DIE_FRONT:
-					case AvatarAction.SNOWWAR_DIE_BACK:
-					case AvatarAction.SNOWWAR_PICK:
-					case AvatarAction.SNOWWAR_THROW:
-						this._useFullImageCache = false;
-						this.addActionData(param!);
-						break;
-					default:
-						// Unknown posture type
-						break;
-				}
-				break;
+                    case AvatarAction.POSTURE_SWIM:
+                    case AvatarAction.POSTURE_FLOAT:
+                    case AvatarAction.SNOWWAR_RUN:
+                    case AvatarAction.SNOWWAR_DIE_FRONT:
+                    case AvatarAction.SNOWWAR_DIE_BACK:
+                    case AvatarAction.SNOWWAR_PICK:
+                    case AvatarAction.SNOWWAR_THROW:
+                        this._useFullImageCache = false;
+                        this.addActionData(param!);
+                        break;
+                    default:
+                        // Unknown posture type
+                        break;
+                }
+                break;
 
-			case AvatarAction.GESTURE:
-				switch (param)
-				{
-					case AvatarAction.GESTURE_AGGRAVATED:
-					case AvatarAction.GESTURE_SAD:
-					case AvatarAction.GESTURE_SMILE:
-					case AvatarAction.GESTURE_SURPRISED:
-						this.addActionData(param!);
-						break;
-					default:
-						// Unknown gesture type
-						break;
-				}
-				break;
+            case AvatarAction.GESTURE:
+                switch(param)
+                {
+                    case AvatarAction.GESTURE_AGGRAVATED:
+                    case AvatarAction.GESTURE_SAD:
+                    case AvatarAction.GESTURE_SMILE:
+                    case AvatarAction.GESTURE_SURPRISED:
+                        this.addActionData(param!);
+                        break;
+                    default:
+                        // Unknown gesture type
+                        break;
+                }
+                break;
 
-			case AvatarAction.EFFECT:
-				if (param === '33' || param === '34' || param === '35' || param === '36' || param === '38' || param === '39')
-				{
-					this._useFullImageCache = true;
-				}
-			// fall through
-			case AvatarAction.DANCE:
-			case AvatarAction.TALK:
-			case AvatarAction.EXPRESSION_WAVE:
-			case AvatarAction.SLEEP:
-			case AvatarAction.SIGN:
-			case AvatarAction.EXPRESSION_RESPECT:
-			case AvatarAction.EXPRESSION_BLOW_A_KISS:
-			case AvatarAction.EXPRESSION_LAUGH:
-			case AvatarAction.EXPRESSION_CRY:
-			case AvatarAction.EXPRESSION_IDLE:
-			case AvatarAction.EXPRESSION_SNOWBOARD_OLLIE:
-			case AvatarAction.EXPRESSION_SNOWBORD_360:
-			case AvatarAction.EXPRESSION_RIDE_JUMP:
-				this.addActionData(actionType, param || '');
-				break;
+            case AvatarAction.EFFECT:
+                if(param === '33' || param === '34' || param === '35' || param === '36' || param === '38' || param === '39')
+                {
+                    this._useFullImageCache = true;
+                }
+                // fall through
+            case AvatarAction.DANCE:
+            case AvatarAction.TALK:
+            case AvatarAction.EXPRESSION_WAVE:
+            case AvatarAction.SLEEP:
+            case AvatarAction.SIGN:
+            case AvatarAction.EXPRESSION_RESPECT:
+            case AvatarAction.EXPRESSION_BLOW_A_KISS:
+            case AvatarAction.EXPRESSION_LAUGH:
+            case AvatarAction.EXPRESSION_CRY:
+            case AvatarAction.EXPRESSION_IDLE:
+            case AvatarAction.EXPRESSION_SNOWBOARD_OLLIE:
+            case AvatarAction.EXPRESSION_SNOWBORD_360:
+            case AvatarAction.EXPRESSION_RIDE_JUMP:
+                this.addActionData(actionType, param || '');
+                break;
 
-			case AvatarAction.CARRY_OBJECT:
-			case AvatarAction.USE_OBJECT:
-			{
-				const actionDef = this._structure.getActionDefinitionWithState(actionType) as ActionDefinition | null;
+            case AvatarAction.CARRY_OBJECT:
+            case AvatarAction.USE_OBJECT:
+            {
+                const actionDef = this._structure.getActionDefinitionWithState(actionType) as ActionDefinition | null;
 
-				if (actionDef != null && param)
-				{
-					param = actionDef.getParameterValue(param);
-				}
+                if(actionDef != null && param)
+                {
+                    param = actionDef.getParameterValue(param);
+                }
 
-				this.addActionData(actionType, param || '');
-				break;
-			}
+                this.addActionData(actionType, param || '');
+                break;
+            }
 
-			default:
-				// Unknown action type
-				break;
-		}
+            default:
+                // Unknown action type
+                break;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
+    /**
 	 * Whether the avatar is currently animating.
 	 *
 	 * @returns True if animating or if multiple frames exist
 	 */
-	public isAnimating(): boolean
-	{
-		return this._isAnimating || this._animFrameCount > 1;
-	}
+    public isAnimating(): boolean
+    {
+        return this._isAnimating || this._animFrameCount > 1;
+    }
 
-	/**
+    /**
 	 * Whether this is a placeholder avatar image.
 	 *
 	 * @returns False for regular avatar images
 	 */
-	public isPlaceholder(): boolean
-	{
-		return false;
-	}
+    public isPlaceholder(): boolean
+    {
+        return false;
+    }
 
-	/**
+    /**
 	 * Forces the action state to be recalculated on the next render.
 	 */
-	public forceActionUpdate(): void
-	{
-		this._lastActionsString = '';
-	}
+    public forceActionUpdate(): void
+    {
+        this._lastActionsString = '';
+    }
 
-	/**
+    /**
 	 * Disposes inactive action caches to free memory.
 	 */
-	public disposeInactiveActionCache(): void
-	{
-		if (this._cache)
-		{
-			this._cache.disposeInactiveActions();
-		}
-	}
+    public disposeInactiveActionCache(): void
+    {
+        if(this._cache)
+        {
+            this._cache.disposeInactiveActions();
+        }
+    }
 
-	/**
+    /**
 	 * Called when an avatar effect finishes loading. Resets actions and
 	 * reapplies them if the effect matches the currently active one.
 	 *
 	 * @param effectId - The effect identifier that is now ready
 	 */
-	public avatarEffectReady(effectId: number): void
-	{
-		if (effectId === this._effectId)
-		{
-			this.resetActions();
-			this.setActionsToParts();
-			this._animationHasResetOnToggle = true;
-			this._needsUpdate = true;
+    public avatarEffectReady(effectId: number): void
+    {
+        if(effectId === this._effectId)
+        {
+            this.resetActions();
+            this.setActionsToParts();
+            this._animationHasResetOnToggle = true;
+            this._needsUpdate = true;
 
-			if (this._effectListener)
-			{
-				this._effectListener.avatarEffectReady(effectId);
-			}
-		}
-	}
+            if(this._effectListener)
+            {
+                this._effectListener.avatarEffectReady(effectId);
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Pre-renders all body parts for the given avatar set, used by the camera system.
 	 *
 	 * @param setType - The avatar set type (e.g. "full")
 	 */
-	public getAvatarPartsForCamera(setType: string): void
-	{
-		if (this._mainAction == null) return;
+    public getAvatarPartsForCamera(setType: string): void
+    {
+        if(this._mainAction == null) return;
 
-		const canvas = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
+        const canvas = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
 
-		if (canvas == null) return;
+        if(canvas == null) return;
 
-		const bodyParts = this.getBodyParts(setType, this._mainAction.definition.geometryType, this._mainDirection);
+        const bodyParts = this.getBodyParts(setType, this._mainAction.definition.geometryType, this._mainDirection);
 
-		for (let i = bodyParts.length - 1; i >= 0; i--)
-		{
-			const partId = bodyParts[i];
+        for(let i = bodyParts.length - 1; i >= 0; i--)
+        {
+            const partId = bodyParts[i];
 
-			if (this._cache)
-			{
-				this._cache.getImageContainer(partId, this._frameCounter, true);
-			}
-		}
-	}
+            if(this._cache)
+            {
+                this._cache.getImageContainer(partId, this._frameCounter, true);
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Renders and returns the full avatar image for the given set type.
 	 * Composites body parts from the cache into a final bitmap.
 	 *
@@ -586,695 +586,694 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param scale - Optional scale factor (1 = no scaling)
 	 * @returns The rendered texture, or null if rendering failed
 	 */
-	public getImage(setType: string, makeCopy: boolean = false, scale: number = 1): Texture | null
-	{
-		if (!this._needsUpdate)
-		{
-			return this._image;
-		}
+    public getImage(setType: string, makeCopy: boolean = false, scale: number = 1): Texture | null
+    {
+        if(!this._needsUpdate)
+        {
+            return this._image;
+        }
 
-		if (this._mainAction == null)
-		{
-			log.warn('getImage: mainAction is null');
+        if(this._mainAction == null)
+        {
+            log.warn('getImage: mainAction is null');
 
-			return null;
-		}
+            return null;
+        }
 
-		if (!this._actionsSorted)
-		{
-			this.endActionAppends();
-		}
+        if(!this._actionsSorted)
+        {
+            this.endActionAppends();
+        }
 
-		const cacheKey = this.getFullImageCacheKey();
+        const cacheKey = this.getFullImageCacheKey();
 
-		if (cacheKey != null)
-		{
-			const cached = this.getFullImage(cacheKey);
+        if(cacheKey != null)
+        {
+            const cached = this.getFullImage(cacheKey);
 
-			if (cached)
-			{
-				this._needsUpdate = false;
+            if(cached)
+            {
+                this._needsUpdate = false;
 
-				if (makeCopy)
-				{
-					return cached;
-				}
+                if(makeCopy)
+                {
+                    return cached;
+                }
 
-				this._image = cached;
-				this._fullImageFromCache = true;
+                this._image = cached;
+                this._fullImageFromCache = true;
 
-				return this._image;
-			}
-		}
+                return this._image;
+            }
+        }
 
-		const geometryType = this._mainAction.definition.geometryType;
-		const canvas = this._structure.getCanvas(this._scale, geometryType);
+        const geometryType = this._mainAction.definition.geometryType;
+        const canvas = this._structure.getCanvas(this._scale, geometryType);
 
-		if (canvas == null)
-		{
-			log.warn(`getImage: canvas is null for scale="${this._scale}" geometry="${geometryType}"`);
+        if(canvas == null)
+        {
+            log.warn(`getImage: canvas is null for scale="${this._scale}" geometry="${geometryType}"`);
 
-			return null;
-		}
+            return null;
+        }
 
-		const bodyParts = this.getBodyParts(setType, geometryType, this._mainDirection);
+        const bodyParts = this.getBodyParts(setType, geometryType, this._mainDirection);
 
-		// Create OffscreenCanvas for compositing (equivalent to AS3 BitmapData)
-		const canvasWidth = canvas.width;
-		const canvasHeight = canvas.height;
-		const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
-		const ctx = offscreen.getContext('2d')!;
+        // Create OffscreenCanvas for compositing (equivalent to AS3 BitmapData)
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
+        const ctx = offscreen.getContext('2d')!;
 
-		let isCacheable = true;
+        let isCacheable = true;
 
-		for (let i = bodyParts.length - 1; i >= 0; i--)
-		{
-			const partId = bodyParts[i];
+        for(let i = bodyParts.length - 1; i >= 0; i--)
+        {
+            const partId = bodyParts[i];
 
-			if (this._cache)
-			{
-				const container = this._cache.getImageContainer(partId, this._frameCounter);
+            if(this._cache)
+            {
+                const container = this._cache.getImageContainer(partId, this._frameCounter);
 
-				if (container)
-				{
-					isCacheable = isCacheable && container.isCacheable;
+                if(container)
+                {
+                    isCacheable = isCacheable && container.isCacheable;
 
-					if (container.image)
-					{
-						// AS3: copyPixels at offset = regPoint + canvas.offset + canvas.regPoint
-						const regPoint = container.regPoint;
-						const destX = regPoint.x + canvas.offset.x + canvas.regPoint.x;
-						const destY = regPoint.y + canvas.offset.y + canvas.regPoint.y;
+                    if(container.image)
+                    {
+                        // AS3: copyPixels at offset = regPoint + canvas.offset + canvas.regPoint
+                        const regPoint = container.regPoint;
+                        const destX = regPoint.x + canvas.offset.x + canvas.regPoint.x;
+                        const destY = regPoint.y + canvas.offset.y + canvas.regPoint.y;
 
-						const source = container.image.source?.resource;
+                        const source = container.image.source?.resource;
 
-						if (source)
-						{
-							const frame = container.image.frame;
+                        if(source)
+                        {
+                            const frame = container.image.frame;
 
-							ctx.drawImage(
-								source as CanvasImageSource,
-								frame.x, frame.y, frame.width, frame.height,
-								destX, destY, frame.width, frame.height
-							);
+                            ctx.drawImage(
+                                source as CanvasImageSource,
+                                frame.x, frame.y, frame.width, frame.height,
+                                destX, destY, frame.width, frame.height
+                            );
+                        }
+                        else
+                        {
+                            log.debug(`getImage: part "${partId}" has image but no drawable source`);
+                        }
+                    }
+                    else
+                    {
+                        log.debug(`getImage: part "${partId}" container has no image`);
+                    }
+                }
+            }
+        }
 
-						}
-						else
-						{
-							log.debug(`getImage: part "${partId}" has image but no drawable source`);
-						}
-					}
-					else
-					{
-						log.debug(`getImage: part "${partId}" container has no image`);
-					}
-				}
-			}
-		}
+        // Convert to PixiJS Texture
+        if(!this._fullImageFromCache && this._image)
+        {
+            this._image.destroy();
+        }
 
-		// Convert to PixiJS Texture
-		if (!this._fullImageFromCache && this._image)
-		{
-			this._image.destroy();
-		}
+        this._image = Texture.from({resource: offscreen, alphaMode: 'premultiply-alpha-on-upload'});
+        this._fullImageFromCache = false;
+        this._needsUpdate = false;
 
-		this._image = Texture.from({resource: offscreen, alphaMode: 'premultiply-alpha-on-upload'});
-		this._fullImageFromCache = false;
-		this._needsUpdate = false;
+        // Cache the result if eligible
+        if(cacheKey != null && isCacheable && this._image)
+        {
+            this.cacheFullImage(cacheKey, this._image);
+            this._fullImageFromCache = true;
+        }
 
-		// Cache the result if eligible
-		if (cacheKey != null && isCacheable && this._image)
-		{
-			this.cacheFullImage(cacheKey, this._image);
-			this._fullImageFromCache = true;
-		}
+        return this._image;
+    }
 
-		return this._image;
-	}
-
-	/**
+    /**
 	 * Returns a cropped version of the avatar image.
 	 *
 	 * @param setType - The avatar set type
 	 * @param scale - Optional scale factor
 	 * @returns The cropped texture, or null if rendering failed
 	 */
-	public getCroppedImage(setType: string, scale: number = 1): Texture | null
-	{
-		if (this._mainAction == null)
-		{
-			return null;
-		}
+    public getCroppedImage(setType: string, scale: number = 1): Texture | null
+    {
+        if(this._mainAction == null)
+        {
+            return null;
+        }
 
-		if (!this._actionsSorted)
-		{
-			this.endActionAppends();
-		}
+        if(!this._actionsSorted)
+        {
+            this.endActionAppends();
+        }
 
-		const canvas = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
+        const canvas = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
 
-		if (canvas == null)
-		{
-			return null;
-		}
+        if(canvas == null)
+        {
+            return null;
+        }
 
-		const bodyParts = this._structure.getBodyParts(setType, this._mainAction.definition.geometryType, this._mainDirection);
+        const bodyParts = this._structure.getBodyParts(setType, this._mainAction.definition.geometryType, this._mainDirection);
 
-		// Composite body parts then crop to content bounds
-		const canvasWidth = canvas.width;
-		const canvasHeight = canvas.height;
-		const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
-		const ctx = offscreen.getContext('2d')!;
+        // Composite body parts then crop to content bounds
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const offscreen = new OffscreenCanvas(canvasWidth, canvasHeight);
+        const ctx = offscreen.getContext('2d')!;
 
-		// AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage()
-		// tracks the union of each drawn part's rect as it goes, then crops the
-		// final bitmap down to that bounding box — this is what makes the
-		// result "cropped" rather than the full (mostly empty) render canvas.
-		let bounds: {x: number; y: number; width: number; height: number} | null = null;
+        // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage()
+        // tracks the union of each drawn part's rect as it goes, then crops the
+        // final bitmap down to that bounding box — this is what makes the
+        // result "cropped" rather than the full (mostly empty) render canvas.
+        let bounds: {x: number; y: number; width: number; height: number} | null = null;
 
-		for (let i = bodyParts.length - 1; i >= 0; i--)
-		{
-			const partId = bodyParts[i];
+        for(let i = bodyParts.length - 1; i >= 0; i--)
+        {
+            const partId = bodyParts[i];
 
-			if (this._cache)
-			{
-				const container = this._cache.getImageContainer(partId, this._frameCounter);
+            if(this._cache)
+            {
+                const container = this._cache.getImageContainer(partId, this._frameCounter);
 
-				if (container && container.image)
-				{
-					const regPoint = container.regPoint;
-					const destX = regPoint.x + canvas.offset.x + canvas.regPoint.x;
-					const destY = regPoint.y + canvas.offset.y + canvas.regPoint.y;
+                if(container && container.image)
+                {
+                    const regPoint = container.regPoint;
+                    const destX = regPoint.x + canvas.offset.x + canvas.regPoint.x;
+                    const destY = regPoint.y + canvas.offset.y + canvas.regPoint.y;
 
-					const source = container.image.source?.resource;
+                    const source = container.image.source?.resource;
 
-					if (source)
-					{
-						const frame = container.image.frame;
+                    if(source)
+                    {
+                        const frame = container.image.frame;
 
-						ctx.drawImage(
-							source as CanvasImageSource,
-							frame.x, frame.y, frame.width, frame.height,
-							destX, destY, frame.width, frame.height
-						);
+                        ctx.drawImage(
+                            source as CanvasImageSource,
+                            frame.x, frame.y, frame.width, frame.height,
+                            destX, destY, frame.width, frame.height
+                        );
 
-						const partRect = {x: destX, y: destY, width: frame.width, height: frame.height};
+                        const partRect = {x: destX, y: destY, width: frame.width, height: frame.height};
 
-						bounds = bounds ? AvatarImage.unionRect(bounds, partRect) : partRect;
-					}
-				}
-			}
-		}
+                        bounds = bounds ? AvatarImage.unionRect(bounds, partRect) : partRect;
+                    }
+                }
+            }
+        }
 
-		if (!bounds)
-		{
-			bounds = {x: 0, y: 0, width: 1, height: 1};
-		}
+        if(!bounds)
+        {
+            bounds = {x: 0, y: 0, width: 1, height: 1};
+        }
 
-		const cropWidth = Math.max(1, Math.round(bounds.width));
-		const cropHeight = Math.max(1, Math.round(bounds.height));
-		const cropped = new OffscreenCanvas(cropWidth, cropHeight);
-		const croppedCtx = cropped.getContext('2d')!;
+        const cropWidth = Math.max(1, Math.round(bounds.width));
+        const cropHeight = Math.max(1, Math.round(bounds.height));
+        const cropped = new OffscreenCanvas(cropWidth, cropHeight);
+        const croppedCtx = cropped.getContext('2d')!;
 
-		croppedCtx.drawImage(
-			offscreen,
-			Math.round(bounds.x), Math.round(bounds.y), cropWidth, cropHeight,
-			0, 0, cropWidth, cropHeight
-		);
+        croppedCtx.drawImage(
+            offscreen,
+            Math.round(bounds.x), Math.round(bounds.y), cropWidth, cropHeight,
+            0, 0, cropWidth, cropHeight
+        );
 
-		return Texture.from({resource: cropped, alphaMode: 'premultiply-alpha-on-upload'});
-	}
+        return Texture.from({resource: cropped, alphaMode: 'premultiply-alpha-on-upload'});
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() — Rectangle.union()
-	private static unionRect(
-		a: {x: number; y: number; width: number; height: number},
-		b: {x: number; y: number; width: number; height: number}
-	): {x: number; y: number; width: number; height: number}
-	{
-		const x = Math.min(a.x, b.x);
-		const y = Math.min(a.y, b.y);
-		const right = Math.max(a.x + a.width, b.x + b.width);
-		const bottom = Math.max(a.y + a.height, b.y + b.height);
+    // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() — Rectangle.union()
+    private static unionRect(
+        a: {x: number; y: number; width: number; height: number},
+        b: {x: number; y: number; width: number; height: number}
+    ): {x: number; y: number; width: number; height: number}
+    {
+        const x = Math.min(a.x, b.x);
+        const y = Math.min(a.y, b.y);
+        const right = Math.max(a.x + a.width, b.x + b.width);
+        const bottom = Math.max(a.y + a.height, b.y + b.height);
 
-		return {x, y, width: right - x, height: bottom - y};
-	}
+        return {x, y, width: right - x, height: bottom - y};
+    }
 
-	/**
+    /**
 	 * Disposes all resources: cache, textures, and clears collections.
 	 * Always the last method of the class.
 	 */
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._structure = null!;
-		this._assets = null!;
-		this._mainAction = null;
-		this._figure = null!;
-		this._avatarDataContainer = null;
-		this._actions = null!;
+        this._structure = null!;
+        this._assets = null!;
+        this._mainAction = null;
+        this._figure = null!;
+        this._avatarDataContainer = null;
+        this._actions = null!;
 
-		if (this._image && !this._fullImageFromCache)
-		{
-			this._image.destroy();
-		}
+        if(this._image && !this._fullImageFromCache)
+        {
+            this._image.destroy();
+        }
 
-		if (this._cache)
-		{
-			this._cache.dispose();
-			this._cache = null;
-		}
+        if(this._cache)
+        {
+            this._cache.dispose();
+            this._cache = null;
+        }
 
-		if (this._fullImageCache)
-		{
-			for (const texture of this._fullImageCache.values())
-			{
-				if (texture) texture.destroy();
-			}
+        if(this._fullImageCache)
+        {
+            for(const texture of this._fullImageCache.values())
+            {
+                if(texture) texture.destroy();
+            }
 
-			this._fullImageCache.clear();
-		}
+            this._fullImageCache.clear();
+        }
 
-		this._image = null;
-		this._canvasOffsets = [];
-		this._disposed = true;
-	}
+        this._image = null;
+        this._canvasOffsets = [];
+        this._disposed = true;
+    }
 
-	/**
+    /**
 	 * Gets a cached full image by key.
 	 *
 	 * @param key - The cache key
 	 * @returns The cached texture, or null
 	 */
-	protected getFullImage(key: string): Texture | null
-	{
-		return this._fullImageCache.get(key) || null;
-	}
+    protected getFullImage(key: string): Texture | null
+    {
+        return this._fullImageCache.get(key) || null;
+    }
 
-	/**
+    /**
 	 * Stores a full image in the cache, disposing any previously cached image for the same key.
 	 *
 	 * @param key - The cache key
 	 * @param image - The texture to cache
 	 */
-	protected cacheFullImage(key: string, image: Texture): void
-	{
-		const existing = this._fullImageCache.get(key);
+    protected cacheFullImage(key: string, image: Texture): void
+    {
+        const existing = this._fullImageCache.get(key);
 
-		if (existing)
-		{
-			if (existing === image) return;
+        if(existing)
+        {
+            if(existing === image) return;
 
-			existing.destroy();
-			this._fullImageCache.delete(key);
-		}
+            existing.destroy();
+            this._fullImageCache.delete(key);
+        }
 
-		this._fullImageCache.set(key, image);
-	}
+        this._fullImageCache.set(key, image);
+    }
 
-	/**
+    /**
 	 * Adds an action data entry to the pending queue, avoiding duplicates.
 	 *
 	 * @param param1 - The action state or type
 	 * @param param2 - The action parameter
 	 */
-	protected addActionData(param1: string, param2: string = ''): void
-	{
-		if (this._actions == null)
-		{
-			this._actions = [];
-		}
+    protected addActionData(param1: string, param2: string = ''): void
+    {
+        if(this._actions == null)
+        {
+            this._actions = [];
+        }
 
-		for (let i = 0; i < this._actions.length; i++)
-		{
-			const existing = this._actions[i];
+        for(let i = 0; i < this._actions.length; i++)
+        {
+            const existing = this._actions[i];
 
-			if (existing.actionType === param1 && existing.actionParameter === param2)
-			{
-				return;
-			}
-		}
+            if(existing.actionType === param1 && existing.actionParameter === param2)
+            {
+                return;
+            }
+        }
 
-		this._actions.push(new ActiveActionData(param1, param2, this._frameCounter));
-	}
+        this._actions.push(new ActiveActionData(param1, param2, this._frameCounter));
+    }
 
-	/**
+    /**
 	 * Resets internal state: clears sprite data, avatar data, direction offset,
 	 * removes dynamic items, and resets the main action to default.
 	 *
 	 * @returns True
 	 */
-	private resetActions(): boolean
-	{
-		this._animationHasResetOnToggle = false;
-		this._isAnimating = false;
-		this._animationSpriteData = [];
-		this._avatarDataContainer = null;
-		this._directionOffset = 0;
+    private resetActions(): boolean
+    {
+        this._animationHasResetOnToggle = false;
+        this._isAnimating = false;
+        this._animationSpriteData = [];
+        this._avatarDataContainer = null;
+        this._directionOffset = 0;
 
-		this._structure.removeDynamicItems(this);
+        this._structure.removeDynamicItems(this);
 
-		this._mainAction = this._defaultAction;
-		this._mainAction.definition = this._defaultAction.definition;
+        this._mainAction = this._defaultAction;
+        this._mainAction.definition = this._defaultAction.definition;
 
-		this.resetBodyPartCache(this._defaultAction);
+        this.resetBodyPartCache(this._defaultAction);
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
+    /**
 	 * Checks whether head turning is blocked by any of the current sorted actions.
 	 *
 	 * @returns True if head turning is prevented
 	 */
-	private isHeadTurnPreventedByAction(): boolean
-	{
-		if (this._sortedActions == null)
-		{
-			return false;
-		}
+    private isHeadTurnPreventedByAction(): boolean
+    {
+        if(this._sortedActions == null)
+        {
+            return false;
+        }
 
-		for (const action of this._sortedActions)
-		{
-			const def = this._structure.getActionDefinitionWithState(action.actionType);
+        for(const action of this._sortedActions)
+        {
+            const def = this._structure.getActionDefinitionWithState(action.actionType);
 
-			if (action.actionType === AvatarAction.SLEEP && this._mainAction && this._mainAction.actionType !== AvatarAction.POSTURE_LAY)
-			{
-				continue;
-			}
+            if(action.actionType === AvatarAction.SLEEP && this._mainAction && this._mainAction.actionType !== AvatarAction.POSTURE_LAY)
+            {
+                continue;
+            }
 
-			if (def != null && def.getPreventHeadTurn(action.actionParameter))
-			{
-				return true;
-			}
-		}
+            if(def != null && def.getPreventHeadTurn(action.actionParameter))
+            {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
 	 * Sorts the pending actions by precedence, builds the actions string,
 	 * tracks the active effect, and computes canvas offsets.
 	 *
 	 * @returns True if actions changed since last sort
 	 */
-	private sortActions(): boolean
-	{
-		let effectChanged = false;
-		let hasEffect = false;
-		let actionsChanged = false;
+    private sortActions(): boolean
+    {
+        let effectChanged = false;
+        let hasEffect = false;
+        let actionsChanged = false;
 
-		this._currentActionsString = '';
-		this._sortedActions = this._structure.sortActions(this._actions);
-		this._animFrameCount = this._structure.maxFrames(this._sortedActions);
+        this._currentActionsString = '';
+        this._sortedActions = this._structure.sortActions(this._actions);
+        this._animFrameCount = this._structure.maxFrames(this._sortedActions);
 
-		if (this._sortedActions == null)
-		{
-			this._canvasOffsets = [0, 0, 0];
+        if(this._sortedActions == null)
+        {
+            this._canvasOffsets = [0, 0, 0];
 
-			if (this._lastActionsString !== '')
-			{
-				actionsChanged = true;
-				this._lastActionsString = '';
-			}
-		}
-		else
-		{
-			this._canvasOffsets = this._structure.getCanvasOffsets(this._sortedActions, this._scale, this._mainDirection) || [0, 0, 0];
+            if(this._lastActionsString !== '')
+            {
+                actionsChanged = true;
+                this._lastActionsString = '';
+            }
+        }
+        else
+        {
+            this._canvasOffsets = this._structure.getCanvasOffsets(this._sortedActions, this._scale, this._mainDirection) || [0, 0, 0];
 
-			const actionParts: string[] = [];
+            const actionParts: string[] = [];
 
-			for (const action of this._sortedActions)
-			{
-				actionParts.push(action.actionType, action.actionParameter);
+            for(const action of this._sortedActions)
+            {
+                actionParts.push(action.actionType, action.actionParameter);
 
-				if (action.actionType === AvatarAction.EFFECT)
-				{
-					const newEffectId = parseInt(action.actionParameter);
+                if(action.actionType === AvatarAction.EFFECT)
+                {
+                    const newEffectId = parseInt(action.actionParameter);
 
-					if (this._effectId !== newEffectId)
-					{
-						effectChanged = true;
-					}
+                    if(this._effectId !== newEffectId)
+                    {
+                        effectChanged = true;
+                    }
 
-					this._effectId = newEffectId;
-					hasEffect = true;
-				}
-			}
+                    this._effectId = newEffectId;
+                    hasEffect = true;
+                }
+            }
 
-			if (!hasEffect)
-			{
-				if (this._effectId > -1)
-				{
-					effectChanged = true;
-				}
+            if(!hasEffect)
+            {
+                if(this._effectId > -1)
+                {
+                    effectChanged = true;
+                }
 
-				this._effectId = -1;
-			}
+                this._effectId = -1;
+            }
 
-			if (effectChanged && this._cache)
-			{
-				this._cache.disposeInactiveActions(0);
-			}
+            if(effectChanged && this._cache)
+            {
+                this._cache.disposeInactiveActions(0);
+            }
 
-			this._currentActionsString = actionParts.join('');
+            this._currentActionsString = actionParts.join('');
 
-			if (this._lastActionsString !== this._currentActionsString)
-			{
-				actionsChanged = true;
-				this._lastActionsString = this._currentActionsString;
-			}
-		}
+            if(this._lastActionsString !== this._currentActionsString)
+            {
+                actionsChanged = true;
+                this._lastActionsString = this._currentActionsString;
+            }
+        }
 
-		this._actionsSorted = true;
+        this._actionsSorted = true;
 
-		return actionsChanged;
-	}
+        return actionsChanged;
+    }
 
-	/**
+    /**
 	 * Applies the sorted actions to body parts via the cache. Resolves
 	 * overriding actions, loads animation sprite data, direction offsets,
 	 * and avatar data containers.
 	 */
-	private setActionsToParts(): void
-	{
-		if (this._sortedActions == null)
-		{
-			return;
-		}
+    private setActionsToParts(): void
+    {
+        if(this._sortedActions == null)
+        {
+            return;
+        }
 
-		const actionTypes: string[] = [];
+        const actionTypes: string[] = [];
 
-		for (const action of this._sortedActions)
-		{
-			actionTypes.push(action.actionType);
-		}
+        for(const action of this._sortedActions)
+        {
+            actionTypes.push(action.actionType);
+        }
 
-		for (const action of this._sortedActions)
-		{
-			if (action && action.definition && action.definition.isAnimation)
-			{
-				const animation = this._structure.getAnimation(action.definition.state + '.' + action.actionParameter);
+        for(const action of this._sortedActions)
+        {
+            if(action && action.definition && action.definition.isAnimation)
+            {
+                const animation = this._structure.getAnimation(action.definition.state + '.' + action.actionParameter);
 
-				if (animation && animation.hasOverriddenActions())
-				{
-					const overriddenNames = (animation as Animation).overriddenActionNames();
+                if(animation && animation.hasOverriddenActions())
+                {
+                    const overriddenNames = (animation as Animation).overriddenActionNames();
 
-					if (overriddenNames)
-					{
-						for (const name of overriddenNames)
-						{
-							if (actionTypes.indexOf(name) >= 0)
-							{
-								action.overridingAction = (animation as Animation).overridingAction(name) || '';
-							}
-						}
-					}
-				}
+                    if(overriddenNames)
+                    {
+                        for(const name of overriddenNames)
+                        {
+                            if(actionTypes.indexOf(name) >= 0)
+                            {
+                                action.overridingAction = (animation as Animation).overridingAction(name) || '';
+                            }
+                        }
+                    }
+                }
 
-				if (animation && animation.resetOnToggle)
-				{
-					this._animationHasResetOnToggle = true;
-				}
-			}
-		}
+                if(animation && animation.resetOnToggle)
+                {
+                    this._animationHasResetOnToggle = true;
+                }
+            }
+        }
 
-		for (const action of this._sortedActions)
-		{
-			if (!action || !action.definition)
-			{
-				continue;
-			}
+        for(const action of this._sortedActions)
+        {
+            if(!action || !action.definition)
+            {
+                continue;
+            }
 
-			if (action.definition.isAnimation && action.actionParameter === '')
-			{
-				action.actionParameter = '1';
-			}
+            if(action.definition.isAnimation && action.actionParameter === '')
+            {
+                action.actionParameter = '1';
+            }
 
-			this.setActionToParts(action, this._frameCounter);
+            this.setActionToParts(action, this._frameCounter);
 
-			if (action.definition.isAnimation)
-			{
-				this._isAnimating = action.definition.isAnimated(action.actionParameter);
+            if(action.definition.isAnimation)
+            {
+                this._isAnimating = action.definition.isAnimated(action.actionParameter);
 
-				const animation = this._structure.getAnimation(action.definition.state + '.' + action.actionParameter);
+                const animation = this._structure.getAnimation(action.definition.state + '.' + action.actionParameter);
 
-				if (animation != null)
-				{
-					const spriteData = animation.spriteData;
+                if(animation != null)
+                {
+                    const spriteData = animation.spriteData;
 
-					if (spriteData)
-					{
-						this._animationSpriteData.push(...spriteData);
-					}
+                    if(spriteData)
+                    {
+                        this._animationSpriteData.push(...spriteData);
+                    }
 
-					if (animation.hasDirectionData())
-					{
-						const dirData = (animation as Animation).directionData;
+                    if(animation.hasDirectionData())
+                    {
+                        const dirData = (animation as Animation).directionData;
 
-						if (dirData)
-						{
-							this._directionOffset = dirData.offset;
-						}
-					}
+                        if(dirData)
+                        {
+                            this._directionOffset = dirData.offset;
+                        }
+                    }
 
-					if (animation.hasAvatarData())
-					{
-						this._avatarDataContainer = (animation as Animation).avatarData;
-					}
-				}
-			}
-		}
-	}
+                    if(animation.hasAvatarData())
+                    {
+                        this._avatarDataContainer = (animation as Animation).avatarData;
+                    }
+                }
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Applies a single action to body parts. Sets the main action and geometry type
 	 * on the cache if the action definition is main.
 	 *
 	 * @param action - The action data to apply
 	 * @param frameCount - The current frame counter
 	 */
-	private setActionToParts(action: IActiveActionData, frameCount: number): void
-	{
-		if (action == null || action.definition == null)
-		{
-			return;
-		}
+    private setActionToParts(action: IActiveActionData, frameCount: number): void
+    {
+        if(action == null || action.definition == null)
+        {
+            return;
+        }
 
-		if (action.definition.assetPartDefinition === '')
-		{
-			return;
-		}
+        if(action.definition.assetPartDefinition === '')
+        {
+            return;
+        }
 
-		if (action.definition.isMain)
-		{
-			this._mainAction = action;
+        if(action.definition.isMain)
+        {
+            this._mainAction = action;
 
-			if (this._cache)
-			{
-				this._cache.setGeometryType(action.definition.geometryType);
-			}
-		}
+            if(this._cache)
+            {
+                this._cache.setGeometryType(action.definition.geometryType);
+            }
+        }
 
-		if (this._cache)
-		{
-			this._cache.setAction(action, frameCount);
-		}
+        if(this._cache)
+        {
+            this._cache.setAction(action, frameCount);
+        }
 
-		this._needsUpdate = true;
-	}
+        this._needsUpdate = true;
+    }
 
-	/**
+    /**
 	 * Resets body part cache for a given action. If the action is main,
 	 * updates the geometry type on the cache.
 	 *
 	 * @param action - The action to reset cache for
 	 */
-	private resetBodyPartCache(action: IActiveActionData): void
-	{
-		if (action == null || !action.definition)
-		{
-			return;
-		}
+    private resetBodyPartCache(action: IActiveActionData): void
+    {
+        if(action == null || !action.definition)
+        {
+            return;
+        }
 
-		if (action.definition.assetPartDefinition === '')
-		{
-			return;
-		}
+        if(action.definition.assetPartDefinition === '')
+        {
+            return;
+        }
 
-		if (action.definition.isMain)
-		{
-			this._mainAction = action;
+        if(action.definition.isMain)
+        {
+            this._mainAction = action;
 
-			if (this._cache)
-			{
-				this._cache.setGeometryType(action.definition.geometryType);
-			}
-		}
+            if(this._cache)
+            {
+                this._cache.setGeometryType(action.definition.geometryType);
+            }
+        }
 
-		if (this._cache)
-		{
-			this._cache.resetBodyPartCache(action);
-		}
+        if(this._cache)
+        {
+            this._cache.resetBodyPartCache(action);
+        }
 
-		this._needsUpdate = true;
-	}
+        this._needsUpdate = true;
+    }
 
-	/**
+    /**
 	 * Builds a cache key for the full composite image based on direction,
 	 * actions string, and frame counter.
 	 *
 	 * @returns The cache key string, or null if caching is disabled
 	 */
-	private getFullImageCacheKey(): string | null
-	{
-		if (!this._useFullImageCache)
-		{
-			return null;
-		}
+    private getFullImageCacheKey(): string | null
+    {
+        if(!this._useFullImageCache)
+        {
+            return null;
+        }
 
-		if (this._sortedActions && this._sortedActions.length === 1)
-		{
-			const frame = (this._currentActionsString === AvatarAction.POSTURE_STAND ||
+        if(this._sortedActions && this._sortedActions.length === 1)
+        {
+            const frame = (this._currentActionsString === AvatarAction.POSTURE_STAND ||
 				this._currentActionsString === AvatarAction.POSTURE_LAY ||
 				this._currentActionsString === AvatarAction.POSTURE_SIT)
-				? this._frameCounter % 8
-				: this._frameCounter % 4;
+                ? this._frameCounter % 8
+                : this._frameCounter % 4;
 
-			if(this._mainDirection === this._headDirection)
-			{
-				return this._mainDirection + this._currentActionsString + frame;
-			}
+            if(this._mainDirection === this._headDirection)
+            {
+                return this._mainDirection + this._currentActionsString + frame;
+            }
 
-			return this._mainDirection + '_' + this._headDirection + this._currentActionsString + frame;
-		}
+            return this._mainDirection + '_' + this._headDirection + this._currentActionsString + frame;
+        }
 
-		if (this._sortedActions && this._sortedActions.length === 2)
-		{
-			for (const action of this._sortedActions)
-			{
-				if (action.actionType === AvatarAction.EFFECT)
-				{
-					const p = action.actionParameter;
+        if(this._sortedActions && this._sortedActions.length === 2)
+        {
+            for(const action of this._sortedActions)
+            {
+                if(action.actionType === AvatarAction.EFFECT)
+                {
+                    const p = action.actionParameter;
 
-					if (p === '33' || p === '34' || p === '35' || p === '36')
-					{
-						return this._mainDirection + this._currentActionsString + 0;
-					}
+                    if(p === '33' || p === '34' || p === '35' || p === '36')
+                    {
+                        return this._mainDirection + this._currentActionsString + 0;
+                    }
 
-					if (p === '38' || p === '39')
-					{
-						const frame = this._frameCounter % 11;
-						return this._mainDirection + '_' + this._headDirection + this._currentActionsString + frame;
-					}
-				}
-			}
-		}
+                    if(p === '38' || p === '39')
+                    {
+                        const frame = this._frameCounter % 11;
+                        return this._mainDirection + '_' + this._headDirection + this._currentActionsString + frame;
+                    }
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Gets the ordered body parts for a given set type, geometry, and direction.
 	 * Results are cached until parameters change.
 	 *
@@ -1283,18 +1282,18 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param direction - The direction index
 	 * @returns An array of body part identifiers
 	 */
-	private getBodyParts(setType: string, geometryType: string, direction: number): string[]
-	{
-		if (direction !== this._cachedBodyPartsDirection || geometryType !== this._cachedBodyPartsGeometry || setType !== this._cachedBodyPartsSetType)
-		{
-			this._cachedBodyPartsDirection = direction;
-			this._cachedBodyPartsGeometry = geometryType;
-			this._cachedBodyPartsSetType = setType;
-			this._cachedBodyParts = this._structure.getBodyParts(setType, geometryType, direction);
-		}
+    private getBodyParts(setType: string, geometryType: string, direction: number): string[]
+    {
+        if(direction !== this._cachedBodyPartsDirection || geometryType !== this._cachedBodyPartsGeometry || setType !== this._cachedBodyPartsSetType)
+        {
+            this._cachedBodyPartsDirection = direction;
+            this._cachedBodyPartsGeometry = geometryType;
+            this._cachedBodyPartsSetType = setType;
+            this._cachedBodyParts = this._structure.getBodyParts(setType, geometryType, direction);
+        }
 
-		return this._cachedBodyParts;
-	}
+        return this._cachedBodyParts;
+    }
 }
 
 /**
@@ -1302,7 +1301,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
  */
 interface EffectAssetDownloadManager
 {
-	isReady(effectId: number): boolean;
+    isReady(effectId: number): boolean;
 
-	loadEffectData(effectId: number, listener: IAvatarEffectListener): void;
+    loadEffectData(effectId: number, listener: IAvatarEffectListener): void;
 }

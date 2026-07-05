@@ -10,16 +10,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MountPetComposer extends MessageComposer<[number, boolean]>
 {
-	private _data: [number, boolean];
+    private _data: [number, boolean];
 
-	constructor(petId: number, mount: boolean)
-	{
-		super();
-		this._data = [petId, mount];
-	}
+    constructor(petId: number, mount: boolean)
+    {
+        super();
+        this._data = [petId, mount];
+    }
 
-	getMessageArray(): [number, boolean]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, boolean]
+    {
+        return this._data;
+    }
 }

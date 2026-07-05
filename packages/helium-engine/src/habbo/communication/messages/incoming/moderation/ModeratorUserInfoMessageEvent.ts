@@ -9,8 +9,8 @@ import {ModeratorUserInfoParser} from '../../parser/moderation/ModeratorUserInfo
  */
 export class ModeratorUserInfoMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ModeratorUserInfoParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ModeratorUserInfoParser);
+    }
 }

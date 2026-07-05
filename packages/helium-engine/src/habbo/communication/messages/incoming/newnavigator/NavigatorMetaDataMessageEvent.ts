@@ -9,8 +9,8 @@ import {NavigatorMetaDataMessageParser} from '../../parser/newnavigator';
  */
 export class NavigatorMetaDataMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NavigatorMetaDataMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NavigatorMetaDataMessageParser);
+    }
 }

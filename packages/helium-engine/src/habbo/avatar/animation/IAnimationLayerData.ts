@@ -7,11 +7,11 @@ import type {IActiveActionData} from '../actions/IActiveActionData';
  */
 export interface IAnimationLayerData
 {
-	readonly id: string;
-	readonly action: IActiveActionData;
-	readonly animationFrame: number;
-	readonly dx: number;
-	readonly dy: number;
-	readonly dz: number;
-	readonly dd: number;
+    readonly id: string;
+    readonly action: IActiveActionData;
+    readonly animationFrame: number;
+    readonly dx: number;
+    readonly dy: number;
+    readonly dz: number;
+    readonly dd: number;
 }

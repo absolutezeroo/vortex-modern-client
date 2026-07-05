@@ -8,25 +8,25 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CallForHelpFromIMMessageComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(message: string, topicId: number, reportedUserId: number, chatEntries: string[])
-	{
-		super();
-		this._data = [];
-		this._data.push(message);
-		this._data.push(topicId);
-		this._data.push(reportedUserId);
-		this._data.push(chatEntries.length / 2);
+    constructor(message: string, topicId: number, reportedUserId: number, chatEntries: string[])
+    {
+        super();
+        this._data = [];
+        this._data.push(message);
+        this._data.push(topicId);
+        this._data.push(reportedUserId);
+        this._data.push(chatEntries.length / 2);
 
-		for (const entry of chatEntries)
-		{
-			this._data.push(entry);
-		}
-	}
+        for(const entry of chatEntries)
+        {
+            this._data.push(entry);
+        }
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

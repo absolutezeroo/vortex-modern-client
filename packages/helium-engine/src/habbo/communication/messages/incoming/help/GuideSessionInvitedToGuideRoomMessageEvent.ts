@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	GuideSessionInvitedToGuideRoomMessageParser
+    GuideSessionInvitedToGuideRoomMessageParser
 } from '../../parser/help/GuideSessionInvitedToGuideRoomMessageParser';
 
 /**
@@ -12,8 +12,8 @@ import {
  */
 export class GuideSessionInvitedToGuideRoomMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideSessionInvitedToGuideRoomMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideSessionInvitedToGuideRoomMessageParser);
+    }
 }

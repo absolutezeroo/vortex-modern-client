@@ -17,35 +17,35 @@ import type {IHeliumLoadingScreen} from './IHeliumLoadingScreen';
 
 export interface IHelium extends IDisposable
 {
-	readonly context: CoreComponentContext;
-	readonly application: Application<Renderer>;
-	readonly communication: ICoreCommunicationManager;
-	readonly isReady: boolean;
-	readonly configuration: IHabboConfigurationManager;
-	readonly habboCommunication: HabboCommunicationManager;
-	readonly roomEngine: RoomEngine;
-	readonly sessionDataManager: ISessionDataManager;
-	readonly roomSessionManager: IRoomSessionManager;
-	readonly navigator: IHabboNavigator;
-	readonly newNavigator: IHabboNewNavigator;
-	readonly inventory: IHabboInventory;
-	readonly catalog: IHabboCatalog;
-	readonly localization: IHabboLocalizationManager;
-	readonly windowManager: IHabboWindowManager;
-	readonly toolbar: IHabboToolbar;
+    readonly context: CoreComponentContext;
+    readonly application: Application<Renderer>;
+    readonly communication: ICoreCommunicationManager;
+    readonly isReady: boolean;
+    readonly configuration: IHabboConfigurationManager;
+    readonly habboCommunication: HabboCommunicationManager;
+    readonly roomEngine: RoomEngine;
+    readonly sessionDataManager: ISessionDataManager;
+    readonly roomSessionManager: IRoomSessionManager;
+    readonly navigator: IHabboNavigator;
+    readonly newNavigator: IHabboNewNavigator;
+    readonly inventory: IHabboInventory;
+    readonly catalog: IHabboCatalog;
+    readonly localization: IHabboLocalizationManager;
+    readonly windowManager: IHabboWindowManager;
+    readonly toolbar: IHabboToolbar;
 
-	/**
+    /**
 	 * Connect to the Habbo server
 	 */
-	connect(): Promise<void>;
+    connect(): Promise<void>;
 
-	/**
+    /**
 	 * Disconnect from the server
 	 */
-	disconnect(): void;
+    disconnect(): void;
 
-	/**
+    /**
 	 * Initialize the application
 	 */
-	init(config?: IHeliumConfig, loadingScreen?: IHeliumLoadingScreen): Promise<void>;
+    init(config?: IHeliumConfig, loadingScreen?: IHeliumLoadingScreen): Promise<void>;
 }

@@ -7,70 +7,70 @@ import type {IMessageDataWrapper} from '@core/communication';
  */
 export class FlatCategory
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._nodeId = wrapper.readInt();
-		this._nodeName = wrapper.readString();
-		this._visible = wrapper.readBoolean();
-		this._automatic = wrapper.readBoolean();
-		this._automaticCategoryKey = wrapper.readString();
-		this._globalCategoryKey = wrapper.readString();
-		this._staffOnly = wrapper.readBoolean();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._nodeId = wrapper.readInt();
+        this._nodeName = wrapper.readString();
+        this._visible = wrapper.readBoolean();
+        this._automatic = wrapper.readBoolean();
+        this._automaticCategoryKey = wrapper.readString();
+        this._globalCategoryKey = wrapper.readString();
+        this._staffOnly = wrapper.readBoolean();
+    }
 
-	private _nodeId: number = 0;
+    private _nodeId: number = 0;
 
-	get nodeId(): number
-	{
-		return this._nodeId;
-	}
+    get nodeId(): number
+    {
+        return this._nodeId;
+    }
 
-	private _nodeName: string = '';
+    private _nodeName: string = '';
 
-	get nodeName(): string
-	{
-		return this._nodeName;
-	}
+    get nodeName(): string
+    {
+        return this._nodeName;
+    }
 
-	private _visible: boolean = false;
+    private _visible: boolean = false;
 
-	get visible(): boolean
-	{
-		return this._visible;
-	}
+    get visible(): boolean
+    {
+        return this._visible;
+    }
 
-	private _automatic: boolean = false;
+    private _automatic: boolean = false;
 
-	get automatic(): boolean
-	{
-		return this._automatic;
-	}
+    get automatic(): boolean
+    {
+        return this._automatic;
+    }
 
-	private _automaticCategoryKey: string = '';
+    private _automaticCategoryKey: string = '';
 
-	get automaticCategoryKey(): string
-	{
-		return this._automaticCategoryKey;
-	}
+    get automaticCategoryKey(): string
+    {
+        return this._automaticCategoryKey;
+    }
 
-	private _globalCategoryKey: string = '';
+    private _globalCategoryKey: string = '';
 
-	get globalCategoryKey(): string
-	{
-		return this._globalCategoryKey;
-	}
+    get globalCategoryKey(): string
+    {
+        return this._globalCategoryKey;
+    }
 
-	private _staffOnly: boolean = false;
+    private _staffOnly: boolean = false;
 
-	get staffOnly(): boolean
-	{
-		return this._staffOnly;
-	}
+    get staffOnly(): boolean
+    {
+        return this._staffOnly;
+    }
 
-	get visibleName(): string
-	{
-		return this._globalCategoryKey === ''
-			? this._nodeName
-			: '${navigator.flatcategory.global.' + this._globalCategoryKey + '}';
-	}
+    get visibleName(): string
+    {
+        return this._globalCategoryKey === ''
+            ? this._nodeName
+            : '${navigator.flatcategory.global.' + this._globalCategoryKey + '}';
+    }
 }

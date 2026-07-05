@@ -10,8 +10,8 @@ import {SkinRenderer} from './SkinRenderer';
  */
 export class NullSkinRenderer extends SkinRenderer
 {
-	constructor(name: string)
-	{
-		super(name);
-	}
+    constructor(name: string)
+    {
+        super(name);
+    }
 }

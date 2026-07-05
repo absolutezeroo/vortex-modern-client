@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class AvatarExpressionMessageComposer extends MessageComposer<[number]>
 {
-	private _data: [number];
+    private _data: [number];
 
-	constructor(expressionId: number)
-	{
-		super();
-		this._data = [expressionId];
-	}
+    constructor(expressionId: number)
+    {
+        super();
+        this._data = [expressionId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

@@ -7,21 +7,21 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class DefaultSanctionMessageComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(issueId: number, modActionId: number, message: string, cfhTopicId: number = -1)
-	{
-		super();
-		this._data = [issueId, modActionId, message];
+    constructor(issueId: number, modActionId: number, message: string, cfhTopicId: number = -1)
+    {
+        super();
+        this._data = [issueId, modActionId, message];
 
-		if (cfhTopicId !== -1)
-		{
-			this._data.push(cfhTopicId);
-		}
-	}
+        if(cfhTopicId !== -1)
+        {
+            this._data.push(cfhTopicId);
+        }
+    }
 
-	getMessageArray(): unknown[]
-	{
-		return this._data;
-	}
+    getMessageArray(): unknown[]
+    {
+        return this._data;
+    }
 }

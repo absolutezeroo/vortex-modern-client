@@ -8,22 +8,22 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class IsFirstLoginOfDayMessageParser implements IMessageParser
 {
-	private _isFirstLoginOfDay: boolean = false;
+    private _isFirstLoginOfDay: boolean = false;
 
-	get isFirstLoginOfDay(): boolean
-	{
-		return this._isFirstLoginOfDay;
-	}
+    get isFirstLoginOfDay(): boolean
+    {
+        return this._isFirstLoginOfDay;
+    }
 
-	flush(): boolean
-	{
-		this._isFirstLoginOfDay = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._isFirstLoginOfDay = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._isFirstLoginOfDay = wrapper.readBoolean();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._isFirstLoginOfDay = wrapper.readBoolean();
+        return true;
+    }
 }

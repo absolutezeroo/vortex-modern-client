@@ -9,26 +9,26 @@ import {RoomEngineEvent} from './RoomEngineEvent';
 
 export class RoomEngineZoomEvent extends RoomEngineEvent
 {
-	public static readonly ROOM_ZOOM = 'REE_ROOM_ZOOM';
+    public static readonly ROOM_ZOOM = 'REE_ROOM_ZOOM';
 
-	constructor(roomId: number, level: number, isFlipForced: boolean = false)
-	{
-		super(RoomEngineZoomEvent.ROOM_ZOOM, roomId);
-		this._level = level;
-		this._isFlipForced = isFlipForced;
-	}
+    constructor(roomId: number, level: number, isFlipForced: boolean = false)
+    {
+        super(RoomEngineZoomEvent.ROOM_ZOOM, roomId);
+        this._level = level;
+        this._isFlipForced = isFlipForced;
+    }
 
-	private _level: number = 1;
+    private _level: number = 1;
 
-	get level(): number
-	{
-		return this._level;
-	}
+    get level(): number
+    {
+        return this._level;
+    }
 
-	private _isFlipForced: boolean = false;
+    private _isFlipForced: boolean = false;
 
-	get isFlipForced(): boolean
-	{
-		return this._isFlipForced;
-	}
+    get isFlipForced(): boolean
+    {
+        return this._isFlipForced;
+    }
 }

@@ -9,9 +9,8 @@ import type {IWidget} from './IWidget';
  */
 export interface IRoomUserCountWidget extends IWidget
 {
-	/**
+    /**
 	 * Set the user count to display.
 	 */
-	set userCount(value: number);
+    set userCount(value: number);
 }
-

@@ -8,24 +8,24 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class EpicPopupMessageParser implements IMessageParser
 {
-	private _imageUri: string = '';
+    private _imageUri: string = '';
 
-	get imageUri(): string
-	{
-		return this._imageUri;
-	}
+    get imageUri(): string
+    {
+        return this._imageUri;
+    }
 
-	flush(): boolean
-	{
-		this._imageUri = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._imageUri = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._imageUri = wrapper.readString();
-		return true;
-	}
+        this._imageUri = wrapper.readString();
+        return true;
+    }
 }

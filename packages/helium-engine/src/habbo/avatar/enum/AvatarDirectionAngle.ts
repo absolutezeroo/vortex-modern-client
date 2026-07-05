@@ -5,8 +5,8 @@
  */
 export class AvatarDirectionAngle
 {
-	public static readonly DIRECTION_ANGLES: number[] = [45, 90, 135, 180, 225, 270, 315, 0];
-	public static readonly DIRECTION_IS_FLIPPED: boolean[] = [false, false, false, false, true, true, true, false];
-	public static readonly MIN_DIRECTION: number = 0;
-	public static readonly MAX_DIRECTION: number = 7;
+    public static readonly DIRECTION_ANGLES: number[] = [45, 90, 135, 180, 225, 270, 315, 0];
+    public static readonly DIRECTION_IS_FLIPPED: boolean[] = [false, false, false, false, true, true, true, false];
+    public static readonly MIN_DIRECTION: number = 0;
+    public static readonly MAX_DIRECTION: number = 7;
 }

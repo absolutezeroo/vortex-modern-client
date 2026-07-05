@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	AchievementResolutionCompletedMessageEventParser
+    AchievementResolutionCompletedMessageEventParser
 } from '../../../parser/game/lobby/AchievementResolutionCompletedMessageEventParser';
 
 /**
@@ -12,8 +12,8 @@ import {
  */
 export class AchievementResolutionCompletedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AchievementResolutionCompletedMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AchievementResolutionCompletedMessageEventParser);
+    }
 }

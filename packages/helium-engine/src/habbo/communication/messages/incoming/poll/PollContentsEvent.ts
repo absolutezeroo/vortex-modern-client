@@ -9,8 +9,8 @@ import {PollContentsEventParser} from '../../parser/poll/PollContentsEventParser
  */
 export class PollContentsEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PollContentsEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PollContentsEventParser);
+    }
 }

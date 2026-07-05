@@ -11,16 +11,16 @@ type RoomDimmerSavePresetMessageArray = [number, number, string, number, boolean
 
 export class RoomDimmerSavePresetComposer extends MessageComposer<RoomDimmerSavePresetMessageArray>
 {
-	private _data: RoomDimmerSavePresetMessageArray;
+    private _data: RoomDimmerSavePresetMessageArray;
 
-	constructor(presetNumber: number, effectTypeId: number, color: string, brightness: number, apply: boolean, objectId: number)
-	{
-		super();
-		this._data = [presetNumber, effectTypeId, color, brightness, apply, false, objectId];
-	}
+    constructor(presetNumber: number, effectTypeId: number, color: string, brightness: number, apply: boolean, objectId: number)
+    {
+        super();
+        this._data = [presetNumber, effectTypeId, color, brightness, apply, false, objectId];
+    }
 
-	getMessageArray(): RoomDimmerSavePresetMessageArray
-	{
-		return this._data;
-	}
+    getMessageArray(): RoomDimmerSavePresetMessageArray
+    {
+        return this._data;
+    }
 }

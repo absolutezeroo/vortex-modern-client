@@ -1,5 +1,5 @@
 import {
-	SetRoomSessionTagsMessageComposer
+    SetRoomSessionTagsMessageComposer
 } from '@habbo/communication/messages/outgoing/navigator/SetRoomSessionTagsMessageComposer';
 
 /**
@@ -9,17 +9,17 @@ import {
  */
 export class RoomSessionTags
 {
-	private _tag1: string;
-	private _tag2: string;
+    private _tag1: string;
+    private _tag2: string;
 
-	constructor(tag1: string, tag2: string)
-	{
-		this._tag1 = tag1;
-		this._tag2 = tag2;
-	}
+    constructor(tag1: string, tag2: string)
+    {
+        this._tag1 = tag1;
+        this._tag2 = tag2;
+    }
 
-	getMsg(): SetRoomSessionTagsMessageComposer
-	{
-		return new SetRoomSessionTagsMessageComposer(this._tag1, this._tag2);
-	}
+    getMsg(): SetRoomSessionTagsMessageComposer
+    {
+        return new SetRoomSessionTagsMessageComposer(this._tag1, this._tag2);
+    }
 }

@@ -11,57 +11,57 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class CompetitionVotingInfoMessageEventParser implements IMessageParser
 {
-	private _goalId: number = 0;
+    private _goalId: number = 0;
 
-	get goalId(): number
-	{
-		return this._goalId;
-	}
+    get goalId(): number
+    {
+        return this._goalId;
+    }
 
-	private _goalCode: string = '';
+    private _goalCode: string = '';
 
-	get goalCode(): string
-	{
-		return this._goalCode;
-	}
+    get goalCode(): string
+    {
+        return this._goalCode;
+    }
 
-	private _resultCode: number = 0;
+    private _resultCode: number = 0;
 
-	get resultCode(): number
-	{
-		return this._resultCode;
-	}
+    get resultCode(): number
+    {
+        return this._resultCode;
+    }
 
-	private _votesRemaining: number = 0;
+    private _votesRemaining: number = 0;
 
-	get votesRemaining(): number
-	{
-		return this._votesRemaining;
-	}
+    get votesRemaining(): number
+    {
+        return this._votesRemaining;
+    }
 
-	get isVotingAllowedForUser(): boolean
-	{
-		return this._resultCode === 0;
-	}
+    get isVotingAllowedForUser(): boolean
+    {
+        return this._resultCode === 0;
+    }
 
-	flush(): boolean
-	{
-		this._goalId = 0;
-		this._goalCode = '';
-		this._resultCode = 0;
-		this._votesRemaining = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._goalId = 0;
+        this._goalCode = '';
+        this._resultCode = 0;
+        this._votesRemaining = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._goalId = wrapper.readInt();
-		this._goalCode = wrapper.readString();
-		this._resultCode = wrapper.readInt();
-		this._votesRemaining = wrapper.readInt();
+        this._goalId = wrapper.readInt();
+        this._goalCode = wrapper.readString();
+        this._resultCode = wrapper.readInt();
+        this._votesRemaining = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

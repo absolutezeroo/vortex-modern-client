@@ -7,13 +7,13 @@
  * @see sources/win63_2021_version/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
 export const WindowContextLayer =
-	{
-		BACKGROUND: 0,
-		DEFAULT: 1,
-		DIALOGS: 2,
-		TOOLTIPS: 3,
+    {
+        BACKGROUND: 0,
+        DEFAULT: 1,
+        DIALOGS: 2,
+        TOOLTIPS: 3,
 
-		COUNT: 4,
-	} as const;
+        COUNT: 4,
+    } as const;
 
 export type WindowContextLayerValue = typeof WindowContextLayer[keyof typeof WindowContextLayer];

@@ -9,97 +9,97 @@ import {GuestRoomData, RoomChatSettings, RoomModerationSettings} from '../../inc
  */
 export class GetGuestRoomResultMessageParser implements IMessageParser
 {
-	private _enterRoom: boolean = false;
+    private _enterRoom: boolean = false;
 
-	get enterRoom(): boolean
-	{
-		return this._enterRoom;
-	}
+    get enterRoom(): boolean
+    {
+        return this._enterRoom;
+    }
 
-	private _roomForward: boolean = false;
+    private _roomForward: boolean = false;
 
-	get roomForward(): boolean
-	{
-		return this._roomForward;
-	}
+    get roomForward(): boolean
+    {
+        return this._roomForward;
+    }
 
-	private _staffPick: boolean = false;
+    private _staffPick: boolean = false;
 
-	get staffPick(): boolean
-	{
-		return this._staffPick;
-	}
+    get staffPick(): boolean
+    {
+        return this._staffPick;
+    }
 
-	private _isGroupMember: boolean = false;
+    private _isGroupMember: boolean = false;
 
-	get isGroupMember(): boolean
-	{
-		return this._isGroupMember;
-	}
+    get isGroupMember(): boolean
+    {
+        return this._isGroupMember;
+    }
 
-	private _openingConnection: boolean = false;
+    private _openingConnection: boolean = false;
 
-	get openingConnection(): boolean
-	{
-		return this._openingConnection;
-	}
+    get openingConnection(): boolean
+    {
+        return this._openingConnection;
+    }
 
-	private _data: GuestRoomData | null = null;
+    private _data: GuestRoomData | null = null;
 
-	get data(): GuestRoomData | null
-	{
-		return this._data;
-	}
+    get data(): GuestRoomData | null
+    {
+        return this._data;
+    }
 
-	private _roomModerationSettings: RoomModerationSettings | null = null;
+    private _roomModerationSettings: RoomModerationSettings | null = null;
 
-	get roomModerationSettings(): RoomModerationSettings | null
-	{
-		return this._roomModerationSettings;
-	}
+    get roomModerationSettings(): RoomModerationSettings | null
+    {
+        return this._roomModerationSettings;
+    }
 
-	private _chatSettings: RoomChatSettings | null = null;
+    private _chatSettings: RoomChatSettings | null = null;
 
-	get chatSettings(): RoomChatSettings | null
-	{
-		return this._chatSettings;
-	}
+    get chatSettings(): RoomChatSettings | null
+    {
+        return this._chatSettings;
+    }
 
-	flush(): boolean
-	{
-		this._enterRoom = false;
-		this._roomForward = false;
-		this._staffPick = false;
-		this._isGroupMember = false;
-		this._openingConnection = false;
-		this._data = null;
-		this._roomModerationSettings = null;
-		this._chatSettings = null;
+    flush(): boolean
+    {
+        this._enterRoom = false;
+        this._roomForward = false;
+        this._staffPick = false;
+        this._isGroupMember = false;
+        this._openingConnection = false;
+        this._data = null;
+        this._roomModerationSettings = null;
+        this._chatSettings = null;
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._enterRoom = wrapper.readBoolean();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._enterRoom = wrapper.readBoolean();
 
-		this._data = new GuestRoomData(wrapper);
+        this._data = new GuestRoomData(wrapper);
 
-		this._roomForward = wrapper.readBoolean();
-		this._staffPick = wrapper.readBoolean();
-		this._isGroupMember = wrapper.readBoolean();
+        this._roomForward = wrapper.readBoolean();
+        this._staffPick = wrapper.readBoolean();
+        this._isGroupMember = wrapper.readBoolean();
 
-		const allInRoomMuted = wrapper.readBoolean();
+        const allInRoomMuted = wrapper.readBoolean();
 
-		this._roomModerationSettings = new RoomModerationSettings(wrapper);
+        this._roomModerationSettings = new RoomModerationSettings(wrapper);
 
-		this._data.allInRoomMuted = allInRoomMuted;
-		this._data.canMute = wrapper.readBoolean();
+        this._data.allInRoomMuted = allInRoomMuted;
+        this._data.canMute = wrapper.readBoolean();
 
-		this._chatSettings = new RoomChatSettings(wrapper);
+        this._chatSettings = new RoomChatSettings(wrapper);
 
-		this._openingConnection = wrapper.readBoolean();
+        this._openingConnection = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

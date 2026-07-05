@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ChangeUserNameMessageComposer extends MessageComposer<ConstructorParameters<typeof ChangeUserNameMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ChangeUserNameMessageComposer>;
+    private _data: ConstructorParameters<typeof ChangeUserNameMessageComposer>;
 
-	constructor(name: string)
-	{
-		super();
-		this._data = [name];
-	}
+    constructor(name: string)
+    {
+        super();
+        this._data = [name];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

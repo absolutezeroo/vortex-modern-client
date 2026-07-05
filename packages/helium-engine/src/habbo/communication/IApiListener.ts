@@ -8,23 +8,23 @@
  */
 export interface IApiListener
 {
-	/**
+    /**
 	 * Called when the API returns a successful JSON response.
 	 *
 	 * @param uri - The request URI path
 	 * @param data - Parsed JSON response data
 	 */
-	apiResponse(uri: string, data: Record<string, unknown>): void;
+    apiResponse(uri: string, data: Record<string, unknown>): void;
 
-	/**
+    /**
 	 * Called when the API returns a successful non-JSON response.
 	 *
 	 * @param uri - The request URI path
 	 * @param data - Raw response data
 	 */
-	apiRawResponse(uri: string, data: unknown): void;
+    apiRawResponse(uri: string, data: unknown): void;
 
-	/**
+    /**
 	 * Called when the API returns an error.
 	 *
 	 * @param uri - The request URI path
@@ -33,5 +33,5 @@ export interface IApiListener
 	 * @param data - Parsed error response data
 	 * @param isCaptcha - Whether this error requires captcha verification
 	 */
-	apiError(uri: string, status: number, error: string, data: Record<string, unknown> | null, isCaptcha?: boolean): void;
+    apiError(uri: string, status: number, error: string, data: Record<string, unknown> | null, isCaptcha?: boolean): void;
 }

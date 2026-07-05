@@ -4,9 +4,9 @@
 // Core Exports
 export {WindowContextLayer} from './WindowContextLayer';
 export {
-	WindowElementType,
-	ELEMENT_NAME_TO_TYPE,
-	ELEMENT_TYPE_TO_NAME,
+    WindowElementType,
+    ELEMENT_NAME_TO_TYPE,
+    ELEMENT_TYPE_TO_NAME,
 } from './WindowElementType';
 export {WindowParam, PARAM_NAME_TO_FLAG} from './WindowParam';
 export {WindowState, STATE_PRIORITY, STATE_NAME_TO_VALUE} from './WindowState';

@@ -5,16 +5,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetClubGiftMessageComposer extends MessageComposer<ConstructorParameters<typeof GetClubGiftMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetClubGiftMessageComposer>;
+    private _data: ConstructorParameters<typeof GetClubGiftMessageComposer>;
 
-	constructor()
-	{
-		super();
-		this._data = [];
-	}
+    constructor()
+    {
+        super();
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

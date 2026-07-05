@@ -10,38 +10,38 @@ import type {IRoomWidgetHandlerContainer} from './IRoomWidgetHandlerContainer';
 
 export interface IRoomWidgetHandler extends IDisposable
 {
-	/**
+    /**
 	 * The handler type identifier.
 	 */
-	readonly type: string;
+    readonly type: string;
 
-	/**
+    /**
 	 * Sets the container providing services to this handler.
 	 */
-	set container(value: IRoomWidgetHandlerContainer | null);
+    set container(value: IRoomWidgetHandlerContainer | null);
 
-	/**
+    /**
 	 * Gets the list of widget message types this handler processes.
 	 */
-	getWidgetMessages(): string[];
+    getWidgetMessages(): string[];
 
-	/**
+    /**
 	 * Processes a widget message.
 	 */
-	processWidgetMessage(message: unknown): unknown;
+    processWidgetMessage(message: unknown): unknown;
 
-	/**
+    /**
 	 * Gets the list of event types this handler processes.
 	 */
-	getProcessedEvents(): string[];
+    getProcessedEvents(): string[];
 
-	/**
+    /**
 	 * Processes an event.
 	 */
-	processEvent(event: unknown): void;
+    processEvent(event: unknown): void;
 
-	/**
+    /**
 	 * Called each frame to update handler state.
 	 */
-	update(): void;
+    update(): void;
 }

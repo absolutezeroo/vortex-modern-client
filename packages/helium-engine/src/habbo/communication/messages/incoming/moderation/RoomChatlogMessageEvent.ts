@@ -9,8 +9,8 @@ import {RoomChatlogMessageParser} from '../../parser/moderation/RoomChatlogMessa
  */
 export class RoomChatlogMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomChatlogMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomChatlogMessageParser);
+    }
 }

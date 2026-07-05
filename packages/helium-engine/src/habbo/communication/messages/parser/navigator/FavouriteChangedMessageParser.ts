@@ -8,31 +8,31 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FavouriteChangedMessageParser implements IMessageParser
 {
-	private _flatId: number = 0;
+    private _flatId: number = 0;
 
-	get flatId(): number
-	{
-		return this._flatId;
-	}
+    get flatId(): number
+    {
+        return this._flatId;
+    }
 
-	private _added: boolean = false;
+    private _added: boolean = false;
 
-	get added(): boolean
-	{
-		return this._added;
-	}
+    get added(): boolean
+    {
+        return this._added;
+    }
 
-	flush(): boolean
-	{
-		this._flatId = 0;
-		this._added = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._flatId = 0;
+        this._added = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._flatId = wrapper.readInt();
-		this._added = wrapper.readBoolean();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._flatId = wrapper.readInt();
+        this._added = wrapper.readBoolean();
+        return true;
+    }
 }

@@ -9,8 +9,8 @@ import {EmailStatusResultParser} from '../../parser/users/EmailStatusResultParse
  */
 export class EmailStatusResultEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, EmailStatusResultParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, EmailStatusResultParser);
+    }
 }

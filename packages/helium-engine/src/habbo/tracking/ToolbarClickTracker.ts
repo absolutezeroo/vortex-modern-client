@@ -10,31 +10,31 @@ import type {HabboTracking} from './HabboTracking';
  */
 export class ToolbarClickTracker
 {
-	private _tracking: HabboTracking;
-	private _eventCount: number = 0;
+    private _tracking: HabboTracking;
+    private _eventCount: number = 0;
 
-	constructor(tracking: HabboTracking)
-	{
-		this._tracking = tracking;
-	}
+    constructor(tracking: HabboTracking)
+    {
+        this._tracking = tracking;
+    }
 
-	/**
+    /**
 	 * Track a toolbar button click
 	 *
 	 * @param buttonName The name of the clicked toolbar button
 	 */
-	track(buttonName: string): void
-	{
-		if (!this._tracking.getBoolean('toolbar.tracking.enabled'))
-		{
-			return;
-		}
+    track(buttonName: string): void
+    {
+        if(!this._tracking.getBoolean('toolbar.tracking.enabled'))
+        {
+            return;
+        }
 
-		this._eventCount++;
+        this._eventCount++;
 
-		if (this._eventCount <= this._tracking.getInteger('toolbar.tracking.max.events', 100))
-		{
-			this._tracking.trackGoogle('toolbar', buttonName);
-		}
-	}
+        if(this._eventCount <= this._tracking.getInteger('toolbar.tracking.max.events', 100))
+        {
+            this._tracking.trackGoogle('toolbar', buttonName);
+        }
+    }
 }

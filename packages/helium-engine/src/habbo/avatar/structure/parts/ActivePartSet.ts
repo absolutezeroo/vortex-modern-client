@@ -7,50 +7,50 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtil
  */
 export class ActivePartSet
 {
-	// AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::ActivePartSet()
-	constructor(data: any)
-	{
-		const element = getXmlRoot(data);
+    // AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::ActivePartSet()
+    constructor(data: any)
+    {
+        const element = getXmlRoot(data);
 
-		this._id = element ? getXmlAttribute(element, 'id') : String(data.id ?? data['@id'] ?? '');
-		this._parts = [];
+        this._id = element ? getXmlAttribute(element, 'id') : String(data.id ?? data['@id'] ?? '');
+        this._parts = [];
 
-		if (element)
-		{
-			for (const activePart of getXmlChildElements(element, 'activePart'))
-			{
-				this._parts.push(getXmlAttribute(activePart, 'set-type'));
-			}
+        if(element)
+        {
+            for(const activePart of getXmlChildElements(element, 'activePart'))
+            {
+                this._parts.push(getXmlAttribute(activePart, 'set-type'));
+            }
 
-			return;
-		}
+            return;
+        }
 
-		const rawParts = data.activeParts || data.activePart;
+        const rawParts = data.activeParts || data.activePart;
 
-		if (rawParts)
-		{
-			const activeParts: any[] = Array.isArray(rawParts) ? rawParts : [rawParts];
+        if(rawParts)
+        {
+            const activeParts: any[] = Array.isArray(rawParts) ? rawParts : [rawParts];
 
-			for (const part of activeParts)
-			{
-				this._parts.push(String(part.setType ?? part['set-type'] ?? ''));
-			}
-		}
-	}
+            for(const part of activeParts)
+            {
+                this._parts.push(String(part.setType ?? part['set-type'] ?? ''));
+            }
+        }
+    }
 
-	private _id: string;
+    private _id: string;
 
-	// AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get id()
-	public get id(): string
-	{
-		return this._id;
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get id()
+    public get id(): string
+    {
+        return this._id;
+    }
 
-	private _parts: string[];
+    private _parts: string[];
 
-	// AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get parts()
-	public get parts(): string[]
-	{
-		return this._parts;
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/parts/ActivePartSet.as::get parts()
+    public get parts(): string[]
+    {
+        return this._parts;
+    }
 }

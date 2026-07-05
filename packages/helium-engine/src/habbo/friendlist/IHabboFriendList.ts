@@ -7,18 +7,18 @@ import type {HabboSearchResultData} from '@habbo/communication/messages/parser/f
  */
 export interface HabboFriendListEvents
 {
-	'friendListInitialized': () => void;
-	'friendListFragment': (friends: FriendData[]) => void;
-	'friendListUpdate': (addedFriends: FriendData[], updatedFriends: FriendData[], removedFriendIds: number[]) => void;
-	'friendRequestsReceived': (requests: FriendRequestData[]) => void;
-	'newFriendRequest': (request: FriendRequestData) => void;
-	'acceptFriendFailed': (senderId: number, errorCode: number) => void;
-	'friendNotification': (avatarId: string, typeCode: number, message: string) => void;
-	'searchResult': (friends: HabboSearchResultData[], others: HabboSearchResultData[]) => void;
-	'findFriendsResult': (success: boolean) => void;
-	'followFriendFailed': (errorCode: number) => void;
-	'roomInviteError': (errorCode: number, failedRecipients: number[]) => void;
-	'messengerError': (errorCode: number, clientMessageId: number) => void;
+    'friendListInitialized': () => void;
+    'friendListFragment': (friends: FriendData[]) => void;
+    'friendListUpdate': (addedFriends: FriendData[], updatedFriends: FriendData[], removedFriendIds: number[]) => void;
+    'friendRequestsReceived': (requests: FriendRequestData[]) => void;
+    'newFriendRequest': (request: FriendRequestData) => void;
+    'acceptFriendFailed': (senderId: number, errorCode: number) => void;
+    'friendNotification': (avatarId: string, typeCode: number, message: string) => void;
+    'searchResult': (friends: HabboSearchResultData[], others: HabboSearchResultData[]) => void;
+    'findFriendsResult': (success: boolean) => void;
+    'followFriendFailed': (errorCode: number) => void;
+    'roomInviteError': (errorCode: number, failedRecipients: number[]) => void;
+    'messengerError': (errorCode: number, clientMessageId: number) => void;
 }
 
 /**
@@ -28,42 +28,42 @@ export interface HabboFriendListEvents
  */
 export interface IHabboFriendList
 {
-	// === Friend queries ===
-	readonly hasFriendsListInitialized: boolean;
+    // === Friend queries ===
+    readonly hasFriendsListInitialized: boolean;
 
-	getFriendById(id: number): FriendData | null;
+    getFriendById(id: number): FriendData | null;
 
-	getFriendByName(name: string): FriendData | null;
+    getFriendByName(name: string): FriendData | null;
 
-	getFriends(): FriendData[];
+    getFriends(): FriendData[];
 
-	getFriendNames(): string[];
+    getFriendNames(): string[];
 
-	getFriendCount(onlineOnly: boolean): number;
+    getFriendCount(onlineOnly: boolean): number;
 
-	isFriend(userId: number): boolean;
+    isFriend(userId: number): boolean;
 
-	canBeAskedForAFriend(userId: number): boolean;
+    canBeAskedForAFriend(userId: number): boolean;
 
-	// === Friend actions ===
-	requestFriend(userName: string): void;
+    // === Friend actions ===
+    requestFriend(userName: string): void;
 
-	acceptFriend(...requestIds: number[]): void;
+    acceptFriend(...requestIds: number[]): void;
 
-	declineFriend(declineAll: boolean, ...requestIds: number[]): void;
+    declineFriend(declineAll: boolean, ...requestIds: number[]): void;
 
-	removeFriend(...friendIds: number[]): void;
+    removeFriend(...friendIds: number[]): void;
 
-	// === Search ===
-	findNewFriends(): void;
+    // === Search ===
+    findNewFriends(): void;
 
-	searchUsers(query: string): void;
+    searchUsers(query: string): void;
 
-	// === Relationship ===
-	setRelationship(friendId: number, status: number): void;
+    // === Relationship ===
+    setRelationship(friendId: number, status: number): void;
 
-	getRelationshipStatus(friendId: number): number;
+    getRelationshipStatus(friendId: number): number;
 
-	// === Lifecycle ===
-	dispose(): void;
+    // === Lifecycle ===
+    dispose(): void;
 }

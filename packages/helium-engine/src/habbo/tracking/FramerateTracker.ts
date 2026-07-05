@@ -11,65 +11,65 @@ import type {HabboTracking} from './HabboTracking';
  */
 export class FramerateTracker
 {
-	private _lastReportTime: number = 0;
-	private _updateCount: number = 0;
-	private _averageInterval: number = 0;
-	private _reportCount: number = 0;
-	private _habboTracking: HabboTracking;
+    private _lastReportTime: number = 0;
+    private _updateCount: number = 0;
+    private _averageInterval: number = 0;
+    private _reportCount: number = 0;
+    private _habboTracking: HabboTracking;
 
-	constructor(tracking: HabboTracking)
-	{
-		this._habboTracking = tracking;
-	}
+    constructor(tracking: HabboTracking)
+    {
+        this._habboTracking = tracking;
+    }
 
-	/**
+    /**
 	 * Get the current average framerate
 	 */
-	get frameRate(): number
-	{
-		return Math.round(1000 / this._averageInterval);
-	}
+    get frameRate(): number
+    {
+        return Math.round(1000 / this._averageInterval);
+    }
 
-	/**
+    /**
 	 * Called each frame to update the running average and report periodically
 	 *
 	 * @param deltaTime Time since last update in milliseconds
 	 * @param currentTime Current time in milliseconds
 	 */
-	trackUpdate(deltaTime: number, currentTime: number): void
-	{
-		this._updateCount++;
+    trackUpdate(deltaTime: number, currentTime: number): void
+    {
+        this._updateCount++;
 
-		if (this._updateCount === 1)
-		{
-			this._averageInterval = deltaTime;
-			this._lastReportTime = currentTime;
-		}
-		else
-		{
-			// Exponential moving average
-			const n = this._updateCount;
-			this._averageInterval = this._averageInterval * (n - 1) / n + deltaTime / n;
-		}
+        if(this._updateCount === 1)
+        {
+            this._averageInterval = deltaTime;
+            this._lastReportTime = currentTime;
+        }
+        else
+        {
+            // Exponential moving average
+            const n = this._updateCount;
+            this._averageInterval = this._averageInterval * (n - 1) / n + deltaTime / n;
+        }
 
-		const reportIntervalMs = this._habboTracking.getInteger(
-			'tracking.framerate.reportInterval.seconds', 300
-		) * 1000;
+        const reportIntervalMs = this._habboTracking.getInteger(
+            'tracking.framerate.reportInterval.seconds', 300
+        ) * 1000;
 
-		if (currentTime - this._lastReportTime >= reportIntervalMs)
-		{
-			this._updateCount = 0;
+        if(currentTime - this._lastReportTime >= reportIntervalMs)
+        {
+            this._updateCount = 0;
 
-			const maxEvents = this._habboTracking.getInteger(
-				'tracking.framerate.maximumEvents', 5
-			);
+            const maxEvents = this._habboTracking.getInteger(
+                'tracking.framerate.maximumEvents', 5
+            );
 
-			if (this._reportCount < maxEvents)
-			{
-				this._habboTracking.trackGoogle('performance', 'averageFramerate', this.frameRate);
-				this._reportCount++;
-				this._lastReportTime = currentTime;
-			}
-		}
-	}
+            if(this._reportCount < maxEvents)
+            {
+                this._habboTracking.trackGoogle('performance', 'averageFramerate', this.frameRate);
+                this._reportCount++;
+                this._lastReportTime = currentTime;
+            }
+        }
+    }
 }

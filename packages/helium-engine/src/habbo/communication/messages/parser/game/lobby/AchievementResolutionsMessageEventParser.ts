@@ -10,50 +10,50 @@ import {ResolutionAchievementData} from '../../quest/ResolutionAchievementData';
  */
 export class AchievementResolutionsMessageEventParser implements IMessageParser
 {
-	private _stuffId: number = -1;
+    private _stuffId: number = -1;
 
-	get stuffId(): number
-	{
-		return this._stuffId;
-	}
+    get stuffId(): number
+    {
+        return this._stuffId;
+    }
 
-	private _achievements: ResolutionAchievementData[] = [];
+    private _achievements: ResolutionAchievementData[] = [];
 
-	get achievements(): ResolutionAchievementData[]
-	{
-		return this._achievements;
-	}
+    get achievements(): ResolutionAchievementData[]
+    {
+        return this._achievements;
+    }
 
-	private _endTime: number = -1;
+    private _endTime: number = -1;
 
-	get endTime(): number
-	{
-		return this._endTime;
-	}
+    get endTime(): number
+    {
+        return this._endTime;
+    }
 
-	flush(): boolean
-	{
-		this._stuffId = -1;
-		this._achievements = [];
-		this._endTime = -1;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._stuffId = -1;
+        this._achievements = [];
+        this._endTime = -1;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._stuffId = wrapper.readInt();
+        this._stuffId = wrapper.readInt();
 
-		const count: number = wrapper.readInt();
+        const count: number = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._achievements.push(new ResolutionAchievementData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._achievements.push(new ResolutionAchievementData(wrapper));
+        }
 
-		this._endTime = wrapper.readInt();
+        this._endTime = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

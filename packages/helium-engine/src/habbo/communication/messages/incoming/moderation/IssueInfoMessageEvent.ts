@@ -9,8 +9,8 @@ import {IssueInfoMessageParser} from '../../parser/moderation/IssueInfoMessagePa
  */
 export class IssueInfoMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IssueInfoMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IssueInfoMessageParser);
+    }
 }

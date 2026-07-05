@@ -11,27 +11,27 @@ import {Motion} from './Motion';
  */
 export class Callback extends Motion
 {
-	protected _callback: ((motion: Motion) => void) | null;
+    protected _callback: ((motion: Motion) => void) | null;
 
-	constructor(callback: (motion: Motion) => void)
-	{
-		super(null);
-		this._callback = callback;
-	}
+    constructor(callback: (motion: Motion) => void)
+    {
+        super(null);
+        this._callback = callback;
+    }
 
-	public override get running(): boolean
-	{
-		return this._running && this._callback !== null;
-	}
+    public override get running(): boolean
+    {
+        return this._running && this._callback !== null;
+    }
 
-	public override tick(timestamp: number): void
-	{
-		super.tick(timestamp);
+    public override tick(timestamp: number): void
+    {
+        super.tick(timestamp);
 
-		if (this._callback !== null)
-		{
-			this._callback(this);
-			this._callback = null;
-		}
-	}
+        if(this._callback !== null)
+        {
+            this._callback(this);
+            this._callback = null;
+        }
+    }
 }

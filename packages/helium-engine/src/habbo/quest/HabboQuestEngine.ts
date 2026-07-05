@@ -43,421 +43,421 @@ const log = Logger.getLogger('HabboQuestEngine');
  */
 export class HabboQuestEngine extends Component implements IHabboQuestEngine, ILinkEventTracker
 {
-	private _resolutionController: AchievementsResolutionController | null = null;
-	private _competitionController: RoomCompetitionController | null = null;
-	private _messageHandler: QuestMessageHandler | null = null;
-	private _windowManager: IHabboWindowManager | null = null;
-	private _localization: IHabboLocalizationManager | null = null;
-	private _configuration: unknown | null = null;
-	private _toolbar: IHabboToolbar | null = null;
-	private _catalog: unknown | null = null;
-	private _notifications: IHabboNotifications | null = null;
-	private _habboHelp: IHabboHelp | null = null;
-	private _navigator: IHabboNewNavigator | null = null;
-	private _sessionDataManager: ISessionDataManager | null = null;
-	private _roomEngine: IRoomEngine | null = null;
-	private _tracking: IHabboTracking | null = null;
+    private _resolutionController: AchievementsResolutionController | null = null;
+    private _competitionController: RoomCompetitionController | null = null;
+    private _messageHandler: QuestMessageHandler | null = null;
+    private _windowManager: IHabboWindowManager | null = null;
+    private _localization: IHabboLocalizationManager | null = null;
+    private _configuration: unknown | null = null;
+    private _toolbar: IHabboToolbar | null = null;
+    private _catalog: unknown | null = null;
+    private _notifications: IHabboNotifications | null = null;
+    private _habboHelp: IHabboHelp | null = null;
+    private _navigator: IHabboNewNavigator | null = null;
+    private _sessionDataManager: ISessionDataManager | null = null;
+    private _roomEngine: IRoomEngine | null = null;
+    private _tracking: IHabboTracking | null = null;
 
-	constructor(context: IContext)
-	{
-		super(context);
-	}
+    constructor(context: IContext)
+    {
+        super(context);
+    }
 
-	private _communicationManager: IHabboCommunicationManager | null = null;
+    private _communicationManager: IHabboCommunicationManager | null = null;
 
-	/**
+    /**
 	 * Get the communication manager
 	 */
-	get communicationManager(): IHabboCommunicationManager | null
-	{
-		return this._communicationManager;
-	}
+    get communicationManager(): IHabboCommunicationManager | null
+    {
+        return this._communicationManager;
+    }
 
-	private _questController: QuestController | null = null;
+    private _questController: QuestController | null = null;
 
-	/**
+    /**
 	 * Get the quest controller
 	 */
-	get questController(): QuestController | null
-	{
-		return this._questController;
-	}
+    get questController(): QuestController | null
+    {
+        return this._questController;
+    }
 
-	private _achievementController: AchievementController | null = null;
+    private _achievementController: AchievementController | null = null;
 
-	/**
+    /**
 	 * Get the achievement controller
 	 */
-	get achievementController(): AchievementController | null
-	{
-		return this._achievementController;
-	}
+    get achievementController(): AchievementController | null
+    {
+        return this._achievementController;
+    }
 
-	private _currentlyInRoom: boolean = false;
+    private _currentlyInRoom: boolean = false;
 
-	/**
+    /**
 	 * Whether the user is currently in a room
 	 */
-	get currentlyInRoom(): boolean
-	{
-		return this._currentlyInRoom;
-	}
+    get currentlyInRoom(): boolean
+    {
+        return this._currentlyInRoom;
+    }
 
-	set currentlyInRoom(value: boolean)
-	{
-		this._currentlyInRoom = value;
-	}
+    set currentlyInRoom(value: boolean)
+    {
+        this._currentlyInRoom = value;
+    }
 
-	private _isFirstLoginOfDay: boolean = false;
+    private _isFirstLoginOfDay: boolean = false;
 
-	/**
+    /**
 	 * Whether this is the first login of the day
 	 */
-	get isFirstLoginOfDay(): boolean
-	{
-		return this._isFirstLoginOfDay;
-	}
+    get isFirstLoginOfDay(): boolean
+    {
+        return this._isFirstLoginOfDay;
+    }
 
-	/**
+    /**
 	 * Get the achievements resolution controller
 	 */
-	get achievementsResolutionController(): AchievementsResolutionController | null
-	{
-		return this._resolutionController;
-	}
+    get achievementsResolutionController(): AchievementsResolutionController | null
+    {
+        return this._resolutionController;
+    }
 
-	/**
+    /**
 	 * Get the room competition controller
 	 */
-	get roomCompetitionController(): RoomCompetitionController | null
-	{
-		return this._competitionController;
-	}
+    get roomCompetitionController(): RoomCompetitionController | null
+    {
+        return this._competitionController;
+    }
 
-	/**
+    /**
 	 * The link pattern for the ILinkEventTracker interface
 	 */
-	get linkPattern(): string
-	{
-		return 'questengine/';
-	}
+    get linkPattern(): string
+    {
+        return 'questengine/';
+    }
 
-	protected override get dependencies(): Array<ComponentDependency<any>>
-	{
-		return [
-			new ComponentDependency(
-				IID_HabboCommunicationManager,
-				(manager: IHabboCommunicationManager | null) =>
-				{
-					this._communicationManager = manager;
-				},
-				true
-			),
-			new ComponentDependency(
-				IID_HabboWindowManager,
-				(manager: IHabboWindowManager | null) =>
-				{
-					this._windowManager = manager;
-				}
-			),
-			new ComponentDependency(
-				IID_HabboLocalizationManager,
-				(manager: IHabboLocalizationManager | null) =>
-				{
-					this._localization = manager;
-				}
-			),
-			new ComponentDependency(
-				IID_HabboConfigurationManager,
-				(config: unknown | null) =>
-				{
-					this._configuration = config;
-				}
-			),
-			new ComponentDependency(
-				IID_HabboToolbar,
-				(toolbar: IHabboToolbar | null) =>
-				{
-					this._toolbar = toolbar;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboCatalog,
-				(catalog: unknown | null) =>
-				{
-					this._catalog = catalog;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboNotifications,
-				(notifications: IHabboNotifications | null) =>
-				{
-					this._notifications = notifications;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboHelp,
-				(help: IHabboHelp | null) =>
-				{
-					this._habboHelp = help;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboNewNavigator,
-				(navigator: IHabboNewNavigator | null) =>
-				{
-					this._navigator = navigator;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_SessionDataManager,
-				(manager: ISessionDataManager | null) =>
-				{
-					this._sessionDataManager = manager;
-				}
-			),
-			new ComponentDependency(
-				IID_RoomEngine,
-				(engine: IRoomEngine | null) =>
-				{
-					this._roomEngine = engine;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboTracking,
-				(tracking: IHabboTracking | null) =>
-				{
-					this._tracking = tracking;
-				},
-				false
-			),
-		];
-	}
+    protected override get dependencies(): Array<ComponentDependency<any>>
+    {
+        return [
+            new ComponentDependency(
+                IID_HabboCommunicationManager,
+                (manager: IHabboCommunicationManager | null) =>
+                {
+                    this._communicationManager = manager;
+                },
+                true
+            ),
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_HabboLocalizationManager,
+                (manager: IHabboLocalizationManager | null) =>
+                {
+                    this._localization = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_HabboConfigurationManager,
+                (config: unknown | null) =>
+                {
+                    this._configuration = config;
+                }
+            ),
+            new ComponentDependency(
+                IID_HabboToolbar,
+                (toolbar: IHabboToolbar | null) =>
+                {
+                    this._toolbar = toolbar;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboCatalog,
+                (catalog: unknown | null) =>
+                {
+                    this._catalog = catalog;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboNotifications,
+                (notifications: IHabboNotifications | null) =>
+                {
+                    this._notifications = notifications;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboHelp,
+                (help: IHabboHelp | null) =>
+                {
+                    this._habboHelp = help;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboNewNavigator,
+                (navigator: IHabboNewNavigator | null) =>
+                {
+                    this._navigator = navigator;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_SessionDataManager,
+                (manager: ISessionDataManager | null) =>
+                {
+                    this._sessionDataManager = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_RoomEngine,
+                (engine: IRoomEngine | null) =>
+                {
+                    this._roomEngine = engine;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboTracking,
+                (tracking: IHabboTracking | null) =>
+                {
+                    this._tracking = tracking;
+                },
+                false
+            ),
+        ];
+    }
 
-	/**
+    /**
 	 * Set the first login of day flag
 	 */
-	setIsFirstLoginOfDay(value: boolean): void
-	{
-		this._isFirstLoginOfDay = value;
-	}
+    setIsFirstLoginOfDay(value: boolean): void
+    {
+        this._isFirstLoginOfDay = value;
+    }
 
-	/**
+    /**
 	 * Handle a link event matching the "questengine/" pattern
 	 *
 	 * @param link The full link string
 	 */
-	linkReceived(link: string): void
-	{
-		const parts = link.split('/');
+    linkReceived(link: string): void
+    {
+        const parts = link.split('/');
 
-		if (parts.length < 2)
-		{
-			return;
-		}
+        if(parts.length < 2)
+        {
+            return;
+        }
 
-		switch (parts[1])
-		{
-			case 'gotorooms':
-				this.goToQuestRooms();
-				break;
+        switch(parts[1])
+        {
+            case 'gotorooms':
+                this.goToQuestRooms();
+                break;
 
-			case 'achievements':
-				if (parts.length === 3)
-				{
-					// Deep link to specific category: questengine/achievements/{category}
-					this.showAchievements();
-				}
-				else
-				{
-					this.showAchievements();
-				}
-				break;
+            case 'achievements':
+                if(parts.length === 3)
+                {
+                    // Deep link to specific category: questengine/achievements/{category}
+                    this.showAchievements();
+                }
+                else
+                {
+                    this.showAchievements();
+                }
+                break;
 
-			case 'quests':
-				this.showQuests();
-				break;
+            case 'quests':
+                this.showQuests();
+                break;
 
-			default:
-				log.warn(`QuestEngine unknown link-type received: ${parts[1]}`);
-		}
-	}
+            default:
+                log.warn(`QuestEngine unknown link-type received: ${parts[1]}`);
+        }
+    }
 
-	/**
+    /**
 	 * Send a message through the communication manager
 	 *
 	 * @param composer The message composer to send
 	 */
-	send(composer: IMessageComposer<unknown[]>): void
-	{
-		const connection = this._communicationManager?.connection;
+    send(composer: IMessageComposer<unknown[]>): void
+    {
+        const connection = this._communicationManager?.connection;
 
-		if (connection)
-		{
-			connection.send(composer);
-		}
-	}
+        if(connection)
+        {
+            connection.send(composer);
+        }
+    }
 
-	/**
+    /**
 	 * Request all quests from the server
 	 */
-	requestQuests(): void
-	{
-		// send(new GetQuestsMessageComposer());
-		// Composer will be imported once available
-		log.debug('Requesting quests');
-	}
+    requestQuests(): void
+    {
+        // send(new GetQuestsMessageComposer());
+        // Composer will be imported once available
+        log.debug('Requesting quests');
+    }
 
-	/**
+    /**
 	 * Request seasonal quests from the server
 	 */
-	requestSeasonalQuests(): void
-	{
-		// send(new GetSeasonalQuestsOnlyMessageComposer());
-		// Composer will be imported once available
-		log.debug('Requesting seasonal quests');
-	}
+    requestSeasonalQuests(): void
+    {
+        // send(new GetSeasonalQuestsOnlyMessageComposer());
+        // Composer will be imported once available
+        log.debug('Requesting seasonal quests');
+    }
 
-	/**
+    /**
 	 * Activate a quest by its ID
 	 *
 	 * @param questId The quest ID to activate
 	 */
-	activateQuest(questId: number): void
-	{
-		// send(new ActivateQuestMessageComposer(questId));
-		// Composer will be imported once available
-		log.debug(`Activating quest: ${questId}`);
-	}
+    activateQuest(questId: number): void
+    {
+        // send(new ActivateQuestMessageComposer(questId));
+        // Composer will be imported once available
+        log.debug(`Activating quest: ${questId}`);
+    }
 
-	/**
+    /**
 	 * Show the quests panel
 	 */
-	showQuests(): void
-	{
-		// Emit event for UI to handle
-		this.events.emit('showQuests');
-		log.debug('Show quests requested');
-	}
+    showQuests(): void
+    {
+        // Emit event for UI to handle
+        this.events.emit('showQuests');
+        log.debug('Show quests requested');
+    }
 
-	/**
+    /**
 	 * Show the achievements panel
 	 */
-	showAchievements(): void
-	{
-		// Emit event for UI to handle
-		this.events.emit('showAchievements');
-		log.debug('Show achievements requested');
-	}
+    showAchievements(): void
+    {
+        // Emit event for UI to handle
+        this.events.emit('showAchievements');
+        log.debug('Show achievements requested');
+    }
 
-	/**
+    /**
 	 * Ensure achievements data has been requested from the server
 	 */
-	ensureAchievementsInitialized(): void
-	{
-		if (this._achievementController)
-		{
-			this._achievementController.ensureAchievementsInitialized();
-		}
-	}
+    ensureAchievementsInitialized(): void
+    {
+        if(this._achievementController)
+        {
+            this._achievementController.ensureAchievementsInitialized();
+        }
+    }
 
-	/**
+    /**
 	 * Get the user's achievement level for a given category and badge
 	 *
 	 * @param category The achievement category code
 	 * @param badge The badge identifier
 	 * @returns The user's level for the achievement, or 0 if not found
 	 */
-	getAchievementLevel(category: string, badge: string): number
-	{
-		if (this._achievementController)
-		{
-			return this._achievementController.getAchievementLevel(category, badge);
-		}
+    getAchievementLevel(category: string, badge: string): number
+    {
+        if(this._achievementController)
+        {
+            return this._achievementController.getAchievementLevel(category, badge);
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	/**
+    /**
 	 * Navigate to a random quest room via link event
 	 */
-	goToQuestRooms(): void
-	{
-		this.context.createLinkEvent('navigator/goto/quest_rooms');
-		log.debug('Going to quest rooms');
-	}
+    goToQuestRooms(): void
+    {
+        this.context.createLinkEvent('navigator/goto/quest_rooms');
+        log.debug('Going to quest rooms');
+    }
 
-	/**
+    /**
 	 * Dispose of this engine and all controllers
 	 */
-	override dispose(): void
-	{
-		if (this.disposed) return;
+    override dispose(): void
+    {
+        if(this.disposed) return;
 
-		// Remove link event tracker
-		this.context.removeLinkEventTracker(this);
+        // Remove link event tracker
+        this.context.removeLinkEventTracker(this);
 
-		// Dispose message handler
-		if (this._messageHandler)
-		{
-			this._messageHandler.dispose();
-			this._messageHandler = null;
-		}
+        // Dispose message handler
+        if(this._messageHandler)
+        {
+            this._messageHandler.dispose();
+            this._messageHandler = null;
+        }
 
-		// Dispose controllers
-		if (this._questController)
-		{
-			this._questController.dispose();
-			this._questController = null;
-		}
+        // Dispose controllers
+        if(this._questController)
+        {
+            this._questController.dispose();
+            this._questController = null;
+        }
 
-		if (this._achievementController)
-		{
-			this._achievementController.dispose();
-			this._achievementController = null;
-		}
+        if(this._achievementController)
+        {
+            this._achievementController.dispose();
+            this._achievementController = null;
+        }
 
-		if (this._resolutionController)
-		{
-			this._resolutionController.dispose();
-			this._resolutionController = null;
-		}
+        if(this._resolutionController)
+        {
+            this._resolutionController.dispose();
+            this._resolutionController = null;
+        }
 
-		if (this._competitionController)
-		{
-			this._competitionController.dispose();
-			this._competitionController = null;
-		}
+        if(this._competitionController)
+        {
+            this._competitionController.dispose();
+            this._competitionController = null;
+        }
 
-		log.info('HabboQuestEngine disposed');
+        log.info('HabboQuestEngine disposed');
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	/**
+    /**
 	 * Called when all required dependencies are available.
 	 * Creates all controllers and the message handler, registers link event tracker.
 	 */
-	protected override initComponent(): void
-	{
-		// Create controllers
-		this._questController = new QuestController(this);
-		this._achievementController = new AchievementController(this);
-		this._resolutionController = new AchievementsResolutionController(this);
-		this._competitionController = new RoomCompetitionController(this);
+    protected override initComponent(): void
+    {
+        // Create controllers
+        this._questController = new QuestController(this);
+        this._achievementController = new AchievementController(this);
+        this._resolutionController = new AchievementsResolutionController(this);
+        this._competitionController = new RoomCompetitionController(this);
 
-		// Create message handler (registers all message events)
-		this._messageHandler = new QuestMessageHandler(this);
+        // Create message handler (registers all message events)
+        this._messageHandler = new QuestMessageHandler(this);
 
-		// Register link event tracker
-		this.context.addLinkEventTracker(this);
+        // Register link event tracker
+        this.context.addLinkEventTracker(this);
 
-		log.info('HabboQuestEngine initialized');
-	}
+        log.info('HabboQuestEngine initialized');
+    }
 }

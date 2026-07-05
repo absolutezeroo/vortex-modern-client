@@ -6,47 +6,47 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class HallOfFameEntryData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._userId = wrapper.readInt();
-		this._userName = wrapper.readString();
-		this._figure = wrapper.readString();
-		this._rank = wrapper.readInt();
-		this._currentScore = wrapper.readInt();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._userId = wrapper.readInt();
+        this._userName = wrapper.readString();
+        this._figure = wrapper.readString();
+        this._rank = wrapper.readInt();
+        this._currentScore = wrapper.readInt();
+    }
 
-	private _userId: number;
+    private _userId: number;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _userName: string;
+    private _userName: string;
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 
-	private _figure: string;
+    private _figure: string;
 
-	get figure(): string
-	{
-		return this._figure;
-	}
+    get figure(): string
+    {
+        return this._figure;
+    }
 
-	private _rank: number;
+    private _rank: number;
 
-	get rank(): number
-	{
-		return this._rank;
-	}
+    get rank(): number
+    {
+        return this._rank;
+    }
 
-	private _currentScore: number;
+    private _currentScore: number;
 
-	get currentScore(): number
-	{
-		return this._currentScore;
-	}
+    get currentScore(): number
+    {
+        return this._currentScore;
+    }
 }

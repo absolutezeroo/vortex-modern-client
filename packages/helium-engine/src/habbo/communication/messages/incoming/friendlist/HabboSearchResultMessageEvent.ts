@@ -9,8 +9,8 @@ import {HabboSearchResultMessageParser} from '../../parser/friendlist/HabboSearc
  */
 export class HabboSearchResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboSearchResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboSearchResultMessageParser);
+    }
 }

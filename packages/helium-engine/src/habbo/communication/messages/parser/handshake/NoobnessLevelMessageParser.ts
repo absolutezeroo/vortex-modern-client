@@ -9,22 +9,22 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class NoobnessLevelMessageParser implements IMessageParser
 {
-	private _noobnessLevel: number = 0;
+    private _noobnessLevel: number = 0;
 
-	get noobnessLevel(): number
-	{
-		return this._noobnessLevel;
-	}
+    get noobnessLevel(): number
+    {
+        return this._noobnessLevel;
+    }
 
-	flush(): boolean
-	{
-		this._noobnessLevel = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._noobnessLevel = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._noobnessLevel = wrapper.readInt();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._noobnessLevel = wrapper.readInt();
+        return true;
+    }
 }

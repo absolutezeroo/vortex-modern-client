@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PresentOpenMessageComposer extends MessageComposer<ConstructorParameters<typeof PresentOpenMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof PresentOpenMessageComposer>;
+    private _data: ConstructorParameters<typeof PresentOpenMessageComposer>;
 
-	constructor(objectId: number)
-	{
-		super();
-		this._data = [objectId];
-	}
+    constructor(objectId: number)
+    {
+        super();
+        this._data = [objectId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

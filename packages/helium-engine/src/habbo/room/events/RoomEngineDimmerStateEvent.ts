@@ -9,66 +9,66 @@ import {RoomEngineEvent} from './RoomEngineEvent';
 
 export class RoomEngineDimmerStateEvent extends RoomEngineEvent
 {
-	public static readonly CYCLED = 'REDSE_ROOM_COLOR';
+    public static readonly CYCLED = 'REDSE_ROOM_COLOR';
 
-	constructor(
-		roomId: number,
-		objectId: number,
-		state: number,
-		presetId: number,
-		effectId: number,
-		color: number,
-		brightness: number
-	)
-	{
-		super(RoomEngineDimmerStateEvent.CYCLED, roomId);
-		this._objectId = objectId;
-		this._state = state;
-		this._presetId = presetId;
-		this._effectId = effectId;
-		this._color = color;
-		this._brightness = brightness;
-	}
+    constructor(
+        roomId: number,
+        objectId: number,
+        state: number,
+        presetId: number,
+        effectId: number,
+        color: number,
+        brightness: number
+    )
+    {
+        super(RoomEngineDimmerStateEvent.CYCLED, roomId);
+        this._objectId = objectId;
+        this._state = state;
+        this._presetId = presetId;
+        this._effectId = effectId;
+        this._color = color;
+        this._brightness = brightness;
+    }
 
-	private _objectId: number;
+    private _objectId: number;
 
-	get objectId(): number
-	{
-		return this._objectId;
-	}
+    get objectId(): number
+    {
+        return this._objectId;
+    }
 
-	private _state: number;
+    private _state: number;
 
-	get state(): number
-	{
-		return this._state;
-	}
+    get state(): number
+    {
+        return this._state;
+    }
 
-	private _presetId: number;
+    private _presetId: number;
 
-	get presetId(): number
-	{
-		return this._presetId;
-	}
+    get presetId(): number
+    {
+        return this._presetId;
+    }
 
-	private _effectId: number;
+    private _effectId: number;
 
-	get effectId(): number
-	{
-		return this._effectId;
-	}
+    get effectId(): number
+    {
+        return this._effectId;
+    }
 
-	private _color: number;
+    private _color: number;
 
-	get color(): number
-	{
-		return this._color;
-	}
+    get color(): number
+    {
+        return this._color;
+    }
 
-	private _brightness: number;
+    private _brightness: number;
 
-	get brightness(): number
-	{
-		return this._brightness;
-	}
+    get brightness(): number
+    {
+        return this._brightness;
+    }
 }

@@ -10,10 +10,10 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetHeightMapMessageComposer extends MessageComposer<[]>
 {
-	private _data: [] = [];
+    private _data: [] = [];
 
-	getMessageArray(): []
-	{
-		return this._data;
-	}
+    getMessageArray(): []
+    {
+        return this._data;
+    }
 }

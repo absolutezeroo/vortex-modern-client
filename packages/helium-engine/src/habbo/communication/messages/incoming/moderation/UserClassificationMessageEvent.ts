@@ -9,8 +9,8 @@ import {UserClassificationMessageParser} from '../../parser/moderation/UserClass
  */
 export class UserClassificationMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserClassificationMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserClassificationMessageParser);
+    }
 }

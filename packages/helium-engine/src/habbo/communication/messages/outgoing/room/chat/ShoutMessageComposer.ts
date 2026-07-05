@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ShoutMessageComposer extends MessageComposer<[string, number]>
 {
-	private _data: [string, number];
+    private _data: [string, number];
 
-	constructor(message: string, styleId: number = 0)
-	{
-		super();
-		this._data = [message, styleId];
-	}
+    constructor(message: string, styleId: number = 0)
+    {
+        super();
+        this._data = [message, styleId];
+    }
 
-	getMessageArray(): [string, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string, number]
+    {
+        return this._data;
+    }
 }

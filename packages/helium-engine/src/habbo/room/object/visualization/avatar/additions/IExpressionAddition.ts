@@ -10,5 +10,5 @@ import type {IAvatarAddition} from './IAvatarAddition';
 
 export interface IExpressionAddition extends IAvatarAddition
 {
-	readonly type: number;
+    readonly type: number;
 }

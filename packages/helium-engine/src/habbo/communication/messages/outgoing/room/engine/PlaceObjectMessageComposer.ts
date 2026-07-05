@@ -11,30 +11,30 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
  */
 export class PlaceObjectMessageComposer extends MessageComposer<[string]>
 {
-	private _itemId: number;
-	private _category: number;
-	private _x: number;
-	private _y: number;
-	private _rotation: number;
+    private _itemId: number;
+    private _category: number;
+    private _x: number;
+    private _y: number;
+    private _rotation: number;
 
-	constructor(itemId: number, x: number, y: number, rotation: number)
-	{
-		super();
+    constructor(itemId: number, x: number, y: number, rotation: number)
+    {
+        super();
 
-		this._itemId = itemId;
-		this._category = RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
-		this._x = x;
-		this._y = y;
-		this._rotation = rotation;
-	}
+        this._itemId = itemId;
+        this._category = RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
+        this._x = x;
+        this._y = y;
+        this._rotation = rotation;
+    }
 
-	getMessageArray(): [string]
-	{
-		if (this._category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
-		{
-			return [`${this._itemId} ${this._x} ${this._y} ${this._rotation}`];
-		}
+    getMessageArray(): [string]
+    {
+        if(this._category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        {
+            return [`${this._itemId} ${this._x} ${this._y} ${this._rotation}`];
+        }
 
-		return [''];
-	}
+        return [''];
+    }
 }

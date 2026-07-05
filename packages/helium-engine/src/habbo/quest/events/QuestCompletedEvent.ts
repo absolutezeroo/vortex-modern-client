@@ -5,25 +5,25 @@
  */
 export class QuestCompletedEvent
 {
-	public static readonly QUEST_SEASONAL: string = 'qce_seasonal';
+    public static readonly QUEST_SEASONAL: string = 'qce_seasonal';
 
-	constructor(type: string, questData: unknown)
-	{
-		this._type = type;
-		this._questData = questData;
-	}
+    constructor(type: string, questData: unknown)
+    {
+        this._type = type;
+        this._questData = questData;
+    }
 
-	private _type: string;
+    private _type: string;
 
-	get type(): string
-	{
-		return this._type;
-	}
+    get type(): string
+    {
+        return this._type;
+    }
 
-	private _questData: unknown;
+    private _questData: unknown;
 
-	get questData(): unknown
-	{
-		return this._questData;
-	}
+    get questData(): unknown
+    {
+        return this._questData;
+    }
 }

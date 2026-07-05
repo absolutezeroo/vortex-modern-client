@@ -10,6 +10,6 @@ import {FurnitureVisualization} from './FurnitureVisualization';
 
 export class FurnitureExternalImageVisualization extends FurnitureVisualization
 {
-	// TODO: Implement external image loading from furniture_data JSON
-	// and ExtraDataManager URL resolution when available.
+    // TODO: Implement external image loading from furniture_data JSON
+    // and ExtraDataManager URL resolution when available.
 }

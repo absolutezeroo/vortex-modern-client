@@ -9,13 +9,13 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class PingMessageParser implements IMessageParser
 {
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(_wrapper: IMessageDataWrapper): boolean
-	{
-		return true;
-	}
+    parse(_wrapper: IMessageDataWrapper): boolean
+    {
+        return true;
+    }
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class KickUserMessageComposer extends MessageComposer<[number]>
 {
-	private _data: [number];
+    private _data: [number];
 
-	constructor(userId: number)
-	{
-		super();
-		this._data = [userId];
-	}
+    constructor(userId: number)
+    {
+        super();
+        this._data = [userId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

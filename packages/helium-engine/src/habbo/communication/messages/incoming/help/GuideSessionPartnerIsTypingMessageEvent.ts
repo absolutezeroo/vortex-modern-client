@@ -9,8 +9,8 @@ import {GuideSessionPartnerIsTypingMessageParser} from '../../parser/help/GuideS
  */
 export class GuideSessionPartnerIsTypingMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, GuideSessionPartnerIsTypingMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, GuideSessionPartnerIsTypingMessageParser);
+    }
 }

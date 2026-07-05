@@ -12,7 +12,7 @@ import type {ChatItem} from './data/ChatItem';
  */
 export interface IFreeFlowChatRoomSessionManager
 {
-	readonly sessionEvents: EventEmitter;
+    readonly sessionEvents: EventEmitter;
 }
 
 /**
@@ -25,53 +25,53 @@ export interface IFreeFlowChatRoomSessionManager
  */
 export interface IHabboFreeFlowChat
 {
-	/**
+    /**
 	 * Whether free flow chat is disabled in user preferences
 	 */
-	isDisabledInPreferences: boolean;
+    isDisabledInPreferences: boolean;
 
-	/**
+    /**
 	 * The user's preferred chat style ID
 	 */
-	preferedChatStyle: number;
+    preferedChatStyle: number;
 
-	/**
+    /**
 	 * Reference to the room session manager (used by handlers).
 	 * Uses IFreeFlowChatRoomSessionManager to access sessionEvents
 	 * (the correct EventEmitter, not the Component.events getter).
 	 */
-	readonly roomSessionManager: IFreeFlowChatRoomSessionManager | null;
+    readonly roomSessionManager: IFreeFlowChatRoomSessionManager | null;
 
-	/**
+    /**
 	 * Reference to the session data manager
 	 */
-	readonly sessionDataManager: ISessionDataManager | null;
+    readonly sessionDataManager: ISessionDataManager | null;
 
-	/**
+    /**
 	 * Clear the current chat flow stage
 	 */
-	clear(): void;
+    clear(): void;
 
-	/**
+    /**
 	 * Toggle the chat history visibility
 	 */
-	toggleVisibility(): void;
+    toggleVisibility(): void;
 
-	/**
+    /**
 	 * Insert a chat item into the chat system.
 	 * Adds to history buffer and (in VIEW layer) creates the visual bubble.
 	 *
 	 * @param item The chat item to insert
 	 */
-	insertChat(item: ChatItem): void;
+    insertChat(item: ChatItem): void;
 
-	/**
+    /**
 	 * Called when a room session has been created/entered
 	 */
-	roomEntered(): void;
+    roomEntered(): void;
 
-	/**
+    /**
 	 * Called when a room session has ended/left
 	 */
-	roomLeft(): void;
+    roomLeft(): void;
 }

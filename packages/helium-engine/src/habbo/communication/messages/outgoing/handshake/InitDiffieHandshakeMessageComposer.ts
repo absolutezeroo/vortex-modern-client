@@ -8,18 +8,17 @@ import {PreEncryptionMessageComposer} from '@core/communication/messages/PreEncr
  */
 export class InitDiffieHandshakeMessageComposer extends PreEncryptionMessageComposer<ConstructorParameters<typeof InitDiffieHandshakeMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof InitDiffieHandshakeMessageComposer>;
+    private _data: ConstructorParameters<typeof InitDiffieHandshakeMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

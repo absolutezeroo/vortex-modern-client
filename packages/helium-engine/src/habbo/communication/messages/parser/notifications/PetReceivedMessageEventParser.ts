@@ -12,34 +12,34 @@ import {parsePetInfoData} from '../../incoming/notifications/PetFigureDataParser
  */
 export class PetReceivedMessageEventParser implements IMessageParser
 {
-	private _boughtAsGift: boolean = false;
+    private _boughtAsGift: boolean = false;
 
-	get boughtAsGift(): boolean
-	{
-		return this._boughtAsGift;
-	}
+    get boughtAsGift(): boolean
+    {
+        return this._boughtAsGift;
+    }
 
-	private _pet: PetInfoData | null = null;
+    private _pet: PetInfoData | null = null;
 
-	get pet(): PetInfoData | null
-	{
-		return this._pet;
-	}
+    get pet(): PetInfoData | null
+    {
+        return this._pet;
+    }
 
-	flush(): boolean
-	{
-		this._boughtAsGift = false;
-		this._pet = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._boughtAsGift = false;
+        this._pet = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._boughtAsGift = wrapper.readBoolean();
-		this._pet = parsePetInfoData(wrapper);
+        this._boughtAsGift = wrapper.readBoolean();
+        this._pet = parsePetInfoData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

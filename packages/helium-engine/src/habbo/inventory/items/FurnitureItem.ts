@@ -9,231 +9,231 @@ import type {FurnitureItemData} from './FurnitureItemData';
  */
 export class FurnitureItem implements IFurnitureItem
 {
-	private _expirationTimeStamp: number;
+    private _expirationTimeStamp: number;
 
-	constructor(data: FurnitureItemData)
-	{
-		this._id = data.itemId;
-		this._ref = data.roomItemId;
-		this._type = data.itemTypeId;
-		this._category = data.category;
-		this._stuffData = data.stuffData;
-		this._extra = data.extra;
-		this._recyclable = data.isRecyclable;
-		this._tradeable = data.isTradeable;
-		this._groupable = data.isGroupable && !data.isRented;
-		this._sellable = data.isSellable;
-		this._isWallItem = data.isWallItem;
-		this._isRented = data.isRented;
-		this._secondsToExpiration = data.secondsToExpiration;
-		this._expirationTimeStamp = data.expirationTimeStamp;
-		this._hasRentPeriodStarted = data.hasRentPeriodStarted;
-		this._flatId = data.flatId;
-		this._slotId = data.slotId;
-		this._songId = data.songId;
-		this._creationDay = data.creationDay;
-		this._creationMonth = data.creationMonth;
-		this._creationYear = data.creationYear;
-	}
+    constructor(data: FurnitureItemData)
+    {
+        this._id = data.itemId;
+        this._ref = data.roomItemId;
+        this._type = data.itemTypeId;
+        this._category = data.category;
+        this._stuffData = data.stuffData;
+        this._extra = data.extra;
+        this._recyclable = data.isRecyclable;
+        this._tradeable = data.isTradeable;
+        this._groupable = data.isGroupable && !data.isRented;
+        this._sellable = data.isSellable;
+        this._isWallItem = data.isWallItem;
+        this._isRented = data.isRented;
+        this._secondsToExpiration = data.secondsToExpiration;
+        this._expirationTimeStamp = data.expirationTimeStamp;
+        this._hasRentPeriodStarted = data.hasRentPeriodStarted;
+        this._flatId = data.flatId;
+        this._slotId = data.slotId;
+        this._songId = data.songId;
+        this._creationDay = data.creationDay;
+        this._creationMonth = data.creationMonth;
+        this._creationYear = data.creationYear;
+    }
 
-	private _id: number;
+    private _id: number;
 
-	get id(): number
-	{
-		return this._id;
-	}
+    get id(): number
+    {
+        return this._id;
+    }
 
-	private _ref: number;
+    private _ref: number;
 
-	get ref(): number
-	{
-		return this._ref;
-	}
+    get ref(): number
+    {
+        return this._ref;
+    }
 
-	private _type: number;
+    private _type: number;
 
-	get type(): number
-	{
-		return this._type;
-	}
+    get type(): number
+    {
+        return this._type;
+    }
 
-	private _category: number;
+    private _category: number;
 
-	get category(): number
-	{
-		return this._category;
-	}
+    get category(): number
+    {
+        return this._category;
+    }
 
-	private _stuffData: IStuffData | null;
+    private _stuffData: IStuffData | null;
 
-	get stuffData(): IStuffData | null
-	{
-		return this._stuffData;
-	}
+    get stuffData(): IStuffData | null
+    {
+        return this._stuffData;
+    }
 
-	set stuffData(value: IStuffData | null)
-	{
-		this._stuffData = value;
-	}
+    set stuffData(value: IStuffData | null)
+    {
+        this._stuffData = value;
+    }
 
-	private _extra: number;
+    private _extra: number;
 
-	get extra(): number
-	{
-		return this._extra;
-	}
+    get extra(): number
+    {
+        return this._extra;
+    }
 
-	private _recyclable: boolean;
+    private _recyclable: boolean;
 
-	get recyclable(): boolean
-	{
-		return this._recyclable;
-	}
+    get recyclable(): boolean
+    {
+        return this._recyclable;
+    }
 
-	private _tradeable: boolean;
+    private _tradeable: boolean;
 
-	get tradeable(): boolean
-	{
-		return this._tradeable;
-	}
+    get tradeable(): boolean
+    {
+        return this._tradeable;
+    }
 
-	private _groupable: boolean;
+    private _groupable: boolean;
 
-	get groupable(): boolean
-	{
-		return this._groupable;
-	}
+    get groupable(): boolean
+    {
+        return this._groupable;
+    }
 
-	private _sellable: boolean;
+    private _sellable: boolean;
 
-	get sellable(): boolean
-	{
-		return this._sellable;
-	}
+    get sellable(): boolean
+    {
+        return this._sellable;
+    }
 
-	private _isWallItem: boolean;
+    private _isWallItem: boolean;
 
-	get isWallItem(): boolean
-	{
-		return this._isWallItem;
-	}
+    get isWallItem(): boolean
+    {
+        return this._isWallItem;
+    }
 
-	private _isRented: boolean;
+    private _isRented: boolean;
 
-	get isRented(): boolean
-	{
-		return this._isRented;
-	}
+    get isRented(): boolean
+    {
+        return this._isRented;
+    }
 
-	private _secondsToExpiration: number;
+    private _secondsToExpiration: number;
 
-	/**
+    /**
 	 * Get seconds until expiration
 	 * Calculates remaining time if rent period has started
 	 */
-	get secondsToExpiration(): number
-	{
-		if (this._secondsToExpiration === -1)
-		{
-			return -1;
-		}
+    get secondsToExpiration(): number
+    {
+        if(this._secondsToExpiration === -1)
+        {
+            return -1;
+        }
 
-		if (this._hasRentPeriodStarted)
-		{
-			const elapsed = (Date.now() - this._expirationTimeStamp) / 1000;
-			const remaining = this._secondsToExpiration - elapsed;
+        if(this._hasRentPeriodStarted)
+        {
+            const elapsed = (Date.now() - this._expirationTimeStamp) / 1000;
+            const remaining = this._secondsToExpiration - elapsed;
 
-			return Math.max(0, Math.floor(remaining));
-		}
+            return Math.max(0, Math.floor(remaining));
+        }
 
-		return this._secondsToExpiration;
-	}
+        return this._secondsToExpiration;
+    }
 
-	private _hasRentPeriodStarted: boolean;
+    private _hasRentPeriodStarted: boolean;
 
-	get hasRentPeriodStarted(): boolean
-	{
-		return this._hasRentPeriodStarted;
-	}
+    get hasRentPeriodStarted(): boolean
+    {
+        return this._hasRentPeriodStarted;
+    }
 
-	private _locked: boolean = false;
+    private _locked: boolean = false;
 
-	get locked(): boolean
-	{
-		return this._locked;
-	}
+    get locked(): boolean
+    {
+        return this._locked;
+    }
 
-	set locked(value: boolean)
-	{
-		this._locked = value;
-	}
+    set locked(value: boolean)
+    {
+        this._locked = value;
+    }
 
-	private _flatId: number;
+    private _flatId: number;
 
-	get flatId(): number
-	{
-		return this._flatId;
-	}
+    get flatId(): number
+    {
+        return this._flatId;
+    }
 
-	private _slotId: string;
+    private _slotId: string;
 
-	get slotId(): string
-	{
-		return this._slotId;
-	}
+    get slotId(): string
+    {
+        return this._slotId;
+    }
 
-	private _songId: number;
+    private _songId: number;
 
-	get songId(): number
-	{
-		return this._songId;
-	}
+    get songId(): number
+    {
+        return this._songId;
+    }
 
-	private _creationDay: number;
+    private _creationDay: number;
 
-	get creationDay(): number
-	{
-		return this._creationDay;
-	}
+    get creationDay(): number
+    {
+        return this._creationDay;
+    }
 
-	private _creationMonth: number;
+    private _creationMonth: number;
 
-	get creationMonth(): number
-	{
-		return this._creationMonth;
-	}
+    get creationMonth(): number
+    {
+        return this._creationMonth;
+    }
 
-	private _creationYear: number;
+    private _creationYear: number;
 
-	get creationYear(): number
-	{
-		return this._creationYear;
-	}
+    get creationYear(): number
+    {
+        return this._creationYear;
+    }
 
-	/**
+    /**
 	 * Update item from new data
 	 */
-	update(data: FurnitureItemData): void
-	{
-		this._ref = data.roomItemId;
-		this._type = data.itemTypeId;
-		this._category = data.category;
-		this._stuffData = data.stuffData;
-		this._extra = data.extra;
-		this._recyclable = data.isRecyclable;
-		this._tradeable = data.isTradeable;
-		this._groupable = data.isGroupable && !data.isRented;
-		this._sellable = data.isSellable;
-		this._isWallItem = data.isWallItem;
-		this._isRented = data.isRented;
-		this._secondsToExpiration = data.secondsToExpiration;
-		this._expirationTimeStamp = data.expirationTimeStamp;
-		this._hasRentPeriodStarted = data.hasRentPeriodStarted;
-		this._flatId = data.flatId;
-		this._slotId = data.slotId;
-		this._songId = data.songId;
-		this._creationDay = data.creationDay;
-		this._creationMonth = data.creationMonth;
-		this._creationYear = data.creationYear;
-	}
+    update(data: FurnitureItemData): void
+    {
+        this._ref = data.roomItemId;
+        this._type = data.itemTypeId;
+        this._category = data.category;
+        this._stuffData = data.stuffData;
+        this._extra = data.extra;
+        this._recyclable = data.isRecyclable;
+        this._tradeable = data.isTradeable;
+        this._groupable = data.isGroupable && !data.isRented;
+        this._sellable = data.isSellable;
+        this._isWallItem = data.isWallItem;
+        this._isRented = data.isRented;
+        this._secondsToExpiration = data.secondsToExpiration;
+        this._expirationTimeStamp = data.expirationTimeStamp;
+        this._hasRentPeriodStarted = data.hasRentPeriodStarted;
+        this._flatId = data.flatId;
+        this._slotId = data.slotId;
+        this._songId = data.songId;
+        this._creationDay = data.creationDay;
+        this._creationMonth = data.creationMonth;
+        this._creationYear = data.creationYear;
+    }
 }

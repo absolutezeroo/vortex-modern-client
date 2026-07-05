@@ -10,13 +10,13 @@ import type {AssetTypeDeclaration} from './AssetTypeDeclaration';
  */
 export interface IAsset extends IDisposable
 {
-	readonly url: string;
-	readonly content: unknown;
-	readonly declaration: AssetTypeDeclaration;
+    readonly url: string;
+    readonly content: unknown;
+    readonly declaration: AssetTypeDeclaration;
 
-	setUnknownContent(content: unknown): void;
+    setUnknownContent(content: unknown): void;
 
-	setFromOtherAsset(asset: IAsset): void;
+    setFromOtherAsset(asset: IAsset): void;
 
-	setParamsDesc(params: Map<string, string>): void;
+    setParamsDesc(params: Map<string, string>): void;
 }

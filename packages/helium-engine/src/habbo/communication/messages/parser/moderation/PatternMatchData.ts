@@ -7,31 +7,31 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class PatternMatchData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._pattern = wrapper.readString();
-		this._startIndex = wrapper.readInt();
-		this._endIndex = wrapper.readInt();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._pattern = wrapper.readString();
+        this._startIndex = wrapper.readInt();
+        this._endIndex = wrapper.readInt();
+    }
 
-	private _pattern: string;
+    private _pattern: string;
 
-	get pattern(): string
-	{
-		return this._pattern;
-	}
+    get pattern(): string
+    {
+        return this._pattern;
+    }
 
-	private _startIndex: number;
+    private _startIndex: number;
 
-	get startIndex(): number
-	{
-		return this._startIndex;
-	}
+    get startIndex(): number
+    {
+        return this._startIndex;
+    }
 
-	private _endIndex: number;
+    private _endIndex: number;
 
-	get endIndex(): number
-	{
-		return this._endIndex;
-	}
+    get endIndex(): number
+    {
+        return this._endIndex;
+    }
 }

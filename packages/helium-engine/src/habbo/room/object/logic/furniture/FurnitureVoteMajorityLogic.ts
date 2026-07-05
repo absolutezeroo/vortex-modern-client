@@ -13,23 +13,23 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureVoteMajorityLogic extends FurnitureMultiStateLogic
 {
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		super.processUpdateMessage(message);
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        super.processUpdateMessage(message);
 
-		const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+        const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-		if ('state' in message && 'data' in message && dataMessage.data !== null)
-		{
-			const voteData = dataMessage.data as unknown as VoteResultStuffData;
+        if('state' in message && 'data' in message && dataMessage.data !== null)
+        {
+            const voteData = dataMessage.data as unknown as VoteResultStuffData;
 
-			if (typeof voteData.result === 'number')
-			{
-				this.object?.getModelController()?.setNumber(
-					RoomObjectVariableEnum.FURNITURE_VOTE_MAJORITY_RESULT,
-					voteData.result
-				);
-			}
-		}
-	}
+            if(typeof voteData.result === 'number')
+            {
+                this.object?.getModelController()?.setNumber(
+                    RoomObjectVariableEnum.FURNITURE_VOTE_MAJORITY_RESULT,
+                    voteData.result
+                );
+            }
+        }
+    }
 }

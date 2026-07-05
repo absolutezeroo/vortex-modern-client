@@ -8,44 +8,44 @@
  */
 export class TextStyle
 {
-	public static readonly NORMAL: string = 'normal';
-	public static readonly ITALIC: string = 'italic';
-	public static readonly BOLD: string = 'bold';
-	public static readonly UNDERLINE: string = 'underline';
-	public static readonly NONE: string = 'none';
-	public static readonly ADVANCED: string = 'advanced';
-	public static readonly TOP_LEFT: string = 'top-left';
-	public static readonly TOP: string = 'top';
-	public static readonly TOP_RIGHT: string = 'top-right';
-	public static readonly LEFT: string = 'left';
-	public static readonly RIGHT: string = 'right';
-	public static readonly BOTTOM_LEFT: string = 'bottom-left';
-	public static readonly BOTTOM: string = 'bottom';
-	public static readonly BOTTOM_RIGHT: string = 'bottom-right';
+    public static readonly NORMAL: string = 'normal';
+    public static readonly ITALIC: string = 'italic';
+    public static readonly BOLD: string = 'bold';
+    public static readonly UNDERLINE: string = 'underline';
+    public static readonly NONE: string = 'none';
+    public static readonly ADVANCED: string = 'advanced';
+    public static readonly TOP_LEFT: string = 'top-left';
+    public static readonly TOP: string = 'top';
+    public static readonly TOP_RIGHT: string = 'top-right';
+    public static readonly LEFT: string = 'left';
+    public static readonly RIGHT: string = 'right';
+    public static readonly BOTTOM_LEFT: string = 'bottom-left';
+    public static readonly BOTTOM: string = 'bottom';
+    public static readonly BOTTOM_RIGHT: string = 'bottom-right';
 
-	public name: string = '';
-	public color: number | null = null;
-	public fontFamily: string | null = null;
-	public fontSize: number | null = null;
-	public fontStyle: string | null = null;
-	public fontWeight: string | null = null;
-	public kerning: boolean | null = null;
-	public leading: number | null = null;
-	public letterSpacing: number | null = null;
-	public textDecoration: string | null = null;
-	public textIndent: number | null = null;
-	public antiAliasType: string | null = null;
-	public sharpness: number | null = null;
-	public thickness: number | null = null;
-	public etchingColor: number | null = null;
-	public etchingPosition: string | null = null;
+    public name: string = '';
+    public color: number | null = null;
+    public fontFamily: string | null = null;
+    public fontSize: number | null = null;
+    public fontStyle: string | null = null;
+    public fontWeight: string | null = null;
+    public kerning: boolean | null = null;
+    public leading: number | null = null;
+    public letterSpacing: number | null = null;
+    public textDecoration: string | null = null;
+    public textIndent: number | null = null;
+    public antiAliasType: string | null = null;
+    public sharpness: number | null = null;
+    public thickness: number | null = null;
+    public etchingColor: number | null = null;
+    public etchingPosition: string | null = null;
 
-	/**
+    /**
 	 * Compares all style properties (excluding name) for equality.
 	 */
-	public equals(other: TextStyle): boolean
-	{
-		return this.color === other.color
+    public equals(other: TextStyle): boolean
+    {
+        return this.color === other.color
 			&& this.fontFamily === other.fontFamily
 			&& this.fontSize === other.fontSize
 			&& this.fontStyle === other.fontStyle
@@ -60,60 +60,60 @@ export class TextStyle
 			&& this.thickness === other.thickness
 			&& this.etchingColor === other.etchingColor
 			&& this.etchingPosition === other.etchingPosition;
-	}
+    }
 
-	/**
+    /**
 	 * Creates a deep copy of this style.
 	 */
-	public clone(): TextStyle
-	{
-		const copy = new TextStyle();
+    public clone(): TextStyle
+    {
+        const copy = new TextStyle();
 
-		copy.name = this.name;
-		copy.color = this.color;
-		copy.fontFamily = this.fontFamily;
-		copy.fontSize = this.fontSize;
-		copy.fontStyle = this.fontStyle;
-		copy.fontWeight = this.fontWeight;
-		copy.kerning = this.kerning;
-		copy.leading = this.leading;
-		copy.letterSpacing = this.letterSpacing;
-		copy.textDecoration = this.textDecoration;
-		copy.textIndent = this.textIndent;
-		copy.antiAliasType = this.antiAliasType;
-		copy.sharpness = this.sharpness;
-		copy.thickness = this.thickness;
-		copy.etchingColor = this.etchingColor;
-		copy.etchingPosition = this.etchingPosition;
+        copy.name = this.name;
+        copy.color = this.color;
+        copy.fontFamily = this.fontFamily;
+        copy.fontSize = this.fontSize;
+        copy.fontStyle = this.fontStyle;
+        copy.fontWeight = this.fontWeight;
+        copy.kerning = this.kerning;
+        copy.leading = this.leading;
+        copy.letterSpacing = this.letterSpacing;
+        copy.textDecoration = this.textDecoration;
+        copy.textIndent = this.textIndent;
+        copy.antiAliasType = this.antiAliasType;
+        copy.sharpness = this.sharpness;
+        copy.thickness = this.thickness;
+        copy.etchingColor = this.etchingColor;
+        copy.etchingPosition = this.etchingPosition;
 
-		return copy;
-	}
+        return copy;
+    }
 
-	/**
+    /**
 	 * Returns a CSS-like string representation for debugging.
 	 */
-	public toString(): string
-	{
-		let out = this.name + ' {\n';
+    public toString(): string
+    {
+        let out = this.name + ' {\n';
 
-		if (this.color != null) out += `\tcolor: #${this.color.toString(16).padStart(6, '0')};\n`;
-		if (this.fontFamily != null) out += `\tfont-family: ${this.fontFamily};\n`;
-		if (this.fontSize != null) out += `\tfont-size: ${this.fontSize};\n`;
-		if (this.fontStyle != null) out += `\tfont-style: ${this.fontStyle};\n`;
-		if (this.fontWeight != null) out += `\tfont-weight: ${this.fontWeight};\n`;
-		if (this.kerning != null) out += `\tkerning: ${this.kerning};\n`;
-		if (this.leading != null) out += `\tleading: ${this.leading};\n`;
-		if (this.letterSpacing != null) out += `\tletter-spacing: ${this.letterSpacing};\n`;
-		if (this.textDecoration != null) out += `\ttext-decoration: ${this.textDecoration};\n`;
-		if (this.textIndent != null) out += `\ttext-indent: ${this.textIndent};\n`;
-		if (this.antiAliasType != null) out += `\tanti-alias-type: ${this.antiAliasType};\n`;
-		if (this.sharpness != null) out += `\tsharpness: ${this.sharpness};\n`;
-		if (this.thickness != null) out += `\tthickness: ${this.thickness};\n`;
-		if (this.etchingColor != null) out += `\tetching-color: #${this.etchingColor.toString(16).padStart(8, '0')};\n`;
-		if (this.etchingPosition != null) out += `\tetching-position: ${this.etchingPosition};\n`;
+        if(this.color != null) out += `\tcolor: #${this.color.toString(16).padStart(6, '0')};\n`;
+        if(this.fontFamily != null) out += `\tfont-family: ${this.fontFamily};\n`;
+        if(this.fontSize != null) out += `\tfont-size: ${this.fontSize};\n`;
+        if(this.fontStyle != null) out += `\tfont-style: ${this.fontStyle};\n`;
+        if(this.fontWeight != null) out += `\tfont-weight: ${this.fontWeight};\n`;
+        if(this.kerning != null) out += `\tkerning: ${this.kerning};\n`;
+        if(this.leading != null) out += `\tleading: ${this.leading};\n`;
+        if(this.letterSpacing != null) out += `\tletter-spacing: ${this.letterSpacing};\n`;
+        if(this.textDecoration != null) out += `\ttext-decoration: ${this.textDecoration};\n`;
+        if(this.textIndent != null) out += `\ttext-indent: ${this.textIndent};\n`;
+        if(this.antiAliasType != null) out += `\tanti-alias-type: ${this.antiAliasType};\n`;
+        if(this.sharpness != null) out += `\tsharpness: ${this.sharpness};\n`;
+        if(this.thickness != null) out += `\tthickness: ${this.thickness};\n`;
+        if(this.etchingColor != null) out += `\tetching-color: #${this.etchingColor.toString(16).padStart(8, '0')};\n`;
+        if(this.etchingPosition != null) out += `\tetching-position: ${this.etchingPosition};\n`;
 
-		out += '}';
+        out += '}';
 
-		return out;
-	}
+        return out;
+    }
 }

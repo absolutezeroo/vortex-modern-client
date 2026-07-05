@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetSecondsUntilMessageComposer extends MessageComposer<ConstructorParameters<typeof GetSecondsUntilMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetSecondsUntilMessageComposer>;
+    private _data: ConstructorParameters<typeof GetSecondsUntilMessageComposer>;
 
-	constructor(goalCode: string)
-	{
-		super();
+    constructor(goalCode: string)
+    {
+        super();
 
-		this._data = [goalCode];
-	}
+        this._data = [goalCode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

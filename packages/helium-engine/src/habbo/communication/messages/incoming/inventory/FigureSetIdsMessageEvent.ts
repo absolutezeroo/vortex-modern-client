@@ -9,8 +9,8 @@ import {FigureSetIdsMessageParser} from '../../parser/inventory/FigureSetIdsMess
  */
 export class FigureSetIdsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FigureSetIdsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FigureSetIdsMessageParser);
+    }
 }

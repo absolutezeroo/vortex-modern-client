@@ -9,16 +9,16 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectAvatarPlayerValueUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(value: number)
-	{
-		super(null, null);
-		this._value = value;
-	}
+    constructor(value: number)
+    {
+        super(null, null);
+        this._value = value;
+    }
 
-	private _value: number;
+    private _value: number;
 
-	get value(): number
-	{
-		return this._value;
-	}
+    get value(): number
+    {
+        return this._value;
+    }
 }

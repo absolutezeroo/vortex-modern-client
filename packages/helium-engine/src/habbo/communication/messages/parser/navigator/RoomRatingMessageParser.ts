@@ -8,31 +8,31 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomRatingMessageParser implements IMessageParser
 {
-	private _rating: number = 0;
+    private _rating: number = 0;
 
-	get rating(): number
-	{
-		return this._rating;
-	}
+    get rating(): number
+    {
+        return this._rating;
+    }
 
-	private _canRate: boolean = false;
+    private _canRate: boolean = false;
 
-	get canRate(): boolean
-	{
-		return this._canRate;
-	}
+    get canRate(): boolean
+    {
+        return this._canRate;
+    }
 
-	flush(): boolean
-	{
-		this._rating = 0;
-		this._canRate = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._rating = 0;
+        this._canRate = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._rating = wrapper.readInt();
-		this._canRate = wrapper.readBoolean();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._rating = wrapper.readInt();
+        this._canRate = wrapper.readBoolean();
+        return true;
+    }
 }

@@ -16,551 +16,551 @@ import type {AssetLoaderStruct} from './AssetLoaderStruct';
  */
 export class AssetLibraryCollection extends Component implements IAssetLibrary
 {
-	protected readonly _libraries: IAssetLibrary[] = [];
-	protected readonly _pendingLibraries: IAssetLibrary[] = [];
-	protected readonly _collectionEvents: EventEmitter = new EventEmitter();
-	private readonly _name: string;
-	private _libraryCounter: number = 0;
+    protected readonly _libraries: IAssetLibrary[] = [];
+    protected readonly _pendingLibraries: IAssetLibrary[] = [];
+    protected readonly _collectionEvents: EventEmitter = new EventEmitter();
+    private readonly _name: string;
+    private _libraryCounter: number = 0;
 
-	constructor(context: IContext, name: string = 'AssetLibraryCollection')
-	{
-		super(context);
-		this._name = name;
-	}
+    constructor(context: IContext, name: string = 'AssetLibraryCollection')
+    {
+        super(context);
+        this._name = name;
+    }
 
-	private _manifest: object | null = null;
+    private _manifest: object | null = null;
 
-	/**
+    /**
 	 * The manifest (builds a combined manifest)
 	 */
-	get manifest(): object | null
-	{
-		return this._manifest ?? {};
-	}
+    get manifest(): object | null
+    {
+        return this._manifest ?? {};
+    }
 
-	/**
+    /**
 	 * Collection-level event emitter
 	 */
-	get collectionEvents(): EventEmitter
-	{
-		return this._collectionEvents;
-	}
+    get collectionEvents(): EventEmitter
+    {
+        return this._collectionEvents;
+    }
 
-	/**
+    /**
 	 * The URL (empty for collections)
 	 */
-	get url(): string
-	{
-		return '';
-	}
+    get url(): string
+    {
+        return '';
+    }
 
-	/**
+    /**
 	 * The name of this collection
 	 */
-	get name(): string
-	{
-		return this._name;
-	}
+    get name(): string
+    {
+        return this._name;
+    }
 
-	/**
+    /**
 	 * Whether all libraries are ready
 	 */
-	get isReady(): boolean
-	{
-		return this._pendingLibraries.length === 0;
-	}
+    get isReady(): boolean
+    {
+        return this._pendingLibraries.length === 0;
+    }
 
-	/**
+    /**
 	 * Total number of assets across all libraries
 	 */
-	get numAssets(): number
-	{
-		let total = 0;
+    get numAssets(): number
+    {
+        let total = 0;
 
-		for (const lib of this._libraries)
-		{
-			total += lib.numAssets;
-		}
+        for(const lib of this._libraries)
+        {
+            total += lib.numAssets;
+        }
 
-		return total;
-	}
+        return total;
+    }
 
-	/**
+    /**
 	 * Combined array of all asset names
 	 */
-	get nameArray(): string[]
-	{
-		const names: string[] = [];
+    get nameArray(): string[]
+    {
+        const names: string[] = [];
 
-		for (const lib of this._libraries)
-		{
-			names.push(...lib.nameArray);
-		}
+        for(const lib of this._libraries)
+        {
+            names.push(...lib.nameArray);
+        }
 
-		return names;
-	}
+        return names;
+    }
 
-	protected _binLibrary: AssetLibrary | null = null;
+    protected _binLibrary: AssetLibrary | null = null;
 
-	/**
+    /**
 	 * Get the bin library (lazy creation)
 	 */
-	private get binLibrary(): AssetLibrary
-	{
-		if (!this._binLibrary)
-		{
-			this._binLibrary = new AssetLibrary(this.context, 'bin');
-			this._libraries.unshift(this._binLibrary);
-		}
+    private get binLibrary(): AssetLibrary
+    {
+        if(!this._binLibrary)
+        {
+            this._binLibrary = new AssetLibrary(this.context, 'bin');
+            this._libraries.unshift(this._binLibrary);
+        }
 
-		return this._binLibrary;
-	}
+        return this._binLibrary;
+    }
 
-	/**
+    /**
 	 * Dispose of the collection
 	 */
-	override dispose(): void
-	{
-		if (!this.disposed)
-		{
-			// Dispose pending libraries
-			while (this._pendingLibraries.length > 0)
-			{
-				const lib = this._pendingLibraries.pop()!;
-				lib.dispose();
-			}
+    override dispose(): void
+    {
+        if(!this.disposed)
+        {
+            // Dispose pending libraries
+            while(this._pendingLibraries.length > 0)
+            {
+                const lib = this._pendingLibraries.pop()!;
+                lib.dispose();
+            }
 
-			// Dispose loaded libraries
-			while (this._libraries.length > 0)
-			{
-				const lib = this._libraries.pop()!;
-				lib.dispose();
-			}
+            // Dispose loaded libraries
+            while(this._libraries.length > 0)
+            {
+                const lib = this._libraries.pop()!;
+                lib.dispose();
+            }
 
-			this._binLibrary = null;
-			this._collectionEvents.removeAllListeners();
+            this._binLibrary = null;
+            this._collectionEvents.removeAllListeners();
 
-			super.dispose();
-		}
-	}
+            super.dispose();
+        }
+    }
 
-	/**
+    /**
 	 * Load a library from a URL and add it to the collection
 	 */
-	async loadFromUrl(url: string, isReady: boolean = false): Promise<void>
-	{
-		const library = new AssetLibrary(this.context, `lib-${this._libraryCounter++}`);
-		this._pendingLibraries.push(library);
+    async loadFromUrl(url: string, isReady: boolean = false): Promise<void>
+    {
+        const library = new AssetLibrary(this.context, `lib-${this._libraryCounter++}`);
+        this._pendingLibraries.push(library);
 
-		try
-		{
-			await library.loadFromUrl(url, isReady);
+        try
+        {
+            await library.loadFromUrl(url, isReady);
 
-			// Move from pending to loaded
-			const index = this._pendingLibraries.indexOf(library);
+            // Move from pending to loaded
+            const index = this._pendingLibraries.indexOf(library);
 
-			if (index >= 0)
-			{
-				this._pendingLibraries.splice(index, 1);
-			}
+            if(index >= 0)
+            {
+                this._pendingLibraries.splice(index, 1);
+            }
 
-			this._libraries.push(library);
+            this._libraries.push(library);
 
-			// Emit loaded event if all pending are done
-			if (this._pendingLibraries.length === 0)
-			{
-				this._collectionEvents.emit(AssetLibraryEvents.LOADED);
-			}
-		}
-		catch (error)
-		{
-			// Remove from pending on error
-			const index = this._pendingLibraries.indexOf(library);
+            // Emit loaded event if all pending are done
+            if(this._pendingLibraries.length === 0)
+            {
+                this._collectionEvents.emit(AssetLibraryEvents.LOADED);
+            }
+        }
+        catch (error)
+        {
+            // Remove from pending on error
+            const index = this._pendingLibraries.indexOf(library);
 
-			if (index >= 0)
-			{
-				this._pendingLibraries.splice(index, 1);
-			}
+            if(index >= 0)
+            {
+                this._pendingLibraries.splice(index, 1);
+            }
 
-			library.dispose();
-			throw error;
-		}
-	}
+            library.dispose();
+            throw error;
+        }
+    }
 
-	/**
+    /**
 	 * Load from resource (delegates to bin library)
 	 */
-	loadFromResource(manifest: object, resourceData: unknown): boolean
-	{
-		return this.binLibrary.loadFromResource(manifest, resourceData);
-	}
+    loadFromResource(manifest: object, resourceData: unknown): boolean
+    {
+        return this.binLibrary.loadFromResource(manifest, resourceData);
+    }
 
-	/**
+    /**
 	 * Unload all libraries
 	 */
-	unload(): void
-	{
-		while (this._pendingLibraries.length > 0)
-		{
-			const lib = this._pendingLibraries.pop()!;
-			lib.dispose();
-		}
+    unload(): void
+    {
+        while(this._pendingLibraries.length > 0)
+        {
+            const lib = this._pendingLibraries.pop()!;
+            lib.dispose();
+        }
 
-		while (this._libraries.length > 0)
-		{
-			const lib = this._libraries.pop()!;
-			lib.dispose();
-		}
+        while(this._libraries.length > 0)
+        {
+            const lib = this._libraries.pop()!;
+            lib.dispose();
+        }
 
-		this._binLibrary = null;
-	}
+        this._binLibrary = null;
+    }
 
-	/**
+    /**
 	 * Load an asset from file (delegates to bin library)
 	 */
-	loadAssetFromFile(name: string, url: string, mimeType?: string, id?: number): AssetLoaderStruct
-	{
-		return this.binLibrary.loadAssetFromFile(name, url, mimeType, id);
-	}
+    loadAssetFromFile(name: string, url: string, mimeType?: string, id?: number): AssetLoaderStruct
+    {
+        return this.binLibrary.loadAssetFromFile(name, url, mimeType, id);
+    }
 
-	/**
+    /**
 	 * Check if a library exists by name
 	 */
-	hasAssetLibrary(name: string): boolean
-	{
-		for (const lib of this._libraries)
-		{
-			if (lib.name === name)
-			{
-				return true;
-			}
-		}
+    hasAssetLibrary(name: string): boolean
+    {
+        for(const lib of this._libraries)
+        {
+            if(lib.name === name)
+            {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
 	 * Get a library by name
 	 */
-	getAssetLibraryByName(name: string): IAssetLibrary | null
-	{
-		for (const lib of this._libraries)
-		{
-			if (lib.name === name)
-			{
-				return lib;
-			}
-		}
+    getAssetLibraryByName(name: string): IAssetLibrary | null
+    {
+        for(const lib of this._libraries)
+        {
+            if(lib.name === name)
+            {
+                return lib;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get a library by URL
 	 */
-	getAssetLibraryByUrl(url: string): IAssetLibrary | null
-	{
-		for (const lib of this._libraries)
-		{
-			if (lib.url === url)
-			{
-				return lib;
-			}
-		}
+    getAssetLibraryByUrl(url: string): IAssetLibrary | null
+    {
+        for(const lib of this._libraries)
+        {
+            if(lib.url === url)
+            {
+                return lib;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get a library by partial URL match
 	 */
-	getAssetLibraryByPartialUrl(partialUrl: string): IAssetLibrary | null
-	{
-		for (const lib of this._libraries)
-		{
-			if (lib.url && lib.url.includes(partialUrl))
-			{
-				return lib;
-			}
-		}
+    getAssetLibraryByPartialUrl(partialUrl: string): IAssetLibrary | null
+    {
+        for(const lib of this._libraries)
+        {
+            if(lib.url && lib.url.includes(partialUrl))
+            {
+                return lib;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Add a library to the collection
 	 */
-	addAssetLibrary(library: IAssetLibrary): void
-	{
-		if (!this._libraries.includes(library))
-		{
-			this._libraries.push(library);
-		}
-	}
+    addAssetLibrary(library: IAssetLibrary): void
+    {
+        if(!this._libraries.includes(library))
+        {
+            this._libraries.push(library);
+        }
+    }
 
-	/**
+    /**
 	 * Remove a library from the collection
 	 */
-	removeAssetLibrary(library: IAssetLibrary): void
-	{
-		const index = this._libraries.indexOf(library);
+    removeAssetLibrary(library: IAssetLibrary): void
+    {
+        const index = this._libraries.indexOf(library);
 
-		if (index >= 0)
-		{
-			this._libraries.splice(index, 1);
-		}
-	}
+        if(index >= 0)
+        {
+            this._libraries.splice(index, 1);
+        }
+    }
 
-	/**
+    /**
 	 * Get an asset by name (searches all libraries)
 	 */
-	getAssetByName(name: string): IAsset | null
-	{
-		for (const lib of this._libraries)
-		{
-			const asset = lib.getAssetByName(name);
+    getAssetByName(name: string): IAsset | null
+    {
+        for(const lib of this._libraries)
+        {
+            const asset = lib.getAssetByName(name);
 
-			if (asset)
-			{
-				return asset;
-			}
-		}
+            if(asset)
+            {
+                return asset;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get all assets with a given name (from all libraries)
 	 */
-	getAssetsByName(name: string): IAsset[]
-	{
-		const assets: IAsset[] = [];
+    getAssetsByName(name: string): IAsset[]
+    {
+        const assets: IAsset[] = [];
 
-		for (const lib of this._libraries)
-		{
-			const asset = lib.getAssetByName(name);
+        for(const lib of this._libraries)
+        {
+            const asset = lib.getAssetByName(name);
 
-			if (asset)
-			{
-				assets.push(asset);
-			}
-		}
+            if(asset)
+            {
+                assets.push(asset);
+            }
+        }
 
-		return assets;
-	}
+        return assets;
+    }
 
-	/**
+    /**
 	 * Get an asset by content
 	 */
-	getAssetByContent(content: unknown): IAsset | null
-	{
-		for (const lib of this._libraries)
-		{
-			const asset = lib.getAssetByContent(content);
+    getAssetByContent(content: unknown): IAsset | null
+    {
+        for(const lib of this._libraries)
+        {
+            const asset = lib.getAssetByContent(content);
 
-			if (asset)
-			{
-				return asset;
-			}
-		}
+            if(asset)
+            {
+                return asset;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get an asset by index
 	 */
-	getAssetByIndex(index: number): IAsset | null
-	{
-		let current = 0;
+    getAssetByIndex(index: number): IAsset | null
+    {
+        let current = 0;
 
-		for (const lib of this._libraries)
-		{
-			const libCount = lib.numAssets;
+        for(const lib of this._libraries)
+        {
+            const libCount = lib.numAssets;
 
-			if (current + libCount > index)
-			{
-				return lib.getAssetByIndex(index - current);
-			}
+            if(current + libCount > index)
+            {
+                return lib.getAssetByIndex(index - current);
+            }
 
-			current += libCount;
-		}
+            current += libCount;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get the index of an asset
 	 */
-	getAssetIndex(asset: IAsset): number
-	{
-		let offset = 0;
+    getAssetIndex(asset: IAsset): number
+    {
+        let offset = 0;
 
-		for (const lib of this._libraries)
-		{
-			const localIndex = lib.getAssetIndex(asset);
+        for(const lib of this._libraries)
+        {
+            const localIndex = lib.getAssetIndex(asset);
 
-			if (localIndex !== -1)
-			{
-				return offset + localIndex;
-			}
+            if(localIndex !== -1)
+            {
+                return offset + localIndex;
+            }
 
-			offset += lib.numAssets;
-		}
+            offset += lib.numAssets;
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	/**
+    /**
 	 * Check if an asset exists
 	 */
-	hasAsset(name: string): boolean
-	{
-		for (const lib of this._libraries)
-		{
-			if (lib.hasAsset(name))
-			{
-				return true;
-			}
-		}
+    hasAsset(name: string): boolean
+    {
+        for(const lib of this._libraries)
+        {
+            if(lib.hasAsset(name))
+            {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
 	 * Set an asset (delegates to bin library)
 	 */
-	setAsset(name: string, asset: IAsset, overwrite?: boolean): boolean
-	{
-		return this.binLibrary.setAsset(name, asset, overwrite);
-	}
+    setAsset(name: string, asset: IAsset, overwrite?: boolean): boolean
+    {
+        return this.binLibrary.setAsset(name, asset, overwrite);
+    }
 
-	/**
+    /**
 	 * Create an asset (delegates to bin library)
 	 */
-	createAsset(name: string, declaration: AssetTypeDeclaration): IAsset | null
-	{
-		return this.binLibrary.createAsset(name, declaration);
-	}
+    createAsset(name: string, declaration: AssetTypeDeclaration): IAsset | null
+    {
+        return this.binLibrary.createAsset(name, declaration);
+    }
 
-	/**
+    /**
 	 * Remove an asset
 	 */
-	removeAsset(asset: IAsset): IAsset | null
-	{
-		for (const lib of this._libraries)
-		{
-			const removed = lib.removeAsset(asset);
+    removeAsset(asset: IAsset): IAsset | null
+    {
+        for(const lib of this._libraries)
+        {
+            const removed = lib.removeAsset(asset);
 
-			if (removed === asset)
-			{
-				return asset;
-			}
-		}
+            if(removed === asset)
+            {
+                return asset;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Register a type declaration (delegates to bin library)
 	 */
-	registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared?: boolean): boolean
-	{
-		return this.binLibrary.registerAssetTypeDeclaration(declaration, isShared);
-	}
+    registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared?: boolean): boolean
+    {
+        return this.binLibrary.registerAssetTypeDeclaration(declaration, isShared);
+    }
 
-	/**
+    /**
 	 * Get type declaration by MIME type
 	 */
-	getAssetTypeDeclarationByMimeType(mimeType: string, checkShared: boolean = true): AssetTypeDeclaration | null
-	{
-		if (checkShared)
-		{
-			return this.binLibrary.getAssetTypeDeclarationByMimeType(mimeType, true);
-		}
+    getAssetTypeDeclarationByMimeType(mimeType: string, checkShared: boolean = true): AssetTypeDeclaration | null
+    {
+        if(checkShared)
+        {
+            return this.binLibrary.getAssetTypeDeclarationByMimeType(mimeType, true);
+        }
 
-		for (const lib of this._libraries)
-		{
-			const decl = lib.getAssetTypeDeclarationByMimeType(mimeType, false);
+        for(const lib of this._libraries)
+        {
+            const decl = lib.getAssetTypeDeclarationByMimeType(mimeType, false);
 
-			if (decl)
-			{
-				return decl;
-			}
-		}
+            if(decl)
+            {
+                return decl;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get type declaration by asset class
 	 */
-	getAssetTypeDeclarationByClass(assetClass: new (...args: unknown[]) => IAsset, checkShared: boolean = true): AssetTypeDeclaration | null
-	{
-		if (checkShared)
-		{
-			return this.binLibrary.getAssetTypeDeclarationByClass(assetClass, true);
-		}
+    getAssetTypeDeclarationByClass(assetClass: new (...args: unknown[]) => IAsset, checkShared: boolean = true): AssetTypeDeclaration | null
+    {
+        if(checkShared)
+        {
+            return this.binLibrary.getAssetTypeDeclarationByClass(assetClass, true);
+        }
 
-		for (const lib of this._libraries)
-		{
-			const decl = lib.getAssetTypeDeclarationByClass(assetClass, false);
+        for(const lib of this._libraries)
+        {
+            const decl = lib.getAssetTypeDeclarationByClass(assetClass, false);
 
-			if (decl)
-			{
-				return decl;
-			}
-		}
+            if(decl)
+            {
+                return decl;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get type declaration by filename
 	 */
-	getAssetTypeDeclarationByFileName(fileName: string, checkShared: boolean = true): AssetTypeDeclaration | null
-	{
-		if (checkShared)
-		{
-			return this.binLibrary.getAssetTypeDeclarationByFileName(fileName, true);
-		}
+    getAssetTypeDeclarationByFileName(fileName: string, checkShared: boolean = true): AssetTypeDeclaration | null
+    {
+        if(checkShared)
+        {
+            return this.binLibrary.getAssetTypeDeclarationByFileName(fileName, true);
+        }
 
-		for (const lib of this._libraries)
-		{
-			const decl = lib.getAssetTypeDeclarationByFileName(fileName, false);
+        for(const lib of this._libraries)
+        {
+            const decl = lib.getAssetTypeDeclarationByFileName(fileName, false);
 
-			if (decl)
-			{
-				return decl;
-			}
-		}
+            if(decl)
+            {
+                return decl;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get all manifests from all libraries
 	 */
-	getManifests(): object[]
-	{
-		const manifests: object[] = [];
+    getManifests(): object[]
+    {
+        const manifests: object[] = [];
 
-		for (const lib of this._libraries)
-		{
-			if (lib.manifest)
-			{
-				manifests.push(lib.manifest);
-			}
-		}
+        for(const lib of this._libraries)
+        {
+            if(lib.manifest)
+            {
+                manifests.push(lib.manifest);
+            }
+        }
 
-		return manifests;
-	}
+        return manifests;
+    }
 
-	/**
+    /**
 	 * String representation
 	 */
-	override toString(): string
-	{
-		return `[AssetLibraryCollection ${this._name} libraries=${this._libraries.length} assets=${this.numAssets}]`;
-	}
+    override toString(): string
+    {
+        return `[AssetLibraryCollection ${this._name} libraries=${this._libraries.length} assets=${this.numAssets}]`;
+    }
 }

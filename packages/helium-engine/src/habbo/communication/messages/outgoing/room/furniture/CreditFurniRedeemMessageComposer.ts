@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CreditFurniRedeemMessageComposer extends MessageComposer<ConstructorParameters<typeof CreditFurniRedeemMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof CreditFurniRedeemMessageComposer>;
+    private _data: ConstructorParameters<typeof CreditFurniRedeemMessageComposer>;
 
-	constructor(objectId: number)
-	{
-		super();
-		this._data = [objectId];
-	}
+    constructor(objectId: number)
+    {
+        super();
+        this._data = [objectId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

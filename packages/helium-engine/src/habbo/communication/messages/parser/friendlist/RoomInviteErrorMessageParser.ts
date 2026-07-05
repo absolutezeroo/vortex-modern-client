@@ -9,43 +9,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomInviteErrorMessageParser implements IMessageParser
 {
-	private _errorCode: number = 0;
+    private _errorCode: number = 0;
 
-	get errorCode(): number
-	{
-		return this._errorCode;
-	}
+    get errorCode(): number
+    {
+        return this._errorCode;
+    }
 
-	private _failedRecipients: number[] = [];
+    private _failedRecipients: number[] = [];
 
-	get failedRecipients(): number[]
-	{
-		return this._failedRecipients;
-	}
+    get failedRecipients(): number[]
+    {
+        return this._failedRecipients;
+    }
 
-	flush(): boolean
-	{
-		this._errorCode = 0;
-		this._failedRecipients = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._errorCode = 0;
+        this._failedRecipients = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._errorCode = wrapper.readInt();
+        this._errorCode = wrapper.readInt();
 
-		if (this._errorCode === 1)
-		{
-			const count = wrapper.readInt();
+        if(this._errorCode === 1)
+        {
+            const count = wrapper.readInt();
 
-			for (let i = 0; i < count; i++)
-			{
-				this._failedRecipients.push(wrapper.readInt());
-			}
-		}
+            for(let i = 0; i < count; i++)
+            {
+                this._failedRecipients.push(wrapper.readInt());
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

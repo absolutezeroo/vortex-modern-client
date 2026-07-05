@@ -8,43 +8,43 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class EmailStatusResultParser implements IMessageParser
 {
-	private _email: string = '';
+    private _email: string = '';
 
-	get email(): string
-	{
-		return this._email;
-	}
+    get email(): string
+    {
+        return this._email;
+    }
 
-	private _isVerified: boolean = false;
+    private _isVerified: boolean = false;
 
-	get isVerified(): boolean
-	{
-		return this._isVerified;
-	}
+    get isVerified(): boolean
+    {
+        return this._isVerified;
+    }
 
-	private _allowChange: boolean = false;
+    private _allowChange: boolean = false;
 
-	get allowChange(): boolean
-	{
-		return this._allowChange;
-	}
+    get allowChange(): boolean
+    {
+        return this._allowChange;
+    }
 
-	flush(): boolean
-	{
-		this._email = '';
-		this._isVerified = false;
-		this._allowChange = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._email = '';
+        this._isVerified = false;
+        this._allowChange = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._email = wrapper.readString();
-		this._isVerified = wrapper.readBoolean();
-		this._allowChange = wrapper.readBoolean();
+        this._email = wrapper.readString();
+        this._isVerified = wrapper.readBoolean();
+        this._allowChange = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

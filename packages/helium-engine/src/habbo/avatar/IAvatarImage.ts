@@ -11,54 +11,54 @@ import type {IPartColor} from './structure/figure/IPartColor';
  */
 export interface IAvatarImage
 {
-	readonly avatarSpriteData: IAvatarDataContainer | null;
-	readonly animationHasResetOnToggle: boolean;
-	readonly mainAction: string;
-	disposed?: boolean;
+    readonly avatarSpriteData: IAvatarDataContainer | null;
+    readonly animationHasResetOnToggle: boolean;
+    readonly mainAction: string;
+    disposed?: boolean;
 
-	getCroppedImage(setType: string, scale?: number): any;
+    getCroppedImage(setType: string, scale?: number): any;
 
-	getImage(setType: string, hightlight: boolean, scale?: number): any;
+    getImage(setType: string, hightlight: boolean, scale?: number): any;
 
-	getServerRenderData(): any[];
+    getServerRenderData(): any[];
 
-	setDirection(setType: string, direction: number): void;
+    setDirection(setType: string, direction: number): void;
 
-	setDirectionAngle(setType: string, angle: number): void;
+    setDirectionAngle(setType: string, angle: number): void;
 
-	updateAnimationByFrames(frames?: number): void;
+    updateAnimationByFrames(frames?: number): void;
 
-	getScale(): string;
+    getScale(): string;
 
-	getSprites(): ISpriteDataContainer[];
+    getSprites(): ISpriteDataContainer[];
 
-	getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null;
+    getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null;
 
-	getAsset(name: string): any;
+    getAsset(name: string): any;
 
-	getDirection(): number;
+    getDirection(): number;
 
-	getFigure(): IAvatarFigureContainer;
+    getFigure(): IAvatarFigureContainer;
 
-	getPartColor(partType: string): IPartColor | null;
+    getPartColor(partType: string): IPartColor | null;
 
-	isAnimating(): boolean;
+    isAnimating(): boolean;
 
-	getCanvasOffsets(): number[];
+    getCanvasOffsets(): number[];
 
-	initActionAppends(): void;
+    initActionAppends(): void;
 
-	endActionAppends(): void;
+    endActionAppends(): void;
 
-	appendAction(actionType: string, ...args: any[]): boolean;
+    appendAction(actionType: string, ...args: any[]): boolean;
 
-	isPlaceholder(): boolean;
+    isPlaceholder(): boolean;
 
-	forceActionUpdate(): void;
+    forceActionUpdate(): void;
 
-	resetAnimationFrameCounter(): void;
+    resetAnimationFrameCounter(): void;
 
-	disposeInactiveActionCache(): void;
+    disposeInactiveActionCache(): void;
 
-	dispose(): void;
+    dispose(): void;
 }

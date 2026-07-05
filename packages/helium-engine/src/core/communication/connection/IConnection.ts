@@ -11,115 +11,115 @@ import type {IMessageConfiguration} from '../messages/IMessageConfiguration';
  */
 export interface IConnection extends IDisposable
 {
-	/**
+    /**
 	 * Whether the connection is currently established
 	 */
-	readonly connected: boolean;
-	/**
+    readonly connected: boolean;
+    /**
 	 * Connection timeout in milliseconds
 	 */
-	timeout: number;
+    timeout: number;
 
-	/**
+    /**
 	 * Initialize and connect to host
 	 * @param host Server hostname or IP
 	 * @param port Server port (0 for WebSocket default)
 	 * @param tcpNoDelay AS3 socket TCP_NODELAY flag; ignored by WebSocket transport
 	 * @returns True if connection attempt started
 	 */
-	init(host: string, port?: number, tcpNoDelay?: boolean): boolean;
+    init(host: string, port?: number, tcpNoDelay?: boolean): boolean;
 
-	/**
+    /**
 	 * Recreate the underlying socket transport.
 	 *
 	 * AS3: IConnection.createSocket()
 	 */
-	createSocket(): void;
+    createSocket(): void;
 
-	/**
+    /**
 	 * Add a legacy connection event listener.
 	 *
 	 * AS3: IConnection.addListener()
 	 */
-	addListener(type: string, listener: (...args: unknown[]) => void): void;
+    addListener(type: string, listener: (...args: unknown[]) => void): void;
 
-	/**
+    /**
 	 * Send an encrypted message
 	 * @param composer The message to send
 	 * @returns True if message was sent
 	 */
-	send(composer: IMessageComposer<unknown[]>): boolean;
+    send(composer: IMessageComposer<unknown[]>): boolean;
 
-	/**
+    /**
 	 * Send an unencrypted message
 	 * @param composer The message to send
 	 * @returns True if message was sent
 	 */
-	sendUnencrypted(composer: IMessageComposer<unknown[]>): boolean;
+    sendUnencrypted(composer: IMessageComposer<unknown[]>): boolean;
 
-	/**
+    /**
 	 * Set encryption for both directions
 	 * @param clientToServer Encryption for outgoing messages
 	 * @param serverToClient Encryption for incoming messages
 	 */
-	setEncryption(clientToServer: IEncryption, serverToClient: IEncryption): void;
+    setEncryption(clientToServer: IEncryption, serverToClient: IEncryption): void;
 
-	/**
+    /**
 	 * Mark the connection as authenticated.
 	 *
 	 * AS3: IConnection.isAuthenticated()
 	 */
-	isAuthenticated(): void;
+    isAuthenticated(): void;
 
-	/**
+    /**
 	 * Mark the connection as configured and flush queued messages.
 	 *
 	 * AS3: IConnection.isConfigured()
 	 */
-	isConfigured(): void;
+    isConfigured(): void;
 
-	/**
+    /**
 	 * Get the server-to-client encryption
 	 */
-	getServerToClientEncryption(): IEncryption | null;
+    getServerToClientEncryption(): IEncryption | null;
 
-	/**
+    /**
 	 * Get the client-to-server encryption
 	 */
-	getClientToServerEncryption(): IEncryption | null;
+    getClientToServerEncryption(): IEncryption | null;
 
-	/**
+    /**
 	 * Register message classes from configuration
 	 */
-	registerMessageClasses(config: IMessageConfiguration): void;
+    registerMessageClasses(config: IMessageConfiguration): void;
 
-	/**
+    /**
 	 * Add a message event handler
 	 */
-	addMessageEvent(event: IMessageEvent): void;
+    addMessageEvent(event: IMessageEvent): void;
 
-	/**
+    /**
 	 * Remove a message event handler
 	 */
-	removeMessageEvent(event: IMessageEvent): void;
+    removeMessageEvent(event: IMessageEvent): void;
 
-	/**
+    /**
 	 * Process received data (call from update loop)
 	 */
-	processReceivedData(): void;
+    processReceivedData(): void;
 
-	/**
+    /**
 	 * Close the connection
 	 */
-	close(): void;
+    close(): void;
 
-	/**
+    /**
 	 * Subscribe to messageEvent
 	 */
-	on(event: 'messageEvent', listener: (event: IMessageEvent) => void): this;
+    on(event: 'messageEvent', listener: (event: IMessageEvent) => void): this;
 
-	/**
+    /**
 	 * Unsubscribe from messageEvent
 	 */
-	off(event: 'messageEvent', listener: (event: IMessageEvent) => void): this;
+    off(event: 'messageEvent', listener: (event: IMessageEvent) => void): this;
 }

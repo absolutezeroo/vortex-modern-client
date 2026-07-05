@@ -10,18 +10,18 @@ import type {IVector3d} from '@room/utils/IVector3d';
 
 export class RoomToObjectOwnAvatarMoveEvent extends RoomToObjectEvent
 {
-	public static readonly MOVE_TO = 'ROAME_MOVE_TO';
+    public static readonly MOVE_TO = 'ROAME_MOVE_TO';
 
-	constructor(type: string, targetLoc: IVector3d)
-	{
-		super(type);
-		this._targetLoc = targetLoc;
-	}
+    constructor(type: string, targetLoc: IVector3d)
+    {
+        super(type);
+        this._targetLoc = targetLoc;
+    }
 
-	private _targetLoc: IVector3d;
+    private _targetLoc: IVector3d;
 
-	get targetLoc(): IVector3d
-	{
-		return this._targetLoc;
-	}
+    get targetLoc(): IVector3d
+    {
+        return this._targetLoc;
+    }
 }

@@ -9,18 +9,18 @@ import {RoomEngineToWidgetEvent} from './RoomEngineToWidgetEvent';
 
 export class RoomEngineAreaHideStateWidgetEvent extends RoomEngineToWidgetEvent
 {
-	public static readonly UPDATE_STATE_AREA_HIDE = 'RETWE_UPDATE_STATE_AREA_HIDE';
+    public static readonly UPDATE_STATE_AREA_HIDE = 'RETWE_UPDATE_STATE_AREA_HIDE';
 
-	constructor(roomId: number, objectId: number, category: number, isOn: boolean)
-	{
-		super(RoomEngineAreaHideStateWidgetEvent.UPDATE_STATE_AREA_HIDE, roomId, objectId, category);
-		this._isOn = isOn;
-	}
+    constructor(roomId: number, objectId: number, category: number, isOn: boolean)
+    {
+        super(RoomEngineAreaHideStateWidgetEvent.UPDATE_STATE_AREA_HIDE, roomId, objectId, category);
+        this._isOn = isOn;
+    }
 
-	private _isOn: boolean;
+    private _isOn: boolean;
 
-	get isOn(): boolean
-	{
-		return this._isOn;
-	}
+    get isOn(): boolean
+    {
+        return this._isOn;
+    }
 }

@@ -6,12 +6,12 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export interface AvatarEffect
 {
-	type: number;
-	subType: number;
-	duration: number;
-	inactiveEffectsInInventory: number;
-	secondsLeftIfActive: number;
-	isPermanent: boolean;
+    type: number;
+    subType: number;
+    duration: number;
+    inactiveEffectsInInventory: number;
+    secondsLeftIfActive: number;
+    isPermanent: boolean;
 }
 
 /**
@@ -21,34 +21,34 @@ export interface AvatarEffect
  */
 export class AvatarEffectsMessageParser implements IMessageParser
 {
-	private _effects: AvatarEffect[] = [];
+    private _effects: AvatarEffect[] = [];
 
-	get effects(): AvatarEffect[]
-	{
-		return this._effects;
-	}
+    get effects(): AvatarEffect[]
+    {
+        return this._effects;
+    }
 
-	flush(): boolean
-	{
-		this._effects = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._effects = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			const effect: AvatarEffect = {
-				type: wrapper.readInt(),
-				subType: wrapper.readInt(),
-				duration: wrapper.readInt(),
-				inactiveEffectsInInventory: wrapper.readInt(),
-				secondsLeftIfActive: wrapper.readInt(),
-				isPermanent: wrapper.readBoolean(),
-			};
-			this._effects.push(effect);
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            const effect: AvatarEffect = {
+                type: wrapper.readInt(),
+                subType: wrapper.readInt(),
+                duration: wrapper.readInt(),
+                inactiveEffectsInInventory: wrapper.readInt(),
+                secondsLeftIfActive: wrapper.readInt(),
+                isPermanent: wrapper.readBoolean(),
+            };
+            this._effects.push(effect);
+        }
+        return true;
+    }
 }

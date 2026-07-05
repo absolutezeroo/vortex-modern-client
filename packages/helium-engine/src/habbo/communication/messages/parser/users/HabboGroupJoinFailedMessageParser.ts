@@ -10,25 +10,25 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class HabboGroupJoinFailedMessageParser implements IMessageParser
 {
-	public static readonly INSUFFICIENT_SUBSCRIPTION_LEVEL = 4;
+    public static readonly INSUFFICIENT_SUBSCRIPTION_LEVEL = 4;
 
-	private _reason: number = 0;
+    private _reason: number = 0;
 
-	get reason(): number
-	{
-		return this._reason;
-	}
+    get reason(): number
+    {
+        return this._reason;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._reason = wrapper.readInt();
-		return true;
-	}
+        this._reason = wrapper.readInt();
+        return true;
+    }
 }

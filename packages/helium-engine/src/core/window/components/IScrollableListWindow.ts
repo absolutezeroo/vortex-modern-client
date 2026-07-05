@@ -9,6 +9,6 @@ import type {IItemListWindow} from './IItemListWindow';
  */
 export interface IScrollableListWindow extends IItemListWindow
 {
-	autoHideScrollBar: boolean;
-	readonly isScrollBarVisible: boolean;
+    autoHideScrollBar: boolean;
+    readonly isScrollBarVisible: boolean;
 }

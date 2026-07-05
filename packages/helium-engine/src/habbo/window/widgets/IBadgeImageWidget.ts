@@ -10,19 +10,18 @@ import type {IWidget} from './IWidget';
  */
 export interface IBadgeImageWidget extends IWidget
 {
-	/**
+    /**
 	 * The badge type: "normal", "group", or "perk".
 	 */
-	type: string;
+    type: string;
 
-	/**
+    /**
 	 * The badge identifier string.
 	 */
-	badgeId: string;
+    badgeId: string;
 
-	/**
+    /**
 	 * The group ID for group-type badges. Set to 0 to disable.
 	 */
-	groupId: number;
+    groupId: number;
 }
-

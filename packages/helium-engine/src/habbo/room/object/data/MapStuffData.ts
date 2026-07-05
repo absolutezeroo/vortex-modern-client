@@ -14,84 +14,84 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class MapStuffData extends StuffDataBase implements IStuffData
 {
-	public static readonly FORMAT_KEY = 1;
+    public static readonly FORMAT_KEY = 1;
 
-	private static readonly STATE_KEY = 'state';
-	private static readonly RARITY_KEY = 'rarity';
+    private static readonly STATE_KEY = 'state';
+    private static readonly RARITY_KEY = 'rarity';
 
-	private _data: Map<string, string> = new Map();
+    private _data: Map<string, string> = new Map();
 
-	constructor(data?: Map<string, string>)
-	{
-		super();
+    constructor(data?: Map<string, string>)
+    {
+        super();
 
-		if (data)
-		{
-			this._data = data;
-		}
-	}
+        if(data)
+        {
+            this._data = data;
+        }
+    }
 
-	override get rarityLevel(): number
-	{
-		const rarity = this._data.get(MapStuffData.RARITY_KEY);
+    override get rarityLevel(): number
+    {
+        const rarity = this._data.get(MapStuffData.RARITY_KEY);
 
-		if (rarity)
-		{
-			return parseInt(rarity, 10);
-		}
+        if(rarity)
+        {
+            return parseInt(rarity, 10);
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
-	{
-		this._data = new Map();
+    override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
+    {
+        this._data = new Map();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const key = wrapper.readString();
-			const value = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const key = wrapper.readString();
+            const value = wrapper.readString();
 
-			this._data.set(key, value);
-		}
+            this._data.set(key, value);
+        }
 
-		super.initializeFromIncomingMessage(wrapper);
-	}
+        super.initializeFromIncomingMessage(wrapper);
+    }
 
-	override initializeFromRoomObjectModel(model: IRoomObjectModel): void
-	{
-		super.initializeFromRoomObjectModel(model);
-		this._data = model.getStringToStringMap(RoomObjectVariableEnum.FURNITURE_DATA);
-	}
+    override initializeFromRoomObjectModel(model: IRoomObjectModel): void
+    {
+        super.initializeFromRoomObjectModel(model);
+        this._data = model.getStringToStringMap(RoomObjectVariableEnum.FURNITURE_DATA);
+    }
 
-	override writeRoomObjectModel(model: IRoomObjectModelController): void
-	{
-		super.writeRoomObjectModel(model);
-		model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT, MapStuffData.FORMAT_KEY);
-		model.setStringToStringMap(RoomObjectVariableEnum.FURNITURE_DATA, this._data);
-	}
+    override writeRoomObjectModel(model: IRoomObjectModelController): void
+    {
+        super.writeRoomObjectModel(model);
+        model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT, MapStuffData.FORMAT_KEY);
+        model.setStringToStringMap(RoomObjectVariableEnum.FURNITURE_DATA, this._data);
+    }
 
-	override getLegacyString(): string
-	{
-		const state = this._data.get(MapStuffData.STATE_KEY);
+    override getLegacyString(): string
+    {
+        const state = this._data.get(MapStuffData.STATE_KEY);
 
-		if (state !== undefined)
-		{
-			return state;
-		}
+        if(state !== undefined)
+        {
+            return state;
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	override compare(_data: IStuffData): boolean
-	{
-		return false;
-	}
+    override compare(_data: IStuffData): boolean
+    {
+        return false;
+    }
 
-	getValue(key: string): string | null
-	{
-		return this._data.get(key) ?? null;
-	}
+    getValue(key: string): string | null
+    {
+        return this._data.get(key) ?? null;
+    }
 }

@@ -9,43 +9,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class AvailabilityStatusMessageParser implements IMessageParser
 {
-	private _isOpen: boolean = false;
+    private _isOpen: boolean = false;
 
-	get isOpen(): boolean
-	{
-		return this._isOpen;
-	}
+    get isOpen(): boolean
+    {
+        return this._isOpen;
+    }
 
-	private _onShutDown: boolean = false;
+    private _onShutDown: boolean = false;
 
-	get onShutDown(): boolean
-	{
-		return this._onShutDown;
-	}
+    get onShutDown(): boolean
+    {
+        return this._onShutDown;
+    }
 
-	private _isAuthenticHabbo: boolean = false;
+    private _isAuthenticHabbo: boolean = false;
 
-	get isAuthenticHabbo(): boolean
-	{
-		return this._isAuthenticHabbo;
-	}
+    get isAuthenticHabbo(): boolean
+    {
+        return this._isAuthenticHabbo;
+    }
 
-	flush(): boolean
-	{
-		this._isOpen = false;
-		this._onShutDown = false;
-		this._isAuthenticHabbo = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._isOpen = false;
+        this._onShutDown = false;
+        this._isAuthenticHabbo = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._isOpen = wrapper.readBoolean();
-		this._onShutDown = wrapper.readBoolean();
-		if (wrapper.bytesAvailable > 0)
-		{
-			this._isAuthenticHabbo = wrapper.readBoolean();
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._isOpen = wrapper.readBoolean();
+        this._onShutDown = wrapper.readBoolean();
+        if(wrapper.bytesAvailable > 0)
+        {
+            this._isAuthenticHabbo = wrapper.readBoolean();
+        }
+        return true;
+    }
 }

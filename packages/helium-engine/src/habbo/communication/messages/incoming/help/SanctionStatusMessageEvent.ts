@@ -10,8 +10,8 @@ import {SanctionStatusMessageParser} from '../../parser/help/SanctionStatusMessa
  */
 export class SanctionStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, SanctionStatusMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, SanctionStatusMessageParser);
+    }
 }

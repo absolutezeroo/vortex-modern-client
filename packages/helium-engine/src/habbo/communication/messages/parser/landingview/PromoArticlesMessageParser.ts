@@ -8,30 +8,30 @@ import {PromoArticleData} from './PromoArticleData';
  */
 export class PromoArticlesMessageParser implements IMessageParser
 {
-	private _articles: PromoArticleData[] = [];
+    private _articles: PromoArticleData[] = [];
 
-	get articles(): PromoArticleData[]
-	{
-		return this._articles;
-	}
+    get articles(): PromoArticleData[]
+    {
+        return this._articles;
+    }
 
-	flush(): boolean
-	{
-		this._articles = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._articles = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._articles.push(new PromoArticleData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._articles.push(new PromoArticleData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

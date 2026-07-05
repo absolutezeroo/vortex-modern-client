@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetModeratorUserInfoMessageComposer extends MessageComposer<ConstructorParameters<typeof GetModeratorUserInfoMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetModeratorUserInfoMessageComposer>;
+    private _data: ConstructorParameters<typeof GetModeratorUserInfoMessageComposer>;
 
-	constructor(userId: number)
-	{
-		super();
-		this._data = [userId];
-	}
+    constructor(userId: number)
+    {
+        super();
+        this._data = [userId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -4,9 +4,9 @@ import type {Badge} from './Badge';
  * Badge filter types
  */
 export const BadgeFilter = {
-	ALL: -1,
-	INACTIVE: 0,
-	ACTIVE: 1,
+    ALL: -1,
+    INACTIVE: 0,
+    ACTIVE: 1,
 } as const;
 
 export type BadgeFilterType = typeof BadgeFilter[keyof typeof BadgeFilter];
@@ -16,8 +16,8 @@ export type BadgeFilterType = typeof BadgeFilter[keyof typeof BadgeFilter];
  */
 export interface BadgeData
 {
-	badgeId: string;
-	slotId: number;
+    badgeId: string;
+    slotId: number;
 }
 
 /**
@@ -27,88 +27,88 @@ export interface BadgeData
  */
 export interface IBadgesModel
 {
-	readonly disposed: boolean;
-	readonly maxActiveCount: number;
+    readonly disposed: boolean;
+    readonly maxActiveCount: number;
 
-	dispose(): void;
+    dispose(): void;
 
-	/**
+    /**
 	 * Initialize badges from server message
 	 */
-	initBadges(badges: BadgeData[], getName: (id: string) => string, getDesc: (id: string) => string): void;
+    initBadges(badges: BadgeData[], getName: (id: string) => string, getDesc: (id: string) => string): void;
 
-	/**
+    /**
 	 * Update or add a badge
 	 */
-	updateBadge(badgeId: string, isInUse: boolean, slotId: number, getName: (id: string) => string, getDesc: (id: string) => string): Badge | null;
+    updateBadge(badgeId: string, isInUse: boolean, slotId: number, getName: (id: string) => string, getDesc: (id: string) => string): Badge | null;
 
-	/**
+    /**
 	 * Remove a badge
 	 */
-	removeBadge(badgeId: string): boolean;
+    removeBadge(badgeId: string): boolean;
 
-	/**
+    /**
 	 * Toggle wearing status
 	 * Returns the updated badge if changed, null otherwise
 	 */
-	toggleBadgeWearing(badgeId: string): Badge | null;
+    toggleBadgeWearing(badgeId: string): Badge | null;
 
-	/**
+    /**
 	 * Get badges by filter
 	 */
-	getBadges(filter?: BadgeFilterType): Badge[];
+    getBadges(filter?: BadgeFilterType): Badge[];
 
-	/**
+    /**
 	 * Get badge by ID
 	 */
-	getBadge(badgeId: string): Badge | null;
+    getBadge(badgeId: string): Badge | null;
 
-	/**
+    /**
 	 * Get badge from active badges by index
 	 */
-	getBadgeFromActive(index: number): Badge | null;
+    getBadgeFromActive(index: number): Badge | null;
 
-	/**
+    /**
 	 * Get badge from inactive badges by index
 	 */
-	getBadgeFromInactive(index: number): Badge | null;
+    getBadgeFromInactive(index: number): Badge | null;
 
-	/**
+    /**
 	 * Get currently selected badge
 	 */
-	getSelectedBadge(filter?: BadgeFilterType): Badge | null;
+    getSelectedBadge(filter?: BadgeFilterType): Badge | null;
 
-	/**
+    /**
 	 * Select a badge by ID
 	 */
-	setBadgeSelected(badgeId: string): void;
+    setBadgeSelected(badgeId: string): void;
 
-	/**
+    /**
 	 * Force selection if none selected
 	 */
-	forceSelection(): void;
+    forceSelection(): void;
 
-	/**
+    /**
 	 * Remove all selections
 	 */
-	removeSelections(): void;
+    removeSelections(): void;
 
-	/**
+    /**
 	 * Reset unseen flags
 	 * Returns badge IDs that were marked as unseen
 	 */
-	resetUnseenItems(): string[];
+    resetUnseenItems(): string[];
 
-	/**
+    /**
 	 * Mark badges as unseen based on IDs
 	 */
-	updateUnseenItems(unseenIds: number[]): void;
+    updateUnseenItems(unseenIds: number[]): void;
 
-	/**
+    /**
 	 * Get IDs of currently active badges for saving
 	 */
-	getActiveBadgeIds(): string[];
+    getActiveBadgeIds(): string[];
 
-	// AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::updateView()
-	updateView(): void;
+    // AS3: sources/win63_version/habbo/inventory/badges/BadgesModel.as::updateView()
+    updateView(): void;
 }

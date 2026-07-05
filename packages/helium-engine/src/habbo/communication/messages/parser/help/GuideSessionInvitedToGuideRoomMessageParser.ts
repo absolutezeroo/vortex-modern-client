@@ -9,34 +9,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionInvitedToGuideRoomMessageParser implements IMessageParser
 {
-	private _roomId: number = 0;
+    private _roomId: number = 0;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	private _roomName: string = '';
+    private _roomName: string = '';
 
-	get roomName(): string
-	{
-		return this._roomName;
-	}
+    get roomName(): string
+    {
+        return this._roomName;
+    }
 
-	flush(): boolean
-	{
-		this._roomId = 0;
-		this._roomName = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._roomId = 0;
+        this._roomName = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._roomId = wrapper.readInt();
-		this._roomName = wrapper.readString();
+        this._roomId = wrapper.readInt();
+        this._roomName = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

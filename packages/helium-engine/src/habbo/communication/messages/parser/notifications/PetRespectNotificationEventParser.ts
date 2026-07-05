@@ -12,53 +12,53 @@ import {parsePetInfoData} from '../../incoming/notifications/PetFigureDataParser
  */
 export class PetRespectNotificationEventParser implements IMessageParser
 {
-	public static readonly PET_TREAT_TYPE_ID: number = 16;
+    public static readonly PET_TREAT_TYPE_ID: number = 16;
 
-	private _respect: number = 0;
+    private _respect: number = 0;
 
-	get respect(): number
-	{
-		return this._respect;
-	}
+    get respect(): number
+    {
+        return this._respect;
+    }
 
-	private _petOwnerId: number = 0;
+    private _petOwnerId: number = 0;
 
-	get petOwnerId(): number
-	{
-		return this._petOwnerId;
-	}
+    get petOwnerId(): number
+    {
+        return this._petOwnerId;
+    }
 
-	private _petData: PetInfoData | null = null;
+    private _petData: PetInfoData | null = null;
 
-	get petData(): PetInfoData | null
-	{
-		return this._petData;
-	}
+    get petData(): PetInfoData | null
+    {
+        return this._petData;
+    }
 
-	flush(): boolean
-	{
-		this._respect = 0;
-		this._petOwnerId = 0;
-		this._petData = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._respect = 0;
+        this._petOwnerId = 0;
+        this._petData = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._respect = wrapper.readInt();
-		this._petOwnerId = wrapper.readInt();
-		this._petData = parsePetInfoData(wrapper);
+        this._respect = wrapper.readInt();
+        this._petOwnerId = wrapper.readInt();
+        this._petData = parsePetInfoData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
+    /**
 	 * Returns whether this is a treat notification
 	 */
-	isTreat(): boolean
-	{
-		return this._petData !== null && this._petData.figureData.typeId === PetRespectNotificationEventParser.PET_TREAT_TYPE_ID;
-	}
+    isTreat(): boolean
+    {
+        return this._petData !== null && this._petData.figureData.typeId === PetRespectNotificationEventParser.PET_TREAT_TYPE_ID;
+    }
 }

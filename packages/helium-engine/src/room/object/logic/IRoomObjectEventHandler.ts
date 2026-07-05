@@ -12,23 +12,23 @@ import type {IRoomObjectMouseHandler} from './IRoomObjectMouseHandler';
 
 export interface IRoomObjectEventHandler extends IRoomObjectMouseHandler
 {
-	object: IRoomObjectController | null;
-	eventDispatcher: EventEmitter | null;
+    object: IRoomObjectController | null;
+    eventDispatcher: EventEmitter | null;
 
-	readonly widget: string | null;
-	readonly contextMenu: string | null;
+    readonly widget: string | null;
+    readonly contextMenu: string | null;
 
-	dispose(): void;
+    dispose(): void;
 
-	initialize(data: unknown): void;
+    initialize(data: unknown): void;
 
-	tearDown(): void;
+    tearDown(): void;
 
-	update(time: number): void;
+    update(time: number): void;
 
-	processUpdateMessage(message: RoomObjectUpdateMessage): void;
+    processUpdateMessage(message: RoomObjectUpdateMessage): void;
 
-	useObject(): void;
+    useObject(): void;
 
-	getEventTypes(): string[];
+    getEventTypes(): string[];
 }

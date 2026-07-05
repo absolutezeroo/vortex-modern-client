@@ -5,13 +5,13 @@
  */
 export interface IDisposable
 {
-	/**
+    /**
 	 * Whether this object has been disposed
 	 */
-	readonly disposed: boolean;
+    readonly disposed: boolean;
 
-	/**
+    /**
 	 * Dispose of this object and release all resources
 	 */
-	dispose(): void;
+    dispose(): void;
 }

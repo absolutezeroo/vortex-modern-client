@@ -10,12 +10,12 @@ import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 
 export interface IRoomWidgetFactory extends IDisposable
 {
-	/**
+    /**
 	 * Creates a widget of the given type with the given handler.
 	 *
 	 * @param type - Widget type code (e.g. "RWE_CHAT_WIDGET")
 	 * @param handler - The handler for the widget
 	 * @returns The created widget, or null if type is unknown
 	 */
-	createWidget(type: string, handler: IRoomWidgetHandler): unknown | null;
+    createWidget(type: string, handler: IRoomWidgetHandler): unknown | null;
 }

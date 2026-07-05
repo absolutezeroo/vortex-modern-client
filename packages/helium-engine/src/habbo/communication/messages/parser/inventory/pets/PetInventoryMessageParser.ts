@@ -3,16 +3,16 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 
 export interface PetData
 {
-	id: number;
-	name: string;
-	figureData: {
-		typeId: number;
-		paletteId: number;
-		color: string;
-		breedId: number;
-		customParts: number[];
-	};
-	level: number;
+    id: number;
+    name: string;
+    figureData: {
+        typeId: number;
+        paletteId: number;
+        color: string;
+        breedId: number;
+        customParts: number[];
+    };
+    level: number;
 }
 
 /**
@@ -22,77 +22,77 @@ export interface PetData
  */
 export class PetInventoryMessageParser implements IMessageParser
 {
-	private _totalFragments: number = 1;
+    private _totalFragments: number = 1;
 
-	get totalFragments(): number
-	{
-		return this._totalFragments;
-	}
+    get totalFragments(): number
+    {
+        return this._totalFragments;
+    }
 
-	private _fragmentNo: number = 0;
+    private _fragmentNo: number = 0;
 
-	get fragmentNo(): number
-	{
-		return this._fragmentNo;
-	}
+    get fragmentNo(): number
+    {
+        return this._fragmentNo;
+    }
 
-	private _pets: PetData[] = [];
+    private _pets: PetData[] = [];
 
-	get pets(): PetData[]
-	{
-		return this._pets;
-	}
+    get pets(): PetData[]
+    {
+        return this._pets;
+    }
 
-	flush(): boolean
-	{
-		this._pets = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._pets = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._totalFragments = wrapper.readInt();
-		this._fragmentNo = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._totalFragments = wrapper.readInt();
+        this._fragmentNo = wrapper.readInt();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const id = wrapper.readInt();
-			const name = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const id = wrapper.readInt();
+            const name = wrapper.readString();
 
-			// Pet figure data (AS3: class_2486)
-			const typeId = wrapper.readInt();
-			const paletteId = wrapper.readInt();
-			const color = wrapper.readString();
-			const breedId = wrapper.readInt();
+            // Pet figure data (AS3: class_2486)
+            const typeId = wrapper.readInt();
+            const paletteId = wrapper.readInt();
+            const color = wrapper.readString();
+            const breedId = wrapper.readInt();
 
-			// Custom parts: 3 ints per part
-			const customPartCount = wrapper.readInt();
-			const customParts: number[] = [];
-			for (let j = 0; j < customPartCount; j++)
-			{
-				customParts.push(wrapper.readInt());
-				customParts.push(wrapper.readInt());
-				customParts.push(wrapper.readInt());
-			}
+            // Custom parts: 3 ints per part
+            const customPartCount = wrapper.readInt();
+            const customParts: number[] = [];
+            for(let j = 0; j < customPartCount; j++)
+            {
+                customParts.push(wrapper.readInt());
+                customParts.push(wrapper.readInt());
+                customParts.push(wrapper.readInt());
+            }
 
-			const level = wrapper.readInt();
+            const level = wrapper.readInt();
 
-			this._pets.push({
-				id,
-				name,
-				figureData: {
-					typeId,
-					paletteId,
-					color,
-					breedId,
-					customParts,
-				},
-				level,
-			});
-		}
+            this._pets.push({
+                id,
+                name,
+                figureData: {
+                    typeId,
+                    paletteId,
+                    color,
+                    breedId,
+                    customParts,
+                },
+                level,
+            });
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -8,31 +8,31 @@
  */
 export interface IHabboHelp
 {
-	reportBully(userId: number): void;
+    reportBully(userId: number): void;
 
-	reportUser(userId: number, roomId: number, userName: string): void;
+    reportUser(userId: number, roomId: number, userName: string): void;
 
-	reportRoom(roomId: number, roomName: string, roomDescription: string): void;
+    reportRoom(roomId: number, roomName: string, roomDescription: string): void;
 
-	reportThread(groupId: number, threadId: number): void;
+    reportThread(groupId: number, threadId: number): void;
 
-	reportMessage(groupId: number, threadId: number, messageId: number): void;
+    reportMessage(groupId: number, threadId: number, messageId: number): void;
 
-	reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): boolean;
+    reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): boolean;
 
-	reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): boolean;
+    reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): boolean;
 
-	requestGuide(): void;
+    requestGuide(): void;
 
-	startNameChange(): void;
+    startNameChange(): void;
 
-	showWelcomeScreen(title: string, body: string, position: number, imageName?: string | null): void;
+    showWelcomeScreen(title: string, body: string, position: number, imageName?: string | null): void;
 
-	showHabboWay(): void;
+    showHabboWay(): void;
 
-	showSafetyBooklet(): void;
+    showSafetyBooklet(): void;
 
-	showTourPopup(): void;
+    showTourPopup(): void;
 
-	set outsideRoom(value: boolean);
+    set outsideRoom(value: boolean);
 }

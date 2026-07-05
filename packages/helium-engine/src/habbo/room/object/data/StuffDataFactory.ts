@@ -17,62 +17,62 @@ import {CrackableStuffData} from './CrackableStuffData';
 
 export class StuffDataFactory
 {
-	public static readonly FLAGS_MASK = 0xFF00;
-	public static readonly TYPE_MASK = 0x00FF;
+    public static readonly FLAGS_MASK = 0xFF00;
+    public static readonly TYPE_MASK = 0x00FF;
 
-	static getStuffDataForType(typeFlags: number): IStuffData | null
-	{
-		const type = typeFlags & StuffDataFactory.TYPE_MASK;
-		let stuffData: IStuffData | null = null;
+    static getStuffDataForType(typeFlags: number): IStuffData | null
+    {
+        const type = typeFlags & StuffDataFactory.TYPE_MASK;
+        let stuffData: IStuffData | null = null;
 
-		switch (type)
-		{
-			case LegacyStuffData.FORMAT_KEY:
-				stuffData = new LegacyStuffData();
+        switch(type)
+        {
+            case LegacyStuffData.FORMAT_KEY:
+                stuffData = new LegacyStuffData();
 
-				break;
+                break;
 
-			case MapStuffData.FORMAT_KEY:
-				stuffData = new MapStuffData();
+            case MapStuffData.FORMAT_KEY:
+                stuffData = new MapStuffData();
 
-				break;
+                break;
 
-			case StringArrayStuffData.FORMAT_KEY:
-				stuffData = new StringArrayStuffData();
+            case StringArrayStuffData.FORMAT_KEY:
+                stuffData = new StringArrayStuffData();
 
-				break;
+                break;
 
-			case VoteResultStuffData.FORMAT_KEY:
-				stuffData = new VoteResultStuffData();
+            case VoteResultStuffData.FORMAT_KEY:
+                stuffData = new VoteResultStuffData();
 
-				break;
+                break;
 
-			case EmptyStuffData.FORMAT_KEY:
-				stuffData = new EmptyStuffData();
+            case EmptyStuffData.FORMAT_KEY:
+                stuffData = new EmptyStuffData();
 
-				break;
+                break;
 
-			case IntArrayStuffData.FORMAT_KEY:
-				stuffData = new IntArrayStuffData();
+            case IntArrayStuffData.FORMAT_KEY:
+                stuffData = new IntArrayStuffData();
 
-				break;
+                break;
 
-			case HighScoreStuffData.FORMAT_KEY:
-				stuffData = new HighScoreStuffData();
+            case HighScoreStuffData.FORMAT_KEY:
+                stuffData = new HighScoreStuffData();
 
-				break;
+                break;
 
-			case CrackableStuffData.FORMAT_KEY:
-				stuffData = new CrackableStuffData();
+            case CrackableStuffData.FORMAT_KEY:
+                stuffData = new CrackableStuffData();
 
-				break;
-		}
+                break;
+        }
 
-		if (stuffData !== null)
-		{
-			stuffData.flags = typeFlags & StuffDataFactory.FLAGS_MASK;
-		}
+        if(stuffData !== null)
+        {
+            stuffData.flags = typeFlags & StuffDataFactory.FLAGS_MASK;
+        }
 
-		return stuffData;
-	}
+        return stuffData;
+    }
 }

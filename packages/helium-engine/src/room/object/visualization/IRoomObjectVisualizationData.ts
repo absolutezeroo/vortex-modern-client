@@ -9,5 +9,5 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 
 export interface IRoomObjectVisualizationData extends IDisposable
 {
-	initialize(data: unknown): boolean;
+    initialize(data: unknown): boolean;
 }

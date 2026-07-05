@@ -8,24 +8,24 @@ import {CommunityGoalHallOfFameData} from './CommunityGoalHallOfFameData';
  */
 export class CommunityGoalHallOfFameMessageParser implements IMessageParser
 {
-	private _data: CommunityGoalHallOfFameData | null = null;
+    private _data: CommunityGoalHallOfFameData | null = null;
 
-	get data(): CommunityGoalHallOfFameData | null
-	{
-		return this._data;
-	}
+    get data(): CommunityGoalHallOfFameData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new CommunityGoalHallOfFameData(wrapper);
-		return true;
-	}
+        this._data = new CommunityGoalHallOfFameData(wrapper);
+        return true;
+    }
 }

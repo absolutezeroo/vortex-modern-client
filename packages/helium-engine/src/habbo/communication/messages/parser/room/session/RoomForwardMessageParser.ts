@@ -8,26 +8,26 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class RoomForwardMessageParser implements IMessageParser
 {
-	private _roomId: number = 0;
+    private _roomId: number = 0;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._roomId = wrapper.readInt();
-		return true;
-	}
+        this._roomId = wrapper.readInt();
+        return true;
+    }
 }

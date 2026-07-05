@@ -11,21 +11,21 @@ import type {InfoStandWidget} from './InfoStandWidget';
 
 export class InfoStandRentableBotView
 {
-	constructor(_widget: InfoStandWidget, _name: string, _catalog: IHabboCatalog | null)
-	{
-	}
+    constructor(_widget: InfoStandWidget, _name: string, _catalog: IHabboCatalog | null)
+    {
+    }
 
-	public get window(): IWindow | null
-	{
-		return null;
-	}
+    public get window(): IWindow | null
+    {
+        return null;
+    }
 
-	public dispose(): void
-	{
-	}
+    public dispose(): void
+    {
+    }
 
-	// TODO(AS3): InfoStandRentableBotView.as::update() — param is RoomWidgetRentableBotInfoUpdateEvent
-	public update(_event: unknown): void
-	{
-	}
+    // TODO(AS3): InfoStandRentableBotView.as::update() — param is RoomWidgetRentableBotInfoUpdateEvent
+    public update(_event: unknown): void
+    {
+    }
 }

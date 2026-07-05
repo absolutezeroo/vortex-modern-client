@@ -10,8 +10,8 @@ import {GuideSessionEndedMessageParser} from '../../parser/help/GuideSessionEnde
  */
 export class GuideSessionEndedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideSessionEndedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideSessionEndedMessageParser);
+    }
 }

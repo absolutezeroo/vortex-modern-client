@@ -16,143 +16,143 @@ import {FurniturePlane} from './FurniturePlane';
 
 export class FurnitureCuboidVisualization extends RoomObjectSpriteVisualization
 {
-	private _planes: FurniturePlane[] = [];
-	private _planesInitialized: boolean = false;
-	private _updateCounter: number = 0;
+    private _planes: FurniturePlane[] = [];
+    private _planesInitialized: boolean = false;
+    private _updateCounter: number = 0;
 
-	override initialize(_data: IRoomObjectVisualizationData): boolean
-	{
-		this.reset();
-		return true;
-	}
+    override initialize(_data: IRoomObjectVisualizationData): boolean
+    {
+        this.reset();
+        return true;
+    }
 
-	override update(geometry: IRoomGeometry, time: number, _update: boolean, _skipUpdate: boolean): void
-	{
-		const roomObject = this.object;
+    override update(geometry: IRoomGeometry, time: number, _update: boolean, _skipUpdate: boolean): void
+    {
+        const roomObject = this.object;
 
-		if (roomObject === null) return;
-		if (geometry === null) return;
+        if(roomObject === null) return;
+        if(geometry === null) return;
 
-		this.initializePlanes();
-		this.updatePlanes(geometry, time);
-	}
+        this.initializePlanes();
+        this.updatePlanes(geometry, time);
+    }
 
-	override dispose(): void
-	{
-		super.dispose();
+    override dispose(): void
+    {
+        super.dispose();
 
-		for (const plane of this._planes)
-		{
-			if (plane !== null)
-			{
-				plane.dispose();
-			}
-		}
+        for(const plane of this._planes)
+        {
+            if(plane !== null)
+            {
+                plane.dispose();
+            }
+        }
 
-		this._planes = [];
-	}
+        this._planes = [];
+    }
 
-	protected defineSprites(): void
-	{
-		this.createSprites(1);
-	}
+    protected defineSprites(): void
+    {
+        this.createSprites(1);
+    }
 
-	/**
+    /**
 	 * Initialize planes from the room object model dimensions.
 	 *
 	 * Creates a single top-face plane from furniture_size_x/y/z.
 	 *
 	 * @see AS3 FurnitureCuboidVisualization.initializePlanes()
 	 */
-	protected initializePlanes(): void
-	{
-		if (this._planesInitialized) return;
+    protected initializePlanes(): void
+    {
+        if(this._planesInitialized) return;
 
-		const roomObject = this.object;
+        const roomObject = this.object;
 
-		if (roomObject === null) return;
+        if(roomObject === null) return;
 
-		const model = roomObject.getModel();
-		const sizeX = model.getNumber('furniture_size_x');
-		const sizeY = model.getNumber('furniture_size_y');
-		const sizeZ = model.getNumber('furniture_size_z');
+        const model = roomObject.getModel();
+        const sizeX = model.getNumber('furniture_size_x');
+        const sizeY = model.getNumber('furniture_size_y');
+        const sizeZ = model.getNumber('furniture_size_z');
 
-		if (isNaN(sizeX) || isNaN(sizeY) || isNaN(sizeZ)) return;
+        if(isNaN(sizeX) || isNaN(sizeY) || isNaN(sizeZ)) return;
 
-		const leftSide = new Vector3d(sizeX, 0, 0);
-		const rightSide = new Vector3d(0, sizeY, 0);
-		const origin = new Vector3d(-0.5, -0.5, 0);
+        const leftSide = new Vector3d(sizeX, 0, 0);
+        const rightSide = new Vector3d(0, sizeY, 0);
+        const origin = new Vector3d(-0.5, -0.5, 0);
 
-		if (origin !== null && leftSide !== null && rightSide !== null)
-		{
-			const plane = new FurniturePlane(origin, leftSide, rightSide);
-			plane.color = 0xFFFF00; // Yellow default (matches AS3)
-			this._planes.push(plane);
-			this._planesInitialized = true;
-			this.defineSprites();
-		}
-	}
+        if(origin !== null && leftSide !== null && rightSide !== null)
+        {
+            const plane = new FurniturePlane(origin, leftSide, rightSide);
+            plane.color = 0xFFFF00; // Yellow default (matches AS3)
+            this._planes.push(plane);
+            this._planesInitialized = true;
+            this.defineSprites();
+        }
+    }
 
-	/**
+    /**
 	 * Update all planes and sync their bitmaps to sprites.
 	 *
 	 * @see AS3 FurnitureCuboidVisualization.updatePlanes()
 	 */
-	protected updatePlanes(geometry: IRoomGeometry, time: number): void
-	{
-		const roomObject = this.object;
+    protected updatePlanes(geometry: IRoomGeometry, time: number): void
+    {
+        const roomObject = this.object;
 
-		if (roomObject === null) return;
+        if(roomObject === null) return;
 
-		this._updateCounter++;
+        this._updateCounter++;
 
-		for (let i = 0; i < this._planes.length; i++)
-		{
-			const plane = this._planes[i];
+        for(let i = 0; i < this._planes.length; i++)
+        {
+            const plane = this._planes[i];
 
-			if (plane === null) continue;
+            if(plane === null) continue;
 
-			// Handle rotation for diagonal directions
-			const dir = Math.floor(roomObject.getDirection().x);
+            // Handle rotation for diagonal directions
+            const dir = Math.floor(roomObject.getDirection().x);
 
-			if (dir / 45 === 2 || dir / 45 === 6)
-			{
-				plane.setRotation(true);
-			}
-			else
-			{
-				plane.setRotation(false);
-			}
+            if(dir / 45 === 2 || dir / 45 === 6)
+            {
+                plane.setRotation(true);
+            }
+            else
+            {
+                plane.setRotation(false);
+            }
 
-			const changed = plane.update(geometry, time);
+            const changed = plane.update(geometry, time);
 
-			const sprite = this.getSprite(i);
+            const sprite = this.getSprite(i);
 
-			if (sprite !== null)
-			{
-				if (plane !== null)
-				{
-					const offset = plane.offset;
-					sprite.offsetX = -offset.x;
-					sprite.offsetY = -offset.y;
-					sprite.color = plane.color;
-					sprite.visible = plane.visible;
-				}
-				else
-				{
-					sprite.visible = false;
-				}
+            if(sprite !== null)
+            {
+                if(plane !== null)
+                {
+                    const offset = plane.offset;
+                    sprite.offsetX = -offset.x;
+                    sprite.offsetY = -offset.y;
+                    sprite.color = plane.color;
+                    sprite.visible = plane.visible;
+                }
+                else
+                {
+                    sprite.visible = false;
+                }
 
-				const bitmap = plane.bitmapData;
-				sprite.texture = bitmap !== null ? Texture.from(bitmap) : null;
+                const bitmap = plane.bitmapData;
+                sprite.texture = bitmap !== null ? Texture.from(bitmap) : null;
 
-				if (changed)
-				{
-					sprite.assetName = `plane_${i}_${geometry.scale}_${roomObject.getInstanceId()}_${this._updateCounter}`;
-				}
+                if(changed)
+                {
+                    sprite.assetName = `plane_${i}_${geometry.scale}_${roomObject.getInstanceId()}_${this._updateCounter}`;
+                }
 
-				sprite.relativeDepth = plane.relativeDepth;
-			}
-		}
-	}
+                sprite.relativeDepth = plane.relativeDepth;
+            }
+        }
+    }
 }

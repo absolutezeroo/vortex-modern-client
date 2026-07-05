@@ -9,8 +9,8 @@ import {PollErrorEventParser} from '../../parser/poll/PollErrorEventParser';
  */
 export class PollErrorEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PollErrorEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PollErrorEventParser);
+    }
 }

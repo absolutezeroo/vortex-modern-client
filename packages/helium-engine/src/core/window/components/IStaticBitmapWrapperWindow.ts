@@ -10,17 +10,17 @@ import type {IWindow} from '../IWindow';
  */
 export interface IStaticBitmapWrapperWindow extends IWindow
 {
-	/**
+    /**
 	 * The asset URI for this static bitmap.
 	 *
 	 * Setting this triggers an asset request via the ResourceManager.
 	 */
-	assetUri: string;
+    assetUri: string;
 
-	/**
+    /**
 	 * The decoded bitmap content for this window.
 	 *
 	 * Set automatically by `receiveAsset()` when the asset loads.
 	 */
-	bitmapData: ImageBitmap | null;
+    bitmapData: ImageBitmap | null;
 }

@@ -9,36 +9,36 @@ import {RoomTagData} from './RoomTagData';
  */
 export class PopularTagsData implements INavigatorSearchResultData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._tags.push(new RoomTagData(wrapper));
-		}
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._tags.push(new RoomTagData(wrapper));
+        }
+    }
 
-	private _tags: RoomTagData[] = [];
+    private _tags: RoomTagData[] = [];
 
-	get tags(): RoomTagData[]
-	{
-		return this._tags;
-	}
+    get tags(): RoomTagData[]
+    {
+        return this._tags;
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	dispose(): void
-	{
-		if (this._disposed)
-		{
-			return;
-		}
-		this._disposed = true;
-		this._tags = [];
-	}
+    dispose(): void
+    {
+        if(this._disposed)
+        {
+            return;
+        }
+        this._disposed = true;
+        this._tags = [];
+    }
 }

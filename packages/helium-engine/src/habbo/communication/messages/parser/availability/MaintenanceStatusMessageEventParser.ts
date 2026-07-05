@@ -8,45 +8,45 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class MaintenanceStatusMessageEventParser implements IMessageParser
 {
-	private _isInMaintenance: boolean = false;
+    private _isInMaintenance: boolean = false;
 
-	get isInMaintenance(): boolean
-	{
-		return this._isInMaintenance;
-	}
+    get isInMaintenance(): boolean
+    {
+        return this._isInMaintenance;
+    }
 
-	private _minutesUntilMaintenance: number = 0;
+    private _minutesUntilMaintenance: number = 0;
 
-	get minutesUntilMaintenance(): number
-	{
-		return this._minutesUntilMaintenance;
-	}
+    get minutesUntilMaintenance(): number
+    {
+        return this._minutesUntilMaintenance;
+    }
 
-	private _duration: number = 15;
+    private _duration: number = 15;
 
-	get duration(): number
-	{
-		return this._duration;
-	}
+    get duration(): number
+    {
+        return this._duration;
+    }
 
-	flush(): boolean
-	{
-		this._isInMaintenance = false;
-		this._minutesUntilMaintenance = 0;
-		this._duration = 15;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._isInMaintenance = false;
+        this._minutesUntilMaintenance = 0;
+        this._duration = 15;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._isInMaintenance = wrapper.readBoolean();
-		this._minutesUntilMaintenance = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._isInMaintenance = wrapper.readBoolean();
+        this._minutesUntilMaintenance = wrapper.readInt();
 
-		if (wrapper.bytesAvailable)
-		{
-			this._duration = wrapper.readInt();
-		}
+        if(wrapper.bytesAvailable)
+        {
+            this._duration = wrapper.readInt();
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

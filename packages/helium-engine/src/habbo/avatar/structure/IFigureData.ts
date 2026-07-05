@@ -9,9 +9,9 @@ import type {IPalette} from './figure/IPalette';
  */
 export interface IFigureData
 {
-	getSetType(type: string): ISetType | null;
+    getSetType(type: string): ISetType | null;
 
-	getPalette(id: number): IPalette | null;
+    getPalette(id: number): IPalette | null;
 
-	getFigurePartSet(id: number): IFigurePartSet | null;
+    getFigurePartSet(id: number): IFigurePartSet | null;
 }

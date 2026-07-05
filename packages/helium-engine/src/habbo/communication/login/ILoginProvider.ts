@@ -10,61 +10,61 @@ import type {IHabboCommunicationManager} from '../IHabboCommunicationManager';
 
 export interface ILoginProvider
 {
-	/**
+    /**
 	 * AS3: init(communication)
 	 * Initialize the provider with the communication manager.
 	 */
-	init(communication?: IHabboCommunicationManager | null): void;
+    init(communication?: IHabboCommunicationManager | null): void;
 
-	/**
+    /**
 	 * AS3: loginWithCredentials(email, password, captchaToken)
 	 * Login with email and password.
 	 */
-	loginWithCredentials(email: string, password: string): void;
+    loginWithCredentials(email: string, password: string): void;
 
-	/**
+    /**
 	 * AS3: loginWithCredentialsWeb(uniqueId)
 	 * Select an avatar by unique ID after login.
 	 */
-	loginWithCredentialsWeb(uniqueId: string): void;
+    loginWithCredentialsWeb(uniqueId: string): void;
 
-	/**
+    /**
 	 * AS3: selectAvatarUniqueid(uniqueId)
 	 * Select an avatar by unique ID.
 	 */
-	selectAvatarUniqueid(uniqueId: string): void;
+    selectAvatarUniqueid(uniqueId: string): void;
 
-	/**
+    /**
 	 * AS3: register(email, password, day, month, year, termsOfServiceAccepted, captchaToken)
 	 * Register a new account. Our port omits the birthdate/captcha fields not surfaced
 	 * by the onboarding register step.
 	 */
-	register(email: string, password: string): void;
+    register(email: string, password: string): void;
 
-	/**
+    /**
 	 * AS3: createAvatar(name, figure, gender)
 	 * Create the first avatar for a freshly registered account.
 	 */
-	createAvatar(name: string, figure: string, gender: string): void;
+    createAvatar(name: string, figure: string, gender: string): void;
 
-	/**
+    /**
 	 * AS3: checkName(name)
 	 * Check whether an avatar name is available.
 	 */
-	checkName(name: string): void;
+    checkName(name: string): void;
 
-	/**
+    /**
 	 * Subscribe to events.
 	 */
-	on(event: string, fn: (...args: any[]) => void): this;
+    on(event: string, fn: (...args: any[]) => void): this;
 
-	/**
+    /**
 	 * Unsubscribe from events.
 	 */
-	off(event: string, fn: (...args: any[]) => void): this;
+    off(event: string, fn: (...args: any[]) => void): this;
 
-	/**
+    /**
 	 * Dispose the provider.
 	 */
-	dispose(): void;
+    dispose(): void;
 }

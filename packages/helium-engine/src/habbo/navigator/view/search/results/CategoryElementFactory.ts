@@ -19,46 +19,46 @@ import {NavigatorSearchAction} from '@habbo/communication/messages/incoming/newn
 // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::CategoryElementFactory
 export class CategoryElementFactory
 {
-	private static readonly MARGIN_LAYOUT_CATEGORY_CONTAINER: number = 13;
+    private static readonly MARGIN_LAYOUT_CATEGORY_CONTAINER: number = 13;
 
-	private _navigator: HabboNewNavigator;
-	private _roomEntryElementFactory: RoomEntryElementFactory;
+    private _navigator: HabboNewNavigator;
+    private _roomEntryElementFactory: RoomEntryElementFactory;
 
-	constructor(navigator: HabboNewNavigator, roomEntryElementFactory: RoomEntryElementFactory)
-	{
-		this._navigator = navigator;
-		this._roomEntryElementFactory = roomEntryElementFactory;
-	}
+    constructor(navigator: HabboNewNavigator, roomEntryElementFactory: RoomEntryElementFactory)
+    {
+        this._navigator = navigator;
+        this._roomEntryElementFactory = roomEntryElementFactory;
+    }
 
-	private _blockResultsView: BlockResultsView | null = null;
+    private _blockResultsView: BlockResultsView | null = null;
 
-	set blockResultsView(value: BlockResultsView)
-	{
-		this._blockResultsView = value;
-	}
+    set blockResultsView(value: BlockResultsView)
+    {
+        this._blockResultsView = value;
+    }
 
-	private _categoryTemplate: IWindowContainer | null = null;
+    private _categoryTemplate: IWindowContainer | null = null;
 
-	set categoryTemplate(value: IWindowContainer)
-	{
-		this._categoryTemplate = value;
-	}
+    set categoryTemplate(value: IWindowContainer)
+    {
+        this._categoryTemplate = value;
+    }
 
-	private _collapsedCategoryTemplate: IWindowContainer | null = null;
+    private _collapsedCategoryTemplate: IWindowContainer | null = null;
 
-	set collapsedCategoryTemplate(value: IWindowContainer)
-	{
-		this._collapsedCategoryTemplate = value;
-	}
+    set collapsedCategoryTemplate(value: IWindowContainer)
+    {
+        this._collapsedCategoryTemplate = value;
+    }
 
-	private _noResultsTemplate: IWindowContainer | null = null;
+    private _noResultsTemplate: IWindowContainer | null = null;
 
-	set noResultsTemplate(value: IWindowContainer)
-	{
-		this._noResultsTemplate = value;
-	}
+    set noResultsTemplate(value: IWindowContainer)
+    {
+        this._noResultsTemplate = value;
+    }
 
-	/**
+    /**
 	 * Create an open (expanded) category element populated with room entries.
 	 *
 	 * @param guestRooms - The rooms to display in this category
@@ -70,207 +70,207 @@ export class CategoryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as getOpenCategoryElement()
 	 */
-	// AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::getOpenCategoryElement()
-	getOpenCategoryElement(
-		guestRooms: GuestRoomData[],
-		title: string,
-		showMoreId: number = -1,
-		actionAllowed: number = 0,
-		resultMode: number = -1
-	): IWindowContainer
-	{
-		const safeGuestRooms = Array.isArray(guestRooms) ? guestRooms : [];
-		const container = this._categoryTemplate!.clone() as IWindowContainer;
+    // AS3: sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as::getOpenCategoryElement()
+    getOpenCategoryElement(
+        guestRooms: GuestRoomData[],
+        title: string,
+        showMoreId: number = -1,
+        actionAllowed: number = 0,
+        resultMode: number = -1
+    ): IWindowContainer
+    {
+        const safeGuestRooms = Array.isArray(guestRooms) ? guestRooms : [];
+        const container = this._categoryTemplate!.clone() as IWindowContainer;
 
-		container.width = this._blockResultsView!.itemListWidth - CategoryElementFactory.MARGIN_LAYOUT_CATEGORY_CONTAINER;
-		container.height = 16 + this._roomEntryElementFactory.rowEntryTemplateHeight * (safeGuestRooms.length + 1);
+        container.width = this._blockResultsView!.itemListWidth - CategoryElementFactory.MARGIN_LAYOUT_CATEGORY_CONTAINER;
+        container.height = 16 + this._roomEntryElementFactory.rowEntryTemplateHeight * (safeGuestRooms.length + 1);
 
-		// Set category name
-		const nameEl = container.findChildByName('category_name');
+        // Set category name
+        const nameEl = container.findChildByName('category_name');
 
-		if (nameEl)
-		{
-			nameEl.caption = title;
-		}
+        if(nameEl)
+        {
+            nameEl.caption = title;
+        }
 
-		// Wire back button
-		const backEl = container.findChildByName('category_back');
+        // Wire back button
+        const backEl = container.findChildByName('category_back');
 
-		if (backEl)
-		{
-			backEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryBackClicked(e));
-			backEl.visible = actionAllowed === NavigatorSearchAction.GO_BACK;
-		}
+        if(backEl)
+        {
+            backEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryBackClicked(e));
+            backEl.visible = actionAllowed === NavigatorSearchAction.GO_BACK;
+        }
 
-		// Wire collapse button
-		const collapseEl = container.findChildByName('category_collapse');
+        // Wire collapse button
+        const collapseEl = container.findChildByName('category_collapse');
 
-		if (collapseEl)
-		{
-			collapseEl.visible = actionAllowed !== NavigatorSearchAction.GO_BACK;
-			collapseEl.id = showMoreId;
-			collapseEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
-		}
+        if(collapseEl)
+        {
+            collapseEl.visible = actionAllowed !== NavigatorSearchAction.GO_BACK;
+            collapseEl.id = showMoreId;
+            collapseEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
+        }
 
-		// Wire category name region (clickable to collapse)
-		const nameRegion = container.findChildByName('category_name_region');
+        // Wire category name region (clickable to collapse)
+        const nameRegion = container.findChildByName('category_name_region');
 
-		if (nameRegion)
-		{
-			nameRegion.id = showMoreId;
-			nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
-		}
+        if(nameRegion)
+        {
+            nameRegion.id = showMoreId;
+            nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
+        }
 
-		if (collapseEl)
-		{
-			const collapseIndex = container.getChildIndex(collapseEl);
+        if(collapseEl)
+        {
+            const collapseIndex = container.getChildIndex(collapseEl);
 
-			if (collapseIndex > -1)
-			{
-				container.setChildIndex(collapseEl, container.numChildren - 1);
-			}
-		}
+            if(collapseIndex > -1)
+            {
+                container.setChildIndex(collapseEl, container.numChildren - 1);
+            }
+        }
 
-		// Wire show more button
-		const showMoreEl = container.findChildByName('category_show_more');
+        // Wire show more button
+        const showMoreEl = container.findChildByName('category_show_more');
 
-		if (showMoreEl)
-		{
-			showMoreEl.id = showMoreId;
-			showMoreEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
-			showMoreEl.visible = actionAllowed === NavigatorSearchAction.SHOW_MORE;
-		}
+        if(showMoreEl)
+        {
+            showMoreEl.id = showMoreId;
+            showMoreEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
+            showMoreEl.visible = actionAllowed === NavigatorSearchAction.SHOW_MORE;
+        }
 
-		// Wire add quick link button
-		const addQuickLink = container.findChildByName('category_add_quick_link');
+        // Wire add quick link button
+        const addQuickLink = container.findChildByName('category_add_quick_link');
 
-		if (addQuickLink)
-		{
-			addQuickLink.id = showMoreId;
-			addQuickLink.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
+        if(addQuickLink)
+        {
+            addQuickLink.id = showMoreId;
+            addQuickLink.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
 
-			const searchCode = this._navigator.currentResults?.searchCodeOriginal ?? '';
+            const searchCode = this._navigator.currentResults?.searchCodeOriginal ?? '';
 
-			addQuickLink.visible = searchCode.indexOf('official_view') === -1;
-		}
+            addQuickLink.visible = searchCode.indexOf('official_view') === -1;
+        }
 
-		// Set background
-		const bgEl = container.findChildByName('category_content_background');
+        // Set background
+        const bgEl = container.findChildByName('category_content_background');
 
-		if (bgEl)
-		{
-			bgEl.background = true;
-			bgEl.height = 12 + this._roomEntryElementFactory.rowEntryTemplateHeight * (safeGuestRooms.length + 1);
-		}
+        if(bgEl)
+        {
+            bgEl.background = true;
+            bgEl.height = 12 + this._roomEntryElementFactory.rowEntryTemplateHeight * (safeGuestRooms.length + 1);
+        }
 
-		// Wire toggle tiles/rows buttons (AS3: only if perk allowed)
-		const headerControls = container.findChildByName('category_controls_itemlist') as IItemListWindow | null;
+        // Wire toggle tiles/rows buttons (AS3: only if perk allowed)
+        const headerControls = container.findChildByName('category_controls_itemlist') as IItemListWindow | null;
 
-		if (headerControls)
-		{
-			if(this._navigator.isPerkAllowed('NAVIGATOR_ROOM_THUMBNAIL_CAMERA'))
-			{
-				const toggleTiles = headerControls.getListItemByName?.('category_toggle_tiles');
-				const toggleRows = headerControls.getListItemByName?.('category_toggle_rows');
+        if(headerControls)
+        {
+            if(this._navigator.isPerkAllowed('NAVIGATOR_ROOM_THUMBNAIL_CAMERA'))
+            {
+                const toggleTiles = headerControls.getListItemByName?.('category_toggle_tiles');
+                const toggleRows = headerControls.getListItemByName?.('category_toggle_rows');
 
-				if (toggleTiles)
-				{
-					toggleTiles.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
-					toggleTiles.id = showMoreId;
-					toggleTiles.visible = resultMode === 0;
-				}
+                if(toggleTiles)
+                {
+                    toggleTiles.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
+                    toggleTiles.id = showMoreId;
+                    toggleTiles.visible = resultMode === 0;
+                }
 
-				if (toggleRows)
-				{
-					toggleRows.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
-					toggleRows.id = showMoreId;
-					toggleRows.visible = resultMode === 1;
-				}
-			}
-			else
-			{
-				const toggleTiles = headerControls.getListItemByName?.('category_toggle_tiles');
-				const toggleRows = headerControls.getListItemByName?.('category_toggle_rows');
+                if(toggleRows)
+                {
+                    toggleRows.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
+                    toggleRows.id = showMoreId;
+                    toggleRows.visible = resultMode === 1;
+                }
+            }
+            else
+            {
+                const toggleTiles = headerControls.getListItemByName?.('category_toggle_tiles');
+                const toggleRows = headerControls.getListItemByName?.('category_toggle_rows');
 
-				if(toggleTiles) headerControls.removeListItem(toggleTiles);
-				if(toggleRows) headerControls.removeListItem(toggleRows);
-			}
+                if(toggleTiles) headerControls.removeListItem(toggleTiles);
+                if(toggleRows) headerControls.removeListItem(toggleRows);
+            }
 
-			headerControls.arrangeListItems();
-		}
+            headerControls.arrangeListItems();
+        }
 
-		// Populate room list
-		const roomList = container.findChildByName('category_content') as IItemListWindow | null;
+        // Populate room list
+        const roomList = container.findChildByName('category_content') as IItemListWindow | null;
 
-		if (roomList)
-		{
-			if (resultMode === 0)
-			{
-				roomList.spacing = 0;
-			}
+        if(roomList)
+        {
+            if(resultMode === 0)
+            {
+                roomList.spacing = 0;
+            }
 
-			const colorMod = 0x8FBFFF;
-			let colorModAccumulator = 1;
-			let currentTileContainer: IItemListWindow | null = null;
+            const colorMod = 0x8FBFFF;
+            let colorModAccumulator = 1;
+            let currentTileContainer: IItemListWindow | null = null;
 
-			for (const guestRoom of safeGuestRooms)
-			{
-				const alternatingColor = colorModAccumulator % 2 === 0 ? -1 : colorMod;
+            for(const guestRoom of safeGuestRooms)
+            {
+                const alternatingColor = colorModAccumulator % 2 === 0 ? -1 : colorMod;
 
-				if (resultMode === 0)
-				{
-					roomList.addListItem(this._roomEntryElementFactory.getNewRowElement(guestRoom, alternatingColor));
-					colorModAccumulator++;
-				}
-				else
-				{
-					if (!currentTileContainer)
-					{
-						currentTileContainer = this._roomEntryElementFactory.getNewTileContainerElement();
-						roomList.addListItem(currentTileContainer as unknown as IWindow);
-						currentTileContainer.addEventListener('WME_WHEEL', (event: WindowEvent) =>
-							{
-								const delta = (event as unknown as { delta?: number }).delta ?? 0;
-								const list = this._blockResultsView?.itemList as unknown as { scrollWithWheel?: (value: number) => void } | null;
+                if(resultMode === 0)
+                {
+                    roomList.addListItem(this._roomEntryElementFactory.getNewRowElement(guestRoom, alternatingColor));
+                    colorModAccumulator++;
+                }
+                else
+                {
+                    if(!currentTileContainer)
+                    {
+                        currentTileContainer = this._roomEntryElementFactory.getNewTileContainerElement();
+                        roomList.addListItem(currentTileContainer as unknown as IWindow);
+                        currentTileContainer.addEventListener('WME_WHEEL', (event: WindowEvent) =>
+                        {
+                            const delta = (event as unknown as { delta?: number }).delta ?? 0;
+                            const list = this._blockResultsView?.itemList as unknown as { scrollWithWheel?: (value: number) => void } | null;
 
-								list?.scrollWithWheel?.(delta);
-							});
-					}
+                            list?.scrollWithWheel?.(delta);
+                        });
+                    }
 
-					currentTileContainer.addListItem(
-						this._roomEntryElementFactory.getNewTileElement(guestRoom, alternatingColor)
-					);
+                    currentTileContainer.addListItem(
+                        this._roomEntryElementFactory.getNewTileElement(guestRoom, alternatingColor)
+                    );
 
-					if (currentTileContainer.numListItems >= 3)
-					{
-						currentTileContainer = null;
-						colorModAccumulator++;
-					}
-				}
-			}
+                    if(currentTileContainer.numListItems >= 3)
+                    {
+                        currentTileContainer = null;
+                        colorModAccumulator++;
+                    }
+                }
+            }
 
-			roomList.arrangeListItems();
+            roomList.arrangeListItems();
 
-			if(resultMode !== 0)
-			{
-				const contentBottom = roomList.y + roomList.height;
+            if(resultMode !== 0)
+            {
+                const contentBottom = roomList.y + roomList.height;
 
-				if(bgEl && bgEl.height < contentBottom + 1)
-				{
-					bgEl.height = contentBottom + 1;
-				}
+                if(bgEl && bgEl.height < contentBottom + 1)
+                {
+                    bgEl.height = contentBottom + 1;
+                }
 
-				if(container.height < contentBottom + 5)
-				{
-					container.height = contentBottom + 5;
-				}
-			}
-		}
+                if(container.height < contentBottom + 5)
+                {
+                    container.height = contentBottom + 5;
+                }
+            }
+        }
 
-		return container;
-	}
+        return container;
+    }
 
-	/**
+    /**
 	 * Create a collapsed category element.
 	 *
 	 * @param title - The category title text
@@ -280,80 +280,80 @@ export class CategoryElementFactory
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as getCollapsedCategoryElement()
 	 */
-	getCollapsedCategoryElement(title: string, showMoreId: number = -1, actionAllowed: number = 0): IWindowContainer
-	{
-		const container = this._collapsedCategoryTemplate!.clone() as IWindowContainer;
+    getCollapsedCategoryElement(title: string, showMoreId: number = -1, actionAllowed: number = 0): IWindowContainer
+    {
+        const container = this._collapsedCategoryTemplate!.clone() as IWindowContainer;
 
-		const nameEl = container.findChildByName('category_name');
+        const nameEl = container.findChildByName('category_name');
 
-		if (nameEl)
-		{
-			nameEl.caption = title;
-		}
+        if(nameEl)
+        {
+            nameEl.caption = title;
+        }
 
-		const showMoreEl = container.findChildByName('category_show_more');
+        const showMoreEl = container.findChildByName('category_show_more');
 
-		if (showMoreEl)
-		{
-			showMoreEl.id = showMoreId;
-			showMoreEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
-			showMoreEl.visible = actionAllowed === NavigatorSearchAction.SHOW_MORE;
-		}
+        if(showMoreEl)
+        {
+            showMoreEl.id = showMoreId;
+            showMoreEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
+            showMoreEl.visible = actionAllowed === NavigatorSearchAction.SHOW_MORE;
+        }
 
-		const expandEl = container.findChildByName('category_expand');
+        const expandEl = container.findChildByName('category_expand');
 
-		if (expandEl)
-		{
-			expandEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
-			expandEl.id = showMoreId;
-		}
+        if(expandEl)
+        {
+            expandEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
+            expandEl.id = showMoreId;
+        }
 
-		const nameRegion = container.findChildByName('category_name_region');
+        const nameRegion = container.findChildByName('category_name_region');
 
-		if (nameRegion)
-		{
-			nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
-			nameRegion.id = showMoreId;
-		}
+        if(nameRegion)
+        {
+            nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
+            nameRegion.id = showMoreId;
+        }
 
-		const addQuickLink = container.findChildByName('category_add_quick_link');
+        const addQuickLink = container.findChildByName('category_add_quick_link');
 
-		if (addQuickLink)
-		{
-			addQuickLink.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
-			addQuickLink.id = showMoreId;
+        if(addQuickLink)
+        {
+            addQuickLink.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
+            addQuickLink.id = showMoreId;
 
-			const searchCode = this._navigator.currentResults?.searchCodeOriginal ?? '';
+            const searchCode = this._navigator.currentResults?.searchCodeOriginal ?? '';
 
-			addQuickLink.visible = searchCode.indexOf('official_view') === -1;
-		}
+            addQuickLink.visible = searchCode.indexOf('official_view') === -1;
+        }
 
-		container.width = this._blockResultsView!.itemListWidth - CategoryElementFactory.MARGIN_LAYOUT_CATEGORY_CONTAINER;
+        container.width = this._blockResultsView!.itemListWidth - CategoryElementFactory.MARGIN_LAYOUT_CATEGORY_CONTAINER;
 
-		const controlsList = container.findChildByName('category_controls_itemlist') as IItemListWindow | null;
+        const controlsList = container.findChildByName('category_controls_itemlist') as IItemListWindow | null;
 
-		if (controlsList)
-		{
-			controlsList.arrangeListItems();
-		}
+        if(controlsList)
+        {
+            controlsList.arrangeListItems();
+        }
 
-		return container;
-	}
+        return container;
+    }
 
-	/**
+    /**
 	 * Create a no-results element.
 	 *
 	 * @returns A cloned no-results container
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/CategoryElementFactory.as getNoResultsELement()
 	 */
-	getNoResultsElement(): IWindowContainer
-	{
-		return this._noResultsTemplate!.clone() as IWindowContainer;
-	}
+    getNoResultsElement(): IWindowContainer
+    {
+        return this._noResultsTemplate!.clone() as IWindowContainer;
+    }
 
-	getNoResultsELement(): IWindowContainer
-	{
-		return this.getNoResultsElement();
-	}
+    getNoResultsELement(): IWindowContainer
+    {
+        return this.getNoResultsElement();
+    }
 }

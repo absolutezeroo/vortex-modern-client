@@ -5,7 +5,7 @@
  */
 export interface IAvatarImageListener
 {
-	disposed?: boolean;
+    disposed?: boolean;
 
-	avatarImageReady(figureString: string): void;
+    avatarImageReady(figureString: string): void;
 }

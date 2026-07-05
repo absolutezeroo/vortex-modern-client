@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomsWithHighestScoreSearchMessageComposer extends MessageComposer<ConstructorParameters<typeof RoomsWithHighestScoreSearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RoomsWithHighestScoreSearchMessageComposer>;
+    private _data: ConstructorParameters<typeof RoomsWithHighestScoreSearchMessageComposer>;
 
-	constructor(categoryId: number)
-	{
-		super();
+    constructor(categoryId: number)
+    {
+        super();
 
-		this._data = [categoryId];
-	}
+        this._data = [categoryId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

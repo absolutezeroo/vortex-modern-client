@@ -9,8 +9,8 @@ import {InfoHotelClosedMessageEventParser} from '../../parser/notifications/Info
  */
 export class InfoHotelClosedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, InfoHotelClosedMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, InfoHotelClosedMessageEventParser);
+    }
 }

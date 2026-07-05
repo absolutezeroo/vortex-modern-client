@@ -11,17 +11,17 @@ import type {IInteractiveWindow} from './IInteractiveWindow';
  */
 export interface ITextFieldWindow extends ITextWindow, IInteractiveWindow
 {
-	editable: boolean;
-	selectable: boolean;
-	displayAsPassword: boolean;
-	readonly focused: boolean;
-	readonly selectionBeginIndex: number;
-	readonly selectionEndIndex: number;
-	displayRaw: boolean;
+    editable: boolean;
+    selectable: boolean;
+    displayAsPassword: boolean;
+    readonly focused: boolean;
+    readonly selectionBeginIndex: number;
+    readonly selectionEndIndex: number;
+    displayRaw: boolean;
 
-	setSelection(beginIndex: number, endIndex: number): void;
+    setSelection(beginIndex: number, endIndex: number): void;
 
-	requestChangeEvent(): void;
+    requestChangeEvent(): void;
 
-	getWordAt(x: number, y: number): string;
+    getWordAt(x: number, y: number): string;
 }

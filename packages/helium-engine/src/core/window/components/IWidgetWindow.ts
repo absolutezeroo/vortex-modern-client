@@ -8,6 +8,6 @@ import type {IIterable} from '../utils/IIterable';
  */
 export interface IWidgetWindow extends IWindow, IIterable
 {
-	readonly widget: unknown;
-	rootWindow: IWindow | null;
+    readonly widget: unknown;
+    rootWindow: IWindow | null;
 }

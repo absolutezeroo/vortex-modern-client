@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class LatencyPingReportMessageComposer extends MessageComposer<ConstructorParameters<typeof LatencyPingReportMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof LatencyPingReportMessageComposer>;
+    private _data: ConstructorParameters<typeof LatencyPingReportMessageComposer>;
 
-	constructor(averageLatency: number, adjustedAverage: number, sampleCount: number)
-	{
-		super();
-		this._data = [averageLatency, adjustedAverage, sampleCount];
-	}
+    constructor(averageLatency: number, adjustedAverage: number, sampleCount: number)
+    {
+        super();
+        this._data = [averageLatency, adjustedAverage, sampleCount];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

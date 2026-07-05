@@ -7,15 +7,15 @@
  */
 export class RoomToObjectEvent
 {
-	constructor(type: string)
-	{
-		this._type = type;
-	}
+    constructor(type: string)
+    {
+        this._type = type;
+    }
 
-	private _type: string;
+    private _type: string;
 
-	get type(): string
-	{
-		return this._type;
-	}
+    get type(): string
+    {
+        return this._type;
+    }
 }

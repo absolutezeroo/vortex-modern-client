@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetIgnoredUsersMessageComposer extends MessageComposer<ConstructorParameters<typeof GetIgnoredUsersMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetIgnoredUsersMessageComposer>;
+    private _data: ConstructorParameters<typeof GetIgnoredUsersMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

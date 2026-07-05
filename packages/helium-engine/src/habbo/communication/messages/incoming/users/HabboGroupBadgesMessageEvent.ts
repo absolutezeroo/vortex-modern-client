@@ -12,13 +12,13 @@ import {HabboGroupBadgesMessageParser} from "@habbo/communication";
  */
 export class HabboGroupBadgesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboGroupBadgesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboGroupBadgesMessageParser);
+    }
 
-	get badges(): Map<number, string> | null
-	{
-		return (this._parser as HabboGroupBadgesMessageParser).badges;
-	}
+    get badges(): Map<number, string> | null
+    {
+        return (this._parser as HabboGroupBadgesMessageParser).badges;
+    }
 }

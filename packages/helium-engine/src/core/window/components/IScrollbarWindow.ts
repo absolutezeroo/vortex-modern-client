@@ -11,10 +11,10 @@ import type {IScrollableWindow} from './IScrollableWindow';
  */
 export interface IScrollbarWindow extends IInteractiveWindow
 {
-	scrollH: number;
-	scrollV: number;
-	scrollable: IScrollableWindow | null;
+    scrollH: number;
+    scrollV: number;
+    scrollable: IScrollableWindow | null;
 
-	readonly vertical: boolean;
-	readonly horizontal: boolean;
+    readonly vertical: boolean;
+    readonly horizontal: boolean;
 }

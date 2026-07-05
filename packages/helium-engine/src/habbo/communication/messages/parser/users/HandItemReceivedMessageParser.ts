@@ -10,32 +10,32 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class HandItemReceivedMessageParser implements IMessageParser
 {
-	private _giverUserId: number = -1;
-	private _handItemType: number = 0;
+    private _giverUserId: number = -1;
+    private _handItemType: number = 0;
 
-	get giverUserId(): number
-	{
-		return this._giverUserId;
-	}
+    get giverUserId(): number
+    {
+        return this._giverUserId;
+    }
 
-	get handItemType(): number
-	{
-		return this._handItemType;
-	}
+    get handItemType(): number
+    {
+        return this._handItemType;
+    }
 
-	flush(): boolean
-	{
-		this._giverUserId = -1;
-		this._handItemType = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._giverUserId = -1;
+        this._handItemType = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._giverUserId = wrapper.readInt();
-		this._handItemType = wrapper.readInt();
-		return true;
-	}
+        this._giverUserId = wrapper.readInt();
+        this._handItemType = wrapper.readInt();
+        return true;
+    }
 }

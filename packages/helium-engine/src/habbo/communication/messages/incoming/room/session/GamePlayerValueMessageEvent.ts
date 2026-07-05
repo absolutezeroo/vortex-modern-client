@@ -9,8 +9,8 @@ import {GamePlayerValueMessageParser} from '@habbo/communication/messages/parser
  */
 export class GamePlayerValueMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GamePlayerValueMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GamePlayerValueMessageParser);
+    }
 }

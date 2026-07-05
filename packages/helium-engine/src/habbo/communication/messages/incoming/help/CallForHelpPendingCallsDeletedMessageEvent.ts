@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	CallForHelpPendingCallsDeletedMessageParser
+    CallForHelpPendingCallsDeletedMessageParser
 } from '../../parser/help/CallForHelpPendingCallsDeletedMessageParser';
 
 /**
@@ -11,8 +11,8 @@ import {
  */
 export class CallForHelpPendingCallsDeletedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CallForHelpPendingCallsDeletedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CallForHelpPendingCallsDeletedMessageParser);
+    }
 }

@@ -7,23 +7,23 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MoveObjectMessageComposer extends MessageComposer<[number, number, number, number]>
 {
-	private _objectId: number;
-	private _x: number;
-	private _y: number;
-	private _direction: number;
+    private _objectId: number;
+    private _x: number;
+    private _y: number;
+    private _direction: number;
 
-	constructor(objectId: number, x: number, y: number, direction: number)
-	{
-		super();
+    constructor(objectId: number, x: number, y: number, direction: number)
+    {
+        super();
 
-		this._objectId = objectId;
-		this._x = x;
-		this._y = y;
-		this._direction = direction;
-	}
+        this._objectId = objectId;
+        this._x = x;
+        this._y = y;
+        this._direction = direction;
+    }
 
-	getMessageArray(): [number, number, number, number]
-	{
-		return [this._objectId, this._x, this._y, this._direction];
-	}
+    getMessageArray(): [number, number, number, number]
+    {
+        return [this._objectId, this._x, this._y, this._direction];
+    }
 }

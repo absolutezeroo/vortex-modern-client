@@ -9,8 +9,8 @@ import {ActivityPointsMessageParser} from '../../parser/notifications/ActivityPo
  */
 export class ActivityPointsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ActivityPointsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ActivityPointsMessageParser);
+    }
 }

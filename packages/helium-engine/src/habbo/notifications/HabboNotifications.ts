@@ -24,7 +24,7 @@ import {NotificationMessageHandler} from './NotificationMessageHandler';
 import {Logger} from '@core/utils/Logger';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {GetMOTDMessageComposer} from "@habbo/communication";
-import {IHabboLocalizationManager} from "@habbo/localization";
+import type {IHabboLocalizationManager} from "@habbo/localization";
 import {IID_HabboLocalizationManager} from "@iid";
 
 const log = Logger.getLogger('HabboNotifications');
@@ -37,12 +37,12 @@ const log = Logger.getLogger('HabboNotifications');
  */
 export interface HabboNotificationEvents
 {
-	'showItem': (item: unknown) => void;
-	'clubGiftNotification': (numGifts: number) => void;
-	'safetyLockedNotification': (userId: number) => void;
-	'hideSafetyLockedNotification': () => void;
-	'showNotification': (type: string, parameters: Map<string, string> | null) => void;
-	'disabled': (disabled: boolean) => void;
+    'showItem': (item: unknown) => void;
+    'clubGiftNotification': (numGifts: number) => void;
+    'safetyLockedNotification': (userId: number) => void;
+    'hideSafetyLockedNotification': () => void;
+    'showNotification': (type: string, parameters: Map<string, string> | null) => void;
+    'disabled': (disabled: boolean) => void;
 }
 
 /**
@@ -59,196 +59,196 @@ export interface HabboNotificationEvents
  */
 export class HabboNotifications extends Component implements IHabboNotifications
 {
-	private _messageHandler: NotificationMessageHandler | null = null;
-	private _inventory: IHabboInventory | null = null;
-	private _friendList: IHabboFriendList | null = null;
-	private _roomEngine: IRoomEngine | null = null;
-	private _catalog: unknown | null = null;
-	private _toolbar: IHabboToolbar | null = null;
-	private _windowManager: IHabboWindowManager | null = null;
-	private _habboHelp: IHabboHelp | null = null;
+    private _messageHandler: NotificationMessageHandler | null = null;
+    private _inventory: IHabboInventory | null = null;
+    private _friendList: IHabboFriendList | null = null;
+    private _roomEngine: IRoomEngine | null = null;
+    private _catalog: unknown | null = null;
+    private _toolbar: IHabboToolbar | null = null;
+    private _windowManager: IHabboWindowManager | null = null;
+    private _habboHelp: IHabboHelp | null = null;
 
-	constructor(context: IContext)
-	{
-		super(context);
+    constructor(context: IContext)
+    {
+        super(context);
 
-		this._disabled = false;
-	}
+        this._disabled = false;
+    }
 
-	/**
+    /**
 	 * Separate notification EventEmitter.
 	 * CRITICAL: Do NOT override the `events` getter from Component.
 	 * @see MEMORY.md - Component EventEmitter Override Bug
 	 */
-	private _notificationEvents: EventEmitter<HabboNotificationEvents> = new EventEmitter();
+    private _notificationEvents: EventEmitter<HabboNotificationEvents> = new EventEmitter();
 
-	/**
+    /**
 	 * Get the notification-specific event emitter.
 	 * Use this (NOT `events`) for notification events.
 	 */
-	get notificationEvents(): EventEmitter<HabboNotificationEvents>
-	{
-		return this._notificationEvents;
-	}
+    get notificationEvents(): EventEmitter<HabboNotificationEvents>
+    {
+        return this._notificationEvents;
+    }
 
-	private _communication: IHabboCommunicationManager | null = null;
+    private _communication: IHabboCommunicationManager | null = null;
 
-	get communication(): IHabboCommunicationManager | null
-	{
-		return this._communication;
-	}
+    get communication(): IHabboCommunicationManager | null
+    {
+        return this._communication;
+    }
 
-	private _sessionDataManager: ISessionDataManager | null = null;
+    private _sessionDataManager: ISessionDataManager | null = null;
 
-	get sessionDataManager(): ISessionDataManager | null
-	{
-		return this._sessionDataManager;
-	}
+    get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
+    }
 
-	private _roomSessionManager: IRoomSessionManager | null = null;
+    private _roomSessionManager: IRoomSessionManager | null = null;
 
-	get roomSessionManager(): IRoomSessionManager | null
-	{
-		return this._roomSessionManager;
-	}
+    get roomSessionManager(): IRoomSessionManager | null
+    {
+        return this._roomSessionManager;
+    }
 
-	private _localizationManager: IHabboLocalizationManager | null = null;
+    private _localizationManager: IHabboLocalizationManager | null = null;
 
-	get localizationManager(): IHabboLocalizationManager | null
-	{
-		return this._localizationManager;
-	}
+    get localizationManager(): IHabboLocalizationManager | null
+    {
+        return this._localizationManager;
+    }
 
-	private _singularController: SingularNotificationController | null = null;
+    private _singularController: SingularNotificationController | null = null;
 
-	get singularController(): SingularNotificationController | null
-	{
-		return this._singularController;
-	}
+    get singularController(): SingularNotificationController | null
+    {
+        return this._singularController;
+    }
 
-	private _disabled: boolean = false;
+    private _disabled: boolean = false;
 
-	get disabled(): boolean
-	{
-		return this._disabled;
-	}
+    get disabled(): boolean
+    {
+        return this._disabled;
+    }
 
-	set disabled(value: boolean)
-	{
-		this._disabled = value;
-		this._notificationEvents.emit('disabled', value);
-	}
+    set disabled(value: boolean)
+    {
+        this._disabled = value;
+        this._notificationEvents.emit('disabled', value);
+    }
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	protected override get dependencies(): Array<ComponentDependency<any>>
-	{
-		return [
-			new ComponentDependency(
-				IID_HabboCommunicationManager,
-				(manager: IHabboCommunicationManager | null) =>
-				{
-					this._communication = manager;
-				},
-				true
-			),
-			new ComponentDependency(
-				IID_SessionDataManager,
-				(manager: ISessionDataManager | null) =>
-				{
-					this._sessionDataManager = manager;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboLocalizationManager,
-				(manager: IHabboLocalizationManager | null) =>
-				{
-					this._localizationManager = manager;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_RoomSessionManager,
-				(manager: IRoomSessionManager | null) =>
-				{
-					this._roomSessionManager = manager;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboInventory,
-				(inventory: IHabboInventory | null) =>
-				{
-					this._inventory = inventory;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboFriendList,
-				(friendList: IHabboFriendList | null) =>
-				{
-					this._friendList = friendList;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_RoomEngine,
-				(engine: IRoomEngine | null) =>
-				{
-					this._roomEngine = engine;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboCatalog,
-				(catalog: unknown | null) =>
-				{
-					this._catalog = catalog;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboToolbar,
-				(toolbar: IHabboToolbar | null) =>
-				{
-					this._toolbar = toolbar;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboWindowManager,
-				(manager: IHabboWindowManager | null) =>
-				{
-					this._windowManager = manager;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboHelp,
-				(help: IHabboHelp | null) =>
-				{
-					this._habboHelp = help;
-				},
-				false
-			),
-		];
-	}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    protected override get dependencies(): Array<ComponentDependency<any>>
+    {
+        return [
+            new ComponentDependency(
+                IID_HabboCommunicationManager,
+                (manager: IHabboCommunicationManager | null) =>
+                {
+                    this._communication = manager;
+                },
+                true
+            ),
+            new ComponentDependency(
+                IID_SessionDataManager,
+                (manager: ISessionDataManager | null) =>
+                {
+                    this._sessionDataManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboLocalizationManager,
+                (manager: IHabboLocalizationManager | null) =>
+                {
+                    this._localizationManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomSessionManager,
+                (manager: IRoomSessionManager | null) =>
+                {
+                    this._roomSessionManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboInventory,
+                (inventory: IHabboInventory | null) =>
+                {
+                    this._inventory = inventory;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboFriendList,
+                (friendList: IHabboFriendList | null) =>
+                {
+                    this._friendList = friendList;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomEngine,
+                (engine: IRoomEngine | null) =>
+                {
+                    this._roomEngine = engine;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboCatalog,
+                (catalog: unknown | null) =>
+                {
+                    this._catalog = catalog;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboToolbar,
+                (toolbar: IHabboToolbar | null) =>
+                {
+                    this._toolbar = toolbar;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboHelp,
+                (help: IHabboHelp | null) =>
+                {
+                    this._habboHelp = help;
+                },
+                false
+            ),
+        ];
+    }
 
-	/**
+    /**
 	 * Activate the notifications system.
 	 * Called by the NotificationMessageHandler after message events are registered.
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as activate()
 	 */
-	activate(): void
-	{
-		if (this._communication?.connection)
-		{
-			this._communication.connection.send(new GetMOTDMessageComposer());
-		}
-	}
+    activate(): void
+    {
+        if(this._communication?.connection)
+        {
+            this._communication.connection.send(new GetMOTDMessageComposer());
+        }
+    }
 
-	/**
+    /**
 	 * Add a notification item with content, type, and optional icon asset name
 	 *
 	 * @param content The notification message text
@@ -257,12 +257,12 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as addItem()
 	 */
-	addItem(content: string, type: string, iconAssetName?: string | null): void
-	{
-		this._singularController?.addItem(content, type, iconAssetName ?? null);
-	}
+    addItem(content: string, type: string, iconAssetName?: string | null): void
+    {
+        this._singularController?.addItem(content, type, iconAssetName ?? null);
+    }
 
-	/**
+    /**
 	 * Show a notification popup with the given type and parameters
 	 *
 	 * @param type The notification type key
@@ -270,61 +270,61 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as showNotification()
 	 */
-	showNotification(type: string, parameters?: Map<string, string> | null): void
-	{
-		const params = parameters ?? new Map<string, string>();
+    showNotification(type: string, parameters?: Map<string, string> | null): void
+    {
+        const params = parameters ?? new Map<string, string>();
 
-		// Check for configuration-defined notification properties
-		const configKey = 'notification.' + type;
+        // Check for configuration-defined notification properties
+        const configKey = 'notification.' + type;
 
-		if (this.propertyExists(configKey))
-		{
-			try
-			{
-				const configJson = this.getProperty(configKey);
-				const configObj = JSON.parse(configJson) as Record<string, string>;
+        if(this.propertyExists(configKey))
+        {
+            try
+            {
+                const configJson = this.getProperty(configKey);
+                const configObj = JSON.parse(configJson) as Record<string, string>;
 
-				for (const [key, value] of Object.entries(configObj))
-				{
-					params.set(key, value);
-				}
-			}
-			catch (e)
-			{
-				log.error(`Failed to parse notification config for "${configKey}":`, e);
-			}
-		}
+                for(const [key, value] of Object.entries(configObj))
+                {
+                    params.set(key, value);
+                }
+            }
+            catch (e)
+            {
+                log.error(`Failed to parse notification config for "${configKey}":`, e);
+            }
+        }
 
-		// Check if this should be displayed as a bubble
-		if (params.get('display') === 'BUBBLE')
-		{
-			const message = this.getNotificationPart(params, type, 'message', true);
-			const linkUrl = this.getNotificationPart(params, type, 'linkUrl', false);
-			const imageUrl = this.getNotificationImageUrl(params, type);
+        // Check if this should be displayed as a bubble
+        if(params.get('display') === 'BUBBLE')
+        {
+            const message = this.getNotificationPart(params, type, 'message', true);
+            const linkUrl = this.getNotificationPart(params, type, 'linkUrl', false);
+            const imageUrl = this.getNotificationImageUrl(params, type);
 
-			let internalLink: string | null = null;
+            let internalLink: string | null = null;
 
-			if (linkUrl != null && linkUrl.substring(0, 6) === 'event:')
-			{
-				internalLink = linkUrl.substring(6);
-			}
+            if(linkUrl != null && linkUrl.substring(0, 6) === 'event:')
+            {
+                internalLink = linkUrl.substring(6);
+            }
 
-			this._singularController?.addItem(
-				message ?? '',
-				'info',
-				imageUrl,
-				null,
-				internalLink ?? linkUrl
-			);
-		}
-		else
-		{
-			// Emit event for UI layer to show notification popup
-			this._notificationEvents.emit('showNotification', type, params);
-		}
-	}
+            this._singularController?.addItem(
+                message ?? '',
+                'info',
+                imageUrl,
+                null,
+                internalLink ?? linkUrl
+            );
+        }
+        else
+        {
+            // Emit event for UI layer to show notification popup
+            this._notificationEvents.emit('showNotification', type, params);
+        }
+    }
 
-	/**
+    /**
 	 * Add a song playing notification
 	 *
 	 * @param songName The name of the song
@@ -332,12 +332,12 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as addSongPlayingNotification()
 	 */
-	addSongPlayingNotification(songName: string, songAuthor: string): void
-	{
-		this._singularController?.addSongPlayingNotification(songName, songAuthor);
-	}
+    addSongPlayingNotification(songName: string, songAuthor: string): void
+    {
+        this._singularController?.addSongPlayingNotification(songName, songAuthor);
+    }
 
-	/**
+    /**
 	 * Get a part of a notification (message, linkUrl, etc.)
 	 * Resolves from parameters map or localization.
 	 *
@@ -349,37 +349,37 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as getNotificationPart()
 	 */
-	getNotificationPart(
-		params: Map<string, string>,
-		type: string,
-		part: string,
-		required: boolean
-	): string | null
-	{
-		if (params.has(part))
-		{
-			return params.get(part) ?? null;
-		}
+    getNotificationPart(
+        params: Map<string, string>,
+        type: string,
+        part: string,
+        required: boolean
+    ): string | null
+    {
+        if(params.has(part))
+        {
+            return params.get(part) ?? null;
+        }
 
-		const locKey = ['notification', type, part].join('.');
+        const locKey = ['notification', type, part].join('.');
 
-		if (this._localizationManager)
-		{
-			if (this._localizationManager?.hasLocalization(locKey) || required)
-			{
-				return this._localizationManager.getLocalizationWithParamMap(locKey, locKey, params);
-			}
-		}
+        if(this._localizationManager)
+        {
+            if(this._localizationManager?.hasLocalization(locKey) || required)
+            {
+                return this._localizationManager.getLocalizationWithParamMap(locKey, locKey, params);
+            }
+        }
 
-		if (required)
-		{
-			return locKey;
-		}
+        if(required)
+        {
+            return locKey;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get the notification image URL
 	 *
 	 * @param params The notification parameters
@@ -388,62 +388,62 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as getNotificationImageUrl()
 	 */
-	getNotificationImageUrl(params: Map<string, string>, type: string): string | null
-	{
-		const image = params.get('image');
+    getNotificationImageUrl(params: Map<string, string>, type: string): string | null
+    {
+        const image = params.get('image');
 
-		if (image != null)
-		{
-			return image;
-		}
+        if(image != null)
+        {
+            return image;
+        }
 
-		return '${image.library.url}notifications/' + type.replace(/\./g, '_') + '.png';
-	}
+        return '${image.library.url}notifications/' + type.replace(/\./g, '_') + '.png';
+    }
 
-	/**
+    /**
 	 * Create a link event (dispatches through the context)
 	 *
 	 * @param link The link event string
 	 *
 	 * @see source_as_win63/habbo/notifications/HabboNotifications.as createLinkEvent()
 	 */
-	createLinkEvent(link: string): void
-	{
-		this.context.createLinkEvent(link);
-	}
+    createLinkEvent(link: string): void
+    {
+        this.context.createLinkEvent(link);
+    }
 
-	override dispose(): void
-	{
-		if (this.disposed) return;
+    override dispose(): void
+    {
+        if(this.disposed) return;
 
-		if (this._messageHandler != null)
-		{
-			this._messageHandler.dispose();
-			this._messageHandler = null;
-		}
+        if(this._messageHandler != null)
+        {
+            this._messageHandler.dispose();
+            this._messageHandler = null;
+        }
 
-		if (this._singularController != null)
-		{
-			this._singularController.dispose();
-			this._singularController = null;
-		}
+        if(this._singularController != null)
+        {
+            this._singularController.dispose();
+            this._singularController = null;
+        }
 
-		this._notificationEvents.removeAllListeners();
+        this._notificationEvents.removeAllListeners();
 
-		log.info('HabboNotifications disposed');
+        log.info('HabboNotifications disposed');
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	/**
+    /**
 	 * Called when all required dependencies are resolved.
 	 * Creates the SingularNotificationController and NotificationMessageHandler.
 	 */
-	protected override initComponent(): void
-	{
-		this._singularController = new SingularNotificationController(this);
-		this._messageHandler = new NotificationMessageHandler(this, this._communication!);
+    protected override initComponent(): void
+    {
+        this._singularController = new SingularNotificationController(this);
+        this._messageHandler = new NotificationMessageHandler(this, this._communication!);
 
-		log.info('HabboNotifications initialized');
-	}
+        log.info('HabboNotifications initialized');
+    }
 }

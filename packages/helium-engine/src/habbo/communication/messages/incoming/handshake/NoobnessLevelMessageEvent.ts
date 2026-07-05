@@ -10,8 +10,8 @@ import {NoobnessLevelMessageParser} from '../../parser/handshake/NoobnessLevelMe
  */
 export class NoobnessLevelMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NoobnessLevelMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NoobnessLevelMessageParser);
+    }
 }

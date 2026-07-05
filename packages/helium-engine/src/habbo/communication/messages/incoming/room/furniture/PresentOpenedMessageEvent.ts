@@ -6,13 +6,13 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	PresentOpenedMessageEventParser
+    PresentOpenedMessageEventParser
 } from '@habbo/communication/messages/parser/room/furniture/PresentOpenedMessageEventParser';
 
 export class PresentOpenedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PresentOpenedMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PresentOpenedMessageEventParser);
+    }
 }

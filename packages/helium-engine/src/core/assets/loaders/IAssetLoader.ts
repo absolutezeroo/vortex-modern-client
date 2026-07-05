@@ -10,24 +10,24 @@ import type {EventEmitter} from 'eventemitter3';
  */
 export interface IAssetLoader extends IDisposable
 {
-	readonly events: EventEmitter;
-	readonly url: string;
-	readonly content: unknown;
-	readonly bytes: ArrayBuffer | null;
-	readonly mimeType: string;
-	readonly bytesLoaded: number;
-	readonly bytesTotal: number;
-	readonly errorCode: number;
-	readonly id: number;
+    readonly events: EventEmitter;
+    readonly url: string;
+    readonly content: unknown;
+    readonly bytes: ArrayBuffer | null;
+    readonly mimeType: string;
+    readonly bytesLoaded: number;
+    readonly bytesTotal: number;
+    readonly errorCode: number;
+    readonly id: number;
 
-	load(url: string): void;
+    load(url: string): void;
 }
 
 /**
  * Error codes for asset loaders
  */
 export const AssetLoaderErrorCodes = {
-	NONE: 0,
-	IO_ERROR: 1,
-	SECURITY_ERROR: 2,
+    NONE: 0,
+    IO_ERROR: 1,
+    SECURITY_ERROR: 2,
 } as const;

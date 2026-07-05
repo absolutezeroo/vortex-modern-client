@@ -9,8 +9,8 @@ import {LatencyPingResponseMessageParser} from '../../parser/tracking/LatencyPin
  */
 export class LatencyPingResponseMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, LatencyPingResponseMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, LatencyPingResponseMessageParser);
+    }
 }

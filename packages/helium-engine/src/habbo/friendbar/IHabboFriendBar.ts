@@ -7,8 +7,8 @@
  */
 export interface IHabboFriendBar
 {
-	/**
+    /**
 	 * Set the visibility of the friend bar view
 	 */
-	visible: boolean;
+    visible: boolean;
 }

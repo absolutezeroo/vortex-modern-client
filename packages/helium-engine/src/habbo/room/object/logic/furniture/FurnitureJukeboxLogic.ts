@@ -10,23 +10,23 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 
 export class FurnitureJukeboxLogic extends FurnitureMultiStateLogic
 {
-	constructor()
-	{
-		super();
-		this.widgetType = 'jukebox';
-	}
+    constructor()
+    {
+        super();
+        this.widgetType = 'jukebox';
+    }
 
-	override useObject(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    override useObject(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		// Open jukebox widget
-		this.eventDispatcher.emit(
-			RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
-			new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
-		);
-	}
+        // Open jukebox widget
+        this.eventDispatcher.emit(
+            RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
+            new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
+        );
+    }
 }

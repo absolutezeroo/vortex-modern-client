@@ -9,8 +9,8 @@ import {ConcurrentUsersGoalProgressMessageParser} from '../../parser/quest/Concu
  */
 export class ConcurrentUsersGoalProgressMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, ConcurrentUsersGoalProgressMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, ConcurrentUsersGoalProgressMessageParser);
+    }
 }

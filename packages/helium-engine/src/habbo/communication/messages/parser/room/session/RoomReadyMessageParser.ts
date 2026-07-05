@@ -10,31 +10,31 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class RoomReadyMessageParser implements IMessageParser
 {
-	private _roomType: string = '';
+    private _roomType: string = '';
 
-	get roomType(): string
-	{
-		return this._roomType;
-	}
+    get roomType(): string
+    {
+        return this._roomType;
+    }
 
-	private _roomId: number = 0;
+    private _roomId: number = 0;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	flush(): boolean
-	{
-		this._roomType = '';
-		this._roomId = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._roomType = '';
+        this._roomId = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._roomType = wrapper.readString();
-		this._roomId = wrapper.readInt();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._roomType = wrapper.readString();
+        this._roomId = wrapper.readInt();
+        return true;
+    }
 }

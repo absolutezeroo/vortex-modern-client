@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class BlockUserMessageComposer extends MessageComposer<ConstructorParameters<typeof BlockUserMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof BlockUserMessageComposer>;
+    private _data: ConstructorParameters<typeof BlockUserMessageComposer>;
 
-	constructor(userId: number)
-	{
-		super();
+    constructor(userId: number)
+    {
+        super();
 
-		this._data = [userId];
-	}
+        this._data = [userId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class OpenPetPackageMessageComposer extends MessageComposer<ConstructorParameters<typeof OpenPetPackageMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof OpenPetPackageMessageComposer>;
+    private _data: ConstructorParameters<typeof OpenPetPackageMessageComposer>;
 
-	constructor(objectId: number, name: string)
-	{
-		super();
-		this._data = [objectId, name];
-	}
+    constructor(objectId: number, name: string)
+    {
+        super();
+        this._data = [objectId, name];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

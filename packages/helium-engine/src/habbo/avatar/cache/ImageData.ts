@@ -1,4 +1,4 @@
-import {Texture} from 'pixi.js';
+import type {Texture} from 'pixi.js';
 
 /**
  * Color transform data for avatar part tinting.
@@ -6,10 +6,10 @@ import {Texture} from 'pixi.js';
  */
 export interface ColorTransformData
 {
-	redMultiplier: number;
-	greenMultiplier: number;
-	blueMultiplier: number;
-	alphaMultiplier: number;
+    redMultiplier: number;
+    greenMultiplier: number;
+    blueMultiplier: number;
+    alphaMultiplier: number;
 }
 
 /**
@@ -20,97 +20,97 @@ export interface ColorTransformData
  */
 export class ImageData
 {
-	constructor(
-		texture: Texture | null,
-		rect: { x: number; y: number; width: number; height: number },
-		regPoint: { x: number; y: number },
-		flipH: boolean,
-		colorTransform: ColorTransformData | null
-	)
-	{
-		this._texture = texture;
-		this._rect = rect;
-		this._regPoint = {x: regPoint.x, y: regPoint.y};
-		this._flipH = flipH;
-		this._colorTransform = colorTransform;
+    constructor(
+        texture: Texture | null,
+        rect: { x: number; y: number; width: number; height: number },
+        regPoint: { x: number; y: number },
+        flipH: boolean,
+        colorTransform: ColorTransformData | null
+    )
+    {
+        this._texture = texture;
+        this._rect = rect;
+        this._regPoint = {x: regPoint.x, y: regPoint.y};
+        this._flipH = flipH;
+        this._colorTransform = colorTransform;
 
-		if (flipH)
-		{
-			this._regPoint.x = -(this._regPoint.x) + rect.width;
-		}
-	}
+        if(flipH)
+        {
+            this._regPoint.x = -(this._regPoint.x) + rect.width;
+        }
+    }
 
-	private _texture: Texture | null;
+    private _texture: Texture | null;
 
-	/**
+    /**
 	 * The rendered texture for this image data.
 	 */
-	public get texture(): Texture | null
-	{
-		return this._texture;
-	}
+    public get texture(): Texture | null
+    {
+        return this._texture;
+    }
 
-	private _rect: { x: number; y: number; width: number; height: number };
+    private _rect: { x: number; y: number; width: number; height: number };
 
-	/**
+    /**
 	 * The bounding rectangle of the source asset.
 	 */
-	public get rect(): { x: number; y: number; width: number; height: number }
-	{
-		return this._rect;
-	}
+    public get rect(): { x: number; y: number; width: number; height: number }
+    {
+        return this._rect;
+    }
 
-	private _regPoint: { x: number; y: number };
+    private _regPoint: { x: number; y: number };
 
-	/**
+    /**
 	 * The registration point (origin offset) of this image.
 	 */
-	public get regPoint(): { x: number; y: number }
-	{
-		return this._regPoint;
-	}
+    public get regPoint(): { x: number; y: number }
+    {
+        return this._regPoint;
+    }
 
-	private _flipH: boolean;
+    private _flipH: boolean;
 
-	/**
+    /**
 	 * Whether this image is horizontally flipped.
 	 */
-	public get flipH(): boolean
-	{
-		return this._flipH;
-	}
+    public get flipH(): boolean
+    {
+        return this._flipH;
+    }
 
-	private _colorTransform: ColorTransformData | null;
+    private _colorTransform: ColorTransformData | null;
 
-	/**
+    /**
 	 * The color transform applied to this image, or null if none.
 	 */
-	public get colorTransform(): ColorTransformData | null
-	{
-		return this._colorTransform;
-	}
+    public get colorTransform(): ColorTransformData | null
+    {
+        return this._colorTransform;
+    }
 
-	/**
+    /**
 	 * Returns a new rectangle offset by the negative registration point.
 	 * Matches AS3: new Rectangle(0, 0, width, height).offset(-regPoint.x, -regPoint.y)
 	 */
-	public get offsetRect(): { x: number; y: number; width: number; height: number }
-	{
-		return {
-			x: -this._regPoint.x,
-			y: -this._regPoint.y,
-			width: this._rect.width,
-			height: this._rect.height
-		};
-	}
+    public get offsetRect(): { x: number; y: number; width: number; height: number }
+    {
+        return {
+            x: -this._regPoint.x,
+            y: -this._regPoint.y,
+            width: this._rect.width,
+            height: this._rect.height
+        };
+    }
 
-	/**
+    /**
 	 * Disposes the texture and nullifies references.
 	 */
-	public dispose(): void
-	{
-		this._texture = null;
-		this._regPoint = null!;
-		this._colorTransform = null;
-	}
+    public dispose(): void
+    {
+        this._texture = null;
+        this._regPoint = null!;
+        this._colorTransform = null;
+    }
 }

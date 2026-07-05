@@ -6,64 +6,64 @@
  * Logic for counter clock furniture (start_stop / reset sprite tags).
  */
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
-import {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
+import type {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
 import {FurnitureLogic} from './FurnitureLogic';
 import {RoomObjectStateChangeEvent} from '@habbo/room/events/RoomObjectStateChangeEvent';
 
 export class FurnitureCounterClockLogic extends FurnitureLogic
 {
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void
-	{
-		if (event === null || geometry === null)
-		{
-			return;
-		}
+    override mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void
+    {
+        if(event === null || geometry === null)
+        {
+            return;
+        }
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		if (event.type === 'doubleClick')
-		{
-			let stateEvent: RoomObjectStateChangeEvent | null = null;
+        if(event.type === 'doubleClick')
+        {
+            let stateEvent: RoomObjectStateChangeEvent | null = null;
 
-			switch (event.spriteTag)
-			{
-				case 'start_stop':
-					stateEvent = new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, this.object, 1);
-					break;
+            switch(event.spriteTag)
+            {
+                case 'start_stop':
+                    stateEvent = new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, this.object, 1);
+                    break;
 
-				case 'reset':
-					stateEvent = new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, this.object, 2);
-					break;
-			}
+                case 'reset':
+                    stateEvent = new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, this.object, 2);
+                    break;
+            }
 
-			if (this.eventDispatcher !== null && stateEvent !== null)
-			{
-				this.eventDispatcher.emit(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, stateEvent);
-				return;
-			}
-		}
+            if(this.eventDispatcher !== null && stateEvent !== null)
+            {
+                this.eventDispatcher.emit(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, stateEvent);
+                return;
+            }
+        }
 
-		super.mouseEvent(event, geometry);
-	}
+        super.mouseEvent(event, geometry);
+    }
 
-	override useObject(): void
-	{
-		if (this.object !== null && this.eventDispatcher !== null)
-		{
-			const stateEvent = new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, this.object, 1);
-			this.eventDispatcher.emit(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, stateEvent);
-		}
-	}
+    override useObject(): void
+    {
+        if(this.object !== null && this.eventDispatcher !== null)
+        {
+            const stateEvent = new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, this.object, 1);
+            this.eventDispatcher.emit(RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE, stateEvent);
+        }
+    }
 }

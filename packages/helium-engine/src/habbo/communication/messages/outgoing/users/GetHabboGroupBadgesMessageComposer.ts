@@ -8,18 +8,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetHabboGroupBadgesMessageComposer extends MessageComposer<ConstructorParameters<typeof GetHabboGroupBadgesMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetHabboGroupBadgesMessageComposer>;
+    private _data: ConstructorParameters<typeof GetHabboGroupBadgesMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

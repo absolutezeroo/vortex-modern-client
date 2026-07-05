@@ -9,7 +9,7 @@ import type {IPropertyMap} from './IPropertyMap';
  */
 export interface IThemeManager
 {
-	getPropertyDefaults(style: number): IPropertyMap | null;
+    getPropertyDefaults(style: number): IPropertyMap | null;
 
-	setPropertyDefaults(style: number, properties: IPropertyMap): void;
+    setPropertyDefaults(style: number, properties: IPropertyMap): void;
 }

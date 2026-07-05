@@ -8,30 +8,30 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionErrorMessageParser implements IMessageParser
 {
-	public static readonly ERROR_NO_AVAILABLE_GUIDES: number = 0;
-	public static readonly ERROR_REQUEST_PENDING: number = 1;
-	public static readonly ERROR_SESSION_ACTIVE: number = 2;
-	public static readonly ERROR_GUIDE_UNAVAILABLE: number = 3;
-	public static readonly ERROR_INVALID_REQUEST: number = 4;
+    public static readonly ERROR_NO_AVAILABLE_GUIDES: number = 0;
+    public static readonly ERROR_REQUEST_PENDING: number = 1;
+    public static readonly ERROR_SESSION_ACTIVE: number = 2;
+    public static readonly ERROR_GUIDE_UNAVAILABLE: number = 3;
+    public static readonly ERROR_INVALID_REQUEST: number = 4;
 
-	private _errorCode: number = 0;
+    private _errorCode: number = 0;
 
-	get errorCode(): number
-	{
-		return this._errorCode;
-	}
+    get errorCode(): number
+    {
+        return this._errorCode;
+    }
 
-	flush(): boolean
-	{
-		this._errorCode = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._errorCode = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._errorCode = wrapper.readInt();
-		return true;
-	}
+        this._errorCode = wrapper.readInt();
+        return true;
+    }
 }

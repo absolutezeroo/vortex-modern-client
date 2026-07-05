@@ -12,61 +12,61 @@ import type {ChatItem} from '../data/ChatItem';
  */
 export class ChatHistoryBuffer
 {
-	private static readonly MAX_CHAT_ITEMS: number = 1000;
+    private static readonly MAX_CHAT_ITEMS: number = 1000;
 
-	private _entries: ChatItem[] = [];
+    private _entries: ChatItem[] = [];
 
-	get entries(): ChatItem[]
-	{
-		return this._entries;
-	}
+    get entries(): ChatItem[]
+    {
+        return this._entries;
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	/**
+    /**
 	 * Total number of entries in the buffer.
 	 */
-	get length(): number
-	{
-		return this._entries.length;
-	}
+    get length(): number
+    {
+        return this._entries.length;
+    }
 
-	/**
+    /**
 	 * Insert a chat item into the history buffer.
 	 * If the buffer exceeds MAX_CHAT_ITEMS, the oldest entry is removed.
 	 *
 	 * @param item The chat item to insert
 	 */
-	insertChat(item: ChatItem): void
-	{
-		this._entries.push(item);
-		this.checkBufferOverflow();
-	}
+    insertChat(item: ChatItem): void
+    {
+        this._entries.push(item);
+        this.checkBufferOverflow();
+    }
 
-	/**
+    /**
 	 * Dispose of the buffer and clear all entries.
 	 */
-	dispose(): void
-	{
-		if (this._disposed) return;
+    dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._entries = [];
-		this._disposed = true;
-	}
+        this._entries = [];
+        this._disposed = true;
+    }
 
-	/**
+    /**
 	 * Check if the buffer has exceeded max capacity and splice the top if needed.
 	 */
-	private checkBufferOverflow(): void
-	{
-		if (this._entries.length > ChatHistoryBuffer.MAX_CHAT_ITEMS)
-		{
-			this._entries.splice(0, 1);
-		}
-	}
+    private checkBufferOverflow(): void
+    {
+        if(this._entries.length > ChatHistoryBuffer.MAX_CHAT_ITEMS)
+        {
+            this._entries.splice(0, 1);
+        }
+    }
 }

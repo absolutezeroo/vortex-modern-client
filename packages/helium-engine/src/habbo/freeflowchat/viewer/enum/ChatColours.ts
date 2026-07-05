@@ -8,31 +8,31 @@ import type {ChatItem} from '../../data/ChatItem';
  */
 export class ChatColours
 {
-	public static readonly COLOUR_ARRAY: [string, number][] = [
-		['@red@', 0x8B0909],
-		['@cyan@', 0x007F7F],
-		['@blue@', 0x004C99],
-		['@green@', 0x008000],
-		['@purple@', 0x4BF5CC],
-	];
+    public static readonly COLOUR_ARRAY: [string, number][] = [
+        ['@red@', 0x8B0909],
+        ['@cyan@', 0x007F7F],
+        ['@blue@', 0x004C99],
+        ['@green@', 0x008000],
+        ['@purple@', 0x4BF5CC],
+    ];
 
-	/**
+    /**
 	 * Checks if the chat item's text starts with a colour tag prefix,
 	 * and if so returns the stripped text and the corresponding colour.
 	 *
 	 * @param item The chat item to process
 	 * @returns An object with the (possibly stripped) text and colour (null if no tag found)
 	 */
-	static applyColourToChat(item: ChatItem): { text: string; color: number | null }
-	{
-		for (const [tag, color] of ChatColours.COLOUR_ARRAY)
-		{
-			if (item.text.startsWith(tag))
-			{
-				return {text: item.text.substring(tag.length), color};
-			}
-		}
+    static applyColourToChat(item: ChatItem): { text: string; color: number | null }
+    {
+        for(const [tag, color] of ChatColours.COLOUR_ARRAY)
+        {
+            if(item.text.startsWith(tag))
+            {
+                return {text: item.text.substring(tag.length), color};
+            }
+        }
 
-		return {text: item.text, color: null};
-	}
+        return {text: item.text, color: null};
+    }
 }

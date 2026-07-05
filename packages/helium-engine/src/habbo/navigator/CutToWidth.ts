@@ -8,23 +8,23 @@ import type {IBinarySearchTest} from './IBinarySearchTest';
  */
 export class CutToWidth implements IBinarySearchTest
 {
-	private _value: string = '';
-	private _text: ITextWindow | null = null;
-	private _maxWidth: number = 0;
+    private _value: string = '';
+    private _text: ITextWindow | null = null;
+    private _maxWidth: number = 0;
 
-	test(index: number): boolean
-	{
-		if (!this._text) return false;
+    test(index: number): boolean
+    {
+        if(!this._text) return false;
 
-		this._text.text = this._value.substring(0, index) + '...';
+        this._text.text = this._value.substring(0, index) + '...';
 
-		return this._text.textWidth > this._maxWidth;
-	}
+        return this._text.textWidth > this._maxWidth;
+    }
 
-	beforeSearch(value: string, textWindow: ITextWindow, maxWidth: number): void
-	{
-		this._value = value;
-		this._text = textWindow;
-		this._maxWidth = maxWidth;
-	}
+    beforeSearch(value: string, textWindow: ITextWindow, maxWidth: number): void
+    {
+        this._value = value;
+        this._text = textWindow;
+        this._maxWidth = maxWidth;
+    }
 }

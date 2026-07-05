@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MyGuildBasesSearchMessageComposer extends MessageComposer<ConstructorParameters<typeof MyGuildBasesSearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof MyGuildBasesSearchMessageComposer>;
+    private _data: ConstructorParameters<typeof MyGuildBasesSearchMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

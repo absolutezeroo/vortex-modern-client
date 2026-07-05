@@ -9,52 +9,52 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionAttachedMessageParser implements IMessageParser
 {
-	private _asGuide: boolean = false;
+    private _asGuide: boolean = false;
 
-	get asGuide(): boolean
-	{
-		return this._asGuide;
-	}
+    get asGuide(): boolean
+    {
+        return this._asGuide;
+    }
 
-	private _helpRequestType: number = 0;
+    private _helpRequestType: number = 0;
 
-	get helpRequestType(): number
-	{
-		return this._helpRequestType;
-	}
+    get helpRequestType(): number
+    {
+        return this._helpRequestType;
+    }
 
-	private _helpRequestDescription: string = '';
+    private _helpRequestDescription: string = '';
 
-	get helpRequestDescription(): string
-	{
-		return this._helpRequestDescription;
-	}
+    get helpRequestDescription(): string
+    {
+        return this._helpRequestDescription;
+    }
 
-	private _roleSpecificWaitTime: number = 0;
+    private _roleSpecificWaitTime: number = 0;
 
-	get roleSpecificWaitTime(): number
-	{
-		return this._roleSpecificWaitTime;
-	}
+    get roleSpecificWaitTime(): number
+    {
+        return this._roleSpecificWaitTime;
+    }
 
-	flush(): boolean
-	{
-		this._asGuide = false;
-		this._helpRequestType = 0;
-		this._helpRequestDescription = '';
-		this._roleSpecificWaitTime = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._asGuide = false;
+        this._helpRequestType = 0;
+        this._helpRequestDescription = '';
+        this._roleSpecificWaitTime = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._asGuide = wrapper.readBoolean();
-		this._helpRequestType = wrapper.readInt();
-		this._helpRequestDescription = wrapper.readString();
-		this._roleSpecificWaitTime = wrapper.readInt();
+        this._asGuide = wrapper.readBoolean();
+        this._helpRequestType = wrapper.readInt();
+        this._helpRequestDescription = wrapper.readString();
+        this._roleSpecificWaitTime = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

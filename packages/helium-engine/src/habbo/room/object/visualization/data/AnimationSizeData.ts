@@ -12,30 +12,30 @@ import {SizeData} from './SizeData';
 
 export class AnimationSizeData extends SizeData
 {
-	private _animations: Map<number, AnimationData> = new Map();
-	private _animationIds: number[] = [];
+    private _animations: Map<number, AnimationData> = new Map();
+    private _animationIds: number[] = [];
 
-	constructor(layerCount: number, angle: number)
-	{
-		super(layerCount, angle);
-	}
+    constructor(layerCount: number, angle: number)
+    {
+        super(layerCount, angle);
+    }
 
-	override dispose(): void
-	{
-		super.dispose();
+    override dispose(): void
+    {
+        super.dispose();
 
-		for (const animation of this._animations.values())
-		{
-			if (animation !== null)
-			{
-				animation.dispose();
-			}
-		}
+        for(const animation of this._animations.values())
+        {
+            if(animation !== null)
+            {
+                animation.dispose();
+            }
+        }
 
-		this._animations.clear();
-	}
+        this._animations.clear();
+    }
 
-	/**
+    /**
 	 * Define animations from Nitro JSON data.
 	 *
 	 * JSON format:
@@ -51,161 +51,161 @@ export class AnimationSizeData extends SizeData
 	 * }
 	 * ```
 	 */
-	defineAnimations(data: Record<string, unknown>): boolean
-	{
-		if (data === null || data === undefined)
-		{
-			return true;
-		}
+    defineAnimations(data: Record<string, unknown>): boolean
+    {
+        if(data === null || data === undefined)
+        {
+            return true;
+        }
 
-		const animations = data as Record<string, Record<string, unknown>>;
+        const animations = data as Record<string, Record<string, unknown>>;
 
-		for (const idStr in animations)
-		{
-			const animDef = animations[idStr];
-			let animationId = parseInt(idStr);
+        for(const idStr in animations)
+        {
+            const animDef = animations[idStr];
+            let animationId = parseInt(idStr);
 
-			if (isNaN(animationId))
-			{
-				continue;
-			}
+            if(isNaN(animationId))
+            {
+                continue;
+            }
 
-			let isTransition = false;
+            let isTransition = false;
 
-			const transitionTo = (animDef['transitionTo'] ?? null) as number | null;
+            const transitionTo = (animDef['transitionTo'] ?? null) as number | null;
 
-			if (transitionTo !== null)
-			{
-				animationId = AnimationData.getTransitionToAnimationId(transitionTo);
-				isTransition = true;
-			}
+            if(transitionTo !== null)
+            {
+                animationId = AnimationData.getTransitionToAnimationId(transitionTo);
+                isTransition = true;
+            }
 
-			const transitionFrom = (animDef['transitionFrom'] ?? null) as number | null;
+            const transitionFrom = (animDef['transitionFrom'] ?? null) as number | null;
 
-			if (transitionFrom !== null)
-			{
-				animationId = AnimationData.getTransitionFromAnimationId(transitionFrom);
-				isTransition = true;
-			}
+            if(transitionFrom !== null)
+            {
+                animationId = AnimationData.getTransitionFromAnimationId(transitionFrom);
+                isTransition = true;
+            }
 
-			const animData = this.createAnimationData();
+            const animData = this.createAnimationData();
 
-			if (!animData.initialize(animDef))
-			{
-				animData.dispose();
-				return false;
-			}
+            if(!animData.initialize(animDef))
+            {
+                animData.dispose();
+                return false;
+            }
 
-			const immediateChangeFrom = (animDef['immediateChangeFrom'] ?? null) as string | null;
+            const immediateChangeFrom = (animDef['immediateChangeFrom'] ?? null) as string | null;
 
-			if (immediateChangeFrom && immediateChangeFrom.length > 0)
-			{
-				const parts = immediateChangeFrom.split(',');
-				const changes: number[] = [];
+            if(immediateChangeFrom && immediateChangeFrom.length > 0)
+            {
+                const parts = immediateChangeFrom.split(',');
+                const changes: number[] = [];
 
-				for (const part of parts)
-				{
-					const changeId = parseInt(part);
+                for(const part of parts)
+                {
+                    const changeId = parseInt(part);
 
-					if (!isNaN(changeId) && changes.indexOf(changeId) < 0)
-					{
-						changes.push(changeId);
-					}
-				}
+                    if(!isNaN(changeId) && changes.indexOf(changeId) < 0)
+                    {
+                        changes.push(changeId);
+                    }
+                }
 
-				animData.setImmediateChanges(changes);
-			}
+                animData.setImmediateChanges(changes);
+            }
 
-			this._animations.set(animationId, animData);
+            this._animations.set(animationId, animData);
 
-			if (!isTransition)
-			{
-				this._animationIds.push(animationId);
-			}
-		}
+            if(!isTransition)
+            {
+                this._animationIds.push(animationId);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	hasAnimation(animationId: number): boolean
-	{
-		return this._animations.has(animationId);
-	}
+    hasAnimation(animationId: number): boolean
+    {
+        return this._animations.has(animationId);
+    }
 
-	getAnimationCount(): number
-	{
-		return this._animationIds.length;
-	}
+    getAnimationCount(): number
+    {
+        return this._animationIds.length;
+    }
 
-	getAnimationId(index: number): number
-	{
-		const count = this.getAnimationCount();
+    getAnimationId(index: number): number
+    {
+        const count = this.getAnimationCount();
 
-		if (index >= 0 && count > 0)
-		{
-			return this._animationIds[index % count];
-		}
+        if(index >= 0 && count > 0)
+        {
+            return this._animationIds[index % count];
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	isImmediateChange(animationId: number, fromAnimationId: number): boolean
-	{
-		const animData = this._animations.get(animationId);
+    isImmediateChange(animationId: number, fromAnimationId: number): boolean
+    {
+        const animData = this._animations.get(animationId);
 
-		if (animData !== undefined)
-		{
-			return animData.isImmediateChange(fromAnimationId);
-		}
+        if(animData !== undefined)
+        {
+            return animData.isImmediateChange(fromAnimationId);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	getStartFrame(animationId: number, layerIndex: number): number
-	{
-		const animData = this._animations.get(animationId);
+    getStartFrame(animationId: number, layerIndex: number): number
+    {
+        const animData = this._animations.get(animationId);
 
-		if (animData !== undefined)
-		{
-			return animData.getStartFrame(layerIndex);
-		}
+        if(animData !== undefined)
+        {
+            return animData.getStartFrame(layerIndex);
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	getFrame(animationId: number, direction: number, layerId: number, frameCounter: number): AnimationFrame | null
-	{
-		const animData = this._animations.get(animationId);
+    getFrame(animationId: number, direction: number, layerId: number, frameCounter: number): AnimationFrame | null
+    {
+        const animData = this._animations.get(animationId);
 
-		if (animData !== undefined)
-		{
-			return animData.getFrame(direction, layerId, frameCounter);
-		}
+        if(animData !== undefined)
+        {
+            return animData.getFrame(direction, layerId, frameCounter);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	getFrameFromSequence(
-		animationId: number,
-		direction: number,
-		layerId: number,
-		sequenceIndex: number,
-		frameIndex: number,
-		frameCounter: number
-	): AnimationFrame | null
-	{
-		const animData = this._animations.get(animationId);
+    getFrameFromSequence(
+        animationId: number,
+        direction: number,
+        layerId: number,
+        sequenceIndex: number,
+        frameIndex: number,
+        frameCounter: number
+    ): AnimationFrame | null
+    {
+        const animData = this._animations.get(animationId);
 
-		if (animData !== undefined)
-		{
-			return animData.getFrameFromSequence(direction, layerId, sequenceIndex, frameIndex, frameCounter);
-		}
+        if(animData !== undefined)
+        {
+            return animData.getFrameFromSequence(direction, layerId, sequenceIndex, frameIndex, frameCounter);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	protected createAnimationData(): AnimationData
-	{
-		return new AnimationData();
-	}
+    protected createAnimationData(): AnimationData
+    {
+        return new AnimationData();
+    }
 }

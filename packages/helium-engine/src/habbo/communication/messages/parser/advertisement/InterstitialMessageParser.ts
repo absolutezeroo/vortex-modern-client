@@ -8,25 +8,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class InterstitialMessageParser implements IMessageParser
 {
-	private _canShowInterstitial: boolean = false;
+    private _canShowInterstitial: boolean = false;
 
-	get canShowInterstitial(): boolean
-	{
-		return this._canShowInterstitial;
-	}
+    get canShowInterstitial(): boolean
+    {
+        return this._canShowInterstitial;
+    }
 
-	flush(): boolean
-	{
-		this._canShowInterstitial = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._canShowInterstitial = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._canShowInterstitial = wrapper.readBoolean();
+        this._canShowInterstitial = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

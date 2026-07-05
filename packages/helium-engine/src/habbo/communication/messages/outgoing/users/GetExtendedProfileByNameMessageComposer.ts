@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetExtendedProfileByNameMessageComposer extends MessageComposer<ConstructorParameters<typeof GetExtendedProfileByNameMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetExtendedProfileByNameMessageComposer>;
+    private _data: ConstructorParameters<typeof GetExtendedProfileByNameMessageComposer>;
 
-	constructor(userName: string)
-	{
-		super();
+    constructor(userName: string)
+    {
+        super();
 
-		this._data = [userName];
-	}
+        this._data = [userName];
+    }
 
-	getMessageArray(): [string]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string]
+    {
+        return this._data;
+    }
 }

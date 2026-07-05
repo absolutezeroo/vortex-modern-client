@@ -14,8 +14,8 @@ import {RoomRenderingCanvas} from './RoomRenderingCanvas';
 
 export class HabboRoomRenderer extends RoomRenderer
 {
-	protected override createCanvasInstance(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas
-	{
-		return new RoomRenderingCanvas(this, id, width, height, scale);
-	}
+    protected override createCanvasInstance(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas
+    {
+        return new RoomRenderingCanvas(this, id, width, height, scale);
+    }
 }

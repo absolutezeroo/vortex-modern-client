@@ -9,8 +9,8 @@ import {ItemUpdateMessageParser} from '@habbo/communication/messages/parser/room
 
 export class ItemUpdateMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ItemUpdateMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ItemUpdateMessageParser);
+    }
 }

@@ -12,13 +12,13 @@ import {InClientLinkMessageParser} from '../../parser/users/InClientLinkMessageP
  */
 export class InClientLinkMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, InClientLinkMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, InClientLinkMessageParser);
+    }
 
-	get link(): string
-	{
-		return (this._parser as InClientLinkMessageParser).link;
-	}
+    get link(): string
+    {
+        return (this._parser as InClientLinkMessageParser).link;
+    }
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class FollowFriendMessageComposer extends MessageComposer<ConstructorParameters<typeof FollowFriendMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof FollowFriendMessageComposer>;
+    private _data: ConstructorParameters<typeof FollowFriendMessageComposer>;
 
-	constructor(friendId: number)
-	{
-		super();
-		this._data = [friendId];
-	}
+    constructor(friendId: number)
+    {
+        super();
+        this._data = [friendId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

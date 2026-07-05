@@ -76,7 +76,7 @@ export class RoomCreateViewCtrl
     {
         this.prepare();
 
-        if (!this._content) return;
+        if(!this._content) return;
 
         this._content.visible = true;
         this.refresh();
@@ -86,7 +86,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::hide()
     hide(): void
     {
-        if (this._content)
+        if(this._content)
         {
             this._content.visible = false;
         }
@@ -96,16 +96,16 @@ export class RoomCreateViewCtrl
     refresh(): void
     {
         this._roomNameManager?.goBackToInitialState();
-        if (this._roomNameManager?.input) this._roomNameManager.input.textBackgroundColor = 0xFFFFFFFF;
+        if(this._roomNameManager?.input) this._roomNameManager.input.textBackgroundColor = 0xFFFFFFFF;
         this._roomDescManager?.goBackToInitialState();
-        if (this._roomDescManager?.input) this._roomDescManager.input.textBackgroundColor = 0xFFFFFFFF;
+        if(this._roomDescManager?.input) this._roomDescManager.input.textBackgroundColor = 0xFFFFFFFF;
 
-        if (this._categoryDropMenu && this._categoryDropMenu.numMenuItems > 0)
+        if(this._categoryDropMenu && this._categoryDropMenu.numMenuItems > 0)
         {
             this._categoryDropMenu.selection = 0;
         }
 
-        if (this._tradeModeDropMenu && this._tradeModeDropMenu.numMenuItems > 0)
+        if(this._tradeModeDropMenu && this._tradeModeDropMenu.numMenuItems > 0)
         {
             this._tradeModeDropMenu.selection = 0;
         }
@@ -123,11 +123,11 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepare()
     private prepare(): void
     {
-        if (!this._navigator || this._content) return;
+        if(!this._navigator || this._content) return;
 
         const window = this._navigator.getXmlWindow('roc_create_room') as IWindowContainer | null;
 
-        if (!window) return;
+        if(!window) return;
 
         this._content = window;
         this._layoutItemList = this._content.findChildByName('layout_item_list') as IItemListWindow | null;
@@ -144,12 +144,12 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareTextFields()
     private prepareTextFields(): void
     {
-        if (!this._navigator || !this._content) return;
+        if(!this._navigator || !this._content) return;
 
         const roomNameInput = this._content.findChildByName('room_name_input') as ITextFieldWindow | null;
         const roomDescInput = this._content.findChildByName('room_desc_input') as ITextFieldWindow | null;
 
-        if (roomNameInput)
+        if(roomNameInput)
         {
             this._roomNameManager = new TextFieldManager(
                 this._navigator,
@@ -160,7 +160,7 @@ export class RoomCreateViewCtrl
             );
         }
 
-        if (roomDescInput)
+        if(roomDescInput)
         {
             this._roomDescManager = new TextFieldManager(
                 this._navigator,
@@ -175,7 +175,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareButtons()
     private prepareButtons(): void
     {
-        if (!this._content) return;
+        if(!this._content) return;
 
         RoomCreateViewCtrl.addClickHandler(this._content.findChildByName('create_button'), this.onCreateButtonClick);
         RoomCreateViewCtrl.addClickHandler(this._content.findChildByName('back_button'), this.onCancelButtonClick);
@@ -185,7 +185,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareCategorySelection()
     private prepareCategorySelection(): void
     {
-        if (!this._navigator || !this._content) return;
+        if(!this._navigator || !this._content) return;
 
         this._categoryDropMenu = this._content.findChildByName('categories_list') as IDropMenuWindow | null;
         this._categories = [];
@@ -193,20 +193,20 @@ export class RoomCreateViewCtrl
         const items: string[] = [];
         const hasStaffSecurity = this._navigator.sessionData?.hasSecurity(7) ?? false;
 
-        for (const category of this._navigator.data.visibleCategories)
+        for(const category of this._navigator.data.visibleCategories)
         {
-            if (category.automatic) continue;
-            if (category.staffOnly && !hasStaffSecurity) continue;
+            if(category.automatic) continue;
+            if(category.staffOnly && !hasStaffSecurity) continue;
 
             this._categories.push(category);
             items.push(this.resolveLocalization(category.visibleName));
         }
 
-        if (this._categoryDropMenu)
+        if(this._categoryDropMenu)
         {
             this._categoryDropMenu.populate(items);
 
-            if (this._categoryDropMenu.numMenuItems > 0)
+            if(this._categoryDropMenu.numMenuItems > 0)
             {
                 this._categoryDropMenu.selection = 0;
             }
@@ -216,11 +216,11 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::prepareTradeModeSelection()
     private prepareTradeModeSelection(): void
     {
-        if (!this._navigator || !this._content) return;
+        if(!this._navigator || !this._content) return;
 
         this._tradeModeDropMenu = this._content.findChildByName('trade_settings_list') as IDropMenuWindow | null;
 
-        if (!this._tradeModeDropMenu) return;
+        if(!this._tradeModeDropMenu) return;
 
         this._tradeModeDropMenu.populate([
             this._navigator.getText('navigator.roomsettings.trade_not_allowed'),
@@ -233,15 +233,15 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshMaxVisitors()
     private refreshMaxVisitors(maxVisitors: number): void
     {
-        if (!this._content) return;
+        if(!this._content) return;
 
         this._maxVisitorsDropMenu = this._content.findChildByName('visitors_list') as IDropMenuWindow | null;
 
-        if (!this._maxVisitorsDropMenu) return;
+        if(!this._maxVisitorsDropMenu) return;
 
         const items: string[] = [];
 
-        for (let value = 10; value <= maxVisitors; value += 5)
+        for(let value = 10; value <= maxVisitors; value += 5)
         {
             items.push(String(value));
         }
@@ -253,11 +253,11 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshRoomThumbnails()
     private refreshRoomThumbnails(): void
     {
-        if (!this._navigator || !this._layoutItemList) return;
+        if(!this._navigator || !this._layoutItemList) return;
 
         this._layoutItemList.destroyListItems();
 
-        for (const layout of this._layouts)
+        for(const layout of this._layouts)
         {
             layout.view = null;
         }
@@ -265,17 +265,17 @@ export class RoomCreateViewCtrl
         let row: IWindowContainer | null = null;
         let col = 0;
 
-        for (const layout of this._layouts)
+        for(const layout of this._layouts)
         {
-            if (!this.isAllowed(layout, false)) continue;
+            if(!this.isAllowed(layout, false)) continue;
 
-            if (col === 0)
+            if(col === 0)
             {
                 row = this.getRow();
                 this._layoutItemList.addListItem(row);
             }
 
-            if (row)
+            if(row)
             {
                 this.addThumbnail(row, layout, col === 0);
             }
@@ -290,19 +290,20 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshRoomThumbnails()
     private addVipPromo(): void
     {
-        if (!this._navigator || !this._layoutItemList) return;
+        if(!this._navigator || !this._layoutItemList) return;
 
         const clubLevel = this._navigator.sessionData?.clubLevel ?? 0;
 
-        if (clubLevel >= 2 || this._navigator.getBoolean('habbo_club_buy_disabled')) return;
+        if(clubLevel >= 2 || this._navigator.getBoolean('habbo_club_buy_disabled')) return;
 
         const promo = this._navigator.getXmlWindow('roc_vip_promo') as IWindowContainer | null;
 
-        if (!promo) return;
+        if(!promo) return;
 
         RoomCreateViewCtrl.addClickHandler(promo.findChildByName('link'), this.onHcMoreClick);
         this._layoutItemList.addListItem(promo);
     }
+
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getRow()
     private getRow(): IWindowContainer
     {
@@ -315,7 +316,7 @@ export class RoomCreateViewCtrl
             {x: 0, y: 0, width: 100, height: 300}
         ) as IWindowContainer | null;
 
-        if (!row)
+        if(!row)
         {
             throw new Error('Unable to create room layout row');
         }
@@ -326,11 +327,11 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::addThumbnail()
     private addThumbnail(row: IWindowContainer, layout: RoomLayout, leftColumn: boolean): void
     {
-        if (!this._navigator) return;
+        if(!this._navigator) return;
 
         const thumbnail = this._navigator.getXmlWindow('roc_room_thumbnail') as IWindowContainer | null;
 
-        if (!thumbnail) return;
+        if(!thumbnail) return;
 
         thumbnail.tags.push(layout.name);
         thumbnail.x = leftColumn ? 0 : thumbnail.width;
@@ -339,21 +340,21 @@ export class RoomCreateViewCtrl
 
         const bgPic = thumbnail.findChildByName('bg_pic') as IStaticBitmapWrapperWindow | null;
 
-        if (bgPic)
+        if(bgPic)
         {
             bgPic.assetUri = '${image.library.url}newroom/model_' + layout.name + '.png';
         }
 
         const tileSizeText = thumbnail.findChildByName('tile_size_txt') as ITextWindow | null;
 
-        if (tileSizeText)
+        if(tileSizeText)
         {
             tileSizeText.text = layout.tileSize + ' ' + this._navigator.getText('navigator.createroom.tilesize');
         }
 
         const clubIcon = thumbnail.findChildByName('club_icon');
 
-        if (clubIcon)
+        if(clubIcon)
         {
             clubIcon.visible = layout.requiredClubLevel > 0;
         }
@@ -367,11 +368,11 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::refreshSelection()
     private refreshSelection(): void
     {
-        for (const layout of this._layouts)
+        for(const layout of this._layouts)
         {
             const view = layout.view;
 
-            if (!view) continue;
+            if(!view) continue;
 
             const selected = layout === this._selectedLayout;
             this.setChildVisible(view, 'bg_sel', selected);
@@ -382,7 +383,7 @@ export class RoomCreateViewCtrl
 
             const tileSizeText = view.findChildByName('tile_size_txt') as ITextWindow | null;
 
-            if (tileSizeText)
+            if(tileSizeText)
             {
                 tileSizeText.textColor = selected ? 0xFFFFFFFF : 0xFF000000;
                 tileSizeText.color = selected ? 0xFF6E8184 : 0xFFCBCBCB;
@@ -395,7 +396,7 @@ export class RoomCreateViewCtrl
     {
         const child = container.findChildByName(childName);
 
-        if (child)
+        if(child)
         {
             child.visible = visible;
         }
@@ -406,7 +407,7 @@ export class RoomCreateViewCtrl
     {
         const target = event.window as IWindowContainer | null;
 
-        if (!target) return;
+        if(!target) return;
 
         this.onChooseLayout(target);
     };
@@ -416,9 +417,9 @@ export class RoomCreateViewCtrl
     {
         const layout = this.findLayout(view.tags);
 
-        if (!layout) return;
+        if(!layout) return;
 
-        if (!this.isAllowed(layout, true))
+        if(!this.isAllowed(layout, true))
         {
             this._navigator?.openCatalogClubPage('RoomCreateViewCtrl');
             return;
@@ -431,11 +432,11 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::findLayout()
     private findLayout(tags: string[]): RoomLayout | null
     {
-        for (const tag of tags)
+        for(const tag of tags)
         {
             const layout = this.getLayout(tag);
 
-            if (layout) return layout;
+            if(layout) return layout;
         }
 
         return this._layouts[0] ?? null;
@@ -444,9 +445,9 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getLayout()
     private getLayout(name: string): RoomLayout | null
     {
-        for (const layout of this._layouts)
+        for(const layout of this._layouts)
         {
-            if (layout.name === name) return layout;
+            if(layout.name === name) return layout;
         }
 
         return null;
@@ -455,13 +456,13 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isAllowed()
     private isAllowed(layout: RoomLayout, requireMembership: boolean): boolean
     {
-        if (layout.requiredClubLevel === 0) return true;
-        if (!requireMembership) return true;
+        if(layout.requiredClubLevel === 0) return true;
+        if(!requireMembership) return true;
 
         const sessionData = this._navigator?.sessionData;
 
-        if (layout.requiredClubLevel === 1) return sessionData?.hasClub ?? false;
-        if (layout.requiredClubLevel === 2) return sessionData?.hasVip ?? false;
+        if(layout.requiredClubLevel === 1) return sessionData?.hasClub ?? false;
+        if(layout.requiredClubLevel === 2) return sessionData?.hasVip ?? false;
 
         return sessionData?.hasSecurity(4) ?? false;
     }
@@ -469,7 +470,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isMandatoryFieldsFilled()
     private isMandatoryFieldsFilled(): boolean
     {
-        if (!this._roomNameManager) return false;
+        if(!this._roomNameManager) return false;
 
         return this._roomNameManager.checkMandatory(
             this._navigator?.getText('navigator.createroom.nameerr') ?? 'Name required'
@@ -479,8 +480,8 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onCreateButtonClick()
     private onCreateButtonClick = (_event: WindowEvent): void =>
     {
-        if (!this._navigator || !this._selectedLayout) return;
-        if (!this.isMandatoryFieldsFilled()) return;
+        if(!this._navigator || !this._selectedLayout) return;
+        if(!this.isMandatoryFieldsFilled()) return;
 
         const name = this._roomNameManager?.getText() ?? '';
         const desc = this._roomDescManager?.getText() ?? '';
@@ -502,7 +503,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::resolveSelectedVisitorLimit()
     private resolveSelectedVisitorLimit(): number
     {
-        if (!this._maxVisitorsDropMenu) return RoomCreateViewCtrl.ROOM_LIMIT_NON_SUBSCRIBER;
+        if(!this._maxVisitorsDropMenu) return RoomCreateViewCtrl.ROOM_LIMIT_NON_SUBSCRIBER;
 
         const selection = this._maxVisitorsDropMenu.selection;
         const values = this._maxVisitorsDropMenu.enumerateSelection();
@@ -518,6 +519,7 @@ export class RoomCreateViewCtrl
     {
         this._navigator?.openCatalogClubPage('RoomCreateViewCtrl');
     };
+
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::onCancelButtonClick()
     private onCancelButtonClick = (_event: WindowEvent): void =>
     {
@@ -527,7 +529,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::centerContent()
     private centerContent(): void
     {
-        if (!this._navigator || !this._content) return;
+        if(!this._navigator || !this._content) return;
 
         const desktop = this._navigator.windowManager?.getDesktop(1) ?? this._content.parent;
         const rect = Util.getLocationRelativeTo(desktop, this._content.width, this._content.height);
@@ -539,7 +541,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::resolveLocalization()
     private resolveLocalization(value: string): string
     {
-        if (!this._navigator) return value;
+        if(!this._navigator) return value;
 
         const match = /^\$\{(.+)\}$/.exec(value);
 
@@ -549,7 +551,7 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::addClickHandler()
     private static addClickHandler(window: IWindow | null, handler: (event: WindowEvent) => void): void
     {
-        if (!window) return;
+        if(!window) return;
 
         window.setParamFlag(WindowParam.INPUT_EVENT_PROCESSOR, true);
         window.addEventListener('WME_CLICK', handler);
@@ -607,7 +609,7 @@ export class RoomCreateViewCtrl
         this._roomNameManager = null;
         this._roomDescManager = null;
 
-        if (this._content)
+        if(this._content)
         {
             this._content.destroy();
             this._content = null;

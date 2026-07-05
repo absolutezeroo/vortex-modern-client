@@ -10,74 +10,74 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from './AvatarXmlUtils
  */
 export class AnimationData implements IStructureData
 {
-	private _actions: Map<string, AnimationAction>;
+    private _actions: Map<string, AnimationAction>;
 
-	// AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::AnimationData()
-	constructor()
-	{
-		this._actions = new Map();
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::AnimationData()
+    constructor()
+    {
+        this._actions = new Map();
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::parse()
-	public parse(data: any): boolean
-	{
-		if (!data) return false;
+    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::parse()
+    public parse(data: any): boolean
+    {
+        if(!data) return false;
 
-		this.appendXML(data);
+        this.appendXML(data);
 
-		return true;
-	}
+        return true;
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::appendXML()
-	public appendXML(data: any): boolean
-	{
-		if (!data) return false;
+    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::appendXML()
+    public appendXML(data: any): boolean
+    {
+        if(!data) return false;
 
-		const root = getXmlRoot(data);
+        const root = getXmlRoot(data);
 
-		if (root)
-		{
-			for (const actionElement of getXmlChildElements(root, 'action'))
-			{
-				this._actions.set(getXmlAttribute(actionElement, 'id'), new AnimationAction(actionElement));
-			}
+        if(root)
+        {
+            for(const actionElement of getXmlChildElements(root, 'action'))
+            {
+                this._actions.set(getXmlAttribute(actionElement, 'id'), new AnimationAction(actionElement));
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		const actions = data.actions ?? data.action;
+        const actions = data.actions ?? data.action;
 
-		if (actions)
-		{
-			const actionList = Array.isArray(actions) ? actions : [actions];
+        if(actions)
+        {
+            const actionList = Array.isArray(actions) ? actions : [actions];
 
-			for (const actionData of actionList)
-			{
-				this._actions.set(String(actionData.id), new AnimationAction(actionData));
-			}
-		}
+            for(const actionData of actionList)
+            {
+                this._actions.set(String(actionData.id), new AnimationAction(actionData));
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	public appendJSON(data: any): boolean
-	{
-		return this.appendXML(data);
-	}
+    public appendJSON(data: any): boolean
+    {
+        return this.appendXML(data);
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::getAction()
-	public getAction(action: IActionDefinition): AnimationAction | null
-	{
-		return this._actions.get(action.id) || null;
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::getAction()
+    public getAction(action: IActionDefinition): AnimationAction | null
+    {
+        return this._actions.get(action.id) || null;
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::getFrameCount()
-	public getFrameCount(action: IActionDefinition): number
-	{
-		const animAction = this.getAction(action);
+    // AS3: sources/win63_version/habbo/avatar/structure/AnimationData.as::getFrameCount()
+    public getFrameCount(action: IActionDefinition): number
+    {
+        const animAction = this.getAction(action);
 
-		if (!animAction) return 0;
+        if(!animAction) return 0;
 
-		return animAction.frameCount;
-	}
+        return animAction.frameCount;
+    }
 }

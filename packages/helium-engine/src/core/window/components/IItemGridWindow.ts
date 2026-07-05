@@ -12,47 +12,47 @@ import type {IScrollableWindow} from './IScrollableWindow';
  */
 export interface IItemGridWindow extends IWindow, IScrollableWindow, IIterable
 {
-	spacing: number;
-	verticalSpacing: number;
-	scaleToFitItems: boolean;
-	autoArrangeItems: boolean;
-	resizeOnItemUpdate: boolean;
-	shouldRebuildGridOnResize: boolean;
-	containerResizeToColumns: boolean;
+    spacing: number;
+    verticalSpacing: number;
+    scaleToFitItems: boolean;
+    autoArrangeItems: boolean;
+    resizeOnItemUpdate: boolean;
+    shouldRebuildGridOnResize: boolean;
+    containerResizeToColumns: boolean;
 
-	readonly numColumns: number;
-	readonly numRows: number;
-	readonly numGridItems: number;
+    readonly numColumns: number;
+    readonly numRows: number;
+    readonly numGridItems: number;
 
-	addGridItem(item: IWindow): IWindow;
+    addGridItem(item: IWindow): IWindow;
 
-	addGridItemAt(item: IWindow, index: number): IWindow;
+    addGridItemAt(item: IWindow, index: number): IWindow;
 
-	getGridItemAt(index: number): IWindow | null;
+    getGridItemAt(index: number): IWindow | null;
 
-	getGridItemByID(id: number): IWindow | null;
+    getGridItemByID(id: number): IWindow | null;
 
-	getGridItemByName(name: string): IWindow | null;
+    getGridItemByName(name: string): IWindow | null;
 
-	getGridItemByTag(tag: string): IWindow | null;
+    getGridItemByTag(tag: string): IWindow | null;
 
-	getGridItemIndex(item: IWindow): number;
+    getGridItemIndex(item: IWindow): number;
 
-	removeGridItem(item: IWindow): IWindow | null;
+    removeGridItem(item: IWindow): IWindow | null;
 
-	removeGridItemAt(index: number): IWindow | null;
+    removeGridItemAt(index: number): IWindow | null;
 
-	setGridItemIndex(item: IWindow, index: number): void;
+    setGridItemIndex(item: IWindow, index: number): void;
 
-	swapGridItems(a: IWindow, b: IWindow): void;
+    swapGridItems(a: IWindow, b: IWindow): void;
 
-	swapGridItemsAt(indexA: number, indexB: number): void;
+    swapGridItemsAt(indexA: number, indexB: number): void;
 
-	removeGridItems(): void;
+    removeGridItems(): void;
 
-	destroyGridItems(): void;
+    destroyGridItems(): void;
 
-	rebuildGridStructure(): void;
+    rebuildGridStructure(): void;
 
-	populate(items: IWindow[]): void;
+    populate(items: IWindow[]): void;
 }

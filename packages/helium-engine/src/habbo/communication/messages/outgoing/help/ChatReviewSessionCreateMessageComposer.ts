@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ChatReviewSessionCreateMessageComposer extends MessageComposer<ConstructorParameters<typeof ChatReviewSessionCreateMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ChatReviewSessionCreateMessageComposer>;
+    private _data: ConstructorParameters<typeof ChatReviewSessionCreateMessageComposer>;
 
-	constructor(roomId: number, reportedUserId: number)
-	{
-		super();
-		this._data = [roomId, reportedUserId];
-	}
+    constructor(roomId: number, reportedUserId: number)
+    {
+        super();
+        this._data = [roomId, reportedUserId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

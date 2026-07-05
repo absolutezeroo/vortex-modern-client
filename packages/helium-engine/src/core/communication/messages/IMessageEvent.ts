@@ -20,23 +20,23 @@ export type ParserClass<T extends IMessageParser = IMessageParser> = new () => T
  */
 export interface IMessageEvent extends IDisposable
 {
-	/**
+    /**
 	 * The callback function to invoke when this message is received
 	 */
-	readonly callback: MessageEventCallback;
+    readonly callback: MessageEventCallback;
 
-	/**
+    /**
 	 * The connection that received this message
 	 */
-	connection: IConnection | null;
+    connection: IConnection | null;
 
-	/**
+    /**
 	 * The parser class constructor
 	 */
-	readonly parserClass: ParserClass;
+    readonly parserClass: ParserClass;
 
-	/**
+    /**
 	 * The parser instance (shared among handlers for same message type)
 	 */
-	parser: IMessageParser | null;
+    parser: IMessageParser | null;
 }

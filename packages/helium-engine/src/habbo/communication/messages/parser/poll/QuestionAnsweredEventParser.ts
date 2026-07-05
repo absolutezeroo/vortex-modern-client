@@ -8,52 +8,52 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class QuestionAnsweredEventParser implements IMessageParser
 {
-	private _userId: number = -1;
+    private _userId: number = -1;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _value: string = '';
+    private _value: string = '';
 
-	get value(): string
-	{
-		return this._value;
-	}
+    get value(): string
+    {
+        return this._value;
+    }
 
-	private _answerCounts: Map<string, number> = new Map();
+    private _answerCounts: Map<string, number> = new Map();
 
-	get answerCounts(): Map<string, number>
-	{
-		return this._answerCounts;
-	}
+    get answerCounts(): Map<string, number>
+    {
+        return this._answerCounts;
+    }
 
-	flush(): boolean
-	{
-		this._userId = -1;
-		this._value = '';
-		this._answerCounts = new Map();
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = -1;
+        this._value = '';
+        this._answerCounts = new Map();
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._userId = wrapper.readInt();
-		this._value = wrapper.readString();
-		this._answerCounts = new Map();
+        this._userId = wrapper.readInt();
+        this._value = wrapper.readString();
+        this._answerCounts = new Map();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const key = wrapper.readString();
-			const value = wrapper.readInt();
-			this._answerCounts.set(key, value);
-		}
+        for(let i = 0; i < count; i++)
+        {
+            const key = wrapper.readString();
+            const value = wrapper.readInt();
+            this._answerCounts.set(key, value);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

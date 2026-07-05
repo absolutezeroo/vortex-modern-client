@@ -7,31 +7,31 @@
  */
 export class RoomPlaneBitmapMask
 {
-	constructor(type: string, leftSideLoc: number, rightSideLoc: number)
-	{
-		this._type = type;
-		this._leftSideLoc = leftSideLoc;
-		this._rightSideLoc = rightSideLoc;
-	}
+    constructor(type: string, leftSideLoc: number, rightSideLoc: number)
+    {
+        this._type = type;
+        this._leftSideLoc = leftSideLoc;
+        this._rightSideLoc = rightSideLoc;
+    }
 
-	private _type: string;
+    private _type: string;
 
-	get type(): string
-	{
-		return this._type;
-	}
+    get type(): string
+    {
+        return this._type;
+    }
 
-	private _leftSideLoc: number;
+    private _leftSideLoc: number;
 
-	get leftSideLoc(): number
-	{
-		return this._leftSideLoc;
-	}
+    get leftSideLoc(): number
+    {
+        return this._leftSideLoc;
+    }
 
-	private _rightSideLoc: number;
+    private _rightSideLoc: number;
 
-	get rightSideLoc(): number
-	{
-		return this._rightSideLoc;
-	}
+    get rightSideLoc(): number
+    {
+        return this._rightSideLoc;
+    }
 }

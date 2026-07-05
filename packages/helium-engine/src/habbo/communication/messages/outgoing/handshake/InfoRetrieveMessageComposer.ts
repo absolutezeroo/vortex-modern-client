@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class InfoRetrieveMessageComposer extends MessageComposer<ConstructorParameters<typeof InfoRetrieveMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof InfoRetrieveMessageComposer>;
+    private _data: ConstructorParameters<typeof InfoRetrieveMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

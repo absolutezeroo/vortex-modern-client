@@ -10,76 +10,76 @@ import {PerksUpdatedEvent} from './events/PerksUpdatedEvent';
  */
 export class PerkManager implements IPerkManager
 {
-	private _ready: boolean = false;
-	private _sessionDataManager: SessionDataManager | null = null;
-	private _perkAllowancesMessageEvent: IMessageEvent | null = null;
-	private _perks: Map<string, PerkAllowance> | null = new Map();
+    private _ready: boolean = false;
+    private _sessionDataManager: SessionDataManager | null = null;
+    private _perkAllowancesMessageEvent: IMessageEvent | null = null;
+    private _perks: Map<string, PerkAllowance> | null = new Map();
 
-	constructor(sessionDataManager: SessionDataManager)
-	{
-		this._sessionDataManager = sessionDataManager;
+    constructor(sessionDataManager: SessionDataManager)
+    {
+        this._sessionDataManager = sessionDataManager;
 
-		if (this._sessionDataManager.communication)
-		{
-			this._perkAllowancesMessageEvent = this._sessionDataManager.communication.addMessageEvent(
-				new PerkAllowancesMessageEvent(this.onPerkAllowances.bind(this))
-			);
-		}
-	}
+        if(this._sessionDataManager.communication)
+        {
+            this._perkAllowancesMessageEvent = this._sessionDataManager.communication.addMessageEvent(
+                new PerkAllowancesMessageEvent(this.onPerkAllowances.bind(this))
+            );
+        }
+    }
 
-	get isReady(): boolean
-	{
-		return this._ready;
-	}
+    get isReady(): boolean
+    {
+        return this._ready;
+    }
 
-	get disposed(): boolean
-	{
-		return this._sessionDataManager === null;
-	}
+    get disposed(): boolean
+    {
+        return this._sessionDataManager === null;
+    }
 
-	isPerkAllowed(perkCode: string): boolean
-	{
-		const perk = this._perks?.get(perkCode) ?? null;
+    isPerkAllowed(perkCode: string): boolean
+    {
+        const perk = this._perks?.get(perkCode) ?? null;
 
-		return perk !== null && perk.isAllowed;
-	}
+        return perk !== null && perk.isAllowed;
+    }
 
-	getPerkErrorMessage(perkCode: string): string
-	{
-		const perk = this._perks?.get(perkCode) ?? null;
+    getPerkErrorMessage(perkCode: string): string
+    {
+        const perk = this._perks?.get(perkCode) ?? null;
 
-		return perk !== null ? perk.errorMessage : '';
-	}
+        return perk !== null ? perk.errorMessage : '';
+    }
 
-	private onPerkAllowances(event: IMessageEvent): void
-	{
-		const parser = (event as PerkAllowancesMessageEvent).getParser();
+    private onPerkAllowances(event: IMessageEvent): void
+    {
+        const parser = (event as PerkAllowancesMessageEvent).getParser();
 
-		for (const perk of parser.getPerks())
-		{
-			this._perks?.set(perk.code, perk);
-		}
+        for(const perk of parser.getPerks())
+        {
+            this._perks?.set(perk.code, perk);
+        }
 
-		this._ready = true;
-		this._sessionDataManager?.events.emit(PerksUpdatedEvent.PERKS_UPDATED, new PerksUpdatedEvent());
-	}
+        this._ready = true;
+        this._sessionDataManager?.events.emit(PerksUpdatedEvent.PERKS_UPDATED, new PerksUpdatedEvent());
+    }
 
-	dispose(): void
-	{
-		if (this.disposed) return;
+    dispose(): void
+    {
+        if(this.disposed) return;
 
-		if (this._perks)
-		{
-			this._perks.clear();
-			this._perks = null;
-		}
+        if(this._perks)
+        {
+            this._perks.clear();
+            this._perks = null;
+        }
 
-		if (this._sessionDataManager?.communication && this._perkAllowancesMessageEvent)
-		{
-			this._sessionDataManager.communication.removeMessageEvent(this._perkAllowancesMessageEvent);
-		}
+        if(this._sessionDataManager?.communication && this._perkAllowancesMessageEvent)
+        {
+            this._sessionDataManager.communication.removeMessageEvent(this._perkAllowancesMessageEvent);
+        }
 
-		this._perkAllowancesMessageEvent = null;
-		this._sessionDataManager = null;
-	}
+        this._perkAllowancesMessageEvent = null;
+        this._sessionDataManager = null;
+    }
 }

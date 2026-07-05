@@ -5,5 +5,5 @@
  */
 export class PerksUpdatedEvent
 {
-	public static readonly PERKS_UPDATED = 'PUE_perks_updated';
+    public static readonly PERKS_UPDATED = 'PUE_perks_updated';
 }

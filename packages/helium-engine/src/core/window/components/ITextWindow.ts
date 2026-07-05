@@ -11,26 +11,26 @@ import type {IScrollableWindow} from './IScrollableWindow';
  */
 export interface ITextWindow extends IWindow, IScrollableWindow
 {
-	readonly bold: boolean;
-	readonly italic: boolean;
-	readonly underline: boolean;
-	readonly fontFace: string;
-	readonly fontSize: number;
-	readonly length: number;
-	readonly numLines: number;
-	readonly textHeight: number;
-	readonly textWidth: number;
+    readonly bold: boolean;
+    readonly italic: boolean;
+    readonly underline: boolean;
+    readonly fontFace: string;
+    readonly fontSize: number;
+    readonly length: number;
+    readonly numLines: number;
+    readonly textHeight: number;
+    readonly textWidth: number;
 
-	text: string;
-	textColor: number;
-	textBackground: boolean;
-	textBackgroundColor: number;
-	maxChars: number;
-	multiline: boolean;
-	wordWrap: boolean;
-	autoSize: string;
+    text: string;
+    textColor: number;
+    textBackground: boolean;
+    textBackgroundColor: number;
+    maxChars: number;
+    multiline: boolean;
+    wordWrap: boolean;
+    autoSize: string;
 
-	appendText(text: string): void;
+    appendText(text: string): void;
 
-	replaceText(beginIndex: number, endIndex: number, newText: string): void;
+    replaceText(beginIndex: number, endIndex: number, newText: string): void;
 }

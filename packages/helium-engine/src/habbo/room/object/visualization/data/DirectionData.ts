@@ -9,215 +9,215 @@ import {LayerData} from './LayerData';
 
 export class DirectionData
 {
-	public static readonly USE_DEFAULT_DIRECTION: number = -1;
+    public static readonly USE_DEFAULT_DIRECTION: number = -1;
 
-	private _layers: LayerData[];
+    private _layers: LayerData[];
 
-	constructor(layerCount: number)
-	{
-		this._layers = [];
+    constructor(layerCount: number)
+    {
+        this._layers = [];
 
-		for (let i = 0; i < layerCount; i++)
-		{
-			this._layers.push(new LayerData());
-		}
-	}
+        for(let i = 0; i < layerCount; i++)
+        {
+            this._layers.push(new LayerData());
+        }
+    }
 
-	get layerCount(): number
-	{
-		return this._layers.length;
-	}
+    get layerCount(): number
+    {
+        return this._layers.length;
+    }
 
-	getTag(layerIndex: number): string
-	{
-		const layer = this.getLayer(layerIndex);
+    getTag(layerIndex: number): string
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.tag;
-		}
+        if(layer !== null)
+        {
+            return layer.tag;
+        }
 
-		return LayerData.DEFAULT_TAG;
-	}
+        return LayerData.DEFAULT_TAG;
+    }
 
-	setTag(layerIndex: number, value: string): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setTag(layerIndex: number, value: string): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.tag = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.tag = value;
+        }
+    }
 
-	getInk(layerIndex: number): number
-	{
-		const layer = this.getLayer(layerIndex);
+    getInk(layerIndex: number): number
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.ink;
-		}
+        if(layer !== null)
+        {
+            return layer.ink;
+        }
 
-		return LayerData.DEFAULT_INK;
-	}
+        return LayerData.DEFAULT_INK;
+    }
 
-	setInk(layerIndex: number, value: number): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setInk(layerIndex: number, value: number): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.ink = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.ink = value;
+        }
+    }
 
-	getAlpha(layerIndex: number): number
-	{
-		const layer = this.getLayer(layerIndex);
+    getAlpha(layerIndex: number): number
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.alpha;
-		}
+        if(layer !== null)
+        {
+            return layer.alpha;
+        }
 
-		return LayerData.DEFAULT_ALPHA;
-	}
+        return LayerData.DEFAULT_ALPHA;
+    }
 
-	setAlpha(layerIndex: number, value: number): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setAlpha(layerIndex: number, value: number): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.alpha = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.alpha = value;
+        }
+    }
 
-	getIgnoreMouse(layerIndex: number): boolean
-	{
-		const layer = this.getLayer(layerIndex);
+    getIgnoreMouse(layerIndex: number): boolean
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.ignoreMouse;
-		}
+        if(layer !== null)
+        {
+            return layer.ignoreMouse;
+        }
 
-		return LayerData.DEFAULT_IGNORE_MOUSE;
-	}
+        return LayerData.DEFAULT_IGNORE_MOUSE;
+    }
 
-	setIgnoreMouse(layerIndex: number, value: boolean): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setIgnoreMouse(layerIndex: number, value: boolean): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.ignoreMouse = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.ignoreMouse = value;
+        }
+    }
 
-	getXOffset(layerIndex: number): number
-	{
-		const layer = this.getLayer(layerIndex);
+    getXOffset(layerIndex: number): number
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.xOffset;
-		}
+        if(layer !== null)
+        {
+            return layer.xOffset;
+        }
 
-		return LayerData.DEFAULT_X_OFFSET;
-	}
+        return LayerData.DEFAULT_X_OFFSET;
+    }
 
-	setXOffset(layerIndex: number, value: number): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setXOffset(layerIndex: number, value: number): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.xOffset = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.xOffset = value;
+        }
+    }
 
-	getYOffset(layerIndex: number): number
-	{
-		const layer = this.getLayer(layerIndex);
+    getYOffset(layerIndex: number): number
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.yOffset;
-		}
+        if(layer !== null)
+        {
+            return layer.yOffset;
+        }
 
-		return LayerData.DEFAULT_Y_OFFSET;
-	}
+        return LayerData.DEFAULT_Y_OFFSET;
+    }
 
-	setYOffset(layerIndex: number, value: number): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setYOffset(layerIndex: number, value: number): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.yOffset = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.yOffset = value;
+        }
+    }
 
-	getZOffset(layerIndex: number): number
-	{
-		const layer = this.getLayer(layerIndex);
+    getZOffset(layerIndex: number): number
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			return layer.zOffset;
-		}
+        if(layer !== null)
+        {
+            return layer.zOffset;
+        }
 
-		return LayerData.DEFAULT_Z_OFFSET;
-	}
+        return LayerData.DEFAULT_Z_OFFSET;
+    }
 
-	setZOffset(layerIndex: number, value: number): void
-	{
-		const layer = this.getLayer(layerIndex);
+    setZOffset(layerIndex: number, value: number): void
+    {
+        const layer = this.getLayer(layerIndex);
 
-		if (layer !== null)
-		{
-			layer.zOffset = value;
-		}
-	}
+        if(layer !== null)
+        {
+            layer.zOffset = value;
+        }
+    }
 
-	copyValues(other: DirectionData): void
-	{
-		if (other === null)
-		{
-			return;
-		}
+    copyValues(other: DirectionData): void
+    {
+        if(other === null)
+        {
+            return;
+        }
 
-		if (this.layerCount !== other.layerCount)
-		{
-			return;
-		}
+        if(this.layerCount !== other.layerCount)
+        {
+            return;
+        }
 
-		for (let i = 0; i < this.layerCount; i++)
-		{
-			const thisLayer = this.getLayer(i);
-			const otherLayer = other.getLayer(i);
+        for(let i = 0; i < this.layerCount; i++)
+        {
+            const thisLayer = this.getLayer(i);
+            const otherLayer = other.getLayer(i);
 
-			if (thisLayer !== null && otherLayer !== null)
-			{
-				thisLayer.copyValues(otherLayer);
-			}
-		}
-	}
+            if(thisLayer !== null && otherLayer !== null)
+            {
+                thisLayer.copyValues(otherLayer);
+            }
+        }
+    }
 
-	getLayer(index: number): LayerData | null
-	{
-		if (index < 0 || index >= this.layerCount)
-		{
-			return null;
-		}
+    getLayer(index: number): LayerData | null
+    {
+        if(index < 0 || index >= this.layerCount)
+        {
+            return null;
+        }
 
-		return this._layers[index];
-	}
+        return this._layers[index];
+    }
 
-	dispose(): void
-	{
-		this._layers = [];
-	}
+    dispose(): void
+    {
+        this._layers = [];
+    }
 }

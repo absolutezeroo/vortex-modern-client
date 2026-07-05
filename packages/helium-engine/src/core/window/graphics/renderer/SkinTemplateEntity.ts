@@ -8,21 +8,21 @@
  */
 export class SkinTemplateEntity
 {
-	public readonly id: number;
-	public readonly name: string;
-	public readonly type: string;
-	public readonly region: { x: number; y: number; width: number; height: number };
+    public readonly id: number;
+    public readonly name: string;
+    public readonly type: string;
+    public readonly region: { x: number; y: number; width: number; height: number };
 
-	constructor(
-		id: number,
-		name: string,
-		type: string,
-		region: { x: number; y: number; width: number; height: number }
-	)
-	{
-		this.id = id;
-		this.name = name;
-		this.type = type;
-		this.region = {...region};
-	}
+    constructor(
+        id: number,
+        name: string,
+        type: string,
+        region: { x: number; y: number; width: number; height: number }
+    )
+    {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.region = {...region};
+    }
 }

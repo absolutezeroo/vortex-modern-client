@@ -8,45 +8,45 @@ import type {IMessageComposer} from '@core/communication/messages/IMessageCompos
  */
 export class DeclineFriendMessageComposer implements IMessageComposer<unknown[]>
 {
-	private _declineAll: boolean;
-	private _requestIds: number[];
+    private _declineAll: boolean;
+    private _requestIds: number[];
 
-	constructor(declineAll: boolean, ...requestIds: number[])
-	{
-		this._declineAll = declineAll;
-		this._requestIds = requestIds;
-	}
+    constructor(declineAll: boolean, ...requestIds: number[])
+    {
+        this._declineAll = declineAll;
+        this._requestIds = requestIds;
+    }
 
-	get disposed(): boolean
-	{
-		return false;
-	}
+    get disposed(): boolean
+    {
+        return false;
+    }
 
-	getMessageArray(): unknown[]
-	{
-		const result: unknown[] = [];
+    getMessageArray(): unknown[]
+    {
+        const result: unknown[] = [];
 
-		if (this._declineAll)
-		{
-			result.push(true);
-			result.push(0);
-		}
-		else
-		{
-			result.push(false);
-			result.push(this._requestIds.length);
+        if(this._declineAll)
+        {
+            result.push(true);
+            result.push(0);
+        }
+        else
+        {
+            result.push(false);
+            result.push(this._requestIds.length);
 
-			for (let i = 0; i < this._requestIds.length; i++)
-			{
-				result.push(this._requestIds[i]);
-			}
-		}
+            for(let i = 0; i < this._requestIds.length; i++)
+            {
+                result.push(this._requestIds[i]);
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	dispose(): void
-	{
-		return;
-	}
+    dispose(): void
+    {
+        return;
+    }
 }

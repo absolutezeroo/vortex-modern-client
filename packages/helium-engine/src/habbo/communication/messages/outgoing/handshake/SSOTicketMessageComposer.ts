@@ -7,30 +7,29 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SSOTicketMessageComposer extends MessageComposer<ConstructorParameters<typeof SSOTicketMessageComposer>>
 {
-	private static readonly _startTime: number = Date.now();
+    private static readonly _startTime: number = Date.now();
 
-	private _data: ConstructorParameters<typeof SSOTicketMessageComposer>;
+    private _data: ConstructorParameters<typeof SSOTicketMessageComposer>;
 
-	constructor(ssoTicket: string, time: number = SSOTicketMessageComposer.getTimer())
-	{
-		super();
+    constructor(ssoTicket: string, time: number = SSOTicketMessageComposer.getTimer())
+    {
+        super();
 
-		this._data = [ssoTicket, time];
-	}
+        this._data = [ssoTicket, time];
+    }
 
-	private static getTimer(): number
-	{
-		if(typeof performance !== 'undefined')
-		{
-			return Math.floor(performance.now());
-		}
+    private static getTimer(): number
+    {
+        if(typeof performance !== 'undefined')
+        {
+            return Math.floor(performance.now());
+        }
 
-		return Date.now() - SSOTicketMessageComposer._startTime;
-	}
+        return Date.now() - SSOTicketMessageComposer._startTime;
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -10,34 +10,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class PetRespectFailedEventParser implements IMessageParser
 {
-	private _requiredDays: number = 0;
+    private _requiredDays: number = 0;
 
-	get requiredDays(): number
-	{
-		return this._requiredDays;
-	}
+    get requiredDays(): number
+    {
+        return this._requiredDays;
+    }
 
-	private _avatarAgeInDays: number = 0;
+    private _avatarAgeInDays: number = 0;
 
-	get avatarAgeInDays(): number
-	{
-		return this._avatarAgeInDays;
-	}
+    get avatarAgeInDays(): number
+    {
+        return this._avatarAgeInDays;
+    }
 
-	flush(): boolean
-	{
-		this._requiredDays = 0;
-		this._avatarAgeInDays = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._requiredDays = 0;
+        this._avatarAgeInDays = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._requiredDays = wrapper.readInt();
-		this._avatarAgeInDays = wrapper.readInt();
+        this._requiredDays = wrapper.readInt();
+        this._avatarAgeInDays = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

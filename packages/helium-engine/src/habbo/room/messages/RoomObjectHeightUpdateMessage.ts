@@ -10,16 +10,16 @@ import type {IVector3d} from '@room/utils/IVector3d';
 
 export class RoomObjectHeightUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(location: IVector3d | null, direction: IVector3d | null, height: number)
-	{
-		super(location, direction);
-		this._height = height;
-	}
+    constructor(location: IVector3d | null, direction: IVector3d | null, height: number)
+    {
+        super(location, direction);
+        this._height = height;
+    }
 
-	private _height: number;
+    private _height: number;
 
-	get height(): number
-	{
-		return this._height;
-	}
+    get height(): number
+    {
+        return this._height;
+    }
 }

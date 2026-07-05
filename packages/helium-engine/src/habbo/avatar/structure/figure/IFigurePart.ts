@@ -5,10 +5,10 @@
  */
 export interface IFigurePart
 {
-	readonly id: number;
-	readonly type: string;
-	readonly breed: number;
-	readonly colorLayerIndex: number;
-	readonly index: number;
-	readonly paletteMap: number;
+    readonly id: number;
+    readonly type: string;
+    readonly breed: number;
+    readonly colorLayerIndex: number;
+    readonly index: number;
+    readonly paletteMap: number;
 }

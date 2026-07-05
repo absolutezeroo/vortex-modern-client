@@ -9,8 +9,8 @@ import {FurnitureMultiStateLogic} from './FurnitureMultiStateLogic';
 
 export class FurnitureRandomTeleportLogic extends FurnitureMultiStateLogic
 {
-	override get contextMenu(): string | null
-	{
-		return 'RANDOM_TELEPORT';
-	}
+    override get contextMenu(): string | null
+    {
+        return 'RANDOM_TELEPORT';
+    }
 }

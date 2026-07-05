@@ -5,82 +5,82 @@
  */
 export class Bot
 {
-	constructor(
-		id: number,
-		name: string,
-		motto: string,
-		figure: string,
-		gender: string
-	)
-	{
-		this._id = id;
-		this._name = name;
-		this._motto = motto;
-		this._figure = figure;
-		this._gender = gender;
-	}
+    constructor(
+        id: number,
+        name: string,
+        motto: string,
+        figure: string,
+        gender: string
+    )
+    {
+        this._id = id;
+        this._name = name;
+        this._motto = motto;
+        this._figure = figure;
+        this._gender = gender;
+    }
 
-	private _id: number;
+    private _id: number;
 
-	get id(): number
-	{
-		return this._id;
-	}
+    get id(): number
+    {
+        return this._id;
+    }
 
-	private _name: string;
+    private _name: string;
 
-	get name(): string
-	{
-		return this._name;
-	}
+    get name(): string
+    {
+        return this._name;
+    }
 
-	private _motto: string;
+    private _motto: string;
 
-	get motto(): string
-	{
-		return this._motto;
-	}
+    get motto(): string
+    {
+        return this._motto;
+    }
 
-	private _figure: string;
+    private _figure: string;
 
-	get figure(): string
-	{
-		return this._figure;
-	}
+    get figure(): string
+    {
+        return this._figure;
+    }
 
-	private _gender: string;
+    private _gender: string;
 
-	get gender(): string
-	{
-		return this._gender;
-	}
+    get gender(): string
+    {
+        return this._gender;
+    }
 
-	private _isSelected: boolean = false;
+    private _isSelected: boolean = false;
 
-	get isSelected(): boolean
-	{
-		return this._isSelected;
-	}
+    get isSelected(): boolean
+    {
+        return this._isSelected;
+    }
 
-	set isSelected(value: boolean)
-	{
-		this._isSelected = value;
-	}
+    set isSelected(value: boolean)
+    {
+        this._isSelected = value;
+    }
 
-	private _isUnseen: boolean = false;
+    private _isUnseen: boolean = false;
 
-	get isUnseen(): boolean
-	{
-		return this._isUnseen;
-	}
+    get isUnseen(): boolean
+    {
+        return this._isUnseen;
+    }
 
-	set isUnseen(value: boolean)
-	{
-		this._isUnseen = value;
-	}
+    set isUnseen(value: boolean)
+    {
+        this._isUnseen = value;
+    }
 
-	dispose(): void
-	{
-		// Nothing to clean up
-	}
+    dispose(): void
+    {
+        // Nothing to clean up
+    }
 }

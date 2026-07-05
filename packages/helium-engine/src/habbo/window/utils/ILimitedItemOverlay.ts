@@ -11,18 +11,18 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export interface ILimitedItemOverlay extends IDisposable
 {
-	/**
+    /**
 	 * The container window holding the overlay elements.
 	 */
-	readonly window: IWindowContainer | null;
+    readonly window: IWindowContainer | null;
 
-	/**
+    /**
 	 * Set the serial number of this limited item.
 	 */
-	serialNumber: number;
+    serialNumber: number;
 
-	/**
+    /**
 	 * Set the total series size of this limited item.
 	 */
-	seriesSize: number;
+    seriesSize: number;
 }

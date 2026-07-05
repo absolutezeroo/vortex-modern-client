@@ -9,16 +9,16 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectAvatarChatUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(numberOfWords: number)
-	{
-		super(null, null);
-		this._numberOfWords = numberOfWords;
-	}
+    constructor(numberOfWords: number)
+    {
+        super(null, null);
+        this._numberOfWords = numberOfWords;
+    }
 
-	private _numberOfWords: number;
+    private _numberOfWords: number;
 
-	get numberOfWords(): number
-	{
-		return this._numberOfWords;
-	}
+    get numberOfWords(): number
+    {
+        return this._numberOfWords;
+    }
 }

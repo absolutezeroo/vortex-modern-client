@@ -10,16 +10,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class BanUserWithDurationMessageComposer extends MessageComposer<[number, number, string]>
 {
-	private _data: [number, number, string];
+    private _data: [number, number, string];
 
-	constructor(userId: number, banType: string, roomId: number = 0)
-	{
-		super();
-		this._data = [userId, roomId, banType];
-	}
+    constructor(userId: number, banType: string, roomId: number = 0)
+    {
+        super();
+        this._data = [userId, roomId, banType];
+    }
 
-	getMessageArray(): [number, number, string]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, number, string]
+    {
+        return this._data;
+    }
 }

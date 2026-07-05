@@ -9,8 +9,8 @@ import {ErrorReportEventParser} from '../../parser/error/ErrorReportEventParser'
  */
 export class ErrorReportEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ErrorReportEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ErrorReportEventParser);
+    }
 }

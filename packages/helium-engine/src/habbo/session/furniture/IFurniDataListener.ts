@@ -7,5 +7,5 @@ import type {IDisposable} from '@core/runtime/IDisposable';
  */
 export interface IFurniDataListener extends IDisposable
 {
-	furniDataReady(): void;
+    furniDataReady(): void;
 }

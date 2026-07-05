@@ -5,12 +5,12 @@
  */
 export class RoomWidgetFurniInfoUsagePolicyEnum
 {
-	// AS3: sources/win63_version/habbo/ui/widget/enums/RoomWidgetFurniInfoUsagePolicyEnum.as::NOBODY
-	public static readonly NOBODY: number = 0;
+    // AS3: sources/win63_version/habbo/ui/widget/enums/RoomWidgetFurniInfoUsagePolicyEnum.as::NOBODY
+    public static readonly NOBODY: number = 0;
 
-	// AS3: sources/win63_version/habbo/ui/widget/enums/RoomWidgetFurniInfoUsagePolicyEnum.as::CONTROLLER
-	public static readonly CONTROLLER: number = 1;
+    // AS3: sources/win63_version/habbo/ui/widget/enums/RoomWidgetFurniInfoUsagePolicyEnum.as::CONTROLLER
+    public static readonly CONTROLLER: number = 1;
 
-	// AS3: sources/win63_version/habbo/ui/widget/enums/RoomWidgetFurniInfoUsagePolicyEnum.as::const_731
-	public static readonly EVERYBODY: number = 2;
+    // AS3: sources/win63_version/habbo/ui/widget/enums/RoomWidgetFurniInfoUsagePolicyEnum.as::const_731
+    public static readonly EVERYBODY: number = 2;
 }

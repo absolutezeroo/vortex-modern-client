@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetUserFlatCatsMessageComposer extends MessageComposer<ConstructorParameters<typeof GetUserFlatCatsMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetUserFlatCatsMessageComposer>;
+    private _data: ConstructorParameters<typeof GetUserFlatCatsMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

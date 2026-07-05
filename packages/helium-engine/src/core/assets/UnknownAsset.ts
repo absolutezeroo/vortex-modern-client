@@ -10,64 +10,64 @@ import type {AssetTypeDeclaration} from './AssetTypeDeclaration';
  */
 export class UnknownAsset implements IAsset
 {
-	private readonly _declaration: AssetTypeDeclaration;
-	private readonly _url: string;
+    private readonly _declaration: AssetTypeDeclaration;
+    private readonly _url: string;
 
-	constructor(declaration: AssetTypeDeclaration, url: string = '')
-	{
-		this._declaration = declaration;
-		this._url = url;
-	}
+    constructor(declaration: AssetTypeDeclaration, url: string = '')
+    {
+        this._declaration = declaration;
+        this._url = url;
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	private _content: unknown = null;
+    private _content: unknown = null;
 
-	get content(): unknown
-	{
-		return this._content;
-	}
+    get content(): unknown
+    {
+        return this._content;
+    }
 
-	get url(): string
-	{
-		return this._url;
-	}
+    get url(): string
+    {
+        return this._url;
+    }
 
-	get declaration(): AssetTypeDeclaration
-	{
-		return this._declaration;
-	}
+    get declaration(): AssetTypeDeclaration
+    {
+        return this._declaration;
+    }
 
-	dispose(): void
-	{
-		if (!this._disposed)
-		{
-			this._disposed = true;
-			this._content = null;
-		}
-	}
+    dispose(): void
+    {
+        if(!this._disposed)
+        {
+            this._disposed = true;
+            this._content = null;
+        }
+    }
 
-	setUnknownContent(content: unknown): void
-	{
-		this._content = content;
-	}
+    setUnknownContent(content: unknown): void
+    {
+        this._content = content;
+    }
 
-	setFromOtherAsset(asset: IAsset): void
-	{
-		this._content = asset.content;
-	}
+    setFromOtherAsset(asset: IAsset): void
+    {
+        this._content = asset.content;
+    }
 
-	setParamsDesc(_params: Map<string, string>): void
-	{
-	}
+    setParamsDesc(_params: Map<string, string>): void
+    {
+    }
 
-	toString(): string
-	{
-		return `[UnknownAsset: ${this._content}]`;
-	}
+    toString(): string
+    {
+        return `[UnknownAsset: ${this._content}]`;
+    }
 }

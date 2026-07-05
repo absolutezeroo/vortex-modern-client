@@ -2,7 +2,7 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IIterator} from '../utils/IIterator';
 import type {IDropListWindow} from './IDropListWindow';
-import {WindowEvent} from '../events/WindowEvent';
+import type {WindowEvent} from '../events/WindowEvent';
 import {DropBaseController} from './DropBaseController';
 import {DropListIterator} from '../iterators/DropListIterator';
 
@@ -16,146 +16,146 @@ import {DropListIterator} from '../iterators/DropListIterator';
  */
 export class DropListController extends DropBaseController implements IDropListWindow
 {
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0
-	)
-	{
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
-	}
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0
+    )
+    {
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
 
-	/**
+    /**
 	 * Returns an iterator over the menu items.
 	 */
-	public iterator(): IIterator
-	{
-		return new DropListIterator(this._itemArray);
-	}
+    public iterator(): IIterator
+    {
+        return new DropListIterator(this._itemArray);
+    }
 
-	/**
+    /**
 	 * Adds a menu item at the end of the list.
 	 */
-	public addMenuItem(item: IWindow): IWindow | null
-	{
-		return this.addMenuItemAt(item, this._itemArray.length);
-	}
+    public addMenuItem(item: IWindow): IWindow | null
+    {
+        return this.addMenuItemAt(item, this._itemArray.length);
+    }
 
-	/**
+    /**
 	 * Adds a menu item at the specified index.
 	 *
 	 * In AS3, special named children (_DROPLIST_TITLETEXT, _DROPLIST_ITEMLIST,
 	 * _DROPLIST_REGION) are redirected to addChild() instead of the item array.
 	 */
-	public addMenuItemAt(item: IWindow, _index: number): IWindow | null
-	{
-		if (item && this._itemArray.indexOf(item) === -1)
-		{
-			if (!this.getTitleLabel())
-			{
-				if ('text' in item && item.name === '_DROPLIST_TITLETEXT')
-				{
-					return this.addChild(item);
-				}
-			}
+    public addMenuItemAt(item: IWindow, _index: number): IWindow | null
+    {
+        if(item && this._itemArray.indexOf(item) === -1)
+        {
+            if(!this.getTitleLabel())
+            {
+                if('text' in item && item.name === '_DROPLIST_TITLETEXT')
+                {
+                    return this.addChild(item);
+                }
+            }
 
-			if (!this.getItemList())
-			{
-				if ('addListItem' in item && item.name === '_DROPLIST_ITEMLIST')
-				{
-					return this.addChild(item);
-				}
-			}
+            if(!this.getItemList())
+            {
+                if('addListItem' in item && item.name === '_DROPLIST_ITEMLIST')
+                {
+                    return this.addChild(item);
+                }
+            }
 
-			if (!this.getRegion())
-			{
-				if (item.name === '_DROPLIST_REGION')
-				{
-					return this.addChild(item);
-				}
-			}
+            if(!this.getRegion())
+            {
+                if(item.name === '_DROPLIST_REGION')
+                {
+                    return this.addChild(item);
+                }
+            }
 
-			if (this._menuIsOpen)
-			{
-				this.closeExpandedMenuView();
-				this._itemArray.push(item);
-				this.openExpandedMenuView();
-			}
-			else
-			{
-				this._itemArray.push(item);
-			}
+            if(this._menuIsOpen)
+            {
+                this.closeExpandedMenuView();
+                this._itemArray.push(item);
+                this.openExpandedMenuView();
+            }
+            else
+            {
+                this._itemArray.push(item);
+            }
 
-			return item;
-		}
+            return item;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Returns the menu item at the specified index.
 	 */
-	public getMenuItemAt(index: number): IWindow | null
-	{
-		if (this._itemArray && index > -1 && index < this._itemArray.length)
-		{
-			return this._itemArray[index];
-		}
+    public getMenuItemAt(index: number): IWindow | null
+    {
+        if(this._itemArray && index > -1 && index < this._itemArray.length)
+        {
+            return this._itemArray[index];
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Removes a menu item.
 	 */
-	public removeMenuItem(item: IWindow): IWindow | null
-	{
-		const index = this._itemArray.indexOf(item);
+    public removeMenuItem(item: IWindow): IWindow | null
+    {
+        const index = this._itemArray.indexOf(item);
 
-		if (index > -1)
-		{
-			if (index === this._selection)
-			{
-				this._selection = -1;
-			}
+        if(index > -1)
+        {
+            if(index === this._selection)
+            {
+                this._selection = -1;
+            }
 
-			this._itemArray.splice(index, 1);
+            this._itemArray.splice(index, 1);
 
-			if (this._menuIsOpen)
-			{
-				this.closeExpandedMenuView();
-				this.openExpandedMenuView();
-			}
+            if(this._menuIsOpen)
+            {
+                this.closeExpandedMenuView();
+                this.openExpandedMenuView();
+            }
 
-			return item;
-		}
+            return item;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Removes the menu item at the specified index.
 	 */
-	public removeMenuItemAt(index: number): IWindow | null
-	{
-		const item = this._itemArray[index];
+    public removeMenuItemAt(index: number): IWindow | null
+    {
+        const item = this._itemArray[index];
 
-		return item ? this.removeMenuItem(item) : null;
-	}
+        return item ? this.removeMenuItem(item) : null;
+    }
 
-	/**
+    /**
 	 * Returns the index of a menu item.
 	 */
-	public getMenuItemIndex(item: IWindow): number
-	{
-		return this._itemArray.indexOf(item);
-	}
+    public getMenuItemIndex(item: IWindow): number
+    {
+        return this._itemArray.indexOf(item);
+    }
 }

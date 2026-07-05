@@ -9,25 +9,25 @@ import {ModeratorRoomInfoData} from './ModeratorRoomInfoData';
  */
 export class ModeratorRoomInfoParser implements IMessageParser
 {
-	private _data: ModeratorRoomInfoData | null = null;
+    private _data: ModeratorRoomInfoData | null = null;
 
-	get data(): ModeratorRoomInfoData | null
-	{
-		return this._data;
-	}
+    get data(): ModeratorRoomInfoData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new ModeratorRoomInfoData(wrapper);
+        this._data = new ModeratorRoomInfoData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

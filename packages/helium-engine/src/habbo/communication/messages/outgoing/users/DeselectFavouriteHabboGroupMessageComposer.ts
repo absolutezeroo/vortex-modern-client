@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class DeselectFavouriteHabboGroupMessageComposer extends MessageComposer<ConstructorParameters<typeof DeselectFavouriteHabboGroupMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof DeselectFavouriteHabboGroupMessageComposer>;
+    private _data: ConstructorParameters<typeof DeselectFavouriteHabboGroupMessageComposer>;
 
-	constructor(groupId: number)
-	{
-		super();
+    constructor(groupId: number)
+    {
+        super();
 
-		this._data = [groupId];
-	}
+        this._data = [groupId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

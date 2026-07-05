@@ -10,43 +10,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class NotificationDialogMessageEventParser implements IMessageParser
 {
-	private _type: string = '';
+    private _type: string = '';
 
-	get type(): string
-	{
-		return this._type;
-	}
+    get type(): string
+    {
+        return this._type;
+    }
 
-	private _parameters: Map<string, string> = new Map();
+    private _parameters: Map<string, string> = new Map();
 
-	get parameters(): Map<string, string>
-	{
-		return this._parameters;
-	}
+    get parameters(): Map<string, string>
+    {
+        return this._parameters;
+    }
 
-	flush(): boolean
-	{
-		this._type = '';
-		this._parameters = new Map();
-		return true;
-	}
+    flush(): boolean
+    {
+        this._type = '';
+        this._parameters = new Map();
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._type = wrapper.readString();
-		this._parameters = new Map();
+        this._type = wrapper.readString();
+        this._parameters = new Map();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const key = wrapper.readString();
-			const value = wrapper.readString();
-			this._parameters.set(key, value);
-		}
+        for(let i = 0; i < count; i++)
+        {
+            const key = wrapper.readString();
+            const value = wrapper.readString();
+            this._parameters.set(key, value);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

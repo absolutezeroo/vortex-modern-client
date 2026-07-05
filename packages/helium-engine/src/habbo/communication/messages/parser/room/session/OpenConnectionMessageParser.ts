@@ -10,27 +10,27 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class OpenConnectionMessageParser implements IMessageParser
 {
-	private _flatId: number = 0;
+    private _flatId: number = 0;
 
-	get flatId(): number
-	{
-		return this._flatId;
-	}
+    get flatId(): number
+    {
+        return this._flatId;
+    }
 
-	flush(): boolean
-	{
-		this._flatId = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._flatId = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._flatId = wrapper.readInt();
-		return true;
-	}
+        this._flatId = wrapper.readInt();
+        return true;
+    }
 }

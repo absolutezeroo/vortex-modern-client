@@ -9,8 +9,8 @@ import {FollowFriendFailedMessageParser} from '../../parser/friendlist/FollowFri
  */
 export class FollowFriendFailedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FollowFriendFailedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FollowFriendFailedMessageParser);
+    }
 }

@@ -8,37 +8,37 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class DanceMessageEventParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _danceStyle: number = 0;
+    private _danceStyle: number = 0;
 
-	get danceStyle(): number
-	{
-		return this._danceStyle;
-	}
+    get danceStyle(): number
+    {
+        return this._danceStyle;
+    }
 
-	flush(): boolean
-	{
-		this._userId = 0;
-		this._danceStyle = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = 0;
+        this._danceStyle = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._userId = wrapper.readInt();
-		this._danceStyle = wrapper.readInt();
+        this._userId = wrapper.readInt();
+        this._danceStyle = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -3,7 +3,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboNewNavigator} from '../../../HabboNewNavigator';
 import type {
-	NavigatorSearchResultSet
+    NavigatorSearchResultSet
 } from '@habbo/communication/messages/incoming/newnavigator/NavigatorSearchResultSet';
 import {ResultsModeEnum} from '../../ResultsModeEnum';
 import type {CategoryElementFactory} from './CategoryElementFactory';
@@ -18,289 +18,289 @@ import type {CategoryElementFactory} from './CategoryElementFactory';
  */
 export class BlockResultsView
 {
-	private _navigator: HabboNewNavigator;
-	/** Maps block index → search code */
-	private _blockSearchCodes: Map<number, string> = new Map();
-	/** Maps block index → the rendered IWindow */
-	private _blockWindows: Map<number, IWindow> = new Map();
-	/** Maps block index → view mode */
-	private _blockViewModes: Map<number, number> = new Map();
+    private _navigator: HabboNewNavigator;
+    /** Maps block index → search code */
+    private _blockSearchCodes: Map<number, string> = new Map();
+    /** Maps block index → the rendered IWindow */
+    private _blockWindows: Map<number, IWindow> = new Map();
+    /** Maps block index → view mode */
+    private _blockViewModes: Map<number, number> = new Map();
 
-	constructor(navigator: HabboNewNavigator)
-	{
-		this._navigator = navigator;
-	}
+    constructor(navigator: HabboNewNavigator)
+    {
+        this._navigator = navigator;
+    }
 
-	private _itemList: IItemListWindow | null = null;
+    private _itemList: IItemListWindow | null = null;
 
-	get itemList(): IItemListWindow | null
-	{
-		return this._itemList;
-	}
+    get itemList(): IItemListWindow | null
+    {
+        return this._itemList;
+    }
 
-	set itemList(value: IItemListWindow)
-	{
-		this._itemList = value;
-		this._itemList.disableAutodrag = true;
-	}
+    set itemList(value: IItemListWindow)
+    {
+        this._itemList = value;
+        this._itemList.disableAutodrag = true;
+    }
 
-	private _categoryElementFactory: CategoryElementFactory | null = null;
+    private _categoryElementFactory: CategoryElementFactory | null = null;
 
-	set categoryElementFactory(value: CategoryElementFactory)
-	{
-		this._categoryElementFactory = value;
-	}
+    set categoryElementFactory(value: CategoryElementFactory)
+    {
+        this._categoryElementFactory = value;
+    }
 
-	get itemListWidth(): number
-	{
-		if (!this._itemList) return 0;
+    get itemListWidth(): number
+    {
+        if(!this._itemList) return 0;
 
-		return this._itemList.width;
-	}
+        return this._itemList.width;
+    }
 
-	/**
+    /**
 	 * Display the current search results by clearing and repopulating the list.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as displayCurrentResults()
 	 */
-	displayCurrentResults(): void
-	{
-		if (!this._navigator.currentResults || !this._itemList || !this._categoryElementFactory)
-		{
-			return;
-		}
+    displayCurrentResults(): void
+    {
+        if(!this._navigator.currentResults || !this._itemList || !this._categoryElementFactory)
+        {
+            return;
+        }
 
-		this._blockSearchCodes.clear();
-		this._blockWindows.clear();
-		this._blockViewModes.clear();
+        this._blockSearchCodes.clear();
+        this._blockWindows.clear();
+        this._blockViewModes.clear();
 
-		this._itemList.destroyListItems();
+        this._itemList.destroyListItems();
 
-		const resultSet = this._navigator.currentResults;
-		const blocks = Array.isArray(resultSet.blocks) ? resultSet.blocks : [];
+        const resultSet = this._navigator.currentResults;
+        const blocks = Array.isArray(resultSet.blocks) ? resultSet.blocks : [];
 
-		if (blocks.length === 0)
-		{
-			this._itemList.addListItem(this._categoryElementFactory.getNoResultsELement());
-		}
-		else
-		{
-			for (let i = 0; i < blocks.length; i++)
-			{
-				const block = blocks[i];
-				const isExpanded = (!this.isMinimized(block.searchCode) || this.isSingleBlock(resultSet)) && !block.forceClosed;
+        if(blocks.length === 0)
+        {
+            this._itemList.addListItem(this._categoryElementFactory.getNoResultsELement());
+        }
+        else
+        {
+            for(let i = 0; i < blocks.length; i++)
+            {
+                const block = blocks[i];
+                const isExpanded = (!this.isMinimized(block.searchCode) || this.isSingleBlock(resultSet)) && !block.forceClosed;
 
-				const element = this.renderCurrentResultsBlock(i, isExpanded);
+                const element = this.renderCurrentResultsBlock(i, isExpanded);
 
-				element.id = i;
-				this._itemList.addListItem(element);
+                element.id = i;
+                this._itemList.addListItem(element);
 
-				this._blockWindows.set(i, element);
-				this._blockSearchCodes.set(i, block.searchCode);
-				this._blockViewModes.set(i, block.viewMode);
-			}
-		}
+                this._blockWindows.set(i, element);
+                this._blockSearchCodes.set(i, block.searchCode);
+                this._blockViewModes.set(i, block.viewMode);
+            }
+        }
 
-		this._itemList.arrangeItems();
-	}
+        this._itemList.arrangeItems();
+    }
 
-	/**
+    /**
 	 * Handle "show more" click — expand a category by performing a search.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryShowMoreClicked()
 	 */
-	onCategoryShowMoreClicked(event: WindowEvent): void
-	{
-		if (!event.window) return;
+    onCategoryShowMoreClicked(event: WindowEvent): void
+    {
+        if(!event.window) return;
 
-		const searchCode = this._blockSearchCodes.get(event.window.id);
+        const searchCode = this._blockSearchCodes.get(event.window.id);
 
-		if (searchCode)
-		{
-			this._navigator.performSearch(searchCode, this._navigator.currentResults?.filteringData ?? '');
-			this._navigator.trackEventLog('browse.expandsearch', 'Results', this.getEventLogExtra(searchCode));
-		}
-	}
+        if(searchCode)
+        {
+            this._navigator.performSearch(searchCode, this._navigator.currentResults?.filteringData ?? '');
+            this._navigator.trackEventLog('browse.expandsearch', 'Results', this.getEventLogExtra(searchCode));
+        }
+    }
 
-	/**
+    /**
 	 * Handle "back" click — go back in search history.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryBackClicked()
 	 */
-	onCategoryBackClicked(_event: WindowEvent): void
-	{
-		this._navigator.goBack();
-	}
+    onCategoryBackClicked(_event: WindowEvent): void
+    {
+        this._navigator.goBack();
+    }
 
-	/**
+    /**
 	 * Handle collapse click — collapse a category and persist state.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryCollapseClicked()
 	 */
-	onCategoryCollapseClicked(event: WindowEvent): void
-	{
-		if (!event.window) return;
+    onCategoryCollapseClicked(event: WindowEvent): void
+    {
+        if(!event.window) return;
 
-		const searchCode = this._blockSearchCodes.get(event.window.id);
+        const searchCode = this._blockSearchCodes.get(event.window.id);
 
-		if (searchCode)
-		{
-			this._navigator.addCollapsedCategory(searchCode);
-			this.replaceBlock(event.window.id, false);
-			this._navigator.trackEventLog('browse.collapsecategory', 'Results', this.getEventLogExtra(searchCode));
-		}
-	}
+        if(searchCode)
+        {
+            this._navigator.addCollapsedCategory(searchCode);
+            this.replaceBlock(event.window.id, false);
+            this._navigator.trackEventLog('browse.collapsecategory', 'Results', this.getEventLogExtra(searchCode));
+        }
+    }
 
-	/**
+    /**
 	 * Handle expand click — expand a collapsed category and persist state.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryExpandClicked()
 	 */
-	onCategoryExpandClicked(event: WindowEvent): void
-	{
-		if (!event.window) return;
+    onCategoryExpandClicked(event: WindowEvent): void
+    {
+        if(!event.window) return;
 
-		const searchCode = this._blockSearchCodes.get(event.window.id);
+        const searchCode = this._blockSearchCodes.get(event.window.id);
 
-		if (searchCode)
-		{
-			this._navigator.removeCollapsedCategory(searchCode);
-			this.replaceBlock(event.window.id, true);
-			this._navigator.trackEventLog('browse.uncollapsecategory', 'Results', this.getEventLogExtra(searchCode));
-		}
-	}
+        if(searchCode)
+        {
+            this._navigator.removeCollapsedCategory(searchCode);
+            this.replaceBlock(event.window.id, true);
+            this._navigator.trackEventLog('browse.uncollapsecategory', 'Results', this.getEventLogExtra(searchCode));
+        }
+    }
 
-	/**
+    /**
 	 * Handle "add quick link" click — save search as a quick link.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryAddQuickLinkClicked()
 	 */
-	onCategoryAddQuickLinkClicked(event: WindowEvent): void
-	{
-		if (!event.window) return;
+    onCategoryAddQuickLinkClicked(event: WindowEvent): void
+    {
+        if(!event.window) return;
 
-		const searchCode = this._blockSearchCodes.get(event.window.id);
+        const searchCode = this._blockSearchCodes.get(event.window.id);
 
-		if (searchCode)
-		{
-			this._navigator.addSavedSearch(searchCode, this._navigator.currentResults?.filteringData ?? '');
-		}
-	}
+        if(searchCode)
+        {
+            this._navigator.addSavedSearch(searchCode, this._navigator.currentResults?.filteringData ?? '');
+        }
+    }
 
-	/**
+    /**
 	 * Handle toggle mode click — switch between rows and tiles view.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/search/results/BlockResultsView.as onCategoryToggleModeClicked()
 	 */
-	onCategoryToggleModeClicked(event: WindowEvent): void
-	{
-		if (!event.window) return;
+    onCategoryToggleModeClicked(event: WindowEvent): void
+    {
+        if(!event.window) return;
 
-		const blockId = event.window.id;
-		const currentMode = this._blockViewModes.get(blockId) ?? ResultsModeEnum.ROWS;
-		const newMode = currentMode === ResultsModeEnum.ROWS ? ResultsModeEnum.TILES : ResultsModeEnum.ROWS;
+        const blockId = event.window.id;
+        const currentMode = this._blockViewModes.get(blockId) ?? ResultsModeEnum.ROWS;
+        const newMode = currentMode === ResultsModeEnum.ROWS ? ResultsModeEnum.TILES : ResultsModeEnum.ROWS;
 
-		const searchCode = this._blockSearchCodes.get(blockId);
+        const searchCode = this._blockSearchCodes.get(blockId);
 
-		if (searchCode)
-		{
-			this._navigator.toggleSearchCodeViewMode(searchCode, newMode);
-		}
+        if(searchCode)
+        {
+            this._navigator.toggleSearchCodeViewMode(searchCode, newMode);
+        }
 
-		const currentResults = this._navigator.currentResults;
+        const currentResults = this._navigator.currentResults;
 
-		if (currentResults && currentResults.blocks[blockId])
-		{
-			currentResults.blocks[blockId].viewMode = newMode;
-		}
+        if(currentResults && currentResults.blocks[blockId])
+        {
+            currentResults.blocks[blockId].viewMode = newMode;
+        }
 
-		this.replaceBlock(blockId, true);
-		this._blockViewModes.set(blockId, newMode);
-	}
+        this.replaceBlock(blockId, true);
+        this._blockViewModes.set(blockId, newMode);
+    }
 
-	private isMinimized(searchCode: string): boolean
-	{
-		return this._navigator.isCategoryCollapsed(searchCode);
-	}
+    private isMinimized(searchCode: string): boolean
+    {
+        return this._navigator.isCategoryCollapsed(searchCode);
+    }
 
-	private isSingleBlock(resultSet: NavigatorSearchResultSet): boolean
-	{
-		return resultSet.blocks.length === 1;
-	}
+    private isSingleBlock(resultSet: NavigatorSearchResultSet): boolean
+    {
+        return resultSet.blocks.length === 1;
+    }
 
-	/**
+    /**
 	 * Render a single block as either expanded or collapsed.
 	 *
 	 * @param blockIndex - The index of the block in the result set
 	 * @param isExpanded - Whether to render in expanded state
 	 * @returns The rendered IWindow element
 	 */
-	private renderCurrentResultsBlock(blockIndex: number, isExpanded: boolean): IWindow
-	{
-		const resultSet = this._navigator.currentResults;
-		const blocks = resultSet ? resultSet.blocks : null;
+    private renderCurrentResultsBlock(blockIndex: number, isExpanded: boolean): IWindow
+    {
+        const resultSet = this._navigator.currentResults;
+        const blocks = resultSet ? resultSet.blocks : null;
 
-		if (!resultSet || !blocks || !blocks[blockIndex])
-		{
-			return this._categoryElementFactory!.getNoResultsELement();
-		}
+        if(!resultSet || !blocks || !blocks[blockIndex])
+        {
+            return this._categoryElementFactory!.getNoResultsELement();
+        }
 
-		const block = blocks[blockIndex];
-		const title = block.text === '' ? '${navigator.searchcode.title.' + block.searchCode + '}' : block.text;
+        const block = blocks[blockIndex];
+        const title = block.text === '' ? '${navigator.searchcode.title.' + block.searchCode + '}' : block.text;
 
-		if (isExpanded)
-		{
-			const viewMode = !this._navigator.isPerkAllowed('NAVIGATOR_ROOM_THUMBNAIL_CAMERA')
+        if(isExpanded)
+        {
+            const viewMode = !this._navigator.isPerkAllowed('NAVIGATOR_ROOM_THUMBNAIL_CAMERA')
 				&& this._navigator.currentResults?.searchCodeOriginal !== 'official_view'
-				? 0
-				: block.viewMode;
+                ? 0
+                : block.viewMode;
 
-			return this._categoryElementFactory!.getOpenCategoryElement(
-				block.guestRooms,
-				title,
-				blockIndex,
-				block.actionAllowed,
-				viewMode
-			);
-		}
+            return this._categoryElementFactory!.getOpenCategoryElement(
+                block.guestRooms,
+                title,
+                blockIndex,
+                block.actionAllowed,
+                viewMode
+            );
+        }
 
-		return this._categoryElementFactory!.getCollapsedCategoryElement(
-			title,
-			blockIndex,
-			block.actionAllowed
-		);
-	}
+        return this._categoryElementFactory!.getCollapsedCategoryElement(
+            title,
+            blockIndex,
+            block.actionAllowed
+        );
+    }
 
-	/**
+    /**
 	 * Replace a block at its current position in the list.
 	 *
 	 * @param blockId - The block index
 	 * @param expanded - Whether to render expanded or collapsed
 	 */
-	private replaceBlock(blockId: number, expanded: boolean): void
-	{
-		if (!this._itemList) return;
+    private replaceBlock(blockId: number, expanded: boolean): void
+    {
+        if(!this._itemList) return;
 
-		const currentWindow = this._blockWindows.get(blockId);
+        const currentWindow = this._blockWindows.get(blockId);
 
-		if (!currentWindow) return;
+        if(!currentWindow) return;
 
-		const listIndex = this._itemList.getListItemIndex(currentWindow);
+        const listIndex = this._itemList.getListItemIndex(currentWindow);
 
-		this._itemList.removeListItemAt(listIndex);
+        this._itemList.removeListItemAt(listIndex);
 
-		const newElement = this.renderCurrentResultsBlock(blockId, expanded);
+        const newElement = this.renderCurrentResultsBlock(blockId, expanded);
 
-		newElement.id = blockId;
-		this._itemList.addListItemAt(newElement, listIndex);
+        newElement.id = blockId;
+        this._itemList.addListItemAt(newElement, listIndex);
 
-		this._blockWindows.set(blockId, newElement);
-	}
+        this._blockWindows.set(blockId, newElement);
+    }
 
-	private getEventLogExtra(searchCode: string): string
-	{
-		const filtering = this._navigator.currentResults?.filteringData ?? '';
+    private getEventLogExtra(searchCode: string): string
+    {
+        const filtering = this._navigator.currentResults?.filteringData ?? '';
 
-		return searchCode + (filtering === '' ? '' : ':' + filtering);
-	}
+        return searchCode + (filtering === '' ? '' : ':' + filtering);
+    }
 }

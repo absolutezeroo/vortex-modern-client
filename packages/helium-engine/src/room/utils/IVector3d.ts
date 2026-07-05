@@ -7,8 +7,8 @@
  */
 export interface IVector3d
 {
-	readonly x: number;
-	readonly y: number;
-	readonly z: number;
-	readonly length: number;
+    readonly x: number;
+    readonly y: number;
+    readonly z: number;
+    readonly length: number;
 }

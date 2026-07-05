@@ -10,8 +10,8 @@ import {ConsoleMessageHistoryEventParser} from '../../parser/friendlist/ConsoleM
  */
 export class ConsoleMessageHistoryEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ConsoleMessageHistoryEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ConsoleMessageHistoryEventParser);
+    }
 }

@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ConfirmAcceptTradingComposer extends MessageComposer<ConstructorParameters<typeof ConfirmAcceptTradingComposer>>
 {
-	private _data: ConstructorParameters<typeof ConfirmAcceptTradingComposer>;
+    private _data: ConstructorParameters<typeof ConfirmAcceptTradingComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

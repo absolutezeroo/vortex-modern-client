@@ -10,95 +10,95 @@ import {PlaneMaterialCellMatrix} from './PlaneMaterialCellMatrix';
 
 export class PlaneMaterial
 {
-	private _matrices: PlaneMaterialCellMatrix[] = [];
-	private _cacheUsed: boolean = false;
+    private _matrices: PlaneMaterialCellMatrix[] = [];
+    private _cacheUsed: boolean = false;
 
-	dispose(): void
-	{
-		if (this._matrices !== null)
-		{
-			for (const matrix of this._matrices)
-			{
-				if (matrix !== null)
-				{
-					matrix.dispose();
-				}
-			}
-			this._matrices = [];
-		}
-	}
+    dispose(): void
+    {
+        if(this._matrices !== null)
+        {
+            for(const matrix of this._matrices)
+            {
+                if(matrix !== null)
+                {
+                    matrix.dispose();
+                }
+            }
+            this._matrices = [];
+        }
+    }
 
-	clearCache(): void
-	{
-		if (!this._cacheUsed) return;
+    clearCache(): void
+    {
+        if(!this._cacheUsed) return;
 
-		for (const matrix of this._matrices)
-		{
-			if (matrix !== null)
-			{
-				matrix.clearCache();
-			}
-		}
-		this._cacheUsed = false;
-	}
+        for(const matrix of this._matrices)
+        {
+            if(matrix !== null)
+            {
+                matrix.clearCache();
+            }
+        }
+        this._cacheUsed = false;
+    }
 
-	addMaterialCellMatrix(
-		numColumns: number,
-		repeatMode: number,
-		align: number,
-		normalMinX: number = -1,
-		normalMaxX: number = 1,
-		normalMinY: number = -1,
-		normalMaxY: number = 1
-	): PlaneMaterialCellMatrix
-	{
-		const matrix = new PlaneMaterialCellMatrix(numColumns, repeatMode, align, normalMinX, normalMaxX, normalMinY, normalMaxY);
-		this._matrices.push(matrix);
-		return matrix;
-	}
+    addMaterialCellMatrix(
+        numColumns: number,
+        repeatMode: number,
+        align: number,
+        normalMinX: number = -1,
+        normalMaxX: number = 1,
+        normalMinY: number = -1,
+        normalMaxY: number = 1
+    ): PlaneMaterialCellMatrix
+    {
+        const matrix = new PlaneMaterialCellMatrix(numColumns, repeatMode, align, normalMinX, normalMaxX, normalMinY, normalMaxY);
+        this._matrices.push(matrix);
+        return matrix;
+    }
 
-	getMaterialCellMatrix(normal: IVector3d): PlaneMaterialCellMatrix | null
-	{
-		if (normal === null) return null;
+    getMaterialCellMatrix(normal: IVector3d): PlaneMaterialCellMatrix | null
+    {
+        if(normal === null) return null;
 
-		for (const matrix of this._matrices)
-		{
-			if (matrix !== null)
-			{
-				if (normal.x >= matrix.normalMinX &&
+        for(const matrix of this._matrices)
+        {
+            if(matrix !== null)
+            {
+                if(normal.x >= matrix.normalMinX &&
 					normal.x <= matrix.normalMaxX &&
 					normal.y >= matrix.normalMinY &&
 					normal.y <= matrix.normalMaxY)
-				{
-					return matrix;
-				}
-			}
-		}
+                {
+                    return matrix;
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	render(
-		canvas: HTMLCanvasElement | null,
-		width: number,
-		height: number,
-		normal: IVector3d,
-		hasTexture: boolean,
-		offsetX: number,
-		offsetY: number,
-		isTopAligned: boolean
-	): HTMLCanvasElement | null
-	{
-		if (width < 1) width = 1;
-		if (height < 1) height = 1;
+    render(
+        canvas: HTMLCanvasElement | null,
+        width: number,
+        height: number,
+        normal: IVector3d,
+        hasTexture: boolean,
+        offsetX: number,
+        offsetY: number,
+        isTopAligned: boolean
+    ): HTMLCanvasElement | null
+    {
+        if(width < 1) width = 1;
+        if(height < 1) height = 1;
 
-		const matrix = this.getMaterialCellMatrix(normal);
-		if (matrix !== null)
-		{
-			this._cacheUsed = true;
-			return matrix.render(canvas, width, height, normal, hasTexture, offsetX, offsetY, isTopAligned);
-		}
+        const matrix = this.getMaterialCellMatrix(normal);
+        if(matrix !== null)
+        {
+            this._cacheUsed = true;
+            return matrix.render(canvas, width, height, normal, hasTexture, offsetX, offsetY, isTopAligned);
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

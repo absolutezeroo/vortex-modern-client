@@ -11,33 +11,33 @@ import {QuestMessageData} from './QuestMessageData';
  */
 export class QuestCompletedMessageEventParser implements IMessageParser
 {
-	private _questData: QuestMessageData | null = null;
+    private _questData: QuestMessageData | null = null;
 
-	get questData(): QuestMessageData | null
-	{
-		return this._questData;
-	}
+    get questData(): QuestMessageData | null
+    {
+        return this._questData;
+    }
 
-	private _showDialog: boolean = false;
+    private _showDialog: boolean = false;
 
-	get showDialog(): boolean
-	{
-		return this._showDialog;
-	}
+    get showDialog(): boolean
+    {
+        return this._showDialog;
+    }
 
-	flush(): boolean
-	{
-		this._questData = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._questData = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._questData = new QuestMessageData(wrapper);
-		this._showDialog = wrapper.readBoolean();
+        this._questData = new QuestMessageData(wrapper);
+        this._showDialog = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

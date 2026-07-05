@@ -8,22 +8,21 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class VersionCheckMessageComposer extends MessageComposer<ConstructorParameters<typeof VersionCheckMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof VersionCheckMessageComposer>;
+    private _data: ConstructorParameters<typeof VersionCheckMessageComposer>;
 
-	constructor(
-		versionId: number = 0,
-		clientUrl: string = '',
-		externalVariablesUrl: string = ''
-	)
-	{
-		super();
+    constructor(
+        versionId: number = 0,
+        clientUrl: string = '',
+        externalVariablesUrl: string = ''
+    )
+    {
+        super();
 
-		this._data = [versionId, clientUrl, externalVariablesUrl];
-	}
+        this._data = [versionId, clientUrl, externalVariablesUrl];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

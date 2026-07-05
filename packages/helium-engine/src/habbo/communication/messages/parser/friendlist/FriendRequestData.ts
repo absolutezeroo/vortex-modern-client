@@ -7,39 +7,39 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FriendRequestData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._requestId = wrapper.readInt();
-		this._requesterName = wrapper.readString();
-		this._figureString = wrapper.readString();
-		this._requesterUserId = this._requestId;
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._requestId = wrapper.readInt();
+        this._requesterName = wrapper.readString();
+        this._figureString = wrapper.readString();
+        this._requesterUserId = this._requestId;
+    }
 
-	private _requestId: number;
+    private _requestId: number;
 
-	get requestId(): number
-	{
-		return this._requestId;
-	}
+    get requestId(): number
+    {
+        return this._requestId;
+    }
 
-	private _requesterName: string;
+    private _requesterName: string;
 
-	get requesterName(): string
-	{
-		return this._requesterName;
-	}
+    get requesterName(): string
+    {
+        return this._requesterName;
+    }
 
-	private _figureString: string;
+    private _figureString: string;
 
-	get figureString(): string
-	{
-		return this._figureString;
-	}
+    get figureString(): string
+    {
+        return this._figureString;
+    }
 
-	private _requesterUserId: number;
+    private _requesterUserId: number;
 
-	get requesterUserId(): number
-	{
-		return this._requesterUserId;
-	}
+    get requesterUserId(): number
+    {
+        return this._requesterUserId;
+    }
 }

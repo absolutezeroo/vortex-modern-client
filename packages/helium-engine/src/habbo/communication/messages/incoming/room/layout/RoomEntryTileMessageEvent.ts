@@ -11,8 +11,8 @@ import {RoomEntryTileMessageParser} from '@habbo/communication/messages/parser/r
 
 export class RoomEntryTileMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomEntryTileMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomEntryTileMessageParser);
+    }
 }

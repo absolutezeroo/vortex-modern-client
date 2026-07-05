@@ -1,5 +1,5 @@
 import {MessageComposer} from '@core/communication/messages/MessageComposer';
-import {InterstitialShownMessageComposer} from "./InterstitialShownMessageComposer";
+import type {InterstitialShownMessageComposer} from "./InterstitialShownMessageComposer";
 
 /**
  * Request interstitial ad availability from server
@@ -8,17 +8,17 @@ import {InterstitialShownMessageComposer} from "./InterstitialShownMessageCompos
  */
 export class GetInterstitialMessageComposer extends MessageComposer<ConstructorParameters<typeof InterstitialShownMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof InterstitialShownMessageComposer>;
+    private _data: ConstructorParameters<typeof InterstitialShownMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

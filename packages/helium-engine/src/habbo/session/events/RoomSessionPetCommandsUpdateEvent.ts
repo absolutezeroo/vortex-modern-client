@@ -8,34 +8,34 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionPetCommandsUpdateEvent extends RoomSessionEvent
 {
-	public static readonly PET_COMMANDS = 'RSPIUE_ENABLED_PET_COMMANDS';
+    public static readonly PET_COMMANDS = 'RSPIUE_ENABLED_PET_COMMANDS';
 
-	constructor(session: IRoomSession, petId: number, allCommands: number[], enabledCommands: number[])
-	{
-		super(RoomSessionPetCommandsUpdateEvent.PET_COMMANDS, session);
-		this._petId = petId;
-		this._allCommands = allCommands;
-		this._enabledCommands = enabledCommands;
-	}
+    constructor(session: IRoomSession, petId: number, allCommands: number[], enabledCommands: number[])
+    {
+        super(RoomSessionPetCommandsUpdateEvent.PET_COMMANDS, session);
+        this._petId = petId;
+        this._allCommands = allCommands;
+        this._enabledCommands = enabledCommands;
+    }
 
-	private _petId: number;
+    private _petId: number;
 
-	get petId(): number
-	{
-		return this._petId;
-	}
+    get petId(): number
+    {
+        return this._petId;
+    }
 
-	private _allCommands: number[];
+    private _allCommands: number[];
 
-	get allCommands(): number[]
-	{
-		return this._allCommands;
-	}
+    get allCommands(): number[]
+    {
+        return this._allCommands;
+    }
 
-	private _enabledCommands: number[];
+    private _enabledCommands: number[];
 
-	get enabledCommands(): number[]
-	{
-		return this._enabledCommands;
-	}
+    get enabledCommands(): number[]
+    {
+        return this._enabledCommands;
+    }
 }

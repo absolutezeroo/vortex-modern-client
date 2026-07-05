@@ -11,36 +11,36 @@ import {Motion} from './Motion';
  */
 export class Wait extends Motion
 {
-	private _duration: number;
-	private _startTime: number = 0;
+    private _duration: number;
+    private _startTime: number = 0;
 
-	constructor(duration: number)
-	{
-		super(null);
-		this._duration = duration;
-	}
+    constructor(duration: number)
+    {
+        super(null);
+        this._duration = duration;
+    }
 
-	public override get running(): boolean
-	{
-		return this._running;
-	}
+    public override get running(): boolean
+    {
+        return this._running;
+    }
 
-	public override start(): void
-	{
-		super.start();
-		this._complete = false;
-		this._startTime = performance.now();
-	}
+    public override start(): void
+    {
+        super.start();
+        this._complete = false;
+        this._startTime = performance.now();
+    }
 
-	public override tick(timestamp: number): void
-	{
-		this._complete = (timestamp - this._startTime) >= this._duration;
+    public override tick(timestamp: number): void
+    {
+        this._complete = (timestamp - this._startTime) >= this._duration;
 
-		if (this._complete)
-		{
-			this.stop();
-		}
+        if(this._complete)
+        {
+            this.stop();
+        }
 
-		super.tick(timestamp);
-	}
+        super.tick(timestamp);
+    }
 }

@@ -6,16 +6,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetPromoArticlesComposer extends MessageComposer<ConstructorParameters<typeof GetPromoArticlesComposer>>
 {
-	private _data: ConstructorParameters<typeof GetPromoArticlesComposer>;
+    private _data: ConstructorParameters<typeof GetPromoArticlesComposer>;
 
-	constructor()
-	{
-		super();
-		this._data = [];
-	}
+    constructor()
+    {
+        super();
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

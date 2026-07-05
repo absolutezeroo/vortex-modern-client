@@ -7,8 +7,8 @@ import {BadgesMessageParser} from '@habbo/communication/messages/parser/inventor
  */
 export class BadgesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, BadgesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, BadgesMessageParser);
+    }
 }

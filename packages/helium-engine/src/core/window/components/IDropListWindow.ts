@@ -9,18 +9,18 @@ import type {IInteractiveWindow} from './IInteractiveWindow';
  */
 export interface IDropListWindow extends IInteractiveWindow, IIterable
 {
-	selection: number;
-	readonly numMenuItems: number;
+    selection: number;
+    readonly numMenuItems: number;
 
-	addMenuItem(item: IWindow): IWindow | null;
+    addMenuItem(item: IWindow): IWindow | null;
 
-	addMenuItemAt(item: IWindow, index: number): IWindow | null;
+    addMenuItemAt(item: IWindow, index: number): IWindow | null;
 
-	getMenuItemIndex(item: IWindow): number;
+    getMenuItemIndex(item: IWindow): number;
 
-	getMenuItemAt(index: number): IWindow | null;
+    getMenuItemAt(index: number): IWindow | null;
 
-	removeMenuItem(item: IWindow): IWindow | null;
+    removeMenuItem(item: IWindow): IWindow | null;
 
-	removeMenuItemAt(index: number): IWindow | null;
+    removeMenuItemAt(index: number): IWindow | null;
 }

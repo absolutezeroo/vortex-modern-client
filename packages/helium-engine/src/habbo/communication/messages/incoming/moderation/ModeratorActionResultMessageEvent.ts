@@ -9,8 +9,8 @@ import {ModeratorActionResultMessageParser} from '../../parser/moderation/Modera
  */
 export class ModeratorActionResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ModeratorActionResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ModeratorActionResultMessageParser);
+    }
 }

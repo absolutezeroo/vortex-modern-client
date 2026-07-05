@@ -9,25 +9,25 @@ import {FriendRequestData} from './FriendRequestData';
  */
 export class NewFriendRequestMessageParser implements IMessageParser
 {
-	private _req: FriendRequestData | null = null;
+    private _req: FriendRequestData | null = null;
 
-	get req(): FriendRequestData | null
-	{
-		return this._req;
-	}
+    get req(): FriendRequestData | null
+    {
+        return this._req;
+    }
 
-	flush(): boolean
-	{
-		this._req = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._req = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._req = new FriendRequestData(wrapper);
+        this._req = new FriendRequestData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ScrGetUserInfoMessageComposer extends MessageComposer<ConstructorParameters<typeof ScrGetUserInfoMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ScrGetUserInfoMessageComposer>;
+    private _data: ConstructorParameters<typeof ScrGetUserInfoMessageComposer>;
 
-	constructor(productName: string)
-	{
-		super();
+    constructor(productName: string)
+    {
+        super();
 
-		this._data = [productName];
-	}
+        this._data = [productName];
+    }
 
-	getMessageArray(): [string]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string]
+    {
+        return this._data;
+    }
 }

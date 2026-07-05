@@ -11,135 +11,135 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export interface IFurniModel
 {
-	readonly disposed: boolean;
-	readonly isListInitialized: boolean;
-	readonly furniData: GroupItem[];
-	readonly showingRentedFurni: boolean;
+    readonly disposed: boolean;
+    readonly isListInitialized: boolean;
+    readonly furniData: GroupItem[];
+    readonly showingRentedFurni: boolean;
 
-	dispose(): void;
+    dispose(): void;
 
-	/**
+    /**
 	 * Insert furniture from server message (full list)
 	 * Returns info about what changed for the store to update signals
 	 */
-	insertFurniture(items: Map<number, FurnitureItemData>): {
-		addedCount: number;
-		removedCount: number;
-		isFirstLoad: boolean;
-	};
+    insertFurniture(items: Map<number, FurnitureItemData>): {
+        addedCount: number;
+        removedCount: number;
+        isFirstLoad: boolean;
+    };
 
-	/**
+    /**
 	 * Add or update a single item
 	 * Returns the group item affected and if it's new
 	 */
-	addOrUpdateItem(item: FurnitureItem, isInitializing: boolean): {
-		groupItem: GroupItem;
-		isNewGroup: boolean;
-	};
+    addOrUpdateItem(item: FurnitureItem, isInitializing: boolean): {
+        groupItem: GroupItem;
+        isNewGroup: boolean;
+    };
 
-	/**
+    /**
 	 * Remove a furniture item by ID
 	 * Returns the affected group item if found
 	 */
-	removeFurni(itemId: number): GroupItem | null;
+    removeFurni(itemId: number): GroupItem | null;
 
-	/**
+    /**
 	 * Remove multiple furniture items by ID.
 	 * Returns true if any item was actually removed.
 	 */
-	removeFurnis(itemIds: number[]): boolean;
+    removeFurnis(itemIds: number[]): boolean;
 
-	/**
+    /**
 	 * Clear all furniture
 	 */
-	clearFurniList(): void;
+    clearFurniList(): void;
 
-	/**
+    /**
 	 * Get currently selected group item
 	 */
-	getSelectedItem(): GroupItem | null;
+    getSelectedItem(): GroupItem | null;
 
-	/**
+    /**
 	 * Remove all selections
 	 */
-	removeSelections(): void;
+    removeSelections(): void;
 
-	/**
+    /**
 	 * Select the first available item
 	 */
-	selectFirstItem(): GroupItem | null;
+    selectFirstItem(): GroupItem | null;
 
-	/**
+    /**
 	 * Select a specific group item
 	 */
-	selectItem(groupItem: GroupItem): void;
+    selectItem(groupItem: GroupItem): void;
 
-	/**
+    /**
 	 * Find group item containing a furniture with this ID
 	 */
-	getItemById(itemId: number): GroupItem | null;
+    getItemById(itemId: number): GroupItem | null;
 
-	/**
+    /**
 	 * Alias for getItemById (AS3 compatibility)
 	 */
-	getItemWithStripId(stripId: number): GroupItem | null;
+    getItemWithStripId(stripId: number): GroupItem | null;
 
-	/**
+    /**
 	 * Find group item by furniture type ID
 	 */
-	getGroupItemByItemTypeId(typeId: number, isWallItem: boolean): GroupItem | null;
+    getGroupItemByItemTypeId(typeId: number, isWallItem: boolean): GroupItem | null;
 
-	/**
+    /**
 	 * Update item locks based on list of locked reference IDs
 	 */
-	updateItemLocks(lockedRefIds: number[]): void;
+    updateItemLocks(lockedRefIds: number[]): void;
 
-	/**
+    /**
 	 * Lock a specific item
 	 */
-	addLockTo(itemId: number): void;
+    addLockTo(itemId: number): void;
 
-	/**
+    /**
 	 * Unlock a specific item
 	 */
-	removeLockFrom(itemId: number): void;
+    removeLockFrom(itemId: number): void;
 
-	/**
+    /**
 	 * Remove all locks
 	 */
-	removeAllLocks(): void;
+    removeAllLocks(): void;
 
-	/**
+    /**
 	 * Switch category (furni / rentables)
 	 */
-	categorySwitch(category: 'furni' | 'rentables'): void;
+    categorySwitch(category: 'furni' | 'rentables'): void;
 
-	/**
+    /**
 	 * Reset unseen flags for current category
 	 * Returns IDs to send to server
 	 */
-	resetUnseenItems(): number[];
+    resetUnseenItems(): number[];
 
-	/**
+    /**
 	 * Update unseen flags on items based on tracker
 	 */
-	updateUnseenItems(unseenIds: number[]): void;
+    updateUnseenItems(unseenIds: number[]): void;
 
-	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getWindowContainer()
-	getWindowContainer(): IWindowContainer | null;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::getWindowContainer()
+    getWindowContainer(): IWindowContainer | null;
 
-	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestInitialization()
-	requestInitialization(): void;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestInitialization()
+    requestInitialization(): void;
 
-	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
-	subCategorySwitch(category: string): void;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
+    subCategorySwitch(category: string): void;
 
-	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::closingInventoryView()
-	closingInventoryView(): void;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::closingInventoryView()
+    closingInventoryView(): void;
 
-	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateView()
-	updateView(): void;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::updateView()
+    updateView(): void;
 
-	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::selectItemById()
-	selectItemById(itemId: string): void;
+    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::selectItemById()
+    selectItemById(itemId: string): void;
 }

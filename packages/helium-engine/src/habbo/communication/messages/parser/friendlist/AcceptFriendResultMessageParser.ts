@@ -10,30 +10,30 @@ import {AcceptFriendFailureData} from './AcceptFriendFailureData';
  */
 export class AcceptFriendResultMessageParser implements IMessageParser
 {
-	private _failures: AcceptFriendFailureData[] = [];
+    private _failures: AcceptFriendFailureData[] = [];
 
-	get failures(): AcceptFriendFailureData[]
-	{
-		return this._failures;
-	}
+    get failures(): AcceptFriendFailureData[]
+    {
+        return this._failures;
+    }
 
-	flush(): boolean
-	{
-		this._failures = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._failures = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._failures.push(new AcceptFriendFailureData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._failures.push(new AcceptFriendFailureData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

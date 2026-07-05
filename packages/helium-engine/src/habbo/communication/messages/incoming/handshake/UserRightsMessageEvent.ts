@@ -10,8 +10,8 @@ import {UserRightsMessageParser} from '../../parser/handshake/UserRightsMessageP
  */
 export class UserRightsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserRightsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserRightsMessageParser);
+    }
 }

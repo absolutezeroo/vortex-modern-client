@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class LagWarningReportMessageComposer extends MessageComposer<ConstructorParameters<typeof LagWarningReportMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof LagWarningReportMessageComposer>;
+    private _data: ConstructorParameters<typeof LagWarningReportMessageComposer>;
 
-	constructor(warningCount: number)
-	{
-		super();
-		this._data = [warningCount];
-	}
+    constructor(warningCount: number)
+    {
+        super();
+        this._data = [warningCount];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

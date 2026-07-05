@@ -10,5 +10,5 @@ import type {IRoomGeometry} from '../../utils/IRoomGeometry';
 
 export interface IRoomObjectMouseHandler
 {
-	mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void;
+    mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void;
 }

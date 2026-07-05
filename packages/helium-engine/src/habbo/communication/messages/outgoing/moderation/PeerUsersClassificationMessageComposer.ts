@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PeerUsersClassificationMessageComposer extends MessageComposer<ConstructorParameters<typeof PeerUsersClassificationMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof PeerUsersClassificationMessageComposer>;
+    private _data: ConstructorParameters<typeof PeerUsersClassificationMessageComposer>;
 
-	constructor(userName: string)
-	{
-		super();
-		this._data = [userName];
-	}
+    constructor(userName: string)
+    {
+        super();
+        this._data = [userName];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

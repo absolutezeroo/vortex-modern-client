@@ -3,7 +3,7 @@ import type {IWindowContainer} from '../IWindowContainer';
 import type {IWindowContext} from '../IWindowContext';
 import type {IIterator} from '../utils/IIterator';
 import {WindowController} from '../WindowController';
-import {WindowEvent} from '../events/WindowEvent';
+import type {WindowEvent} from '../events/WindowEvent';
 import {ContainerIterator} from '../iterators/ContainerIterator';
 
 /**
@@ -16,55 +16,55 @@ import {ContainerIterator} from '../iterators/ContainerIterator';
  */
 export class ContainerController extends WindowController implements IWindowContainer
 {
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0
-	)
-	{
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0
+    )
+    {
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
-		this._hasVisualContent = this._background || this.testParamFlag(1) || !this.testParamFlag(16);
-	}
+        this._hasVisualContent = this._background || this.testParamFlag(1) || !this.testParamFlag(16);
+    }
 
-	public iterator(): IIterator | null
-	{
-		return new ContainerIterator(this._children ?? []);
-	}
+    public iterator(): IIterator | null
+    {
+        return new ContainerIterator(this._children ?? []);
+    }
 
-	public getChildUnderPoint(point: { x: number; y: number }): IWindow | null
-	{
-		for (let i = this.numChildren - 1; i >= 0; i--)
-		{
-			const child = this.getChildAt(i);
+    public getChildUnderPoint(point: { x: number; y: number }): IWindow | null
+    {
+        for(let i = this.numChildren - 1; i >= 0; i--)
+        {
+            const child = this.getChildAt(i);
 
-			if (child && child.visible && child.hitTestLocalPoint(point))
-			{
-				return child;
-			}
-		}
+            if(child && child.visible && child.hitTestLocalPoint(point))
+            {
+                return child;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public groupChildrenUnderPoint(point: { x: number; y: number }, result: IWindow[]): void
-	{
-		for (let i = 0; i < this.numChildren; i++)
-		{
-			const child = this.getChildAt(i);
+    public groupChildrenUnderPoint(point: { x: number; y: number }, result: IWindow[]): void
+    {
+        for(let i = 0; i < this.numChildren; i++)
+        {
+            const child = this.getChildAt(i);
 
-			if (child && child.visible && child.hitTestLocalPoint(point))
-			{
-				result.push(child);
-			}
-		}
-	}
+            if(child && child.visible && child.hitTestLocalPoint(point))
+            {
+                result.push(child);
+            }
+        }
+    }
 }

@@ -18,237 +18,237 @@ import {RoomObjectModel} from './RoomObjectModel';
 
 export class RoomObject implements IRoomObjectController
 {
-	private static _instanceCounter: number = 0;
+    private static _instanceCounter: number = 0;
 
-	private _id: number;
-	private _type: string = '';
-	private _location: Vector3d;
-	private _direction: Vector3d;
-	private _locationCache: Vector3d;
-	private _directionCache: Vector3d;
-	private _states: number[];
-	private _model: RoomObjectModel;
-	private _visualization: IRoomObjectVisualization | null = null;
-	private _eventHandler: IRoomObjectEventHandler | null = null;
-	private _updateID: number = 0;
-	private _avatarLibraryAssetName: string | null = null;
-	private _instanceId: number = 0;
-	private _initialized: boolean = false;
+    private _id: number;
+    private _type: string = '';
+    private _location: Vector3d;
+    private _direction: Vector3d;
+    private _locationCache: Vector3d;
+    private _directionCache: Vector3d;
+    private _states: number[];
+    private _model: RoomObjectModel;
+    private _visualization: IRoomObjectVisualization | null = null;
+    private _eventHandler: IRoomObjectEventHandler | null = null;
+    private _updateID: number = 0;
+    private _avatarLibraryAssetName: string | null = null;
+    private _instanceId: number = 0;
+    private _initialized: boolean = false;
 
-	constructor(id: number, stateCount: number, type: string)
-	{
-		this._id = id;
-		this._location = new Vector3d();
-		this._direction = new Vector3d();
-		this._locationCache = new Vector3d();
-		this._directionCache = new Vector3d();
-		this._states = new Array(stateCount);
+    constructor(id: number, stateCount: number, type: string)
+    {
+        this._id = id;
+        this._location = new Vector3d();
+        this._direction = new Vector3d();
+        this._locationCache = new Vector3d();
+        this._directionCache = new Vector3d();
+        this._states = new Array(stateCount);
 
-		for (let i = stateCount - 1; i >= 0; i--)
-		{
-			this._states[i] = 0;
-		}
+        for(let i = stateCount - 1; i >= 0; i--)
+        {
+            this._states[i] = 0;
+        }
 
-		this._type = type;
-		this._model = new RoomObjectModel();
-		this._instanceId = RoomObject._instanceCounter++;
-	}
+        this._type = type;
+        this._model = new RoomObjectModel();
+        this._instanceId = RoomObject._instanceCounter++;
+    }
 
-	dispose(): void
-	{
-		this._avatarLibraryAssetName = null;
-		this.setVisualization(null);
-		this.setEventHandler(null);
+    dispose(): void
+    {
+        this._avatarLibraryAssetName = null;
+        this.setVisualization(null);
+        this.setEventHandler(null);
 
-		if (this._model !== null)
-		{
-			this._model.dispose();
-		}
-	}
+        if(this._model !== null)
+        {
+            this._model.dispose();
+        }
+    }
 
-	setInitialized(value: boolean): void
-	{
-		this._initialized = value;
-	}
+    setInitialized(value: boolean): void
+    {
+        this._initialized = value;
+    }
 
-	isInitialized(): boolean
-	{
-		return this._initialized;
-	}
+    isInitialized(): boolean
+    {
+        return this._initialized;
+    }
 
-	getId(): number
-	{
-		return this._id;
-	}
+    getId(): number
+    {
+        return this._id;
+    }
 
-	getInstanceId(): number
-	{
-		return this._instanceId;
-	}
+    getInstanceId(): number
+    {
+        return this._instanceId;
+    }
 
-	getType(): string
-	{
-		return this._type;
-	}
+    getType(): string
+    {
+        return this._type;
+    }
 
-	getLocation(): IVector3d
-	{
-		this._locationCache.assign(this._location);
+    getLocation(): IVector3d
+    {
+        this._locationCache.assign(this._location);
 
-		return this._locationCache;
-	}
+        return this._locationCache;
+    }
 
-	getDirection(): IVector3d
-	{
-		this._directionCache.assign(this._direction);
+    getDirection(): IVector3d
+    {
+        this._directionCache.assign(this._direction);
 
-		return this._directionCache;
-	}
+        return this._directionCache;
+    }
 
-	getModel(): IRoomObjectModel
-	{
-		return this._model;
-	}
+    getModel(): IRoomObjectModel
+    {
+        return this._model;
+    }
 
-	getModelController(): IRoomObjectModelController
-	{
-		return this._model;
-	}
+    getModelController(): IRoomObjectModelController
+    {
+        return this._model;
+    }
 
-	getState(index: number): number
-	{
-		if (index >= 0 && index < this._states.length)
-		{
-			return this._states[index];
-		}
+    getState(index: number): number
+    {
+        if(index >= 0 && index < this._states.length)
+        {
+            return this._states[index];
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	getVisualization(): IRoomObjectVisualization | null
-	{
-		return this._visualization;
-	}
+    getVisualization(): IRoomObjectVisualization | null
+    {
+        return this._visualization;
+    }
 
-	setLocation(location: IVector3d): void
-	{
-		if (location === null)
-		{
-			return;
-		}
+    setLocation(location: IVector3d): void
+    {
+        if(location === null)
+        {
+            return;
+        }
 
-		if (this._location.x !== location.x || this._location.y !== location.y || this._location.z !== location.z)
-		{
-			this._location.x = location.x;
-			this._location.y = location.y;
-			this._location.z = location.z;
-			this._updateID++;
-		}
-	}
+        if(this._location.x !== location.x || this._location.y !== location.y || this._location.z !== location.z)
+        {
+            this._location.x = location.x;
+            this._location.y = location.y;
+            this._location.z = location.z;
+            this._updateID++;
+        }
+    }
 
-	setDirection(direction: IVector3d): void
-	{
-		if (direction === null)
-		{
-			return;
-		}
+    setDirection(direction: IVector3d): void
+    {
+        if(direction === null)
+        {
+            return;
+        }
 
-		if (this._direction.x !== direction.x || this._direction.y !== direction.y || this._direction.z !== direction.z)
-		{
-			this._direction.x = ((direction.x % 360) + 360) % 360;
-			this._direction.y = ((direction.y % 360) + 360) % 360;
-			this._direction.z = ((direction.z % 360) + 360) % 360;
-			this._updateID++;
-		}
-	}
+        if(this._direction.x !== direction.x || this._direction.y !== direction.y || this._direction.z !== direction.z)
+        {
+            this._direction.x = ((direction.x % 360) + 360) % 360;
+            this._direction.y = ((direction.y % 360) + 360) % 360;
+            this._direction.z = ((direction.z % 360) + 360) % 360;
+            this._updateID++;
+        }
+    }
 
-	setState(state: number, index: number): boolean
-	{
-		if (index >= 0 && index < this._states.length)
-		{
-			if (this._states[index] !== state)
-			{
-				this._states[index] = state;
-				this._updateID++;
-			}
+    setState(state: number, index: number): boolean
+    {
+        if(index >= 0 && index < this._states.length)
+        {
+            if(this._states[index] !== state)
+            {
+                this._states[index] = state;
+                this._updateID++;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	setVisualization(visualization: IRoomObjectVisualization | null): void
-	{
-		if (visualization !== this._visualization)
-		{
-			if (this._visualization !== null)
-			{
-				this._visualization.dispose();
-			}
+    setVisualization(visualization: IRoomObjectVisualization | null): void
+    {
+        if(visualization !== this._visualization)
+        {
+            if(this._visualization !== null)
+            {
+                this._visualization.dispose();
+            }
 
-			this._visualization = visualization;
+            this._visualization = visualization;
 
-			if (this._visualization !== null)
-			{
-				this._visualization.object = this;
-			}
-		}
-	}
+            if(this._visualization !== null)
+            {
+                this._visualization.object = this;
+            }
+        }
+    }
 
-	setEventHandler(handler: IRoomObjectEventHandler | null): void
-	{
-		if (handler === this._eventHandler)
-		{
-			return;
-		}
+    setEventHandler(handler: IRoomObjectEventHandler | null): void
+    {
+        if(handler === this._eventHandler)
+        {
+            return;
+        }
 
-		const oldHandler = this._eventHandler;
+        const oldHandler = this._eventHandler;
 
-		if (oldHandler !== null)
-		{
-			this._eventHandler = null;
-			oldHandler.object = null;
-		}
+        if(oldHandler !== null)
+        {
+            this._eventHandler = null;
+            oldHandler.object = null;
+        }
 
-		this._eventHandler = handler;
+        this._eventHandler = handler;
 
-		if (this._eventHandler !== null)
-		{
-			this._eventHandler.object = this;
-		}
-	}
+        if(this._eventHandler !== null)
+        {
+            this._eventHandler.object = this;
+        }
+    }
 
-	getEventHandler(): IRoomObjectEventHandler | null
-	{
-		return this._eventHandler;
-	}
+    getEventHandler(): IRoomObjectEventHandler | null
+    {
+        return this._eventHandler;
+    }
 
-	getUpdateID(): number
-	{
-		return this._updateID;
-	}
+    getUpdateID(): number
+    {
+        return this._updateID;
+    }
 
-	getMouseHandler(): IRoomObjectMouseHandler | null
-	{
-		return this.getEventHandler();
-	}
+    getMouseHandler(): IRoomObjectMouseHandler | null
+    {
+        return this.getEventHandler();
+    }
 
-	getAvatarLibraryAssetName(): string
-	{
-		if (!this._avatarLibraryAssetName)
-		{
-			this._avatarLibraryAssetName = `avatar_${this.getId()}`;
-		}
+    getAvatarLibraryAssetName(): string
+    {
+        if(!this._avatarLibraryAssetName)
+        {
+            this._avatarLibraryAssetName = `avatar_${this.getId()}`;
+        }
 
-		return this._avatarLibraryAssetName;
-	}
+        return this._avatarLibraryAssetName;
+    }
 
-	tearDown(): void
-	{
-		if (this._eventHandler)
-		{
-			this._eventHandler.tearDown();
-		}
-	}
+    tearDown(): void
+    {
+        if(this._eventHandler)
+        {
+            this._eventHandler.tearDown();
+        }
+    }
 }

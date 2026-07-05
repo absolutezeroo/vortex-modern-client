@@ -10,8 +10,8 @@ import {CfhTopicsInitMessageParser} from '../../parser/help/CfhTopicsInitMessage
  */
 export class CfhTopicsInitMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CfhTopicsInitMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CfhTopicsInitMessageParser);
+    }
 }

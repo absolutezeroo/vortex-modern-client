@@ -10,32 +10,32 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 
 export class FurnitureRoomDimmerLogic extends FurnitureLogic
 {
-	constructor()
-	{
-		super();
-		this.widgetType = 'dimmer';
-	}
+    constructor()
+    {
+        super();
+        this.widgetType = 'dimmer';
+    }
 
-	override initialize(data: unknown): void
-	{
-		super.initialize(data);
+    override initialize(data: unknown): void
+    {
+        super.initialize(data);
 
-		const model = this.object?.getModelController();
-		model?.setNumber('furniture_uses_plane_mask', 0, true);
-		model?.setNumber('furniture_plane_mask_type', 1, true);
-	}
+        const model = this.object?.getModelController();
+        model?.setNumber('furniture_uses_plane_mask', 0, true);
+        model?.setNumber('furniture_plane_mask_type', 1, true);
+    }
 
-	override useObject(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    override useObject(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		// Open dimmer widget
-		this.eventDispatcher.emit(
-			RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
-			new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
-		);
-	}
+        // Open dimmer widget
+        this.eventDispatcher.emit(
+            RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
+            new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
+        );
+    }
 }

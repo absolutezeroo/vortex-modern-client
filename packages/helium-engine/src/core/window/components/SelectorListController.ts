@@ -1,9 +1,9 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {ISelectorListWindow} from './ISelectorListWindow';
-import {WindowController} from '../WindowController';
-import {WindowEvent} from '../events/WindowEvent';
-import {PropertyStruct} from '../utils/PropertyStruct';
+import type {WindowController} from '../WindowController';
+import type {WindowEvent} from '../events/WindowEvent';
+import type {PropertyStruct} from '../utils/PropertyStruct';
 import {SelectorController} from './SelectorController';
 
 /**
@@ -16,151 +16,151 @@ import {SelectorController} from './SelectorController';
  */
 export class SelectorListController extends SelectorController implements ISelectorListWindow
 {
-	private _updating: boolean = false;
+    private _updating: boolean = false;
 
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0
-	)
-	{
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0
+    )
+    {
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
-		this._bringToFront = false;
-	}
+        this._bringToFront = false;
+    }
 
-	protected _spacing: number = 0;
+    protected _spacing: number = 0;
 
-	/**
+    /**
 	 * The spacing between selectable children.
 	 */
-	public get spacing(): number
-	{
-		return this._spacing;
-	}
+    public get spacing(): number
+    {
+        return this._spacing;
+    }
 
-	public set spacing(value: number)
-	{
-		this._spacing = value;
-		this.updateSelectableRegion();
-	}
+    public set spacing(value: number)
+    {
+        this._spacing = value;
+        this.updateSelectableRegion();
+    }
 
-	private _vertical: boolean = false;
+    private _vertical: boolean = false;
 
-	/**
+    /**
 	 * Whether children are arranged vertically.
 	 */
-	public get vertical(): boolean
-	{
-		return this._vertical;
-	}
+    public get vertical(): boolean
+    {
+        return this._vertical;
+    }
 
-	public set vertical(value: boolean)
-	{
-		this._vertical = value;
-		this.updateSelectableRegion();
-	}
+    public set vertical(value: boolean)
+    {
+        this._vertical = value;
+        this.updateSelectableRegion();
+    }
 
-	public override get properties(): unknown[]
-	{
-		const props = super.properties;
+    public override get properties(): unknown[]
+    {
+        const props = super.properties;
 
-		props.push(this.createProperty('spacing', this._spacing));
-		props.push(this.createProperty('vertical', this._vertical));
+        props.push(this.createProperty('spacing', this._spacing));
+        props.push(this.createProperty('vertical', this._vertical));
 
-		return props;
-	}
+        return props;
+    }
 
-	public override set properties(value: unknown[])
-	{
-		for (const item of value)
-		{
-			const prop = item as PropertyStruct;
+    public override set properties(value: unknown[])
+    {
+        for(const item of value)
+        {
+            const prop = item as PropertyStruct;
 
-			switch (prop.key)
-			{
-				case 'spacing':
-					if (prop.value !== this._spacing)
-					{
-						this.spacing = prop.value as number;
-					}
-					break;
-				case 'vertical':
-					if (prop.value !== this._vertical)
-					{
-						this.vertical = prop.value as boolean;
-					}
-					break;
-			}
-		}
+            switch(prop.key)
+            {
+                case 'spacing':
+                    if(prop.value !== this._spacing)
+                    {
+                        this.spacing = prop.value as number;
+                    }
+                    break;
+                case 'vertical':
+                    if(prop.value !== this._vertical)
+                    {
+                        this.vertical = prop.value as boolean;
+                    }
+                    break;
+            }
+        }
 
-		super.properties = value;
-	}
+        super.properties = value;
+    }
 
-	public override update(source: WindowController, event: WindowEvent): boolean
-	{
-		if (event.type === 'WE_CHILD_ADDED')
-		{
-			this.updateSelectableRegion();
-		}
-		else if (event.type === 'WE_CHILD_RESIZED')
-		{
-			this.updateSelectableRegion();
-		}
-		else if (event.type === 'WE_CHILD_RELOCATED')
-		{
-			this.updateSelectableRegion();
-		}
-		else if (event.type === 'WE_CHILD_REMOVED')
-		{
-			this.updateSelectableRegion();
-		}
+    public override update(source: WindowController, event: WindowEvent): boolean
+    {
+        if(event.type === 'WE_CHILD_ADDED')
+        {
+            this.updateSelectableRegion();
+        }
+        else if(event.type === 'WE_CHILD_RESIZED')
+        {
+            this.updateSelectableRegion();
+        }
+        else if(event.type === 'WE_CHILD_RELOCATED')
+        {
+            this.updateSelectableRegion();
+        }
+        else if(event.type === 'WE_CHILD_REMOVED')
+        {
+            this.updateSelectableRegion();
+        }
 
-		return super.update(source, event);
-	}
+        return super.update(source, event);
+    }
 
-	/**
+    /**
 	 * Re-arranges children along the main axis.
 	 */
-	private updateSelectableRegion(): void
-	{
-		if (this._updating)
-		{
-			return;
-		}
+    private updateSelectableRegion(): void
+    {
+        if(this._updating)
+        {
+            return;
+        }
 
-		this._updating = true;
+        this._updating = true;
 
-		const count = this.numSelectables;
-		let offset: number = 0;
+        const count = this.numSelectables;
+        let offset: number = 0;
 
-		for (let i = 0; i < count; i++)
-		{
-			const child = this.getSelectableAt(i) as unknown as IWindow;
+        for(let i = 0; i < count; i++)
+        {
+            const child = this.getSelectableAt(i) as unknown as IWindow;
 
-			if (child)
-			{
-				if (this._vertical)
-				{
-					child.y = offset;
-					offset += child.height + this._spacing;
-				}
-				else
-				{
-					child.x = offset;
-					offset += child.width + this._spacing;
-				}
-			}
-		}
+            if(child)
+            {
+                if(this._vertical)
+                {
+                    child.y = offset;
+                    offset += child.height + this._spacing;
+                }
+                else
+                {
+                    child.x = offset;
+                    offset += child.width + this._spacing;
+                }
+            }
+        }
 
-		this._updating = false;
-	}
+        this._updating = false;
+    }
 }

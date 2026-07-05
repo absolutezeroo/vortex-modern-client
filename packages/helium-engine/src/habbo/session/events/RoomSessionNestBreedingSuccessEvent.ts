@@ -8,26 +8,26 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionNestBreedingSuccessEvent extends RoomSessionEvent
 {
-	public static readonly NEST_BREEDING_SUCCESS = 'RSPFUE_NEST_BREEDING_SUCCESS';
+    public static readonly NEST_BREEDING_SUCCESS = 'RSPFUE_NEST_BREEDING_SUCCESS';
 
-	constructor(session: IRoomSession, petId: number, rarityCategory: number)
-	{
-		super(RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS, session);
-		this._petId = petId;
-		this._rarityCategory = rarityCategory;
-	}
+    constructor(session: IRoomSession, petId: number, rarityCategory: number)
+    {
+        super(RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS, session);
+        this._petId = petId;
+        this._rarityCategory = rarityCategory;
+    }
 
-	private _petId: number;
+    private _petId: number;
 
-	get petId(): number
-	{
-		return this._petId;
-	}
+    get petId(): number
+    {
+        return this._petId;
+    }
 
-	private _rarityCategory: number;
+    private _rarityCategory: number;
 
-	get rarityCategory(): number
-	{
-		return this._rarityCategory;
-	}
+    get rarityCategory(): number
+    {
+        return this._rarityCategory;
+    }
 }

@@ -10,27 +10,27 @@
  */
 export class ObjectMouseData
 {
-	private _objectId: string = '';
+    private _objectId: string = '';
 
-	get objectId(): string
-	{
-		return this._objectId;
-	}
+    get objectId(): string
+    {
+        return this._objectId;
+    }
 
-	set objectId(value: string)
-	{
-		this._objectId = value;
-	}
+    set objectId(value: string)
+    {
+        this._objectId = value;
+    }
 
-	private _spriteTag: string = '';
+    private _spriteTag: string = '';
 
-	get spriteTag(): string
-	{
-		return this._spriteTag;
-	}
+    get spriteTag(): string
+    {
+        return this._spriteTag;
+    }
 
-	set spriteTag(value: string)
-	{
-		this._spriteTag = value;
-	}
+    set spriteTag(value: string)
+    {
+        this._spriteTag = value;
+    }
 }

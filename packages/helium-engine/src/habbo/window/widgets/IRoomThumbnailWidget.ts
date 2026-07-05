@@ -9,14 +9,13 @@ import type {IWidget} from './IWidget';
  */
 export interface IRoomThumbnailWidget extends IWidget
 {
-	/**
+    /**
 	 * Reset the thumbnail to its default/blank state.
 	 */
-	reset(): void;
+    reset(): void;
 
-	/**
+    /**
 	 * Set the room (flat) ID to load a thumbnail for.
 	 */
-	set flatId(value: number);
+    set flatId(value: number);
 }
-

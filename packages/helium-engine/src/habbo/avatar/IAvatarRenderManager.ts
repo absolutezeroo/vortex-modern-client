@@ -12,33 +12,33 @@ import type {IFigureData} from './structure/IFigureData';
  */
 export interface IAvatarRenderManager
 {
-	createAvatarImage(
-		figureString: string,
-		scale: string,
-		gender: string,
-		listener: IAvatarImageListener | null,
-		effectListener: IAvatarEffectListener | null
-	): IAvatarImage | null;
+    createAvatarImage(
+        figureString: string,
+        scale: string,
+        gender: string,
+        listener: IAvatarImageListener | null,
+        effectListener: IAvatarEffectListener | null
+    ): IAvatarImage | null;
 
-	getFigureData(): IFigureData;
+    getFigureData(): IFigureData;
 
-	getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string;
+    getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string;
 
-	isValidFigureSetForGender(setId: number, gender: string): boolean;
+    isValidFigureSetForGender(setId: number, gender: string): boolean;
 
-	getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[];
+    getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[];
 
-	createFigureContainer(figureString: string): IAvatarFigureContainer;
+    createFigureContainer(figureString: string): IAvatarFigureContainer;
 
-	isFigureReady(figure: IAvatarFigureContainer): boolean;
+    isFigureReady(figure: IAvatarFigureContainer): boolean;
 
-	downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null): void;
+    downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null): void;
 
-	injectFigureData(data: any): void;
+    injectFigureData(data: any): void;
 
-	get isReady(): boolean;
+    get isReady(): boolean;
 
-	get events(): EventEmitter;
+    get events(): EventEmitter;
 
-	get effectMap(): Map<string, any>;
+    get effectMap(): Map<string, any>;
 }

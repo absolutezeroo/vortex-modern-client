@@ -8,32 +8,32 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class UserNftChatStylesMessageParser implements IMessageParser
 {
-	private _chatStyleIds: number[] = [];
+    private _chatStyleIds: number[] = [];
 
-	get chatStyleIds(): number[]
-	{
-		return this._chatStyleIds;
-	}
+    get chatStyleIds(): number[]
+    {
+        return this._chatStyleIds;
+    }
 
-	flush(): boolean
-	{
-		this._chatStyleIds = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._chatStyleIds = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		this._chatStyleIds = [];
+        this._chatStyleIds = [];
 
-		for (let i = 0; i < count; i++)
-		{
-			this._chatStyleIds.push(wrapper.readInt());
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._chatStyleIds.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

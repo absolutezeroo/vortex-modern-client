@@ -11,65 +11,65 @@ import type {IWindow} from '../IWindow';
  */
 export class Motion
 {
-	constructor(target: IWindow | null)
-	{
-		this._target = target;
-	}
+    constructor(target: IWindow | null)
+    {
+        this._target = target;
+    }
 
-	protected _target: IWindow | null;
+    protected _target: IWindow | null;
 
-	public get target(): IWindow | null
-	{
-		return this._target;
-	}
+    public get target(): IWindow | null
+    {
+        return this._target;
+    }
 
-	public set target(value: IWindow | null)
-	{
-		this._target = value;
-	}
+    public set target(value: IWindow | null)
+    {
+        this._target = value;
+    }
 
-	protected _running: boolean = false;
+    protected _running: boolean = false;
 
-	public get running(): boolean
-	{
-		return this._running && this._target !== null && !this._target.disposed;
-	}
+    public get running(): boolean
+    {
+        return this._running && this._target !== null && !this._target.disposed;
+    }
 
-	protected _complete: boolean = true;
+    protected _complete: boolean = true;
 
-	public get complete(): boolean
-	{
-		return this._complete;
-	}
+    public get complete(): boolean
+    {
+        return this._complete;
+    }
 
-	protected _tag: string = '';
+    protected _tag: string = '';
 
-	public get tag(): string
-	{
-		return this._tag;
-	}
+    public get tag(): string
+    {
+        return this._tag;
+    }
 
-	public set tag(value: string)
-	{
-		this._tag = value;
-	}
+    public set tag(value: string)
+    {
+        this._tag = value;
+    }
 
-	public start(): void
-	{
-		this._running = true;
-	}
+    public start(): void
+    {
+        this._running = true;
+    }
 
-	public update(_progress: number): void
-	{
-	}
+    public update(_progress: number): void
+    {
+    }
 
-	public stop(): void
-	{
-		this._target = null;
-		this._running = false;
-	}
+    public stop(): void
+    {
+        this._target = null;
+        this._running = false;
+    }
 
-	public tick(_timestamp: number): void
-	{
-	}
+    public tick(_timestamp: number): void
+    {
+    }
 }

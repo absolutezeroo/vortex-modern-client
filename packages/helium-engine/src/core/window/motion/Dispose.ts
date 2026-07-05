@@ -11,19 +11,19 @@ import {Motion} from './Motion';
  */
 export class Dispose extends Motion
 {
-	constructor(target: IWindow)
-	{
-		super(target);
-	}
+    constructor(target: IWindow)
+    {
+        super(target);
+    }
 
-	public override tick(timestamp: number): void
-	{
-		super.tick(timestamp);
+    public override tick(timestamp: number): void
+    {
+        super.tick(timestamp);
 
-		if (this._target && !this._target.disposed)
-		{
-			this._target.dispose();
-			this._target = null;
-		}
-	}
+        if(this._target && !this._target.disposed)
+        {
+            this._target.dispose();
+            this._target = null;
+        }
+    }
 }

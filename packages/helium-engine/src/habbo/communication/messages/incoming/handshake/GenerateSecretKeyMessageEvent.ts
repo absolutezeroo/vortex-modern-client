@@ -10,8 +10,8 @@ import {CompleteDiffieHandshakeMessageParser} from '../../parser/handshake/Gener
  */
 export class CompleteDiffieHandshakeMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CompleteDiffieHandshakeMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CompleteDiffieHandshakeMessageParser);
+    }
 }

@@ -8,30 +8,30 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class TradingAcceptMessageParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _accepted: boolean = false;
+    private _accepted: boolean = false;
 
-	get accepted(): boolean
-	{
-		return this._accepted;
-	}
+    get accepted(): boolean
+    {
+        return this._accepted;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._userId = wrapper.readInt();
-		this._accepted = wrapper.readInt() === 1;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._userId = wrapper.readInt();
+        this._accepted = wrapper.readInt() === 1;
 
-		return true;
-	}
+        return true;
+    }
 }

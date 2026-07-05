@@ -9,34 +9,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionMessageMessageParser implements IMessageParser
 {
-	private _chatMessage: string = '';
+    private _chatMessage: string = '';
 
-	get chatMessage(): string
-	{
-		return this._chatMessage;
-	}
+    get chatMessage(): string
+    {
+        return this._chatMessage;
+    }
 
-	private _senderId: number = 0;
+    private _senderId: number = 0;
 
-	get senderId(): number
-	{
-		return this._senderId;
-	}
+    get senderId(): number
+    {
+        return this._senderId;
+    }
 
-	flush(): boolean
-	{
-		this._chatMessage = '';
-		this._senderId = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._chatMessage = '';
+        this._senderId = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._chatMessage = wrapper.readString();
-		this._senderId = wrapper.readInt();
+        this._chatMessage = wrapper.readString();
+        this._senderId = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

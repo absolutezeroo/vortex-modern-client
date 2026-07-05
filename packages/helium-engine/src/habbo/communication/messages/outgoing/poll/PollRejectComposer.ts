@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PollRejectComposer extends MessageComposer<ConstructorParameters<typeof PollRejectComposer>>
 {
-	private _data: ConstructorParameters<typeof PollRejectComposer>;
+    private _data: ConstructorParameters<typeof PollRejectComposer>;
 
-	constructor(pollId: number)
-	{
-		super();
+    constructor(pollId: number)
+    {
+        super();
 
-		this._data = [pollId];
-	}
+        this._data = [pollId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

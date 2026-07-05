@@ -4,23 +4,23 @@
  */
 export class BadgeInfo
 {
-	constructor(image: HTMLImageElement | null, placeHolder: boolean)
-	{
-		this._image = image;
-		this._placeHolder = placeHolder;
-	}
+    constructor(image: HTMLImageElement | null, placeHolder: boolean)
+    {
+        this._image = image;
+        this._placeHolder = placeHolder;
+    }
 
-	private _image: HTMLImageElement | null;
+    private _image: HTMLImageElement | null;
 
-	get image(): HTMLImageElement | null
-	{
-		return this._image;
-	}
+    get image(): HTMLImageElement | null
+    {
+        return this._image;
+    }
 
-	private _placeHolder: boolean;
+    private _placeHolder: boolean;
 
-	get placeHolder(): boolean
-	{
-		return this._placeHolder;
-	}
+    get placeHolder(): boolean
+    {
+        return this._placeHolder;
+    }
 }

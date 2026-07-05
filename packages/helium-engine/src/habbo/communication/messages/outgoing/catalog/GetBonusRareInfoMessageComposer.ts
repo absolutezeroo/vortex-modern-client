@@ -6,16 +6,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetBonusRareInfoMessageComposer extends MessageComposer<ConstructorParameters<typeof GetBonusRareInfoMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetBonusRareInfoMessageComposer>;
+    private _data: ConstructorParameters<typeof GetBonusRareInfoMessageComposer>;
 
-	constructor()
-	{
-		super();
-		this._data = [];
-	}
+    constructor()
+    {
+        super();
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

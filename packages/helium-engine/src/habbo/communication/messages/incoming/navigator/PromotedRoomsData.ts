@@ -9,41 +9,41 @@ import {PromotedRoomCategoryData} from './PromotedRoomCategoryData';
  */
 export class PromotedRoomsData implements INavigatorSearchResultData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._entries.push(new PromotedRoomCategoryData(wrapper));
-		}
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._entries.push(new PromotedRoomCategoryData(wrapper));
+        }
+    }
 
-	private _entries: PromotedRoomCategoryData[] = [];
+    private _entries: PromotedRoomCategoryData[] = [];
 
-	get entries(): PromotedRoomCategoryData[]
-	{
-		return this._entries;
-	}
+    get entries(): PromotedRoomCategoryData[]
+    {
+        return this._entries;
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	dispose(): void
-	{
-		if (this._disposed)
-		{
-			return;
-		}
-		this._disposed = true;
+    dispose(): void
+    {
+        if(this._disposed)
+        {
+            return;
+        }
+        this._disposed = true;
 
-		for (const entry of this._entries)
-		{
-			entry.dispose();
-		}
-		this._entries = [];
-	}
+        for(const entry of this._entries)
+        {
+            entry.dispose();
+        }
+        this._entries = [];
+    }
 }

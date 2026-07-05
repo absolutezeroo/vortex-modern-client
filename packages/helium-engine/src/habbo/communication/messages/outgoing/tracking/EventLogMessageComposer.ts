@@ -8,24 +8,23 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class EventLogMessageComposer extends MessageComposer<ConstructorParameters<typeof EventLogMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof EventLogMessageComposer>;
+    private _data: ConstructorParameters<typeof EventLogMessageComposer>;
 
-	constructor(
-		category: string,
-		type: string,
-		action: string,
-		extraString: string = '',
-		extraInt: number = 0
-	)
-	{
-		super();
+    constructor(
+        category: string,
+        type: string,
+        action: string,
+        extraString: string = '',
+        extraInt: number = 0
+    )
+    {
+        super();
 
-		this._data = [category, type, action, extraString, extraInt];
-	}
+        this._data = [category, type, action, extraString, extraInt];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

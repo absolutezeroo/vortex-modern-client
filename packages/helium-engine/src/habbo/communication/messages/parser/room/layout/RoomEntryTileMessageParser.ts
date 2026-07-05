@@ -10,45 +10,45 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class RoomEntryTileMessageParser implements IMessageParser
 {
-	private _x: number = 0;
+    private _x: number = 0;
 
-	get x(): number
-	{
-		return this._x;
-	}
+    get x(): number
+    {
+        return this._x;
+    }
 
-	private _y: number = 0;
+    private _y: number = 0;
 
-	get y(): number
-	{
-		return this._y;
-	}
+    get y(): number
+    {
+        return this._y;
+    }
 
-	private _dir: number = 0;
+    private _dir: number = 0;
 
-	get dir(): number
-	{
-		return this._dir;
-	}
+    get dir(): number
+    {
+        return this._dir;
+    }
 
-	flush(): boolean
-	{
-		this._x = 0;
-		this._y = 0;
-		this._dir = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._x = 0;
+        this._y = 0;
+        this._dir = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._x = wrapper.readInt();
-		this._y = wrapper.readInt();
-		this._dir = wrapper.readInt();
-		return true;
-	}
+        this._x = wrapper.readInt();
+        this._y = wrapper.readInt();
+        this._dir = wrapper.readInt();
+        return true;
+    }
 }

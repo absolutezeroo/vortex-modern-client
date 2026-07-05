@@ -7,13 +7,13 @@ import type {IFigurePartSet} from './IFigurePartSet';
  */
 export interface ISetType
 {
-	readonly type: string;
-	readonly paletteID: number;
-	readonly partSets: Map<string, IFigurePartSet>;
+    readonly type: string;
+    readonly paletteID: number;
+    readonly partSets: Map<string, IFigurePartSet>;
 
-	getPartSet(id: number): IFigurePartSet | null;
+    getPartSet(id: number): IFigurePartSet | null;
 
-	isMandatory(gender: string, clubLevel: number): boolean;
+    isMandatory(gender: string, clubLevel: number): boolean;
 
-	optionalFromClubLevel(gender: string): number;
+    optionalFromClubLevel(gender: string): number;
 }

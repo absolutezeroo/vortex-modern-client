@@ -64,7 +64,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
-import {IHeliumMain} from "./IHeliumMain";
+import type {IHeliumMain} from "./IHeliumMain";
 import type {IHeliumLoadingScreen} from './IHeliumLoadingScreen';
 import type {Application, Ticker} from 'pixi.js';
 
@@ -83,15 +83,15 @@ const log = Logger.getLogger('HabboMain');
  */
 export class HeliumMain implements IHeliumMain
 {
-	/**
+    /**
 	 * Ratio of progress bar dedicated to core/SWF loading (0.0 to CORE_RATIO).
 	 * The remaining (CORE_RATIO to 1.0) is for initialization steps.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as::CORE_RATIO
 	 */
-	private static readonly CORE_RATIO: number = 0.6;
+    private static readonly CORE_RATIO: number = 0.6;
 
-	/**
+    /**
 	 * Number of initialization steps for progress tracking in the [CORE_RATIO - 1.0] range:
 	 * 1. Configuration loaded
 	 * 2. Localization loaded
@@ -99,39 +99,39 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as::INIT_STEPS
 	 */
-	private static readonly INIT_STEPS: number = 3;
+    private static readonly INIT_STEPS: number = 3;
 
-	/**
+    /**
 	 * Embedded avatar XML assets registered from IHeliumConfig.embeddedConfigurations.
 	 * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset bundling.
 	 */
-	private static readonly EMBEDDED_AVATAR_XML_ASSET_NAMES: string[] = [
-		'action_offset_lay',
-		'action_offset_swim',
-		'HabboAvatarAnimation',
-		'HabboAvatarFigure',
-		'HabboAvatarGeometry',
-		'HabboAvatarPartSets',
-	];
+    private static readonly EMBEDDED_AVATAR_XML_ASSET_NAMES: string[] = [
+        'action_offset_lay',
+        'action_offset_swim',
+        'HabboAvatarAnimation',
+        'HabboAvatarFigure',
+        'HabboAvatarGeometry',
+        'HabboAvatarPartSets',
+    ];
 
-	/**
+    /**
 	 * PixiJS Application reference.
 	 * Passed in from Helium shell (which owns the Application).
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as (uses stage from HabboAir)
 	 */
-	private _application: Application | null = null;
+    private _application: Application | null = null;
 
-	/**
+    /**
 	 * Asset library reference (created in prepareCore).
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as (AssetLibrary is a core component)
 	 */
-	private _assets: AssetLibrary | null = null;
+    private _assets: AssetLibrary | null = null;
 
-	private _heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+    private _heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 
-	/**
+    /**
 	 * Loading screen reference.
 	 *
 	 * AS3: HabboAirMain receives _loadingScreen from HabboAir constructor.
@@ -139,276 +139,276 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as _loadingScreen
 	 */
-	private _loadingScreen: IHeliumLoadingScreen | null = null;
+    private _loadingScreen: IHeliumLoadingScreen | null = null;
 
-	/**
+    /**
 	 * Number of completed initialization steps.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as _completedInitSteps
 	 */
-	private _completedInitSteps: number = 0;
+    private _completedInitSteps: number = 0;
 
-	/**
+    /**
 	 * Whether the room engine has finished initialization.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_412
 	 */
-	private _roomEngineReady: boolean = false;
+    private _roomEngineReady: boolean = false;
 
-	/**
+    /**
 	 * Whether all core components are running.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_413
 	 */
-	private _coreRunning: boolean = false;
+    private _coreRunning: boolean = false;
 
-	/**
+    /**
 	 * Guards onExitFrame()'s cleanup so it only runs once.
 	 *
 	 * @see sources/flash_version/src/HabboMain.as::dispose() (called once from onExitFrame)
 	 */
-	private _bootFinalized: boolean = false;
+    private _bootFinalized: boolean = false;
 
-	private _habboCommunicationManager: HabboCommunicationManager | null = null;
-	private _localizationManager: HabboLocalizationManager | null = null;
-	private _campaigns: HabboCampaigns | null = null;
-	private _adManager: AdManager | null = null;
-	private _tracking: HabboTracking | null = null;
-	private _groupsManager: HabboGroupsManager | null = null;
-	private _notifications: HabboNotifications | null = null;
-	private _freeFlowChat: HabboFreeFlowChat | null = null;
-	private _friendBar: HabboFriendBar | null = null;
-	private _catalog: HabboCatalog | null = null;
-	private _clubCenter: HabboClubCenter | null = null;
+    private _habboCommunicationManager: HabboCommunicationManager | null = null;
+    private _localizationManager: HabboLocalizationManager | null = null;
+    private _campaigns: HabboCampaigns | null = null;
+    private _adManager: AdManager | null = null;
+    private _tracking: HabboTracking | null = null;
+    private _groupsManager: HabboGroupsManager | null = null;
+    private _notifications: HabboNotifications | null = null;
+    private _freeFlowChat: HabboFreeFlowChat | null = null;
+    private _friendBar: HabboFriendBar | null = null;
+    private _catalog: HabboCatalog | null = null;
+    private _clubCenter: HabboClubCenter | null = null;
 
-	/**
+    /**
 	 * AS3: HabboAirMain(_arg_1:IHabboLoadingScreen, _arg_2:Dictionary)
 	 *
 	 * @param loadingScreen - Loading screen to update during initialization
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as constructor
 	 */
-	constructor(loadingScreen?: IHeliumLoadingScreen | null)
-	{
-		this._loadingScreen = loadingScreen ?? null;
-	}
+    constructor(loadingScreen?: IHeliumLoadingScreen | null)
+    {
+        this._loadingScreen = loadingScreen ?? null;
+    }
 
-	private _roomUI: RoomUI | null = null;
+    private _roomUI: RoomUI | null = null;
 
-	get roomUI(): RoomUI
-	{
-		if(!this._roomUI)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get roomUI(): RoomUI
+    {
+        if(!this._roomUI)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._roomUI;
-	}
+        return this._roomUI;
+    }
 
-	private _toolbar: HabboToolbar | null = null;
+    private _toolbar: HabboToolbar | null = null;
 
-	get toolbar(): IHabboToolbar
-	{
-		if (!this._toolbar)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get toolbar(): IHabboToolbar
+    {
+        if(!this._toolbar)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._toolbar;
-	}
+        return this._toolbar;
+    }
 
-	private _avatarRenderManager: AvatarRenderManager | null = null;
+    private _avatarRenderManager: AvatarRenderManager | null = null;
 
-	get avatarRenderManager(): AvatarRenderManager
-	{
-		if (!this._avatarRenderManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get avatarRenderManager(): AvatarRenderManager
+    {
+        if(!this._avatarRenderManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._avatarRenderManager;
-	}
+        return this._avatarRenderManager;
+    }
 
-	private _windowManager: HabboWindowManager | null = null;
+    private _windowManager: HabboWindowManager | null = null;
 
-	get windowManager(): IHabboWindowManager
-	{
-		if (!this._windowManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get windowManager(): IHabboWindowManager
+    {
+        if(!this._windowManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._windowManager;
-	}
+        return this._windowManager;
+    }
 
-	protected _disposed: boolean = false;
+    protected _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	private _navigator: HabboNavigator | null = null;
+    private _navigator: HabboNavigator | null = null;
 
-	get navigator(): HabboNavigator
-	{
-		if (!this._navigator)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get navigator(): HabboNavigator
+    {
+        if(!this._navigator)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._navigator;
-	}
+        return this._navigator;
+    }
 
-	private _newNavigator: HabboNewNavigator | null = null;
+    private _newNavigator: HabboNewNavigator | null = null;
 
-	get newNavigator(): HabboNewNavigator
-	{
-		if (!this._newNavigator)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get newNavigator(): HabboNewNavigator
+    {
+        if(!this._newNavigator)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._newNavigator;
-	}
+        return this._newNavigator;
+    }
 
-	private _inventory: HabboInventory | null = null;
+    private _inventory: HabboInventory | null = null;
 
-	get inventory(): HabboInventory
-	{
-		if (!this._inventory)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get inventory(): HabboInventory
+    {
+        if(!this._inventory)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._inventory;
-	}
+        return this._inventory;
+    }
 
-	get catalog(): IHabboCatalog
-	{
-		if (!this._catalog)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get catalog(): IHabboCatalog
+    {
+        if(!this._catalog)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._catalog;
-	}
+        return this._catalog;
+    }
 
-	get clubCenter(): IHabboClubCenter
-	{
-		if (!this._clubCenter)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get clubCenter(): IHabboClubCenter
+    {
+        if(!this._clubCenter)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._clubCenter;
-	}
+        return this._clubCenter;
+    }
 
-	private _configurationManager: HabboConfigurationManager | null = null;
+    private _configurationManager: HabboConfigurationManager | null = null;
 
-	get configurationManager(): IHabboConfigurationManager
-	{
-		if (!this._configurationManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get configurationManager(): IHabboConfigurationManager
+    {
+        if(!this._configurationManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._configurationManager;
-	}
+        return this._configurationManager;
+    }
 
-	private _communicationDemo: HabboCommunicationDemo | null = null;
+    private _communicationDemo: HabboCommunicationDemo | null = null;
 
-	get communicationDemo(): HabboCommunicationDemo
-	{
-		if (!this._communicationDemo)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get communicationDemo(): HabboCommunicationDemo
+    {
+        if(!this._communicationDemo)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._communicationDemo;
-	}
+        return this._communicationDemo;
+    }
 
-	private _roomManager: RoomManager | null = null;
+    private _roomManager: RoomManager | null = null;
 
-	get roomManager(): RoomManager
-	{
-		if (!this._roomManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get roomManager(): RoomManager
+    {
+        if(!this._roomManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._roomManager;
-	}
+        return this._roomManager;
+    }
 
-	private _roomMessageHandler: RoomMessageHandler | null = null;
+    private _roomMessageHandler: RoomMessageHandler | null = null;
 
-	get roomMessageHandler(): RoomMessageHandler
-	{
-		if (!this._roomMessageHandler)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get roomMessageHandler(): RoomMessageHandler
+    {
+        if(!this._roomMessageHandler)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._roomMessageHandler;
-	}
+        return this._roomMessageHandler;
+    }
 
-	private _roomSessionManager: RoomSessionManager | null = null;
+    private _roomSessionManager: RoomSessionManager | null = null;
 
-	get roomSessionManager(): RoomSessionManager
-	{
-		if (!this._roomSessionManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get roomSessionManager(): RoomSessionManager
+    {
+        if(!this._roomSessionManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._roomSessionManager;
-	}
+        return this._roomSessionManager;
+    }
 
-	get localization(): HabboLocalizationManager
-	{
-		if (!this._localizationManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get localization(): HabboLocalizationManager
+    {
+        if(!this._localizationManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._localizationManager;
-	}
+        return this._localizationManager;
+    }
 
-	private _roomEngine: RoomEngine | null = null;
+    private _roomEngine: RoomEngine | null = null;
 
-	get roomEngine(): RoomEngine
-	{
-		if (!this._roomEngine)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get roomEngine(): RoomEngine
+    {
+        if(!this._roomEngine)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._roomEngine;
-	}
+        return this._roomEngine;
+    }
 
-	private _sessionDataManager: SessionDataManager | null = null;
+    private _sessionDataManager: SessionDataManager | null = null;
 
-	get sessionDataManager(): ISessionDataManager
-	{
-		if (!this._sessionDataManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get sessionDataManager(): ISessionDataManager
+    {
+        if(!this._sessionDataManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._sessionDataManager;
-	}
+        return this._sessionDataManager;
+    }
 
-	get habboCommunication(): HabboCommunicationManager
-	{
-		if (!this._habboCommunicationManager)
-		{
-			throw new Error('[HabboMain] Not initialized');
-		}
+    get habboCommunication(): HabboCommunicationManager
+    {
+        if(!this._habboCommunicationManager)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
 
-		return this._habboCommunicationManager;
-	}
+        return this._habboCommunicationManager;
+    }
 
-	/**
+    /**
 	 * Initialize the engine orchestrator.
 	 *
 	 * AS3 flow:
@@ -421,108 +421,109 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
 	 */
-	async init(application: Application, config?: IHeliumConfig): Promise<void>
-	{
-		this._application = application;
+    async init(application: Application, config?: IHeliumConfig): Promise<void>
+    {
+        this._application = application;
 
-		await this.prepareCore(config);
+        await this.prepareCore(config);
 
-		this.addInitializationProgressListeners();
+        this.addInitializationProgressListeners();
 
-		this.initLocalization();
-	}
+        this.initLocalization();
+    }
 
-	/**
+    /**
 	 * Dispose engine resources.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as dispose()
 	 */
-	dispose(): void
-	{
-		if(this._disposed) return;
+    dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
+        this._disposed = true;
 
-		log.info('Disposing HabboMain...');
+        log.info('Disposing HabboMain...');
 
-		// Stop update loop
-		this._application?.ticker.remove(this.update, this);
+        // Stop update loop
+        this._application?.ticker.remove(this.update, this);
 
-		// Stop heartbeat
-		if(this._heartbeatTimer !== null)
-		{
-			clearInterval(this._heartbeatTimer);
-			this._heartbeatTimer = null;
-		}
+        // Stop heartbeat
+        if(this._heartbeatTimer !== null)
+        {
+            clearInterval(this._heartbeatTimer);
+            this._heartbeatTimer = null;
+        }
 
-		// AS3: _loadingScreen.dispose() + _loadingScreen = null
-		if(this._loadingScreen)
-		{
-			this._loadingScreen.dispose();
-			this._loadingScreen = null;
-		}
+        // AS3: _loadingScreen.dispose() + _loadingScreen = null
+        if(this._loadingScreen)
+        {
+            this._loadingScreen.dispose();
+            this._loadingScreen = null;
+        }
 
-		// Dispose RoomMessageHandler (not a Component, needs manual dispose)
-		this._roomMessageHandler?.dispose();
-		this._roomMessageHandler = null;
+        // Dispose RoomMessageHandler (not a Component, needs manual dispose)
+        this._roomMessageHandler?.dispose();
+        this._roomMessageHandler = null;
 
-		// Nullify Habbo manager refs (inverse init order)
-		this._clubCenter = null;
-		this._friendBar = null;
-		this._roomUI = null;
-		this._windowManager = null;
-		this._freeFlowChat = null;
-		this._toolbar = null;
-		this._catalog = null;
-		this._notifications = null;
-		this._groupsManager = null;
-		this._tracking = null;
-		this._adManager = null;
-		this._campaigns = null;
-		this._avatarRenderManager = null;
-		this._roomEngine = null;
-		this._inventory = null;
-		this._newNavigator = null;
-		this._navigator = null;
-		this._sessionDataManager = null;
-		this._roomSessionManager = null;
-		this._roomManager = null;
-		this._localizationManager = null;
-		this._communicationDemo = null;
-		this._habboCommunicationManager = null;
-		this._configurationManager = null;
-		this._assets = null;
+        // Nullify Habbo manager refs (inverse init order)
+        this._clubCenter = null;
+        this._friendBar = null;
+        this._roomUI = null;
+        this._windowManager = null;
+        this._freeFlowChat = null;
+        this._toolbar = null;
+        this._catalog = null;
+        this._notifications = null;
+        this._groupsManager = null;
+        this._tracking = null;
+        this._adManager = null;
+        this._campaigns = null;
+        this._avatarRenderManager = null;
+        this._roomEngine = null;
+        this._inventory = null;
+        this._newNavigator = null;
+        this._navigator = null;
+        this._sessionDataManager = null;
+        this._roomSessionManager = null;
+        this._roomManager = null;
+        this._localizationManager = null;
+        this._communicationDemo = null;
+        this._habboCommunicationManager = null;
+        this._configurationManager = null;
+        this._assets = null;
 
-		// Do NOT dispose Core or Application — owned by Helium shell
-		this._application = null;
-	}
+        // Do NOT dispose Core or Application — owned by Helium shell
+        this._application = null;
+    }
 
-	private registerEmbeddedAvatarAssets(config?: IHeliumConfig): void
-	{
-		if (!this._assets || !config?.embeddedConfigurations)
-		{
-			return;
-		}
+    private registerEmbeddedAvatarAssets(config?: IHeliumConfig): void
+    {
+        if(!this._assets || !config?.embeddedConfigurations)
+        {
+            return;
+        }
 
-		const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
+        const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
 			?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
 
-		for (const assetName of HeliumMain.EMBEDDED_AVATAR_XML_ASSET_NAMES)
-		{
-			const content = config.embeddedConfigurations[assetName];
+        for(const assetName of HeliumMain.EMBEDDED_AVATAR_XML_ASSET_NAMES)
+        {
+            const content = config.embeddedConfigurations[assetName];
 
-			if (content === undefined)
-			{
-				continue;
-			}
+            if(content === undefined)
+            {
+                continue;
+            }
 
-			const asset = new XmlAsset(declaration, assetName);
+            const asset = new XmlAsset(declaration, assetName);
 
-			asset.setUnknownContent(content);
-			this._assets.setAsset(assetName, asset, true);
-		}
-	}
-	/**
+            asset.setUnknownContent(content);
+            this._assets.setAsset(assetName, asset, true);
+        }
+    }
+
+    /**
 	 * Create Core and prepare all components.
 	 *
 	 * AS3: HabboAirMain.prepareCore() calls Core.instantiate(stage, 1, reporter, dict),
@@ -530,202 +531,201 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
 	 */
-	async prepareCore(config?: IHeliumConfig): Promise<void>
-	{
-		const ctx = Core.instantiate(
-			CoreSetup.FRAME_UPDATE_SIMPLE
-		) as CoreComponentContext;
+    async prepareCore(config?: IHeliumConfig): Promise<void>
+    {
+        const ctx = Core.instantiate(
+            CoreSetup.FRAME_UPDATE_SIMPLE
+        ) as CoreComponentContext;
 
-		// Set target FPS from ticker
-		ctx.targetFps = this._application!.ticker.maxFPS || 60;
+        // Set target FPS from ticker
+        ctx.targetFps = this._application!.ticker.maxFPS || 60;
 
-		// Register core itself as IID_Core so components can depend on it
-		ctx.registerInterface(IID_Core, ctx);
+        // Register core itself as IID_Core so components can depend on it
+        ctx.registerInterface(IID_Core, ctx);
 
-		// Asset Library — manages all game assets
-		this._assets = new AssetLibrary(ctx);
-		ctx.attachComponent(this._assets, [IID_AssetLibrary]);
-		this.registerEmbeddedAvatarAssets(config);
+        // Asset Library — manages all game assets
+        this._assets = new AssetLibrary(ctx);
+        ctx.attachComponent(this._assets, [IID_AssetLibrary]);
+        this.registerEmbeddedAvatarAssets(config);
 
-		// Core Communication Manager — low-level socket communication
-		const coreCommunication = new CoreCommunicationManager(ctx);
-		ctx.attachComponent(coreCommunication, [IID_CoreCommunicationManager]);
+        // Core Communication Manager — low-level socket communication
+        const coreCommunication = new CoreCommunicationManager(ctx);
+        ctx.attachComponent(coreCommunication, [IID_CoreCommunicationManager]);
 
-		this._application!.ticker.add(this.update, this);
+        this._application!.ticker.add(this.update, this);
 
-		ctx.initialize();
+        ctx.initialize();
 
-		// 1. Configuration Manager (must be first - other managers depend on it)
-		this._configurationManager = new HabboConfigurationManager(ctx);
-		this._configurationManager.setEmbeddedConfigurationAssets(config?.embeddedConfigurations ?? {});
-		ctx.attachComponent(this._configurationManager, [IID_HabboConfigurationManager]);
+        // 1. Configuration Manager (must be first - other managers depend on it)
+        this._configurationManager = new HabboConfigurationManager(ctx);
+        this._configurationManager.setEmbeddedConfigurationAssets(config?.embeddedConfigurations ?? {});
+        ctx.attachComponent(this._configurationManager, [IID_HabboConfigurationManager]);
 
-		// The Component base defers initComponent to a microtask; wait for resetAll()
-		// so embedded AS3 TextAsset configurations are parsed before downloads.
-		await Promise.resolve();
+        // The Component base defers initComponent to a microtask; wait for resetAll()
+        // so embedded AS3 TextAsset configurations are parsed before downloads.
+        await Promise.resolve();
 
-		// Set external variables URL if provided (must be set before download)
-		if(config?.configurationUrl)
-		{
-			this._configurationManager.setProperty(HabboProperty.EXTERNAL_VARIABLES, config.configurationUrl);
-		}
+        // Set external variables URL if provided (must be set before download)
+        if(config?.configurationUrl)
+        {
+            this._configurationManager.setProperty(HabboProperty.EXTERNAL_VARIABLES, config.configurationUrl);
+        }
 
-		// Load external configuration
-		await this._configurationManager.initConfigurationDownload();
+        // Load external configuration
+        await this._configurationManager.initConfigurationDownload();
 
-		// Set configuration properties from config object (after download so resetAll doesn't clear them)
-		if(config?.configuration)
-		{
-			for(const [key, value] of Object.entries(config.configuration))
-			{
-				this._configurationManager.setProperty(key, value);
-			}
-		}
+        // Set configuration properties from config object (after download so resetAll doesn't clear them)
+        if(config?.configuration)
+        {
+            for(const [key, value] of Object.entries(config.configuration))
+            {
+                this._configurationManager.setProperty(key, value);
+            }
+        }
 
-		// Also pick up top-level string properties as configuration overrides
-		if(config)
-		{
-			const reservedKeys = new Set(['background', 'resizeTo', 'antialias', 'resolution', 'canvas', 'connection', 'configurationUrl', 'configuration', 'embeddedConfigurations']);
+        // Also pick up top-level string properties as configuration overrides
+        if(config)
+        {
+            const reservedKeys = new Set(['background', 'resizeTo', 'antialias', 'resolution', 'canvas', 'connection', 'configurationUrl', 'configuration', 'embeddedConfigurations']);
 
-			for(const [key, value] of Object.entries(config))
-			{
-				if(!reservedKeys.has(key) && typeof value === 'string')
-				{
-					this._configurationManager.setProperty(key, value);
-				}
-			}
-		}
+            for(const [key, value] of Object.entries(config))
+            {
+                if(!reservedKeys.has(key) && typeof value === 'string')
+                {
+                    this._configurationManager.setProperty(key, value);
+                }
+            }
+        }
 
-		// 2. Habbo Communication Manager (depends on CoreCommunicationManager from core)
-		this._habboCommunicationManager = new HabboCommunicationManager(ctx);
-		ctx.attachComponent(this._habboCommunicationManager, [IID_HabboCommunicationManager]);
+        // 2. Habbo Communication Manager (depends on CoreCommunicationManager from core)
+        this._habboCommunicationManager = new HabboCommunicationManager(ctx);
+        ctx.attachComponent(this._habboCommunicationManager, [IID_HabboCommunicationManager]);
 
-		// Configure connection if provided
-		if(config?.connection)
-		{
-			this._habboCommunicationManager.configure(config.connection);
-		}
+        // Configure connection if provided
+        if(config?.connection)
+        {
+            this._habboCommunicationManager.configure(config.connection);
+        }
 
-		// 3. Communication Demo (manages login flow, IncomingMessages)
-		this._communicationDemo = new HabboCommunicationDemo(ctx);
+        // 3. Communication Demo (manages login flow, IncomingMessages)
+        this._communicationDemo = new HabboCommunicationDemo(ctx);
 
-		if(config?.connection?.ssoTicket)
-		{
-			this._communicationDemo.ssoTicket = config.connection.ssoTicket;
-		}
+        if(config?.connection?.ssoTicket)
+        {
+            this._communicationDemo.ssoTicket = config.connection.ssoTicket;
+        }
 
-		ctx.attachComponent(this._communicationDemo, []);
+        ctx.attachComponent(this._communicationDemo, []);
 
-		// 4. Localization Manager
-		this._localizationManager = new HabboLocalizationManager(ctx);
+        // 4. Localization Manager
+        this._localizationManager = new HabboLocalizationManager(ctx);
 
-		ctx.attachComponent(this._localizationManager, [IID_HabboLocalizationManager]);
+        ctx.attachComponent(this._localizationManager, [IID_HabboLocalizationManager]);
 
-		this._localizationManager.setConfigurationManager(this._configurationManager);
-		this._localizationManager.setCommunicationManager(this._habboCommunicationManager);
+        this._localizationManager.setConfigurationManager(this._configurationManager);
+        this._localizationManager.setCommunicationManager(this._habboCommunicationManager);
 
+        // 5. Room Manager (must be registered before RoomEngine)
+        this._roomManager = new RoomManager(ctx);
+        ctx.attachComponent(this._roomManager, [IID_RoomManager]);
 
-		// 5. Room Manager (must be registered before RoomEngine)
-		this._roomManager = new RoomManager(ctx);
-		ctx.attachComponent(this._roomManager, [IID_RoomManager]);
+        // 5b. Room Renderer Factory
+        // AS3: RoomEngine depends on IIDRoomRendererFactory and calls createRenderer().
+        const roomRendererFactory = new HabboRoomRendererFactory(ctx);
+        ctx.attachComponent(roomRendererFactory, [IID_RoomRendererFactory]);
 
-		// 5b. Room Renderer Factory
-		// AS3: RoomEngine depends on IIDRoomRendererFactory and calls createRenderer().
-		const roomRendererFactory = new HabboRoomRendererFactory(ctx);
-		ctx.attachComponent(roomRendererFactory, [IID_RoomRendererFactory]);
+        // 6. Room Session Manager
+        this._roomSessionManager = new RoomSessionManager(ctx);
+        ctx.attachComponent(this._roomSessionManager, [IID_RoomSessionManager]);
 
-		// 6. Room Session Manager
-		this._roomSessionManager = new RoomSessionManager(ctx);
-		ctx.attachComponent(this._roomSessionManager, [IID_RoomSessionManager]);
+        // 7. Session Data Manager (manages user data after authentication)
+        // AS3: HabboSessionDataManagerLib - depends on HabboCommunicationManager via IID
+        this._sessionDataManager = new SessionDataManager(ctx);
+        ctx.attachComponent(this._sessionDataManager, [IID_SessionDataManager]);
 
-		// 7. Session Data Manager (manages user data after authentication)
-		// AS3: HabboSessionDataManagerLib - depends on HabboCommunicationManager via IID
-		this._sessionDataManager = new SessionDataManager(ctx);
-		ctx.attachComponent(this._sessionDataManager, [IID_SessionDataManager]);
+        // 8. Navigator (legacy)
+        this._navigator = new HabboNavigator(ctx);
+        ctx.attachComponent(this._navigator, [IID_HabboNavigator]);
 
-		// 8. Navigator (legacy)
-		this._navigator = new HabboNavigator(ctx);
-		ctx.attachComponent(this._navigator, [IID_HabboNavigator]);
+        // 9. New Navigator
+        this._newNavigator = new HabboNewNavigator(ctx);
+        ctx.attachComponent(this._newNavigator, [IID_HabboNewNavigator]);
 
-		// 9. New Navigator
-		this._newNavigator = new HabboNewNavigator(ctx);
-		ctx.attachComponent(this._newNavigator, [IID_HabboNewNavigator]);
+        // 10. Inventory
+        this._inventory = new HabboInventory(ctx);
+        ctx.attachComponent(this._inventory, [IID_HabboInventory]);
 
-		// 10. Inventory
-		this._inventory = new HabboInventory(ctx);
-		ctx.attachComponent(this._inventory, [IID_HabboInventory]);
+        // 11. Room Engine (depends on RoomManager via IID_RoomManager)
+        this._roomEngine = new RoomEngine(ctx, this._assets);
+        ctx.attachComponent(this._roomEngine, [IID_RoomEngine]);
 
-		// 11. Room Engine (depends on RoomManager via IID_RoomManager)
-		this._roomEngine = new RoomEngine(ctx, this._assets);
-		ctx.attachComponent(this._roomEngine, [IID_RoomEngine]);
+        // 12a. Avatar Render Manager
+        this._avatarRenderManager = new AvatarRenderManager(ctx);
+        ctx.attachComponent(this._avatarRenderManager, [IID_AvatarRenderManager]);
 
-		// 12a. Avatar Render Manager
-		this._avatarRenderManager = new AvatarRenderManager(ctx);
-		ctx.attachComponent(this._avatarRenderManager, [IID_AvatarRenderManager]);
+        // 12b. Campaign Calendar
+        this._campaigns = new HabboCampaigns(ctx);
+        ctx.attachComponent(this._campaigns, []);
 
-		// 12b. Campaign Calendar
-		this._campaigns = new HabboCampaigns(ctx);
-		ctx.attachComponent(this._campaigns, []);
+        // 12c. Advertisement Manager
+        this._adManager = new AdManager(ctx);
+        ctx.attachComponent(this._adManager, []);
 
-		// 12c. Advertisement Manager
-		this._adManager = new AdManager(ctx);
-		ctx.attachComponent(this._adManager, []);
+        // 12d. Tracking
+        this._tracking = new HabboTracking(ctx);
+        ctx.attachComponent(this._tracking, [IID_HabboTracking]);
 
-		// 12d. Tracking
-		this._tracking = new HabboTracking(ctx);
-		ctx.attachComponent(this._tracking, [IID_HabboTracking]);
+        // 12e. Groups Manager
+        this._groupsManager = new HabboGroupsManager(ctx);
+        ctx.attachComponent(this._groupsManager, []);
 
-		// 12e. Groups Manager
-		this._groupsManager = new HabboGroupsManager(ctx);
-		ctx.attachComponent(this._groupsManager, []);
+        // 12f. Notifications
+        this._notifications = new HabboNotifications(ctx);
+        ctx.attachComponent(this._notifications, []);
 
-		// 12f. Notifications
-		this._notifications = new HabboNotifications(ctx);
-		ctx.attachComponent(this._notifications, []);
+        // 12g. Catalog
+        this._catalog = new HabboCatalog(ctx);
+        ctx.attachComponent(this._catalog, [IID_HabboCatalog]);
 
-		// 12g. Catalog
-		this._catalog = new HabboCatalog(ctx);
-		ctx.attachComponent(this._catalog, [IID_HabboCatalog]);
+        // 12h. Toolbar
+        this._toolbar = new HabboToolbar(ctx);
+        ctx.attachComponent(this._toolbar, [IID_HabboToolbar]);
 
-		// 12h. Toolbar
-		this._toolbar = new HabboToolbar(ctx);
-		ctx.attachComponent(this._toolbar, [IID_HabboToolbar]);
+        // 12i. FreeFlowChat
+        this._freeFlowChat = new HabboFreeFlowChat(ctx);
+        ctx.attachComponent(this._freeFlowChat, []);
 
-		// 12i. FreeFlowChat
-		this._freeFlowChat = new HabboFreeFlowChat(ctx);
-		ctx.attachComponent(this._freeFlowChat, []);
+        // 12j. Window Manager
+        this._windowManager = new HabboWindowManager(ctx);
+        ctx.attachComponent(this._windowManager, [IID_HabboWindowManager]);
 
-		// 12j. Window Manager
-		this._windowManager = new HabboWindowManager(ctx);
-		ctx.attachComponent(this._windowManager, [IID_HabboWindowManager]);
+        // 12k. Room UI
+        this._roomUI = new RoomUI(ctx, 0, this._assets);
+        ctx.attachComponent(this._roomUI, [IID_RoomUI]);
 
-		// 12k. Room UI
-		this._roomUI = new RoomUI(ctx, 0, this._assets);
-		ctx.attachComponent(this._roomUI, [IID_RoomUI]);
+        // 12l. Habbo Club Center
+        this._clubCenter = new HabboClubCenter(ctx);
+        ctx.attachComponent(this._clubCenter, [IID_HabboClubCenter]);
 
-		// 12l. Habbo Club Center
-		this._clubCenter = new HabboClubCenter(ctx);
-		ctx.attachComponent(this._clubCenter, [IID_HabboClubCenter]);
+        // Set PixiJS stage on room engine for rendering
+        this._roomEngine.setStage(this._application!.stage);
+        this._roomEngine.setCanvasElement(this._application!.canvas as HTMLCanvasElement);
+        this._roomEngine.setTicker(this._application!.ticker);
 
-		// Set PixiJS stage on room engine for rendering
-		this._roomEngine.setStage(this._application!.stage);
-		this._roomEngine.setCanvasElement(this._application!.canvas as HTMLCanvasElement);
-		this._roomEngine.setTicker(this._application!.ticker);
+        // 12. Room Message Handler - bridges communication to room engine
+        this._roomMessageHandler = new RoomMessageHandler(this._roomEngine);
 
-		// 12. Room Message Handler - bridges communication to room engine
-		this._roomMessageHandler = new RoomMessageHandler(this._roomEngine);
+        // Wire RoomMessageHandler to the connection.
+        await Promise.resolve();
 
-		// Wire RoomMessageHandler to the connection.
-		await Promise.resolve();
+        if(this._habboCommunicationManager.connection)
+        {
+            this._roomMessageHandler.connection = this._habboCommunicationManager.connection;
+            this._roomEngine.connection = this._habboCommunicationManager.connection;
+        }
+    }
 
-		if(this._habboCommunicationManager.connection)
-		{
-			this._roomMessageHandler.connection = this._habboCommunicationManager.connection;
-			this._roomEngine.connection = this._habboCommunicationManager.connection;
-		}
-	}
-
-	/**
+    /**
 	 * Initialize the Friend Bar (landing view, friend bar view, etc.)
 	 *
 	 * Must be called AFTER window layouts are registered by the client layer,
@@ -733,32 +733,32 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
 	 */
-	initFriendBar(): void
-	{
-		const ctx = Core.instance as CoreComponentContext;
+    initFriendBar(): void
+    {
+        const ctx = Core.instance as CoreComponentContext;
 
-		this._friendBar = new HabboFriendBar(ctx);
-		ctx.attachComponent(this._friendBar, [IID_HabboFriendBar]);
+        this._friendBar = new HabboFriendBar(ctx);
+        ctx.attachComponent(this._friendBar, [IID_HabboFriendBar]);
 
-		log.info('Friend Bar initialized');
-	}
+        log.info('Friend Bar initialized');
+    }
 
-	/**
+    /**
 	 * Initialize localization.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as (inline in prepareCore)
 	 */
-	initLocalization(): void
-	{
-		if (this._configurationManager!.propertyExists('localization.1'))
-		{
-			const locName = this._configurationManager!.getProperty('localization.1');
+    initLocalization(): void
+    {
+        if(this._configurationManager!.propertyExists('localization.1'))
+        {
+            const locName = this._configurationManager!.getProperty('localization.1');
 
-			this._localizationManager!.activateLocalizationDefinition(locName);
-		}
-	}
+            this._localizationManager!.activateLocalizationDefinition(locName);
+        }
+    }
 
-	/**
+    /**
 	 * Main update loop — PixiJS ticker calls this each frame.
 	 *
 	 * Delegates to CoreComponentContext.update() which handles
@@ -766,21 +766,21 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as (ticker integration)
 	 */
-	private update(ticker: Ticker): void
-	{
-		if(this._disposed) return;
+    private update(ticker: Ticker): void
+    {
+        if(this._disposed) return;
 
-		const ctx = Core.instance as CoreComponentContext;
+        const ctx = Core.instance as CoreComponentContext;
 
-		if(ctx)
-		{
-			ctx.update(ticker.deltaMS);
-		}
+        if(ctx)
+        {
+            ctx.update(ticker.deltaMS);
+        }
 
-		this.onExitFrame();
-	}
+        this.onExitFrame();
+    }
 
-	/**
+    /**
 	 * Once both the room engine and the core are up and running, the
 	 * loading screen has done its job and can be freed.
 	 *
@@ -794,20 +794,20 @@ export class HeliumMain implements IHeliumMain
 	 * @see sources/flash_version/src/HabboMain.as::onExitFrame()
 	 * @see sources/win63_2023_version/HabboAirMain.as::onExitFrame()
 	 */
-	private onExitFrame(): void
-	{
-		if (this._bootFinalized || !this._roomEngineReady || !this._coreRunning) return;
+    private onExitFrame(): void
+    {
+        if(this._bootFinalized || !this._roomEngineReady || !this._coreRunning) return;
 
-		this._bootFinalized = true;
+        this._bootFinalized = true;
 
-		if (this._loadingScreen)
-		{
-			this._loadingScreen.dispose();
-			this._loadingScreen = null;
-		}
-	}
+        if(this._loadingScreen)
+        {
+            this._loadingScreen.dispose();
+            this._loadingScreen = null;
+        }
+    }
 
-	/**
+    /**
 	 * Set up listeners to track initialization progress of key components.
 	 *
 	 * AS3 listens for:
@@ -818,31 +818,31 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as addInitializationProgressListeners()
 	 */
-	private addInitializationProgressListeners(): void
-	{
-		// AS3: simpleQueueInterface(new IIDHabboConfigurationManager(), onConfigurationComplete)
-		// Configuration is already loaded (we awaited initConfigurationDownload in prepareCore)
-		this.onConfigurationComplete();
+    private addInitializationProgressListeners(): void
+    {
+        // AS3: simpleQueueInterface(new IIDHabboConfigurationManager(), onConfigurationComplete)
+        // Configuration is already loaded (we awaited initConfigurationDownload in prepareCore)
+        this.onConfigurationComplete();
 
-		// AS3: simpleQueueInterface(new IIDHabboLocalizationManager(), cb → events.addEventListener("complete", onLocalizationComplete))
-		if (this._localizationManager)
-		{
-			this._localizationManager.events.on('complete', () => this.onLocalizationComplete());
-		}
+        // AS3: simpleQueueInterface(new IIDHabboLocalizationManager(), cb → events.addEventListener("complete", onLocalizationComplete))
+        if(this._localizationManager)
+        {
+            this._localizationManager.events.on('complete', () => this.onLocalizationComplete());
+        }
 
-		// AS3: simpleQueueInterface(new IIDRoomEngine(), cb → events.addEventListener("REE_ENGINE_INITIALIZED", onRoomEngineReady))
-		if (this._roomEngine)
-		{
-			this._roomEngine.events.on('REE_ENGINE_INITIALIZED', () => this.onRoomEngineReady());
-		}
+        // AS3: simpleQueueInterface(new IIDRoomEngine(), cb → events.addEventListener("REE_ENGINE_INITIALIZED", onRoomEngineReady))
+        if(this._roomEngine)
+        {
+            this._roomEngine.events.on('REE_ENGINE_INITIALIZED', () => this.onRoomEngineReady());
+        }
 
-		// AS3: _core.events.addEventListener("COMPONENT_EVENT_RUNNING", onCoreRunning)
-		// In our system, all components are ready after prepareCore + microtask flush.
-		// We trigger this after the current microtask completes.
-		queueMicrotask(() => this.onCoreRunning());
-	}
+        // AS3: _core.events.addEventListener("COMPONENT_EVENT_RUNNING", onCoreRunning)
+        // In our system, all components are ready after prepareCore + microtask flush.
+        // We trigger this after the current microtask completes.
+        queueMicrotask(() => this.onCoreRunning());
+    }
 
-	/**
+    /**
 	 * Update the loading bar progress.
 	 *
 	 * Progress formula: CORE_RATIO + (completedInitSteps / INIT_STEPS) * (1 - CORE_RATIO)
@@ -850,55 +850,55 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as updateProgressBar()
 	 */
-	private updateProgressBar(): void
-	{
-		if (this._loadingScreen != null)
-		{
-			const progress = HeliumMain.CORE_RATIO + ((this._completedInitSteps / HeliumMain.INIT_STEPS) * (1 - HeliumMain.CORE_RATIO));
+    private updateProgressBar(): void
+    {
+        if(this._loadingScreen != null)
+        {
+            const progress = HeliumMain.CORE_RATIO + ((this._completedInitSteps / HeliumMain.INIT_STEPS) * (1 - HeliumMain.CORE_RATIO));
 
-			this._loadingScreen.updateLoadingBar(progress);
-		}
-	}
+            this._loadingScreen.updateLoadingBar(progress);
+        }
+    }
 
-	/**
+    /**
 	 * Called when the configuration manager has loaded.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as onConfigurationComplete()
 	 */
-	private onConfigurationComplete(): void
-	{
-		Helium.trackLoginStep('client.init.config.loaded');
-		this._completedInitSteps++;
-		this.updateProgressBar();
-	}
+    private onConfigurationComplete(): void
+    {
+        Helium.trackLoginStep('client.init.config.loaded');
+        this._completedInitSteps++;
+        this.updateProgressBar();
+    }
 
-	/**
+    /**
 	 * Called when the localization manager has finished loading.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as onLocalizationComplete()
 	 */
-	private onLocalizationComplete(): void
-	{
-		Helium.trackLoginStep('client.init.localization.loaded');
+    private onLocalizationComplete(): void
+    {
+        Helium.trackLoginStep('client.init.localization.loaded');
 
-		// Wire localization resolver for WindowParser.
-		if (this._localizationManager)
-		{
-			const locMgr = this._localizationManager;
+        // Wire localization resolver for WindowParser.
+        if(this._localizationManager)
+        {
+            const locMgr = this._localizationManager;
 
-			WindowParser.localizationResolver = (key: string) =>
-			{
-				const value = locMgr.getLocalization(key, '');
+            WindowParser.localizationResolver = (key: string) =>
+            {
+                const value = locMgr.getLocalization(key, '');
 
-				return value !== '' ? value : null;
-			};
-		}
+                return value !== '' ? value : null;
+            };
+        }
 
-		this._completedInitSteps++;
-		this.updateProgressBar();
-	}
+        this._completedInitSteps++;
+        this.updateProgressBar();
+    }
 
-	/**
+    /**
 	 * Called when the room engine has finished initialization.
 	 *
 	 * AS3: Sets _SafeStr_412 = true, starts heartbeat if spaweb=1.
@@ -906,15 +906,15 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as onRoomEngineReady()
 	 */
-	private onRoomEngineReady(): void
-	{
-		this._roomEngineReady = true;
-		Helium.trackLoginStep('client.init.room.ready');
+    private onRoomEngineReady(): void
+    {
+        this._roomEngineReady = true;
+        Helium.trackLoginStep('client.init.room.ready');
 
-		this.startSendingHeartBeat();
-	}
+        this.startSendingHeartBeat();
+    }
 
-	/**
+    /**
 	 * Called when all core components are running.
 	 *
 	 * AS3: Sets _SafeStr_413 = true, increments completedInitSteps.
@@ -922,15 +922,15 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as onCoreRunning()
 	 */
-	private onCoreRunning(): void
-	{
-		this._coreRunning = true;
-		Helium.trackLoginStep('client.init.core.running');
-		this._completedInitSteps++;
-		this.updateProgressBar();
-	}
+    private onCoreRunning(): void
+    {
+        this._coreRunning = true;
+        Helium.trackLoginStep('client.init.core.running');
+        this._completedInitSteps++;
+        this.updateProgressBar();
+    }
 
-	/**
+    /**
 	 * Start sending heartbeat at regular intervals.
 	 *
 	 * AS3: If config "spaweb=1", sends heartbeat every 10 seconds
@@ -938,30 +938,30 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as startSendingHeartBeat()
 	 */
-	private startSendingHeartBeat(): void
-	{
-		const config = this._configurationManager;
+    private startSendingHeartBeat(): void
+    {
+        const config = this._configurationManager;
 
-		if (!config) return;
+        if(!config) return;
 
-		const spaweb = config.propertyExists('spaweb')
-			? config.getProperty('spaweb')
-			: '0';
+        const spaweb = config.propertyExists('spaweb')
+            ? config.getProperty('spaweb')
+            : '0';
 
-		if (spaweb === '1')
-		{
-			log.info('SPA heartbeat enabled');
+        if(spaweb === '1')
+        {
+            log.info('SPA heartbeat enabled');
 
-			this.sendHeartBeat();
+            this.sendHeartBeat();
 
-			this._heartbeatTimer = setInterval(() =>
-			{
-				this.sendHeartBeat();
-			}, 10000);
-		}
-	}
+            this._heartbeatTimer = setInterval(() =>
+            {
+                this.sendHeartBeat();
+            }, 10000);
+        }
+    }
 
-	/**
+    /**
 	 * Send a heartbeat signal.
 	 *
 	 * Emits a 'heartbeat' event on the Helium instance.
@@ -969,32 +969,32 @@ export class HeliumMain implements IHeliumMain
 	 *
 	 * @see sources/win63_version/Habbo.as sendHeartBeat()
 	 */
-	private sendHeartBeat(): void
-	{
-		Helium.instance.heliumEvents.emit('heartbeat');
-	}
+    private sendHeartBeat(): void
+    {
+        Helium.instance.heliumEvents.emit('heartbeat');
+    }
 
-	/**
+    /**
 	 * Handle a core component error.
 	 *
 	 * @see sources/win63_version/HabboMain.as onCoreError()
 	 */
-	private onCoreError(message: string): void
-	{
-		log.error(`Core error: ${message}`);
+    private onCoreError(message: string): void
+    {
+        log.error(`Core error: ${message}`);
 
-		Helium.reportCrash(message, 'core', false);
-	}
+        Helium.reportCrash(message, 'core', false);
+    }
 
-	/**
+    /**
 	 * Handle a core component reboot request.
 	 *
 	 * @see sources/win63_version/HabboMain.as onCoreReboot()
 	 */
-	private onCoreReboot(): void
-	{
-		log.warn('Core reboot requested');
+    private onCoreReboot(): void
+    {
+        log.warn('Core reboot requested');
 
-		Helium.instance.heliumEvents.emit('reboot');
-	}
+        Helium.instance.heliumEvents.emit('reboot');
+    }
 }

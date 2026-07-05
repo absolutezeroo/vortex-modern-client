@@ -12,6 +12,6 @@ import type {IItemListWindow} from './IItemListWindow';
  */
 export interface IHeaderWindow extends IWindowContainer
 {
-	readonly title: ILabelWindow;
-	readonly controls: IItemListWindow;
+    readonly title: ILabelWindow;
+    readonly controls: IItemListWindow;
 }

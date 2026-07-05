@@ -9,57 +9,57 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class HistoryMessageEntry
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._senderId = wrapper.readInt();
-		this._senderName = wrapper.readString();
-		this._senderFigure = wrapper.readString();
-		this._message = wrapper.readString();
-		this._secondsSinceSent = wrapper.readInt();
-		this._messageId = wrapper.readString();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._senderId = wrapper.readInt();
+        this._senderName = wrapper.readString();
+        this._senderFigure = wrapper.readString();
+        this._message = wrapper.readString();
+        this._secondsSinceSent = wrapper.readInt();
+        this._messageId = wrapper.readString();
+    }
 
-	private _senderId: number;
+    private _senderId: number;
 
-	get senderId(): number
-	{
-		return this._senderId;
-	}
+    get senderId(): number
+    {
+        return this._senderId;
+    }
 
-	private _senderName: string;
+    private _senderName: string;
 
-	get senderName(): string
-	{
-		return this._senderName;
-	}
+    get senderName(): string
+    {
+        return this._senderName;
+    }
 
-	private _senderFigure: string;
+    private _senderFigure: string;
 
-	get senderFigure(): string
-	{
-		return this._senderFigure;
-	}
+    get senderFigure(): string
+    {
+        return this._senderFigure;
+    }
 
-	private _message: string;
+    private _message: string;
 
-	get message(): string
-	{
-		return this._message;
-	}
+    get message(): string
+    {
+        return this._message;
+    }
 
-	private _secondsSinceSent: number;
+    private _secondsSinceSent: number;
 
-	get secondsSinceSent(): number
-	{
-		return this._secondsSinceSent;
-	}
+    get secondsSinceSent(): number
+    {
+        return this._secondsSinceSent;
+    }
 
-	private _messageId: string;
+    private _messageId: string;
 
-	get messageId(): string
-	{
-		return this._messageId;
-	}
+    get messageId(): string
+    {
+        return this._messageId;
+    }
 }
 
 /**
@@ -70,41 +70,41 @@ export class HistoryMessageEntry
  */
 export class ConsoleMessageHistoryEventParser implements IMessageParser
 {
-	private _chatId: number = 0;
+    private _chatId: number = 0;
 
-	get chatId(): number
-	{
-		return this._chatId;
-	}
+    get chatId(): number
+    {
+        return this._chatId;
+    }
 
-	private _historyFragment: HistoryMessageEntry[] = [];
+    private _historyFragment: HistoryMessageEntry[] = [];
 
-	get historyFragment(): HistoryMessageEntry[]
-	{
-		return this._historyFragment;
-	}
+    get historyFragment(): HistoryMessageEntry[]
+    {
+        return this._historyFragment;
+    }
 
-	flush(): boolean
-	{
-		this._chatId = 0;
-		this._historyFragment = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._chatId = 0;
+        this._historyFragment = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._chatId = wrapper.readInt();
-		this._historyFragment = [];
+        this._chatId = wrapper.readInt();
+        this._historyFragment = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._historyFragment.push(new HistoryMessageEntry(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._historyFragment.push(new HistoryMessageEntry(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

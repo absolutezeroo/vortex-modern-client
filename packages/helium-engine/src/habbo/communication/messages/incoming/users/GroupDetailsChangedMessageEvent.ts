@@ -9,13 +9,13 @@ import {GroupDetailsChangedMessageParser} from '../../parser/users/GroupDetailsC
  */
 export class GroupDetailsChangedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GroupDetailsChangedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GroupDetailsChangedMessageParser);
+    }
 
-	get groupId(): number
-	{
-		return (this._parser as GroupDetailsChangedMessageParser).groupId;
-	}
+    get groupId(): number
+    {
+        return (this._parser as GroupDetailsChangedMessageParser).groupId;
+    }
 }

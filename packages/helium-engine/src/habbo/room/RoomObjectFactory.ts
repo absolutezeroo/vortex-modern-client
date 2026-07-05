@@ -40,182 +40,182 @@ type LogicConstructor = new () => IRoomObjectEventHandler;
 
 export class RoomObjectFactory implements IRoomObjectFactory
 {
-	private _registeredTypes: Map<string, boolean>;
-	private _trackedEventTypes: Map<string, boolean>;
-	private _objectEventListeners: Array<(event: unknown) => void>;
+    private _registeredTypes: Map<string, boolean>;
+    private _trackedEventTypes: Map<string, boolean>;
+    private _objectEventListeners: Array<(event: unknown) => void>;
 
-	constructor()
-	{
-		this._events = new EventEmitter();
-		this._registeredTypes = new Map();
-		this._trackedEventTypes = new Map();
-		this._objectEventListeners = [];
-	}
+    constructor()
+    {
+        this._events = new EventEmitter();
+        this._registeredTypes = new Map();
+        this._trackedEventTypes = new Map();
+        this._objectEventListeners = [];
+    }
 
-	private _events: EventEmitter;
+    private _events: EventEmitter;
 
-	get events(): EventEmitter
-	{
-		return this._events;
-	}
+    get events(): EventEmitter
+    {
+        return this._events;
+    }
 
-	addObjectEventListener(callback: (event: unknown) => void): void
-	{
-		if (this._objectEventListeners.indexOf(callback) < 0)
-		{
-			this._objectEventListeners.push(callback);
+    addObjectEventListener(callback: (event: unknown) => void): void
+    {
+        if(this._objectEventListeners.indexOf(callback) < 0)
+        {
+            this._objectEventListeners.push(callback);
 
-			if (callback !== null)
-			{
-				for (const eventType of this._trackedEventTypes.keys())
-				{
-					this._events.on(eventType, callback);
-				}
-			}
-		}
-	}
+            if(callback !== null)
+            {
+                for(const eventType of this._trackedEventTypes.keys())
+                {
+                    this._events.on(eventType, callback);
+                }
+            }
+        }
+    }
 
-	removeObjectEventListener(callback: (event: unknown) => void): void
-	{
-		const index = this._objectEventListeners.indexOf(callback);
+    removeObjectEventListener(callback: (event: unknown) => void): void
+    {
+        const index = this._objectEventListeners.indexOf(callback);
 
-		if (index >= 0)
-		{
-			this._objectEventListeners.splice(index, 1);
+        if(index >= 0)
+        {
+            this._objectEventListeners.splice(index, 1);
 
-			if (callback !== null)
-			{
-				for (const eventType of this._trackedEventTypes.keys())
-				{
-					this._events.off(eventType, callback);
-				}
-			}
-		}
-	}
+            if(callback !== null)
+            {
+                for(const eventType of this._trackedEventTypes.keys())
+                {
+                    this._events.off(eventType, callback);
+                }
+            }
+        }
+    }
 
-	createRoomObjectLogic(type: string): IRoomObjectEventHandler | null
-	{
-		let LogicClass: LogicConstructor | null = null;
+    createRoomObjectLogic(type: string): IRoomObjectEventHandler | null
+    {
+        let LogicClass: LogicConstructor | null = null;
 
-		switch (type)
-		{
-			// Basic furniture types
-			case RoomObjectLogicEnum.FURNITURE_BASIC:
-				LogicClass = FurnitureLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_MULTISTATE:
-				LogicClass = FurnitureMultiStateLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_MULTIHEIGHT:
-				LogicClass = FurnitureMultiHeightLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_PLACEHOLDER:
-				LogicClass = FurniturePlaceholderLogic;
-				break;
+        switch(type)
+        {
+            // Basic furniture types
+            case RoomObjectLogicEnum.FURNITURE_BASIC:
+                LogicClass = FurnitureLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_MULTISTATE:
+                LogicClass = FurnitureMultiStateLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_MULTIHEIGHT:
+                LogicClass = FurnitureMultiHeightLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_PLACEHOLDER:
+                LogicClass = FurniturePlaceholderLogic;
+                break;
 
-			// Specific furniture types
-			case RoomObjectLogicEnum.FURNITURE_DICE:
-				LogicClass = FurnitureDiceLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_ONE_WAY_DOOR:
-				LogicClass = FurnitureOneWayDoorLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_STICKIE:
-				LogicClass = FurnitureStickieLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_PRESENT:
-				LogicClass = FurniturePresentLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_TROPHY:
-				LogicClass = FurnitureTrophyLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_MANNEQUIN:
-				LogicClass = FurnitureMannequinLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_ROOMDIMMER:
-				LogicClass = FurnitureRoomDimmerLogic;
-				break;
-			case RoomObjectLogicEnum.FURNITURE_JUKEBOX:
-				LogicClass = FurnitureJukeboxLogic;
-				break;
+                // Specific furniture types
+            case RoomObjectLogicEnum.FURNITURE_DICE:
+                LogicClass = FurnitureDiceLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_ONE_WAY_DOOR:
+                LogicClass = FurnitureOneWayDoorLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_STICKIE:
+                LogicClass = FurnitureStickieLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_PRESENT:
+                LogicClass = FurniturePresentLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_TROPHY:
+                LogicClass = FurnitureTrophyLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_MANNEQUIN:
+                LogicClass = FurnitureMannequinLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_ROOMDIMMER:
+                LogicClass = FurnitureRoomDimmerLogic;
+                break;
+            case RoomObjectLogicEnum.FURNITURE_JUKEBOX:
+                LogicClass = FurnitureJukeboxLogic;
+                break;
 
-			// Avatar types
-			case RoomObjectLogicEnum.USER:
-			case RoomObjectLogicEnum.BOT:
-			case RoomObjectLogicEnum.RENTABLE_BOT:
-				LogicClass = AvatarLogic;
-				break;
+                // Avatar types
+            case RoomObjectLogicEnum.USER:
+            case RoomObjectLogicEnum.BOT:
+            case RoomObjectLogicEnum.RENTABLE_BOT:
+                LogicClass = AvatarLogic;
+                break;
 
-			case RoomObjectLogicEnum.PET:
-				LogicClass = PetLogic;
-				break;
+            case RoomObjectLogicEnum.PET:
+                LogicClass = PetLogic;
+                break;
 
-			// Room types
-			case RoomObjectLogicEnum.ROOM:
-				LogicClass = RoomLogic;
-				break;
+                // Room types
+            case RoomObjectLogicEnum.ROOM:
+                LogicClass = RoomLogic;
+                break;
 
-			case RoomObjectLogicEnum.ROOM_TILE_CURSOR:
-				LogicClass = RoomTileCursorLogic;
-				break;
+            case RoomObjectLogicEnum.ROOM_TILE_CURSOR:
+                LogicClass = RoomTileCursorLogic;
+                break;
 
-			case RoomObjectLogicEnum.SELECTION_ARROW:
-				LogicClass = SelectionArrowLogic;
-				break;
+            case RoomObjectLogicEnum.SELECTION_ARROW:
+                LogicClass = SelectionArrowLogic;
+                break;
 
-			default:
-				// Default to basic furniture logic for unknown types
-				LogicClass = FurnitureLogic;
-				break;
-		}
+            default:
+                // Default to basic furniture logic for unknown types
+                LogicClass = FurnitureLogic;
+                break;
+        }
 
-		if (LogicClass === null)
-		{
-			return null;
-		}
+        if(LogicClass === null)
+        {
+            return null;
+        }
 
-		const logic = new LogicClass();
+        const logic = new LogicClass();
 
-		if (logic !== null)
-		{
-			logic.eventDispatcher = this._events;
+        if(logic !== null)
+        {
+            logic.eventDispatcher = this._events;
 
-			if (!this._registeredTypes.has(type))
-			{
-				this._registeredTypes.set(type, true);
+            if(!this._registeredTypes.has(type))
+            {
+                this._registeredTypes.set(type, true);
 
-				const eventTypes = logic.getEventTypes();
+                const eventTypes = logic.getEventTypes();
 
-				for (const eventType of eventTypes)
-				{
-					this.addTrackedEventType(eventType);
-				}
-			}
+                for(const eventType of eventTypes)
+                {
+                    this.addTrackedEventType(eventType);
+                }
+            }
 
-			return logic;
-		}
+            return logic;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	createRoomObjectManager(): IRoomObjectManager
-	{
-		return new RoomObjectManager();
-	}
+    createRoomObjectManager(): IRoomObjectManager
+    {
+        return new RoomObjectManager();
+    }
 
-	private addTrackedEventType(eventType: string): void
-	{
-		if (!this._trackedEventTypes.has(eventType))
-		{
-			this._trackedEventTypes.set(eventType, true);
+    private addTrackedEventType(eventType: string): void
+    {
+        if(!this._trackedEventTypes.has(eventType))
+        {
+            this._trackedEventTypes.set(eventType, true);
 
-			for (const listener of this._objectEventListeners)
-			{
-				if (listener !== null)
-				{
-					this._events.on(eventType, listener);
-				}
-			}
-		}
-	}
+            for(const listener of this._objectEventListeners)
+            {
+                if(listener !== null)
+                {
+                    this._events.on(eventType, listener);
+                }
+            }
+        }
+    }
 }

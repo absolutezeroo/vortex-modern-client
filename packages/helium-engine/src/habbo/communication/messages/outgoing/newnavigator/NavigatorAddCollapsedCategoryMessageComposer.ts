@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class NavigatorAddCollapsedCategoryMessageComposer extends MessageComposer<ConstructorParameters<typeof NavigatorAddCollapsedCategoryMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof NavigatorAddCollapsedCategoryMessageComposer>;
+    private _data: ConstructorParameters<typeof NavigatorAddCollapsedCategoryMessageComposer>;
 
-	constructor(category: string)
-	{
-		super();
+    constructor(category: string)
+    {
+        super();
 
-		this._data = [category];
-	}
+        this._data = [category];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

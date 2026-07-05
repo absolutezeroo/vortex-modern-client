@@ -9,16 +9,16 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectAvatarSignUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(signType: number)
-	{
-		super(null, null);
-		this._signType = signType;
-	}
+    constructor(signType: number)
+    {
+        super(null, null);
+        this._signType = signType;
+    }
 
-	private _signType: number;
+    private _signType: number;
 
-	get signType(): number
-	{
-		return this._signType;
-	}
+    get signType(): number
+    {
+        return this._signType;
+    }
 }

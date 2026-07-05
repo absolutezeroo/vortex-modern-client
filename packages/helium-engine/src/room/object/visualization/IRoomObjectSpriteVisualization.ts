@@ -13,14 +13,14 @@ import type {IGraphicAssetCollection} from './utils/IGraphicAssetCollection';
 
 export interface IRoomObjectSpriteVisualization extends IRoomObjectVisualization
 {
-	spriteCount: number;
-	assetCollection: IGraphicAssetCollection | null;
+    spriteCount: number;
+    assetCollection: IGraphicAssetCollection | null;
 
-	getSprite(index: number): IRoomObjectSprite | null;
+    getSprite(index: number): IRoomObjectSprite | null;
 
-	getSpriteList(): IRoomObjectSprite[] | null;
+    getSpriteList(): IRoomObjectSprite[] | null;
 
-	getUpdateID(): number;
+    getUpdateID(): number;
 
-	getInstanceId(): number;
+    getInstanceId(): number;
 }

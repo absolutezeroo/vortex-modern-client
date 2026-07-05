@@ -1,7 +1,7 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IIterator} from '../utils/IIterator';
-import {WindowEvent} from '../events/WindowEvent';
+import type {WindowEvent} from '../events/WindowEvent';
 import {ContainerIterator} from '../iterators/ContainerIterator';
 import {InteractiveController} from './InteractiveController';
 
@@ -15,28 +15,28 @@ import {InteractiveController} from './InteractiveController';
  */
 export class ContainerButtonController extends InteractiveController
 {
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0
-	)
-	{
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
-	}
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0
+    )
+    {
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
 
-	/**
+    /**
 	 * Returns an iterator over children.
 	 */
-	public iterator(): IIterator
-	{
-		return new ContainerIterator(this._children ?? []);
-	}
+    public iterator(): IIterator
+    {
+        return new ContainerIterator(this._children ?? []);
+    }
 }

@@ -9,18 +9,18 @@ import {IgnoreResultMessageParser} from '../../parser/users/IgnoreResultMessageP
  */
 export class IgnoreResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IgnoreResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IgnoreResultMessageParser);
+    }
 
-	get result(): number
-	{
-		return (this._parser as IgnoreResultMessageParser).result;
-	}
+    get result(): number
+    {
+        return (this._parser as IgnoreResultMessageParser).result;
+    }
 
-	get userId(): number
-	{
-		return (this._parser as IgnoreResultMessageParser).ignoredUserId;
-	}
+    get userId(): number
+    {
+        return (this._parser as IgnoreResultMessageParser).ignoredUserId;
+    }
 }

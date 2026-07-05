@@ -7,16 +7,16 @@ import type {IAnimation} from './IAnimation';
  */
 export interface ISpriteDataContainer
 {
-	readonly animation: IAnimation;
-	readonly id: string;
-	readonly ink: number;
-	readonly member: string;
-	readonly hasDirections: boolean;
-	readonly hasStaticY: boolean;
+    readonly animation: IAnimation;
+    readonly id: string;
+    readonly ink: number;
+    readonly member: string;
+    readonly hasDirections: boolean;
+    readonly hasStaticY: boolean;
 
-	getDirectionOffsetX(direction: number): number;
+    getDirectionOffsetX(direction: number): number;
 
-	getDirectionOffsetY(direction: number): number;
+    getDirectionOffsetY(direction: number): number;
 
-	getDirectionOffsetZ(direction: number): number;
+    getDirectionOffsetZ(direction: number): number;
 }

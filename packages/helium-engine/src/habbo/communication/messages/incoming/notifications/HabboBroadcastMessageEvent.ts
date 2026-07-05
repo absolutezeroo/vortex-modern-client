@@ -9,8 +9,8 @@ import {HabboBroadcastMessageEventParser} from '../../parser/notifications/Habbo
  */
 export class HabboBroadcastMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboBroadcastMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboBroadcastMessageEventParser);
+    }
 }

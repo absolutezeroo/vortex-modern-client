@@ -9,14 +9,13 @@ import type {IWidget} from './IWidget';
  */
 export interface ILimitedItemOverlayWidget extends IWidget
 {
-	/**
+    /**
 	 * The serial number of the limited item.
 	 */
-	serialNumber: number;
+    serialNumber: number;
 
-	/**
+    /**
 	 * The total series size.
 	 */
-	seriesSize: number;
+    seriesSize: number;
 }
-

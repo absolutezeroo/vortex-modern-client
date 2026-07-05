@@ -11,21 +11,21 @@ import type {IWindow} from '../IWindow';
  */
 export interface IBitmapWrapperWindow extends IWindow
 {
-	/**
+    /**
 	 * The programmatic bitmap for this window.
 	 *
 	 * Setting this disposes the old bitmap if `disposesBitmap` is true,
 	 * calls `fitSize()`, and invalidates the window.
 	 */
-	bitmap: ImageBitmap | null;
+    bitmap: ImageBitmap | null;
 
-	/**
+    /**
 	 * The underlying bitmap data (alias for bitmap).
 	 */
-	bitmapData: ImageBitmap | null;
+    bitmapData: ImageBitmap | null;
 
-	/**
+    /**
 	 * Whether this window owns the bitmap and should dispose it.
 	 */
-	disposesBitmap: boolean;
+    disposesBitmap: boolean;
 }

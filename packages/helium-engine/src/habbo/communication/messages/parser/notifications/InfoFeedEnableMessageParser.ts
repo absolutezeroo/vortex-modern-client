@@ -8,22 +8,22 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class InfoFeedEnableMessageParser implements IMessageParser
 {
-	private _enabled: boolean = false;
+    private _enabled: boolean = false;
 
-	get enabled(): boolean
-	{
-		return this._enabled;
-	}
+    get enabled(): boolean
+    {
+        return this._enabled;
+    }
 
-	flush(): boolean
-	{
-		this._enabled = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._enabled = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._enabled = wrapper.readBoolean();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._enabled = wrapper.readBoolean();
+        return true;
+    }
 }

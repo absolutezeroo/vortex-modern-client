@@ -13,44 +13,44 @@ import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 
 export interface IRoomEngineServices
 {
-	// Connection
-	readonly connection: IConnection | null;
+    // Connection
+    readonly connection: IConnection | null;
 
-	// Events
-	readonly events: EventEmitter;
+    // Events
+    readonly events: EventEmitter;
 
-	// State flags
-	readonly isDecorateMode: boolean;
-	readonly isGameMode: boolean;
+    // State flags
+    readonly isDecorateMode: boolean;
+    readonly isGameMode: boolean;
 
-	// Room access
-	getRoom(roomId: number): IRoomInstance | null;
+    // Room access
+    getRoom(roomId: number): IRoomInstance | null;
 
-	// Object access
-	getRoomObjectCategory(type: string): number;
+    // Object access
+    getRoomObjectCategory(type: string): number;
 
-	getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null;
+    getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null;
 
-	getRoomObjectWithIndex(roomId: number, index: number, category: number): IRoomObject | null;
+    getRoomObjectWithIndex(roomId: number, index: number, category: number): IRoomObject | null;
 
-	getRoomObjectCount(roomId: number, category: number): number;
+    getRoomObjectCount(roomId: number, category: number): number;
 
-	// Tile cursor
-	getTileCursor(roomId: number): IRoomObjectController | null;
+    // Tile cursor
+    getTileCursor(roomId: number): IRoomObjectController | null;
 
-	// Selection arrow
-	getSelectionArrow(roomId: number): IRoomObjectController | null;
+    // Selection arrow
+    getSelectionArrow(roomId: number): IRoomObjectController | null;
 
-	// Game state
-	getIsPlayingGame(roomId: number): boolean;
+    // Game state
+    getIsPlayingGame(roomId: number): boolean;
 
-	getActiveRoomIsPlayingGame(): boolean;
+    getActiveRoomIsPlayingGame(): boolean;
 
-	// Area selection
-	isAreaSelectionMode(): boolean;
+    // Area selection
+    isAreaSelectionMode(): boolean;
 
-	// Movement
-	isMoveBlocked(): boolean;
+    // Movement
+    isMoveBlocked(): boolean;
 
-	isWhereYouClickWhereYouGo(): boolean;
+    isWhereYouClickWhereYouGo(): boolean;
 }

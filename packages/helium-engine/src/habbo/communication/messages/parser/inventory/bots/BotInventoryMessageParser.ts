@@ -3,11 +3,11 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 
 export interface BotData
 {
-	id: number;
-	name: string;
-	motto: string;
-	gender: string;
-	figure: string;
+    id: number;
+    name: string;
+    motto: string;
+    gender: string;
+    figure: string;
 }
 
 /**
@@ -17,34 +17,34 @@ export interface BotData
  */
 export class BotInventoryMessageParser implements IMessageParser
 {
-	private _bots: BotData[] = [];
+    private _bots: BotData[] = [];
 
-	get bots(): BotData[]
-	{
-		return this._bots;
-	}
+    get bots(): BotData[]
+    {
+        return this._bots;
+    }
 
-	flush(): boolean
-	{
-		this._bots = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._bots = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		const count = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const id = wrapper.readInt();
-			const name = wrapper.readString();
-			const motto = wrapper.readString();
-			const gender = wrapper.readString();
-			const figure = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const id = wrapper.readInt();
+            const name = wrapper.readString();
+            const motto = wrapper.readString();
+            const gender = wrapper.readString();
+            const figure = wrapper.readString();
 
-			this._bots.push({id, name, motto, gender, figure});
-		}
+            this._bots.push({id, name, motto, gender, figure});
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -7,219 +7,219 @@ import {PetCustomPart} from './PetCustomPart';
  */
 export class PetFigureData
 {
-	constructor(figureString: string)
-	{
-		this._typeId = this.parseTypeId(figureString);
-		this._paletteId = this.parsePaletteId(figureString);
-		this._color = this.parseColor(figureString);
-		this._headOnly = this.parseHeadOnly(figureString);
+    constructor(figureString: string)
+    {
+        this._typeId = this.parseTypeId(figureString);
+        this._paletteId = this.parsePaletteId(figureString);
+        this._color = this.parseColor(figureString);
+        this._headOnly = this.parseHeadOnly(figureString);
 
-		const customData = this.parseCustomData(figureString);
+        const customData = this.parseCustomData(figureString);
 
-		this._customLayerIds = this.extractCustomLayerIds(customData);
-		this._customPartIds = this.extractCustomPartIds(customData);
-		this._customPaletteIds = this.extractCustomPaletteIds(customData);
+        this._customLayerIds = this.extractCustomLayerIds(customData);
+        this._customPartIds = this.extractCustomPartIds(customData);
+        this._customPaletteIds = this.extractCustomPaletteIds(customData);
 
-		this._customParts = [];
+        this._customParts = [];
 
-		for (let i = 0; i < this._customLayerIds.length; i++)
-		{
-			this._customParts.push(new PetCustomPart(
-				this._customLayerIds[i],
-				this._customPartIds[i],
-				this._customPaletteIds[i]
-			));
-		}
-	}
+        for(let i = 0; i < this._customLayerIds.length; i++)
+        {
+            this._customParts.push(new PetCustomPart(
+                this._customLayerIds[i],
+                this._customPartIds[i],
+                this._customPaletteIds[i]
+            ));
+        }
+    }
 
-	private _typeId: number;
+    private _typeId: number;
 
-	public get typeId(): number
-	{
-		return this._typeId;
-	}
+    public get typeId(): number
+    {
+        return this._typeId;
+    }
 
-	private _paletteId: number;
+    private _paletteId: number;
 
-	public get paletteId(): number
-	{
-		return this._paletteId;
-	}
+    public get paletteId(): number
+    {
+        return this._paletteId;
+    }
 
-	private _color: number;
+    private _color: number;
 
-	public get color(): number
-	{
-		return this._color;
-	}
+    public get color(): number
+    {
+        return this._color;
+    }
 
-	private _customParts: PetCustomPart[];
+    private _customParts: PetCustomPart[];
 
-	public get customParts(): PetCustomPart[]
-	{
-		return this._customParts;
-	}
+    public get customParts(): PetCustomPart[]
+    {
+        return this._customParts;
+    }
 
-	private _customLayerIds: number[];
+    private _customLayerIds: number[];
 
-	public get customLayerIds(): number[]
-	{
-		return this._customLayerIds;
-	}
+    public get customLayerIds(): number[]
+    {
+        return this._customLayerIds;
+    }
 
-	private _customPartIds: number[];
+    private _customPartIds: number[];
 
-	public get customPartIds(): number[]
-	{
-		return this._customPartIds;
-	}
+    public get customPartIds(): number[]
+    {
+        return this._customPartIds;
+    }
 
-	private _customPaletteIds: number[];
+    private _customPaletteIds: number[];
 
-	public get customPaletteIds(): number[]
-	{
-		return this._customPaletteIds;
-	}
+    public get customPaletteIds(): number[]
+    {
+        return this._customPaletteIds;
+    }
 
-	private _headOnly: boolean;
+    private _headOnly: boolean;
 
-	public get headOnly(): boolean
-	{
-		return this._headOnly;
-	}
+    public get headOnly(): boolean
+    {
+        return this._headOnly;
+    }
 
-	public get hasCustomParts(): boolean
-	{
-		return this._customLayerIds != null && this._customLayerIds.length > 0;
-	}
+    public get hasCustomParts(): boolean
+    {
+        return this._customLayerIds != null && this._customLayerIds.length > 0;
+    }
 
-	public get figureString(): string
-	{
-		let result = this._typeId + ' ' + this._paletteId + ' ' + this._color.toString(16);
+    public get figureString(): string
+    {
+        let result = this._typeId + ' ' + this._paletteId + ' ' + this._color.toString(16);
 
-		result += ' ' + this._customParts.length;
+        result += ' ' + this._customParts.length;
 
-		for (const part of this._customParts)
-		{
-			result += ' ' + part.layerId + ' ' + part.partId + ' ' + part.paletteId;
-		}
+        for(const part of this._customParts)
+        {
+            result += ' ' + part.layerId + ' ' + part.partId + ' ' + part.paletteId;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public getCustomPart(layerId: number): PetCustomPart | null
-	{
-		if (this._customParts)
-		{
-			for (const part of this._customParts)
-			{
-				if (part.layerId === layerId) return part;
-			}
-		}
+    public getCustomPart(layerId: number): PetCustomPart | null
+    {
+        if(this._customParts)
+        {
+            for(const part of this._customParts)
+            {
+                if(part.layerId === layerId) return part;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private parseCustomData(figureString: string): string[]
-	{
-		if (!figureString) return [];
+    private parseCustomData(figureString: string): string[]
+    {
+        if(!figureString) return [];
 
-		const parts = figureString.split(' ');
-		const headOffset = this._headOnly ? 1 : 0;
-		const startIndex = 4 + headOffset;
+        const parts = figureString.split(' ');
+        const headOffset = this._headOnly ? 1 : 0;
+        const startIndex = 4 + headOffset;
 
-		if (parts.length > startIndex)
-		{
-			const countIndex = 3 + headOffset;
-			const count = parseInt(parts[countIndex]);
+        if(parts.length > startIndex)
+        {
+            const countIndex = 3 + headOffset;
+            const count = parseInt(parts[countIndex]);
 
-			return parts.slice(startIndex, startIndex + count * 3);
-		}
+            return parts.slice(startIndex, startIndex + count * 3);
+        }
 
-		return [];
-	}
+        return [];
+    }
 
-	private extractCustomLayerIds(data: string[]): number[]
-	{
-		const result: number[] = [];
+    private extractCustomLayerIds(data: string[]): number[]
+    {
+        const result: number[] = [];
 
-		for (let i = 0; i < data.length; i += 3)
-		{
-			result.push(parseInt(data[i]));
-		}
+        for(let i = 0; i < data.length; i += 3)
+        {
+            result.push(parseInt(data[i]));
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private extractCustomPartIds(data: string[]): number[]
-	{
-		const result: number[] = [];
+    private extractCustomPartIds(data: string[]): number[]
+    {
+        const result: number[] = [];
 
-		for (let i = 0; i < data.length; i += 3)
-		{
-			result.push(parseInt(data[i + 1]));
-		}
+        for(let i = 0; i < data.length; i += 3)
+        {
+            result.push(parseInt(data[i + 1]));
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private extractCustomPaletteIds(data: string[]): number[]
-	{
-		const result: number[] = [];
+    private extractCustomPaletteIds(data: string[]): number[]
+    {
+        const result: number[] = [];
 
-		for (let i = 0; i < data.length; i += 3)
-		{
-			result.push(parseInt(data[i + 2]));
-		}
+        for(let i = 0; i < data.length; i += 3)
+        {
+            result.push(parseInt(data[i + 2]));
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private parseTypeId(figureString: string): number
-	{
-		if (figureString)
-		{
-			const parts = figureString.split(' ');
+    private parseTypeId(figureString: string): number
+    {
+        if(figureString)
+        {
+            const parts = figureString.split(' ');
 
-			if (parts.length >= 1) return parseInt(parts[0]);
-		}
+            if(parts.length >= 1) return parseInt(parts[0]);
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	private parsePaletteId(figureString: string): number
-	{
-		if (figureString)
-		{
-			const parts = figureString.split(' ');
+    private parsePaletteId(figureString: string): number
+    {
+        if(figureString)
+        {
+            const parts = figureString.split(' ');
 
-			if (parts.length >= 2) return parseInt(parts[1]);
-		}
+            if(parts.length >= 2) return parseInt(parts[1]);
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	private parseColor(figureString: string): number
-	{
-		if (figureString)
-		{
-			const parts = figureString.split(' ');
+    private parseColor(figureString: string): number
+    {
+        if(figureString)
+        {
+            const parts = figureString.split(' ');
 
-			if (parts.length >= 3) return parseInt(parts[2], 16);
-		}
+            if(parts.length >= 3) return parseInt(parts[2], 16);
+        }
 
-		return 0xFFFFFF;
-	}
+        return 0xFFFFFF;
+    }
 
-	private parseHeadOnly(figureString: string): boolean
-	{
-		if (figureString)
-		{
-			const parts = figureString.split(' ');
+    private parseHeadOnly(figureString: string): boolean
+    {
+        if(figureString)
+        {
+            const parts = figureString.split(' ');
 
-			if (parts.length >= 4) return parts[3] === 'head';
-		}
+            if(parts.length >= 4) return parts[3] === 'head';
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

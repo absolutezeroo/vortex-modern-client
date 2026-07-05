@@ -9,8 +9,8 @@ import {CantConnectMessageParser} from '@habbo/communication/messages/parser/roo
  */
 export class CantConnectMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CantConnectMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CantConnectMessageParser);
+    }
 }

@@ -21,77 +21,77 @@ import {WindowToolTipAgent} from './WindowToolTipAgent';
  */
 export class ServiceManager implements IInternalWindowServices
 {
-	private _dragger: WindowMouseDragger;
-	private _scaler: WindowMouseScaler;
-	private _mouseListener: WindowMouseListener;
-	private _focusManager: FocusManager;
-	private _toolTipAgent: WindowToolTipAgent;
-	private _gestureAgent: IGestureAgentService;
+    private _dragger: WindowMouseDragger;
+    private _scaler: WindowMouseScaler;
+    private _mouseListener: WindowMouseListener;
+    private _focusManager: FocusManager;
+    private _toolTipAgent: WindowToolTipAgent;
+    private _gestureAgent: IGestureAgentService;
 
-	constructor()
-	{
-		this._dragger = new WindowMouseDragger();
-		this._scaler = new WindowMouseScaler();
-		this._mouseListener = new WindowMouseListener();
-		this._focusManager = new FocusManager();
-		this._toolTipAgent = new WindowToolTipAgent();
+    constructor()
+    {
+        this._dragger = new WindowMouseDragger();
+        this._scaler = new WindowMouseScaler();
+        this._mouseListener = new WindowMouseListener();
+        this._focusManager = new FocusManager();
+        this._toolTipAgent = new WindowToolTipAgent();
 
-		// Gesture agent stub — touch/gesture support deferred
-		this._gestureAgent = {
-			disposed: false,
-			dispose(): void
-			{ /* stub */
-			},
-		};
-	}
+        // Gesture agent stub — touch/gesture support deferred
+        this._gestureAgent = {
+            disposed: false,
+            dispose(): void
+            { /* stub */
+            },
+        };
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	public getMouseDraggingService(): IMouseDraggingService
-	{
-		return this._dragger;
-	}
+    public getMouseDraggingService(): IMouseDraggingService
+    {
+        return this._dragger;
+    }
 
-	public getMouseScalingService(): IMouseScalingService
-	{
-		return this._scaler;
-	}
+    public getMouseScalingService(): IMouseScalingService
+    {
+        return this._scaler;
+    }
 
-	public getMouseListenerService(): IMouseListenerService
-	{
-		return this._mouseListener;
-	}
+    public getMouseListenerService(): IMouseListenerService
+    {
+        return this._mouseListener;
+    }
 
-	public getFocusManagerService(): IFocusManagerService
-	{
-		return this._focusManager;
-	}
+    public getFocusManagerService(): IFocusManagerService
+    {
+        return this._focusManager;
+    }
 
-	public getToolTipAgentService(): IToolTipAgentService
-	{
-		return this._toolTipAgent;
-	}
+    public getToolTipAgentService(): IToolTipAgentService
+    {
+        return this._toolTipAgent;
+    }
 
-	public getGestureAgentService(): IGestureAgentService
-	{
-		return this._gestureAgent;
-	}
+    public getGestureAgentService(): IGestureAgentService
+    {
+        return this._gestureAgent;
+    }
 
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
+        this._disposed = true;
 
-		this._dragger.dispose();
-		this._scaler.dispose();
-		this._mouseListener.dispose();
-		this._focusManager.dispose();
-		this._toolTipAgent.dispose();
-	}
+        this._dragger.dispose();
+        this._scaler.dispose();
+        this._mouseListener.dispose();
+        this._focusManager.dispose();
+        this._toolTipAgent.dispose();
+    }
 }

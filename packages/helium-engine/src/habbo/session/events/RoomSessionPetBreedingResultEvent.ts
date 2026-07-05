@@ -8,26 +8,26 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionPetBreedingResultEvent extends RoomSessionEvent
 {
-	public static readonly PET_BREEDING_RESULT = 'RSPFUE_PET_BREEDING_RESULT';
+    public static readonly PET_BREEDING_RESULT = 'RSPFUE_PET_BREEDING_RESULT';
 
-	constructor(session: IRoomSession, resultData: unknown, otherResultData: unknown)
-	{
-		super(RoomSessionPetBreedingResultEvent.PET_BREEDING_RESULT, session);
-		this._resultData = resultData;
-		this._otherResultData = otherResultData;
-	}
+    constructor(session: IRoomSession, resultData: unknown, otherResultData: unknown)
+    {
+        super(RoomSessionPetBreedingResultEvent.PET_BREEDING_RESULT, session);
+        this._resultData = resultData;
+        this._otherResultData = otherResultData;
+    }
 
-	private _resultData: unknown;
+    private _resultData: unknown;
 
-	get resultData(): unknown
-	{
-		return this._resultData;
-	}
+    get resultData(): unknown
+    {
+        return this._resultData;
+    }
 
-	private _otherResultData: unknown;
+    private _otherResultData: unknown;
 
-	get otherResultData(): unknown
-	{
-		return this._otherResultData;
-	}
+    get otherResultData(): unknown
+    {
+        return this._otherResultData;
+    }
 }

@@ -7,8 +7,8 @@ import {UnseenItemsMessageParser} from '@habbo/communication/messages/parser/inv
  */
 export class UnseenItemsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UnseenItemsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UnseenItemsMessageParser);
+    }
 }

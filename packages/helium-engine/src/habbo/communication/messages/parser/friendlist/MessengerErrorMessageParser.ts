@@ -9,34 +9,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class MessengerErrorMessageParser implements IMessageParser
 {
-	private _clientMessageId: number = 0;
+    private _clientMessageId: number = 0;
 
-	get clientMessageId(): number
-	{
-		return this._clientMessageId;
-	}
+    get clientMessageId(): number
+    {
+        return this._clientMessageId;
+    }
 
-	private _errorCode: number = 0;
+    private _errorCode: number = 0;
 
-	get errorCode(): number
-	{
-		return this._errorCode;
-	}
+    get errorCode(): number
+    {
+        return this._errorCode;
+    }
 
-	flush(): boolean
-	{
-		this._clientMessageId = 0;
-		this._errorCode = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._clientMessageId = 0;
+        this._errorCode = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._clientMessageId = wrapper.readInt();
-		this._errorCode = wrapper.readInt();
+        this._clientMessageId = wrapper.readInt();
+        this._errorCode = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

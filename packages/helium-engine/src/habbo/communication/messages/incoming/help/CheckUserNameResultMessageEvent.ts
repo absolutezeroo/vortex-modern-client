@@ -10,15 +10,15 @@ import {CheckUserNameResultMessageParser} from '../../parser/help/CheckUserNameR
  */
 export class CheckUserNameResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	public static readonly NAME_OK: number = 0;
-	public static readonly ERROR_NAME_REQUIRED: number = 1;
-	public static readonly ERROR_NAME_TOO_SHORT: number = 2;
-	public static readonly ERROR_NAME_TOO_LONG: number = 3;
-	public static readonly ERROR_NAME_NOT_VALID: number = 4;
-	public static readonly ERROR_NAME_IN_USE: number = 5;
+    public static readonly NAME_OK: number = 0;
+    public static readonly ERROR_NAME_REQUIRED: number = 1;
+    public static readonly ERROR_NAME_TOO_SHORT: number = 2;
+    public static readonly ERROR_NAME_TOO_LONG: number = 3;
+    public static readonly ERROR_NAME_NOT_VALID: number = 4;
+    public static readonly ERROR_NAME_IN_USE: number = 5;
 
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CheckUserNameResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CheckUserNameResultMessageParser);
+    }
 }

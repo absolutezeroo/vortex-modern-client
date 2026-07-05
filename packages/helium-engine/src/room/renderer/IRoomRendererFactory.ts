@@ -11,5 +11,5 @@ import type {IRoomRenderer} from './IRoomRenderer';
 
 export interface IRoomRendererFactory
 {
-	createRenderer(): IRoomRenderer;
+    createRenderer(): IRoomRenderer;
 }

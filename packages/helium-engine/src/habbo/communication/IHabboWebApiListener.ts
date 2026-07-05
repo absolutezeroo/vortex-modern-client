@@ -9,28 +9,28 @@
  */
 export interface IHabboWebApiListener
 {
-	/**
+    /**
 	 * Whether this listener has been disposed.
 	 */
-	readonly disposed: boolean;
+    readonly disposed: boolean;
 
-	/**
+    /**
 	 * Called when a Web API request returns a successful JSON response.
 	 *
 	 * @param uri - The request URI path
 	 * @param data - Parsed JSON response data
 	 */
-	habboWebApiResponse(uri: string, data: Record<string, unknown>): void;
+    habboWebApiResponse(uri: string, data: Record<string, unknown>): void;
 
-	/**
+    /**
 	 * Called when a Web API request returns a successful non-JSON response.
 	 *
 	 * @param uri - The request URI path
 	 * @param data - Raw response data
 	 */
-	habboWebApiRawResponse(uri: string, data: unknown): void;
+    habboWebApiRawResponse(uri: string, data: unknown): void;
 
-	/**
+    /**
 	 * Called when a Web API request returns an error.
 	 *
 	 * @param uri - The request URI path
@@ -39,5 +39,5 @@ export interface IHabboWebApiListener
 	 * @param data - Parsed error response data
 	 * @param isCaptcha - Whether this error requires captcha verification
 	 */
-	habboWebApiError(uri: string, status: number, error: string, data: Record<string, unknown> | null, isCaptcha?: boolean): void;
+    habboWebApiError(uri: string, status: number, error: string, data: Record<string, unknown> | null, isCaptcha?: boolean): void;
 }

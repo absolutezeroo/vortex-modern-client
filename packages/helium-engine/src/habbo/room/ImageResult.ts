@@ -17,6 +17,6 @@
  */
 export class ImageResult
 {
-	public id: number = 0;
-	public data: ImageBitmap | null = null;
+    public id: number = 0;
+    public data: ImageBitmap | null = null;
 }

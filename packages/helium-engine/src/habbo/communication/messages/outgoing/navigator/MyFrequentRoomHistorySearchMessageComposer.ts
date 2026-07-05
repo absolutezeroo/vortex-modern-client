@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MyFrequentRoomHistorySearchMessageComposer extends MessageComposer<ConstructorParameters<typeof MyFrequentRoomHistorySearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof MyFrequentRoomHistorySearchMessageComposer>;
+    private _data: ConstructorParameters<typeof MyFrequentRoomHistorySearchMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

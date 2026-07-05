@@ -8,34 +8,34 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionFriendRequestEvent extends RoomSessionEvent
 {
-	public static readonly FRIEND_REQUEST = 'RSFRE_FRIEND_REQUEST';
+    public static readonly FRIEND_REQUEST = 'RSFRE_FRIEND_REQUEST';
 
-	constructor(session: IRoomSession, requestId: number, userId: number, userName: string, openLandingPage: boolean = false)
-	{
-		super(RoomSessionFriendRequestEvent.FRIEND_REQUEST, session, openLandingPage);
-		this._requestId = requestId;
-		this._userId = userId;
-		this._userName = userName;
-	}
+    constructor(session: IRoomSession, requestId: number, userId: number, userName: string, openLandingPage: boolean = false)
+    {
+        super(RoomSessionFriendRequestEvent.FRIEND_REQUEST, session, openLandingPage);
+        this._requestId = requestId;
+        this._userId = userId;
+        this._userName = userName;
+    }
 
-	private _requestId: number;
+    private _requestId: number;
 
-	get requestId(): number
-	{
-		return this._requestId;
-	}
+    get requestId(): number
+    {
+        return this._requestId;
+    }
 
-	private _userId: number;
+    private _userId: number;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _userName: string;
+    private _userName: string;
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 }

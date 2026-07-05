@@ -10,67 +10,67 @@ import {ClubGiftEligibilityData} from './ClubGiftEligibilityData';
  */
 export class ClubGiftInfoEventParser implements IMessageParser
 {
-	private _daysUntilNextGift: number = 0;
+    private _daysUntilNextGift: number = 0;
 
-	get daysUntilNextGift(): number
-	{
-		return this._daysUntilNextGift;
-	}
+    get daysUntilNextGift(): number
+    {
+        return this._daysUntilNextGift;
+    }
 
-	private _giftsAvailable: number = 0;
+    private _giftsAvailable: number = 0;
 
-	get giftsAvailable(): number
-	{
-		return this._giftsAvailable;
-	}
+    get giftsAvailable(): number
+    {
+        return this._giftsAvailable;
+    }
 
-	private _offers: ClubOfferData[] = [];
+    private _offers: ClubOfferData[] = [];
 
-	get offers(): ClubOfferData[]
-	{
-		return this._offers;
-	}
+    get offers(): ClubOfferData[]
+    {
+        return this._offers;
+    }
 
-	private _giftData: Map<number, ClubGiftEligibilityData> = new Map();
+    private _giftData: Map<number, ClubGiftEligibilityData> = new Map();
 
-	get giftData(): Map<number, ClubGiftEligibilityData>
-	{
-		return this._giftData;
-	}
+    get giftData(): Map<number, ClubGiftEligibilityData>
+    {
+        return this._giftData;
+    }
 
-	flush(): boolean
-	{
-		this._offers = [];
-		this._giftData = new Map();
+    flush(): boolean
+    {
+        this._offers = [];
+        this._giftData = new Map();
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._daysUntilNextGift = wrapper.readInt();
-		this._giftsAvailable = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._daysUntilNextGift = wrapper.readInt();
+        this._giftsAvailable = wrapper.readInt();
 
-		const offerCount = wrapper.readInt();
+        const offerCount = wrapper.readInt();
 
-		this._offers = [];
+        this._offers = [];
 
-		for (let i = 0; i < offerCount; i++)
-		{
-			this._offers.push(new ClubOfferData(wrapper));
-		}
+        for(let i = 0; i < offerCount; i++)
+        {
+            this._offers.push(new ClubOfferData(wrapper));
+        }
 
-		const eligibilityCount = wrapper.readInt();
+        const eligibilityCount = wrapper.readInt();
 
-		this._giftData = new Map();
+        this._giftData = new Map();
 
-		for (let i = 0; i < eligibilityCount; i++)
-		{
-			const eligibility = new ClubGiftEligibilityData(wrapper);
+        for(let i = 0; i < eligibilityCount; i++)
+        {
+            const eligibility = new ClubGiftEligibilityData(wrapper);
 
-			this._giftData.set(eligibility.offerId, eligibility);
-		}
+            this._giftData.set(eligibility.offerId, eligibility);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

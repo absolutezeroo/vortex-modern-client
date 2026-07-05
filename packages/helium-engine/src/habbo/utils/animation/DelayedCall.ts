@@ -11,85 +11,85 @@ import type {IAnimatable} from './IAnimatable';
  */
 export class DelayedCall implements IAnimatable
 {
-	public static readonly REMOVE_FROM_JUGGLER: string = 'REMOVE_FROM_JUGGLER';
+    public static readonly REMOVE_FROM_JUGGLER: string = 'REMOVE_FROM_JUGGLER';
 
-	private _callback: ((...args: unknown[]) => void) | null;
-	private _args: unknown[];
-	private _complete: boolean = false;
+    private _callback: ((...args: unknown[]) => void) | null;
+    private _args: unknown[];
+    private _complete: boolean = false;
 
-	/**
+    /**
 	 * Create a new DelayedCall.
 	 *
 	 * @param callback The function to call when the delay elapses
 	 * @param delay The delay in seconds before the callback is invoked
 	 * @param args Optional arguments to pass to the callback
 	 */
-	constructor(callback: (...args: unknown[]) => void, delay: number, args: unknown[] = [])
-	{
-		this._callback = callback;
-		this._args = args;
-		this._currentTime = 0;
-		this._totalTime = Math.max(delay, 0.0001);
-		this._repeatCount = 1;
-	}
+    constructor(callback: (...args: unknown[]) => void, delay: number, args: unknown[] = [])
+    {
+        this._callback = callback;
+        this._args = args;
+        this._currentTime = 0;
+        this._totalTime = Math.max(delay, 0.0001);
+        this._repeatCount = 1;
+    }
 
-	private _currentTime: number;
+    private _currentTime: number;
 
-	/**
+    /**
 	 * The current accumulated time in seconds.
 	 */
-	get currentTime(): number
-	{
-		return this._currentTime;
-	}
+    get currentTime(): number
+    {
+        return this._currentTime;
+    }
 
-	private _totalTime: number;
+    private _totalTime: number;
 
-	/**
+    /**
 	 * The total delay time in seconds.
 	 */
-	get totalTime(): number
-	{
-		return this._totalTime;
-	}
+    get totalTime(): number
+    {
+        return this._totalTime;
+    }
 
-	private _repeatCount: number;
+    private _repeatCount: number;
 
-	/**
+    /**
 	 * The number of times the callback will be invoked.
 	 * 0 means infinite repeats.
 	 */
-	get repeatCount(): number
-	{
-		return this._repeatCount;
-	}
+    get repeatCount(): number
+    {
+        return this._repeatCount;
+    }
 
-	set repeatCount(value: number)
-	{
-		this._repeatCount = value;
-	}
+    set repeatCount(value: number)
+    {
+        this._repeatCount = value;
+    }
 
-	private _onRemove: (() => void) | null = null;
+    private _onRemove: (() => void) | null = null;
 
-	/**
+    /**
 	 * Set the callback to invoke when this delayed call should be removed from its juggler.
 	 *
 	 * @param callback The removal callback
 	 */
-	set onRemove(callback: (() => void) | null)
-	{
-		this._onRemove = callback;
-	}
+    set onRemove(callback: (() => void) | null)
+    {
+        this._onRemove = callback;
+    }
 
-	/**
+    /**
 	 * Whether this delayed call has completed.
 	 */
-	get isComplete(): boolean
-	{
-		return this._repeatCount === 1 && this._currentTime >= this._totalTime;
-	}
+    get isComplete(): boolean
+    {
+        return this._repeatCount === 1 && this._currentTime >= this._totalTime;
+    }
 
-	/**
+    /**
 	 * Reset this delayed call with new parameters.
 	 *
 	 * @param callback The function to call
@@ -97,82 +97,82 @@ export class DelayedCall implements IAnimatable
 	 * @param args Optional arguments
 	 * @returns This instance for chaining
 	 */
-	reset(callback: (...args: unknown[]) => void, delay: number, args: unknown[] = []): DelayedCall
-	{
-		this._currentTime = 0;
-		this._totalTime = Math.max(delay, 0.0001);
-		this._callback = callback;
-		this._args = args;
-		this._repeatCount = 1;
-		this._complete = false;
+    reset(callback: (...args: unknown[]) => void, delay: number, args: unknown[] = []): DelayedCall
+    {
+        this._currentTime = 0;
+        this._totalTime = Math.max(delay, 0.0001);
+        this._callback = callback;
+        this._args = args;
+        this._repeatCount = 1;
+        this._complete = false;
 
-		return this;
-	}
+        return this;
+    }
 
-	/**
+    /**
 	 * Advance the timer by the given time delta.
 	 * Invokes the callback when the delay has been reached.
 	 *
 	 * @param time The time delta in seconds
 	 */
-	advanceTime(time: number): void
-	{
-		const previousTime = this._currentTime;
-		this._currentTime += time;
+    advanceTime(time: number): void
+    {
+        const previousTime = this._currentTime;
+        this._currentTime += time;
 
-		if (this._currentTime > this._totalTime)
-		{
-			this._currentTime = this._totalTime;
-		}
+        if(this._currentTime > this._totalTime)
+        {
+            this._currentTime = this._totalTime;
+        }
 
-		if (previousTime < this._totalTime && this._currentTime >= this._totalTime)
-		{
-			if (this._repeatCount === 0 || this._repeatCount > 1)
-			{
-				if (this._callback)
-				{
-					this._callback.apply(null, this._args);
-				}
+        if(previousTime < this._totalTime && this._currentTime >= this._totalTime)
+        {
+            if(this._repeatCount === 0 || this._repeatCount > 1)
+            {
+                if(this._callback)
+                {
+                    this._callback.apply(null, this._args);
+                }
 
-				if (this._repeatCount > 0)
-				{
-					this._repeatCount -= 1;
-				}
+                if(this._repeatCount > 0)
+                {
+                    this._repeatCount -= 1;
+                }
 
-				this._currentTime = 0;
-				this.advanceTime(previousTime + time - this._totalTime);
-			}
-			else
-			{
-				const callback = this._callback;
-				const args = this._args;
+                this._currentTime = 0;
+                this.advanceTime(previousTime + time - this._totalTime);
+            }
+            else
+            {
+                const callback = this._callback;
+                const args = this._args;
 
-				this._complete = true;
+                this._complete = true;
 
-				if (this._onRemove)
-				{
-					this._onRemove();
-				}
+                if(this._onRemove)
+                {
+                    this._onRemove();
+                }
 
-				if (callback)
-				{
-					callback.apply(null, args);
-				}
-			}
-		}
-	}
+                if(callback)
+                {
+                    callback.apply(null, args);
+                }
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Immediately complete this delayed call,
 	 * advancing time to trigger the callback.
 	 */
-	complete(): void
-	{
-		const remaining = this._totalTime - this._currentTime;
+    complete(): void
+    {
+        const remaining = this._totalTime - this._currentTime;
 
-		if (remaining > 0)
-		{
-			this.advanceTime(remaining);
-		}
-	}
+        if(remaining > 0)
+        {
+            this.advanceTime(remaining);
+        }
+    }
 }

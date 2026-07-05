@@ -10,43 +10,43 @@ import type {IIterable} from './utils/IIterable';
  */
 export interface IWindowContainer extends IWindow, IIterable
 {
-	readonly numChildren: number;
+    readonly numChildren: number;
 
-	addChild(child: IWindow): IWindow;
+    addChild(child: IWindow): IWindow;
 
-	addChildAt(child: IWindow, index: number): IWindow;
+    addChildAt(child: IWindow, index: number): IWindow;
 
-	getChildAt(index: number): IWindow | null;
+    getChildAt(index: number): IWindow | null;
 
-	getChildByID(id: number): IWindow | null;
+    getChildByID(id: number): IWindow | null;
 
-	getChildByTag(tag: string): IWindow | null;
+    getChildByTag(tag: string): IWindow | null;
 
-	getChildByName(name: string): IWindow | null;
+    getChildByName(name: string): IWindow | null;
 
-	getChildIndex(child: IWindow): number;
+    getChildIndex(child: IWindow): number;
 
-	findChildByTag(tag: string): IWindow | null;
+    findChildByTag(tag: string): IWindow | null;
 
-	findChildByName(name: string): IWindow | null;
+    findChildByName(name: string): IWindow | null;
 
-	enableLookupCache(): void;
+    enableLookupCache(): void;
 
-	removeChild(child: IWindow): IWindow | null;
+    removeChild(child: IWindow): IWindow | null;
 
-	removeChildAt(index: number): IWindow | null;
+    removeChildAt(index: number): IWindow | null;
 
-	setChildIndex(child: IWindow, index: number): void;
+    setChildIndex(child: IWindow, index: number): void;
 
-	swapChildren(a: IWindow, b: IWindow): void;
+    swapChildren(a: IWindow, b: IWindow): void;
 
-	swapChildrenAt(indexA: number, indexB: number): void;
+    swapChildrenAt(indexA: number, indexB: number): void;
 
-	groupChildrenWithID(id: number, result: IWindow[], depth?: number): number;
+    groupChildrenWithID(id: number, result: IWindow[], depth?: number): number;
 
-	groupChildrenWithTag(tag: string, result: IWindow[], depth?: number): number;
+    groupChildrenWithTag(tag: string, result: IWindow[], depth?: number): number;
 
-	getChildUnderPoint(point: { x: number; y: number }): IWindow | null;
+    getChildUnderPoint(point: { x: number; y: number }): IWindow | null;
 
-	groupChildrenUnderPoint(point: { x: number; y: number }, result: IWindow[]): void;
+    groupChildrenUnderPoint(point: { x: number; y: number }, result: IWindow[]): void;
 }

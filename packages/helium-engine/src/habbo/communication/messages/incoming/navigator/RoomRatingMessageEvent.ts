@@ -9,8 +9,8 @@ import {RoomRatingMessageParser} from '../../parser/navigator/RoomRatingMessageP
  */
 export class RoomRatingMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomRatingMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomRatingMessageParser);
+    }
 }

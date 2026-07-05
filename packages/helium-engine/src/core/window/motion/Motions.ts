@@ -15,253 +15,253 @@ import type {Motion} from './Motion';
  */
 export class Motions
 {
-	private static _active: Motion[] = [];
-	private static _pending: Motion[] = [];
-	private static _removing: Motion[] = [];
-	private static _rafId: number = 0;
+    private static _active: Motion[] = [];
+    private static _pending: Motion[] = [];
+    private static _removing: Motion[] = [];
+    private static _rafId: number = 0;
 
-	private static _isUpdating: boolean = false;
+    private static _isUpdating: boolean = false;
 
-	/**
+    /**
 	 * Whether the scheduler is currently inside its tick loop.
 	 */
-	public static get isUpdating(): boolean
-	{
-		return Motions._isUpdating;
-	}
+    public static get isUpdating(): boolean
+    {
+        return Motions._isUpdating;
+    }
 
-	/**
+    /**
 	 * Whether the scheduler has any running motions.
 	 */
-	public static get isRunning(): boolean
-	{
-		return Motions._rafId !== 0;
-	}
+    public static get isRunning(): boolean
+    {
+        return Motions._rafId !== 0;
+    }
 
-	/**
+    /**
 	 * Run a motion. Starts it immediately (or defers if currently ticking).
 	 *
 	 * @param motion The motion to run
 	 * @returns The same motion, for chaining (e.g. `.tag = ...`)
 	 */
-	public static runMotion(motion: Motion): Motion
-	{
-		if (Motions._active.indexOf(motion) !== -1 || Motions._pending.indexOf(motion) !== -1)
-		{
-			return motion;
-		}
+    public static runMotion(motion: Motion): Motion
+    {
+        if(Motions._active.indexOf(motion) !== -1 || Motions._pending.indexOf(motion) !== -1)
+        {
+            return motion;
+        }
 
-		if (Motions._isUpdating)
-		{
-			Motions._pending.push(motion);
-		}
-		else
-		{
-			Motions._active.push(motion);
-			motion.start();
-		}
+        if(Motions._isUpdating)
+        {
+            Motions._pending.push(motion);
+        }
+        else
+        {
+            Motions._active.push(motion);
+            motion.start();
+        }
 
-		Motions.startLoop();
+        Motions.startLoop();
 
-		return motion;
-	}
+        return motion;
+    }
 
-	/**
+    /**
 	 * Remove a motion from the scheduler.
 	 *
 	 * @param motion The motion to remove
 	 */
-	public static removeMotion(motion: Motion): void
-	{
-		let idx = Motions._active.indexOf(motion);
+    public static removeMotion(motion: Motion): void
+    {
+        let idx = Motions._active.indexOf(motion);
 
-		if (idx > -1)
-		{
-			if (Motions._isUpdating)
-			{
-				if (Motions._removing.indexOf(motion) === -1)
-				{
-					Motions._removing.push(motion);
-				}
-			}
-			else
-			{
-				Motions._active.splice(idx, 1);
+        if(idx > -1)
+        {
+            if(Motions._isUpdating)
+            {
+                if(Motions._removing.indexOf(motion) === -1)
+                {
+                    Motions._removing.push(motion);
+                }
+            }
+            else
+            {
+                Motions._active.splice(idx, 1);
 
-				if (motion.running)
-				{
-					motion.stop();
-				}
+                if(motion.running)
+                {
+                    motion.stop();
+                }
 
-				if (Motions._active.length === 0)
-				{
-					Motions.stopLoop();
-				}
-			}
-		}
-		else
-		{
-			idx = Motions._pending.indexOf(motion);
+                if(Motions._active.length === 0)
+                {
+                    Motions.stopLoop();
+                }
+            }
+        }
+        else
+        {
+            idx = Motions._pending.indexOf(motion);
 
-			if (idx > -1)
-			{
-				Motions._pending.splice(idx, 1);
-			}
-		}
-	}
+            if(idx > -1)
+            {
+                Motions._pending.splice(idx, 1);
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Find a running motion by its tag.
 	 *
 	 * @param tag The tag to search for
 	 * @returns The motion, or null
 	 */
-	public static getMotionByTag(tag: string): Motion | null
-	{
-		for (const m of Motions._active)
-		{
-			if (m.tag === tag) return m;
-		}
+    public static getMotionByTag(tag: string): Motion | null
+    {
+        for(const m of Motions._active)
+        {
+            if(m.tag === tag) return m;
+        }
 
-		for (const m of Motions._pending)
-		{
-			if (m.tag === tag) return m;
-		}
+        for(const m of Motions._pending)
+        {
+            if(m.tag === tag) return m;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Find a running motion by its target window.
 	 *
 	 * @param target The target window to search for
 	 * @returns The motion, or null
 	 */
-	public static getMotionByTarget(target: IWindow): Motion | null
-	{
-		for (const m of Motions._active)
-		{
-			if (m.target === target) return m;
-		}
+    public static getMotionByTarget(target: IWindow): Motion | null
+    {
+        for(const m of Motions._active)
+        {
+            if(m.target === target) return m;
+        }
 
-		for (const m of Motions._pending)
-		{
-			if (m.target === target) return m;
-		}
+        for(const m of Motions._pending)
+        {
+            if(m.target === target) return m;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Find a running motion by tag AND target.
 	 *
 	 * @param tag The tag to search for
 	 * @param target The target window
 	 * @returns The motion, or null
 	 */
-	public static getMotionByTagAndTarget(tag: string, target: IWindow): Motion | null
-	{
-		for (const m of Motions._active)
-		{
-			if (m.tag === tag && m.target === target) return m;
-		}
+    public static getMotionByTagAndTarget(tag: string, target: IWindow): Motion | null
+    {
+        for(const m of Motions._active)
+        {
+            if(m.tag === tag && m.target === target) return m;
+        }
 
-		for (const m of Motions._pending)
-		{
-			if (m.tag === tag && m.target === target) return m;
-		}
+        for(const m of Motions._pending)
+        {
+            if(m.tag === tag && m.target === target) return m;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * RAF tick handler. Processes pending/removing queues, then ticks all
 	 * active motions, removing any that complete.
 	 */
-	private static onTick(timestamp: number): void
-	{
-		Motions._isUpdating = true;
+    private static onTick(timestamp: number): void
+    {
+        Motions._isUpdating = true;
 
-		// Flush pending → active
-		let m: Motion | undefined;
+        // Flush pending → active
+        let m: Motion | undefined;
 
-		while ((m = Motions._pending.pop()) !== undefined)
-		{
-			Motions._active.push(m);
-			m.start();
-		}
+        while((m = Motions._pending.pop()) !== undefined)
+        {
+            Motions._active.push(m);
+            m.start();
+        }
 
-		// Flush removing
-		while ((m = Motions._removing.pop()) !== undefined)
-		{
-			const idx = Motions._active.indexOf(m);
+        // Flush removing
+        while((m = Motions._removing.pop()) !== undefined)
+        {
+            const idx = Motions._active.indexOf(m);
 
-			if (idx > -1)
-			{
-				Motions._active.splice(idx, 1);
+            if(idx > -1)
+            {
+                Motions._active.splice(idx, 1);
 
-				if (m.running)
-				{
-					m.stop();
-				}
-			}
-		}
+                if(m.running)
+                {
+                    m.stop();
+                }
+            }
+        }
 
-		// Tick all active motions
-		for (const motion of Motions._active)
-		{
-			if (motion.running)
-			{
-				motion.tick(timestamp);
+        // Tick all active motions
+        for(const motion of Motions._active)
+        {
+            if(motion.running)
+            {
+                motion.tick(timestamp);
 
-				if (motion.complete)
-				{
-					Motions.removeMotion(motion);
-				}
-			}
-			else
-			{
-				Motions.removeMotion(motion);
-			}
-		}
+                if(motion.complete)
+                {
+                    Motions.removeMotion(motion);
+                }
+            }
+            else
+            {
+                Motions.removeMotion(motion);
+            }
+        }
 
-		if (Motions._active.length === 0)
-		{
-			Motions.stopLoop();
-		}
+        if(Motions._active.length === 0)
+        {
+            Motions.stopLoop();
+        }
 
-		Motions._isUpdating = false;
-	}
+        Motions._isUpdating = false;
+    }
 
-	/**
+    /**
 	 * Start the RAF loop if not already running.
 	 */
-	private static startLoop(): void
-	{
-		if (Motions._rafId !== 0) return;
+    private static startLoop(): void
+    {
+        if(Motions._rafId !== 0) return;
 
-		const loop = (timestamp: number): void =>
-		{
-			Motions.onTick(timestamp);
+        const loop = (timestamp: number): void =>
+        {
+            Motions.onTick(timestamp);
 
-			if (Motions._rafId !== 0)
-			{
-				Motions._rafId = requestAnimationFrame(loop);
-			}
-		};
+            if(Motions._rafId !== 0)
+            {
+                Motions._rafId = requestAnimationFrame(loop);
+            }
+        };
 
-		Motions._rafId = requestAnimationFrame(loop);
-	}
+        Motions._rafId = requestAnimationFrame(loop);
+    }
 
-	/**
+    /**
 	 * Stop the RAF loop.
 	 */
-	private static stopLoop(): void
-	{
-		if (Motions._rafId !== 0)
-		{
-			cancelAnimationFrame(Motions._rafId);
-			Motions._rafId = 0;
-		}
-	}
+    private static stopLoop(): void
+    {
+        if(Motions._rafId !== 0)
+        {
+            cancelAnimationFrame(Motions._rafId);
+            Motions._rafId = 0;
+        }
+    }
 }

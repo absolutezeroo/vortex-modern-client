@@ -11,21 +11,21 @@ import type {EventEmitter} from 'eventemitter3';
 
 export interface IHabboUserDefinedRoomEvents
 {
-	readonly events: EventEmitter;
+    readonly events: EventEmitter;
 
-	stuffSelected(id: number): void;
+    stuffSelected(id: number): void;
 
-	userSelected(id: number): void;
+    userSelected(id: number): void;
 
-	showInspectButton(): boolean;
+    showInspectButton(): boolean;
 
-	showToolbarMenuButton(): boolean;
+    showToolbarMenuButton(): boolean;
 
-	wiredWhisperDisabled: boolean;
+    wiredWhisperDisabled: boolean;
 
-	hasClickUserWired(): boolean;
+    hasClickUserWired(): boolean;
 
-	switchPlayTestMode(): void;
+    switchPlayTestMode(): void;
 
-	resetCache(): void;
+    resetCache(): void;
 }

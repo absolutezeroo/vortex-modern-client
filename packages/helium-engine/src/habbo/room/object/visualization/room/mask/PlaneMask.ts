@@ -12,105 +12,105 @@ import {PlaneMaskVisualization} from './PlaneMaskVisualization';
 
 export class PlaneMask
 {
-	private _visualizations: Map<string, PlaneMaskVisualization> = new Map();
-	private _sizes: number[] = [];
-	private _assetNames: Map<number, string> = new Map();
-	private _cachedVisualization: PlaneMaskVisualization | null = null;
-	private _cachedSize: number = -1;
+    private _visualizations: Map<string, PlaneMaskVisualization> = new Map();
+    private _sizes: number[] = [];
+    private _assetNames: Map<number, string> = new Map();
+    private _cachedVisualization: PlaneMaskVisualization | null = null;
+    private _cachedSize: number = -1;
 
-	dispose(): void
-	{
-		for (const viz of this._visualizations.values())
-		{
-			viz.dispose();
-		}
+    dispose(): void
+    {
+        for(const viz of this._visualizations.values())
+        {
+            viz.dispose();
+        }
 
-		this._visualizations.clear();
-		this._sizes = [];
-		this._cachedVisualization = null;
-	}
+        this._visualizations.clear();
+        this._sizes = [];
+        this._cachedVisualization = null;
+    }
 
-	createMaskVisualization(size: number): PlaneMaskVisualization | null
-	{
-		const key = String(size);
+    createMaskVisualization(size: number): PlaneMaskVisualization | null
+    {
+        const key = String(size);
 
-		if (this._visualizations.has(key))
-		{
-			return null;
-		}
+        if(this._visualizations.has(key))
+        {
+            return null;
+        }
 
-		const viz = new PlaneMaskVisualization();
-		this._visualizations.set(key, viz);
-		this._sizes.push(size);
-		this._sizes.sort((a, b) => a - b);
+        const viz = new PlaneMaskVisualization();
+        this._visualizations.set(key, viz);
+        this._sizes.push(size);
+        this._sizes.sort((a, b) => a - b);
 
-		return viz;
-	}
+        return viz;
+    }
 
-	getGraphicAsset(scale: number, position: IVector3d): IGraphicAsset | null
-	{
-		const viz = this.getMaskVisualization(scale);
+    getGraphicAsset(scale: number, position: IVector3d): IGraphicAsset | null
+    {
+        const viz = this.getMaskVisualization(scale);
 
-		if (viz === null)
-		{
-			return null;
-		}
+        if(viz === null)
+        {
+            return null;
+        }
 
-		return viz.getAsset(position);
-	}
+        return viz.getAsset(position);
+    }
 
-	getAssetName(size: number): string | null
-	{
-		return this._assetNames.get(size) || null;
-	}
+    getAssetName(size: number): string | null
+    {
+        return this._assetNames.get(size) || null;
+    }
 
-	setAssetName(size: number, name: string): void
-	{
-		this._assetNames.set(size, name);
-	}
+    setAssetName(size: number, name: string): void
+    {
+        this._assetNames.set(size, name);
+    }
 
-	protected getMaskVisualization(scale: number): PlaneMaskVisualization | null
-	{
-		if (scale === this._cachedSize)
-		{
-			return this._cachedVisualization;
-		}
+    protected getMaskVisualization(scale: number): PlaneMaskVisualization | null
+    {
+        if(scale === this._cachedSize)
+        {
+            return this._cachedVisualization;
+        }
 
-		const sizeIndex = this.getSizeIndex(scale);
+        const sizeIndex = this.getSizeIndex(scale);
 
-		if (sizeIndex < this._sizes.length)
-		{
-			this._cachedVisualization = this._visualizations.get(String(this._sizes[sizeIndex])) || null;
-		}
-		else
-		{
-			this._cachedVisualization = null;
-		}
+        if(sizeIndex < this._sizes.length)
+        {
+            this._cachedVisualization = this._visualizations.get(String(this._sizes[sizeIndex])) || null;
+        }
+        else
+        {
+            this._cachedVisualization = null;
+        }
 
-		this._cachedSize = scale;
+        this._cachedSize = scale;
 
-		return this._cachedVisualization;
-	}
+        return this._cachedVisualization;
+    }
 
-	private getSizeIndex(scale: number): number
-	{
-		let index = 0;
+    private getSizeIndex(scale: number): number
+    {
+        let index = 0;
 
-		for (let i = 1; i < this._sizes.length; i++)
-		{
-			if (this._sizes[i] > scale)
-			{
-				if (this._sizes[i] - scale < scale - this._sizes[i - 1])
-				{
-					index = i;
-				}
+        for(let i = 1; i < this._sizes.length; i++)
+        {
+            if(this._sizes[i] > scale)
+            {
+                if(this._sizes[i] - scale < scale - this._sizes[i - 1])
+                {
+                    index = i;
+                }
 
-				break;
-			}
+                break;
+            }
 
-			index = i;
-		}
+            index = i;
+        }
 
-		return index;
-	}
+        return index;
+    }
 }

@@ -9,8 +9,8 @@ import {ChangeEmailResultParser} from '../../parser/users/ChangeEmailResultParse
  */
 export class ChangeEmailResultEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ChangeEmailResultParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ChangeEmailResultParser);
+    }
 }

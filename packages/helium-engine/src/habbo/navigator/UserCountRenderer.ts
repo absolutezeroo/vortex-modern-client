@@ -11,16 +11,16 @@ import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
  */
 export class UserCountRenderer
 {
-	static readonly USERCOUNT_ELEMENT_NAME: string = 'usercount';
+    static readonly USERCOUNT_ELEMENT_NAME: string = 'usercount';
 
-	private _navigator: IHabboTransitionalNavigator | null;
+    private _navigator: IHabboTransitionalNavigator | null;
 
-	constructor(navigator: IHabboTransitionalNavigator)
-	{
-		this._navigator = navigator;
-	}
+    constructor(navigator: IHabboTransitionalNavigator)
+    {
+        this._navigator = navigator;
+    }
 
-	/**
+    /**
 	 * Refreshes the user count badge in a container.
 	 *
 	 * @param capacity - Maximum room capacity
@@ -30,103 +30,103 @@ export class UserCountRenderer
 	 * @param xPos - X position
 	 * @param yPos - Y position
 	 */
-	refreshUserCount(capacity: number, container: IWindowContainer, userCount: number, tooltip: string, xPos: number, yPos: number): void
-	{
-		if (!this._navigator) return;
+    refreshUserCount(capacity: number, container: IWindowContainer, userCount: number, tooltip: string, xPos: number, yPos: number): void
+    {
+        if(!this._navigator) return;
 
-		let userCountWindow = container.findChildByName('usercount') as IWindowContainer | null;
+        let userCountWindow = container.findChildByName('usercount') as IWindowContainer | null;
 
-		if (!userCountWindow)
-		{
-			const xmlWindow = this._navigator.getXmlWindow('grs_usercount');
+        if(!userCountWindow)
+        {
+            const xmlWindow = this._navigator.getXmlWindow('grs_usercount');
 
-			if (!xmlWindow) return;
+            if(!xmlWindow) return;
 
-			userCountWindow = xmlWindow as unknown as IWindowContainer;
-			userCountWindow.name = 'usercount';
-			userCountWindow.x = xPos;
-			userCountWindow.y = yPos;
-			container.addChild(userCountWindow);
-		}
+            userCountWindow = xmlWindow as unknown as IWindowContainer;
+            userCountWindow.name = 'usercount';
+            userCountWindow.x = xPos;
+            userCountWindow.y = yPos;
+            container.addChild(userCountWindow);
+        }
 
-		const textWindow = userCountWindow.findChildByName('txt') as ITextWindow | null;
+        const textWindow = userCountWindow.findChildByName('txt') as ITextWindow | null;
 
-		if (textWindow)
-		{
-			textWindow.text = '' + userCount;
-		}
+        if(textWindow)
+        {
+            textWindow.text = '' + userCount;
+        }
 
-		const bgColor = this.getBgColor(capacity, userCount);
+        const bgColor = this.getBgColor(capacity, userCount);
 
-		this.refreshBg(userCountWindow, bgColor);
-		userCountWindow.visible = true;
-	}
+        this.refreshBg(userCountWindow, bgColor);
+        userCountWindow.visible = true;
+    }
 
-	dispose(): void
-	{
-		this._navigator = null;
-	}
+    dispose(): void
+    {
+        this._navigator = null;
+    }
 
-	private getBgColor(capacity: number, userCount: number): string
-	{
-		if (userCount === 0)
-		{
-			return 'b';
-		}
+    private getBgColor(capacity: number, userCount: number): string
+    {
+        if(userCount === 0)
+        {
+            return 'b';
+        }
 
-		if (this.isOverBgColorLimit(capacity, userCount, 'red', 92))
-		{
-			return 'r';
-		}
+        if(this.isOverBgColorLimit(capacity, userCount, 'red', 92))
+        {
+            return 'r';
+        }
 
-		if (this.isOverBgColorLimit(capacity, userCount, 'orange', 80))
-		{
-			return 'o';
-		}
+        if(this.isOverBgColorLimit(capacity, userCount, 'orange', 80))
+        {
+            return 'o';
+        }
 
-		if (this.isOverBgColorLimit(capacity, userCount, 'yellow', 50))
-		{
-			return 'y';
-		}
+        if(this.isOverBgColorLimit(capacity, userCount, 'yellow', 50))
+        {
+            return 'y';
+        }
 
-		return 'g';
-	}
+        return 'g';
+    }
 
-	private isOverBgColorLimit(capacity: number, userCount: number, colorName: string, defaultPercent: number): boolean
-	{
-		if (!this._navigator) return false;
+    private isOverBgColorLimit(capacity: number, userCount: number, colorName: string, defaultPercent: number): boolean
+    {
+        if(!this._navigator) return false;
 
-		const key = 'navigator.colorlimit.' + colorName;
-		const percent = this._navigator.getInteger(key, defaultPercent);
-		const threshold = capacity * percent / 100;
+        const key = 'navigator.colorlimit.' + colorName;
+        const percent = this._navigator.getInteger(key, defaultPercent);
+        const threshold = capacity * percent / 100;
 
-		return userCount >= threshold;
-	}
+        return userCount >= threshold;
+    }
 
-	private refreshBg(container: IWindowContainer, bgColor: string): void
-	{
-		if (!this._navigator) return;
+    private refreshBg(container: IWindowContainer, bgColor: string): void
+    {
+        if(!this._navigator) return;
 
-		const bgWindow = container.findChildByName('usercount_bg');
+        const bgWindow = container.findChildByName('usercount_bg');
 
-		if (!bgWindow) return;
+        if(!bgWindow) return;
 
-		if (bgWindow.tags[0] !== bgColor)
-		{
-			bgWindow.tags.splice(0, bgWindow.tags.length);
-			bgWindow.tags.push(bgColor);
+        if(bgWindow.tags[0] !== bgColor)
+        {
+            bgWindow.tags.splice(0, bgWindow.tags.length);
+            bgWindow.tags.push(bgColor);
 
-			const assetName = 'usercount_fixed_' + bgColor;
-			const bitmapData = this._navigator.getButtonImage(assetName);
+            const assetName = 'usercount_fixed_' + bgColor;
+            const bitmapData = this._navigator.getButtonImage(assetName);
 
-			if (bitmapData)
-			{
-				// Apply bitmap to the wrapper window
-				(bgWindow as any).bitmap = bitmapData;
-				(bgWindow as any).disposesBitmap = false;
-			}
+            if(bitmapData)
+            {
+                // Apply bitmap to the wrapper window
+                (bgWindow as any).bitmap = bitmapData;
+                (bgWindow as any).disposesBitmap = false;
+            }
 
-			bgWindow.invalidate();
-		}
-	}
+            bgWindow.invalidate();
+        }
+    }
 }

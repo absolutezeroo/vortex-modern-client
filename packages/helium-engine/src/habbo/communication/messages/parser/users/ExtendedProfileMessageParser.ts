@@ -11,24 +11,24 @@ import {ExtendedProfileData} from '../../incoming/users/ExtendedProfileData';
  */
 export class ExtendedProfileMessageParser implements IMessageParser
 {
-	private _data: ExtendedProfileData | null = null;
+    private _data: ExtendedProfileData | null = null;
 
-	get data(): ExtendedProfileData | null
-	{
-		return this._data;
-	}
+    get data(): ExtendedProfileData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new ExtendedProfileData(wrapper);
-		return true;
-	}
+        this._data = new ExtendedProfileData(wrapper);
+        return true;
+    }
 }

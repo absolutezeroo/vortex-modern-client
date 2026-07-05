@@ -9,49 +9,49 @@ import type {ILinkEventTracker} from '@core/runtime';
  */
 export interface IHabboQuestEngine extends ILinkEventTracker
 {
-	/**
+    /**
 	 * Ensure achievements data has been requested from the server
 	 */
-	ensureAchievementsInitialized(): void;
+    ensureAchievementsInitialized(): void;
 
-	/**
+    /**
 	 * Show the achievements panel
 	 */
-	showAchievements(): void;
+    showAchievements(): void;
 
-	/**
+    /**
 	 * Show the quests panel
 	 */
-	showQuests(): void;
+    showQuests(): void;
 
-	/**
+    /**
 	 * Get the user's achievement level for a given category and badge
 	 *
 	 * @param category The achievement category code
 	 * @param badge The badge identifier
 	 * @returns The user's level for the achievement, or 0 if not found
 	 */
-	getAchievementLevel(category: string, badge: string): number;
+    getAchievementLevel(category: string, badge: string): number;
 
-	/**
+    /**
 	 * Request seasonal quests from the server
 	 */
-	requestSeasonalQuests(): void;
+    requestSeasonalQuests(): void;
 
-	/**
+    /**
 	 * Request all quests from the server
 	 */
-	requestQuests(): void;
+    requestQuests(): void;
 
-	/**
+    /**
 	 * Activate a quest by its ID
 	 *
 	 * @param questId The quest ID to activate
 	 */
-	activateQuest(questId: number): void;
+    activateQuest(questId: number): void;
 
-	/**
+    /**
 	 * Navigate to a random quest room
 	 */
-	goToQuestRooms(): void;
+    goToQuestRooms(): void;
 }

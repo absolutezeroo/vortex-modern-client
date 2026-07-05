@@ -2,8 +2,8 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IBitmapWrapperWindow} from './IBitmapWrapperWindow';
 import {BitmapDataController} from './BitmapDataController';
-import {PropertyStruct} from '../utils/PropertyStruct';
-import {WindowEvent} from '../events/WindowEvent';
+import type {PropertyStruct} from '../utils/PropertyStruct';
+import type {WindowEvent} from '../events/WindowEvent';
 
 /**
  * Controller for bitmap wrapper windows.
@@ -15,143 +15,143 @@ import {WindowEvent} from '../events/WindowEvent';
  */
 export class BitmapWrapperController extends BitmapDataController implements IBitmapWrapperWindow
 {
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0,
-		dynamicStyle: string = ''
-	)
-	{
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
-	}
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0,
+        dynamicStyle: string = ''
+    )
+    {
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
+    }
 
-	private _disposesBitmap: boolean = false;
+    private _disposesBitmap: boolean = false;
 
-	/**
+    /**
 	 * Whether this window owns the bitmap and should dispose it.
 	 */
-	public get disposesBitmap(): boolean
-	{
-		return this._disposesBitmap;
-	}
+    public get disposesBitmap(): boolean
+    {
+        return this._disposesBitmap;
+    }
 
-	public set disposesBitmap(value: boolean)
-	{
-		this._disposesBitmap = value;
-	}
+    public set disposesBitmap(value: boolean)
+    {
+        this._disposesBitmap = value;
+    }
 
-	private _bitmapAssetName: string = '';
+    private _bitmapAssetName: string = '';
 
-	/**
+    /**
 	 * The asset name used to reference this bitmap.
 	 */
-	public get bitmapAssetName(): string
-	{
-		return this._bitmapAssetName;
-	}
+    public get bitmapAssetName(): string
+    {
+        return this._bitmapAssetName;
+    }
 
-	public set bitmapAssetName(value: string)
-	{
-		this._bitmapAssetName = value;
-	}
+    public set bitmapAssetName(value: string)
+    {
+        this._bitmapAssetName = value;
+    }
 
-	/**
+    /**
 	 * The programmatic bitmap for this window.
 	 * Disposes the old bitmap if `_disposesBitmap` is true.
 	 */
-	public get bitmap(): ImageBitmap | null
-	{
-		return this._bitmapData;
-	}
+    public get bitmap(): ImageBitmap | null
+    {
+        return this._bitmapData;
+    }
 
-	public set bitmap(value: ImageBitmap | null)
-	{
-		if (this._disposesBitmap && this._bitmapData && this._bitmapData !== value)
-		{
-			this._bitmapData.close();
-		}
+    public set bitmap(value: ImageBitmap | null)
+    {
+        if(this._disposesBitmap && this._bitmapData && this._bitmapData !== value)
+        {
+            this._bitmapData.close();
+        }
 
-		this._bitmapData = value;
+        this._bitmapData = value;
 
-		this.fitSize();
-		this._context.invalidate(this, null, 1);
-	}
+        this.fitSize();
+        this._context.invalidate(this, null, 1);
+    }
 
-	/**
+    /**
 	 * Overrides bitmapData setter to delegate to bitmap setter.
 	 */
-	public override get bitmapData(): ImageBitmap | null
-	{
-		return this._bitmapData;
-	}
+    public override get bitmapData(): ImageBitmap | null
+    {
+        return this._bitmapData;
+    }
 
-	public override set bitmapData(value: ImageBitmap | null)
-	{
-		this.bitmap = value;
-	}
+    public override set bitmapData(value: ImageBitmap | null)
+    {
+        this.bitmap = value;
+    }
 
-	public override get properties(): unknown[]
-	{
-		const props = super.properties;
+    public override get properties(): unknown[]
+    {
+        const props = super.properties;
 
-		props.unshift(this.createProperty('handle_bitmap_disposing', this._disposesBitmap));
-		props.unshift(this.createProperty('bitmap_asset_name', this._bitmapAssetName));
+        props.unshift(this.createProperty('handle_bitmap_disposing', this._disposesBitmap));
+        props.unshift(this.createProperty('bitmap_asset_name', this._bitmapAssetName));
 
-		return props;
-	}
+        return props;
+    }
 
-	public override set properties(value: unknown[])
-	{
-		for (const item of value)
-		{
-			const prop = item as PropertyStruct;
+    public override set properties(value: unknown[])
+    {
+        for(const item of value)
+        {
+            const prop = item as PropertyStruct;
 
-			switch (prop.key)
-			{
-				case 'handle_bitmap_disposing':
-					this._disposesBitmap = !!prop.value;
-					break;
-				case 'bitmap_asset_name':
-					this._bitmapAssetName = (prop.value as string) ?? '';
-					break;
-			}
-		}
+            switch(prop.key)
+            {
+                case 'handle_bitmap_disposing':
+                    this._disposesBitmap = !!prop.value;
+                    break;
+                case 'bitmap_asset_name':
+                    this._bitmapAssetName = (prop.value as string) ?? '';
+                    break;
+            }
+        }
 
-		super.properties = value;
-	}
+        super.properties = value;
+    }
 
-	public override clone(): IWindow
-	{
-		const cloned = super.clone() as BitmapWrapperController;
+    public override clone(): IWindow
+    {
+        const cloned = super.clone() as BitmapWrapperController;
 
-		cloned._disposesBitmap = false;
-		cloned._bitmapAssetName = this._bitmapAssetName;
+        cloned._disposesBitmap = false;
+        cloned._bitmapAssetName = this._bitmapAssetName;
 
-		return cloned;
-	}
+        return cloned;
+    }
 
-	public override dispose(): void
-	{
-		if (this._disposed) return;
+    public override dispose(): void
+    {
+        if(this._disposed) return;
 
-		if (this._bitmapData)
-		{
-			if (this._disposesBitmap)
-			{
-				this._bitmapData.close();
-			}
+        if(this._bitmapData)
+        {
+            if(this._disposesBitmap)
+            {
+                this._bitmapData.close();
+            }
 
-			this._bitmapData = null;
-		}
+            this._bitmapData = null;
+        }
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 }

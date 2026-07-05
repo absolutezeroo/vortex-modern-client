@@ -10,13 +10,13 @@ import {HabboGroupDetailsMessageParser} from '../../parser/users/HabboGroupDetai
  */
 export class HabboGroupDetailsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboGroupDetailsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboGroupDetailsMessageParser);
+    }
 
-	get data(): HabboGroupDetailsData | null
-	{
-		return (this._parser as HabboGroupDetailsMessageParser).data;
-	}
+    get data(): HabboGroupDetailsData | null
+    {
+        return (this._parser as HabboGroupDetailsMessageParser).data;
+    }
 }

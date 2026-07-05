@@ -8,33 +8,33 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ChatReviewSessionStartedMessageParser implements IMessageParser
 {
-	private _votingTimeout: number = -1;
+    private _votingTimeout: number = -1;
 
-	get votingTimeout(): number
-	{
-		return this._votingTimeout;
-	}
+    get votingTimeout(): number
+    {
+        return this._votingTimeout;
+    }
 
-	private _chatRecord: string = '';
+    private _chatRecord: string = '';
 
-	get chatRecord(): string
-	{
-		return this._chatRecord;
-	}
+    get chatRecord(): string
+    {
+        return this._chatRecord;
+    }
 
-	flush(): boolean
-	{
-		this._votingTimeout = -1;
-		this._chatRecord = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._votingTimeout = -1;
+        this._chatRecord = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._votingTimeout = wrapper.readInt();
-		this._chatRecord = wrapper.readString();
-		return true;
-	}
+        this._votingTimeout = wrapper.readInt();
+        this._chatRecord = wrapper.readString();
+        return true;
+    }
 }

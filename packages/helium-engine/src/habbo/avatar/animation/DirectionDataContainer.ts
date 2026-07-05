@@ -5,15 +5,15 @@
  */
 export class DirectionDataContainer
 {
-	constructor(data: any)
-	{
-		this._offset = parseInt(data.offset) || 0;
-	}
+    constructor(data: any)
+    {
+        this._offset = parseInt(data.offset) || 0;
+    }
 
-	private _offset: number;
+    private _offset: number;
 
-	public get offset(): number
-	{
-		return this._offset;
-	}
+    public get offset(): number
+    {
+        return this._offset;
+    }
 }

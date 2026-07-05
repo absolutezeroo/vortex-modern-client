@@ -9,8 +9,8 @@ import {NavigatorLiftedRoomsMessageParser} from '../../parser/newnavigator';
  */
 export class NavigatorLiftedRoomsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NavigatorLiftedRoomsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NavigatorLiftedRoomsMessageParser);
+    }
 }

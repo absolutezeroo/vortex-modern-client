@@ -33,7 +33,7 @@ export type IConfirmDialog = IAlertDialog;
  */
 export class ConfirmDialog extends AlertDialog
 {
-	/**
+    /**
 	 * Creates a new confirm dialog.
 	 *
 	 * @param windowManager - The Habbo window manager
@@ -44,21 +44,21 @@ export class ConfirmDialog extends AlertDialog
 	 * @param callback - Callback for button events (required for confirm dialogs)
 	 * @param modal - Whether to display as a modal dialog
 	 */
-	// AS3: sources/win63_version/habbo/window/utils/ConfirmDialog.as::ConfirmDialog()
-	constructor(
-		windowManager: IHabboWindowManager,
-		xml: string,
-		title: string,
-		summary: string,
-		flags: number,
-		callback: AlertDialogCallback | null,
-		modal: boolean
-	)
-	{
-		super(windowManager, xml, title, summary, flags, callback, modal);
-	}
+    // AS3: sources/win63_version/habbo/window/utils/ConfirmDialog.as::ConfirmDialog()
+    constructor(
+        windowManager: IHabboWindowManager,
+        xml: string,
+        title: string,
+        summary: string,
+        flags: number,
+        callback: AlertDialogCallback | null,
+        modal: boolean
+    )
+    {
+        super(windowManager, xml, title, summary, flags, callback, modal);
+    }
 
-	/**
+    /**
 	 * Handles dialog window events.
 	 *
 	 * Unlike AlertDialog, ConfirmDialog NEVER self-disposes on button
@@ -68,32 +68,32 @@ export class ConfirmDialog extends AlertDialog
 	 * @param event - The window event
 	 * @param window - The window that triggered the event
 	 */
-	// AS3: sources/win63_version/habbo/window/utils/ConfirmDialog.as::dialogEventProc()
-	protected override dialogEventProc(event: WindowEvent, window: IWindow): void
-	{
-		if (event.type === WindowMouseEvent.CLICK)
-		{
-			switch (window.name)
-			{
-				case AlertDialog.BUTTON_OK:
-					if (this._callback !== null)
-					{
-						const okEvent = WindowEvent.allocate(WindowEvent.WE_OK, null, null);
-						this._callback(this, okEvent);
-						okEvent.recycle();
-					}
-					break;
+    // AS3: sources/win63_version/habbo/window/utils/ConfirmDialog.as::dialogEventProc()
+    protected override dialogEventProc(event: WindowEvent, window: IWindow): void
+    {
+        if(event.type === WindowMouseEvent.CLICK)
+        {
+            switch(window.name)
+            {
+                case AlertDialog.BUTTON_OK:
+                    if(this._callback !== null)
+                    {
+                        const okEvent = WindowEvent.allocate(WindowEvent.WE_OK, null, null);
+                        this._callback(this, okEvent);
+                        okEvent.recycle();
+                    }
+                    break;
 
-				case AlertDialog.BUTTON_CANCEL:
-				case AlertDialog.HEADER_BUTTON_CLOSE:
-					if (this._callback !== null)
-					{
-						const cancelEvent = WindowEvent.allocate(WindowEvent.WE_CANCEL, null, null);
-						this._callback(this, cancelEvent);
-						cancelEvent.recycle();
-					}
-					break;
-			}
-		}
-	}
+                case AlertDialog.BUTTON_CANCEL:
+                case AlertDialog.HEADER_BUTTON_CLOSE:
+                    if(this._callback !== null)
+                    {
+                        const cancelEvent = WindowEvent.allocate(WindowEvent.WE_CANCEL, null, null);
+                        this._callback(this, cancelEvent);
+                        cancelEvent.recycle();
+                    }
+                    break;
+            }
+        }
+    }
 }

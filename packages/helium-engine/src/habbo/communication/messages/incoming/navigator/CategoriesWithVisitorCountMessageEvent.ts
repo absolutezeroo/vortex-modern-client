@@ -7,8 +7,8 @@ import {CategoriesWithVisitorCountMessageParser} from '../../parser/navigator/Ca
  */
 export class CategoriesWithVisitorCountMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CategoriesWithVisitorCountMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CategoriesWithVisitorCountMessageParser);
+    }
 }

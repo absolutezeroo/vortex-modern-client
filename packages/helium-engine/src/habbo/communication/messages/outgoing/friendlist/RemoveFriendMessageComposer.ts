@@ -8,33 +8,33 @@ import type {IMessageComposer} from '@core/communication/messages/IMessageCompos
  */
 export class RemoveFriendMessageComposer implements IMessageComposer<unknown[]>
 {
-	private _friendIds: number[];
+    private _friendIds: number[];
 
-	constructor(...friendIds: number[])
-	{
-		this._friendIds = friendIds;
-	}
+    constructor(...friendIds: number[])
+    {
+        this._friendIds = friendIds;
+    }
 
-	get disposed(): boolean
-	{
-		return false;
-	}
+    get disposed(): boolean
+    {
+        return false;
+    }
 
-	getMessageArray(): unknown[]
-	{
-		const result: unknown[] = [];
-		result.push(this._friendIds.length);
+    getMessageArray(): unknown[]
+    {
+        const result: unknown[] = [];
+        result.push(this._friendIds.length);
 
-		for (let i = 0; i < this._friendIds.length; i++)
-		{
-			result.push(this._friendIds[i]);
-		}
+        for(let i = 0; i < this._friendIds.length; i++)
+        {
+            result.push(this._friendIds[i]);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	dispose(): void
-	{
-		return;
-	}
+    dispose(): void
+    {
+        return;
+    }
 }

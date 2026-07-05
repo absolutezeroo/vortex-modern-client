@@ -9,34 +9,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class CallForHelpResultMessageParser implements IMessageParser
 {
-	private _resultType: number = -1;
+    private _resultType: number = -1;
 
-	get resultType(): number
-	{
-		return this._resultType;
-	}
+    get resultType(): number
+    {
+        return this._resultType;
+    }
 
-	private _messageText: string = '';
+    private _messageText: string = '';
 
-	get messageText(): string
-	{
-		return this._messageText;
-	}
+    get messageText(): string
+    {
+        return this._messageText;
+    }
 
-	flush(): boolean
-	{
-		this._resultType = -1;
-		this._messageText = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._resultType = -1;
+        this._messageText = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._resultType = wrapper.readInt();
-		this._messageText = wrapper.readString();
+        this._resultType = wrapper.readInt();
+        this._messageText = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

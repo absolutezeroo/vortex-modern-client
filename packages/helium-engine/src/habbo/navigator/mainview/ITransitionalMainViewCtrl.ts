@@ -11,25 +11,25 @@ import type {TextSearchInputs} from '../TextSearchInputs';
  */
 export interface ITransitionalMainViewCtrl extends IDisposable
 {
-	readonly mainWindow: IWindow | null;
-	readonly searchInput: TextSearchInputs | null;
-	readonly isPhaseOneNavigator: boolean;
+    readonly mainWindow: IWindow | null;
+    readonly searchInput: TextSearchInputs | null;
+    readonly isPhaseOneNavigator: boolean;
 
-	onNavigatorToolBarIconClick(): void;
+    onNavigatorToolBarIconClick(): void;
 
-	open(): void;
+    open(): void;
 
-	isOpen(): boolean;
+    isOpen(): boolean;
 
-	close(): void;
+    close(): void;
 
-	refresh(): void;
+    refresh(): void;
 
-	reloadRoomList(categoryId: number): boolean;
+    reloadRoomList(categoryId: number): boolean;
 
-	startSearch(param1: number, searchType: number, query?: string, param4?: number): void;
+    startSearch(param1: number, searchType: number, query?: string, param4?: number): void;
 
-	update(time: number): void;
+    update(time: number): void;
 
-	openAtPosition(x: number, y: number): void;
+    openAtPosition(x: number, y: number): void;
 }

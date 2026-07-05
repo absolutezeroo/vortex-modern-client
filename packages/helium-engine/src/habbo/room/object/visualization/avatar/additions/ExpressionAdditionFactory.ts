@@ -13,13 +13,13 @@ import {FloatingHeart} from './FloatingHeart';
 
 export class ExpressionAdditionFactory
 {
-	public static readonly WAVE: number = 1;
-	public static readonly BLOW: number = 2;
-	public static readonly LAUGH: number = 3;
-	public static readonly CRY: number = 4;
-	public static readonly IDLE: number = 5;
+    public static readonly WAVE: number = 1;
+    public static readonly BLOW: number = 2;
+    public static readonly LAUGH: number = 3;
+    public static readonly CRY: number = 4;
+    public static readonly IDLE: number = 5;
 
-	/**
+    /**
 	 * Creates the appropriate expression addition for the given type.
 	 *
 	 * @param id - The addition identifier
@@ -27,14 +27,14 @@ export class ExpressionAdditionFactory
 	 * @param visualization - The parent avatar visualization
 	 * @returns The created expression addition, or null if type is unknown
 	 */
-	public static make(id: number, type: number, visualization: AvatarVisualization): IExpressionAddition | null
-	{
-		switch (type)
-		{
-			case ExpressionAdditionFactory.BLOW:
-				return new FloatingHeart(id, ExpressionAdditionFactory.BLOW, visualization);
-			default:
-				return new ExpressionAddition(id, type, visualization);
-		}
-	}
+    public static make(id: number, type: number, visualization: AvatarVisualization): IExpressionAddition | null
+    {
+        switch(type)
+        {
+            case ExpressionAdditionFactory.BLOW:
+                return new FloatingHeart(id, ExpressionAdditionFactory.BLOW, visualization);
+            default:
+                return new ExpressionAddition(id, type, visualization);
+        }
+    }
 }

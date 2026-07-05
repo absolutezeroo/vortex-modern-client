@@ -5,7 +5,7 @@
  */
 export interface IGestureAgentService
 {
-	readonly disposed: boolean;
+    readonly disposed: boolean;
 
-	dispose(): void;
+    dispose(): void;
 }

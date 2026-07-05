@@ -9,8 +9,8 @@ import {PetRespectFailedEventParser} from '../../parser/notifications/PetRespect
  */
 export class PetRespectFailedEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PetRespectFailedEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PetRespectFailedEventParser);
+    }
 }

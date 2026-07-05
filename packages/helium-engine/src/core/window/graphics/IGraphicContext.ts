@@ -10,34 +10,34 @@ import type {IDisposable} from "../../runtime/IDisposable";
  */
 export interface IGraphicContext extends IDisposable
 {
-	filters: unknown[];
-	visible: boolean;
-	blend: number;
-	mouse: boolean;
+    filters: unknown[];
+    visible: boolean;
+    blend: number;
+    mouse: boolean;
 
-	readonly numChildContexts: number;
+    readonly numChildContexts: number;
 
-	offset(x: number, y: number): void;
+    offset(x: number, y: number): void;
 
-	getDrawRegion(): { x: number; y: number; width: number; height: number };
+    getDrawRegion(): { x: number; y: number; width: number; height: number };
 
-	fetchDrawBuffer(): unknown;
+    fetchDrawBuffer(): unknown;
 
-	addChildContext(context: IGraphicContext): IGraphicContext;
+    addChildContext(context: IGraphicContext): IGraphicContext;
 
-	addChildContextAt(context: IGraphicContext, index: number): IGraphicContext;
+    addChildContextAt(context: IGraphicContext, index: number): IGraphicContext;
 
-	getChildContextAt(index: number): IGraphicContext;
+    getChildContextAt(index: number): IGraphicContext;
 
-	getChildContextIndex(context: IGraphicContext): number;
+    getChildContextIndex(context: IGraphicContext): number;
 
-	removeChildContext(context: IGraphicContext): IGraphicContext;
+    removeChildContext(context: IGraphicContext): IGraphicContext;
 
-	removeChildContextAt(index: number): IGraphicContext;
+    removeChildContextAt(index: number): IGraphicContext;
 
-	setChildContextIndex(context: IGraphicContext, index: number): void;
+    setChildContextIndex(context: IGraphicContext, index: number): void;
 
-	swapChildContexts(a: IGraphicContext, b: IGraphicContext): void;
+    swapChildContexts(a: IGraphicContext, b: IGraphicContext): void;
 
-	swapChildContextsAt(indexA: number, indexB: number): void;
+    swapChildContextsAt(indexA: number, indexB: number): void;
 }

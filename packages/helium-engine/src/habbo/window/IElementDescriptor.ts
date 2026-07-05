@@ -13,14 +13,14 @@
  */
 export interface IElementDefaults
 {
-	threshold: number;
-	background: boolean;
-	blend: number;
-	color: number;
-	widthMin: number;
-	widthMax: number;
-	heightMin: number;
-	heightMax: number;
+    threshold: number;
+    background: boolean;
+    blend: number;
+    color: number;
+    widthMin: number;
+    widthMax: number;
+    heightMin: number;
+    heightMax: number;
 }
 
 /**
@@ -28,9 +28,9 @@ export interface IElementDefaults
  */
 export interface IElementState
 {
-	name: string;
-	layout: string;
-	template: string;
+    name: string;
+    layout: string;
+    template: string;
 }
 
 /**
@@ -38,35 +38,35 @@ export interface IElementState
  */
 export interface IElementDescriptor
 {
-	/** Element type tag name (e.g. "button", "frame") */
-	type: string;
+    /** Element type tag name (e.g. "button", "frame") */
+    type: string;
 
-	/** Resolved numeric type ID */
-	typeId: number;
+    /** Resolved numeric type ID */
+    typeId: number;
 
-	/** Intent string */
-	intent: string;
+    /** Intent string */
+    intent: string;
 
-	/** Numeric style (0 = default) */
-	style: number;
+    /** Numeric style (0 = default) */
+    style: number;
 
-	/** Renderer class name */
-	renderer: string;
+    /** Renderer class name */
+    renderer: string;
 
-	/** Skin asset name */
-	asset: string;
+    /** Skin asset name */
+    asset: string;
 
-	/** Layout name */
-	layout: string;
+    /** Layout name */
+    layout: string;
 
-	/** Window layout reference */
-	windowLayout: string;
+    /** Window layout reference */
+    windowLayout: string;
 
-	/** Default attribute values */
-	defaults: IElementDefaults;
+    /** Default attribute values */
+    defaults: IElementDefaults;
 
-	/** Visual states */
-	states: IElementState[];
+    /** Visual states */
+    states: IElementState[];
 }
 
 /**
@@ -74,10 +74,10 @@ export interface IElementDescriptor
  */
 export interface IElementDescriptionData
 {
-	id: string;
-	source: string;
-	typeMap: Record<string, number>;
-	paramMap: Record<string, number>;
-	stateMap: Record<string, number>;
-	elements: IElementDescriptor[];
+    id: string;
+    source: string;
+    typeMap: Record<string, number>;
+    paramMap: Record<string, number>;
+    stateMap: Record<string, number>;
+    elements: IElementDescriptor[];
 }

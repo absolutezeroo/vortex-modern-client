@@ -7,43 +7,43 @@ import {HallOfFameEntryData} from './HallOfFameEntryData';
  */
 export class CommunityGoalHallOfFameData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._hof = [];
-		this._goalCode = wrapper.readString();
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._hof = [];
+        this._goalCode = wrapper.readString();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._hof.push(new HallOfFameEntryData(wrapper));
-		}
-	}
+        for(let i = 0; i < count; i++)
+        {
+            this._hof.push(new HallOfFameEntryData(wrapper));
+        }
+    }
 
-	private _goalCode: string;
+    private _goalCode: string;
 
-	get goalCode(): string
-	{
-		return this._goalCode;
-	}
+    get goalCode(): string
+    {
+        return this._goalCode;
+    }
 
-	private _hof: HallOfFameEntryData[];
+    private _hof: HallOfFameEntryData[];
 
-	get hof(): HallOfFameEntryData[]
-	{
-		return this._hof;
-	}
+    get hof(): HallOfFameEntryData[]
+    {
+        return this._hof;
+    }
 
-	private _disposed: boolean = false;
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    private _disposed: boolean = false;
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	dispose(): void
-	{
-		if (this._disposed) return;
-		this._disposed = true;
-		this._hof = [];
-	}
+    dispose(): void
+    {
+        if(this._disposed) return;
+        this._disposed = true;
+        this._hof = [];
+    }
 }

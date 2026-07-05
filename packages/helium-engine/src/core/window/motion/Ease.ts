@@ -10,29 +10,29 @@ import {Interval} from './Interval';
  */
 export class Ease extends Interval
 {
-	protected _inner: Interval;
+    protected _inner: Interval;
 
-	constructor(inner: Interval)
-	{
-		super(inner.target, inner.duration);
-		this._inner = inner;
-	}
+    constructor(inner: Interval)
+    {
+        super(inner.target, inner.duration);
+        this._inner = inner;
+    }
 
-	public override start(): void
-	{
-		super.start();
-		this._inner.start();
-	}
+    public override start(): void
+    {
+        super.start();
+        this._inner.start();
+    }
 
-	public override update(progress: number): void
-	{
-		super.update(progress);
-		this._inner.update(progress);
-	}
+    public override update(progress: number): void
+    {
+        super.update(progress);
+        this._inner.update(progress);
+    }
 
-	public override stop(): void
-	{
-		super.stop();
-		this._inner.stop();
-	}
+    public override stop(): void
+    {
+        super.stop();
+        this._inner.stop();
+    }
 }

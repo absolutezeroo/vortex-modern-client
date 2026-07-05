@@ -11,27 +11,27 @@ import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSpri
 
 export interface IAvatarAddition
 {
-	readonly id: number;
-	readonly disposed: boolean;
+    readonly id: number;
+    readonly disposed: boolean;
 
-	/**
+    /**
 	 * Updates the addition sprite position and asset for the current scale.
 	 *
 	 * @param sprite - The sprite to update
 	 * @param scale - The current visualization scale
 	 */
-	update(sprite: IRoomObjectSprite | null, scale: number): void;
+    update(sprite: IRoomObjectSprite | null, scale: number): void;
 
-	/**
+    /**
 	 * Animates the addition each frame.
 	 *
 	 * @param sprite - The sprite to animate
 	 * @returns True if the animation caused a visual change
 	 */
-	animate(sprite: IRoomObjectSprite | null): boolean;
+    animate(sprite: IRoomObjectSprite | null): boolean;
 
-	/**
+    /**
 	 * Disposes of this addition and releases resources.
 	 */
-	dispose(): void;
+    dispose(): void;
 }

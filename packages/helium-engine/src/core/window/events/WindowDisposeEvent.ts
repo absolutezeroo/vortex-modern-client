@@ -10,59 +10,59 @@ import {WindowEvent} from './WindowEvent';
  */
 export class WindowDisposeEvent extends WindowEvent
 {
-	// ── Event type constants ─────────────────────────────────────────
+    // ── Event type constants ─────────────────────────────────────────
 
-	public static readonly WE_DISPOSED: string = 'WINDOW_DISPOSE_EVENT';
+    public static readonly WE_DISPOSED: string = 'WINDOW_DISPOSE_EVENT';
 
-	// ── Object pool ──────────────────────────────────────────────────
+    // ── Object pool ──────────────────────────────────────────────────
 
-	private static readonly _disposePool: WindowDisposeEvent[] = [];
+    private static readonly _disposePool: WindowDisposeEvent[] = [];
 
-	// ── Constructor ──────────────────────────────────────────────────
+    // ── Constructor ──────────────────────────────────────────────────
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._type = WindowDisposeEvent.WE_DISPOSED;
-	}
+        this._type = WindowDisposeEvent.WE_DISPOSED;
+    }
 
-	// ── Static factory ───────────────────────────────────────────────
+    // ── Static factory ───────────────────────────────────────────────
 
-	/**
+    /**
 	 * Allocates a WindowDisposeEvent from the pool or creates a new one.
 	 *
 	 * @param window - The window being disposed
 	 * @returns A pooled or new WindowDisposeEvent instance
 	 */
-	public static allocateDispose(window: IWindow | null): WindowDisposeEvent
-	{
-		const event: WindowDisposeEvent = (WindowDisposeEvent._disposePool.length > 0)
-			? WindowDisposeEvent._disposePool.pop()!
-			: new WindowDisposeEvent();
+    public static allocateDispose(window: IWindow | null): WindowDisposeEvent
+    {
+        const event: WindowDisposeEvent = (WindowDisposeEvent._disposePool.length > 0)
+            ? WindowDisposeEvent._disposePool.pop()!
+            : new WindowDisposeEvent();
 
-		event._window = window;
-		event._recycled = false;
-		event._poolRef = WindowDisposeEvent._disposePool;
+        event._window = window;
+        event._recycled = false;
+        event._poolRef = WindowDisposeEvent._disposePool;
 
-		return event;
-	}
+        return event;
+    }
 
-	// ── Methods ──────────────────────────────────────────────────────
+    // ── Methods ──────────────────────────────────────────────────────
 
-	/**
+    /**
 	 * Creates a clone of this dispose event via the pool.
 	 */
-	public override clone(): WindowEvent
-	{
-		return WindowDisposeEvent.allocateDispose(this._window);
-	}
+    public override clone(): WindowEvent
+    {
+        return WindowDisposeEvent.allocateDispose(this._window);
+    }
 
-	/**
+    /**
 	 * Returns a string representation of this dispose event.
 	 */
-	public override toString(): string
-	{
-		return `WindowDisposeEvent { type: ${this._type} window: ${this._window} }`;
-	}
+    public override toString(): string
+    {
+        return `WindowDisposeEvent { type: ${this._type} window: ${this._window} }`;
+    }
 }

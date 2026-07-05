@@ -5,9 +5,9 @@ import type {IDisposable} from '@core/runtime';
  */
 export interface PerkAllowance
 {
-	readonly code: string;
-	readonly errorMessage: string;
-	readonly isAllowed: boolean;
+    readonly code: string;
+    readonly errorMessage: string;
+    readonly isAllowed: boolean;
 }
 
 /**
@@ -16,18 +16,18 @@ export interface PerkAllowance
  */
 export interface IPerkManager extends IDisposable
 {
-	/**
+    /**
 	 * Whether the perk data has been loaded
 	 */
-	readonly isReady: boolean;
+    readonly isReady: boolean;
 
-	/**
+    /**
 	 * Check if a perk is allowed for the user
 	 */
-	isPerkAllowed(perkCode: string): boolean;
+    isPerkAllowed(perkCode: string): boolean;
 
-	/**
+    /**
 	 * Get the error message for a perk (why it's not allowed)
 	 */
-	getPerkErrorMessage(perkCode: string): string;
+    getPerkErrorMessage(perkCode: string): string;
 }

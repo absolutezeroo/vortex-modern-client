@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UnblockUserMessageComposer extends MessageComposer<ConstructorParameters<typeof UnblockUserMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof UnblockUserMessageComposer>;
+    private _data: ConstructorParameters<typeof UnblockUserMessageComposer>;
 
-	constructor(userId: number)
-	{
-		super();
+    constructor(userId: number)
+    {
+        super();
 
-		this._data = [userId];
-	}
+        this._data = [userId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

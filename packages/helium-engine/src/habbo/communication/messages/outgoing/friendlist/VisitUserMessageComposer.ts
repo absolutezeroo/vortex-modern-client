@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class VisitUserMessageComposer extends MessageComposer<ConstructorParameters<typeof VisitUserMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof VisitUserMessageComposer>;
+    private _data: ConstructorParameters<typeof VisitUserMessageComposer>;
 
-	constructor(userName: string)
-	{
-		super();
-		this._data = [userName];
-	}
+    constructor(userName: string)
+    {
+        super();
+        this._data = [userName];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

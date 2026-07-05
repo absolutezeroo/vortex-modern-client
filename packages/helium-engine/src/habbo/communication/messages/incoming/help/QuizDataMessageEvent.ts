@@ -9,8 +9,8 @@ import {QuizDataMessageParser} from '../../parser/help/QuizDataMessageParser';
  */
 export class QuizDataMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, QuizDataMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, QuizDataMessageParser);
+    }
 }

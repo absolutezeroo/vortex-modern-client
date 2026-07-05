@@ -9,5 +9,5 @@ import type {IItemGridWindow} from './IItemGridWindow';
  */
 export interface IScrollableGridWindow extends IItemGridWindow
 {
-	autoHideScrollBar: boolean;
+    autoHideScrollBar: boolean;
 }

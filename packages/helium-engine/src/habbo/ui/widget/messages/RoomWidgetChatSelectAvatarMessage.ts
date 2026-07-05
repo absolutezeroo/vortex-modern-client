@@ -7,34 +7,34 @@ import {RoomWidgetMessage} from './RoomWidgetMessage';
 
 export class RoomWidgetChatSelectAvatarMessage extends RoomWidgetMessage
 {
-	public static readonly WIDGET_MESSAGE_SELECT_AVATAR: string = 'RWCSAM_MESSAGE_SELECT_AVATAR';
+    public static readonly WIDGET_MESSAGE_SELECT_AVATAR: string = 'RWCSAM_MESSAGE_SELECT_AVATAR';
 
-	private _objectId: number;
-	private _userName: string;
-	private _roomId: number;
+    private _objectId: number;
+    private _userName: string;
+    private _roomId: number;
 
-	// AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatSelectAvatarMessage.as::RoomWidgetChatSelectAvatarMessage()
-	constructor(type: string, objectId: number, userName: string, roomId: number)
-	{
-		super(type);
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetChatSelectAvatarMessage.as::RoomWidgetChatSelectAvatarMessage()
+    constructor(type: string, objectId: number, userName: string, roomId: number)
+    {
+        super(type);
 
-		this._objectId = objectId;
-		this._userName = userName;
-		this._roomId = roomId;
-	}
+        this._objectId = objectId;
+        this._userName = userName;
+        this._roomId = roomId;
+    }
 
-	public get objectId(): number
-	{
-		return this._objectId;
-	}
+    public get objectId(): number
+    {
+        return this._objectId;
+    }
 
-	public get userName(): string
-	{
-		return this._userName;
-	}
+    public get userName(): string
+    {
+        return this._userName;
+    }
 
-	public get roomId(): number
-	{
-		return this._roomId;
-	}
+    public get roomId(): number
+    {
+        return this._roomId;
+    }
 }

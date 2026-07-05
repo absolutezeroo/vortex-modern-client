@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ForwardToACompetitionRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof ForwardToACompetitionRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ForwardToACompetitionRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof ForwardToACompetitionRoomMessageComposer>;
 
-	constructor(goalCode: string, direction: number)
-	{
-		super();
+    constructor(goalCode: string, direction: number)
+    {
+        super();
 
-		this._data = [goalCode, direction];
-	}
+        this._data = [goalCode, direction];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

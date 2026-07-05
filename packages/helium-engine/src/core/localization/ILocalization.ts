@@ -5,18 +5,18 @@
  */
 export interface ILocalization
 {
-	/**
+    /**
 	 * Whether this localization has been initialized with a value
 	 */
-	readonly isInitialized: boolean;
+    readonly isInitialized: boolean;
 
-	/**
+    /**
 	 * Get the processed value with parameters filled in
 	 */
-	readonly value: string;
+    readonly value: string;
 
-	/**
+    /**
 	 * Get the raw value without parameter processing
 	 */
-	readonly raw: string;
+    readonly raw: string;
 }

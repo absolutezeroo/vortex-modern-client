@@ -13,98 +13,98 @@ import type {IStuffData} from './IStuffData';
 
 export abstract class StuffDataBase implements IStuffData
 {
-	protected static readonly UNIQUE_SERIAL_FLAG = 256;
+    protected static readonly UNIQUE_SERIAL_FLAG = 256;
 
-	private _flags: number = 0;
+    private _flags: number = 0;
 
-	get flags(): number
-	{
-		return this._flags;
-	}
+    get flags(): number
+    {
+        return this._flags;
+    }
 
-	set flags(value: number)
-	{
-		this._flags = value;
-	}
+    set flags(value: number)
+    {
+        this._flags = value;
+    }
 
-	private _uniqueSerialNumber: number = 0;
+    private _uniqueSerialNumber: number = 0;
 
-	get uniqueSerialNumber(): number
-	{
-		return this._uniqueSerialNumber;
-	}
+    get uniqueSerialNumber(): number
+    {
+        return this._uniqueSerialNumber;
+    }
 
-	set uniqueSerialNumber(value: number)
-	{
-		this._uniqueSerialNumber = value;
-	}
+    set uniqueSerialNumber(value: number)
+    {
+        this._uniqueSerialNumber = value;
+    }
 
-	private _uniqueSeriesSize: number = 0;
+    private _uniqueSeriesSize: number = 0;
 
-	get uniqueSeriesSize(): number
-	{
-		return this._uniqueSeriesSize;
-	}
+    get uniqueSeriesSize(): number
+    {
+        return this._uniqueSeriesSize;
+    }
 
-	set uniqueSeriesSize(value: number)
-	{
-		this._uniqueSeriesSize = value;
-	}
+    set uniqueSeriesSize(value: number)
+    {
+        this._uniqueSeriesSize = value;
+    }
 
-	get rarityLevel(): number
-	{
-		return -1;
-	}
+    get rarityLevel(): number
+    {
+        return -1;
+    }
 
-	get state(): number
-	{
-		const value = Number(this.getLegacyString());
+    get state(): number
+    {
+        const value = Number(this.getLegacyString());
 
-		return isNaN(value) ? -1 : Math.floor(value);
-	}
+        return isNaN(value) ? -1 : Math.floor(value);
+    }
 
-	initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
-	{
-		if ((this._flags & StuffDataBase.UNIQUE_SERIAL_FLAG) > 0)
-		{
-			this._uniqueSerialNumber = wrapper.readInt();
-			this._uniqueSeriesSize = wrapper.readInt();
-		}
-	}
+    initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
+    {
+        if((this._flags & StuffDataBase.UNIQUE_SERIAL_FLAG) > 0)
+        {
+            this._uniqueSerialNumber = wrapper.readInt();
+            this._uniqueSeriesSize = wrapper.readInt();
+        }
+    }
 
-	initializeFromRoomObjectModel(model: IRoomObjectModel): void
-	{
-		this._uniqueSerialNumber = model.getNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_SERIAL_NUMBER);
-		this._uniqueSeriesSize = model.getNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_EDITION_SIZE);
-	}
+    initializeFromRoomObjectModel(model: IRoomObjectModel): void
+    {
+        this._uniqueSerialNumber = model.getNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_SERIAL_NUMBER);
+        this._uniqueSeriesSize = model.getNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_EDITION_SIZE);
+    }
 
-	writeRoomObjectModel(model: IRoomObjectModelController): void
-	{
-		model.setNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_SERIAL_NUMBER, this._uniqueSerialNumber);
-		model.setNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_EDITION_SIZE, this._uniqueSeriesSize);
-	}
+    writeRoomObjectModel(model: IRoomObjectModelController): void
+    {
+        model.setNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_SERIAL_NUMBER, this._uniqueSerialNumber);
+        model.setNumber(RoomObjectVariableEnum.FURNITURE_UNIQUE_EDITION_SIZE, this._uniqueSeriesSize);
+    }
 
-	getLegacyString(): string
-	{
-		return '';
-	}
+    getLegacyString(): string
+    {
+        return '';
+    }
 
-	compare(_data: IStuffData): boolean
-	{
-		return false;
-	}
+    compare(_data: IStuffData): boolean
+    {
+        return false;
+    }
 
-	getJSONValue(key: string): string
-	{
-		try
-		{
-			const json = JSON.parse(this.getLegacyString());
+    getJSONValue(key: string): string
+    {
+        try
+        {
+            const json = JSON.parse(this.getLegacyString());
 
-			return String(json[key] ?? '');
-		}
-		catch
-		{
-			return '';
-		}
-	}
+            return String(json[key] ?? '');
+        }
+        catch
+        {
+            return '';
+        }
+    }
 }

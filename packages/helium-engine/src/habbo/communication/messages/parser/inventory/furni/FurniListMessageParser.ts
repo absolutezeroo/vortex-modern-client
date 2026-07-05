@@ -9,48 +9,48 @@ import {FurniListItemParser} from './FurniListItemParser';
  */
 export class FurniListMessageParser implements IMessageParser
 {
-	private _totalFragments: number = 0;
+    private _totalFragments: number = 0;
 
-	get totalFragments(): number
-	{
-		return this._totalFragments;
-	}
+    get totalFragments(): number
+    {
+        return this._totalFragments;
+    }
 
-	private _fragmentNo: number = 0;
+    private _fragmentNo: number = 0;
 
-	get fragmentNo(): number
-	{
-		return this._fragmentNo;
-	}
+    get fragmentNo(): number
+    {
+        return this._fragmentNo;
+    }
 
-	private _items: Map<number, FurniListItemParser> = new Map();
+    private _items: Map<number, FurniListItemParser> = new Map();
 
-	get items(): Map<number, FurniListItemParser>
-	{
-		return this._items;
-	}
+    get items(): Map<number, FurniListItemParser>
+    {
+        return this._items;
+    }
 
-	flush(): boolean
-	{
-		this._items.clear();
+    flush(): boolean
+    {
+        this._items.clear();
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._totalFragments = wrapper.readInt();
-		this._fragmentNo = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._totalFragments = wrapper.readInt();
+        this._fragmentNo = wrapper.readInt();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const item = new FurniListItemParser(wrapper);
+        for(let i = 0; i < count; i++)
+        {
+            const item = new FurniListItemParser(wrapper);
 
-			this._items.set(item.itemId, item);
-		}
+            this._items.set(item.itemId, item);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

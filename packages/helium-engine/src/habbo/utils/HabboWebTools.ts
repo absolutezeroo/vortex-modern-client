@@ -8,10 +8,10 @@ const log = Logger.getLogger('HabboWebTools');
  */
 export interface HabboWebToolsEvents
 {
-	'roomVisited': (roomId: number) => void;
-	'logout': () => void;
-	'disconnect': (reason: number, message: string) => void;
-	'figureUpdated': (figure: string) => void;
+    'roomVisited': (roomId: number) => void;
+    'logout': () => void;
+    'disconnect': (reason: number, message: string) => void;
+    'figureUpdated': (figure: string) => void;
 }
 
 /**
@@ -26,251 +26,251 @@ export interface HabboWebToolsEvents
  */
 export class HabboWebTools
 {
-	public static readonly ADVERTISEMENT: string = 'advertisement';
-	public static readonly WINDOW_HABBO_MAIN: string = 'habboMain';
-	public static readonly OPEN_INTERNAL_LINK_FROM_WEB_CALLBACK: string = 'openlink';
-	public static readonly GOTO_ROOM_FROM_WEB_CALLBACK: string = 'openroom';
-	public static readonly HABBLET_AVATARS: string = 'avatars';
-	public static readonly HABBLET_MINI_MAIL: string = 'minimail';
-	public static readonly HABBLET_ROOM_ENTER_AD: string = 'roomenterad';
-	public static readonly HABBLET_NEWS: string = 'news';
-	private static readonly _toolEvents = new EventEmitter<HabboWebToolsEvents>();
+    public static readonly ADVERTISEMENT: string = 'advertisement';
+    public static readonly WINDOW_HABBO_MAIN: string = 'habboMain';
+    public static readonly OPEN_INTERNAL_LINK_FROM_WEB_CALLBACK: string = 'openlink';
+    public static readonly GOTO_ROOM_FROM_WEB_CALLBACK: string = 'openroom';
+    public static readonly HABBLET_AVATARS: string = 'avatars';
+    public static readonly HABBLET_MINI_MAIL: string = 'minimail';
+    public static readonly HABBLET_ROOM_ENTER_AD: string = 'roomenterad';
+    public static readonly HABBLET_NEWS: string = 'news';
+    private static readonly _toolEvents = new EventEmitter<HabboWebToolsEvents>();
 
-	private static _baseUrl: string = '';
+    private static _baseUrl: string = '';
 
-	static get baseUrl(): string
-	{
-		return HabboWebTools._baseUrl;
-	}
+    static get baseUrl(): string
+    {
+        return HabboWebTools._baseUrl;
+    }
 
-	static set baseUrl(value: string)
-	{
-		HabboWebTools._baseUrl = value;
-	}
+    static set baseUrl(value: string)
+    {
+        HabboWebTools._baseUrl = value;
+    }
 
-	/**
+    /**
 	 * Event emitter for web tool events.
 	 * Named `toolEvents` to avoid conflict with Component.events (see MEMORY.md).
 	 */
-	static get toolEvents(): EventEmitter<HabboWebToolsEvents>
-	{
-		return HabboWebTools._toolEvents;
-	}
+    static get toolEvents(): EventEmitter<HabboWebToolsEvents>
+    {
+        return HabboWebTools._toolEvents;
+    }
 
-	/**
+    /**
 	 * Open a web page in a named window/tab
 	 *
 	 * @param url The URL to open
 	 * @param target The window target name (defaults to WINDOW_HABBO_MAIN)
 	 */
-	static openWebPage(url: string, target: string = ''): void
-	{
-		if (!url) return;
+    static openWebPage(url: string, target: string = ''): void
+    {
+        if(!url) return;
 
-		if (!target)
-		{
-			target = HabboWebTools.WINDOW_HABBO_MAIN;
-		}
+        if(!target)
+        {
+            target = HabboWebTools.WINDOW_HABBO_MAIN;
+        }
 
-		const resolvedUrl = HabboWebTools.resolveUrl(url);
-		window.open(resolvedUrl, target);
-	}
+        const resolvedUrl = HabboWebTools.resolveUrl(url);
+        window.open(resolvedUrl, target);
+    }
 
-	/**
+    /**
 	 * Open a page in the main habbo window
 	 *
 	 * @param url The URL to open
 	 */
-	static openPage(url: string): void
-	{
-		if (!url) return;
+    static openPage(url: string): void
+    {
+        if(!url) return;
 
-		const resolvedUrl = HabboWebTools.resolveUrl(url);
-		window.open(resolvedUrl, HabboWebTools.WINDOW_HABBO_MAIN);
-	}
+        const resolvedUrl = HabboWebTools.resolveUrl(url);
+        window.open(resolvedUrl, HabboWebTools.WINDOW_HABBO_MAIN);
+    }
 
-	/**
+    /**
 	 * Open a web page and minimize the client
 	 *
 	 * @param url The URL to open
 	 */
-	static openWebPageAndMinimizeClient(url: string): void
-	{
-		if (!url) return;
+    static openWebPageAndMinimizeClient(url: string): void
+    {
+        if(!url) return;
 
-		const resolvedUrl = HabboWebTools.resolveUrl(url);
-		window.open(resolvedUrl, HabboWebTools.WINDOW_HABBO_MAIN);
-	}
+        const resolvedUrl = HabboWebTools.resolveUrl(url);
+        window.open(resolvedUrl, HabboWebTools.WINDOW_HABBO_MAIN);
+    }
 
-	/**
+    /**
 	 * Open an external link with a warning dialog
 	 *
 	 * @param url The external URL to open
 	 */
-	static openExternalLinkWarning(url: string): void
-	{
-		if (!url) return;
+    static openExternalLinkWarning(url: string): void
+    {
+        if(!url) return;
 
-		window.open(url, HabboWebTools.WINDOW_HABBO_MAIN);
-	}
+        window.open(url, HabboWebTools.WINDOW_HABBO_MAIN);
+    }
 
-	/**
+    /**
 	 * Log an event to the web page
 	 *
 	 * @param message The event message to log
 	 */
-	static logEventLog(message: string): void
-	{
-		log.debug('EventLog: ' + message);
-	}
+    static logEventLog(message: string): void
+    {
+        log.debug('EventLog: ' + message);
+    }
 
-	/**
+    /**
 	 * Send a heartbeat signal (no-op in browser context)
 	 */
-	static sendHeartBeat(): void
-	{
-		// No-op: Flash ExternalInterface heartbeat not needed in browser
-	}
+    static sendHeartBeat(): void
+    {
+        // No-op: Flash ExternalInterface heartbeat not needed in browser
+    }
 
-	/**
+    /**
 	 * Notify that a room was visited
 	 *
 	 * @param roomId The visited room ID
 	 */
-	static roomVisited(roomId: number): void
-	{
-		HabboWebTools._toolEvents.emit('roomVisited', roomId);
+    static roomVisited(roomId: number): void
+    {
+        HabboWebTools._toolEvents.emit('roomVisited', roomId);
 
-		log.debug('Room visited: ' + roomId);
-	}
+        log.debug('Room visited: ' + roomId);
+    }
 
-	/**
+    /**
 	 * Trigger a logout
 	 */
-	static logOut(): void
-	{
-		HabboWebTools._toolEvents.emit('logout');
+    static logOut(): void
+    {
+        HabboWebTools._toolEvents.emit('logout');
 
-		log.debug('Logout requested');
-	}
+        log.debug('Logout requested');
+    }
 
-	/**
+    /**
 	 * Send a disconnect notification to the web layer
 	 *
 	 * @param reason The disconnect reason code
 	 * @param message The disconnect message
 	 */
-	static sendDisconnectToWeb(reason: number, message: string): void
-	{
-		HabboWebTools._toolEvents.emit('disconnect', reason, message);
+    static sendDisconnectToWeb(reason: number, message: string): void
+    {
+        HabboWebTools._toolEvents.emit('disconnect', reason, message);
 
-		log.debug('Disconnect: reason=' + reason + ', message=' + message);
-	}
+        log.debug('Disconnect: reason=' + reason + ', message=' + message);
+    }
 
-	/**
+    /**
 	 * Notify that the user's figure was updated
 	 *
 	 * @param figure The new figure string
 	 */
-	static updateFigure(figure: string): void
-	{
-		HabboWebTools._toolEvents.emit('figureUpdated', figure);
+    static updateFigure(figure: string): void
+    {
+        HabboWebTools._toolEvents.emit('figureUpdated', figure);
 
-		log.debug('Figure updated: ' + figure);
-	}
+        log.debug('Figure updated: ' + figure);
+    }
 
-	/**
+    /**
 	 * Open a web habblet
 	 *
 	 * @param habblet The habblet type to open
 	 * @param params Optional parameters
 	 */
-	static openWebHabblet(habblet: string, params?: string): void
-	{
-		log.debug('openWebHabblet: ' + habblet + (params ? ', params=' + params : ''));
-	}
+    static openWebHabblet(habblet: string, params?: string): void
+    {
+        log.debug('openWebHabblet: ' + habblet + (params ? ', params=' + params : ''));
+    }
 
-	/**
+    /**
 	 * Close a web habblet
 	 *
 	 * @param habblet The habblet type to close
 	 * @param params Optional parameters
 	 */
-	static closeWebHabblet(habblet: string, params?: string): void
-	{
-		log.debug('closeWebHabblet: ' + habblet + (params ? ', params=' + params : ''));
-	}
+    static closeWebHabblet(habblet: string, params?: string): void
+    {
+        log.debug('closeWebHabblet: ' + habblet + (params ? ', params=' + params : ''));
+    }
 
-	/**
+    /**
 	 * Open the minimail habblet
 	 *
 	 * @param params Optional parameters
 	 */
-	static openMinimail(params?: string): void
-	{
-		HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_MINI_MAIL, params);
-	}
+    static openMinimail(params?: string): void
+    {
+        HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_MINI_MAIL, params);
+    }
 
-	/**
+    /**
 	 * Open the news habblet
 	 */
-	static openNews(): void
-	{
-		HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_NEWS);
-	}
+    static openNews(): void
+    {
+        HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_NEWS);
+    }
 
-	/**
+    /**
 	 * Close the news habblet
 	 */
-	static closeNews(): void
-	{
-		HabboWebTools.closeWebHabblet(HabboWebTools.HABBLET_NEWS);
-	}
+    static closeNews(): void
+    {
+        HabboWebTools.closeWebHabblet(HabboWebTools.HABBLET_NEWS);
+    }
 
-	/**
+    /**
 	 * Open the avatars page
 	 */
-	static openAvatars(): void
-	{
-		HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_AVATARS);
-	}
+    static openAvatars(): void
+    {
+        HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_AVATARS);
+    }
 
-	/**
+    /**
 	 * Open the room enter ad
 	 */
-	static openRoomEnterAd(): void
-	{
-		HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_ROOM_ENTER_AD, '');
-	}
+    static openRoomEnterAd(): void
+    {
+        HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_ROOM_ENTER_AD, '');
+    }
 
-	/**
+    /**
 	 * Show an external game
 	 *
 	 * @param gameId The game identifier
 	 */
-	static showGame(gameId: string): void
-	{
-		log.debug('showGame: ' + gameId);
-	}
+    static showGame(gameId: string): void
+    {
+        log.debug('showGame: ' + gameId);
+    }
 
-	/**
+    /**
 	 * Hide the external game
 	 */
-	static hideGame(): void
-	{
-		log.debug('hideGame');
-	}
+    static hideGame(): void
+    {
+        log.debug('hideGame');
+    }
 
-	/**
+    /**
 	 * Resolve a URL: if it starts with "http", use as-is; otherwise prepend baseUrl
 	 */
-	private static resolveUrl(url: string): string
-	{
-		if (url.indexOf('http') === 0)
-		{
-			return url;
-		}
+    private static resolveUrl(url: string): string
+    {
+        if(url.indexOf('http') === 0)
+        {
+            return url;
+        }
 
-		return HabboWebTools._baseUrl + '/' + url;
-	}
+        return HabboWebTools._baseUrl + '/' + url;
+    }
 }

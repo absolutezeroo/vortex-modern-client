@@ -12,24 +12,24 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export interface IInventoryModel extends IDisposable
 {
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::getWindowContainer()
-	getWindowContainer(): IWindowContainer | null;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::getWindowContainer()
+    getWindowContainer(): IWindowContainer | null;
 
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::requestInitialization()
-	requestInitialization(): void;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::requestInitialization()
+    requestInitialization(): void;
 
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::categorySwitch()
-	categorySwitch(category: string): void;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::categorySwitch()
+    categorySwitch(category: string): void;
 
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::subCategorySwitch()
-	subCategorySwitch(category: string): void;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::subCategorySwitch()
+    subCategorySwitch(category: string): void;
 
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::closingInventoryView()
-	closingInventoryView(): void;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::closingInventoryView()
+    closingInventoryView(): void;
 
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::updateView()
-	updateView(): void;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::updateView()
+    updateView(): void;
 
-	// AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::selectItemById()
-	selectItemById(itemId: string): void;
+    // AS3: sources/win63_version/habbo/inventory/IInventoryModel.as::selectItemById()
+    selectItemById(itemId: string): void;
 }

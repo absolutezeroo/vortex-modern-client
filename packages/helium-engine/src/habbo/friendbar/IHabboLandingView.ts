@@ -8,13 +8,13 @@
  */
 export interface IHabboLandingView
 {
-	/**
+    /**
 	 * Activate the landing view (show it, set toolbar state to hotel view)
 	 */
-	activate(): void;
+    activate(): void;
 
-	/**
+    /**
 	 * Disable the landing view (hide it)
 	 */
-	disable(): void;
+    disable(): void;
 }

@@ -10,11 +10,11 @@ import type {IDisposable} from "../runtime/IDisposable";
  */
 export interface IAssetReceiver extends IDisposable
 {
-	/**
+    /**
 	 * Called when an asset has been loaded and is ready for use.
 	 *
 	 * @param asset - The decoded bitmap
 	 * @param uri - The resolved asset URI
 	 */
-	receiveAsset(asset: ImageBitmap, uri: string): void;
+    receiveAsset(asset: ImageBitmap, uri: string): void;
 }

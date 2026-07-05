@@ -9,8 +9,8 @@ import {PetRespectNotificationEventParser} from '../../parser/notifications/PetR
  */
 export class PetRespectNotificationEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PetRespectNotificationEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PetRespectNotificationEventParser);
+    }
 }

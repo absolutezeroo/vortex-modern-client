@@ -11,20 +11,20 @@ import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelCont
 
 export interface IStuffData
 {
-	flags: number;
-	uniqueSerialNumber: number;
-	uniqueSeriesSize: number;
-	readonly rarityLevel: number;
+    flags: number;
+    uniqueSerialNumber: number;
+    uniqueSeriesSize: number;
+    readonly rarityLevel: number;
 
-	initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void;
+    initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void;
 
-	initializeFromRoomObjectModel(model: IRoomObjectModel): void;
+    initializeFromRoomObjectModel(model: IRoomObjectModel): void;
 
-	writeRoomObjectModel(model: IRoomObjectModelController): void;
+    writeRoomObjectModel(model: IRoomObjectModelController): void;
 
-	getLegacyString(): string;
+    getLegacyString(): string;
 
-	getJSONValue(key: string): string;
+    getJSONValue(key: string): string;
 
-	compare(data: IStuffData): boolean;
+    compare(data: IStuffData): boolean;
 }

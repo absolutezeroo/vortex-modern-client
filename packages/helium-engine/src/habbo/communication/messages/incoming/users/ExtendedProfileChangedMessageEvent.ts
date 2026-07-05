@@ -9,13 +9,13 @@ import {ExtendedProfileChangedMessageParser} from '../../parser/users/ExtendedPr
  */
 export class ExtendedProfileChangedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ExtendedProfileChangedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ExtendedProfileChangedMessageParser);
+    }
 
-	get userId(): number
-	{
-		return (this._parser as ExtendedProfileChangedMessageParser).userId;
-	}
+    get userId(): number
+    {
+        return (this._parser as ExtendedProfileChangedMessageParser).userId;
+    }
 }

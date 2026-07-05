@@ -14,21 +14,21 @@ import type {IRoomObjectVisualization} from './visualization/IRoomObjectVisualiz
 
 export interface IRoomObjectController extends IRoomObject
 {
-	dispose(): void;
+    dispose(): void;
 
-	setInitialized(value: boolean): void;
+    setInitialized(value: boolean): void;
 
-	setLocation(location: IVector3d): void;
+    setLocation(location: IVector3d): void;
 
-	setDirection(direction: IVector3d): void;
+    setDirection(direction: IVector3d): void;
 
-	setVisualization(visualization: IRoomObjectVisualization | null): void;
+    setVisualization(visualization: IRoomObjectVisualization | null): void;
 
-	setState(state: number, index: number): boolean;
+    setState(state: number, index: number): boolean;
 
-	setEventHandler(handler: IRoomObjectEventHandler | null): void;
+    setEventHandler(handler: IRoomObjectEventHandler | null): void;
 
-	getEventHandler(): IRoomObjectEventHandler | null;
+    getEventHandler(): IRoomObjectEventHandler | null;
 
-	getModelController(): IRoomObjectModelController;
+    getModelController(): IRoomObjectModelController;
 }

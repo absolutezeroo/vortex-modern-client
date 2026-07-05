@@ -10,26 +10,26 @@ import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
  */
 export interface IHabboClubCenter
 {
-	readonly localization: IHabboLocalizationManager | null;
-	readonly avatarRenderManager: IAvatarRenderManager | null;
-	readonly offerCenter: unknown | null;
-	readonly stage: unknown | null;
+    readonly localization: IHabboLocalizationManager | null;
+    readonly avatarRenderManager: IAvatarRenderManager | null;
+    readonly offerCenter: unknown | null;
+    readonly stage: unknown | null;
 
-	removeView(): void;
+    removeView(): void;
 
-	removeBreakdown(): void;
+    removeBreakdown(): void;
 
-	openPurchasePage(): void;
+    openPurchasePage(): void;
 
-	openClubGiftPage(): void;
+    openClubGiftPage(): void;
 
-	showPaydayBreakdownView(): void;
+    showPaydayBreakdownView(): void;
 
-	openPaydayHelpPage(): void;
+    openPaydayHelpPage(): void;
 
-	openHelpPage(): void;
+    openHelpPage(): void;
 
-	getOffers(): void;
+    getOffers(): void;
 
-	isKickbackEnabled(): boolean;
+    isKickbackEnabled(): boolean;
 }

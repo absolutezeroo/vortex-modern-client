@@ -7,19 +7,18 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetGuestRoomMessageComposer extends MessageComposer<[number, number, number]>
 {
-	private _data: [number, number, number];
+    private _data: [number, number, number];
 
-	constructor(roomId: number, enterRoom: boolean, roomForward: boolean)
-	{
-		super();
+    constructor(roomId: number, enterRoom: boolean, roomForward: boolean)
+    {
+        super();
 
-		// AS3 pushes booleans as 1 or 0 (ints)
-		this._data = [roomId, enterRoom ? 1 : 0, roomForward ? 1 : 0];
-	}
+        // AS3 pushes booleans as 1 or 0 (ints)
+        this._data = [roomId, enterRoom ? 1 : 0, roomForward ? 1 : 0];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

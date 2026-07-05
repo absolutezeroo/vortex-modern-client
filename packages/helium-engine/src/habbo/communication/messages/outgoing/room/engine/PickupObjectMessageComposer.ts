@@ -8,35 +8,35 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
  */
 export class PickupObjectMessageComposer extends MessageComposer<(number | boolean)[]>
 {
-	private _objectId: number;
-	private _category: number;
-	private _confirmed: boolean;
+    private _objectId: number;
+    private _category: number;
+    private _confirmed: boolean;
 
-	constructor(objectId: number, category: number, confirmed: boolean = false)
-	{
-		super();
+    constructor(objectId: number, category: number, confirmed: boolean = false)
+    {
+        super();
 
-		this._objectId = objectId;
-		this._category = category;
-		this._confirmed = confirmed;
-	}
+        this._objectId = objectId;
+        this._category = category;
+        this._confirmed = confirmed;
+    }
 
-	getMessageArray(): (number | boolean)[]
-	{
-		let categoryCode: number;
+    getMessageArray(): (number | boolean)[]
+    {
+        let categoryCode: number;
 
-		switch(this._category)
-		{
-			case RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE:
-				categoryCode = 2;
-				break;
-			case RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL:
-				categoryCode = 1;
-				break;
-			default:
-				return [];
-		}
+        switch(this._category)
+        {
+            case RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE:
+                categoryCode = 2;
+                break;
+            case RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL:
+                categoryCode = 1;
+                break;
+            default:
+                return [];
+        }
 
-		return [categoryCode, this._objectId, this._confirmed];
-	}
+        return [categoryCode, this._objectId, this._confirmed];
+    }
 }

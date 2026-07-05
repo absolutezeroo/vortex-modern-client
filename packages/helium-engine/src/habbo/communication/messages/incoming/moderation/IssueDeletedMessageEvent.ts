@@ -9,8 +9,8 @@ import {IssueDeletedMessageParser} from '../../parser/moderation/IssueDeletedMes
  */
 export class IssueDeletedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IssueDeletedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IssueDeletedMessageParser);
+    }
 }

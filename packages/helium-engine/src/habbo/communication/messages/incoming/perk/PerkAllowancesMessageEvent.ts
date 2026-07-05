@@ -10,13 +10,13 @@ import {PerkAllowancesMessageEventParser} from '../../parser/perk/PerkAllowances
  */
 export class PerkAllowancesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PerkAllowancesMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PerkAllowancesMessageEventParser);
+    }
 
-	override getParser<T extends IMessageParser = PerkAllowancesMessageEventParser>(): T
-	{
-		return this._parser as T;
-	}
+    override getParser<T extends IMessageParser = PerkAllowancesMessageEventParser>(): T
+    {
+        return this._parser as T;
+    }
 }

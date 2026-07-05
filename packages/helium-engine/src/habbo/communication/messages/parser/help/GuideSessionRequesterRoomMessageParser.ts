@@ -9,25 +9,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionRequesterRoomMessageParser implements IMessageParser
 {
-	private _roomId: number = 0;
+    private _roomId: number = 0;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	flush(): boolean
-	{
-		this._roomId = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._roomId = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._roomId = wrapper.readInt();
+        this._roomId = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

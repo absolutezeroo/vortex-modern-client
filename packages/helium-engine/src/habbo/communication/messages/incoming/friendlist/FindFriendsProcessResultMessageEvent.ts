@@ -9,8 +9,8 @@ import {FindFriendsProcessResultMessageParser} from '../../parser/friendlist/Fin
  */
 export class FindFriendsProcessResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FindFriendsProcessResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FindFriendsProcessResultMessageParser);
+    }
 }

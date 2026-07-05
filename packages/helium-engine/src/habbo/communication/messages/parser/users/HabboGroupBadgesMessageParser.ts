@@ -8,41 +8,41 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class HabboGroupBadgesMessageParser implements IMessageParser
 {
-	private _badges: Map<number, string> | null;
+    private _badges: Map<number, string> | null;
 
-	get badges(): Map<number, string> | null
-	{
-		return this._badges;
-	}
+    get badges(): Map<number, string> | null
+    {
+        return this._badges;
+    }
 
-	flush(): boolean
-	{
-		if (this._badges)
-		{
-			this._badges.clear();
+    flush(): boolean
+    {
+        if(this._badges)
+        {
+            this._badges.clear();
 
-			this._badges = null;
-		}
+            this._badges = null;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count: number = wrapper.readInt();
+        const count: number = wrapper.readInt();
 
-		this._badges = new Map<number, string>();
+        this._badges = new Map<number, string>();
 
-		for (let i = 0; i < count; i++)
-		{
-			const groupId: number = wrapper.readInt();
-			const badgeCode: string = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const groupId: number = wrapper.readInt();
+            const badgeCode: string = wrapper.readString();
 
-			this._badges.set(groupId, badgeCode);
-		}
+            this._badges.set(groupId, badgeCode);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

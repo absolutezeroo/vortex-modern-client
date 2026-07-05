@@ -8,28 +8,28 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ActivityPointsMessageParser implements IMessageParser
 {
-	private _points: Map<number, number> = new Map();
+    private _points: Map<number, number> = new Map();
 
-	get points(): Map<number, number>
-	{
-		return this._points;
-	}
+    get points(): Map<number, number>
+    {
+        return this._points;
+    }
 
-	flush(): boolean
-	{
-		this._points = new Map();
-		return true;
-	}
+    flush(): boolean
+    {
+        this._points = new Map();
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			const type = wrapper.readInt();
-			const amount = wrapper.readInt();
-			this._points.set(type, amount);
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            const type = wrapper.readInt();
+            const amount = wrapper.readInt();
+            this._points.set(type, amount);
+        }
+        return true;
+    }
 }

@@ -9,8 +9,8 @@ import {IsFirstLoginOfDayMessageParser} from '../../parser/handshake/IsFirstLogi
  */
 export class IsFirstLoginOfDayMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IsFirstLoginOfDayMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IsFirstLoginOfDayMessageParser);
+    }
 }

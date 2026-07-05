@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetDailyQuestMessageComposer extends MessageComposer<ConstructorParameters<typeof GetDailyQuestMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetDailyQuestMessageComposer>;
+    private _data: ConstructorParameters<typeof GetDailyQuestMessageComposer>;
 
-	constructor(isEasy: boolean, dayIndex: number)
-	{
-		super();
-		this._data = [isEasy, dayIndex];
-	}
+    constructor(isEasy: boolean, dayIndex: number)
+    {
+        super();
+        this._data = [isEasy, dayIndex];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

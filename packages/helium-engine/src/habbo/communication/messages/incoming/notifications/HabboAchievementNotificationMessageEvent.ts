@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	HabboAchievementNotificationMessageEventParser
+    HabboAchievementNotificationMessageEventParser
 } from '../../parser/notifications/HabboAchievementNotificationMessageEventParser';
 
 /**
@@ -11,8 +11,8 @@ import {
  */
 export class HabboAchievementNotificationMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboAchievementNotificationMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboAchievementNotificationMessageEventParser);
+    }
 }

@@ -9,43 +9,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideReportingStatusMessageParser implements IMessageParser
 {
-	public static readonly STATUS_OK: number = 0;
-	public static readonly STATUS_PENDING: number = 1;
-	public static readonly STATUS_BLOCKED: number = 2;
-	public static readonly STATUS_TOO_QUICK: number = 3;
+    public static readonly STATUS_OK: number = 0;
+    public static readonly STATUS_PENDING: number = 1;
+    public static readonly STATUS_BLOCKED: number = 2;
+    public static readonly STATUS_TOO_QUICK: number = 3;
 
-	private _statusCode: number = 0;
+    private _statusCode: number = 0;
 
-	get statusCode(): number
-	{
-		return this._statusCode;
-	}
+    get statusCode(): number
+    {
+        return this._statusCode;
+    }
 
-	get localizationCode(): string
-	{
-		switch (this._statusCode - 2)
-		{
-			case 0:
-				return 'blocked';
-			case 1:
-				return 'tooquick';
-			default:
-				return '';
-		}
-	}
+    get localizationCode(): string
+    {
+        switch(this._statusCode - 2)
+        {
+            case 0:
+                return 'blocked';
+            case 1:
+                return 'tooquick';
+            default:
+                return '';
+        }
+    }
 
-	flush(): boolean
-	{
-		this._statusCode = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._statusCode = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._statusCode = wrapper.readInt();
+        this._statusCode = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

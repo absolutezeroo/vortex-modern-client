@@ -7,8 +7,8 @@ import {OfficialRoomsMessageParser} from '../../parser/navigator/OfficialRoomsMe
  */
 export class OfficialRoomsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, OfficialRoomsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, OfficialRoomsMessageParser);
+    }
 }

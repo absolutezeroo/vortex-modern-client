@@ -25,275 +25,275 @@ import {GetHabboGroupDetailsMessageComposer} from '@habbo/communication/messages
  */
 export class BadgeImageWidget implements IBadgeImageWidget
 {
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::TYPE
-	public static readonly TYPE: string = 'badge_image';
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::TYPE
+    public static readonly TYPE: string = 'badge_image';
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::TYPE_KEY
-	private static readonly TYPE_KEY: string = 'badge_image:type';
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::BADGE_ID_KEY
-	private static readonly BADGE_ID_KEY: string = 'badge_image:badge_id';
-	// TS-only: batch-update guard to avoid redundant refresh() calls during set properties
-	private _batchUpdate: boolean = false;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::TYPE_KEY
+    private static readonly TYPE_KEY: string = 'badge_image:type';
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::BADGE_ID_KEY
+    private static readonly BADGE_ID_KEY: string = 'badge_image:badge_id';
+    // TS-only: batch-update guard to avoid redundant refresh() calls during set properties
+    private _batchUpdate: boolean = false;
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_widgetWindow
-	private _widgetWindow: IWidgetWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_windowManager
-	private _windowManager: IHabboWindowManager | null = null;
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_root
-	private _root: IWindowContainer | null = null;
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_bitmap (IStaticBitmapWrapperWindow in AS3)
-	private _bitmap: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_region
-	private _region: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_2554
-	private _groupDetailsEvent: IMessageEvent | null = null;
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_1600
-	private _groupBadgesEvent: IMessageEvent | null = null;
-	// TS-only: bound event handler ref for removeEventListener
-	private _onClickBound: Function;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_widgetWindow
+    private _widgetWindow: IWidgetWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_root
+    private _root: IWindowContainer | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_bitmap (IStaticBitmapWrapperWindow in AS3)
+    private _bitmap: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_region
+    private _region: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_2554
+    private _groupDetailsEvent: IMessageEvent | null = null;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_1600
+    private _groupBadgesEvent: IMessageEvent | null = null;
+    // TS-only: bound event handler ref for removeEventListener
+    private _onClickBound: Function;
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::BadgeImageWidget()
-	constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
-	{
-		this._widgetWindow = window;
-		this._windowManager = windowManager;
-		this._onClickBound = this.onClick.bind(this);
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::BadgeImageWidget()
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    {
+        this._widgetWindow = window;
+        this._windowManager = windowManager;
+        this._onClickBound = this.onClick.bind(this);
 
-		const root = this._windowManager.buildWidgetLayout('badge_image') as IWindowContainer;
+        const root = this._windowManager.buildWidgetLayout('badge_image') as IWindowContainer;
 
-		if (root)
-		{
-			this._root = root;
-			this._bitmap = root.findChildByName('bitmap');
-			this._region = root.findChildByName('region');
+        if(root)
+        {
+            this._root = root;
+            this._bitmap = root.findChildByName('bitmap');
+            this._region = root.findChildByName('region');
 
-			if (this._region)
-			{
-				this._region.addEventListener(WindowMouseEvent.CLICK, this._onClickBound);
-			}
+            if(this._region)
+            {
+                this._region.addEventListener(WindowMouseEvent.CLICK, this._onClickBound);
+            }
 
-			this._widgetWindow.rootWindow = root;
-			root.width = this._widgetWindow.width;
-			root.height = this._widgetWindow.height;
-		}
-	}
+            this._widgetWindow.rootWindow = root;
+            root.width = this._widgetWindow.width;
+            root.height = this._widgetWindow.height;
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_disposed
-	private _disposed: boolean = false;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_disposed
+    private _disposed: boolean = false;
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get disposed()
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_type
-	private _type: string = 'normal';
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_type
+    private _type: string = 'normal';
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get type()
-	public get type(): string
-	{
-		return this._type;
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get type()
+    public get type(): string
+    {
+        return this._type;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set type()
-	public set type(value: string)
-	{
-		this._type = value;
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set type()
+    public set type(value: string)
+    {
+        this._type = value;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_badgeId
-	private _badgeId: string = '';
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_badgeId
+    private _badgeId: string = '';
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get badgeId()
-	public get badgeId(): string
-	{
-		return this._badgeId;
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get badgeId()
+    public get badgeId(): string
+    {
+        return this._badgeId;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set badgeId()
-	public set badgeId(value: string)
-	{
-		this._badgeId = value;
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set badgeId()
+    public set badgeId(value: string)
+    {
+        this._badgeId = value;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_groupId
-	private _groupId: number = 0;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_groupId
+    private _groupId: number = 0;
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get groupId()
-	public get groupId(): number
-	{
-		return this._groupId;
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get groupId()
+    public get groupId(): number
+    {
+        return this._groupId;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set groupId()
-	public set groupId(value: number)
-	{
-		this._groupId = value;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set groupId()
+    public set groupId(value: number)
+    {
+        this._groupId = value;
 
-		const shouldListen = this._type === 'group' && this._groupId > 0;
-		const comm = this._windowManager?.communication ?? null;
+        const shouldListen = this._type === 'group' && this._groupId > 0;
+        const comm = this._windowManager?.communication ?? null;
 
-		if(comm)
-		{
-			if(!shouldListen && this._groupBadgesEvent !== null)
-			{
-				comm.removeHabboConnectionMessageEvent(this._groupDetailsEvent!);
-				comm.removeHabboConnectionMessageEvent(this._groupBadgesEvent!);
-				this._groupDetailsEvent = null;
-				this._groupBadgesEvent = null;
-			}
-			else if(shouldListen && this._groupBadgesEvent === null)
-			{
-				this._groupDetailsEvent = new GroupDetailsChangedMessageEvent((e) => this.onGroupDetailsChanged(e as GroupDetailsChangedMessageEvent));
-				this._groupBadgesEvent = new HabboGroupBadgesMessageEvent((e) => this.onHabboGroupBadges(e as HabboGroupBadgesMessageEvent));
-				comm.addHabboConnectionMessageEvent(this._groupDetailsEvent);
-				comm.addHabboConnectionMessageEvent(this._groupBadgesEvent);
-			}
-		}
-	}
+        if(comm)
+        {
+            if(!shouldListen && this._groupBadgesEvent !== null)
+            {
+                comm.removeHabboConnectionMessageEvent(this._groupDetailsEvent!);
+                comm.removeHabboConnectionMessageEvent(this._groupBadgesEvent!);
+                this._groupDetailsEvent = null;
+                this._groupBadgesEvent = null;
+            }
+            else if(shouldListen && this._groupBadgesEvent === null)
+            {
+                this._groupDetailsEvent = new GroupDetailsChangedMessageEvent((e) => this.onGroupDetailsChanged(e as GroupDetailsChangedMessageEvent));
+                this._groupBadgesEvent = new HabboGroupBadgesMessageEvent((e) => this.onHabboGroupBadges(e as HabboGroupBadgesMessageEvent));
+                comm.addHabboConnectionMessageEvent(this._groupDetailsEvent);
+                comm.addHabboConnectionMessageEvent(this._groupBadgesEvent);
+            }
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
-	public get assetUri(): string
-	{
-		if (!this._badgeId || this._badgeId.length === 0) return '';
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
+    public get assetUri(): string
+    {
+        if(!this._badgeId || this._badgeId.length === 0) return '';
 
-		switch (this._type)
-		{
-			case 'normal':
-				return '${image.library.url}album1584/' + this._badgeId + '.png';
-			case 'group':
-			{
-				// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
-				// AS3: _windowManager.getProperty("group.badge.url").replace("%imagerdata%", _badgeId)
-				const template = (this._windowManager as unknown as { getProperty?: (k: string) => string }).getProperty?.('group.badge.url') ?? '';
-				return template ? template.replace('%imagerdata%', this._badgeId) : this._badgeId;
-			}
-			case 'perk':
-				return '${image.library.url}perk/' + this._badgeId + '.png';
-			default:
-				return '';
-		}
-	}
+        switch(this._type)
+        {
+            case 'normal':
+                return '${image.library.url}album1584/' + this._badgeId + '.png';
+            case 'group':
+            {
+                // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
+                // AS3: _windowManager.getProperty("group.badge.url").replace("%imagerdata%", _badgeId)
+                const template = (this._windowManager as unknown as { getProperty?: (k: string) => string }).getProperty?.('group.badge.url') ?? '';
+                return template ? template.replace('%imagerdata%', this._badgeId) : this._badgeId;
+            }
+            case 'perk':
+                return '${image.library.url}perk/' + this._badgeId + '.png';
+            default:
+                return '';
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get properties()
-	public get properties(): PropertyStruct[]
-	{
-		if (this._disposed) return [];
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get properties()
+    public get properties(): PropertyStruct[]
+    {
+        if(this._disposed) return [];
 
-		return [
-			new PropertyStruct(BadgeImageWidget.TYPE_KEY, this._type),
-			new PropertyStruct(BadgeImageWidget.BADGE_ID_KEY, this._badgeId),
-		];
-	}
+        return [
+            new PropertyStruct(BadgeImageWidget.TYPE_KEY, this._type),
+            new PropertyStruct(BadgeImageWidget.BADGE_ID_KEY, this._badgeId),
+        ];
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set properties()
-	public set properties(values: PropertyStruct[])
-	{
-		this._batchUpdate = true;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set properties()
+    public set properties(values: PropertyStruct[])
+    {
+        this._batchUpdate = true;
 
-		for (const prop of values)
-		{
-			switch (prop.key)
-			{
-				case BadgeImageWidget.TYPE_KEY:
-					this.type = String(prop.value);
-					break;
-				case BadgeImageWidget.BADGE_ID_KEY:
-					this.badgeId = String(prop.value);
-					break;
-			}
-		}
+        for(const prop of values)
+        {
+            switch(prop.key)
+            {
+                case BadgeImageWidget.TYPE_KEY:
+                    this.type = String(prop.value);
+                    break;
+                case BadgeImageWidget.BADGE_ID_KEY:
+                    this.badgeId = String(prop.value);
+                    break;
+            }
+        }
 
-		if (this._bitmap)
-		{
-			this._bitmap.properties = values as unknown[];
-		}
+        if(this._bitmap)
+        {
+            this._bitmap.properties = values as unknown[];
+        }
 
-		this._batchUpdate = false;
-		this.refresh();
-	}
+        this._batchUpdate = false;
+        this.refresh();
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onGroupDetailsChanged()
-	private onGroupDetailsChanged(event: GroupDetailsChangedMessageEvent): void
-	{
-		this.forceRefresh(event.groupId, this._badgeId);
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onGroupDetailsChanged()
+    private onGroupDetailsChanged(event: GroupDetailsChangedMessageEvent): void
+    {
+        this.forceRefresh(event.groupId, this._badgeId);
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onHabboGroupBadges()
-	private onHabboGroupBadges(event: HabboGroupBadgesMessageEvent): void
-	{
-		const badge = event.badges?.get(this._groupId);
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onHabboGroupBadges()
+    private onHabboGroupBadges(event: HabboGroupBadgesMessageEvent): void
+    {
+        const badge = event.badges?.get(this._groupId);
 
-		if(badge !== undefined)
-		{
-			this.forceRefresh(this._groupId, badge);
-		}
-	}
+        if(badge !== undefined)
+        {
+            this.forceRefresh(this._groupId, badge);
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::forceRefresh()
-	private forceRefresh(groupId: number, badgeId: string): void
-	{
-		if(groupId !== this._groupId) return;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::forceRefresh()
+    private forceRefresh(groupId: number, badgeId: string): void
+    {
+        if(groupId !== this._groupId) return;
 
-		this._badgeId = badgeId;
-		(this._windowManager?.resourceManager as unknown as { removeAsset?: (uri: string) => void })?.removeAsset?.(this.assetUri);
-		this.refresh();
-	}
+        this._badgeId = badgeId;
+        (this._windowManager?.resourceManager as unknown as { removeAsset?: (uri: string) => void })?.removeAsset?.(this.assetUri);
+        this.refresh();
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::dispose()
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::dispose()
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this.groupId = 0;
+        this.groupId = 0;
 
-		if (this._region)
-		{
-			this._region.removeEventListener(WindowMouseEvent.CLICK, this._onClickBound);
-			this._region.dispose();
-			this._region = null;
-		}
+        if(this._region)
+        {
+            this._region.removeEventListener(WindowMouseEvent.CLICK, this._onClickBound);
+            this._region.dispose();
+            this._region = null;
+        }
 
-		this._bitmap = null;
+        this._bitmap = null;
 
-		if (this._root)
-		{
-			this._root.dispose();
-			this._root = null;
-		}
+        if(this._root)
+        {
+            this._root.dispose();
+            this._root = null;
+        }
 
-		if (this._widgetWindow)
-		{
-			this._widgetWindow.rootWindow = null;
-			this._widgetWindow = null;
-		}
+        if(this._widgetWindow)
+        {
+            this._widgetWindow.rootWindow = null;
+            this._widgetWindow = null;
+        }
 
-		this._windowManager = null;
-		this._disposed = true;
-	}
+        this._windowManager = null;
+        this._disposed = true;
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::refresh()
-	private refresh(): void
-	{
-		if (this._batchUpdate) return;
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::refresh()
+    private refresh(): void
+    {
+        if(this._batchUpdate) return;
 
-		const bitmap = this._bitmap as unknown as IStaticBitmapWrapperWindow;
+        const bitmap = this._bitmap as unknown as IStaticBitmapWrapperWindow;
 
-		if(bitmap)
-		{
-			bitmap.assetUri = this.assetUri;
-			(bitmap as unknown as { blend: number }).blend = this._widgetWindow?.blend ?? 0;
-			bitmap.invalidate();
-		}
-	}
+        if(bitmap)
+        {
+            bitmap.assetUri = this.assetUri;
+            (bitmap as unknown as { blend: number }).blend = this._widgetWindow?.blend ?? 0;
+            bitmap.invalidate();
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onClick()
-	private onClick(_event: WindowMouseEvent): void
-	{
-		if(this._groupId > 0 && this._windowManager?.communication?.connection)
-		{
-			this._windowManager.communication.connection.send(new GetHabboGroupDetailsMessageComposer(this._groupId, true));
-		}
-	}
+    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::onClick()
+    private onClick(_event: WindowMouseEvent): void
+    {
+        if(this._groupId > 0 && this._windowManager?.communication?.connection)
+        {
+            this._windowManager.communication.connection.send(new GetHabboGroupDetailsMessageComposer(this._groupId, true));
+        }
+    }
 }

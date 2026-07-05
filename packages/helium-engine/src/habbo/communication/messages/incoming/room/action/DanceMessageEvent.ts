@@ -9,8 +9,8 @@ import {DanceMessageEventParser} from '@habbo/communication/messages/parser/room
 
 export class DanceMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, DanceMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, DanceMessageEventParser);
+    }
 }

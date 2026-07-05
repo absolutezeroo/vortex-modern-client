@@ -12,16 +12,16 @@ import type {IWindow} from '../IWindow';
  */
 export interface IDesktopWindow extends IWindowContainer, IDisplayObjectWrapper
 {
-	readonly mouseX: number;
-	readonly mouseY: number;
+    readonly mouseX: number;
+    readonly mouseY: number;
 
-	getActiveWindow(): IWindow;
+    getActiveWindow(): IWindow;
 
-	setActiveWindow(window: IWindow): IWindow;
+    setActiveWindow(window: IWindow): IWindow;
 
-	groupParameterFilteredChildrenUnderPoint(
-		point: { x: number; y: number },
-		result: IWindow[],
-		paramFilter?: number
-	): void;
+    groupParameterFilteredChildrenUnderPoint(
+        point: { x: number; y: number },
+        result: IWindow[],
+        paramFilter?: number
+    ): void;
 }

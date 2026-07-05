@@ -10,18 +10,18 @@ import type {IWindow} from '../IWindow';
  */
 export interface ILabelWindow extends IWindow
 {
-	readonly bold: boolean;
-	readonly italic: boolean;
-	readonly underline: boolean;
-	readonly fontFace: string;
-	readonly fontSize: number;
-	readonly length: number;
-	readonly textHeight: number;
-	readonly textWidth: number;
+    readonly bold: boolean;
+    readonly italic: boolean;
+    readonly underline: boolean;
+    readonly fontFace: string;
+    readonly fontSize: number;
+    readonly length: number;
+    readonly textHeight: number;
+    readonly textWidth: number;
 
-	text: string;
-	textColor: number;
-	textBackground: boolean;
-	textBackgroundColor: number;
-	vertical: boolean;
+    text: string;
+    textColor: number;
+    textBackground: boolean;
+    textBackgroundColor: number;
+    vertical: boolean;
 }

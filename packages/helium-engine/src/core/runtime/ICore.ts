@@ -18,129 +18,129 @@ import type {IFileProxy} from './IFileProxy';
  */
 export interface ICore extends IContext, ICoreConfiguration
 {
-	/**
+    /**
 	 * Core arguments dictionary.
 	 */
-	readonly arguments: Map<string, unknown>;
+    readonly arguments: Map<string, unknown>;
 
-	/**
+    /**
 	 * File proxy for persistent storage.
 	 *
 	 * @see CoreComponentContext.as (get/set fileProxy)
 	 */
-	fileProxy: IFileProxy | null;
+    fileProxy: IFileProxy | null;
 
-	/**
+    /**
 	 * Initialize the core. Waits for all locked components to unlock,
 	 * then dispatches COMPONENT_EVENT_RUNNING.
 	 */
-	initialize(): void;
+    initialize(): void;
 
-	/**
+    /**
 	 * Check if any attached components are still locked.
 	 *
 	 * @see CoreComponentContext.as lines 199-208
 	 */
-	hasLockedComponents(): boolean;
+    hasLockedComponents(): boolean;
 
-	/**
+    /**
 	 * Purge cached data across all components.
 	 */
-	purge(): void;
+    purge(): void;
 
-	/**
+    /**
 	 * Enter hibernation mode. Updates at a reduced frequency.
 	 *
 	 * @param priority - Maximum priority level to still update (0-2)
 	 * @param updateFrequency - Updates per second during hibernation (default 1)
 	 */
-	hibernate(priority: number, updateFrequency?: number): void;
+    hibernate(priority: number, updateFrequency?: number): void;
 
-	/**
+    /**
 	 * Resume from hibernation.
 	 */
-	resume(): void;
+    resume(): void;
 
-	/**
+    /**
 	 * Get the number of libraries still loading.
 	 */
-	getNumberOfFilesPending(): number;
+    getNumberOfFilesPending(): number;
 
-	/**
+    /**
 	 * Get the number of libraries that have loaded.
 	 */
-	getNumberOfFilesLoaded(): number;
+    getNumberOfFilesLoaded(): number;
 
-	/**
+    /**
 	 * Enable or disable profiler mode.
 	 */
-	setProfilerMode(enabled: boolean): void;
+    setProfilerMode(enabled: boolean): void;
 
-	/**
+    /**
 	 * Clear core arguments.
 	 */
-	clearArguments(): void;
+    clearArguments(): void;
 
-	/**
+    /**
 	 * Set the external error logger.
 	 */
-	set errorLogger(logger: ICoreErrorLogger | null);
+    set errorLogger(logger: ICoreErrorLogger | null);
 
-	/**
+    /**
 	 * Trigger a core reboot on the next frame.
 	 */
-	reboot(): void;
+    reboot(): void;
 
-	/**
+    /**
 	 * Read a config document and set up library loading.
 	 *
 	 * @param config - Configuration object describing libraries to load
 	 * @param eventDelegate - Optional EventEmitter for progress/complete events
 	 */
-	readConfigDocument(config: Record<string, unknown>, eventDelegate?: EventEmitter): void;
+    readConfigDocument(config: Record<string, unknown>, eventDelegate?: EventEmitter): void;
 
-	/**
+    /**
 	 * Dispatch loading progress for an individual file.
 	 */
-	updateLoadingProgress(fileName: string, bytesLoaded: number, bytesTotal: number, elapsedTime: number): void;
+    updateLoadingProgress(fileName: string, bytesLoaded: number, bytesTotal: number, elapsedTime: number): void;
 
-	/**
+    /**
 	 * Handle library loading completion.
 	 */
-	updateLoadingProcess(fileName?: string, status?: 'complete' | 'error'): void;
+    updateLoadingProcess(fileName?: string, status?: 'complete' | 'error'): void;
 
-	/**
+    /**
 	 * Handle a library loading error.
 	 */
-	errorInLoadingProcess(url: string, httpStatus: number, bytesLoaded: number, bytesTotal: number, errorMsg: string): void;
+    errorInLoadingProcess(url: string, httpStatus: number, bytesLoaded: number, bytesTotal: number, errorMsg: string): void;
 
-	/**
+    /**
 	 * Read a string from the file proxy.
 	 */
-	readStringFromProxy(key: string): string | null;
+    readStringFromProxy(key: string): string | null;
 
-	/**
+    /**
 	 * Write a string to the file proxy.
 	 */
-	writeStringToProxy(key: string, value: string): boolean;
+    writeStringToProxy(key: string, value: string): boolean;
 
-	/**
+    /**
 	 * Write a dictionary/object to the file proxy (JSON serialized).
 	 */
-	writeDictionaryToProxy(key: string, data: Record<string, unknown>): boolean;
+    writeDictionaryToProxy(key: string, data: Record<string, unknown>): boolean;
 
-	/**
+    /**
 	 * Read a dictionary/object from the file proxy (JSON deserialized).
 	 */
-	readDictionaryFromProxy(key: string): Record<string, unknown> | null;
+    readDictionaryFromProxy(key: string): Record<string, unknown> | null;
 
-	/**
+    /**
 	 * Write an XML string to the file proxy.
 	 */
-	writeXMLToProxy(key: string, xml: string): boolean;
+    writeXMLToProxy(key: string, xml: string): boolean;
 
-	/**
+    /**
 	 * Read an XML string from the file proxy.
 	 */
-	readXMLFromProxy(key: string): string | null;
+    readXMLFromProxy(key: string): string | null;
 }

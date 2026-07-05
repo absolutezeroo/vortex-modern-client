@@ -12,11 +12,11 @@ import type {IRoomRenderingCanvas} from './IRoomRenderingCanvas';
 
 export interface IRoomRenderer extends IRoomRendererBase
 {
-	roomObjectVariableAccurateZ: string | null;
+    roomObjectVariableAccurateZ: string | null;
 
-	createCanvas(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas;
+    createCanvas(id: number, width: number, height: number, scale: number): IRoomRenderingCanvas;
 
-	getCanvas(id: number): IRoomRenderingCanvas | null;
+    getCanvas(id: number): IRoomRenderingCanvas | null;
 
-	disposeCanvas(id: number): boolean;
+    disposeCanvas(id: number): boolean;
 }

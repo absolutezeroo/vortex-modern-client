@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MyRoomRightsSearchMessageComposer extends MessageComposer<ConstructorParameters<typeof MyRoomRightsSearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof MyRoomRightsSearchMessageComposer>;
+    private _data: ConstructorParameters<typeof MyRoomRightsSearchMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomAdSearchMessageComposer extends MessageComposer<ConstructorParameters<typeof RoomAdSearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RoomAdSearchMessageComposer>;
+    private _data: ConstructorParameters<typeof RoomAdSearchMessageComposer>;
 
-	constructor(categoryId: number, index: number)
-	{
-		super();
+    constructor(categoryId: number, index: number)
+    {
+        super();
 
-		this._data = [categoryId, index];
-	}
+        this._data = [categoryId, index];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

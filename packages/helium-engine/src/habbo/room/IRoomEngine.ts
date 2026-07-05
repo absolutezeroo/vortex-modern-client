@@ -19,243 +19,243 @@ import type {RoomEngineRectangle} from './RoomEngine';
 
 export interface IRoomEngine extends IDisposable
 {
-	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
-	getFurnitureType(type: number): string | null;
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
+    getFurnitureType(type: number): string | null;
 
-	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
-	getWallItemType(type: number, param?: string | null): string | null;
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
+    getWallItemType(type: number, param?: string | null): string | null;
 
-	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
-	getFurnitureIcon(type: number, listener: IGetImageListener, param?: string | null, stuffData?: unknown): ImageResult;
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
+    getFurnitureIcon(type: number, listener: IGetImageListener, param?: string | null, stuffData?: unknown): ImageResult;
 
-	// AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
-	getWallItemIcon(type: number, listener: IGetImageListener, param?: string | null): ImageResult;
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
+    getWallItemIcon(type: number, listener: IGetImageListener, param?: string | null): ImageResult;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
-	initializeRoomObjectInsert(
-		source: string,
-		itemId: number,
-		category: number,
-		type: number,
-		extra: string,
-		stuffData?: unknown
-	): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
+    initializeRoomObjectInsert(
+        source: string,
+        itemId: number,
+        category: number,
+        type: number,
+        extra: string,
+        stuffData?: unknown
+    ): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
-	cancelRoomObjectInsert(): void;
+    // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
+    cancelRoomObjectInsert(): void;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::initializeRoom()
-	initializeRoom(
-		roomId: number,
-		planeParser: RoomPlaneParser | null,
-		doorX?: number,
-		doorY?: number,
-		doorZ?: number,
-		doorDir?: number
-	): void;
+    // AS3: sources/win63_version/habbo/room/class_34.as::initializeRoom()
+    initializeRoom(
+        roomId: number,
+        planeParser: RoomPlaneParser | null,
+        doorX?: number,
+        doorY?: number,
+        doorZ?: number,
+        doorDir?: number
+    ): void;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectFurniture()
-	disposeObjectFurniture(roomId: number, id: number, pickerId?: number, refresh?: boolean): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectFurniture()
+    disposeObjectFurniture(roomId: number, id: number, pickerId?: number, refresh?: boolean): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectWallItem()
-	disposeObjectWallItem(roomId: number, id: number, pickerId?: number): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectWallItem()
+    disposeObjectWallItem(roomId: number, id: number, pickerId?: number): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectUser()
-	disposeObjectUser(roomId: number, roomIndex: number): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::disposeObjectUser()
+    disposeObjectUser(roomId: number, roomIndex: number): boolean;
 
-	// TS-only: see RoomEngine.ts for why this exists.
-	setTicker(ticker: Ticker): void;
+    // TS-only: see RoomEngine.ts for why this exists.
+    setTicker(ticker: Ticker): void;
 
-	// TS-only: see RoomEngine.ts for why this exists.
-	registerCanvasSyncCallback(callback: () => void): void;
+    // TS-only: see RoomEngine.ts for why this exists.
+    registerCanvasSyncCallback(callback: () => void): void;
 
-	// TS-only: see RoomEngine.ts for why this exists.
-	unregisterCanvasSyncCallback(callback: () => void): void;
+    // TS-only: see RoomEngine.ts for why this exists.
+    unregisterCanvasSyncCallback(callback: () => void): void;
 
-	// Event emitter
-	readonly events: EventEmitter;
+    // Event emitter
+    readonly events: EventEmitter;
 
-	// Room lifecycle
-	createRoomInstance(roomId: number): IRoomInstance | null;
+    // Room lifecycle
+    createRoomInstance(roomId: number): IRoomInstance | null;
 
-	disposeRoomInstance(roomId: number): void;
+    disposeRoomInstance(roomId: number): void;
 
-	getRoomInstance(roomId: number): IRoomInstance | null;
+    getRoomInstance(roomId: number): IRoomInstance | null;
 
-	setActiveRoom(roomId: number): void;
+    setActiveRoom(roomId: number): void;
 
-	getActiveRoomId(): number;
+    getActiveRoomId(): number;
 
-	// Object management
-	addRoomObjectUser(roomId: number, id: number, location: IVector3d, direction: IVector3d, type: string): boolean;
+    // Object management
+    addRoomObjectUser(roomId: number, id: number, location: IVector3d, direction: IVector3d, type: string): boolean;
 
-	addRoomObjectFurniture(
-		roomId: number,
-		id: number,
-		typeId: number,
-		location: IVector3d,
-		direction: IVector3d,
-		state: number,
-		extra: string | null,
-		expiryTime: number,
-		usagePolicy: number,
-		ownerId: number,
-		ownerName: string | null,
-		synchronize?: boolean
-	): boolean;
+    addRoomObjectFurniture(
+        roomId: number,
+        id: number,
+        typeId: number,
+        location: IVector3d,
+        direction: IVector3d,
+        state: number,
+        extra: string | null,
+        expiryTime: number,
+        usagePolicy: number,
+        ownerId: number,
+        ownerName: string | null,
+        synchronize?: boolean
+    ): boolean;
 
-	addRoomObjectWallItem(
-		roomId: number,
-		id: number,
-		typeId: number,
-		location: IVector3d,
-		direction: IVector3d,
-		state: number,
-		extra: string | null,
-		ownerId: number,
-		ownerName: string | null
-	): boolean;
+    addRoomObjectWallItem(
+        roomId: number,
+        id: number,
+        typeId: number,
+        location: IVector3d,
+        direction: IVector3d,
+        state: number,
+        extra: string | null,
+        ownerId: number,
+        ownerName: string | null
+    ): boolean;
 
-	getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null;
+    getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null;
 
-	disposeRoomObject(roomId: number, objectId: number, category: number): boolean;
+    disposeRoomObject(roomId: number, objectId: number, category: number): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObject()
-	modifyRoomObject(objectId: number, category: number, action: string): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObject()
+    modifyRoomObject(objectId: number, category: number, action: string): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::useRoomObjectInActiveRoom()
-	useRoomObjectInActiveRoom(objectId: number, category: number): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::useRoomObjectInActiveRoom()
+    useRoomObjectInActiveRoom(objectId: number, category: number): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
-	modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean;
+    // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
+    modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean;
 
-	// User updates
-	updateRoomObjectUser(
-		roomId: number,
-		objectId: number,
-		location: IVector3d | null,
-		targetLocation: IVector3d | null,
-		direction: IVector3d | null,
-		headDirection: number,
-		canStandUp: boolean,
-		baseY: number,
-		animationTime?: number,
-		skipPositionUpdate?: boolean
-	): boolean;
+    // User updates
+    updateRoomObjectUser(
+        roomId: number,
+        objectId: number,
+        location: IVector3d | null,
+        targetLocation: IVector3d | null,
+        direction: IVector3d | null,
+        headDirection: number,
+        canStandUp: boolean,
+        baseY: number,
+        animationTime?: number,
+        skipPositionUpdate?: boolean
+    ): boolean;
 
-	updateRoomObjectUserFigure(
-		roomId: number,
-		objectId: number,
-		figure: string,
-		gender: string | null,
-		clubLevel: string | null,
-		isRiding: boolean
-	): boolean;
+    updateRoomObjectUserFigure(
+        roomId: number,
+        objectId: number,
+        figure: string,
+        gender: string | null,
+        clubLevel: string | null,
+        isRiding: boolean
+    ): boolean;
 
-	updateRoomObjectUserPosture(roomId: number, objectId: number, posture: string, parameter: string): boolean;
+    updateRoomObjectUserPosture(roomId: number, objectId: number, posture: string, parameter: string): boolean;
 
-	updateRoomObjectUserGesture(roomId: number, objectId: number, gesture: number): boolean;
+    updateRoomObjectUserGesture(roomId: number, objectId: number, gesture: number): boolean;
 
-	updateRoomObjectUserEffect(roomId: number, objectId: number, effect: number, delay?: number): boolean;
+    updateRoomObjectUserEffect(roomId: number, objectId: number, effect: number, delay?: number): boolean;
 
-	updateRoomObjectUserChat(roomId: number, objectId: number, numberOfWords: number): boolean;
+    updateRoomObjectUserChat(roomId: number, objectId: number, numberOfWords: number): boolean;
 
-	updateRoomObjectUserTyping(roomId: number, objectId: number, isTyping: boolean): boolean;
+    updateRoomObjectUserTyping(roomId: number, objectId: number, isTyping: boolean): boolean;
 
-	updateRoomObjectUserDance(roomId: number, objectId: number, danceStyle: number): boolean;
+    updateRoomObjectUserDance(roomId: number, objectId: number, danceStyle: number): boolean;
 
-	updateRoomObjectUserSleep(roomId: number, objectId: number, isSleeping: boolean): boolean;
+    updateRoomObjectUserSleep(roomId: number, objectId: number, isSleeping: boolean): boolean;
 
-	updateRoomObjectUserCarryObject(roomId: number, objectId: number, itemType: number): boolean;
+    updateRoomObjectUserCarryObject(roomId: number, objectId: number, itemType: number): boolean;
 
-	updateRoomObjectUserSign(roomId: number, objectId: number, signType: number): boolean;
+    updateRoomObjectUserSign(roomId: number, objectId: number, signType: number): boolean;
 
-	setRoomObjectUserOwnUser(roomId: number, objectId: number): boolean;
+    setRoomObjectUserOwnUser(roomId: number, objectId: number): boolean;
 
-	// Rendering
-	update(time: number): void;
+    // Rendering
+    update(time: number): void;
 
-	initializeRoomVisuals(roomId: number, floorType: string, wallType: string, landscapeType: string, worldType: number): void;
+    initializeRoomVisuals(roomId: number, floorType: string, wallType: string, landscapeType: string, worldType: number): void;
 
-	// Room data
-	getRoomOwnObjectId(roomId: number): number;
+    // Room data
+    getRoomOwnObjectId(roomId: number): number;
 
-	setRoomOwnObjectId(roomId: number, objectId: number): void;
+    setRoomOwnObjectId(roomId: number, objectId: number): void;
 
-	// Canvas management
+    // Canvas management
 
-	/**
+    /**
 	 * Creates a rendering canvas for a room.
 	 *
 	 * @returns The PixiJS Container for the canvas, or null on failure
 	 */
-	createRoomCanvas(roomId: number, canvasId: number, width: number, height: number, scale: number): Container | null;
+    createRoomCanvas(roomId: number, canvasId: number, width: number, height: number, scale: number): Container | null;
 
-	/**
+    /**
 	 * Modifies the dimensions of an existing room canvas.
 	 */
-	modifyRoomCanvas(roomId: number, canvasId: number, width: number, height: number): boolean;
+    modifyRoomCanvas(roomId: number, canvasId: number, width: number, height: number): boolean;
 
-	/**
+    /**
 	 * AS3: sources/win63_version/habbo/room/IRoomEngine.as::setRoomCanvasMask()
 	 */
-	setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void;
+    setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void;
 
-	/**
+    /**
 	 * Handles a mouse event on the room canvas.
 	 */
-	handleRoomCanvasMouseEvent(
-		canvasId: number,
-		x: number,
-		y: number,
-		type: string,
-		altKey: boolean,
-		ctrlKey: boolean,
-		shiftKey: boolean,
-		buttonDown: boolean
-	): void;
+    handleRoomCanvasMouseEvent(
+        canvasId: number,
+        x: number,
+        y: number,
+        type: string,
+        altKey: boolean,
+        ctrlKey: boolean,
+        shiftKey: boolean,
+        buttonDown: boolean
+    ): void;
 
-	/**
+    /**
 	 * Gets the room geometry for a canvas.
 	 */
-	getRoomCanvasGeometry(roomId: number, canvasId?: number): IRoomGeometry | null;
+    getRoomCanvasGeometry(roomId: number, canvasId?: number): IRoomGeometry | null;
 
-	/**
+    /**
 	 * Gets the screen offset of a room canvas.
 	 */
-	getRoomCanvasScreenOffset(roomId: number, canvasId?: number): { x: number; y: number } | null;
+    getRoomCanvasScreenOffset(roomId: number, canvasId?: number): { x: number; y: number } | null;
 
-	/**
+    /**
 	 * Sets the screen offset of a room canvas.
 	 */
-	setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
+    setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
 
-	// AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
-	getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null;
+    // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
+    getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null;
 
-	/**
+    /**
 	 * Sets the scale of a room canvas, optionally centering on a point.
 	 */
-	setRoomCanvasScale(
-		roomId: number,
-		canvasId: number,
-		scale: number,
-		point?: { x: number; y: number } | null,
-		offset?: { x: number; y: number } | null
-	): void;
+    setRoomCanvasScale(
+        roomId: number,
+        canvasId: number,
+        scale: number,
+        point?: { x: number; y: number } | null,
+        offset?: { x: number; y: number } | null
+    ): void;
 
-	/**
+    /**
 	 * Gets the scale of a room canvas.
 	 */
-	getRoomCanvasScale(roomId: number, canvasId?: number): number;
+    getRoomCanvasScale(roomId: number, canvasId?: number): number;
 
-	/**
+    /**
 	 * The currently active room ID.
 	 */
-	readonly activeRoomId: number;
+    readonly activeRoomId: number;
 
-	/**
+    /**
 	 * Whether the room is currently in game mode.
 	 */
-	readonly isGameMode: boolean;
+    readonly isGameMode: boolean;
 }

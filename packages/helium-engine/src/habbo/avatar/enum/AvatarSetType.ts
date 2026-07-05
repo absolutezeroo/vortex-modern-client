@@ -5,7 +5,7 @@
  */
 export class AvatarSetType
 {
-	public static readonly FULL: string = 'full';
-	public static readonly HEAD: string = 'head';
-	public static readonly BODY: string = 'body';
+    public static readonly FULL: string = 'full';
+    public static readonly HEAD: string = 'head';
+    public static readonly BODY: string = 'body';
 }

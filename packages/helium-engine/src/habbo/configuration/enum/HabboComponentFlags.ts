@@ -7,10 +7,10 @@
  * where the user can only view rooms but not interact (no chat, inventory, etc.)
  */
 export const HabboComponentFlags = {
-	/**
+    /**
 	 * Flag indicating room viewer mode is enabled
 	 */
-	ROOM_VIEWER_MODE: 1,
+    ROOM_VIEWER_MODE: 1,
 } as const;
 
 export type HabboComponentFlagsType = typeof HabboComponentFlags;
@@ -23,5 +23,5 @@ export type HabboComponentFlagsType = typeof HabboComponentFlags;
  */
 export function isRoomViewerMode(flags: number): boolean
 {
-	return (flags & HabboComponentFlags.ROOM_VIEWER_MODE) !== 0;
+    return (flags & HabboComponentFlags.ROOM_VIEWER_MODE) !== 0;
 }

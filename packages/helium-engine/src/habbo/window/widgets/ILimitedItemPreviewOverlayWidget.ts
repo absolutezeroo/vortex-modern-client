@@ -11,4 +11,3 @@ import type {ILimitedItemOverlayWidget} from './ILimitedItemOverlayWidget';
 export interface ILimitedItemPreviewOverlayWidget extends ILimitedItemOverlayWidget
 {
 }
-

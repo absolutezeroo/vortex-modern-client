@@ -11,34 +11,34 @@ import {QuestMessageData} from './QuestMessageData';
  */
 export class QuestCancelledMessageEventParser implements IMessageParser
 {
-	private _expired: boolean = false;
+    private _expired: boolean = false;
 
-	get expired(): boolean
-	{
-		return this._expired;
-	}
+    get expired(): boolean
+    {
+        return this._expired;
+    }
 
-	private _quest: QuestMessageData | null = null;
+    private _quest: QuestMessageData | null = null;
 
-	get quest(): QuestMessageData | null
-	{
-		return this._quest;
-	}
+    get quest(): QuestMessageData | null
+    {
+        return this._quest;
+    }
 
-	flush(): boolean
-	{
-		this._expired = false;
-		this._quest = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._expired = false;
+        this._quest = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._expired = wrapper.readBoolean();
-		this._quest = new QuestMessageData(wrapper);
+        this._expired = wrapper.readBoolean();
+        this._quest = new QuestMessageData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

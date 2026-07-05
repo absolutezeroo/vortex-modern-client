@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RateFlatMessageComposer extends MessageComposer<ConstructorParameters<typeof RateFlatMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RateFlatMessageComposer>;
+    private _data: ConstructorParameters<typeof RateFlatMessageComposer>;
 
-	constructor(rating: number)
-	{
-		super();
+    constructor(rating: number)
+    {
+        super();
 
-		this._data = [rating];
-	}
+        this._data = [rating];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

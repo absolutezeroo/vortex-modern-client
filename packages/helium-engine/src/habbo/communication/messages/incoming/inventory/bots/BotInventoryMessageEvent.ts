@@ -7,8 +7,8 @@ import {BotInventoryMessageParser} from '@habbo/communication/messages/parser/in
  */
 export class BotInventoryMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, BotInventoryMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, BotInventoryMessageParser);
+    }
 }

@@ -9,14 +9,14 @@ import {AuthenticationOKMessageParser} from '../../parser/handshake/Authenticati
  */
 export class AuthenticationOKMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AuthenticationOKMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AuthenticationOKMessageParser);
+    }
 
-	// AS3: sources/win63_version/habbo/communication/messages/incoming/handshake/AuthenticationOKMessageEvent.as::get suggestedLoginActions()
-	get suggestedLoginActions(): number[]
-	{
-		return this.getParser<AuthenticationOKMessageParser>().suggestedLoginActions;
-	}
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/handshake/AuthenticationOKMessageEvent.as::get suggestedLoginActions()
+    get suggestedLoginActions(): number[]
+    {
+        return this.getParser<AuthenticationOKMessageParser>().suggestedLoginActions;
+    }
 }

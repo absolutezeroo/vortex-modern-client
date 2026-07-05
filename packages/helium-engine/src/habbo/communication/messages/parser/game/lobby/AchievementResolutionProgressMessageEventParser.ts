@@ -10,70 +10,70 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class AchievementResolutionProgressMessageEventParser implements IMessageParser
 {
-	private _stuffId: number = -1;
+    private _stuffId: number = -1;
 
-	get stuffId(): number
-	{
-		return this._stuffId;
-	}
+    get stuffId(): number
+    {
+        return this._stuffId;
+    }
 
-	private _achievementId: number = 0;
+    private _achievementId: number = 0;
 
-	get achievementId(): number
-	{
-		return this._achievementId;
-	}
+    get achievementId(): number
+    {
+        return this._achievementId;
+    }
 
-	private _requiredLevelBadgeCode: string = '';
+    private _requiredLevelBadgeCode: string = '';
 
-	get requiredLevelBadgeCode(): string
-	{
-		return this._requiredLevelBadgeCode;
-	}
+    get requiredLevelBadgeCode(): string
+    {
+        return this._requiredLevelBadgeCode;
+    }
 
-	private _userProgress: number = 0;
+    private _userProgress: number = 0;
 
-	get userProgress(): number
-	{
-		return this._userProgress;
-	}
+    get userProgress(): number
+    {
+        return this._userProgress;
+    }
 
-	private _totalProgress: number = 0;
+    private _totalProgress: number = 0;
 
-	get totalProgress(): number
-	{
-		return this._totalProgress;
-	}
+    get totalProgress(): number
+    {
+        return this._totalProgress;
+    }
 
-	private _endTime: number = 0;
+    private _endTime: number = 0;
 
-	get endTime(): number
-	{
-		return this._endTime;
-	}
+    get endTime(): number
+    {
+        return this._endTime;
+    }
 
-	flush(): boolean
-	{
-		this._stuffId = -1;
-		this._achievementId = 0;
-		this._requiredLevelBadgeCode = '';
-		this._userProgress = 0;
-		this._totalProgress = 0;
-		this._endTime = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._stuffId = -1;
+        this._achievementId = 0;
+        this._requiredLevelBadgeCode = '';
+        this._userProgress = 0;
+        this._totalProgress = 0;
+        this._endTime = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._stuffId = wrapper.readInt();
-		this._achievementId = wrapper.readInt();
-		this._requiredLevelBadgeCode = wrapper.readString();
-		this._userProgress = wrapper.readInt();
-		this._totalProgress = wrapper.readInt();
-		this._endTime = wrapper.readInt();
+        this._stuffId = wrapper.readInt();
+        this._achievementId = wrapper.readInt();
+        this._requiredLevelBadgeCode = wrapper.readString();
+        this._userProgress = wrapper.readInt();
+        this._totalProgress = wrapper.readInt();
+        this._endTime = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

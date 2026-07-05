@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  */
 export interface IMouseScalingService
 {
-	begin(window: IWindow, scalingFlags: number): void;
+    begin(window: IWindow, scalingFlags: number): void;
 
-	end(window: IWindow): void;
+    end(window: IWindow): void;
 }

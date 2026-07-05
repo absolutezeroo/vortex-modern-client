@@ -11,12 +11,12 @@ export {SkinTemplateEntity} from './SkinTemplateEntity';
 
 // Types
 export type {
-	ISkinRegionData,
-	ISkinTemplateEntityData,
-	ISkinTemplateData,
-	ISkinLayoutEntityData,
-	ISkinLayoutData,
-	ISkinStateData,
-	ISkinData,
+    ISkinRegionData,
+    ISkinTemplateEntityData,
+    ISkinTemplateData,
+    ISkinLayoutEntityData,
+    ISkinLayoutData,
+    ISkinStateData,
+    ISkinData,
 } from './BitmapSkinParser';
 export type {ISkinRenderer} from './ISkinRenderer';

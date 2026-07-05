@@ -9,8 +9,8 @@ import {FurnitureFriendFurniLogic} from './FurnitureFriendFurniLogic';
 
 export class FurnitureLovelockLogic extends FurnitureFriendFurniLogic
 {
-	protected override get engravingDialogType(): number
-	{
-		return 1;
-	}
+    protected override get engravingDialogType(): number
+    {
+        return 1;
+    }
 }

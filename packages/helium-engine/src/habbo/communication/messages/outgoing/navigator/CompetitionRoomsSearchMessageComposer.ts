@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CompetitionRoomsSearchMessageComposer extends MessageComposer<ConstructorParameters<typeof CompetitionRoomsSearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof CompetitionRoomsSearchMessageComposer>;
+    private _data: ConstructorParameters<typeof CompetitionRoomsSearchMessageComposer>;
 
-	constructor(goalId: number, pageIndex: number)
-	{
-		super();
+    constructor(goalId: number, pageIndex: number)
+    {
+        super();
 
-		this._data = [goalId, pageIndex];
-	}
+        this._data = [goalId, pageIndex];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

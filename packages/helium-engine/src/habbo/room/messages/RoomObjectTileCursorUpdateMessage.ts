@@ -10,47 +10,47 @@ import type {Vector3d} from '@room/utils/Vector3d';
 
 export class RoomObjectTileCursorUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(
-		location: Vector3d,
-		height: number,
-		visible: boolean,
-		sourceEventId: string,
-		toggleVisibility: boolean = false
-	)
-	{
-		super(location, null);
+    constructor(
+        location: Vector3d,
+        height: number,
+        visible: boolean,
+        sourceEventId: string,
+        toggleVisibility: boolean = false
+    )
+    {
+        super(location, null);
 
-		this._height = height;
-		this._visible = visible;
-		this._sourceEventId = sourceEventId;
-		this._toggleVisibility = toggleVisibility;
-	}
+        this._height = height;
+        this._visible = visible;
+        this._sourceEventId = sourceEventId;
+        this._toggleVisibility = toggleVisibility;
+    }
 
-	private _height: number;
+    private _height: number;
 
-	get height(): number
-	{
-		return this._height;
-	}
+    get height(): number
+    {
+        return this._height;
+    }
 
-	private _visible: boolean;
+    private _visible: boolean;
 
-	get visible(): boolean
-	{
-		return this._visible;
-	}
+    get visible(): boolean
+    {
+        return this._visible;
+    }
 
-	private _sourceEventId: string;
+    private _sourceEventId: string;
 
-	get sourceEventId(): string
-	{
-		return this._sourceEventId;
-	}
+    get sourceEventId(): string
+    {
+        return this._sourceEventId;
+    }
 
-	private _toggleVisibility: boolean;
+    private _toggleVisibility: boolean;
 
-	get toggleVisibility(): boolean
-	{
-		return this._toggleVisibility;
-	}
+    get toggleVisibility(): boolean
+    {
+        return this._toggleVisibility;
+    }
 }

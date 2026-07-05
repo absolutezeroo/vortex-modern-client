@@ -30,16 +30,16 @@ const log = Logger.getLogger('Helium');
  */
 export interface IHeliumCoreConfig
 {
-	/** Background color */
-	background?: string;
-	/** Element to resize to */
-	resizeTo?: HTMLElement | Window;
-	/** Enable antialiasing */
-	antialias?: boolean;
-	/** Pixel resolution */
-	resolution?: number;
-	/** Canvas container element */
-	canvas?: HTMLElement;
+    /** Background color */
+    background?: string;
+    /** Element to resize to */
+    resizeTo?: HTMLElement | Window;
+    /** Enable antialiasing */
+    antialias?: boolean;
+    /** Pixel resolution */
+    resolution?: number;
+    /** Canvas container element */
+    canvas?: HTMLElement;
 }
 
 /**
@@ -47,17 +47,17 @@ export interface IHeliumCoreConfig
  */
 export interface IConnectionConfig
 {
-	/** Server host (can include ws:// or wss://) */
-	host: string;
+    /** Server host (can include ws:// or wss://) */
+    host: string;
 
-	/** Server ports to try */
-	ports: number[];
+    /** Server ports to try */
+    ports: number[];
 
-	/** SSO ticket for authentication */
-	ssoTicket?: string;
+    /** SSO ticket for authentication */
+    ssoTicket?: string;
 
-	/** Auto-connect on initialization */
-	autoConnect?: boolean;
+    /** Auto-connect on initialization */
+    autoConnect?: boolean;
 }
 
 /**
@@ -65,20 +65,20 @@ export interface IConnectionConfig
  */
 export interface IHeliumConfig extends IHeliumCoreConfig
 {
-	/** Connection configuration */
-	connection?: IConnectionConfig;
+    /** Connection configuration */
+    connection?: IConnectionConfig;
 
-	/** URL to load external configuration from (external_variables.txt) */
-	configurationUrl?: string;
+    /** URL to load external configuration from (external_variables.txt) */
+    configurationUrl?: string;
 
-	/** Configuration object (alternative to URL) */
-	configuration?: Record<string, string>;
+    /** Configuration object (alternative to URL) */
+    configuration?: Record<string, string>;
 
-	/** AS3 embedded text/XML asset contents keyed by asset name. */
-	embeddedConfigurations?: Record<string, string>;
+    /** AS3 embedded text/XML asset contents keyed by asset name. */
+    embeddedConfigurations?: Record<string, string>;
 
-	/** Allow arbitrary configuration properties at the top level */
-	[key: string]: unknown;
+    /** Allow arbitrary configuration properties at the top level */
+    [key: string]: unknown;
 }
 
 /**
@@ -86,11 +86,11 @@ export interface IHeliumConfig extends IHeliumCoreConfig
  */
 export interface ICrashReport
 {
-	message: string;
-	category: string;
-	isFatal: boolean;
-	timestamp: number;
-	error?: Error;
+    message: string;
+    category: string;
+    isFatal: boolean;
+    timestamp: number;
+    error?: Error;
 }
 
 /**
@@ -106,176 +106,176 @@ export interface ICrashReport
  */
 export class Helium implements IHelium
 {
-	// Engine orchestrator (= HabboAirMain)
-	private _habboMain: HeliumMain | null = null;
+    // Engine orchestrator (= HabboAirMain)
+    private _habboMain: HeliumMain | null = null;
 
-	/**
+    /**
 	 * Loading screen reference.
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as _loadingScreen
 	 */
-	private _loadingScreen: IHeliumLoadingScreen | null = null;
+    private _loadingScreen: IHeliumLoadingScreen | null = null;
 
-	/**
+    /**
 	 * PixiJS Application — equivalent to the Flash stage.
 	 * Owned directly by Helium (not by a separate core layer).
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as (stage setup in tryInit)
 	 */
-	private _application: Application | null = null;
+    private _application: Application | null = null;
 
-	// State
-	private _ready: boolean = false;
+    // State
+    private _ready: boolean = false;
 
-	// Event emitter for progress, ready, crash, unload, heartbeat
-	private _events: EventEmitter = new EventEmitter();
+    // Event emitter for progress, ready, crash, unload, heartbeat
+    private _events: EventEmitter = new EventEmitter();
 
-	// Unload handler reference for cleanup
-	private _unloadHandler: (() => void) | null = null;
+    // Unload handler reference for cleanup
+    private _unloadHandler: (() => void) | null = null;
 
-	// Singleton
-	private static _instance: Helium;
+    // Singleton
+    private static _instance: Helium;
 
-	protected _disposed: boolean = false;
+    protected _disposed: boolean = false;
 
-	/**
+    /**
 	 * Get the singleton instance
 	 */
-	public static get instance(): Helium
-	{
-		if(!this._instance)
-		{
-			this._instance = new Helium();
-		}
+    public static get instance(): Helium
+    {
+        if(!this._instance)
+        {
+            this._instance = new Helium();
+        }
 
-		return this._instance;
-	}
+        return this._instance;
+    }
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	/**
+    /**
 	 * Get the CoreComponentContext (= ICore).
 	 *
 	 * In AS3, HabboAirMain stored _core: ICore which was the CoreComponentContext
 	 * created by Core.instantiate(). Here we expose it from Core.instance.
 	 */
-	get context(): CoreComponentContext
-	{
-		const ctx = Core.instance;
+    get context(): CoreComponentContext
+    {
+        const ctx = Core.instance;
 
-		if(!ctx)
-		{
-			throw new Error('[Helium] Core not initialized');
-		}
+        if(!ctx)
+        {
+            throw new Error('[Helium] Core not initialized');
+        }
 
-		return ctx as CoreComponentContext;
-	}
+        return ctx as CoreComponentContext;
+    }
 
-	/**
+    /**
 	 * Get the PixiJS Application.
 	 */
-	get application(): Application
-	{
-		if(!this._application)
-		{
-			throw new Error('[Helium] Not initialized');
-		}
+    get application(): Application
+    {
+        if(!this._application)
+        {
+            throw new Error('[Helium] Not initialized');
+        }
 
-		return this._application;
-	}
+        return this._application;
+    }
 
-	get communication(): ICoreCommunicationManager
-	{
-		return this.context.queueInterface(IID_CoreCommunicationManager)!;
-	}
+    get communication(): ICoreCommunicationManager
+    {
+        return this.context.queueInterface(IID_CoreCommunicationManager)!;
+    }
 
-	get isReady(): boolean
-	{
-		return this._ready;
-	}
+    get isReady(): boolean
+    {
+        return this._ready;
+    }
 
-	/**
+    /**
 	 * Event emitter for lifecycle events.
 	 */
-	get heliumEvents(): EventEmitter
-	{
-		return this._events;
-	}
+    get heliumEvents(): EventEmitter
+    {
+        return this._events;
+    }
 
-	get configuration(): IHabboConfigurationManager
-	{
-		return this._habboMain!.configurationManager;
-	}
+    get configuration(): IHabboConfigurationManager
+    {
+        return this._habboMain!.configurationManager;
+    }
 
-	get habboCommunication(): HabboCommunicationManager
-	{
-		return this._habboMain!.habboCommunication;
-	}
+    get habboCommunication(): HabboCommunicationManager
+    {
+        return this._habboMain!.habboCommunication;
+    }
 
-	get avatarRenderManager(): IAvatarRenderManager
-	{
-		return this._habboMain!.avatarRenderManager;
-	}
+    get avatarRenderManager(): IAvatarRenderManager
+    {
+        return this._habboMain!.avatarRenderManager;
+    }
 
-	get roomEngine(): RoomEngine
-	{
-		return this._habboMain!.roomEngine;
-	}
+    get roomEngine(): RoomEngine
+    {
+        return this._habboMain!.roomEngine;
+    }
 
-	get sessionDataManager(): ISessionDataManager
-	{
-		return this._habboMain!.sessionDataManager;
-	}
+    get sessionDataManager(): ISessionDataManager
+    {
+        return this._habboMain!.sessionDataManager;
+    }
 
-	get roomSessionManager(): IRoomSessionManager
-	{
-		return this._habboMain!.roomSessionManager;
-	}
+    get roomSessionManager(): IRoomSessionManager
+    {
+        return this._habboMain!.roomSessionManager;
+    }
 
-	get navigator(): IHabboNavigator
-	{
-		return this._habboMain!.navigator;
-	}
+    get navigator(): IHabboNavigator
+    {
+        return this._habboMain!.navigator;
+    }
 
-	get newNavigator(): IHabboNewNavigator
-	{
-		return this._habboMain!.newNavigator;
-	}
+    get newNavigator(): IHabboNewNavigator
+    {
+        return this._habboMain!.newNavigator;
+    }
 
-	get inventory(): IHabboInventory
-	{
-		return this._habboMain!.inventory;
-	}
+    get inventory(): IHabboInventory
+    {
+        return this._habboMain!.inventory;
+    }
 
-	get catalog(): IHabboCatalog
-	{
-		return this._habboMain!.catalog;
-	}
+    get catalog(): IHabboCatalog
+    {
+        return this._habboMain!.catalog;
+    }
 
-	get localization(): IHabboLocalizationManager
-	{
-		return this._habboMain!.localization;
-	}
+    get localization(): IHabboLocalizationManager
+    {
+        return this._habboMain!.localization;
+    }
 
-	get windowManager(): IHabboWindowManager
-	{
-		return this._habboMain!.windowManager;
-	}
+    get windowManager(): IHabboWindowManager
+    {
+        return this._habboMain!.windowManager;
+    }
 
-	get toolbar(): IHabboToolbar
-	{
-		return this._habboMain!.toolbar;
-	}
+    get toolbar(): IHabboToolbar
+    {
+        return this._habboMain!.toolbar;
+    }
 
-	get roomUI(): IRoomUI
-	{
-		return this._habboMain!.roomUI;
-	}
+    get roomUI(): IRoomUI
+    {
+        return this._habboMain!.roomUI;
+    }
 
-	/**
+    /**
 	 * Bootstrap the application.
 	 *
 	 * @param config - Optional configuration
@@ -283,144 +283,144 @@ export class Helium implements IHelium
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as finalizePreloading()
 	 */
-	public static async bootstrap(config?: IHeliumConfig, loadingScreen?: IHeliumLoadingScreen): Promise<Helium>
-	{
-		const instance = this.instance;
+    public static async bootstrap(config?: IHeliumConfig, loadingScreen?: IHeliumLoadingScreen): Promise<Helium>
+    {
+        const instance = this.instance;
 
-		await instance.init(config, loadingScreen);
+        await instance.init(config, loadingScreen);
 
-		return instance;
-	}
+        return instance;
+    }
 
-	/**
+    /**
 	 * Track a login step for analytics and debugging.
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as trackLoginStep()
 	 */
-	public static trackLoginStep(step: string, extra?: string): void
-	{
-		const message = extra ? `${step} (${extra})` : step;
+    public static trackLoginStep(step: string, extra?: string): void
+    {
+        const message = extra ? `${step} (${extra})` : step;
 
-		log.debug(`Login step: ${message}`);
+        log.debug(`Login step: ${message}`);
 
-		if(this._instance)
-		{
-			this._instance._events.emit('loginStep', step, extra);
-		}
-	}
+        if(this._instance)
+        {
+            this._instance._events.emit('loginStep', step, extra);
+        }
+    }
 
-	/**
+    /**
 	 * Report a crash or error.
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as reportCrash()
 	 */
-	public static reportCrash(message: string, category: string, isFatal: boolean, error?: Error): void
-	{
-		const report: ICrashReport = {
-			message,
-			category,
-			isFatal,
-			timestamp: Date.now(),
-			error,
-		};
+    public static reportCrash(message: string, category: string, isFatal: boolean, error?: Error): void
+    {
+        const report: ICrashReport = {
+            message,
+            category,
+            isFatal,
+            timestamp: Date.now(),
+            error,
+        };
 
-		log.error(`Crash [${category}]: ${message}${isFatal ? ' (FATAL)' : ''}`);
+        log.error(`Crash [${category}]: ${message}${isFatal ? ' (FATAL)' : ''}`);
 
-		if(error)
-		{
-			log.error(error.stack ?? error.message);
-		}
+        if(error)
+        {
+            log.error(error.stack ?? error.message);
+        }
 
-		if(this._instance)
-		{
-			this._instance._events.emit('crash', report);
-		}
-	}
+        if(this._instance)
+        {
+            this._instance._events.emit('crash', report);
+        }
+    }
 
-	/**
+    /**
 	 * Initialize the Friend Bar (landing view, etc.)
 	 * Must be called AFTER window layouts are registered.
 	 */
-	initFriendBar(): void
-	{
-		this._habboMain!.initFriendBar();
-	}
+    initFriendBar(): void
+    {
+        this._habboMain!.initFriendBar();
+    }
 
-	/**
+    /**
 	 * Connect to the Habbo server (manual).
 	 *
 	 * @see sources/win63_version/habbo/communication/demo/class_467.as::initWithSSO()
 	 * @see sources/win63_version/habbo/communication/demo/class_1762.as::onAuthenticationOK()
 	 */
-	async connect(): Promise<void>
-	{
-		if(!this._habboMain)
-		{
-			throw new Error('[Helium] Not initialized');
-		}
+    async connect(): Promise<void>
+    {
+        if(!this._habboMain)
+        {
+            throw new Error('[Helium] Not initialized');
+        }
 
-		const comm = this._habboMain.habboCommunication;
-		const demo = this._habboMain.communicationDemo;
-		const ssoTicket = comm.ssoTicket;
+        const comm = this._habboMain.habboCommunication;
+        const demo = this._habboMain.communicationDemo;
+        const ssoTicket = comm.ssoTicket;
 
-		if(!ssoTicket || ssoTicket.length === 0)
-		{
-			throw new Error('[Helium] Login without an SSO ticket is not supported');
-		}
+        if(!ssoTicket || ssoTicket.length === 0)
+        {
+            throw new Error('[Helium] Login without an SSO ticket is not supported');
+        }
 
-		log.info('Connecting to server...');
+        log.info('Connecting to server...');
 
-		demo.startConnectionWithSSO(ssoTicket);
-		await demo.waitForAuthentication();
+        demo.startConnectionWithSSO(ssoTicket);
+        await demo.waitForAuthentication();
 
-		this.wireRoomMessageHandler();
-	}
+        this.wireRoomMessageHandler();
+    }
 
-	/**
+    /**
 	 * Disconnect from the server
 	 */
-	disconnect(): void
-	{
-		this._habboMain?.habboCommunication.disconnect();
-	}
+    disconnect(): void
+    {
+        this._habboMain?.habboCommunication.disconnect();
+    }
 
-	/**
+    /**
 	 * Dispose the application.
 	 *
 	 * @see sources/win63_2021_version/HabboAir.as dispose()
 	 */
-	public dispose(): void
-	{
-		if(this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
+        this._disposed = true;
 
-		log.info('Disposing Helium...');
+        log.info('Disposing Helium...');
 
-		// Remove unload listener
-		if(this._unloadHandler)
-		{
-			window.removeEventListener('beforeunload', this._unloadHandler);
-			this._unloadHandler = null;
-		}
+        // Remove unload listener
+        if(this._unloadHandler)
+        {
+            window.removeEventListener('beforeunload', this._unloadHandler);
+            this._unloadHandler = null;
+        }
 
-		// 1. Dispose engine orchestrator
-		this._habboMain?.dispose();
-		this._habboMain = null;
+        // 1. Dispose engine orchestrator
+        this._habboMain?.dispose();
+        this._habboMain = null;
 
-		// 2. Dispose core (disposes context and all components)
-		Core.dispose();
+        // 2. Dispose core (disposes context and all components)
+        Core.dispose();
 
-		// 3. Dispose PixiJS application
-		this._application?.destroy(true);
-		this._application = null;
+        // 3. Dispose PixiJS application
+        this._application?.destroy(true);
+        this._application = null;
 
-		this._ready = false;
+        this._ready = false;
 
-		this._events.removeAllListeners();
-	}
+        this._events.removeAllListeners();
+    }
 
-	/**
+    /**
 	 * Initialize the application.
 	 *
 	 * AS3 flow:
@@ -432,106 +432,106 @@ export class Helium implements IHelium
 	 * @see sources/win63_2021_version/HabboAir.as tryInit(), finalizePreloading()
 	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
 	 */
-	async init(config?: IHeliumConfig, loadingScreen?: IHeliumLoadingScreen): Promise<void>
-	{
-		if(this._ready)
-		{
-			log.warn('Already initialized');
-			return;
-		}
+    async init(config?: IHeliumConfig, loadingScreen?: IHeliumLoadingScreen): Promise<void>
+    {
+        if(this._ready)
+        {
+            log.warn('Already initialized');
+            return;
+        }
 
-		this._loadingScreen = loadingScreen ?? null;
+        this._loadingScreen = loadingScreen ?? null;
 
-		Helium.trackLoginStep('client.init.start');
+        Helium.trackLoginStep('client.init.start');
 
-		try
-		{
-			log.info('Initializing Helium...');
+        try
+        {
+            log.info('Initializing Helium...');
 
-			// 1. Create PixiJS application (= AS3 stage setup in HabboAir.tryInit)
-			this._application = new Application();
+            // 1. Create PixiJS application (= AS3 stage setup in HabboAir.tryInit)
+            this._application = new Application();
 
-			await this._application.init({
-				background: config?.background ?? '#000000',
-				resizeTo: config?.resizeTo ?? window,
-				// AS3 Flash stage renders at logical pixel resolution. Defaulting Pixi to
-				// devicePixelRatio + antialias makes the room canvas much heavier and blurs
-				// pixel-art assets; callers can still override both via config.
-				antialias: config?.antialias ?? false,
-				resolution: config?.resolution ?? 1,
-				autoDensity: true,
-			});
+            await this._application.init({
+                background: config?.background ?? '#000000',
+                resizeTo: config?.resizeTo ?? window,
+                // AS3 Flash stage renders at logical pixel resolution. Defaulting Pixi to
+                // devicePixelRatio + antialias makes the room canvas much heavier and blurs
+                // pixel-art assets; callers can still override both via config.
+                antialias: config?.antialias ?? false,
+                resolution: config?.resolution ?? 1,
+                autoDensity: true,
+            });
 
-			// Append canvas to target
-			const target = config?.canvas ?? document.body;
-			target.appendChild(this._application.canvas);
+            // Append canvas to target
+            const target = config?.canvas ?? document.body;
+            target.appendChild(this._application.canvas);
 
-			// 2. Create and init engine orchestrator (= HabboAirMain)
-			this._habboMain = new HeliumMain(this._loadingScreen);
+            // 2. Create and init engine orchestrator (= HabboAirMain)
+            this._habboMain = new HeliumMain(this._loadingScreen);
 
-			await this._habboMain.init(this._application, config);
+            await this._habboMain.init(this._application, config);
 
-			this._ready = true;
+            this._ready = true;
 
-			// Register unload handler
-			this._unloadHandler = () => this.unloading();
+            // Register unload handler
+            this._unloadHandler = () => this.unloading();
 
-			window.addEventListener('beforeunload', this._unloadHandler);
+            window.addEventListener('beforeunload', this._unloadHandler);
 
-			this._events.emit('ready');
+            this._events.emit('ready');
 
-			log.success('Ready!');
-		}
-		catch(error)
-		{
-			Helium.trackLoginStep('client.init.core.fail');
-			Helium.reportCrash(
-				error instanceof Error ? error.message : String(error),
-				'init',
-				true,
-				error instanceof Error ? error : undefined
-			);
+            log.success('Ready!');
+        }
+        catch (error)
+        {
+            Helium.trackLoginStep('client.init.core.fail');
+            Helium.reportCrash(
+                error instanceof Error ? error.message : String(error),
+                'init',
+                true,
+                error instanceof Error ? error : undefined
+            );
 
-			throw error;
-		}
-	}
+            throw error;
+        }
+    }
 
-	/**
+    /**
 	 * Handle browser unload event.
 	 *
 	 * @see sources/win63_2021_version/HabboAirMain.as unloading()
 	 */
-	unloading(): void
-	{
-		try
-		{
-			if(Core.instance && !this._disposed)
-			{
-				this._events.emit('unload');
-			}
-		}
-		catch(error)
-		{
-			// AS3: catch(error:Error) {} — silently ignore errors during unload
-		}
+    unloading(): void
+    {
+        try
+        {
+            if(Core.instance && !this._disposed)
+            {
+                this._events.emit('unload');
+            }
+        }
+        catch (error)
+        {
+            // AS3: catch(error:Error) {} — silently ignore errors during unload
+        }
 
-		this.dispose();
-	}
+        this.dispose();
+    }
 
-	/**
+    /**
 	 * Wire the RoomMessageHandler to the connection.
 	 */
-	private wireRoomMessageHandler(): void
-	{
-		if(!this._habboMain) return;
+    private wireRoomMessageHandler(): void
+    {
+        if(!this._habboMain) return;
 
-		const comm = this._habboMain.habboCommunication;
-		const handler = this._habboMain.roomMessageHandler;
+        const comm = this._habboMain.habboCommunication;
+        const handler = this._habboMain.roomMessageHandler;
 
-		if(comm.connection)
-		{
-			handler.connection = comm.connection;
-			this._habboMain.roomEngine.connection = comm.connection;
-		}
-	}
+        if(comm.connection)
+        {
+            handler.connection = comm.connection;
+            this._habboMain.roomEngine.connection = comm.connection;
+        }
+    }
 }

@@ -6,23 +6,23 @@
  */
 export class FriendEntryData
 {
-	constructor(userId: number, userName: string)
-	{
-		this._userId = userId;
-		this._userName = userName;
-	}
+    constructor(userId: number, userName: string)
+    {
+        this._userId = userId;
+        this._userName = userName;
+    }
 
-	private _userId: number;
+    private _userId: number;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _userName: string;
+    private _userName: string;
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 }

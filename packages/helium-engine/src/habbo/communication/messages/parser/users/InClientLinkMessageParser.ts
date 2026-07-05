@@ -8,25 +8,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class InClientLinkMessageParser implements IMessageParser
 {
-	private _link: string = '';
+    private _link: string = '';
 
-	get link(): string
-	{
-		return this._link;
-	}
+    get link(): string
+    {
+        return this._link;
+    }
 
-	flush(): boolean
-	{
-		this._link = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._link = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._link = wrapper.readString();
+        this._link = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

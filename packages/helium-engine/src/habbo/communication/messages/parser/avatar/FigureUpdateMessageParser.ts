@@ -9,35 +9,35 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FigureUpdateMessageParser implements IMessageParser
 {
-	private _figure: string = '';
+    private _figure: string = '';
 
-	get figure(): string
-	{
-		return this._figure;
-	}
+    get figure(): string
+    {
+        return this._figure;
+    }
 
-	private _gender: string = '';
+    private _gender: string = '';
 
-	get gender(): string
-	{
-		return this._gender;
-	}
+    get gender(): string
+    {
+        return this._gender;
+    }
 
-	flush(): boolean
-	{
-		this._figure = '';
-		this._gender = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._figure = '';
+        this._gender = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._figure = wrapper.readString();
-		this._gender = wrapper.readString();
-		if (this._gender)
-		{
-			this._gender = this._gender.toUpperCase();
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._figure = wrapper.readString();
+        this._gender = wrapper.readString();
+        if(this._gender)
+        {
+            this._gender = this._gender.toUpperCase();
+        }
+        return true;
+    }
 }

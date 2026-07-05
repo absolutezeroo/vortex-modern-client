@@ -11,16 +11,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class OpenFlatConnectionMessageComposer extends MessageComposer<ConstructorParameters<typeof OpenFlatConnectionMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof OpenFlatConnectionMessageComposer>;
+    private _data: ConstructorParameters<typeof OpenFlatConnectionMessageComposer>;
 
-	constructor(roomId: number, password: string = '', unknown: number = -1)
-	{
-		super();
-		this._data = [roomId, password, unknown];
-	}
+    constructor(roomId: number, password: string = '', unknown: number = -1)
+    {
+        super();
+        this._data = [roomId, password, unknown];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

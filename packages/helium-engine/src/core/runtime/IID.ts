@@ -22,7 +22,7 @@ export type IID<T = unknown> = symbol & { __type?: T };
  */
 export function createIID<T>(name: string): IID<T>
 {
-	return Symbol.for(`IID:${name}`) as IID<T>;
+    return Symbol.for(`IID:${name}`) as IID<T>;
 }
 
 /**
@@ -30,7 +30,7 @@ export function createIID<T>(name: string): IID<T>
  */
 export function getIIDName(iid: IID): string
 {
-	const description = iid.description ?? '';
+    const description = iid.description ?? '';
 
-	return description.startsWith('IID:') ? description.slice(4) : description;
+    return description.startsWith('IID:') ? description.slice(4) : description;
 }

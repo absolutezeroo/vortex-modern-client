@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UpdateHomeRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof UpdateHomeRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof UpdateHomeRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof UpdateHomeRoomMessageComposer>;
 
-	constructor(roomId: number)
-	{
-		super();
+    constructor(roomId: number)
+    {
+        super();
 
-		this._data = [roomId];
-	}
+        this._data = [roomId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

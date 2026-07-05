@@ -10,8 +10,8 @@ import {GuideSessionInviteRequesterMessageParser} from '../../parser/help/GuideS
  */
 export class GuideSessionInviteRequesterMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideSessionInviteRequesterMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideSessionInviteRequesterMessageParser);
+    }
 }

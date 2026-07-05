@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetIsUserPartOfCompetitionMessageComposer extends MessageComposer<ConstructorParameters<typeof GetIsUserPartOfCompetitionMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetIsUserPartOfCompetitionMessageComposer>;
+    private _data: ConstructorParameters<typeof GetIsUserPartOfCompetitionMessageComposer>;
 
-	constructor(goalCode: string)
-	{
-		super();
+    constructor(goalCode: string)
+    {
+        super();
 
-		this._data = [goalCode];
-	}
+        this._data = [goalCode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -7,7 +7,7 @@ import type {IWidget} from './IWidget';
  */
 export interface IProgressIndicatorWidget extends IWidget
 {
-	size: number;
-	position: number;
-	mode: string;
+    size: number;
+    position: number;
+    mode: string;
 }

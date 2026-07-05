@@ -9,8 +9,8 @@ import {ConvertedRoomIdMessageParser} from '../../parser/navigator/ConvertedRoom
  */
 export class ConvertedRoomIdMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ConvertedRoomIdMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ConvertedRoomIdMessageParser);
+    }
 }

@@ -4,17 +4,17 @@
  * @see sources/win63_2021_version/com/sulake/core/window/enum/PivotPoint.as
  */
 export const PivotPoint =
-	{
-		TOP_LEFT: 0,
-		TOP_CENTER: 1,
-		TOP_RIGHT: 2,
-		CENTER_LEFT: 3,
-		CENTER: 4,
-		CENTER_RIGHT: 5,
-		BOTTOM_LEFT: 6,
-		BOTTOM_CENTER: 7,
-		BOTTOM_RIGHT: 8,
-	} as const;
+    {
+        TOP_LEFT: 0,
+        TOP_CENTER: 1,
+        TOP_RIGHT: 2,
+        CENTER_LEFT: 3,
+        CENTER: 4,
+        CENTER_RIGHT: 5,
+        BOTTOM_LEFT: 6,
+        BOTTOM_CENTER: 7,
+        BOTTOM_RIGHT: 8,
+    } as const;
 
 export type PivotPointValue = typeof PivotPoint[keyof typeof PivotPoint];
 
@@ -22,15 +22,15 @@ export type PivotPointValue = typeof PivotPoint[keyof typeof PivotPoint];
  * Pivot point display names, indexed by pivot value.
  */
 export const PIVOT_NAMES: readonly string[] = [
-	'top left',
-	'top center',
-	'top right',
-	'center left',
-	'center',
-	'center right',
-	'bottom left',
-	'bottom center',
-	'bottom right',
+    'top left',
+    'top center',
+    'top right',
+    'center left',
+    'center',
+    'center right',
+    'bottom left',
+    'bottom center',
+    'bottom right',
 ];
 
 /**
@@ -41,5 +41,5 @@ export const PIVOT_NAMES: readonly string[] = [
  */
 export function pivotFromName(name: string): number
 {
-	return PIVOT_NAMES.indexOf(name);
+    return PIVOT_NAMES.indexOf(name);
 }

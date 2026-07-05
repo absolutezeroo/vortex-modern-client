@@ -14,13 +14,13 @@ import type {IRoomObjectManager} from './IRoomObjectManager';
 
 export interface IRoomObjectFactory
 {
-	readonly events: EventEmitter;
+    readonly events: EventEmitter;
 
-	addObjectEventListener(callback: (event: unknown) => void): void;
+    addObjectEventListener(callback: (event: unknown) => void): void;
 
-	removeObjectEventListener(callback: (event: unknown) => void): void;
+    removeObjectEventListener(callback: (event: unknown) => void): void;
 
-	createRoomObjectLogic(type: string): IRoomObjectEventHandler | null;
+    createRoomObjectLogic(type: string): IRoomObjectEventHandler | null;
 
-	createRoomObjectManager(): IRoomObjectManager;
+    createRoomObjectManager(): IRoomObjectManager;
 }

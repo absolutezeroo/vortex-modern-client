@@ -11,29 +11,29 @@ import type {IGraphicAsset} from './IGraphicAsset';
 
 export interface IGraphicAssetCollection extends IDisposable
 {
-	addReference(): void;
+    addReference(): void;
 
-	removeReference(): void;
+    removeReference(): void;
 
-	getReferenceCount(): number;
+    getReferenceCount(): number;
 
-	getLastReferenceTimestamp(): number;
+    getLastReferenceTimestamp(): number;
 
-	define(data: Record<string, unknown>): boolean;
+    define(data: Record<string, unknown>): boolean;
 
-	getAsset(name: string): IGraphicAsset | null;
+    getAsset(name: string): IGraphicAsset | null;
 
-	getAssetWithPalette(name: string, paletteName: string): IGraphicAsset | null;
+    getAssetWithPalette(name: string, paletteName: string): IGraphicAsset | null;
 
-	getPaletteNames(): string[];
+    getPaletteNames(): string[];
 
-	// AS3: sources/win63_version/room/object/visualization/utils/class_1805.as::getPaletteColors()
-	getPaletteColors(paletteName: string): [number, number] | null;
+    // AS3: sources/win63_version/room/object/visualization/utils/class_1805.as::getPaletteColors()
+    getPaletteColors(paletteName: string): [number, number] | null;
 
-	// AS3: sources/win63_version/room/object/visualization/utils/class_1805.as::getPaletteXML()
-	getPaletteXML(paletteName: string): Record<string, unknown> | null;
+    // AS3: sources/win63_version/room/object/visualization/utils/class_1805.as::getPaletteXML()
+    getPaletteXML(paletteName: string): Record<string, unknown> | null;
 
-	addAsset(name: string, texture: Texture, override: boolean, offsetX?: number, offsetY?: number, flipH?: boolean, flipV?: boolean): boolean;
+    addAsset(name: string, texture: Texture, override: boolean, offsetX?: number, offsetY?: number, flipH?: boolean, flipV?: boolean): boolean;
 
-	disposeAsset(name: string): void;
+    disposeAsset(name: string): void;
 }

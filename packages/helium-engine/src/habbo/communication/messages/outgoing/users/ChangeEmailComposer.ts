@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ChangeEmailComposer extends MessageComposer<ConstructorParameters<typeof ChangeEmailComposer>>
 {
-	private _data: ConstructorParameters<typeof ChangeEmailComposer>;
+    private _data: ConstructorParameters<typeof ChangeEmailComposer>;
 
-	constructor(email: string)
-	{
-		super();
+    constructor(email: string)
+    {
+        super();
 
-		this._data = [email];
-	}
+        this._data = [email];
+    }
 
-	getMessageArray(): [string]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string]
+    {
+        return this._data;
+    }
 }

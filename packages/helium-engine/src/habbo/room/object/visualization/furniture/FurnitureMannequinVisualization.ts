@@ -10,7 +10,7 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurnitureMannequinVisualization extends AnimatedFurnitureVisualization
 {
-	// TODO: Implement avatar rendering on furniture when
-	// AvatarRenderManager is available. Delegates to
-	// AvatarFurnitureVisualizationData for avatar renders.
+    // TODO: Implement avatar rendering on furniture when
+    // AvatarRenderManager is available. Delegates to
+    // AvatarFurnitureVisualizationData for avatar renders.
 }

@@ -4,15 +4,15 @@
  */
 export class Byte
 {
-	public readonly value: number;
+    public readonly value: number;
 
-	constructor(value: number)
-	{
-		this.value = value & 0xFF;
-	}
+    constructor(value: number)
+    {
+        this.value = value & 0xFF;
+    }
 
-	toString(): string
-	{
-		return `Byte(${this.value})`;
-	}
+    toString(): string
+    {
+        return `Byte(${this.value})`;
+    }
 }

@@ -25,102 +25,102 @@ import {RoomSessionWordQuizEvent} from '../events/RoomSessionWordQuizEvent';
  */
 export class WordQuizHandler extends BaseHandler
 {
-	private _messageEvents: IMessageEvent[] = [];
+    private _messageEvents: IMessageEvent[] = [];
 
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
 
-		if (connection === null)
-		{
-			return;
-		}
+        if(connection === null)
+        {
+            return;
+        }
 
-		this.addMessageEvent(connection, new QuestionEvent(this.onQuestionStatus.bind(this)));
-		this.addMessageEvent(connection, new QuestionAnsweredEvent(this.onQuestionAnsweredEvent.bind(this)));
-		this.addMessageEvent(connection, new QuestionFinishedEvent(this.onQuestionFinishedEvent.bind(this)));
-	}
+        this.addMessageEvent(connection, new QuestionEvent(this.onQuestionStatus.bind(this)));
+        this.addMessageEvent(connection, new QuestionAnsweredEvent(this.onQuestionAnsweredEvent.bind(this)));
+        this.addMessageEvent(connection, new QuestionFinishedEvent(this.onQuestionFinishedEvent.bind(this)));
+    }
 
-	override dispose(): void
-	{
-		if (this.connection)
-		{
-			for (const event of this._messageEvents)
-			{
-				this.connection.removeMessageEvent(event);
-			}
-		}
-		this._messageEvents = [];
+    override dispose(): void
+    {
+        if(this.connection)
+        {
+            for(const event of this._messageEvents)
+            {
+                this.connection.removeMessageEvent(event);
+            }
+        }
+        this._messageEvents = [];
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	private addMessageEvent(connection: IConnection, event: IMessageEvent): void
-	{
-		connection.addMessageEvent(event);
-		this._messageEvents.push(event);
-	}
+    private addMessageEvent(connection: IConnection, event: IMessageEvent): void
+    {
+        connection.addMessageEvent(event);
+        this._messageEvents.push(event);
+    }
 
-	private onQuestionStatus(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onQuestionStatus(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null) return;
+        const session = this.listener.getSession(this.roomId);
+        if(session === null) return;
 
-		const parser = (event as QuestionEvent).parser as QuestionEventParser;
+        const parser = (event as QuestionEvent).parser as QuestionEventParser;
 
-		const quizEvent = new RoomSessionWordQuizEvent(
-			RoomSessionWordQuizEvent.RWPUW_NEW_QUESTION,
-			session,
-			parser.pollId
-		);
-		quizEvent.question = parser.question;
-		quizEvent.duration = parser.duration;
-		quizEvent.pollType = parser.pollType;
-		quizEvent.questionId = parser.questionId;
-		quizEvent.pollId = parser.pollId;
+        const quizEvent = new RoomSessionWordQuizEvent(
+            RoomSessionWordQuizEvent.RWPUW_NEW_QUESTION,
+            session,
+            parser.pollId
+        );
+        quizEvent.question = parser.question;
+        quizEvent.duration = parser.duration;
+        quizEvent.pollType = parser.pollType;
+        quizEvent.questionId = parser.questionId;
+        quizEvent.pollId = parser.pollId;
 
-		this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_NEW_QUESTION, quizEvent);
-	}
+        this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_NEW_QUESTION, quizEvent);
+    }
 
-	private onQuestionAnsweredEvent(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onQuestionAnsweredEvent(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null) return;
+        const session = this.listener.getSession(this.roomId);
+        if(session === null) return;
 
-		const parser = (event as QuestionAnsweredEvent).parser as QuestionAnsweredEventParser;
+        const parser = (event as QuestionAnsweredEvent).parser as QuestionAnsweredEventParser;
 
-		const quizEvent = new RoomSessionWordQuizEvent(
-			RoomSessionWordQuizEvent.RWPUW_QUESTION_ANSWERED,
-			session,
-			parser.userId
-		);
-		quizEvent.value = parser.value;
-		quizEvent.userId = parser.userId;
-		quizEvent.answerCounts = parser.answerCounts;
+        const quizEvent = new RoomSessionWordQuizEvent(
+            RoomSessionWordQuizEvent.RWPUW_QUESTION_ANSWERED,
+            session,
+            parser.userId
+        );
+        quizEvent.value = parser.value;
+        quizEvent.userId = parser.userId;
+        quizEvent.answerCounts = parser.answerCounts;
 
-		this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_QUESTION_ANSWERED, quizEvent);
-	}
+        this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_QUESTION_ANSWERED, quizEvent);
+    }
 
-	private onQuestionFinishedEvent(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onQuestionFinishedEvent(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null) return;
+        const session = this.listener.getSession(this.roomId);
+        if(session === null) return;
 
-		const parser = (event as QuestionFinishedEvent).parser as QuestionFinishedEventParser;
+        const parser = (event as QuestionFinishedEvent).parser as QuestionFinishedEventParser;
 
-		const quizEvent = new RoomSessionWordQuizEvent(
-			RoomSessionWordQuizEvent.RWPUW_QUESTION_FINISHED,
-			session
-		);
-		quizEvent.questionId = parser.questionId;
-		quizEvent.answerCounts = parser.answerCounts;
+        const quizEvent = new RoomSessionWordQuizEvent(
+            RoomSessionWordQuizEvent.RWPUW_QUESTION_FINISHED,
+            session
+        );
+        quizEvent.questionId = parser.questionId;
+        quizEvent.answerCounts = parser.answerCounts;
 
-		this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_QUESTION_FINISHED, quizEvent);
-	}
+        this.listener.sessionEvents.emit(RoomSessionWordQuizEvent.RWPUW_QUESTION_FINISHED, quizEvent);
+    }
 }

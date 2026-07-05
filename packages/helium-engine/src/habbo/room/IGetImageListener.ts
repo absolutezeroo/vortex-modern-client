@@ -6,9 +6,9 @@
  */
 export interface IGetImageListener
 {
-	// AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageReady()
-	imageReady(id: number, data: ImageBitmap | null): void;
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageReady()
+    imageReady(id: number, data: ImageBitmap | null): void;
 
-	// AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageFailed()
-	imageFailed(id: number): void;
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageFailed()
+    imageFailed(id: number): void;
 }

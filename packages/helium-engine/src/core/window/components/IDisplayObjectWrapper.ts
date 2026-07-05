@@ -11,7 +11,7 @@ import type {IWindow} from '../IWindow';
  */
 export interface IDisplayObjectWrapper extends IWindow
 {
-	setDisplayObject(displayObject: unknown): void;
+    setDisplayObject(displayObject: unknown): void;
 
-	getDisplayObject(): unknown;
+    getDisplayObject(): unknown;
 }

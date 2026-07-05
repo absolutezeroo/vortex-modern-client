@@ -9,8 +9,8 @@ import {RestoreClientMessageEventParser} from '../../parser/notifications/Restor
  */
 export class RestoreClientMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RestoreClientMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RestoreClientMessageEventParser);
+    }
 }

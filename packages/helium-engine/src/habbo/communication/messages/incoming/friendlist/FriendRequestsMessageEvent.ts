@@ -9,8 +9,8 @@ import {FriendRequestsMessageParser} from '../../parser/friendlist/FriendRequest
  */
 export class FriendRequestsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FriendRequestsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FriendRequestsMessageParser);
+    }
 }

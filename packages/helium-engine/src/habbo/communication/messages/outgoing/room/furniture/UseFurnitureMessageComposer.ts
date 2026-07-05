@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UseFurnitureMessageComposer extends MessageComposer<[number, number]>
 {
-	private _data: [number, number];
+    private _data: [number, number];
 
-	constructor(furnitureId: number, extraParam: number = 0)
-	{
-		super();
-		this._data = [furnitureId, extraParam];
-	}
+    constructor(furnitureId: number, extraParam: number = 0)
+    {
+        super();
+        this._data = [furnitureId, extraParam];
+    }
 
-	getMessageArray(): [number, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, number]
+    {
+        return this._data;
+    }
 }

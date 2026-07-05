@@ -8,9 +8,9 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export interface CfhTopic
 {
-	name: string;
-	id: number;
-	consequence: string;
+    name: string;
+    id: number;
+    consequence: string;
 }
 
 /**
@@ -20,8 +20,8 @@ export interface CfhTopic
  */
 export interface CfhCategory
 {
-	name: string;
-	topics: CfhTopic[];
+    name: string;
+    topics: CfhTopic[];
 }
 
 /**
@@ -32,45 +32,45 @@ export interface CfhCategory
  */
 export class CfhTopicsInitMessageParser implements IMessageParser
 {
-	private _callForHelpCategories: CfhCategory[] = [];
+    private _callForHelpCategories: CfhCategory[] = [];
 
-	get callForHelpCategories(): CfhCategory[]
-	{
-		return this._callForHelpCategories;
-	}
+    get callForHelpCategories(): CfhCategory[]
+    {
+        return this._callForHelpCategories;
+    }
 
-	flush(): boolean
-	{
-		this._callForHelpCategories = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._callForHelpCategories = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._callForHelpCategories = [];
+        this._callForHelpCategories = [];
 
-		const categoryCount = wrapper.readInt();
+        const categoryCount = wrapper.readInt();
 
-		for (let i = 0; i < categoryCount; i++)
-		{
-			const name = wrapper.readString();
-			const topicCount = wrapper.readInt();
-			const topics: CfhTopic[] = [];
+        for(let i = 0; i < categoryCount; i++)
+        {
+            const name = wrapper.readString();
+            const topicCount = wrapper.readInt();
+            const topics: CfhTopic[] = [];
 
-			for (let j = 0; j < topicCount; j++)
-			{
-				const topicName = wrapper.readString();
-				const topicId = wrapper.readInt();
-				const consequence = wrapper.readString();
+            for(let j = 0; j < topicCount; j++)
+            {
+                const topicName = wrapper.readString();
+                const topicId = wrapper.readInt();
+                const consequence = wrapper.readString();
 
-				topics.push({name: topicName, id: topicId, consequence});
-			}
+                topics.push({name: topicName, id: topicId, consequence});
+            }
 
-			this._callForHelpCategories.push({name, topics});
-		}
+            this._callForHelpCategories.push({name, topics});
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

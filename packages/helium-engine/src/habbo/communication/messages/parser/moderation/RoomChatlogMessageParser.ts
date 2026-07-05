@@ -9,25 +9,25 @@ import {ChatRecordData} from './ChatRecordData';
  */
 export class RoomChatlogMessageParser implements IMessageParser
 {
-	private _data: ChatRecordData | null = null;
+    private _data: ChatRecordData | null = null;
 
-	get data(): ChatRecordData | null
-	{
-		return this._data;
-	}
+    get data(): ChatRecordData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new ChatRecordData(wrapper);
+        this._data = new ChatRecordData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

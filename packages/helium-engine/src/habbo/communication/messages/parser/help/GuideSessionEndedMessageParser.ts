@@ -9,25 +9,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionEndedMessageParser implements IMessageParser
 {
-	private _endReason: number = 0;
+    private _endReason: number = 0;
 
-	get endReason(): number
-	{
-		return this._endReason;
-	}
+    get endReason(): number
+    {
+        return this._endReason;
+    }
 
-	flush(): boolean
-	{
-		this._endReason = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._endReason = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._endReason = wrapper.readInt();
+        this._endReason = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

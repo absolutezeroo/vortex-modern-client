@@ -9,8 +9,8 @@ import {CallForHelpPendingCallsMessageParser} from '../../parser/help/CallForHel
  */
 export class CallForHelpPendingCallsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CallForHelpPendingCallsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CallForHelpPendingCallsMessageParser);
+    }
 }

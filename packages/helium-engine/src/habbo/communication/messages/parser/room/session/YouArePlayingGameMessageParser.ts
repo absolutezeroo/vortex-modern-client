@@ -8,27 +8,27 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class YouArePlayingGameMessageParser implements IMessageParser
 {
-	private _isPlaying: boolean = false;
+    private _isPlaying: boolean = false;
 
-	get isPlaying(): boolean
-	{
-		return this._isPlaying;
-	}
+    get isPlaying(): boolean
+    {
+        return this._isPlaying;
+    }
 
-	flush(): boolean
-	{
-		this._isPlaying = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._isPlaying = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._isPlaying = wrapper.readBoolean();
-		return true;
-	}
+        this._isPlaying = wrapper.readBoolean();
+        return true;
+    }
 }

@@ -5,33 +5,33 @@
  */
 export interface ILocalizationDefinition
 {
-	/**
+    /**
 	 * Full identifier (e.g., "en_US.UTF-8")
 	 */
-	readonly id: string;
+    readonly id: string;
 
-	/**
+    /**
 	 * Language code (e.g., "en")
 	 */
-	readonly languageCode: string;
+    readonly languageCode: string;
 
-	/**
+    /**
 	 * Country code (e.g., "US")
 	 */
-	readonly countryCode: string;
+    readonly countryCode: string;
 
-	/**
+    /**
 	 * Character encoding (e.g., "UTF-8")
 	 */
-	readonly encoding: string;
+    readonly encoding: string;
 
-	/**
+    /**
 	 * Display name for this localization
 	 */
-	readonly name: string;
+    readonly name: string;
 
-	/**
+    /**
 	 * URL to load localization data from
 	 */
-	readonly url: string;
+    readonly url: string;
 }

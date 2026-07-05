@@ -12,8 +12,8 @@ import {BaseHandler} from './BaseHandler';
  */
 export class AvatarEffectsHandler extends BaseHandler
 {
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
-	}
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
+    }
 }

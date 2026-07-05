@@ -8,51 +8,51 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomDataData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._exists = wrapper.readBoolean();
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._exists = wrapper.readBoolean();
 
-		if (!this._exists)
-		{
-			return;
-		}
+        if(!this._exists)
+        {
+            return;
+        }
 
-		this._name = wrapper.readString();
-		this._desc = wrapper.readString();
+        this._name = wrapper.readString();
+        this._desc = wrapper.readString();
 
-		const tagCount = wrapper.readInt();
+        const tagCount = wrapper.readInt();
 
-		for (let i = 0; i < tagCount; i++)
-		{
-			this._tags.push(wrapper.readString());
-		}
-	}
+        for(let i = 0; i < tagCount; i++)
+        {
+            this._tags.push(wrapper.readString());
+        }
+    }
 
-	private _exists: boolean;
+    private _exists: boolean;
 
-	get exists(): boolean
-	{
-		return this._exists;
-	}
+    get exists(): boolean
+    {
+        return this._exists;
+    }
 
-	private _name: string = '';
+    private _name: string = '';
 
-	get name(): string
-	{
-		return this._name;
-	}
+    get name(): string
+    {
+        return this._name;
+    }
 
-	private _desc: string = '';
+    private _desc: string = '';
 
-	get desc(): string
-	{
-		return this._desc;
-	}
+    get desc(): string
+    {
+        return this._desc;
+    }
 
-	private _tags: string[] = [];
+    private _tags: string[] = [];
 
-	get tags(): string[]
-	{
-		return this._tags;
-	}
+    get tags(): string[]
+    {
+        return this._tags;
+    }
 }

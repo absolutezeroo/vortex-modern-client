@@ -10,30 +10,30 @@ import {ModeratorInitData} from './ModeratorInitData';
  */
 export class ModeratorInitMessageParser implements IMessageParser
 {
-	private _data: ModeratorInitData | null = null;
+    private _data: ModeratorInitData | null = null;
 
-	get data(): ModeratorInitData | null
-	{
-		return this._data;
-	}
+    get data(): ModeratorInitData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		if (this._data)
-		{
-			this._data.dispose();
-			this._data = null;
-		}
+    flush(): boolean
+    {
+        if(this._data)
+        {
+            this._data.dispose();
+            this._data = null;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new ModeratorInitData(wrapper);
+        this._data = new ModeratorInitData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

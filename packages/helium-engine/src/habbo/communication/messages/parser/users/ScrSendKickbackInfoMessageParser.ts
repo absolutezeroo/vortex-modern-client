@@ -11,24 +11,24 @@ import {ScrKickbackData} from '../../incoming/users/ScrKickbackData';
  */
 export class ScrSendKickbackInfoMessageParser implements IMessageParser
 {
-	private _data: ScrKickbackData | null = null;
+    private _data: ScrKickbackData | null = null;
 
-	get data(): ScrKickbackData | null
-	{
-		return this._data;
-	}
+    get data(): ScrKickbackData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new ScrKickbackData(wrapper);
-		return true;
-	}
+        this._data = new ScrKickbackData(wrapper);
+        return true;
+    }
 }

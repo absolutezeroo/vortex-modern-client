@@ -9,8 +9,8 @@ import {RespectNotificationMessageEventParser} from '../../parser/notifications/
  */
 export class RespectNotificationMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RespectNotificationMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RespectNotificationMessageEventParser);
+    }
 }

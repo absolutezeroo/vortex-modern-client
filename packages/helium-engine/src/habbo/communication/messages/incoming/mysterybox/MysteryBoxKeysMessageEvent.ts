@@ -9,8 +9,8 @@ import {MysteryBoxKeysMessageParser} from '../../parser/mysterybox/MysteryBoxKey
  */
 export class MysteryBoxKeysMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, MysteryBoxKeysMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, MysteryBoxKeysMessageParser);
+    }
 }

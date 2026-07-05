@@ -9,8 +9,8 @@ import {ModeratorToolPreferencesParser} from '../../parser/moderation/ModeratorT
  */
 export class ModeratorToolPreferencesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ModeratorToolPreferencesParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ModeratorToolPreferencesParser);
+    }
 }

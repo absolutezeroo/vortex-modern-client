@@ -10,8 +10,8 @@ import {GuideOnDutyStatusMessageParser} from '../../parser/help/GuideOnDutyStatu
  */
 export class GuideOnDutyStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideOnDutyStatusMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideOnDutyStatusMessageParser);
+    }
 }

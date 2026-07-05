@@ -1,5 +1,5 @@
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import {IssueInfoData} from './IssueInfoData';
+import type {IssueInfoData} from './IssueInfoData';
 import {IssueInfoMessageParser} from './IssueInfoMessageParser';
 
 /**
@@ -10,133 +10,133 @@ import {IssueInfoMessageParser} from './IssueInfoMessageParser';
  */
 export class ModeratorInitData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		const issueParser = new IssueInfoMessageParser();
-		this._issues = [];
-		this._messageTemplates = [];
-		this._roomMessageTemplates = [];
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        const issueParser = new IssueInfoMessageParser();
+        this._issues = [];
+        this._messageTemplates = [];
+        this._roomMessageTemplates = [];
 
-		let count = wrapper.readInt();
+        let count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			if (issueParser.parse(wrapper))
-			{
-				const data = issueParser.issueData;
+        for(let i = 0; i < count; i++)
+        {
+            if(issueParser.parse(wrapper))
+            {
+                const data = issueParser.issueData;
 
-				if (data)
-				{
-					this._issues.push(data);
-				}
-			}
-		}
+                if(data)
+                {
+                    this._issues.push(data);
+                }
+            }
+        }
 
-		count = wrapper.readInt();
+        count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._messageTemplates.push(wrapper.readString());
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._messageTemplates.push(wrapper.readString());
+        }
 
-		// CFH categories (read and discard string keys)
-		count = wrapper.readInt();
+        // CFH categories (read and discard string keys)
+        count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			wrapper.readString();
-		}
+        for(let i = 0; i < count; i++)
+        {
+            wrapper.readString();
+        }
 
-		this._cfhPermission = wrapper.readBoolean();
-		this._chatlogsPermission = wrapper.readBoolean();
-		this._alertPermission = wrapper.readBoolean();
-		this._kickPermission = wrapper.readBoolean();
-		this._banPermission = wrapper.readBoolean();
-		this._roomAlertPermission = wrapper.readBoolean();
-		this._roomKickPermission = wrapper.readBoolean();
+        this._cfhPermission = wrapper.readBoolean();
+        this._chatlogsPermission = wrapper.readBoolean();
+        this._alertPermission = wrapper.readBoolean();
+        this._kickPermission = wrapper.readBoolean();
+        this._banPermission = wrapper.readBoolean();
+        this._roomAlertPermission = wrapper.readBoolean();
+        this._roomKickPermission = wrapper.readBoolean();
 
-		count = wrapper.readInt();
+        count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._roomMessageTemplates.push(wrapper.readString());
-		}
-	}
+        for(let i = 0; i < count; i++)
+        {
+            this._roomMessageTemplates.push(wrapper.readString());
+        }
+    }
 
-	private _issues: IssueInfoData[];
+    private _issues: IssueInfoData[];
 
-	get issues(): IssueInfoData[]
-	{
-		return this._issues;
-	}
+    get issues(): IssueInfoData[]
+    {
+        return this._issues;
+    }
 
-	private _messageTemplates: string[];
+    private _messageTemplates: string[];
 
-	get messageTemplates(): string[]
-	{
-		return this._messageTemplates;
-	}
+    get messageTemplates(): string[]
+    {
+        return this._messageTemplates;
+    }
 
-	private _roomMessageTemplates: string[];
+    private _roomMessageTemplates: string[];
 
-	get roomMessageTemplates(): string[]
-	{
-		return this._roomMessageTemplates;
-	}
+    get roomMessageTemplates(): string[]
+    {
+        return this._roomMessageTemplates;
+    }
 
-	private _cfhPermission: boolean;
+    private _cfhPermission: boolean;
 
-	get cfhPermission(): boolean
-	{
-		return this._cfhPermission;
-	}
+    get cfhPermission(): boolean
+    {
+        return this._cfhPermission;
+    }
 
-	private _chatlogsPermission: boolean;
+    private _chatlogsPermission: boolean;
 
-	get chatlogsPermission(): boolean
-	{
-		return this._chatlogsPermission;
-	}
+    get chatlogsPermission(): boolean
+    {
+        return this._chatlogsPermission;
+    }
 
-	private _alertPermission: boolean;
+    private _alertPermission: boolean;
 
-	get alertPermission(): boolean
-	{
-		return this._alertPermission;
-	}
+    get alertPermission(): boolean
+    {
+        return this._alertPermission;
+    }
 
-	private _kickPermission: boolean;
+    private _kickPermission: boolean;
 
-	get kickPermission(): boolean
-	{
-		return this._kickPermission;
-	}
+    get kickPermission(): boolean
+    {
+        return this._kickPermission;
+    }
 
-	private _banPermission: boolean;
+    private _banPermission: boolean;
 
-	get banPermission(): boolean
-	{
-		return this._banPermission;
-	}
+    get banPermission(): boolean
+    {
+        return this._banPermission;
+    }
 
-	private _roomAlertPermission: boolean;
+    private _roomAlertPermission: boolean;
 
-	get roomAlertPermission(): boolean
-	{
-		return this._roomAlertPermission;
-	}
+    get roomAlertPermission(): boolean
+    {
+        return this._roomAlertPermission;
+    }
 
-	private _roomKickPermission: boolean;
+    private _roomKickPermission: boolean;
 
-	get roomKickPermission(): boolean
-	{
-		return this._roomKickPermission;
-	}
+    get roomKickPermission(): boolean
+    {
+        return this._roomKickPermission;
+    }
 
-	dispose(): void
-	{
-		this._issues = [];
-		this._messageTemplates = [];
-		this._roomMessageTemplates = [];
-	}
+    dispose(): void
+    {
+        this._issues = [];
+        this._messageTemplates = [];
+        this._roomMessageTemplates = [];
+    }
 }

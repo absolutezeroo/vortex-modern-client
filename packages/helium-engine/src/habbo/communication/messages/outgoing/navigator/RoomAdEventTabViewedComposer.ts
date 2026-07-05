@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomAdEventTabViewedComposer extends MessageComposer<ConstructorParameters<typeof RoomAdEventTabViewedComposer>>
 {
-	private _data: ConstructorParameters<typeof RoomAdEventTabViewedComposer>;
+    private _data: ConstructorParameters<typeof RoomAdEventTabViewedComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

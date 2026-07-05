@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class OpenCampaignCalendarDoorAsStaffComposer extends MessageComposer<ConstructorParameters<typeof OpenCampaignCalendarDoorAsStaffComposer>>
 {
-	private _data: ConstructorParameters<typeof OpenCampaignCalendarDoorAsStaffComposer>;
+    private _data: ConstructorParameters<typeof OpenCampaignCalendarDoorAsStaffComposer>;
 
-	constructor(campaignName: string, dayIndex: number)
-	{
-		super();
-		this._data = [campaignName, dayIndex];
-	}
+    constructor(campaignName: string, dayIndex: number)
+    {
+        super();
+        this._data = [campaignName, dayIndex];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

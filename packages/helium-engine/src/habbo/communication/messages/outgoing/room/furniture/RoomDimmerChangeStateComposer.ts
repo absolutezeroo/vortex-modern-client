@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomDimmerChangeStateComposer extends MessageComposer<[number]>
 {
-	private _data: [number];
+    private _data: [number];
 
-	constructor(objectId: number)
-	{
-		super();
-		this._data = [objectId];
-	}
+    constructor(objectId: number)
+    {
+        super();
+        this._data = [objectId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

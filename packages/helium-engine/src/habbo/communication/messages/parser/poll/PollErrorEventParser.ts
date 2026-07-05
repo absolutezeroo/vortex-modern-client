@@ -8,13 +8,13 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class PollErrorEventParser implements IMessageParser
 {
-	flush(): boolean
-	{
-		return false;
-	}
+    flush(): boolean
+    {
+        return false;
+    }
 
-	parse(_wrapper: IMessageDataWrapper): boolean
-	{
-		return false;
-	}
+    parse(_wrapper: IMessageDataWrapper): boolean
+    {
+        return false;
+    }
 }

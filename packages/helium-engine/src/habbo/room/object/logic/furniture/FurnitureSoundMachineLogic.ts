@@ -12,124 +12,124 @@ import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectD
 
 export class FurnitureSoundMachineLogic extends FurnitureMultiStateLogic
 {
-	private _wasInitialized: boolean = false;
-	private _isInitialized: boolean = false;
-	private _lastState: number = -1;
+    private _wasInitialized: boolean = false;
+    private _isInitialized: boolean = false;
+    private _lastState: number = -1;
 
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_START,
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_STOP,
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_DISPOSE,
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_INIT
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_START,
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_STOP,
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_DISPOSE,
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_INIT
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override dispose(): void
-	{
-		this.requestDispose();
-		super.dispose();
-	}
+    override dispose(): void
+    {
+        this.requestDispose();
+        super.dispose();
+    }
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		super.processUpdateMessage(message);
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        super.processUpdateMessage(message);
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		if (this.object.getModelController()?.getNumber('furniture_real_room_object') === 1)
-		{
-			if (!this._isInitialized)
-			{
-				this.requestInitialize();
-			}
+        if(this.object.getModelController()?.getNumber('furniture_real_room_object') === 1)
+        {
+            if(!this._isInitialized)
+            {
+                this.requestInitialize();
+            }
 
-			const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+            const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-			if (!('state' in message && 'data' in message))
-			{
-				return;
-			}
+            if(!('state' in message && 'data' in message))
+            {
+                return;
+            }
 
-			const state = this.object.getState(0);
+            const state = this.object.getState(0);
 
-			if (state !== this._lastState)
-			{
-				this._lastState = state;
+            if(state !== this._lastState)
+            {
+                this._lastState = state;
 
-				if (state === 1)
-				{
-					this.requestPlayList();
-				}
-				else if (state === 0)
-				{
-					this.requestStopPlaying();
-				}
-			}
-		}
-	}
+                if(state === 1)
+                {
+                    this.requestPlayList();
+                }
+                else if(state === 0)
+                {
+                    this.requestStopPlaying();
+                }
+            }
+        }
+    }
 
-	private requestInitialize(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    private requestInitialize(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		this._wasInitialized = true;
+        this._wasInitialized = true;
 
-		this.eventDispatcher.emit(
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_INIT,
-			new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_INIT, this.object)
-		);
+        this.eventDispatcher.emit(
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_INIT,
+            new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_INIT, this.object)
+        );
 
-		this._isInitialized = true;
-	}
+        this._isInitialized = true;
+    }
 
-	private requestPlayList(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    private requestPlayList(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		this._wasInitialized = true;
+        this._wasInitialized = true;
 
-		this.eventDispatcher.emit(
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_START,
-			new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_START, this.object)
-		);
-	}
+        this.eventDispatcher.emit(
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_START,
+            new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_START, this.object)
+        );
+    }
 
-	private requestStopPlaying(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    private requestStopPlaying(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		this.eventDispatcher.emit(
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_STOP,
-			new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_STOP, this.object)
-		);
-	}
+        this.eventDispatcher.emit(
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_STOP,
+            new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_STOP, this.object)
+        );
+    }
 
-	private requestDispose(): void
-	{
-		if (!this._wasInitialized)
-		{
-			return;
-		}
+    private requestDispose(): void
+    {
+        if(!this._wasInitialized)
+        {
+            return;
+        }
 
-		this.eventDispatcher?.emit(
-			RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_DISPOSE,
-			new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_DISPOSE, this.object)
-		);
-	}
+        this.eventDispatcher?.emit(
+            RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_DISPOSE,
+            new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_SOUND_MACHINE_DISPOSE, this.object)
+        );
+    }
 }

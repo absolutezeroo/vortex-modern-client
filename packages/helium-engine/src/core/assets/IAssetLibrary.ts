@@ -12,42 +12,42 @@ import type {AssetLoaderStruct} from './AssetLoaderStruct';
  */
 export interface IAssetLibrary extends IDisposable
 {
-	readonly url: string;
-	readonly name: string;
-	readonly isReady: boolean;
-	readonly numAssets: number;
-	readonly manifest: object | null;
-	readonly nameArray: string[];
+    readonly url: string;
+    readonly name: string;
+    readonly isReady: boolean;
+    readonly numAssets: number;
+    readonly manifest: object | null;
+    readonly nameArray: string[];
 
-	loadFromUrl(url: string, isReady?: boolean): Promise<void>;
+    loadFromUrl(url: string, isReady?: boolean): Promise<void>;
 
-	loadFromResource(manifest: object, resourceData: unknown): boolean;
+    loadFromResource(manifest: object, resourceData: unknown): boolean;
 
-	unload(): void;
+    unload(): void;
 
-	loadAssetFromFile(name: string, url: string, mimeType?: string, id?: number): AssetLoaderStruct;
+    loadAssetFromFile(name: string, url: string, mimeType?: string, id?: number): AssetLoaderStruct;
 
-	getAssetByName(name: string): IAsset | null;
+    getAssetByName(name: string): IAsset | null;
 
-	getAssetByContent(content: unknown): IAsset | null;
+    getAssetByContent(content: unknown): IAsset | null;
 
-	getAssetByIndex(index: number): IAsset | null;
+    getAssetByIndex(index: number): IAsset | null;
 
-	getAssetIndex(asset: IAsset): number;
+    getAssetIndex(asset: IAsset): number;
 
-	hasAsset(name: string): boolean;
+    hasAsset(name: string): boolean;
 
-	setAsset(name: string, asset: IAsset, overwrite?: boolean): boolean;
+    setAsset(name: string, asset: IAsset, overwrite?: boolean): boolean;
 
-	createAsset(name: string, declaration: AssetTypeDeclaration): IAsset | null;
+    createAsset(name: string, declaration: AssetTypeDeclaration): IAsset | null;
 
-	removeAsset(asset: IAsset): IAsset | null;
+    removeAsset(asset: IAsset): IAsset | null;
 
-	registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared?: boolean): boolean;
+    registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared?: boolean): boolean;
 
-	getAssetTypeDeclarationByMimeType(mimeType: string, checkShared?: boolean): AssetTypeDeclaration | null;
+    getAssetTypeDeclarationByMimeType(mimeType: string, checkShared?: boolean): AssetTypeDeclaration | null;
 
-	getAssetTypeDeclarationByClass(assetClass: new (...args: unknown[]) => IAsset, checkShared?: boolean): AssetTypeDeclaration | null;
+    getAssetTypeDeclarationByClass(assetClass: new (...args: unknown[]) => IAsset, checkShared?: boolean): AssetTypeDeclaration | null;
 
-	getAssetTypeDeclarationByFileName(fileName: string, checkShared?: boolean): AssetTypeDeclaration | null;
+    getAssetTypeDeclarationByFileName(fileName: string, checkShared?: boolean): AssetTypeDeclaration | null;
 }

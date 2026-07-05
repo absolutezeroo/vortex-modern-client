@@ -10,9 +10,8 @@ import type {ILimitedItemOverlayWidget} from './ILimitedItemOverlayWidget';
  */
 export interface ILimitedItemSupplyLeftOverlayWidget extends ILimitedItemOverlayWidget
 {
-	/**
+    /**
 	 * The number of items remaining in the supply.
 	 */
-	supplyLeft: number;
+    supplyLeft: number;
 }
-

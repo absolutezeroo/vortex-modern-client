@@ -5,12 +5,12 @@ import {BaseHandler} from './BaseHandler';
 
 // Message events
 import {
-	RoomDimmerPresetsMessageEvent
+    RoomDimmerPresetsMessageEvent
 } from '../../communication/messages/incoming/room/furniture/RoomDimmerPresetsMessageEvent';
 
 // Parsers
 import type {
-	RoomDimmerPresetsMessageEventParser
+    RoomDimmerPresetsMessageEventParser
 } from '../../communication/messages/parser/room/furniture/RoomDimmerPresetsMessageEventParser';
 
 // Events
@@ -25,77 +25,77 @@ import {RoomSessionDimmerPresetsEvent} from '../events/RoomSessionDimmerPresetsE
  */
 export class RoomDimmerPresetsHandler extends BaseHandler
 {
-	private _messageEvents: IMessageEvent[] = [];
+    private _messageEvents: IMessageEvent[] = [];
 
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
 
-		if (connection === null)
-		{
-			return;
-		}
+        if(connection === null)
+        {
+            return;
+        }
 
-		this.addMessageEvent(connection, new RoomDimmerPresetsMessageEvent(this.onRoomDimmerPresets.bind(this)));
-	}
+        this.addMessageEvent(connection, new RoomDimmerPresetsMessageEvent(this.onRoomDimmerPresets.bind(this)));
+    }
 
-	override dispose(): void
-	{
-		if (this.connection)
-		{
-			for (const event of this._messageEvents)
-			{
-				this.connection.removeMessageEvent(event);
-			}
-		}
-		this._messageEvents = [];
+    override dispose(): void
+    {
+        if(this.connection)
+        {
+            for(const event of this._messageEvents)
+            {
+                this.connection.removeMessageEvent(event);
+            }
+        }
+        this._messageEvents = [];
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	private addMessageEvent(connection: IConnection, event: IMessageEvent): void
-	{
-		connection.addMessageEvent(event);
-		this._messageEvents.push(event);
-	}
+    private addMessageEvent(connection: IConnection, event: IMessageEvent): void
+    {
+        connection.addMessageEvent(event);
+        this._messageEvents.push(event);
+    }
 
-	private onRoomDimmerPresets(event: IMessageEvent): void
-	{
-		const dimmerEvent = event as RoomDimmerPresetsMessageEvent;
-		if (dimmerEvent === null || dimmerEvent.parser === null)
-		{
-			return;
-		}
+    private onRoomDimmerPresets(event: IMessageEvent): void
+    {
+        const dimmerEvent = event as RoomDimmerPresetsMessageEvent;
+        if(dimmerEvent === null || dimmerEvent.parser === null)
+        {
+            return;
+        }
 
-		const parser = dimmerEvent.parser as RoomDimmerPresetsMessageEventParser;
+        const parser = dimmerEvent.parser as RoomDimmerPresetsMessageEventParser;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null)
-		{
-			return;
-		}
+        const session = this.listener.getSession(this.roomId);
+        if(session === null)
+        {
+            return;
+        }
 
-		const presetsEvent = new RoomSessionDimmerPresetsEvent(
-			RoomSessionDimmerPresetsEvent.ROOM_DIMMER_PRESETS,
-			session
-		);
-		presetsEvent.selectedPresetId = parser.selectedPresetId;
-		presetsEvent.itemId = parser.itemId;
-		presetsEvent.isOn = parser.isOn;
+        const presetsEvent = new RoomSessionDimmerPresetsEvent(
+            RoomSessionDimmerPresetsEvent.ROOM_DIMMER_PRESETS,
+            session
+        );
+        presetsEvent.selectedPresetId = parser.selectedPresetId;
+        presetsEvent.itemId = parser.itemId;
+        presetsEvent.isOn = parser.isOn;
 
-		for (let i = 0; i < parser.presetCount; i++)
-		{
-			const preset = parser.getPreset(i);
+        for(let i = 0; i < parser.presetCount; i++)
+        {
+            const preset = parser.getPreset(i);
 
-			if (preset !== null)
-			{
-				presetsEvent.storePreset(preset.id, preset.type, preset.color, preset.light);
-			}
-		}
+            if(preset !== null)
+            {
+                presetsEvent.storePreset(preset.id, preset.type, preset.color, preset.light);
+            }
+        }
 
-		if (this.listener && this.listener.sessionEvents)
-		{
-			this.listener.sessionEvents.emit(RoomSessionDimmerPresetsEvent.ROOM_DIMMER_PRESETS, presetsEvent);
-		}
-	}
+        if(this.listener && this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(RoomSessionDimmerPresetsEvent.ROOM_DIMMER_PRESETS, presetsEvent);
+        }
+    }
 }

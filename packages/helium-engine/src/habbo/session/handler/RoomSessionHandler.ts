@@ -7,41 +7,41 @@ import {RoomSessionQueueEvent} from '../events/RoomSessionQueueEvent';
 
 // Message events
 import {
-	OpenConnectionMessageEvent
+    OpenConnectionMessageEvent
 } from '../../communication/messages/incoming/room/session/OpenConnectionMessageEvent';
 import {
-	FlatAccessibleMessageEvent
+    FlatAccessibleMessageEvent
 } from '../../communication/messages/incoming/room/session/FlatAccessibleMessageEvent';
 import {RoomReadyMessageEvent} from '../../communication/messages/incoming/room/session/RoomReadyMessageEvent';
 import {
-	CloseConnectionMessageEvent
+    CloseConnectionMessageEvent
 } from '../../communication/messages/incoming/room/session/CloseConnectionMessageEvent';
 import {
-	RoomQueueStatusMessageEvent
+    RoomQueueStatusMessageEvent
 } from '../../communication/messages/incoming/room/session/RoomQueueStatusMessageEvent';
 import {
-	YouAreSpectatorMessageEvent
+    YouAreSpectatorMessageEvent
 } from '../../communication/messages/incoming/room/session/YouAreSpectatorMessageEvent';
 import {
-	FlatAccessDeniedMessageEvent
+    FlatAccessDeniedMessageEvent
 } from '../../communication/messages/incoming/navigator/FlatAccessDeniedMessageEvent';
 
 // Parsers
 import type {
-	OpenConnectionMessageParser
+    OpenConnectionMessageParser
 } from '../../communication/messages/parser/room/session/OpenConnectionMessageParser';
 import type {
-	FlatAccessibleMessageParser
+    FlatAccessibleMessageParser
 } from '../../communication/messages/parser/room/session/FlatAccessibleMessageParser';
 import type {RoomReadyMessageParser} from '../../communication/messages/parser/room/session/RoomReadyMessageParser';
 import type {
-	FlatAccessDeniedMessageParser
+    FlatAccessDeniedMessageParser
 } from '../../communication/messages/parser/navigator/FlatAccessDeniedMessageParser';
 import type {
-	RoomQueueStatusMessageParser
+    RoomQueueStatusMessageParser
 } from '../../communication/messages/parser/room/session/RoomQueueStatusMessageParser';
 import type {
-	YouAreSpectatorMessageParser
+    YouAreSpectatorMessageParser
 } from '../../communication/messages/parser/room/session/YouAreSpectatorMessageParser';
 
 import {Logger} from '@core/utils/Logger';
@@ -52,9 +52,9 @@ const log = Logger.getLogger('RoomSessionHandler');
  * Room session state constants
  */
 export const RoomSessionHandlerState = {
-	RS_CONNECTED: 'RS_CONNECTED',
-	RS_READY: 'RS_READY',
-	RS_DISCONNECTED: 'RS_DISCONNECTED',
+    RS_CONNECTED: 'RS_CONNECTED',
+    RS_READY: 'RS_READY',
+    RS_DISCONNECTED: 'RS_DISCONNECTED',
 } as const;
 
 /**
@@ -67,228 +67,228 @@ export const RoomSessionHandlerState = {
  */
 export class RoomSessionHandler extends BaseHandler
 {
-	private _messageEvents: IMessageEvent[] = [];
+    private _messageEvents: IMessageEvent[] = [];
 
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
 
-		if (connection === null)
-		{
-			return;
-		}
+        if(connection === null)
+        {
+            return;
+        }
 
-		// Register message event handlers
-		this.addMessageEvent(connection, new OpenConnectionMessageEvent(this.onRoomConnected.bind(this)));
-		this.addMessageEvent(connection, new FlatAccessibleMessageEvent(this.onFlatAccessible.bind(this)));
-		this.addMessageEvent(connection, new RoomReadyMessageEvent(this.onRoomReady.bind(this)));
-		this.addMessageEvent(connection, new CloseConnectionMessageEvent(this.onRoomDisconnected.bind(this)));
-		this.addMessageEvent(connection, new FlatAccessDeniedMessageEvent(this.onFlatAccessDenied.bind(this)));
-		this.addMessageEvent(connection, new RoomQueueStatusMessageEvent(this.onRoomQueueStatus.bind(this)));
-		this.addMessageEvent(connection, new YouAreSpectatorMessageEvent(this.onYouAreSpectator.bind(this)));
-	}
+        // Register message event handlers
+        this.addMessageEvent(connection, new OpenConnectionMessageEvent(this.onRoomConnected.bind(this)));
+        this.addMessageEvent(connection, new FlatAccessibleMessageEvent(this.onFlatAccessible.bind(this)));
+        this.addMessageEvent(connection, new RoomReadyMessageEvent(this.onRoomReady.bind(this)));
+        this.addMessageEvent(connection, new CloseConnectionMessageEvent(this.onRoomDisconnected.bind(this)));
+        this.addMessageEvent(connection, new FlatAccessDeniedMessageEvent(this.onFlatAccessDenied.bind(this)));
+        this.addMessageEvent(connection, new RoomQueueStatusMessageEvent(this.onRoomQueueStatus.bind(this)));
+        this.addMessageEvent(connection, new YouAreSpectatorMessageEvent(this.onYouAreSpectator.bind(this)));
+    }
 
-	override dispose(): void
-	{
-		// Remove message events
-		if (this.connection)
-		{
-			for (const event of this._messageEvents)
-			{
-				this.connection.removeMessageEvent(event);
-			}
-		}
-		this._messageEvents = [];
+    override dispose(): void
+    {
+        // Remove message events
+        if(this.connection)
+        {
+            for(const event of this._messageEvents)
+            {
+                this.connection.removeMessageEvent(event);
+            }
+        }
+        this._messageEvents = [];
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	private addMessageEvent(connection: IConnection, event: IMessageEvent): void
-	{
-		connection.addMessageEvent(event);
-		this._messageEvents.push(event);
-	}
+    private addMessageEvent(connection: IConnection, event: IMessageEvent): void
+    {
+        connection.addMessageEvent(event);
+        this._messageEvents.push(event);
+    }
 
-	private onRoomConnected(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onRoomConnected(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const parser = event.parser as OpenConnectionMessageParser;
-		if (parser === null)
-		{
-			return;
-		}
+        const parser = event.parser as OpenConnectionMessageParser;
+        if(parser === null)
+        {
+            return;
+        }
 
-		if (this.listener)
-		{
-			this.listener.sessionUpdate(parser.flatId, RoomSessionHandlerState.RS_CONNECTED);
-		}
+        if(this.listener)
+        {
+            this.listener.sessionUpdate(parser.flatId, RoomSessionHandlerState.RS_CONNECTED);
+        }
 
-		log.debug(`Room connected: ${parser.flatId}`);
-	}
+        log.debug(`Room connected: ${parser.flatId}`);
+    }
 
-	private onFlatAccessible(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onFlatAccessible(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const parser = event.parser as FlatAccessibleMessageParser;
-		if (parser === null)
-		{
-			return;
-		}
+        const parser = event.parser as FlatAccessibleMessageParser;
+        if(parser === null)
+        {
+            return;
+        }
 
-		const userName = parser.userName;
-		if (userName !== null && userName.length > 0)
-		{
-			if (this.listener && this.listener.sessionEvents)
-			{
-				const session = this.listener.getSession(parser.flatId);
-				if (session !== null)
-				{
-					this.listener.sessionEvents.emit(
-						RoomSessionDoorbellEvent.RSDE_ACCEPTED,
-						new RoomSessionDoorbellEvent(RoomSessionDoorbellEvent.RSDE_ACCEPTED, session, userName)
-					);
-				}
-			}
-		}
+        const userName = parser.userName;
+        if(userName !== null && userName.length > 0)
+        {
+            if(this.listener && this.listener.sessionEvents)
+            {
+                const session = this.listener.getSession(parser.flatId);
+                if(session !== null)
+                {
+                    this.listener.sessionEvents.emit(
+                        RoomSessionDoorbellEvent.RSDE_ACCEPTED,
+                        new RoomSessionDoorbellEvent(RoomSessionDoorbellEvent.RSDE_ACCEPTED, session, userName)
+                    );
+                }
+            }
+        }
 
-		log.debug(`Flat accessible: ${parser.flatId}, user: ${userName}`);
-	}
+        log.debug(`Flat accessible: ${parser.flatId}, user: ${userName}`);
+    }
 
-	private onRoomReady(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onRoomReady(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const parser = event.parser as RoomReadyMessageParser;
-		if (parser === null)
-		{
-			return;
-		}
+        const parser = event.parser as RoomReadyMessageParser;
+        if(parser === null)
+        {
+            return;
+        }
 
-		const roomId = parser.roomId;
+        const roomId = parser.roomId;
 
-		if (this.listener)
-		{
-			this.listener.sessionReinitialize(roomId, roomId);
-			this.listener.sessionUpdate(roomId, RoomSessionHandlerState.RS_READY);
-		}
+        if(this.listener)
+        {
+            this.listener.sessionReinitialize(roomId, roomId);
+            this.listener.sessionUpdate(roomId, RoomSessionHandlerState.RS_READY);
+        }
 
-		log.debug(`Room ready: ${roomId}`);
-	}
+        log.debug(`Room ready: ${roomId}`);
+    }
 
-	private onFlatAccessDenied(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onFlatAccessDenied(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const parser = event.parser as FlatAccessDeniedMessageParser;
-		if (parser === null)
-		{
-			return;
-		}
+        const parser = event.parser as FlatAccessDeniedMessageParser;
+        if(parser === null)
+        {
+            return;
+        }
 
-		const userName = parser.userName;
-		if (userName === null || userName.length === 0)
-		{
-			if (this.listener)
-			{
-				this.listener.sessionUpdate(parser.flatId, RoomSessionHandlerState.RS_DISCONNECTED);
-			}
-		}
-		else if (this.listener && this.listener.sessionEvents)
-		{
-			const session = this.listener.getSession(parser.flatId);
-			if (session !== null)
-			{
-				this.listener.sessionEvents.emit(
-					RoomSessionDoorbellEvent.RSDE_REJECTED,
-					new RoomSessionDoorbellEvent(RoomSessionDoorbellEvent.RSDE_REJECTED, session, userName)
-				);
-			}
-		}
+        const userName = parser.userName;
+        if(userName === null || userName.length === 0)
+        {
+            if(this.listener)
+            {
+                this.listener.sessionUpdate(parser.flatId, RoomSessionHandlerState.RS_DISCONNECTED);
+            }
+        }
+        else if(this.listener && this.listener.sessionEvents)
+        {
+            const session = this.listener.getSession(parser.flatId);
+            if(session !== null)
+            {
+                this.listener.sessionEvents.emit(
+                    RoomSessionDoorbellEvent.RSDE_REJECTED,
+                    new RoomSessionDoorbellEvent(RoomSessionDoorbellEvent.RSDE_REJECTED, session, userName)
+                );
+            }
+        }
 
-		log.debug(`Flat access denied: ${parser.flatId}, user: ${userName}`);
-	}
+        log.debug(`Flat access denied: ${parser.flatId}, user: ${userName}`);
+    }
 
-	private onRoomDisconnected(_event: IMessageEvent): void
-	{
-		const roomId = this.roomId;
+    private onRoomDisconnected(_event: IMessageEvent): void
+    {
+        const roomId = this.roomId;
 
-		if (this.listener)
-		{
-			this.listener.sessionUpdate(roomId, RoomSessionHandlerState.RS_DISCONNECTED);
-		}
+        if(this.listener)
+        {
+            this.listener.sessionUpdate(roomId, RoomSessionHandlerState.RS_DISCONNECTED);
+        }
 
-		log.debug(`Room disconnected: ${roomId}`);
-	}
+        log.debug(`Room disconnected: ${roomId}`);
+    }
 
-	private onRoomQueueStatus(event: IMessageEvent): void
-	{
-		if (!this.listener || !this.listener.sessionEvents)
-		{
-			return;
-		}
+    private onRoomQueueStatus(event: IMessageEvent): void
+    {
+        if(!this.listener || !this.listener.sessionEvents)
+        {
+            return;
+        }
 
-		const parser = event.parser as RoomQueueStatusMessageParser;
-		if (!parser)
-		{
-			return;
-		}
+        const parser = event.parser as RoomQueueStatusMessageParser;
+        if(!parser)
+        {
+            return;
+        }
 
-		const session = this.listener.getSession(parser.flatId);
-		if (!session)
-		{
-			return;
-		}
+        const session = this.listener.getSession(parser.flatId);
+        if(!session)
+        {
+            return;
+        }
 
-		const targets = parser.getQueueSetTargets();
-		const activeTarget = parser.activeTarget;
+        const targets = parser.getQueueSetTargets();
+        const activeTarget = parser.activeTarget;
 
-		for (const target of targets)
-		{
-			const queueSet = parser.getQueueSet(target);
-			if (!queueSet)
-			{
-				continue;
-			}
+        for(const target of targets)
+        {
+            const queueSet = parser.getQueueSet(target);
+            if(!queueSet)
+            {
+                continue;
+            }
 
-			const queueEvent = new RoomSessionQueueEvent(
-				session,
-				queueSet.name,
-				queueSet.target,
-				queueSet.target === activeTarget
-			);
+            const queueEvent = new RoomSessionQueueEvent(
+                session,
+                queueSet.name,
+                queueSet.target,
+                queueSet.target === activeTarget
+            );
 
-			const queueTypes = queueSet.queueTypes;
+            const queueTypes = queueSet.queueTypes;
 
-			for (const queueType of queueTypes)
-			{
-				queueEvent.addQueue(queueType, queueSet.getQueueSize(queueType));
-			}
+            for(const queueType of queueTypes)
+            {
+                queueEvent.addQueue(queueType, queueSet.getQueueSize(queueType));
+            }
 
-			this.listener.sessionEvents.emit(RoomSessionQueueEvent.QUEUE_STATUS, queueEvent);
-		}
-	}
+            this.listener.sessionEvents.emit(RoomSessionQueueEvent.QUEUE_STATUS, queueEvent);
+        }
+    }
 
-	private onYouAreSpectator(event: IMessageEvent): void
-	{
-		if (!this.listener)
-		{
-			return;
-		}
+    private onYouAreSpectator(event: IMessageEvent): void
+    {
+        if(!this.listener)
+        {
+            return;
+        }
 
-		const parser = event.parser as YouAreSpectatorMessageParser;
-		if (!parser)
-		{
-			return;
-		}
+        const parser = event.parser as YouAreSpectatorMessageParser;
+        if(!parser)
+        {
+            return;
+        }
 
-		const session = this.listener.getSession(parser.flatId);
-		if (!session)
-		{
-			return;
-		}
+        const session = this.listener.getSession(parser.flatId);
+        if(!session)
+        {
+            return;
+        }
 
-		session.isSpectatorMode = true;
-	}
+        session.isSpectatorMode = true;
+    }
 }

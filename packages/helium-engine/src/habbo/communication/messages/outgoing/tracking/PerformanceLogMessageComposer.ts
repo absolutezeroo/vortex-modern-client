@@ -7,40 +7,40 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PerformanceLogMessageComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(
-		uptimeSeconds: number,
-		userAgent: string,
-		flashVersion: string,
-		os: string,
-		param5: string,
-		isDebugger: boolean,
-		memoryKB: number,
-		param8: number,
-		gcCount: number,
-		averageUpdateInterval: number,
-		slowUpdateCount: number
-	)
-	{
-		super();
-		this._data = [
-			uptimeSeconds,
-			userAgent,
-			flashVersion,
-			os,
-			param5,
-			isDebugger,
-			memoryKB,
-			param8,
-			gcCount,
-			averageUpdateInterval,
-			slowUpdateCount,
-		];
-	}
+    constructor(
+        uptimeSeconds: number,
+        userAgent: string,
+        flashVersion: string,
+        os: string,
+        param5: string,
+        isDebugger: boolean,
+        memoryKB: number,
+        param8: number,
+        gcCount: number,
+        averageUpdateInterval: number,
+        slowUpdateCount: number
+    )
+    {
+        super();
+        this._data = [
+            uptimeSeconds,
+            userAgent,
+            flashVersion,
+            os,
+            param5,
+            isDebugger,
+            memoryKB,
+            param8,
+            gcCount,
+            averageUpdateInterval,
+            slowUpdateCount,
+        ];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

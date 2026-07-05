@@ -13,5 +13,5 @@ import type {IIterable} from './utils/IIterable';
  */
 export interface IWidget extends IDisposable, IIterable
 {
-	properties: unknown[];
+    properties: unknown[];
 }

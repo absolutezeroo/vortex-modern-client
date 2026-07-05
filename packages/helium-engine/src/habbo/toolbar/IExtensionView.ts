@@ -8,22 +8,22 @@
  */
 export interface IExtensionView
 {
-	/**
+    /**
 	 * Whether the extension view is visible
 	 */
-	visible: boolean;
+    visible: boolean;
 
-	/**
+    /**
 	 * The screen height available to the extension view
 	 */
-	readonly screenHeight: number;
+    readonly screenHeight: number;
 
-	/**
+    /**
 	 * Extra margin applied to the extension view
 	 */
-	extraMargin: number;
+    extraMargin: number;
 
-	/**
+    /**
 	 * Attach an extension panel to the view
 	 *
 	 * @param id Extension identifier
@@ -31,25 +31,25 @@ export interface IExtensionView
 	 * @param index Optional insertion index (-1 for end)
 	 * @param params Optional parameters
 	 */
-	attachExtension(id: string, element: unknown, index?: number, params?: unknown[] | null): void;
+    attachExtension(id: string, element: unknown, index?: number, params?: unknown[] | null): void;
 
-	/**
+    /**
 	 * Detach an extension panel from the view
 	 *
 	 * @param id Extension identifier
 	 */
-	detachExtension(id: string): void;
+    detachExtension(id: string): void;
 
-	/**
+    /**
 	 * Check whether an extension is currently attached
 	 *
 	 * @param id Extension identifier
 	 * @returns True if the extension is attached
 	 */
-	hasExtension(id: string): boolean;
+    hasExtension(id: string): boolean;
 
-	/**
+    /**
 	 * Refresh the layout of the extension view
 	 */
-	refreshItemWindow(): void;
+    refreshItemWindow(): void;
 }

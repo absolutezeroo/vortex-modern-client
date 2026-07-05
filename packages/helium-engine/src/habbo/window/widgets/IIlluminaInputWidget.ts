@@ -11,34 +11,33 @@ import type {IIlluminaInputHandler} from './IIlluminaInputHandler';
  */
 export interface IIlluminaInputWidget extends IWidget
 {
-	/**
+    /**
 	 * The current message text.
 	 */
-	message: string;
+    message: string;
 
-	/**
+    /**
 	 * The submit handler called when the user submits input.
 	 */
-	submitHandler: IIlluminaInputHandler | null;
+    submitHandler: IIlluminaInputHandler | null;
 
-	/**
+    /**
 	 * The caption displayed on the submit button.
 	 */
-	buttonCaption: string;
+    buttonCaption: string;
 
-	/**
+    /**
 	 * The placeholder text shown when the input is empty.
 	 */
-	emptyMessage: string;
+    emptyMessage: string;
 
-	/**
+    /**
 	 * Whether the input supports multiple lines.
 	 */
-	multiline: boolean;
+    multiline: boolean;
 
-	/**
+    /**
 	 * The maximum number of characters allowed (0 = unlimited).
 	 */
-	maxChars: number;
+    maxChars: number;
 }
-

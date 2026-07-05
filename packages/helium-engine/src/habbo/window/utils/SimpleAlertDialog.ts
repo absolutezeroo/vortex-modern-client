@@ -34,35 +34,35 @@ const log = Logger.getLogger('SimpleAlertDialog');
  */
 export class SimpleAlertDialog implements IDisposable
 {
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::WINDOW_MARGIN
-	private static readonly WINDOW_MARGIN: number = 10;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_modalDialog
-	private _modalDialog: IModalDialog | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkUrl
-	private _linkUrl: string = '';
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_window
-	private _window: IWindowContainer | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listMain
-	private _listMain: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listTop
-	private _listTop: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listBottom
-	private _listBottom: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_messageWindow
-	private _messageWindow: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_subtitleWindow
-	private _subtitleWindow: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkWindow
-	private _linkWindow: IWindow | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_illustrationWindow
-	private _illustrationWindow: IWindow | null = null;
-	// TS-only: callback refs stored explicitly (AS3 stored them per-instance differently)
-	private _linkClickCallback: (() => void) | null = null;
-	private _closeCallback: (() => void) | null = null;
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_windowManager
-	private _windowManager: IHabboWindowManager | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::WINDOW_MARGIN
+    private static readonly WINDOW_MARGIN: number = 10;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_modalDialog
+    private _modalDialog: IModalDialog | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkUrl
+    private _linkUrl: string = '';
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_window
+    private _window: IWindowContainer | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listMain
+    private _listMain: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listTop
+    private _listTop: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_listBottom
+    private _listBottom: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_messageWindow
+    private _messageWindow: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_subtitleWindow
+    private _subtitleWindow: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_linkWindow
+    private _linkWindow: IWindow | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_illustrationWindow
+    private _illustrationWindow: IWindow | null = null;
+    // TS-only: callback refs stored explicitly (AS3 stored them per-instance differently)
+    private _linkClickCallback: (() => void) | null = null;
+    private _closeCallback: (() => void) | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
 
-	/**
+    /**
 	 * Creates a new simple alert dialog.
 	 *
 	 * @param windowManager - The Habbo window manager
@@ -76,272 +76,272 @@ export class SimpleAlertDialog implements IDisposable
 	 * @param linkClickCallback - Optional callback invoked when the link is clicked
 	 * @param closeCallback - Optional callback invoked when the dialog is closed
 	 */
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::SimpleAlertDialog()
-	constructor(
-		windowManager: IHabboWindowManager,
-		title: string,
-		subtitle: string | null,
-		message: string,
-		linkCaption: string | null,
-		linkUrl: string | null,
-		parameters: Map<string, string> | null,
-		illustrationUrl: string | null,
-		linkClickCallback: (() => void) | null,
-		closeCallback: (() => void) | null
-	)
-	{
-		this._linkClickCallback = linkClickCallback;
-		this._closeCallback = closeCallback;
-		this._windowManager = windowManager;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::SimpleAlertDialog()
+    constructor(
+        windowManager: IHabboWindowManager,
+        title: string,
+        subtitle: string | null,
+        message: string,
+        linkCaption: string | null,
+        linkUrl: string | null,
+        parameters: Map<string, string> | null,
+        illustrationUrl: string | null,
+        linkClickCallback: (() => void) | null,
+        closeCallback: (() => void) | null
+    )
+    {
+        this._linkClickCallback = linkClickCallback;
+        this._closeCallback = closeCallback;
+        this._windowManager = windowManager;
 
-		// AS3: param6 = param1.interpolate(param6) — interpolate URL variables before use
-		if(linkUrl)
-		{
-			linkUrl = (windowManager as unknown as { interpolate?: (v: string) => string }).interpolate?.(linkUrl) ?? linkUrl;
-		}
+        // AS3: param6 = param1.interpolate(param6) — interpolate URL variables before use
+        if(linkUrl)
+        {
+            linkUrl = (windowManager as unknown as { interpolate?: (v: string) => string }).interpolate?.(linkUrl) ?? linkUrl;
+        }
 
-		// In AS3: loads "simple_alert_xml" asset and builds a modal dialog from it.
-		const layout = windowManager.getLayout('simple_alert') as unknown;
-		const layoutXml = typeof layout === 'string' ? layout : '';
+        // In AS3: loads "simple_alert_xml" asset and builds a modal dialog from it.
+        const layout = windowManager.getLayout('simple_alert') as unknown;
+        const layoutXml = typeof layout === 'string' ? layout : '';
 
-		if (!layoutXml)
-		{
-			log.warn('Missing simple_alert XML layout');
-			return;
-		}
+        if(!layoutXml)
+        {
+            log.warn('Missing simple_alert XML layout');
+            return;
+        }
 
-		this._modalDialog = windowManager.buildModalDialogFromXML(layoutXml);
-		this._window = this._modalDialog?.rootWindow as IWindowContainer ?? null;
+        this._modalDialog = windowManager.buildModalDialogFromXML(layoutXml);
+        this._window = this._modalDialog?.rootWindow as IWindowContainer ?? null;
 
-		if (!this._window)
-		{
-			log.warn('Failed to create SimpleAlertDialog window');
-			return;
-		}
+        if(!this._window)
+        {
+            log.warn('Failed to create SimpleAlertDialog window');
+            return;
+        }
 
-		// Resolve child windows
-		this._listMain = this._window.findChildByName('list');
-		this._listTop = this._window.findChildByName('list_top');
-		this._listBottom = this._window.findChildByName('list_bottom');
-		this._messageWindow = this._window.findChildByName('message');
-		this._subtitleWindow = this._window.findChildByName('subtitle');
-		this._linkWindow = this._window.findChildByName('link');
-		this._illustrationWindow = this._window.findChildByName('illustration');
+        // Resolve child windows
+        this._listMain = this._window.findChildByName('list');
+        this._listTop = this._window.findChildByName('list_top');
+        this._listBottom = this._window.findChildByName('list_bottom');
+        this._messageWindow = this._window.findChildByName('message');
+        this._subtitleWindow = this._window.findChildByName('subtitle');
+        this._linkWindow = this._window.findChildByName('link');
+        this._illustrationWindow = this._window.findChildByName('illustration');
 
-		// Remove close button from header (simple alert has its own close)
-		const headerClose = this._window.findChildByName('header_button_close');
+        // Remove close button from header (simple alert has its own close)
+        const headerClose = this._window.findChildByName('header_button_close');
 
-		if (headerClose)
-		{
-			headerClose.dispose();
-		}
+        if(headerClose)
+        {
+            headerClose.dispose();
+        }
 
-		// Set window procedure
-		this._window.procedure = (event: WindowEvent, window: IWindow) => this.windowProcedure(event, window);
+        // Set window procedure
+        this._window.procedure = (event: WindowEvent, window: IWindow) => this.windowProcedure(event, window);
 
-		// Set title and message
-		this._window.caption = title;
+        // Set title and message
+        this._window.caption = title;
 
-		if (this._messageWindow)
-		{
-			this._messageWindow.caption = message;
-		}
+        if(this._messageWindow)
+        {
+            this._messageWindow.caption = message;
+        }
 
-		// Register localization parameters if provided
-		if (parameters)
-		{
-			const textsToProcess = [title, subtitle, message, linkCaption];
+        // Register localization parameters if provided
+        if(parameters)
+        {
+            const textsToProcess = [title, subtitle, message, linkCaption];
 
-			for (const text of textsToProcess)
-			{
-				if (text && text.substring(0, 2) === '${' && text.indexOf('}') > 0)
-				{
-					const key = text.substring(2, text.indexOf('}'));
+            for(const text of textsToProcess)
+            {
+                if(text && text.substring(0, 2) === '${' && text.indexOf('}') > 0)
+                {
+                    const key = text.substring(2, text.indexOf('}'));
 
-					for (const [paramKey, paramValue] of parameters)
-					{
-						windowManager.registerLocalizationParameter(key, paramKey, paramValue);
-					}
-				}
-			}
-		}
+                    for(const [paramKey, paramValue] of parameters)
+                    {
+                        windowManager.registerLocalizationParameter(key, paramKey, paramValue);
+                    }
+                }
+            }
+        }
 
-		// Set subtitle or remove if empty
-		if (subtitle && subtitle.length > 0)
-		{
-			if (this._subtitleWindow)
-			{
-				this._subtitleWindow.caption = subtitle;
-			}
-		}
-		else
-		{
-			if (this._subtitleWindow)
-			{
-				this._subtitleWindow.dispose();
-				this._subtitleWindow = null;
-			}
-		}
+        // Set subtitle or remove if empty
+        if(subtitle && subtitle.length > 0)
+        {
+            if(this._subtitleWindow)
+            {
+                this._subtitleWindow.caption = subtitle;
+            }
+        }
+        else
+        {
+            if(this._subtitleWindow)
+            {
+                this._subtitleWindow.dispose();
+                this._subtitleWindow = null;
+            }
+        }
 
-		// Set link or remove if empty
-		if (linkCaption && linkCaption.length > 0 && ((linkUrl && linkUrl.length > 0) || linkClickCallback))
-		{
-			if (this._linkWindow)
-			{
-				this._linkWindow.caption = linkCaption;
-				this._linkWindow.addEventListener(WindowMouseEvent.CLICK, () => this.onSimpleAlertClick());
-				this._linkWindow.immediateClickMode = true;
-				this._linkUrl = linkUrl ?? '';
-			}
-		}
-		else
-		{
-			if (this._linkWindow)
-			{
-				this._linkWindow.dispose();
-				this._linkWindow = null;
-			}
-		}
+        // Set link or remove if empty
+        if(linkCaption && linkCaption.length > 0 && ((linkUrl && linkUrl.length > 0) || linkClickCallback))
+        {
+            if(this._linkWindow)
+            {
+                this._linkWindow.caption = linkCaption;
+                this._linkWindow.addEventListener(WindowMouseEvent.CLICK, () => this.onSimpleAlertClick());
+                this._linkWindow.immediateClickMode = true;
+                this._linkUrl = linkUrl ?? '';
+            }
+        }
+        else
+        {
+            if(this._linkWindow)
+            {
+                this._linkWindow.dispose();
+                this._linkWindow = null;
+            }
+        }
 
-		// Set illustration or remove if empty
-		if (illustrationUrl && illustrationUrl.length > 0)
-		{
-			if (this._illustrationWindow)
-			{
-				this._illustrationWindow.addEventListener(WindowEvent.WE_RESIZED, () => this.onIllustrationResized());
-				// In AS3: assetUri = illustrationUrl triggers async load
-				// The illustration load is handled by the UI layer
-			}
-		}
-		else
-		{
-			if (this._illustrationWindow)
-			{
-				this._illustrationWindow.dispose();
-				this._illustrationWindow = null;
-			}
-		}
+        // Set illustration or remove if empty
+        if(illustrationUrl && illustrationUrl.length > 0)
+        {
+            if(this._illustrationWindow)
+            {
+                this._illustrationWindow.addEventListener(WindowEvent.WE_RESIZED, () => this.onIllustrationResized());
+                // In AS3: assetUri = illustrationUrl triggers async load
+                // The illustration load is handled by the UI layer
+            }
+        }
+        else
+        {
+            if(this._illustrationWindow)
+            {
+                this._illustrationWindow.dispose();
+                this._illustrationWindow = null;
+            }
+        }
 
-		this.resizeWindow();
-	}
+        this.resizeWindow();
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_disposed
-	private _disposed: boolean = false;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::_disposed
+    private _disposed: boolean = false;
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::get disposed()
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::dispose()
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::dispose()
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this.close();
-		this._windowManager = null;
-		this._disposed = true;
-	}
+        this.close();
+        this._windowManager = null;
+        this._disposed = true;
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::close()
-	private close(): void
-	{
-		if (this._closeCallback)
-		{
-			this._closeCallback();
-		}
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::close()
+    private close(): void
+    {
+        if(this._closeCallback)
+        {
+            this._closeCallback();
+        }
 
-		if (this._modalDialog)
-		{
-			if (this._linkWindow)
-			{
-				this._linkWindow = null;
-			}
+        if(this._modalDialog)
+        {
+            if(this._linkWindow)
+            {
+                this._linkWindow = null;
+            }
 
-			if (this._illustrationWindow)
-			{
-				this._illustrationWindow = null;
-			}
+            if(this._illustrationWindow)
+            {
+                this._illustrationWindow = null;
+            }
 
-			this._window = null;
-			this._listMain = null;
-			this._listTop = null;
-			this._listBottom = null;
-			this._messageWindow = null;
-			this._subtitleWindow = null;
-			this._linkClickCallback = null;
-			this._closeCallback = null;
+            this._window = null;
+            this._listMain = null;
+            this._listTop = null;
+            this._listBottom = null;
+            this._messageWindow = null;
+            this._subtitleWindow = null;
+            this._linkClickCallback = null;
+            this._closeCallback = null;
 
-			this._modalDialog.dispose();
-			this._modalDialog = null;
-		}
-	}
+            this._modalDialog.dispose();
+            this._modalDialog = null;
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::windowProcedure()
-	private windowProcedure(event: WindowEvent, window: IWindow): void
-	{
-		if (event.type === WindowMouseEvent.CLICK && window.name === 'close_button')
-		{
-			this.dispose();
-		}
-	}
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::windowProcedure()
+    private windowProcedure(event: WindowEvent, window: IWindow): void
+    {
+        if(event.type === WindowMouseEvent.CLICK && window.name === 'close_button')
+        {
+            this.dispose();
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
-	private onSimpleAlertClick(): void
-	{
-		if (this._linkUrl && this._linkUrl.length > 0)
-		{
-			if (this._linkUrl.substring(0, 6) === 'event:')
-			{
-				// TODO(AS3): context.createLinkEvent(url.substr(6)) — fire link event via engine
-				// sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
-				const ctx = (this._windowManager as unknown as { context?: { createLinkEvent?: (s: string) => void } }).context;
-				ctx?.createLinkEvent?.(this._linkUrl.substring(6));
-				this.dispose();
-			}
-			else
-			{
-				// AS3: HabboWebTools.openWebPage(url, "habboMain")
-				globalThis.window?.open(this._linkUrl, '_blank');
-			}
-		}
-		else if (this._linkClickCallback)
-		{
-			this._linkClickCallback();
-			this.dispose();
-		}
-	}
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
+    private onSimpleAlertClick(): void
+    {
+        if(this._linkUrl && this._linkUrl.length > 0)
+        {
+            if(this._linkUrl.substring(0, 6) === 'event:')
+            {
+                // TODO(AS3): context.createLinkEvent(url.substr(6)) — fire link event via engine
+                // sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onSimpleAlertClick()
+                const ctx = (this._windowManager as unknown as { context?: { createLinkEvent?: (s: string) => void } }).context;
+                ctx?.createLinkEvent?.(this._linkUrl.substring(6));
+                this.dispose();
+            }
+            else
+            {
+                // AS3: HabboWebTools.openWebPage(url, "habboMain")
+                globalThis.window?.open(this._linkUrl, '_blank');
+            }
+        }
+        else if(this._linkClickCallback)
+        {
+            this._linkClickCallback();
+            this.dispose();
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onIllustrationResized()
-	private onIllustrationResized(): void
-	{
-		if (!this._illustrationWindow || !this._listTop || !this._listBottom || !this._window) return;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::onIllustrationResized()
+    private onIllustrationResized(): void
+    {
+        if(!this._illustrationWindow || !this._listTop || !this._listBottom || !this._window) return;
 
-		this._listTop.x = this._illustrationWindow.width + SimpleAlertDialog.WINDOW_MARGIN;
+        this._listTop.x = this._illustrationWindow.width + SimpleAlertDialog.WINDOW_MARGIN;
 
-		// AS3: _listTop.limits.minHeight = _illustrationWindow.height + 10
-		(this._listTop as unknown as { limits?: { minHeight?: number } }).limits &&
+        // AS3: _listTop.limits.minHeight = _illustrationWindow.height + 10
+        (this._listTop as unknown as { limits?: { minHeight?: number } }).limits &&
 			((this._listTop as unknown as { limits: { minHeight: number } }).limits.minHeight = this._illustrationWindow.height + SimpleAlertDialog.WINDOW_MARGIN);
 
-		const rightEdge = this._listTop.x + this._listTop.width;
-		this._listBottom.width = rightEdge;
-		this._window.width = rightEdge + 2 * SimpleAlertDialog.WINDOW_MARGIN;
+        const rightEdge = this._listTop.x + this._listTop.width;
+        this._listBottom.width = rightEdge;
+        this._window.width = rightEdge + 2 * SimpleAlertDialog.WINDOW_MARGIN;
 
-		this.resizeWindow();
-	}
+        this.resizeWindow();
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::resizeWindow()
-	private resizeWindow(): void
-	{
-		if (!this._window || !this._listMain) return;
+    // AS3: sources/win63_version/habbo/window/utils/SimpleAlertDialog.as::resizeWindow()
+    private resizeWindow(): void
+    {
+        if(!this._window || !this._listMain) return;
 
-		// AS3: _listMain.arrangeListItems(); _listTop.arrangeListItems(); _listBottom.arrangeListItems()
-		(this._listMain as unknown as IItemListWindow).arrangeListItems?.();
-		(this._listTop as unknown as IItemListWindow)?.arrangeListItems?.();
-		(this._listBottom as unknown as IItemListWindow)?.arrangeListItems?.();
+        // AS3: _listMain.arrangeListItems(); _listTop.arrangeListItems(); _listBottom.arrangeListItems()
+        (this._listMain as unknown as IItemListWindow).arrangeListItems?.();
+        (this._listTop as unknown as IItemListWindow)?.arrangeListItems?.();
+        (this._listBottom as unknown as IItemListWindow)?.arrangeListItems?.();
 
-		this._window.height = this._listMain.height + 40;
-		this._window.center();
-	}
+        this._window.height = this._listMain.height + 40;
+        this._window.center();
+    }
 }

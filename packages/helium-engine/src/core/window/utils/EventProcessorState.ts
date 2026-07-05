@@ -13,57 +13,57 @@ import type {IInputEventTracker} from '../IInputEventTracker';
  */
 export class EventProcessorState
 {
-	/**
+    /**
 	 * The window renderer.
 	 */
-	public renderer: IWindowRenderer | null;
+    public renderer: IWindowRenderer | null;
 
-	/**
+    /**
 	 * The desktop window.
 	 */
-	public desktop: IWindow | null;
+    public desktop: IWindow | null;
 
-	/**
+    /**
 	 * The currently hovered window.
 	 */
-	public hovered: IWindow | null;
+    public hovered: IWindow | null;
 
-	/**
+    /**
 	 * The last window that received a mouseDown.
 	 */
-	public lastClickTarget: IWindow | null;
+    public lastClickTarget: IWindow | null;
 
-	/**
+    /**
 	 * The window that received the most recent mouseDown event.
 	 */
-	public lastMouseDownTarget: IWindow | null;
+    public lastMouseDownTarget: IWindow | null;
 
-	/**
+    /**
 	 * The current click-away target.
 	 */
-	public lastClickAwayTarget: IWindow | null;
+    public lastClickAwayTarget: IWindow | null;
 
-	/**
+    /**
 	 * Active input event trackers.
 	 */
-	public eventTrackers: IInputEventTracker[];
+    public eventTrackers: IInputEventTracker[];
 
-	constructor(
-		renderer: IWindowRenderer | null,
-		desktop: IWindow | null,
-		hovered: IWindow | null,
-		lastClickTarget: IWindow | null,
-		lastMouseDownTarget: IWindow | null,
-		lastClickAwayTarget: IWindow | null,
-		eventTrackers: IInputEventTracker[]
-	)
-	{
-		this.renderer = renderer;
-		this.desktop = desktop;
-		this.hovered = hovered;
-		this.lastClickTarget = lastClickTarget;
-		this.lastMouseDownTarget = lastMouseDownTarget;
-		this.lastClickAwayTarget = lastClickAwayTarget;
-		this.eventTrackers = eventTrackers;
-	}
+    constructor(
+        renderer: IWindowRenderer | null,
+        desktop: IWindow | null,
+        hovered: IWindow | null,
+        lastClickTarget: IWindow | null,
+        lastMouseDownTarget: IWindow | null,
+        lastClickAwayTarget: IWindow | null,
+        eventTrackers: IInputEventTracker[]
+    )
+    {
+        this.renderer = renderer;
+        this.desktop = desktop;
+        this.hovered = hovered;
+        this.lastClickTarget = lastClickTarget;
+        this.lastMouseDownTarget = lastMouseDownTarget;
+        this.lastClickAwayTarget = lastClickAwayTarget;
+        this.eventTrackers = eventTrackers;
+    }
 }

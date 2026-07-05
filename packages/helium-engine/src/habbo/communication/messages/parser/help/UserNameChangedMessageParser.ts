@@ -9,43 +9,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class UserNameChangedMessageParser implements IMessageParser
 {
-	private _webId: number = -1;
+    private _webId: number = -1;
 
-	get webId(): number
-	{
-		return this._webId;
-	}
+    get webId(): number
+    {
+        return this._webId;
+    }
 
-	private _id: number = -1;
+    private _id: number = -1;
 
-	get id(): number
-	{
-		return this._id;
-	}
+    get id(): number
+    {
+        return this._id;
+    }
 
-	private _newName: string = '';
+    private _newName: string = '';
 
-	get newName(): string
-	{
-		return this._newName;
-	}
+    get newName(): string
+    {
+        return this._newName;
+    }
 
-	flush(): boolean
-	{
-		this._webId = -1;
-		this._id = -1;
-		this._newName = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._webId = -1;
+        this._id = -1;
+        this._newName = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._webId = wrapper.readInt();
-		this._id = wrapper.readInt();
-		this._newName = wrapper.readString();
+        this._webId = wrapper.readInt();
+        this._id = wrapper.readInt();
+        this._newName = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

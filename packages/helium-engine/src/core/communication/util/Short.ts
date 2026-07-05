@@ -4,16 +4,16 @@
  */
 export class Short
 {
-	public readonly value: number;
+    public readonly value: number;
 
-	constructor(value: number)
-	{
-		// Ensure it's a signed 16-bit value
-		this.value = (value << 16) >> 16;
-	}
+    constructor(value: number)
+    {
+        // Ensure it's a signed 16-bit value
+        this.value = (value << 16) >> 16;
+    }
 
-	toString(): string
-	{
-		return `Short(${this.value})`;
-	}
+    toString(): string
+    {
+        return `Short(${this.value})`;
+    }
 }

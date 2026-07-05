@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class DanceMessageComposer extends MessageComposer<[number]>
 {
-	private _data: [number];
+    private _data: [number];
 
-	constructor(danceStyle: number)
-	{
-		super();
-		this._data = [danceStyle];
-	}
+    constructor(danceStyle: number)
+    {
+        super();
+        this._data = [danceStyle];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

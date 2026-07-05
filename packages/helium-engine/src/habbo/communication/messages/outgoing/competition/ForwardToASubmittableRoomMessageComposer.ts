@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ForwardToASubmittableRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof ForwardToASubmittableRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ForwardToASubmittableRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof ForwardToASubmittableRoomMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

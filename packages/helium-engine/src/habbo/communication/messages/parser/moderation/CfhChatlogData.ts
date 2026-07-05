@@ -8,47 +8,47 @@ import {ChatRecordData} from './ChatRecordData';
  */
 export class CfhChatlogData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._callId = wrapper.readInt();
-		this._callerUserId = wrapper.readInt();
-		this._reportedUserId = wrapper.readInt();
-		this._chatRecordId = wrapper.readInt();
-		this._chatRecord = new ChatRecordData(wrapper);
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._callId = wrapper.readInt();
+        this._callerUserId = wrapper.readInt();
+        this._reportedUserId = wrapper.readInt();
+        this._chatRecordId = wrapper.readInt();
+        this._chatRecord = new ChatRecordData(wrapper);
+    }
 
-	private _callId: number;
+    private _callId: number;
 
-	get callId(): number
-	{
-		return this._callId;
-	}
+    get callId(): number
+    {
+        return this._callId;
+    }
 
-	private _callerUserId: number;
+    private _callerUserId: number;
 
-	get callerUserId(): number
-	{
-		return this._callerUserId;
-	}
+    get callerUserId(): number
+    {
+        return this._callerUserId;
+    }
 
-	private _reportedUserId: number;
+    private _reportedUserId: number;
 
-	get reportedUserId(): number
-	{
-		return this._reportedUserId;
-	}
+    get reportedUserId(): number
+    {
+        return this._reportedUserId;
+    }
 
-	private _chatRecordId: number;
+    private _chatRecordId: number;
 
-	get chatRecordId(): number
-	{
-		return this._chatRecordId;
-	}
+    get chatRecordId(): number
+    {
+        return this._chatRecordId;
+    }
 
-	private _chatRecord: ChatRecordData;
+    private _chatRecord: ChatRecordData;
 
-	get chatRecord(): ChatRecordData
-	{
-		return this._chatRecord;
-	}
+    get chatRecord(): ChatRecordData
+    {
+        return this._chatRecord;
+    }
 }

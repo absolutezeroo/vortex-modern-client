@@ -7,11 +7,11 @@ import type {IIterator} from '../utils/IIterator';
  */
 interface IItemGridHost
 {
-	numGridItems: number;
+    numGridItems: number;
 
-	getGridItemAt(index: number): IWindow | null;
+    getGridItemAt(index: number): IWindow | null;
 
-	getGridItemIndex(item: IWindow): number;
+    getGridItemIndex(item: IWindow): number;
 }
 
 /**
@@ -24,31 +24,31 @@ interface IItemGridHost
  */
 export class ItemGridIterator implements IIterator
 {
-	private _grid: IItemGridHost;
-	private _index: number = 0;
+    private _grid: IItemGridHost;
+    private _index: number = 0;
 
-	constructor(grid: IItemGridHost)
-	{
-		this._grid = grid;
-	}
+    constructor(grid: IItemGridHost)
+    {
+        this._grid = grid;
+    }
 
-	public next(): IWindow | null
-	{
-		if (this._index < this._grid.numGridItems)
-		{
-			return this._grid.getGridItemAt(this._index++);
-		}
+    public next(): IWindow | null
+    {
+        if(this._index < this._grid.numGridItems)
+        {
+            return this._grid.getGridItemAt(this._index++);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public reset(): void
-	{
-		this._index = 0;
-	}
+    public reset(): void
+    {
+        this._index = 0;
+    }
 
-	public count(): number
-	{
-		return this._grid.numGridItems;
-	}
+    public count(): number
+    {
+        return this._grid.numGridItems;
+    }
 }

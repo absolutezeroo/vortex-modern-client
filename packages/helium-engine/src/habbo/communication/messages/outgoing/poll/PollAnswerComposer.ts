@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PollAnswerComposer extends MessageComposer<ConstructorParameters<typeof PollAnswerComposer>>
 {
-	private _data: ConstructorParameters<typeof PollAnswerComposer>;
+    private _data: ConstructorParameters<typeof PollAnswerComposer>;
 
-	constructor(pollId: number, questionId: number, answers: string[])
-	{
-		super();
+    constructor(pollId: number, questionId: number, answers: string[])
+    {
+        super();
 
-		this._data = [pollId, questionId, answers];
-	}
+        this._data = [pollId, questionId, answers];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

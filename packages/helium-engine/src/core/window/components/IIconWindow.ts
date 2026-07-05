@@ -9,5 +9,5 @@ import type {IWindow} from '../IWindow';
  */
 export interface IIconWindow extends IWindow
 {
-	imageUrl: string;
+    imageUrl: string;
 }

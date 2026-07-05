@@ -8,10 +8,10 @@
  */
 export interface IAnimatable
 {
-	/**
+    /**
 	 * Advance the animation by the given time delta.
 	 *
 	 * @param time The time elapsed in seconds since the last call
 	 */
-	advanceTime(time: number): void;
+    advanceTime(time: number): void;
 }

@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RemoveItemFromTradeComposer extends MessageComposer<ConstructorParameters<typeof RemoveItemFromTradeComposer>>
 {
-	private _data: ConstructorParameters<typeof RemoveItemFromTradeComposer>;
+    private _data: ConstructorParameters<typeof RemoveItemFromTradeComposer>;
 
-	constructor(itemId: number)
-	{
-		super();
+    constructor(itemId: number)
+    {
+        super();
 
-		this._data = [itemId];
-	}
+        this._data = [itemId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

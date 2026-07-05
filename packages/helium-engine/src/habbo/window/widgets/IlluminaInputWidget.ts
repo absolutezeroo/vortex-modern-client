@@ -24,220 +24,220 @@ import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
  */
 export class IlluminaInputWidget implements IIlluminaInputWidget
 {
-	public static readonly TYPE: string = 'illumina_input';
+    public static readonly TYPE: string = 'illumina_input';
 
-	private static readonly BUTTON_CAPTION_KEY: string = 'illumina_input:button_caption';
-	private static readonly EMPTY_MESSAGE_KEY: string = 'illumina_input:empty_message';
-	private static readonly MULTILINE_KEY: string = 'illumina_input:multiline';
-	private static readonly MAX_CHARS_KEY: string = 'illumina_input:max_chars';
+    private static readonly BUTTON_CAPTION_KEY: string = 'illumina_input:button_caption';
+    private static readonly EMPTY_MESSAGE_KEY: string = 'illumina_input:empty_message';
+    private static readonly MULTILINE_KEY: string = 'illumina_input:multiline';
+    private static readonly MAX_CHARS_KEY: string = 'illumina_input:max_chars';
 
-	private static readonly SINGLE_LINE_HEIGHT: number = 28;
-	private static readonly ENTER_KEY_CODE: number = 13;
+    private static readonly SINGLE_LINE_HEIGHT: number = 28;
+    private static readonly ENTER_KEY_CODE: number = 13;
 
-	private _widgetWindow: IWidgetWindow | null = null;
-	private _windowManager: IHabboWindowManager | null = null;
+    private _widgetWindow: IWidgetWindow | null = null;
+    private _windowManager: IHabboWindowManager | null = null;
 
-	private _root: IWindowContainer | null = null;
-	private _submitButton: IWindow | null = null;
-	private _input: IWindow | null = null;
-	private _emptyMessageLabel: IWindow | null = null;
+    private _root: IWindowContainer | null = null;
+    private _submitButton: IWindow | null = null;
+    private _input: IWindow | null = null;
+    private _emptyMessageLabel: IWindow | null = null;
 
-	private _widgetProcedureBound: ((event: WindowEvent, window: IWindow) => void);
+    private _widgetProcedureBound: ((event: WindowEvent, window: IWindow) => void);
 
-	constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
-	{
-		this._widgetWindow = window;
-		this._windowManager = windowManager;
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    {
+        this._widgetWindow = window;
+        this._windowManager = windowManager;
 
-		this._widgetProcedureBound = this.widgetProcedure.bind(this);
+        this._widgetProcedureBound = this.widgetProcedure.bind(this);
 
-		const root = this._windowManager.buildWidgetLayout('illumina_input') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('illumina_input') as IWindowContainer | null;
 
-		if (root)
-		{
-			this._root = root;
-			root.width = this._widgetWindow.width;
+        if(root)
+        {
+            this._root = root;
+            root.width = this._widgetWindow.width;
 
-			this._submitButton = root.findChildByName('submit');
-			this._input = root.findChildByName('input');
-			this._emptyMessageLabel = root.findChildByName('empty_message');
+            this._submitButton = root.findChildByName('submit');
+            this._input = root.findChildByName('input');
+            this._emptyMessageLabel = root.findChildByName('empty_message');
 
-			this._buttonCaption = '${widgets.chatinput.say}';
-			this._emptyMessage = '';
-			this._multiline = false;
-			this._maxChars = 0;
+            this._buttonCaption = '${widgets.chatinput.say}';
+            this._emptyMessage = '';
+            this._multiline = false;
+            this._maxChars = 0;
 
-			this.refresh();
+            this.refresh();
 
-			root.procedure = this._widgetProcedureBound;
-			this._widgetWindow.rootWindow = root as unknown as IWindow;
-		}
-	}
+            root.procedure = this._widgetProcedureBound;
+            this._widgetWindow.rootWindow = root as unknown as IWindow;
+        }
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	private _message: string = '';
+    private _message: string = '';
 
-	public get message(): string
-	{
-		return this._message;
-	}
+    public get message(): string
+    {
+        return this._message;
+    }
 
-	public set message(value: string)
-	{
-		this._message = value;
-	}
+    public set message(value: string)
+    {
+        this._message = value;
+    }
 
-	private _submitHandler: IIlluminaInputHandler | null = null;
+    private _submitHandler: IIlluminaInputHandler | null = null;
 
-	public get submitHandler(): IIlluminaInputHandler | null
-	{
-		return this._submitHandler;
-	}
+    public get submitHandler(): IIlluminaInputHandler | null
+    {
+        return this._submitHandler;
+    }
 
-	public set submitHandler(value: IIlluminaInputHandler | null)
-	{
-		this._submitHandler = value;
-	}
+    public set submitHandler(value: IIlluminaInputHandler | null)
+    {
+        this._submitHandler = value;
+    }
 
-	private _buttonCaption: string = '${widgets.chatinput.say}';
+    private _buttonCaption: string = '${widgets.chatinput.say}';
 
-	public get buttonCaption(): string
-	{
-		return this._buttonCaption;
-	}
+    public get buttonCaption(): string
+    {
+        return this._buttonCaption;
+    }
 
-	public set buttonCaption(value: string)
-	{
-		this._buttonCaption = value;
+    public set buttonCaption(value: string)
+    {
+        this._buttonCaption = value;
 
-		if (this._submitButton)
-		{
-			this._submitButton.caption = value;
-		}
-	}
+        if(this._submitButton)
+        {
+            this._submitButton.caption = value;
+        }
+    }
 
-	private _emptyMessage: string = '';
+    private _emptyMessage: string = '';
 
-	public get emptyMessage(): string
-	{
-		return this._emptyMessage;
-	}
+    public get emptyMessage(): string
+    {
+        return this._emptyMessage;
+    }
 
-	public set emptyMessage(value: string)
-	{
-		this._emptyMessage = value;
+    public set emptyMessage(value: string)
+    {
+        this._emptyMessage = value;
 
-		if (this._emptyMessageLabel)
-		{
-			this._emptyMessageLabel.caption = value;
-		}
-	}
+        if(this._emptyMessageLabel)
+        {
+            this._emptyMessageLabel.caption = value;
+        }
+    }
 
-	private _multiline: boolean = false;
+    private _multiline: boolean = false;
 
-	public get multiline(): boolean
-	{
-		return this._multiline;
-	}
+    public get multiline(): boolean
+    {
+        return this._multiline;
+    }
 
-	public set multiline(value: boolean)
-	{
-		this._multiline = value;
-	}
+    public set multiline(value: boolean)
+    {
+        this._multiline = value;
+    }
 
-	private _maxChars: number = 0;
+    private _maxChars: number = 0;
 
-	public get maxChars(): number
-	{
-		return this._maxChars;
-	}
+    public get maxChars(): number
+    {
+        return this._maxChars;
+    }
 
-	public set maxChars(value: number)
-	{
-		this._maxChars = value;
-	}
+    public set maxChars(value: number)
+    {
+        this._maxChars = value;
+    }
 
-	public get properties(): PropertyStruct[]
-	{
-		if (this._disposed) return [];
+    public get properties(): PropertyStruct[]
+    {
+        if(this._disposed) return [];
 
-		return [
-			new PropertyStruct(IlluminaInputWidget.BUTTON_CAPTION_KEY, this._buttonCaption),
-			new PropertyStruct(IlluminaInputWidget.EMPTY_MESSAGE_KEY, this._emptyMessage),
-			new PropertyStruct(IlluminaInputWidget.MULTILINE_KEY, this._multiline),
-			new PropertyStruct(IlluminaInputWidget.MAX_CHARS_KEY, this._maxChars),
-		];
-	}
+        return [
+            new PropertyStruct(IlluminaInputWidget.BUTTON_CAPTION_KEY, this._buttonCaption),
+            new PropertyStruct(IlluminaInputWidget.EMPTY_MESSAGE_KEY, this._emptyMessage),
+            new PropertyStruct(IlluminaInputWidget.MULTILINE_KEY, this._multiline),
+            new PropertyStruct(IlluminaInputWidget.MAX_CHARS_KEY, this._maxChars),
+        ];
+    }
 
-	public set properties(values: PropertyStruct[])
-	{
-		for (const prop of values)
-		{
-			switch (prop.key)
-			{
-				case IlluminaInputWidget.BUTTON_CAPTION_KEY:
-					this.buttonCaption = String(prop.value);
-					break;
-				case IlluminaInputWidget.EMPTY_MESSAGE_KEY:
-					this.emptyMessage = String(prop.value);
-					break;
-				case IlluminaInputWidget.MULTILINE_KEY:
-					this.multiline = Boolean(prop.value);
-					break;
-				case IlluminaInputWidget.MAX_CHARS_KEY:
-					this.maxChars = Number(prop.value);
-					break;
-			}
-		}
-	}
+    public set properties(values: PropertyStruct[])
+    {
+        for(const prop of values)
+        {
+            switch(prop.key)
+            {
+                case IlluminaInputWidget.BUTTON_CAPTION_KEY:
+                    this.buttonCaption = String(prop.value);
+                    break;
+                case IlluminaInputWidget.EMPTY_MESSAGE_KEY:
+                    this.emptyMessage = String(prop.value);
+                    break;
+                case IlluminaInputWidget.MULTILINE_KEY:
+                    this.multiline = Boolean(prop.value);
+                    break;
+                case IlluminaInputWidget.MAX_CHARS_KEY:
+                    this.maxChars = Number(prop.value);
+                    break;
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Submit the current message via the handler.
 	 *
 	 * @param widgetId - The widget identifier
 	 */
-	public submitMessage(widgetId: string): void
-	{
-		if (this._submitHandler)
-		{
-			this._submitHandler.onInput(widgetId, this._message);
-		}
-	}
+    public submitMessage(widgetId: string): void
+    {
+        if(this._submitHandler)
+        {
+            this._submitHandler.onInput(widgetId, this._message);
+        }
+    }
 
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
+        this._disposed = true;
 
-		if (this._root)
-		{
-			this._root.procedure = null;
-			this._root.dispose();
-			this._root = null;
-		}
+        if(this._root)
+        {
+            this._root.procedure = null;
+            this._root.dispose();
+            this._root = null;
+        }
 
-		this._submitButton = null;
-		this._input = null;
-		this._emptyMessageLabel = null;
+        this._submitButton = null;
+        this._input = null;
+        this._emptyMessageLabel = null;
 
-		if (this._widgetWindow)
-		{
-			this._widgetWindow.rootWindow = null;
-		}
+        if(this._widgetWindow)
+        {
+            this._widgetWindow.rootWindow = null;
+        }
 
-		this._widgetWindow = null;
-		this._windowManager = null;
-		this._submitHandler = null;
-	}
+        this._widgetWindow = null;
+        this._windowManager = null;
+        this._submitHandler = null;
+    }
 
-	/**
+    /**
 	 * Widget procedure handling input events.
 	 *
 	 * Handles WE_CHANGE (input text changed), WKE_KEY_DOWN (Enter submits),
@@ -246,75 +246,75 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 	 * @param event - The window event
 	 * @param window - The source window
 	 */
-	private widgetProcedure(event: WindowEvent, window: IWindow): void
-	{
-		if (this._disposed) return;
+    private widgetProcedure(event: WindowEvent, window: IWindow): void
+    {
+        if(this._disposed) return;
 
-		switch (event.type)
-		{
-			case WindowEvent.WE_CHANGE:
-			{
-				if (window === this._input)
-				{
-					this._message = window.caption ?? '';
-					this.refresh();
-				}
-				break;
-			}
-			case WindowKeyboardEvent.KEY_DOWN:
-			{
-				const keyEvent = event as WindowKeyboardEvent;
+        switch(event.type)
+        {
+            case WindowEvent.WE_CHANGE:
+            {
+                if(window === this._input)
+                {
+                    this._message = window.caption ?? '';
+                    this.refresh();
+                }
+                break;
+            }
+            case WindowKeyboardEvent.KEY_DOWN:
+            {
+                const keyEvent = event as WindowKeyboardEvent;
 
-				if (keyEvent.keyCode === IlluminaInputWidget.ENTER_KEY_CODE && !this._multiline)
-				{
-					if (this._submitHandler && this._message.length > 0)
-					{
-						this._submitHandler.onInput(this._widgetWindow?.name ?? '', this._message);
-						this._message = '';
+                if(keyEvent.keyCode === IlluminaInputWidget.ENTER_KEY_CODE && !this._multiline)
+                {
+                    if(this._submitHandler && this._message.length > 0)
+                    {
+                        this._submitHandler.onInput(this._widgetWindow?.name ?? '', this._message);
+                        this._message = '';
 
-						if (this._input)
-						{
-							this._input.caption = '';
-						}
+                        if(this._input)
+                        {
+                            this._input.caption = '';
+                        }
 
-						this.refresh();
-					}
-				}
-				break;
-			}
-			case WindowMouseEvent.CLICK:
-			{
-				if (window === this._submitButton)
-				{
-					if (this._submitHandler && this._message.length > 0)
-					{
-						this._submitHandler.onInput(this._widgetWindow?.name ?? '', this._message);
-						this._message = '';
+                        this.refresh();
+                    }
+                }
+                break;
+            }
+            case WindowMouseEvent.CLICK:
+            {
+                if(window === this._submitButton)
+                {
+                    if(this._submitHandler && this._message.length > 0)
+                    {
+                        this._submitHandler.onInput(this._widgetWindow?.name ?? '', this._message);
+                        this._message = '';
 
-						if (this._input)
-						{
-							this._input.caption = '';
-						}
+                        if(this._input)
+                        {
+                            this._input.caption = '';
+                        }
 
-						this.refresh();
-					}
-				}
-				break;
-			}
-		}
-	}
+                        this.refresh();
+                    }
+                }
+                break;
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Refresh the input widget layout.
 	 *
 	 * Shows/hides the empty message label based on input content,
 	 * and updates the input field width.
 	 */
-	private refresh(): void
-	{
-		if (this._emptyMessageLabel)
-		{
-			this._emptyMessageLabel.visible = (this._message.length === 0);
-		}
-	}
+    private refresh(): void
+    {
+        if(this._emptyMessageLabel)
+        {
+            this._emptyMessageLabel.visible = (this._message.length === 0);
+        }
+    }
 }

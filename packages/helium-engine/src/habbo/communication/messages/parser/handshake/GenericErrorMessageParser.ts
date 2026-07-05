@@ -9,25 +9,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GenericErrorMessageParser implements IMessageParser
 {
-	private _errorCode: number = 0;
+    private _errorCode: number = 0;
 
-	get errorCode(): number
-	{
-		return this._errorCode;
-	}
+    get errorCode(): number
+    {
+        return this._errorCode;
+    }
 
-	flush(): boolean
-	{
-		this._errorCode = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._errorCode = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper.bytesAvailable >= 4)
-		{
-			this._errorCode = wrapper.readInt();
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper.bytesAvailable >= 4)
+        {
+            this._errorCode = wrapper.readInt();
+        }
+        return true;
+    }
 }

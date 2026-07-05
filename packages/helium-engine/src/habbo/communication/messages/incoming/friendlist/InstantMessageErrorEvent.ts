@@ -10,8 +10,8 @@ import {InstantMessageErrorEventParser} from '../../parser/friendlist/InstantMes
  */
 export class InstantMessageErrorEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, InstantMessageErrorEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, InstantMessageErrorEventParser);
+    }
 }

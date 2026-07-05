@@ -8,19 +8,19 @@
  */
 export class RoomWidgetMessage
 {
-	// AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetMessage.as::WIDGET_MESSAGE_TEST
-	public static readonly WIDGET_MESSAGE_TEST: string = 'RWM_MESSAGE_TEST';
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetMessage.as::WIDGET_MESSAGE_TEST
+    public static readonly WIDGET_MESSAGE_TEST: string = 'RWM_MESSAGE_TEST';
 
-	private _type: string;
+    private _type: string;
 
-	// AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetMessage.as::RoomWidgetMessage()
-	constructor(type: string)
-	{
-		this._type = type;
-	}
+    // AS3: sources/win63_version/habbo/ui/widget/messages/RoomWidgetMessage.as::RoomWidgetMessage()
+    constructor(type: string)
+    {
+        this._type = type;
+    }
 
-	public get type(): string
-	{
-		return this._type;
-	}
+    public get type(): string
+    {
+        return this._type;
+    }
 }

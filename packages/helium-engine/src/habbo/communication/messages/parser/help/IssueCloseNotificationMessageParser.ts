@@ -8,33 +8,33 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class IssueCloseNotificationMessageParser implements IMessageParser
 {
-	private _closeReason: number = 0;
+    private _closeReason: number = 0;
 
-	get closeReason(): number
-	{
-		return this._closeReason;
-	}
+    get closeReason(): number
+    {
+        return this._closeReason;
+    }
 
-	private _messageText: string = '';
+    private _messageText: string = '';
 
-	get messageText(): string
-	{
-		return this._messageText;
-	}
+    get messageText(): string
+    {
+        return this._messageText;
+    }
 
-	flush(): boolean
-	{
-		this._closeReason = 0;
-		this._messageText = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._closeReason = 0;
+        this._messageText = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._closeReason = wrapper.readInt();
-		this._messageText = wrapper.readString();
-		return true;
-	}
+        this._closeReason = wrapper.readInt();
+        this._messageText = wrapper.readString();
+        return true;
+    }
 }

@@ -46,68 +46,68 @@ type WidgetConstructor = new (window: IWidgetWindow, windowManager: IHabboWindow
  */
 export class HabboWidgetFactory implements IWidgetFactory
 {
-	private static readonly WIDGET_REGISTRY: Map<string, WidgetConstructor> = HabboWidgetFactory.buildRegistry();
+    private static readonly WIDGET_REGISTRY: Map<string, WidgetConstructor> = HabboWidgetFactory.buildRegistry();
 
-	private _windowManager: IHabboWindowManager;
+    private _windowManager: IHabboWindowManager;
 
-	constructor(windowManager: IHabboWindowManager)
-	{
-		this._windowManager = windowManager;
-	}
+    constructor(windowManager: IHabboWindowManager)
+    {
+        this._windowManager = windowManager;
+    }
 
-	/**
+    /**
 	 * Build the widget type registry.
 	 *
 	 * Maps widget type strings to their constructor classes.
 	 * This is the TypeScript equivalent of AS3 class_3474.
 	 */
-	private static buildRegistry(): Map<string, WidgetConstructor>
-	{
-		const registry = new Map<string, WidgetConstructor>();
+    private static buildRegistry(): Map<string, WidgetConstructor>
+    {
+        const registry = new Map<string, WidgetConstructor>();
 
-		registry.set('avatar_image', AvatarImageWidget);
-		registry.set('badge_image', BadgeImageWidget);
-		registry.set('balloon', BalloonWidget);
-		registry.set('countdown', CountdownWidget);
-		registry.set('furniture_image', FurnitureImageWidget);
-		registry.set('hover_bitmap', HoverBitmapWidget);
-		registry.set('illumina_border', IlluminaBorderWidget);
-		registry.set('illumina_chat_bubble', IlluminaChatBubbleWidget);
-		registry.set('illumina_input', IlluminaInputWidget);
-		registry.set('limited_item_overlay_grid', LimitedItemGridOverlayWidget);
-		registry.set('limited_item_overlay_preview', LimitedItemPreviewOverlayWidget);
-		registry.set('limited_item_overlay_supply', LimitedItemSupplyLeftOverlayWidget);
-		registry.set('pet_image', PetImageWidget);
-		registry.set('pixel_limit', PixelLimitWidget);
-		registry.set('progress_indicator', ProgressIndicatorWidget);
-		registry.set('rarity_item_overlay_grid', RarityItemGridOverlayWidget);
-		registry.set('rarity_item_overlay_preview', RarityItemPreviewOverlayWidget);
-		registry.set('room_previewer', RoomPreviewerWidget);
-		registry.set('room_thumbnail', RoomThumbnailWidget);
-		registry.set('room_user_count', RoomUserCountWidget);
-		registry.set('running_number', RunningNumberWidget);
-		registry.set('separator', SeparatorWidget);
-		registry.set('updating_timestamp', UpdatingTimeStampWidget);
+        registry.set('avatar_image', AvatarImageWidget);
+        registry.set('badge_image', BadgeImageWidget);
+        registry.set('balloon', BalloonWidget);
+        registry.set('countdown', CountdownWidget);
+        registry.set('furniture_image', FurnitureImageWidget);
+        registry.set('hover_bitmap', HoverBitmapWidget);
+        registry.set('illumina_border', IlluminaBorderWidget);
+        registry.set('illumina_chat_bubble', IlluminaChatBubbleWidget);
+        registry.set('illumina_input', IlluminaInputWidget);
+        registry.set('limited_item_overlay_grid', LimitedItemGridOverlayWidget);
+        registry.set('limited_item_overlay_preview', LimitedItemPreviewOverlayWidget);
+        registry.set('limited_item_overlay_supply', LimitedItemSupplyLeftOverlayWidget);
+        registry.set('pet_image', PetImageWidget);
+        registry.set('pixel_limit', PixelLimitWidget);
+        registry.set('progress_indicator', ProgressIndicatorWidget);
+        registry.set('rarity_item_overlay_grid', RarityItemGridOverlayWidget);
+        registry.set('rarity_item_overlay_preview', RarityItemPreviewOverlayWidget);
+        registry.set('room_previewer', RoomPreviewerWidget);
+        registry.set('room_thumbnail', RoomThumbnailWidget);
+        registry.set('room_user_count', RoomUserCountWidget);
+        registry.set('running_number', RunningNumberWidget);
+        registry.set('separator', SeparatorWidget);
+        registry.set('updating_timestamp', UpdatingTimeStampWidget);
 
-		return registry;
-	}
+        return registry;
+    }
 
-	/**
+    /**
 	 * Create a widget by type identifier.
 	 *
 	 * @param type - The widget type string (e.g. "avatar_image", "badge_image")
 	 * @param window - The host IWidgetWindow
 	 * @returns The created widget, or null if the type is unknown
 	 */
-	public createWidget(type: string, window: IWidgetWindow): unknown
-	{
-		const widgetClass = HabboWidgetFactory.WIDGET_REGISTRY.get(type);
+    public createWidget(type: string, window: IWidgetWindow): unknown
+    {
+        const widgetClass = HabboWidgetFactory.WIDGET_REGISTRY.get(type);
 
-		if (!widgetClass)
-		{
-			return null;
-		}
+        if(!widgetClass)
+        {
+            return null;
+        }
 
-		return new widgetClass(window, this._windowManager);
-	}
+        return new widgetClass(window, this._windowManager);
+    }
 }

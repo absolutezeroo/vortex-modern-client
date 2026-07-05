@@ -9,8 +9,8 @@ import {AchievementsScoreMessageParser} from '../../parser/inventory/Achievement
  */
 export class AchievementsScoreMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AchievementsScoreMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AchievementsScoreMessageParser);
+    }
 }

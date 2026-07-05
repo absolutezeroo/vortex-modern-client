@@ -11,18 +11,18 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureCrackableLogic extends FurnitureLogic
 {
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		super.processUpdateMessage(message);
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        super.processUpdateMessage(message);
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		if (this.object.getModelController()?.getNumber(RoomObjectVariableEnum.FURNITURE_REAL_ROOM_OBJECT) === 1)
-		{
-			this.object.getModelController()!.setString('RWEIEP_INFOSTAND_EXTRA_PARAM', 'RWEIEP_CRACKABLE_FURNI');
-		}
-	}
+        if(this.object.getModelController()?.getNumber(RoomObjectVariableEnum.FURNITURE_REAL_ROOM_OBJECT) === 1)
+        {
+            this.object.getModelController()!.setString('RWEIEP_INFOSTAND_EXTRA_PARAM', 'RWEIEP_CRACKABLE_FURNI');
+        }
+    }
 }

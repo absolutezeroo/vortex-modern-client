@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CanCreateRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof CanCreateRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof CanCreateRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof CanCreateRoomMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

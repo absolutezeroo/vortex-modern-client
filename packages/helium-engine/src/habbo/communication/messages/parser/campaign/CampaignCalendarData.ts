@@ -10,111 +10,111 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class CampaignCalendarData
 {
-	private _campaignName: string = '';
+    private _campaignName: string = '';
 
-	get campaignName(): string
-	{
-		return this._campaignName;
-	}
+    get campaignName(): string
+    {
+        return this._campaignName;
+    }
 
-	set campaignName(value: string)
-	{
-		this._campaignName = value;
-	}
+    set campaignName(value: string)
+    {
+        this._campaignName = value;
+    }
 
-	private _campaignImage: string = '';
+    private _campaignImage: string = '';
 
-	get campaignImage(): string
-	{
-		return this._campaignImage;
-	}
+    get campaignImage(): string
+    {
+        return this._campaignImage;
+    }
 
-	set campaignImage(value: string)
-	{
-		this._campaignImage = value;
-	}
+    set campaignImage(value: string)
+    {
+        this._campaignImage = value;
+    }
 
-	private _currentDay: number = 0;
+    private _currentDay: number = 0;
 
-	get currentDay(): number
-	{
-		return this._currentDay;
-	}
+    get currentDay(): number
+    {
+        return this._currentDay;
+    }
 
-	set currentDay(value: number)
-	{
-		this._currentDay = value;
-	}
+    set currentDay(value: number)
+    {
+        this._currentDay = value;
+    }
 
-	private _campaignDays: number = 0;
+    private _campaignDays: number = 0;
 
-	get campaignDays(): number
-	{
-		return this._campaignDays;
-	}
+    get campaignDays(): number
+    {
+        return this._campaignDays;
+    }
 
-	set campaignDays(value: number)
-	{
-		this._campaignDays = value;
-	}
+    set campaignDays(value: number)
+    {
+        this._campaignDays = value;
+    }
 
-	private _openedDays: number[] = [];
+    private _openedDays: number[] = [];
 
-	get openedDays(): number[]
-	{
-		return this._openedDays;
-	}
+    get openedDays(): number[]
+    {
+        return this._openedDays;
+    }
 
-	set openedDays(value: number[])
-	{
-		this._openedDays = value;
-	}
+    set openedDays(value: number[])
+    {
+        this._openedDays = value;
+    }
 
-	private _missedDays: number[] = [];
+    private _missedDays: number[] = [];
 
-	get missedDays(): number[]
-	{
-		return this._missedDays;
-	}
+    get missedDays(): number[]
+    {
+        return this._missedDays;
+    }
 
-	set missedDays(value: number[])
-	{
-		this._missedDays = value;
-	}
+    set missedDays(value: number[])
+    {
+        this._missedDays = value;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._campaignName = wrapper.readString();
-		this._campaignImage = wrapper.readString();
-		this._currentDay = wrapper.readInt();
-		this._campaignDays = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._campaignName = wrapper.readString();
+        this._campaignImage = wrapper.readString();
+        this._currentDay = wrapper.readInt();
+        this._campaignDays = wrapper.readInt();
 
-		this._openedDays = [];
-		let count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._openedDays.push(wrapper.readInt());
-		}
+        this._openedDays = [];
+        let count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._openedDays.push(wrapper.readInt());
+        }
 
-		this._missedDays = [];
-		count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._missedDays.push(wrapper.readInt());
-		}
+        this._missedDays = [];
+        count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._missedDays.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	clone(): CampaignCalendarData
-	{
-		const copy = new CampaignCalendarData();
-		copy.campaignName = this._campaignName;
-		copy.campaignImage = this._campaignImage;
-		copy.currentDay = this._currentDay;
-		copy.campaignDays = this._campaignDays;
-		copy.openedDays = [...this._openedDays];
-		copy.missedDays = [...this._missedDays];
-		return copy;
-	}
+    clone(): CampaignCalendarData
+    {
+        const copy = new CampaignCalendarData();
+        copy.campaignName = this._campaignName;
+        copy.campaignImage = this._campaignImage;
+        copy.currentDay = this._currentDay;
+        copy.campaignDays = this._campaignDays;
+        copy.openedDays = [...this._openedDays];
+        copy.missedDays = [...this._missedDays];
+        return copy;
+    }
 }

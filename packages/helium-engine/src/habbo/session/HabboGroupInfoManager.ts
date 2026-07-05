@@ -4,9 +4,9 @@ import type {IMessageComposer} from '@core/communication/messages/IMessageCompos
 import type {IHabboCommunicationManager} from '../communication/IHabboCommunicationManager';
 import {HabboGroupBadgesMessageEvent, RoomReadyMessageEvent} from "@habbo/communication";
 import {
-	GetHabboGroupBadgesMessageComposer
+    GetHabboGroupBadgesMessageComposer
 } from "@habbo/communication/messages/outgoing/users/GetHabboGroupBadgesMessageComposer";
-import {HabboGroupBadgesMessageParser} from "@habbo/communication/messages/parser/users/HabboGroupBadgesMessageParser";
+import type {HabboGroupBadgesMessageParser} from "@habbo/communication/messages/parser/users/HabboGroupBadgesMessageParser";
 
 /**
  * Habbo group info manager
@@ -14,104 +14,103 @@ import {HabboGroupBadgesMessageParser} from "@habbo/communication/messages/parse
  */
 export class HabboGroupInfoManager implements IHabboGroupInfoManager
 {
-	private _communication: IHabboCommunicationManager | null = null;
-	private _sendCallback: ((composer: IMessageComposer<unknown[]>) => void) | null = null;
-	private _groupBadges: Map<number, string> = new Map();
-	private _messageEvents: IMessageEvent[] = [];
+    private _communication: IHabboCommunicationManager | null = null;
+    private _sendCallback: ((composer: IMessageComposer<unknown[]>) => void) | null = null;
+    private _groupBadges: Map<number, string> = new Map();
+    private _messageEvents: IMessageEvent[] = [];
 
-	constructor(communication: IHabboCommunicationManager | null, sendCallback: ((composer: IMessageComposer<unknown[]>) => void) | null)
-	{
-		this._communication = communication;
-		this._sendCallback = sendCallback;
+    constructor(communication: IHabboCommunicationManager | null, sendCallback: ((composer: IMessageComposer<unknown[]>) => void) | null)
+    {
+        this._communication = communication;
+        this._sendCallback = sendCallback;
 
-		this.registerMessageEvents();
-	}
+        this.registerMessageEvents();
+    }
 
-	get disposed(): boolean
-	{
-		return this._communication === null;
-	}
+    get disposed(): boolean
+    {
+        return this._communication === null;
+    }
 
-	getBadgeId(groupId: number): string | null
-	{
-		return this._groupBadges.get(groupId) ?? null;
-	}
+    getBadgeId(groupId: number): string | null
+    {
+        return this._groupBadges.get(groupId) ?? null;
+    }
 
-	/**
+    /**
 	 * Set a group badge (called by message handler)
 	 */
-	setGroupBadge(groupId: number, badgeId: string): void
-	{
-		this._groupBadges.set(groupId, badgeId);
-	}
+    setGroupBadge(groupId: number, badgeId: string): void
+    {
+        this._groupBadges.set(groupId, badgeId);
+    }
 
-	/**
+    /**
 	 * Set multiple group badges (called by message handler)
 	 */
-	setGroupBadges(badges: Map<number, string>): void
-	{
-		for (const [groupId, badgeId] of badges)
-		{
-			this._groupBadges.set(groupId, badgeId);
-		}
-	}
+    setGroupBadges(badges: Map<number, string>): void
+    {
+        for(const [groupId, badgeId] of badges)
+        {
+            this._groupBadges.set(groupId, badgeId);
+        }
+    }
 
-	/**
+    /**
 	 * Request group badges for the current room (called on room ready)
 	 */
-	requestGroupBadges(): void
-	{
-		if (this._sendCallback)
-		{
-			this._sendCallback(new GetHabboGroupBadgesMessageComposer());
-		}
-	}
+    requestGroupBadges(): void
+    {
+        if(this._sendCallback)
+        {
+            this._sendCallback(new GetHabboGroupBadgesMessageComposer());
+        }
+    }
 
-	dispose(): void
-	{
-		if (this.disposed) return;
+    dispose(): void
+    {
+        if(this.disposed) return;
 
-		for (const event of this._messageEvents)
-		{
-			this._communication?.removeMessageEvent(event);
-		}
+        for(const event of this._messageEvents)
+        {
+            this._communication?.removeMessageEvent(event);
+        }
 
-		this._messageEvents = [];
-		this._groupBadges.clear();
-		this._communication = null;
-		this._sendCallback = null;
-	}
+        this._messageEvents = [];
+        this._groupBadges.clear();
+        this._communication = null;
+        this._sendCallback = null;
+    }
 
-	private registerMessageEvents(): void
-	{
-		if (this._communication)
-		{
-			const roomReadyEvent = new RoomReadyMessageEvent(this.onRoomReady.bind(this));
+    private registerMessageEvents(): void
+    {
+        if(this._communication)
+        {
+            const roomReadyEvent = new RoomReadyMessageEvent(this.onRoomReady.bind(this));
 
-			this._communication.addMessageEvent(roomReadyEvent);
-			this._messageEvents.push(roomReadyEvent);
+            this._communication.addMessageEvent(roomReadyEvent);
+            this._messageEvents.push(roomReadyEvent);
 
-			const groupBadgesEvent = new HabboGroupBadgesMessageEvent(this.onGroupBadges.bind(this));
+            const groupBadgesEvent = new HabboGroupBadgesMessageEvent(this.onGroupBadges.bind(this));
 
-			this._communication.addMessageEvent(groupBadgesEvent);
-			this._messageEvents.push(groupBadgesEvent);
-		}
-	}
+            this._communication.addMessageEvent(groupBadgesEvent);
+            this._messageEvents.push(groupBadgesEvent);
+        }
+    }
 
-	private onRoomReady(event: IMessageEvent): void
-	{
-		this.requestGroupBadges();
-	}
+    private onRoomReady(event: IMessageEvent): void
+    {
+        this.requestGroupBadges();
+    }
 
+    private onGroupBadges(event: IMessageEvent): void
+    {
+        const parser = event.parser as HabboGroupBadgesMessageParser;
 
-	private onGroupBadges(event: IMessageEvent): void
-	{
-		const parser = event.parser as HabboGroupBadgesMessageParser;
+        if(!parser) return;
 
-		if (!parser) return;
+        if(!parser.badges) return;
 
-		if (!parser.badges) return;
-
-		this.setGroupBadges(parser.badges);
-	}
+        this.setGroupBadges(parser.badges);
+    }
 }

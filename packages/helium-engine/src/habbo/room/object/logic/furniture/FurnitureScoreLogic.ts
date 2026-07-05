@@ -11,82 +11,82 @@ import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectD
 
 export class FurnitureScoreLogic extends FurnitureLogic
 {
-	private static readonly UPDATE_INTERVAL = 50;
-	private static readonly MAX_UPDATE_TIME = 3000;
+    private static readonly UPDATE_INTERVAL = 50;
+    private static readonly MAX_UPDATE_TIME = 3000;
 
-	private _targetScore: number = 0;
-	private _lastScoreUpdate: number = 0;
-	private _updateInterval: number = 50;
+    private _targetScore: number = 0;
+    private _lastScoreUpdate: number = 0;
+    private _updateInterval: number = 50;
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-		if ('state' in message && 'data' in message && typeof dataMessage.state === 'number')
-		{
-			this.updateTargetScore(dataMessage.state);
-			return;
-		}
+        if('state' in message && 'data' in message && typeof dataMessage.state === 'number')
+        {
+            this.updateTargetScore(dataMessage.state);
+            return;
+        }
 
-		super.processUpdateMessage(message);
-	}
+        super.processUpdateMessage(message);
+    }
 
-	override update(time: number): void
-	{
-		super.update(time);
+    override update(time: number): void
+    {
+        super.update(time);
 
-		if (this.object !== null)
-		{
-			const currentScore = this.object.getState(0);
+        if(this.object !== null)
+        {
+            const currentScore = this.object.getState(0);
 
-			if (currentScore !== this._targetScore && time >= (this._lastScoreUpdate + this._updateInterval))
-			{
-				const elapsed = time - this._lastScoreUpdate;
-				let steps = Math.trunc(elapsed / this._updateInterval);
+            if(currentScore !== this._targetScore && time >= (this._lastScoreUpdate + this._updateInterval))
+            {
+                const elapsed = time - this._lastScoreUpdate;
+                let steps = Math.trunc(elapsed / this._updateInterval);
 
-				const direction = (this._targetScore > currentScore) ? 1 : -1;
+                const direction = (this._targetScore > currentScore) ? 1 : -1;
 
-				if (steps > (direction * (this._targetScore - currentScore)))
-				{
-					steps = direction * (this._targetScore - currentScore);
-				}
+                if(steps > (direction * (this._targetScore - currentScore)))
+                {
+                    steps = direction * (this._targetScore - currentScore);
+                }
 
-				this.object.setState(currentScore + (direction * steps), 0);
-				this._lastScoreUpdate = time - (elapsed - (steps * this._updateInterval));
-			}
-		}
-	}
+                this.object.setState(currentScore + (direction * steps), 0);
+                this._lastScoreUpdate = time - (elapsed - (steps * this._updateInterval));
+            }
+        }
+    }
 
-	private updateTargetScore(score: number): void
-	{
-		this._targetScore = score;
+    private updateTargetScore(score: number): void
+    {
+        this._targetScore = score;
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		const currentScore = this.object.getState(0);
+        const currentScore = this.object.getState(0);
 
-		if (this._targetScore !== currentScore)
-		{
-			let diff = this._targetScore - currentScore;
+        if(this._targetScore !== currentScore)
+        {
+            let diff = this._targetScore - currentScore;
 
-			if (diff < 0)
-			{
-				diff = -diff;
-			}
+            if(diff < 0)
+            {
+                diff = -diff;
+            }
 
-			if ((diff * FurnitureScoreLogic.UPDATE_INTERVAL) > FurnitureScoreLogic.MAX_UPDATE_TIME)
-			{
-				this._updateInterval = FurnitureScoreLogic.MAX_UPDATE_TIME / diff;
-			}
-			else
-			{
-				this._updateInterval = FurnitureScoreLogic.UPDATE_INTERVAL;
-			}
+            if((diff * FurnitureScoreLogic.UPDATE_INTERVAL) > FurnitureScoreLogic.MAX_UPDATE_TIME)
+            {
+                this._updateInterval = FurnitureScoreLogic.MAX_UPDATE_TIME / diff;
+            }
+            else
+            {
+                this._updateInterval = FurnitureScoreLogic.UPDATE_INTERVAL;
+            }
 
-			this._lastScoreUpdate = performance.now();
-		}
-	}
+            this._lastScoreUpdate = performance.now();
+        }
+    }
 }

@@ -8,26 +8,26 @@ import {StuffDataBase} from './StuffDataBase';
  */
 export class VoteResultStuffData extends StuffDataBase
 {
-	public static readonly FORMAT_KEY = 3;
+    public static readonly FORMAT_KEY = 3;
 
-	private _state: string = '';
-	private _result: number = 0;
+    private _state: string = '';
+    private _result: number = 0;
 
-	get result(): number
-	{
-		return this._result;
-	}
+    get result(): number
+    {
+        return this._result;
+    }
 
-	override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
-	{
-		this._state = wrapper.readString();
-		this._result = wrapper.readInt();
+    override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
+    {
+        this._state = wrapper.readString();
+        this._result = wrapper.readInt();
 
-		super.initializeFromIncomingMessage(wrapper);
-	}
+        super.initializeFromIncomingMessage(wrapper);
+    }
 
-	override getLegacyString(): string
-	{
-		return this._state;
-	}
+    override getLegacyString(): string
+    {
+        return this._state;
+    }
 }

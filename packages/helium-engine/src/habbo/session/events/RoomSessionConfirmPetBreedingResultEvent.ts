@@ -8,26 +8,26 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionConfirmPetBreedingResultEvent extends RoomSessionEvent
 {
-	public static readonly CONFIRM_PET_BREEDING_RESULT = 'RSPFUE_CONFIRM_PET_BREEDING_RESULT';
+    public static readonly CONFIRM_PET_BREEDING_RESULT = 'RSPFUE_CONFIRM_PET_BREEDING_RESULT';
 
-	constructor(session: IRoomSession, breedingNestStuffId: number, result: number)
-	{
-		super(RoomSessionConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, session);
-		this._breedingNestStuffId = breedingNestStuffId;
-		this._result = result;
-	}
+    constructor(session: IRoomSession, breedingNestStuffId: number, result: number)
+    {
+        super(RoomSessionConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, session);
+        this._breedingNestStuffId = breedingNestStuffId;
+        this._result = result;
+    }
 
-	private _breedingNestStuffId: number;
+    private _breedingNestStuffId: number;
 
-	get breedingNestStuffId(): number
-	{
-		return this._breedingNestStuffId;
-	}
+    get breedingNestStuffId(): number
+    {
+        return this._breedingNestStuffId;
+    }
 
-	private _result: number;
+    private _result: number;
 
-	get result(): number
-	{
-		return this._result;
-	}
+    get result(): number
+    {
+        return this._result;
+    }
 }

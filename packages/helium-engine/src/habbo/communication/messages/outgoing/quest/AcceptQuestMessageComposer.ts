@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class AcceptQuestMessageComposer extends MessageComposer<ConstructorParameters<typeof AcceptQuestMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof AcceptQuestMessageComposer>;
+    private _data: ConstructorParameters<typeof AcceptQuestMessageComposer>;
 
-	constructor(questId: number)
-	{
-		super();
-		this._data = [questId];
-	}
+    constructor(questId: number)
+    {
+        super();
+        this._data = [questId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

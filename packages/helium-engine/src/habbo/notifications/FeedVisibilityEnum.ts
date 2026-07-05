@@ -5,7 +5,7 @@
  */
 export class FeedVisibilityEnum
 {
-	public static readonly VIEW_STATE_HIDDEN: number = 0;
-	public static readonly VIEW_STATE_MINIMIZED: number = 1;
-	public static readonly VIEW_STATE_MAXIMIZED: number = 2;
+    public static readonly VIEW_STATE_HIDDEN: number = 0;
+    public static readonly VIEW_STATE_MINIMIZED: number = 1;
+    public static readonly VIEW_STATE_MAXIMIZED: number = 2;
 }

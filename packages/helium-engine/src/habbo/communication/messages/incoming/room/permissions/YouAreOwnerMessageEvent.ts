@@ -9,8 +9,8 @@ import {YouAreOwnerMessageParser} from '@habbo/communication/messages/parser/roo
 
 export class YouAreOwnerMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, YouAreOwnerMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, YouAreOwnerMessageParser);
+    }
 }

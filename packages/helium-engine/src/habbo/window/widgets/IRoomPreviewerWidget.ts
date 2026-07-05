@@ -11,29 +11,29 @@ import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
  */
 export interface IRoomPreviewerWidget extends IWidget
 {
-	/**
+    /**
 	 * The rendering scale (32 = small, 64 = normal).
 	 */
-	scale: number;
+    scale: number;
 
-	/**
+    /**
 	 * The room previewer instance.
 	 */
-	readonly roomPreviewer: RoomPreviewer | null;
-	/**
+    readonly roomPreviewer: RoomPreviewer | null;
+    /**
 	 * The horizontal offset of the preview camera.
 	 */
-	offsetX: number;
-	/**
+    offsetX: number;
+    /**
 	 * The vertical offset of the preview camera.
 	 */
-	offsetY: number;
-	/**
+    offsetY: number;
+    /**
 	 * The zoom level of the preview.
 	 */
-	zoom: number;
+    zoom: number;
 
-	/**
+    /**
 	 * Show a static bitmap preview, replacing the live room canvas.
 	 *
 	 * AS3: showPreview(param1:BitmapData) wraps the given BitmapData in a
@@ -42,6 +42,5 @@ export interface IRoomPreviewerWidget extends IWidget
 	 *
 	 * @param image - The pre-rendered bitmap to display
 	 */
-	showPreview(image: HTMLCanvasElement): void;
+    showPreview(image: HTMLCanvasElement): void;
 }
-

@@ -9,8 +9,8 @@ import {CommunityGoalProgressMessageParser} from '../../parser/quest/CommunityGo
  */
 export class CommunityGoalProgressMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, CommunityGoalProgressMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, CommunityGoalProgressMessageParser);
+    }
 }

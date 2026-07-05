@@ -14,56 +14,56 @@ import {ElementPointerMessageEvent} from '@habbo/communication/messages/incoming
  */
 export class ElementPointerHandler
 {
-	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::_windowManager
-	private _windowManager: IHabboWindowManager | null;
+    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::_windowManager
+    private _windowManager: IHabboWindowManager | null;
 
-	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
-	private _event: IMessageEvent | null = null;
+    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::var_3740
+    private _event: IMessageEvent | null = null;
 
-	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
-	constructor(windowManager: IHabboWindowManager)
-	{
-		this._windowManager = windowManager;
+    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::ElementPointerHandler()
+    constructor(windowManager: IHabboWindowManager)
+    {
+        this._windowManager = windowManager;
 
-		if(this._windowManager.communication !== null)
-		{
-			this._event = new ElementPointerMessageEvent((e) => this.onElementPointerMessage(e as ElementPointerMessageEvent));
-			this._windowManager.communication.addHabboConnectionMessageEvent(this._event);
-		}
-	}
+        if(this._windowManager.communication !== null)
+        {
+            this._event = new ElementPointerMessageEvent((e) => this.onElementPointerMessage(e as ElementPointerMessageEvent));
+            this._windowManager.communication.addHabboConnectionMessageEvent(this._event);
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::get disposed()
-	public get disposed(): boolean
-	{
-		return this._windowManager === null;
-	}
+    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._windowManager === null;
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::onElementPointerMessage()
-	private onElementPointerMessage(event: ElementPointerMessageEvent): void
-	{
-		if (!this._windowManager) return;
+    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::onElementPointerMessage()
+    private onElementPointerMessage(event: ElementPointerMessageEvent): void
+    {
+        if(!this._windowManager) return;
 
-		const key = event.key;
+        const key = event.key;
 
-		if (!key || key.length === 0)
-		{
-			this._windowManager.hideHint();
-		}
-		else
-		{
-			this._windowManager.showHint(key);
-		}
-	}
+        if(!key || key.length === 0)
+        {
+            this._windowManager.hideHint();
+        }
+        else
+        {
+            this._windowManager.showHint(key);
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
-	public dispose(): void
-	{
-		if (this._windowManager?.communication && this._event !== null)
-		{
-			this._windowManager.communication.removeHabboConnectionMessageEvent(this._event);
-			this._event = null;
-		}
+    // AS3: sources/win63_version/habbo/window/utils/ElementPointerHandler.as::dispose()
+    public dispose(): void
+    {
+        if(this._windowManager?.communication && this._event !== null)
+        {
+            this._windowManager.communication.removeHabboConnectionMessageEvent(this._event);
+            this._event = null;
+        }
 
-		this._windowManager = null;
-	}
+        this._windowManager = null;
+    }
 }

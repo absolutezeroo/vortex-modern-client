@@ -10,26 +10,26 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 
 export class FurnitureMysteryTrophyLogic extends FurnitureMultiStateLogic
 {
-	override get contextMenu(): string | null
-	{
-		return 'MYSTERY_TROPHY';
-	}
+    override get contextMenu(): string | null
+    {
+        return 'MYSTERY_TROPHY';
+    }
 
-	override getEventTypes(): string[]
-	{
-		return this.getAllEventTypes(super.getEventTypes(), [
-			RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG
-		]);
-	}
+    override getEventTypes(): string[]
+    {
+        return this.getAllEventTypes(super.getEventTypes(), [
+            RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG
+        ]);
+    }
 
-	override useObject(): void
-	{
-		if (this.eventDispatcher !== null && this.object !== null)
-		{
-			this.eventDispatcher.emit(
-				RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG,
-				new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG, this.object)
-			);
-		}
-	}
+    override useObject(): void
+    {
+        if(this.eventDispatcher !== null && this.object !== null)
+        {
+            this.eventDispatcher.emit(
+                RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG,
+                new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG, this.object)
+            );
+        }
+    }
 }

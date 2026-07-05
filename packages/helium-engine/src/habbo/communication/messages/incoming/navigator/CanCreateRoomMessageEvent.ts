@@ -7,8 +7,8 @@ import {CanCreateRoomMessageParser} from '../../parser/navigator/CanCreateRoomMe
  */
 export class CanCreateRoomMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CanCreateRoomMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CanCreateRoomMessageParser);
+    }
 }

@@ -5,8 +5,8 @@
  */
 export interface ILocalizable
 {
-	/**
+    /**
 	 * Set the localized text value
 	 */
-	set localization(value: string);
+    set localization(value: string);
 }

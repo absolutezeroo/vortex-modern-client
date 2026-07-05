@@ -9,8 +9,8 @@ import {CampaignCalendarDoorOpenedMessageParser} from '../../parser/campaign/Cam
  */
 export class CampaignCalendarDoorOpenedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CampaignCalendarDoorOpenedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CampaignCalendarDoorOpenedMessageParser);
+    }
 }

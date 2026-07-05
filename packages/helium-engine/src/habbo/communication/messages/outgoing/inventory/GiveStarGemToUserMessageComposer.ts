@@ -9,16 +9,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GiveStarGemToUserMessageComposer extends MessageComposer<[number, number]>
 {
-	private _data: [number, number];
+    private _data: [number, number];
 
-	constructor(userId: number)
-	{
-		super();
-		this._data = [userId, 1];
-	}
+    constructor(userId: number)
+    {
+        super();
+        this._data = [userId, 1];
+    }
 
-	getMessageArray(): [number, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, number]
+    {
+        return this._data;
+    }
 }

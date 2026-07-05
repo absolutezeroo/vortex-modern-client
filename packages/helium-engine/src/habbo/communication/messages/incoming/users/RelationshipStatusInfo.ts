@@ -9,43 +9,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RelationshipStatusInfo
 {
-	private _relationshipStatusType: number;
-	private _friendCount: number;
-	private _randomFriendId: number;
-	private _randomFriendName: string;
-	private _randomFriendFigure: string;
+    private _relationshipStatusType: number;
+    private _friendCount: number;
+    private _randomFriendId: number;
+    private _randomFriendName: string;
+    private _randomFriendFigure: string;
 
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._relationshipStatusType = wrapper.readInt();
-		this._friendCount = wrapper.readInt();
-		this._randomFriendId = wrapper.readInt();
-		this._randomFriendName = wrapper.readString();
-		this._randomFriendFigure = wrapper.readString();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._relationshipStatusType = wrapper.readInt();
+        this._friendCount = wrapper.readInt();
+        this._randomFriendId = wrapper.readInt();
+        this._randomFriendName = wrapper.readString();
+        this._randomFriendFigure = wrapper.readString();
+    }
 
-	get relationshipStatusType(): number
-	{
-		return this._relationshipStatusType;
-	}
+    get relationshipStatusType(): number
+    {
+        return this._relationshipStatusType;
+    }
 
-	get friendCount(): number
-	{
-		return this._friendCount;
-	}
+    get friendCount(): number
+    {
+        return this._friendCount;
+    }
 
-	get randomFriendId(): number
-	{
-		return this._randomFriendId;
-	}
+    get randomFriendId(): number
+    {
+        return this._randomFriendId;
+    }
 
-	get randomFriendName(): string
-	{
-		return this._randomFriendName;
-	}
+    get randomFriendName(): string
+    {
+        return this._randomFriendName;
+    }
 
-	get randomFriendFigure(): string
-	{
-		return this._randomFriendFigure;
-	}
+    get randomFriendFigure(): string
+    {
+        return this._randomFriendFigure;
+    }
 }

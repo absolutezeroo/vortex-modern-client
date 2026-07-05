@@ -11,39 +11,39 @@ import {QuestMessageData} from './QuestMessageData';
  */
 export class QuestsMessageEventParser implements IMessageParser
 {
-	private _quests: QuestMessageData[] = [];
+    private _quests: QuestMessageData[] = [];
 
-	get quests(): QuestMessageData[]
-	{
-		return this._quests;
-	}
+    get quests(): QuestMessageData[]
+    {
+        return this._quests;
+    }
 
-	private _openWindow: boolean = false;
+    private _openWindow: boolean = false;
 
-	get openWindow(): boolean
-	{
-		return this._openWindow;
-	}
+    get openWindow(): boolean
+    {
+        return this._openWindow;
+    }
 
-	flush(): boolean
-	{
-		this._quests = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._quests = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count: number = wrapper.readInt();
+        const count: number = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._quests.push(new QuestMessageData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._quests.push(new QuestMessageData(wrapper));
+        }
 
-		this._openWindow = wrapper.readBoolean();
+        this._openWindow = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

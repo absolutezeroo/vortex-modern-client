@@ -4,10 +4,10 @@ import {TradingFurniItemParser} from './TradingFurniItemParser';
 
 export interface TradingUserItems
 {
-	userId: number;
-	items: TradingFurniItemParser[];
-	numItems: number;
-	numCredits: number;
+    userId: number;
+    items: TradingFurniItemParser[];
+    numItems: number;
+    numCredits: number;
 }
 
 /**
@@ -17,49 +17,49 @@ export interface TradingUserItems
  */
 export class TradingItemListMessageParser implements IMessageParser
 {
-	private _userOneItems: TradingUserItems | null = null;
+    private _userOneItems: TradingUserItems | null = null;
 
-	get userOneItems(): TradingUserItems | null
-	{
-		return this._userOneItems;
-	}
+    get userOneItems(): TradingUserItems | null
+    {
+        return this._userOneItems;
+    }
 
-	private _userTwoItems: TradingUserItems | null = null;
+    private _userTwoItems: TradingUserItems | null = null;
 
-	get userTwoItems(): TradingUserItems | null
-	{
-		return this._userTwoItems;
-	}
+    get userTwoItems(): TradingUserItems | null
+    {
+        return this._userTwoItems;
+    }
 
-	flush(): boolean
-	{
-		this._userOneItems = null;
-		this._userTwoItems = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userOneItems = null;
+        this._userTwoItems = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._userOneItems = this.parseUserItems(wrapper);
-		this._userTwoItems = this.parseUserItems(wrapper);
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._userOneItems = this.parseUserItems(wrapper);
+        this._userTwoItems = this.parseUserItems(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 
-	private parseUserItems(wrapper: IMessageDataWrapper): TradingUserItems
-	{
-		const userId = wrapper.readInt();
-		const items: TradingFurniItemParser[] = [];
-		const count = wrapper.readInt();
+    private parseUserItems(wrapper: IMessageDataWrapper): TradingUserItems
+    {
+        const userId = wrapper.readInt();
+        const items: TradingFurniItemParser[] = [];
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			items.push(new TradingFurniItemParser(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            items.push(new TradingFurniItemParser(wrapper));
+        }
 
-		const numItems = wrapper.readInt();
-		const numCredits = wrapper.readInt();
+        const numItems = wrapper.readInt();
+        const numCredits = wrapper.readInt();
 
-		return {userId, items, numItems, numCredits};
-	}
+        return {userId, items, numItems, numCredits};
+    }
 }

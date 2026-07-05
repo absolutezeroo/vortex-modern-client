@@ -4,8 +4,8 @@ import type {ITextLinkWindow} from './ITextLinkWindow';
 import type {IToolTipWindow} from './IToolTipWindow';
 import {TextController} from './TextController';
 import {InteractiveController} from './InteractiveController';
-import {WindowController} from '../WindowController';
-import {WindowEvent} from '../events/WindowEvent';
+import type {WindowController} from '../WindowController';
+import type {WindowEvent} from '../events/WindowEvent';
 
 /**
  * Controller for text link windows.
@@ -19,175 +19,175 @@ import {WindowEvent} from '../events/WindowEvent';
  */
 export class TextLinkController extends TextController implements ITextLinkWindow
 {
-	protected _mouseCursorMap: Map<number, number> | null = null;
+    protected _mouseCursorMap: Map<number, number> | null = null;
 
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0,
-		dynamicStyle: string = ''
-	)
-	{
-		super(name, type, style, (param | 0x01) & ~0x10, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0,
+        dynamicStyle: string = ''
+    )
+    {
+        super(name, type, style, (param | 0x01) & ~0x10, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
 
-		const defaults = context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(style) ?? null;
+        const defaults = context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(style) ?? null;
 
-		this._toolTipDelay = Number(defaults?.getValue('tool_tip_delay') ?? 0);
-		this._toolTipCaption = String(defaults?.getValue('tool_tip_caption') ?? '');
-		this._toolTipIsDynamic = Boolean(defaults?.getValue('tool_tip_is_dynamic') ?? false);
-		this._interactiveCursorDisabled = Boolean(defaults?.getValue('interactive_cursor_disabled') ?? false);
-		this.immediateClickMode = true;
-		this.mouseThreshold = 0;
-	}
+        this._toolTipDelay = Number(defaults?.getValue('tool_tip_delay') ?? 0);
+        this._toolTipCaption = String(defaults?.getValue('tool_tip_caption') ?? '');
+        this._toolTipIsDynamic = Boolean(defaults?.getValue('tool_tip_is_dynamic') ?? false);
+        this._interactiveCursorDisabled = Boolean(defaults?.getValue('interactive_cursor_disabled') ?? false);
+        this.immediateClickMode = true;
+        this.mouseThreshold = 0;
+    }
 
-	private _toolTipDelay: number = 0;
+    private _toolTipDelay: number = 0;
 
-	public get toolTipDelay(): number
-	{
-		return this._toolTipDelay;
-	}
+    public get toolTipDelay(): number
+    {
+        return this._toolTipDelay;
+    }
 
-	public set toolTipDelay(value: number)
-	{
-		this._toolTipDelay = value;
-	}
+    public set toolTipDelay(value: number)
+    {
+        this._toolTipDelay = value;
+    }
 
-	private _toolTipCaption: string = '';
+    private _toolTipCaption: string = '';
 
-	public get toolTipCaption(): string
-	{
-		return this._toolTipCaption;
-	}
+    public get toolTipCaption(): string
+    {
+        return this._toolTipCaption;
+    }
 
-	public set toolTipCaption(value: string)
-	{
-		this._toolTipCaption = value == null ? '' : value;
-	}
+    public set toolTipCaption(value: string)
+    {
+        this._toolTipCaption = value == null ? '' : value;
+    }
 
-	private _toolTipIsDynamic: boolean = false;
+    private _toolTipIsDynamic: boolean = false;
 
-	public get toolTipIsDynamic(): boolean
-	{
-		return this._toolTipIsDynamic;
-	}
+    public get toolTipIsDynamic(): boolean
+    {
+        return this._toolTipIsDynamic;
+    }
 
-	public set toolTipIsDynamic(value: boolean)
-	{
-		this._toolTipIsDynamic = value;
-	}
+    public set toolTipIsDynamic(value: boolean)
+    {
+        this._toolTipIsDynamic = value;
+    }
 
-	private _interactiveCursorDisabled: boolean = false;
+    private _interactiveCursorDisabled: boolean = false;
 
-	public get interactiveCursorDisabled(): boolean
-	{
-		return this._interactiveCursorDisabled;
-	}
+    public get interactiveCursorDisabled(): boolean
+    {
+        return this._interactiveCursorDisabled;
+    }
 
-	public set interactiveCursorDisabled(value: boolean)
-	{
-		this._interactiveCursorDisabled = value;
-	}
+    public set interactiveCursorDisabled(value: boolean)
+    {
+        this._interactiveCursorDisabled = value;
+    }
 
-	private _link: string = '';
+    private _link: string = '';
 
-	public get link(): string
-	{
-		return this._link;
-	}
+    public get link(): string
+    {
+        return this._link;
+    }
 
-	public set link(value: string)
-	{
-		this._link = value ?? '';
-	}
+    public set link(value: string)
+    {
+        this._link = value ?? '';
+    }
 
-	public get mouseCursorType(): number
-	{
-		return 0;
-	}
+    public get mouseCursorType(): number
+    {
+        return 0;
+    }
 
-	public set mouseCursorType(_value: number)
-	{
-		// No-op per AS3
-	}
+    public set mouseCursorType(_value: number)
+    {
+        // No-op per AS3
+    }
 
-	public override get properties(): unknown[]
-	{
-		return InteractiveController.writeInteractiveWindowProperties(this, super.properties);
-	}
+    public override get properties(): unknown[]
+    {
+        return InteractiveController.writeInteractiveWindowProperties(this, super.properties);
+    }
 
-	public override set properties(value: unknown[])
-	{
-		InteractiveController.readInteractiveWindowProperties(this, value);
-		super.properties = value;
-	}
+    public override set properties(value: unknown[])
+    {
+        InteractiveController.readInteractiveWindowProperties(this, value);
+        super.properties = value;
+    }
 
-	/**
+    /**
 	 * Sets a mouse cursor for a specific state.
 	 */
-	public setMouseCursorForState(state: number, cursor: number): number
-	{
-		if (!this._mouseCursorMap)
-		{
-			this._mouseCursorMap = new Map();
-		}
+    public setMouseCursorForState(state: number, cursor: number): number
+    {
+        if(!this._mouseCursorMap)
+        {
+            this._mouseCursorMap = new Map();
+        }
 
-		const old = this._mouseCursorMap.get(state) ?? 0;
+        const old = this._mouseCursorMap.get(state) ?? 0;
 
-		if (cursor === 0 || cursor === 0xFFFFFFFF)
-		{
-			this._mouseCursorMap.delete(state);
-		}
-		else
-		{
-			this._mouseCursorMap.set(state, cursor);
-		}
+        if(cursor === 0 || cursor === 0xFFFFFFFF)
+        {
+            this._mouseCursorMap.delete(state);
+        }
+        else
+        {
+            this._mouseCursorMap.set(state, cursor);
+        }
 
-		return old;
-	}
+        return old;
+    }
 
-	/**
+    /**
 	 * Gets the mouse cursor for a specific state.
 	 */
-	public getMouseCursorByState(state: number): number
-	{
-		if (!this._mouseCursorMap) return 0;
+    public getMouseCursorByState(state: number): number
+    {
+        if(!this._mouseCursorMap) return 0;
 
-		return this._mouseCursorMap.get(state) ?? 0;
-	}
+        return this._mouseCursorMap.get(state) ?? 0;
+    }
 
-	public showToolTip(_toolTip: IToolTipWindow): void
-	{
-		throw new Error('Unimplemented method!');
-	}
+    public showToolTip(_toolTip: IToolTipWindow): void
+    {
+        throw new Error('Unimplemented method!');
+    }
 
-	public hideToolTip(): void
-	{
-		throw new Error('Unimplemented method!');
-	}
+    public hideToolTip(): void
+    {
+        throw new Error('Unimplemented method!');
+    }
 
-	/**
+    /**
 	 * Handles events, delegating interactive processing to InteractiveController.
 	 *
 	 * In AS3, calls super.update() then InteractiveController.processInteractiveWindowEvents()
 	 * when the source is this window.
 	 */
-	public override update(source: WindowController, event: WindowEvent): boolean
-	{
-		const result = super.update(source, event);
+    public override update(source: WindowController, event: WindowEvent): boolean
+    {
+        const result = super.update(source, event);
 
-		if (source === (this as unknown as WindowController))
-		{
-			InteractiveController.processInteractiveWindowEvents(this, event);
-		}
+        if(source === (this as unknown as WindowController))
+        {
+            InteractiveController.processInteractiveWindowEvents(this, event);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

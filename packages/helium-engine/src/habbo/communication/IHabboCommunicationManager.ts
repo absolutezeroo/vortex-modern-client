@@ -13,11 +13,11 @@ import type {IHabboWebApiSession} from './IHabboWebApiSession';
  */
 export interface HabboCommunicationManagerEvents
 {
-	'loginStep': (step: HabboCommunicationEventType) => void;
-	'authenticated': () => void;
-	'connectionError': (error: Error) => void;
-	'disconnected': (reason: number, reasonText: string) => void;
-	'error': (code: number, message: string) => void;
+    'loginStep': (step: HabboCommunicationEventType) => void;
+    'authenticated': () => void;
+    'connectionError': (error: Error) => void;
+    'disconnected': (reason: number, reasonText: string) => void;
+    'error': (code: number, message: string) => void;
 }
 
 /**
@@ -25,128 +25,128 @@ export interface HabboCommunicationManagerEvents
  */
 export interface IHabboCommunicationManager
 {
-	/**
+    /**
 	 * Event emitter for communication events
 	 */
-	readonly events: EventEmitter;
-	/**
+    readonly events: EventEmitter;
+    /**
 	 * Get the main Habbo connection
 	 */
-	readonly connection: IConnection | null;
+    readonly connection: IConnection | null;
 
-	/**
+    /**
 	 * AS3: get mode()
 	 */
-	mode: number;
+    mode: number;
 
-	/**
+    /**
 	 * AS3: get port()
 	 */
-	readonly port: number;
+    readonly port: number;
 
-	/**
+    /**
 	 * AS3: get/set suggestedLoginActions()
 	 */
-	suggestedLoginActions: unknown[];
+    suggestedLoginActions: unknown[];
 
-	/**
+    /**
 	 * AS3: set tcpNoDelay()
 	 */
-	set tcpNoDelay(value: boolean);
+    set tcpNoDelay(value: boolean);
 
-	/**
+    /**
 	 * Get the session data manager
 	 */
-	readonly sessionDataManager: ISessionDataManager | null;
+    readonly sessionDataManager: ISessionDataManager | null;
 
-	/**
+    /**
 	 * Whether currently connected to server
 	 */
-	readonly isConnected: boolean;
+    readonly isConnected: boolean;
 
-	/**
+    /**
 	 * Get the SSO ticket for authentication
 	 */
-	readonly ssoTicket: string | null;
+    readonly ssoTicket: string | null;
 
-	/**
+    /**
 	 * Initialize connection to Habbo server
 	 * @param type Connection type (e.g., 'habbo', 'debug')
 	 */
-	initConnection(type: string): void;
+    initConnection(type: string): void;
 
-	/**
+    /**
 	 * AS3: renewSocket()
 	 */
-	renewSocket(): void;
+    renewSocket(): void;
 
-	/**
+    /**
 	 * Add a message event handler
 	 */
-	addMessageEvent(event: IMessageEvent): IMessageEvent;
+    addMessageEvent(event: IMessageEvent): IMessageEvent;
 
-	/**
+    /**
 	 * AS3: addHabboConnectionMessageEvent()
 	 */
-	addHabboConnectionMessageEvent(event: IMessageEvent): IMessageEvent;
+    addHabboConnectionMessageEvent(event: IMessageEvent): IMessageEvent;
 
-	/**
+    /**
 	 * Remove a message event handler
 	 */
-	removeMessageEvent(event: IMessageEvent): void;
+    removeMessageEvent(event: IMessageEvent): void;
 
-	/**
+    /**
 	 * AS3: removeHabboConnectionMessageEvent()
 	 */
-	removeHabboConnectionMessageEvent(event: IMessageEvent): void;
+    removeHabboConnectionMessageEvent(event: IMessageEvent): void;
 
-	/**
+    /**
 	 * Create a new encryption instance
 	 */
-	createEncryption(): IEncryption;
+    createEncryption(): IEncryption;
 
-	/**
+    /**
 	 * AS3: initializeEncryption()
 	 */
-	initializeEncryption(): IEncryption;
+    initializeEncryption(): IEncryption;
 
-	/**
+    /**
 	 * Create a new key exchange instance
 	 * @param prime The prime number (p)
 	 * @param generator The generator (g)
 	 */
-	createKeyExchange(prime: string, generator: string): IKeyExchange;
+    createKeyExchange(prime: string, generator: string): IKeyExchange;
 
-	/**
+    /**
 	 * AS3: initializeKeyExchange()
 	 */
-	initializeKeyExchange(prime: string, generator: string): IKeyExchange;
+    initializeKeyExchange(prime: string, generator: string): IKeyExchange;
 
-	/**
+    /**
 	 * AS3: setMessageQueueErrorDebugData()
 	 */
-	setMessageQueueErrorDebugData(): void;
+    setMessageQueueErrorDebugData(): void;
 
-	/**
+    /**
 	 * Disconnect from the server
 	 */
-	disconnect(): void;
+    disconnect(): void;
 
-	/**
+    /**
 	 * Register a global message listener
 	 * Called for ALL incoming messages after parsing
 	 * @returns Unsubscribe function
 	 */
-	onMessage(listener: (event: IMessageEvent) => void): () => void;
+    onMessage(listener: (event: IMessageEvent) => void): () => void;
 
-	/**
+    /**
 	 * AS3: updateHostParameters()
 	 * Reads connection.info.host and connection.info.port from configuration
 	 * and updates the internal host/port list.
 	 */
-	updateHostParameters(): void;
+    updateHostParameters(): void;
 
-	/**
+    /**
 	 * AS3: createHabboWebApiSession(listener, server)
 	 * Creates a new HabboWebApiSession for HTTP API requests.
 	 *
@@ -154,16 +154,16 @@ export interface IHabboCommunicationManager
 	 * @param server - Base server URL (e.g., 'https://www.habbo.com')
 	 * @returns The created IHabboWebApiSession
 	 */
-	createHabboWebApiSession(listener: IHabboWebApiListener, server: string): IHabboWebApiSession;
+    createHabboWebApiSession(listener: IHabboWebApiListener, server: string): IHabboWebApiSession;
 
-	/**
+    /**
 	 * AS3: getHabboWebApiSession()
 	 * Returns the current HabboWebApiSession, or null if not created.
 	 */
-	getHabboWebApiSession(): IHabboWebApiSession | null;
+    getHabboWebApiSession(): IHabboWebApiSession | null;
 
-	/**
+    /**
 	 * AS3: resetHabboWebApiSession()
 	 */
-	resetHabboWebApiSession(): void;
+    resetHabboWebApiSession(): void;
 }

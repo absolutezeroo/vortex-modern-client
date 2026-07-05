@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RequestFriendMessageComposer extends MessageComposer<ConstructorParameters<typeof RequestFriendMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RequestFriendMessageComposer>;
+    private _data: ConstructorParameters<typeof RequestFriendMessageComposer>;
 
-	constructor(userName: string)
-	{
-		super();
-		this._data = [userName];
-	}
+    constructor(userName: string)
+    {
+        super();
+        this._data = [userName];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -9,43 +9,43 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class InstantMessageErrorEventParser implements IMessageParser
 {
-	private _errorCode: number = 0;
+    private _errorCode: number = 0;
 
-	get errorCode(): number
-	{
-		return this._errorCode;
-	}
+    get errorCode(): number
+    {
+        return this._errorCode;
+    }
 
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _message: string = '';
+    private _message: string = '';
 
-	get message(): string
-	{
-		return this._message;
-	}
+    get message(): string
+    {
+        return this._message;
+    }
 
-	flush(): boolean
-	{
-		this._errorCode = 0;
-		this._userId = 0;
-		this._message = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._errorCode = 0;
+        this._userId = 0;
+        this._message = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._errorCode = wrapper.readInt();
-		this._userId = wrapper.readInt();
-		this._message = wrapper.readString();
+        this._errorCode = wrapper.readInt();
+        this._userId = wrapper.readInt();
+        this._message = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

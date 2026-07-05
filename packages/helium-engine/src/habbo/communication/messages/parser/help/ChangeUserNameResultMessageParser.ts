@@ -9,51 +9,51 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ChangeUserNameResultMessageParser implements IMessageParser
 {
-	private _resultCode: number = -1;
+    private _resultCode: number = -1;
 
-	get resultCode(): number
-	{
-		return this._resultCode;
-	}
+    get resultCode(): number
+    {
+        return this._resultCode;
+    }
 
-	private _name: string = '';
+    private _name: string = '';
 
-	get name(): string
-	{
-		return this._name;
-	}
+    get name(): string
+    {
+        return this._name;
+    }
 
-	private _nameSuggestions: string[] = [];
+    private _nameSuggestions: string[] = [];
 
-	get nameSuggestions(): string[]
-	{
-		return this._nameSuggestions;
-	}
+    get nameSuggestions(): string[]
+    {
+        return this._nameSuggestions;
+    }
 
-	flush(): boolean
-	{
-		this._resultCode = -1;
-		this._name = '';
-		this._nameSuggestions = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._resultCode = -1;
+        this._name = '';
+        this._nameSuggestions = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._resultCode = wrapper.readInt();
-		this._name = wrapper.readString();
+        this._resultCode = wrapper.readInt();
+        this._name = wrapper.readString();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		this._nameSuggestions = [];
+        this._nameSuggestions = [];
 
-		for (let i = 0; i < count; i++)
-		{
-			this._nameSuggestions.push(wrapper.readString());
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._nameSuggestions.push(wrapper.readString());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

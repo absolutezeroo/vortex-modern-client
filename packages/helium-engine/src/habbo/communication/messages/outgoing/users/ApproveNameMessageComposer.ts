@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ApproveNameMessageComposer extends MessageComposer<ConstructorParameters<typeof ApproveNameMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ApproveNameMessageComposer>;
+    private _data: ConstructorParameters<typeof ApproveNameMessageComposer>;
 
-	constructor(name: string, validationType: number)
-	{
-		super();
+    constructor(name: string, validationType: number)
+    {
+        super();
 
-		this._data = [name, validationType];
-	}
+        this._data = [name, validationType];
+    }
 
-	getMessageArray(): [string, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string, number]
+    {
+        return this._data;
+    }
 }

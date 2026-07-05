@@ -10,8 +10,8 @@ import {FriendListFragmentMessageParser} from '../../parser/friendlist/FriendLis
  */
 export class FriendListFragmentMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FriendListFragmentMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FriendListFragmentMessageParser);
+    }
 }

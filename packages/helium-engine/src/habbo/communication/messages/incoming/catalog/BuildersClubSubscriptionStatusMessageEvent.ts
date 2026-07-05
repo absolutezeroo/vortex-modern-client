@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	BuildersClubSubscriptionStatusMessageParser
+    BuildersClubSubscriptionStatusMessageParser
 } from '../../parser/catalog/BuildersClubSubscriptionStatusMessageParser';
 
 /**
@@ -11,8 +11,8 @@ import {
  */
 export class BuildersClubSubscriptionStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, BuildersClubSubscriptionStatusMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, BuildersClubSubscriptionStatusMessageParser);
+    }
 }

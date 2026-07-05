@@ -10,5 +10,5 @@ import type {IWidgetWindow} from './components/IWidgetWindow';
  */
 export interface IWidgetFactory
 {
-	createWidget(type: string, window: IWidgetWindow): unknown;
+    createWidget(type: string, window: IWidgetWindow): unknown;
 }

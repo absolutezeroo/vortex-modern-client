@@ -9,8 +9,8 @@ import {CfhChatlogMessageParser} from '../../parser/moderation/CfhChatlogMessage
  */
 export class CfhChatlogMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CfhChatlogMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CfhChatlogMessageParser);
+    }
 }

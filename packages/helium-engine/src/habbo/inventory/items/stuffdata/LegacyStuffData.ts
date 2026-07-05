@@ -8,24 +8,24 @@ import {StuffDataBase} from './StuffDataBase';
  */
 export class LegacyStuffData extends StuffDataBase
 {
-	public static readonly FORMAT_KEY = 0;
+    public static readonly FORMAT_KEY = 0;
 
-	private _data: string = '';
+    private _data: string = '';
 
-	override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
-	{
-		this._data = wrapper.readString();
+    override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
+    {
+        this._data = wrapper.readString();
 
-		super.initializeFromIncomingMessage(wrapper);
-	}
+        super.initializeFromIncomingMessage(wrapper);
+    }
 
-	override getLegacyString(): string
-	{
-		return this._data;
-	}
+    override getLegacyString(): string
+    {
+        return this._data;
+    }
 
-	setString(value: string): void
-	{
-		this._data = value;
-	}
+    setString(value: string): void
+    {
+        this._data = value;
+    }
 }

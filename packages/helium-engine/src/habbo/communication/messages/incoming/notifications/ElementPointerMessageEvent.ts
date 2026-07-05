@@ -12,15 +12,15 @@ import {ElementPointerMessageEventParser} from '../../parser/notifications/Eleme
  */
 export class ElementPointerMessageEvent extends MessageEvent implements IMessageEvent
 {
-	// AS3: sources/win63_version/habbo/communication/messages/incoming/notifications/ElementPointerMessageEvent.as::ElementPointerMessageEvent()
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ElementPointerMessageEventParser);
-	}
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/notifications/ElementPointerMessageEvent.as::ElementPointerMessageEvent()
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ElementPointerMessageEventParser);
+    }
 
-	// AS3: sources/win63_version/habbo/communication/messages/incoming/notifications/ElementPointerMessageEvent.as::getParser()
-	public get key(): string
-	{
-		return (this._parser as ElementPointerMessageEventParser).key;
-	}
+    // AS3: sources/win63_version/habbo/communication/messages/incoming/notifications/ElementPointerMessageEvent.as::getParser()
+    public get key(): string
+    {
+        return (this._parser as ElementPointerMessageEventParser).key;
+    }
 }

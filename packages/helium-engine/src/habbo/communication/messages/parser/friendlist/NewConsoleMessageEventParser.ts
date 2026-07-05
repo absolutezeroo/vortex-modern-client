@@ -9,88 +9,88 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class NewConsoleMessageEventParser implements IMessageParser
 {
-	private _chatId: number = 0;
+    private _chatId: number = 0;
 
-	get chatId(): number
-	{
-		return this._chatId;
-	}
+    get chatId(): number
+    {
+        return this._chatId;
+    }
 
-	private _messageText: string = '';
+    private _messageText: string = '';
 
-	get messageText(): string
-	{
-		return this._messageText;
-	}
+    get messageText(): string
+    {
+        return this._messageText;
+    }
 
-	private _secondsSinceSent: number = 0;
+    private _secondsSinceSent: number = 0;
 
-	get secondsSinceSent(): number
-	{
-		return this._secondsSinceSent;
-	}
+    get secondsSinceSent(): number
+    {
+        return this._secondsSinceSent;
+    }
 
-	private _messageId: string = '';
+    private _messageId: string = '';
 
-	get messageId(): string
-	{
-		return this._messageId;
-	}
+    get messageId(): string
+    {
+        return this._messageId;
+    }
 
-	private _confirmationId: number = 0;
+    private _confirmationId: number = 0;
 
-	get confirmationId(): number
-	{
-		return this._confirmationId;
-	}
+    get confirmationId(): number
+    {
+        return this._confirmationId;
+    }
 
-	private _senderId: number = 0;
+    private _senderId: number = 0;
 
-	get senderId(): number
-	{
-		return this._senderId;
-	}
+    get senderId(): number
+    {
+        return this._senderId;
+    }
 
-	private _senderName: string = '';
+    private _senderName: string = '';
 
-	get senderName(): string
-	{
-		return this._senderName;
-	}
+    get senderName(): string
+    {
+        return this._senderName;
+    }
 
-	private _senderFigure: string = '';
+    private _senderFigure: string = '';
 
-	get senderFigure(): string
-	{
-		return this._senderFigure;
-	}
+    get senderFigure(): string
+    {
+        return this._senderFigure;
+    }
 
-	flush(): boolean
-	{
-		this._chatId = 0;
-		this._messageText = '';
-		this._secondsSinceSent = 0;
-		this._messageId = '';
-		this._confirmationId = 0;
-		this._senderId = 0;
-		this._senderName = '';
-		this._senderFigure = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._chatId = 0;
+        this._messageText = '';
+        this._secondsSinceSent = 0;
+        this._messageId = '';
+        this._confirmationId = 0;
+        this._senderId = 0;
+        this._senderName = '';
+        this._senderFigure = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._chatId = wrapper.readInt();
-		this._messageText = wrapper.readString();
-		this._secondsSinceSent = wrapper.readInt();
-		this._messageId = wrapper.readString();
-		this._confirmationId = wrapper.readInt();
-		this._senderId = wrapper.readInt();
-		this._senderName = wrapper.readString();
-		this._senderFigure = wrapper.readString();
+        this._chatId = wrapper.readInt();
+        this._messageText = wrapper.readString();
+        this._secondsSinceSent = wrapper.readInt();
+        this._messageId = wrapper.readString();
+        this._confirmationId = wrapper.readInt();
+        this._senderId = wrapper.readInt();
+        this._senderName = wrapper.readString();
+        this._senderFigure = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

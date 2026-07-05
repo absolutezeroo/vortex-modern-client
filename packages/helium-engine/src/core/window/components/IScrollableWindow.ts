@@ -10,13 +10,13 @@ import type {IWindow} from '../IWindow';
  */
 export interface IScrollableWindow extends IWindow
 {
-	scrollH: number;
-	scrollV: number;
-	scrollStepH: number;
-	scrollStepV: number;
+    scrollH: number;
+    scrollV: number;
+    scrollStepH: number;
+    scrollStepV: number;
 
-	readonly maxScrollH: number;
-	readonly maxScrollV: number;
-	readonly visibleRegion: { x: number; y: number; width: number; height: number };
-	readonly scrollableRegion: { x: number; y: number; width: number; height: number };
+    readonly maxScrollH: number;
+    readonly maxScrollV: number;
+    readonly visibleRegion: { x: number; y: number; width: number; height: number };
+    readonly scrollableRegion: { x: number; y: number; width: number; height: number };
 }

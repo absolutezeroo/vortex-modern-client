@@ -6,10 +6,10 @@ export {RoomObjectCategoryEnum} from './RoomObjectCategoryEnum';
 export {RoomObjectLogicEnum} from './RoomObjectLogicEnum';
 export {RoomObjectTypeEnum} from './RoomObjectTypeEnum';
 export {
-	RoomObjectUserTypes,
-	getUserTypeId,
-	getUserTypeName,
-	getVisualizationType,
+    RoomObjectUserTypes,
+    getUserTypeId,
+    getUserTypeName,
+    getVisualizationType,
 } from './RoomObjectUserTypes';
 export {RoomObjectVariableEnum} from './RoomObjectVariableEnum';
 export {RoomPlaneData} from './RoomPlaneData';

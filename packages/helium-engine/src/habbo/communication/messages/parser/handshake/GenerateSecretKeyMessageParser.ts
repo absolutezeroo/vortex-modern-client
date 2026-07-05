@@ -10,40 +10,40 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class CompleteDiffieHandshakeMessageParser implements IMessageParser
 {
-	private _encryptedPublicKey: string = '';
+    private _encryptedPublicKey: string = '';
 
-	get encryptedPublicKey(): string
-	{
-		return this._encryptedPublicKey;
-	}
+    get encryptedPublicKey(): string
+    {
+        return this._encryptedPublicKey;
+    }
 
-	private _serverClientEncryption: boolean = false;
+    private _serverClientEncryption: boolean = false;
 
-	get serverClientEncryption(): boolean
-	{
-		return this._serverClientEncryption;
-	}
+    get serverClientEncryption(): boolean
+    {
+        return this._serverClientEncryption;
+    }
 
-	flush(): boolean
-	{
-		this._encryptedPublicKey = '';
-		this._serverClientEncryption = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._encryptedPublicKey = '';
+        this._serverClientEncryption = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper.bytesAvailable < 2) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper.bytesAvailable < 2) return false;
 
-		this._encryptedPublicKey = wrapper.readString();
+        this._encryptedPublicKey = wrapper.readString();
 
-		if (wrapper.bytesAvailable > 0)
-		{
-			this._serverClientEncryption = wrapper.readBoolean();
-		}
+        if(wrapper.bytesAvailable > 0)
+        {
+            this._serverClientEncryption = wrapper.readBoolean();
+        }
 
-		return true;
-	}
+        return true;
+    }
 }
 
 // Alias for backwards compatibility

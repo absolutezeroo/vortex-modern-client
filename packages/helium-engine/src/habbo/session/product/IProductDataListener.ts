@@ -7,5 +7,5 @@ import type {IDisposable} from '@core/runtime/IDisposable';
  */
 export interface IProductDataListener extends IDisposable
 {
-	productDataReady(): void;
+    productDataReady(): void;
 }

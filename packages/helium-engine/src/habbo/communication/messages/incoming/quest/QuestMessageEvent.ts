@@ -9,8 +9,8 @@ import {QuestMessageEventParser} from '../../parser/quest/QuestMessageEventParse
  */
 export class QuestMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, QuestMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, QuestMessageEventParser);
+    }
 }

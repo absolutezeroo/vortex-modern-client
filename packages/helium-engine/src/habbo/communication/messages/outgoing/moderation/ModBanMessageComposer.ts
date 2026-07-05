@@ -7,23 +7,23 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ModBanMessageComposer extends MessageComposer<unknown[]>
 {
-	public static readonly NO_ISSUE: number = -1;
+    public static readonly NO_ISSUE: number = -1;
 
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(userId: number, message: string, cfhTopic: number, banDurationInHours: number, banMachine: boolean, cfhTopicId: number = -1)
-	{
-		super();
-		this._data = [userId, message, cfhTopic, banDurationInHours, banMachine];
+    constructor(userId: number, message: string, cfhTopic: number, banDurationInHours: number, banMachine: boolean, cfhTopicId: number = -1)
+    {
+        super();
+        this._data = [userId, message, cfhTopic, banDurationInHours, banMachine];
 
-		if (cfhTopicId !== -1)
-		{
-			this._data.push(cfhTopicId);
-		}
-	}
+        if(cfhTopicId !== -1)
+        {
+            this._data.push(cfhTopicId);
+        }
+    }
 
-	getMessageArray(): unknown[]
-	{
-		return this._data;
-	}
+    getMessageArray(): unknown[]
+    {
+        return this._data;
+    }
 }

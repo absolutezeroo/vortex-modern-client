@@ -9,8 +9,8 @@ import {ChatReviewSessionDetachedMessageParser} from '../../parser/help/ChatRevi
  */
 export class ChatReviewSessionDetachedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, ChatReviewSessionDetachedMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, ChatReviewSessionDetachedMessageParser);
+    }
 }

@@ -1,11 +1,11 @@
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 
 type CompactUnit =
-{
-    readonly value: number;
-    readonly key: string;
-    readonly fallback: string;
-};
+    {
+        readonly value: number;
+        readonly key: string;
+        readonly fallback: string;
+    };
 
 const COMPACT_UNITS: CompactUnit[] = [
     {value: 1_000_000_000_000, key: 'trillion', fallback: 'T'},

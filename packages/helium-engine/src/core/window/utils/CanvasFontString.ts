@@ -10,27 +10,27 @@
  * infrastructure shared by every text-measuring/drawing call site.
  */
 const GENERIC_FONT_KEYWORDS = new Set([
-	'serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui',
+    'serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui',
 ]);
 
 export function quoteFontFamilyList(fontFace: string): string
 {
-	return fontFace
-		.split(',')
-		.map((rawName) =>
-		{
-			const name = rawName.trim();
+    return fontFace
+        .split(',')
+        .map((rawName) =>
+        {
+            const name = rawName.trim();
 
-			if (name.length === 0) return name;
+            if(name.length === 0) return name;
 
-			if (GENERIC_FONT_KEYWORDS.has(name.toLowerCase())) return name;
+            if(GENERIC_FONT_KEYWORDS.has(name.toLowerCase())) return name;
 
-			const unquoted = name.replace(/^["']|["']$/g, '');
+            const unquoted = name.replace(/^["']|["']$/g, '');
 
-			return `"${unquoted.replace(/"/g, '\\"')}"`;
-		})
-		.filter((name) => name.length > 0)
-		.join(', ');
+            return `"${unquoted.replace(/"/g, '\\"')}"`;
+        })
+        .filter((name) => name.length > 0)
+        .join(', ');
 }
 
 /**
@@ -50,19 +50,19 @@ export function quoteFontFamilyList(fontFace: string): string
  * evergreen browsers do), falling back to the old heuristic otherwise.
  */
 export function measureFontLineHeight(
-	ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
-	fontSize: number,
-	leading: number = 0
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    fontSize: number,
+    leading: number = 0
 ): number
 {
-	const metrics = ctx.measureText('Mg');
-	const ascent = metrics.fontBoundingBoxAscent;
-	const descent = metrics.fontBoundingBoxDescent;
+    const metrics = ctx.measureText('Mg');
+    const ascent = metrics.fontBoundingBoxAscent;
+    const descent = metrics.fontBoundingBoxDescent;
 
-	if (typeof ascent === 'number' && typeof descent === 'number' && (ascent + descent) > 0)
-	{
-		return Math.ceil(ascent + descent + Math.max(0, leading));
-	}
+    if(typeof ascent === 'number' && typeof descent === 'number' && (ascent + descent) > 0)
+    {
+        return Math.ceil(ascent + descent + Math.max(0, leading));
+    }
 
-	return Math.ceil(fontSize + Math.max(0, leading));
+    return Math.ceil(fontSize + Math.max(0, leading));
 }

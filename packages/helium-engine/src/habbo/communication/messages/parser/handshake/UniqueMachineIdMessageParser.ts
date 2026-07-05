@@ -9,25 +9,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class UniqueMachineIdMessageParser implements IMessageParser
 {
-	private _machineId: string = '';
+    private _machineId: string = '';
 
-	get machineId(): string
-	{
-		return this._machineId;
-	}
+    get machineId(): string
+    {
+        return this._machineId;
+    }
 
-	flush(): boolean
-	{
-		this._machineId = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._machineId = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper.bytesAvailable >= 2)
-		{
-			this._machineId = wrapper.readString();
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper.bytesAvailable >= 2)
+        {
+            this._machineId = wrapper.readString();
+        }
+        return true;
+    }
 }

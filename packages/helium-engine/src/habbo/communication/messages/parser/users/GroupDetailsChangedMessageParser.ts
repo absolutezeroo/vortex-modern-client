@@ -10,23 +10,23 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class GroupDetailsChangedMessageParser implements IMessageParser
 {
-	private _groupId: number = 0;
+    private _groupId: number = 0;
 
-	get groupId(): number
-	{
-		return this._groupId;
-	}
+    get groupId(): number
+    {
+        return this._groupId;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._groupId = wrapper.readInt();
-		return true;
-	}
+        this._groupId = wrapper.readInt();
+        return true;
+    }
 }

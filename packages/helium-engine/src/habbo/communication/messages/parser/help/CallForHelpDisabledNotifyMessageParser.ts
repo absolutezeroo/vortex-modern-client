@@ -9,25 +9,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class CallForHelpDisabledNotifyMessageParser implements IMessageParser
 {
-	private _infoUrl: string = '';
+    private _infoUrl: string = '';
 
-	get infoUrl(): string
-	{
-		return this._infoUrl;
-	}
+    get infoUrl(): string
+    {
+        return this._infoUrl;
+    }
 
-	flush(): boolean
-	{
-		this._infoUrl = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._infoUrl = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._infoUrl = wrapper.readString();
+        this._infoUrl = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

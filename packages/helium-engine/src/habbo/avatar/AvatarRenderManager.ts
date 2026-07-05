@@ -40,75 +40,75 @@ const EMBEDDED_AVATAR_ACTIONS_XML = `<actions><action  id="Default" precedence="
  */
 export class AvatarRenderManager extends Component implements IAvatarRenderManager
 {
-	private static readonly AVATAR_PLACEHOLDER_FIGURE: string = 'hd-99999-99999';
+    private static readonly AVATAR_PLACEHOLDER_FIGURE: string = 'hd-99999-99999';
 
-	private _structure: AvatarStructure;
-	private _aliasCollection: AssetAliasCollection;
-	private _avatarAssetDownloadManager: AvatarAssetDownloadManager | null = null;
-	private _effectAssetDownloadManager: EffectAssetDownloadManager | null = null;
-	private _placeholderFigure: AvatarFigureContainer | null = null;
-	private _pendingFigureDownloads: [IAvatarFigureContainer, IAvatarImageListener | null][] = [];
-	private _configuration: IHabboConfigurationManager | null = null;
-	private _assetLibrary: IAssetLibrary | null = null;
-	private _figureMapReady: boolean = false;
-	private _mandatoryLibrariesReady: boolean = false;
-	private _structureReady: boolean = false;
-	private _geometryReady: boolean = false;
-	private _partSetsReady: boolean = false;
-	private _actionsReady: boolean = false;
-	private _animationsReady: boolean = false;
-	private _effectMapReady: boolean = false;
-	private _structureDownload: AvatarStructureDownload | null = null;
+    private _structure: AvatarStructure;
+    private _aliasCollection: AssetAliasCollection;
+    private _avatarAssetDownloadManager: AvatarAssetDownloadManager | null = null;
+    private _effectAssetDownloadManager: EffectAssetDownloadManager | null = null;
+    private _placeholderFigure: AvatarFigureContainer | null = null;
+    private _pendingFigureDownloads: [IAvatarFigureContainer, IAvatarImageListener | null][] = [];
+    private _configuration: IHabboConfigurationManager | null = null;
+    private _assetLibrary: IAssetLibrary | null = null;
+    private _figureMapReady: boolean = false;
+    private _mandatoryLibrariesReady: boolean = false;
+    private _structureReady: boolean = false;
+    private _geometryReady: boolean = false;
+    private _partSetsReady: boolean = false;
+    private _actionsReady: boolean = false;
+    private _animationsReady: boolean = false;
+    private _effectMapReady: boolean = false;
+    private _structureDownload: AvatarStructureDownload | null = null;
 
-	constructor(context: IContext)
-	{
-		super(context);
+    constructor(context: IContext)
+    {
+        super(context);
 
-		this._structure = new AvatarStructure();
-		this._aliasCollection = new AssetAliasCollection();
-	}
+        this._structure = new AvatarStructure();
+        this._aliasCollection = new AssetAliasCollection();
+    }
 
-	private _isReady: boolean = false;
-	private _configurationCompleteHandled: boolean = false;
+    private _isReady: boolean = false;
+    private _configurationCompleteHandled: boolean = false;
 
-	public get isReady(): boolean
-	{
-		return this._isReady;
-	}
+    public get isReady(): boolean
+    {
+        return this._isReady;
+    }
 
-	public get effectMap(): Map<string, any>
-	{
-		if (!this._effectAssetDownloadManager) return new Map();
+    public get effectMap(): Map<string, any>
+    {
+        if(!this._effectAssetDownloadManager) return new Map();
 
-		return this._effectAssetDownloadManager.effectMap;
-	}
+        return this._effectAssetDownloadManager.effectMap;
+    }
 
-	protected override get dependencies(): Array<ComponentDependency<any>>
-	{
-		return [
-			new ComponentDependency(
-				IID_HabboConfigurationManager,
-				(config: IHabboConfigurationManager | null) =>
-				{
-					this._configuration = config;
-					this.tryOnConfigurationComplete();
-				},
-				true,
-				[{type: 'complete', callback: () => this.tryOnConfigurationComplete()}]
-			),
-			new ComponentDependency(
-				IID_AssetLibrary,
-				(assets: IAssetLibrary | null) =>
-				{
-					this._assetLibrary = assets;
-					this.tryOnConfigurationComplete();
-				},
-				true
-			),
-		];
-	}
+    protected override get dependencies(): Array<ComponentDependency<any>>
+    {
+        return [
+            new ComponentDependency(
+                IID_HabboConfigurationManager,
+                (config: IHabboConfigurationManager | null) =>
+                {
+                    this._configuration = config;
+                    this.tryOnConfigurationComplete();
+                },
+                true,
+                [{type: 'complete', callback: () => this.tryOnConfigurationComplete()}]
+            ),
+            new ComponentDependency(
+                IID_AssetLibrary,
+                (assets: IAssetLibrary | null) =>
+                {
+                    this._assetLibrary = assets;
+                    this.tryOnConfigurationComplete();
+                },
+                true
+            ),
+        ];
+    }
 
-	/**
+    /**
 	 * Component's dependency injection resolves IID_HabboConfigurationManager and
 	 * IID_AssetLibrary independently and in no guaranteed order, and only attaches
 	 * the 'complete' listener once the *configuration* dependency resolves — so
@@ -123,519 +123,519 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 	 * check both conditions from every point either one could become satisfied,
 	 * and let onConfigurationComplete()'s own guard make repeat calls a no-op.
 	 */
-	private tryOnConfigurationComplete(): void
-	{
-		if (!this._assetLibrary || !this._configuration?.isInitialized()) return;
+    private tryOnConfigurationComplete(): void
+    {
+        if(!this._assetLibrary || !this._configuration?.isInitialized()) return;
 
-		this.onConfigurationComplete();
-	}
+        this.onConfigurationComplete();
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
-	protected override initComponent(): void
-	{
-		this.onConfigurationReady();
-	}
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
+    protected override initComponent(): void
+    {
+        this.onConfigurationReady();
+    }
 
-	public createAvatarImage(
-		figureString: string,
-		scale: string,
-		gender: string,
-		listener: IAvatarImageListener | null = null,
-		effectListener: IAvatarEffectListener | null = null
-	): IAvatarImage | null
-	{
-		const figureContainer = new AvatarFigureContainer(figureString);
+    public createAvatarImage(
+        figureString: string,
+        scale: string,
+        gender: string,
+        listener: IAvatarImageListener | null = null,
+        effectListener: IAvatarEffectListener | null = null
+    ): IAvatarImage | null
+    {
+        const figureContainer = new AvatarFigureContainer(figureString);
 
-		if (this._avatarAssetDownloadManager === null)
-		{
-			this._pendingFigureDownloads.push([figureContainer, listener]);
+        if(this._avatarAssetDownloadManager === null)
+        {
+            this._pendingFigureDownloads.push([figureContainer, listener]);
 
-			return null;
-		}
+            return null;
+        }
 
-		if (gender)
-		{
-			this.validateAvatarFigure(figureContainer, gender);
-		}
+        if(gender)
+        {
+            this.validateAvatarFigure(figureContainer, gender);
+        }
 
-		if (this._avatarAssetDownloadManager.isReady(figureContainer))
-		{
-			return new AvatarImage(
-				this._structure,
-				this._aliasCollection,
-				figureContainer,
-				scale,
-				this._effectAssetDownloadManager,
-				effectListener
-			);
-		}
+        if(this._avatarAssetDownloadManager.isReady(figureContainer))
+        {
+            return new AvatarImage(
+                this._structure,
+                this._aliasCollection,
+                figureContainer,
+                scale,
+                this._effectAssetDownloadManager,
+                effectListener
+            );
+        }
 
-		if (this._placeholderFigure === null)
-		{
-			this._placeholderFigure = new AvatarFigureContainer(AvatarRenderManager.AVATAR_PLACEHOLDER_FIGURE);
-		}
+        if(this._placeholderFigure === null)
+        {
+            this._placeholderFigure = new AvatarFigureContainer(AvatarRenderManager.AVATAR_PLACEHOLDER_FIGURE);
+        }
 
-		this._avatarAssetDownloadManager.loadFigureSetData(figureContainer, listener);
+        this._avatarAssetDownloadManager.loadFigureSetData(figureContainer, listener);
 
-		return new PlaceholderAvatarImage(
-			this._structure,
-			this._aliasCollection,
-			this._placeholderFigure,
-			scale,
-			this._effectAssetDownloadManager
-		);
-	}
+        return new PlaceholderAvatarImage(
+            this._structure,
+            this._aliasCollection,
+            this._placeholderFigure,
+            scale,
+            this._effectAssetDownloadManager
+        );
+    }
 
-	public getFigureData(): IFigureData
-	{
-		return this._structure.figureData;
-	}
+    public getFigureData(): IFigureData
+    {
+        return this._structure.figureData;
+    }
 
-	public getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string
-	{
-		const figure = new AvatarFigureContainer(figureString);
+    public getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string
+    {
+        const figure = new AvatarFigureContainer(figureString);
 
-		for (const setId of figureIds)
-		{
-			const partSet = this._structure.figureData.getFigurePartSet(setId);
+        for(const setId of figureIds)
+        {
+            const partSet = this._structure.figureData.getFigurePartSet(setId);
 
-			if (partSet)
-			{
-				figure.updatePart(partSet.type, setId, [0]);
-			}
-		}
+            if(partSet)
+            {
+                figure.updatePart(partSet.type, setId, [0]);
+            }
+        }
 
-		return figure.getFigureString();
-	}
+        return figure.getFigureString();
+    }
 
-	public isValidFigureSetForGender(setId: number, gender: string): boolean
-	{
-		const partSet = this._structure.figureData.getFigurePartSet(setId);
+    public isValidFigureSetForGender(setId: number, gender: string): boolean
+    {
+        const partSet = this._structure.figureData.getFigurePartSet(setId);
 
-		if (!partSet) return false;
+        if(!partSet) return false;
 
-		return partSet.gender === gender || partSet.gender === 'U';
-	}
+        return partSet.gender === gender || partSet.gender === 'U';
+    }
 
-	public getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[]
-	{
-		return this._structure.getMandatorySetTypeIds(gender, clubLevel);
-	}
+    public getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[]
+    {
+        return this._structure.getMandatorySetTypeIds(gender, clubLevel);
+    }
 
-	public createFigureContainer(figureString: string): IAvatarFigureContainer
-	{
-		return new AvatarFigureContainer(figureString);
-	}
+    public createFigureContainer(figureString: string): IAvatarFigureContainer
+    {
+        return new AvatarFigureContainer(figureString);
+    }
 
-	public isFigureReady(figure: IAvatarFigureContainer): boolean
-	{
-		if (!this._avatarAssetDownloadManager) return false;
+    public isFigureReady(figure: IAvatarFigureContainer): boolean
+    {
+        if(!this._avatarAssetDownloadManager) return false;
 
-		return this._avatarAssetDownloadManager.isReady(figure);
-	}
+        return this._avatarAssetDownloadManager.isReady(figure);
+    }
 
-	public downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null = null): void
-	{
-		if (!this._avatarAssetDownloadManager)
-		{
-			this._pendingFigureDownloads.push([figure, listener]);
+    public downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null = null): void
+    {
+        if(!this._avatarAssetDownloadManager)
+        {
+            this._pendingFigureDownloads.push([figure, listener]);
 
-			return;
-		}
+            return;
+        }
 
-		this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
-	}
+        this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
+    }
 
-	public injectFigureData(data: any): void
-	{
-		this._structure.injectFigureData(data);
-	}
+    public injectFigureData(data: any): void
+    {
+        this._structure.injectFigureData(data);
+    }
 
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
+        this._disposed = true;
 
-		if (this._avatarAssetDownloadManager)
-		{
-			this._avatarAssetDownloadManager.dispose();
-			this._avatarAssetDownloadManager = null;
-		}
+        if(this._avatarAssetDownloadManager)
+        {
+            this._avatarAssetDownloadManager.dispose();
+            this._avatarAssetDownloadManager = null;
+        }
 
-		if (this._effectAssetDownloadManager)
-		{
-			this._effectAssetDownloadManager.dispose();
-			this._effectAssetDownloadManager = null;
-		}
+        if(this._effectAssetDownloadManager)
+        {
+            this._effectAssetDownloadManager.dispose();
+            this._effectAssetDownloadManager = null;
+        }
 
-		this._pendingFigureDownloads.length = 0;
-		this._structureDownload = null;
-		this._placeholderFigure = null;
-		this._structure.dispose();
-		this._aliasCollection.dispose();
+        this._pendingFigureDownloads.length = 0;
+        this._structureDownload = null;
+        this._placeholderFigure = null;
+        this._structure.dispose();
+        this._aliasCollection.dispose();
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	/**
+    /**
 	 * AS3 initComponent(): loads embedded avatar XML assets from AssetLibrary.
 	 *
 	 * @see sources/win63_version/habbo/avatar/class_49.as
 	 */
-	private onConfigurationReady(): void
-	{
-		if (!this._assetLibrary) return;
+    private onConfigurationReady(): void
+    {
+        if(!this._assetLibrary) return;
 
-		log.info('Loading embedded avatar XML assets...');
+        log.info('Loading embedded avatar XML assets...');
 
-		const embeddedActions = parseXmlDocument(EMBEDDED_AVATAR_ACTIONS_XML);
+        const embeddedActions = parseXmlDocument(EMBEDDED_AVATAR_ACTIONS_XML);
 
-		this._structure.initGeometry(this.getEmbeddedAvatarAssetContent('HabboAvatarGeometry'));
-		this._geometryReady = true;
-		this._structure.initPartSets(this.getEmbeddedAvatarAssetContent('HabboAvatarPartSets'));
-		this._partSetsReady = true;
+        this._structure.initGeometry(this.getEmbeddedAvatarAssetContent('HabboAvatarGeometry'));
+        this._geometryReady = true;
+        this._structure.initPartSets(this.getEmbeddedAvatarAssetContent('HabboAvatarPartSets'));
+        this._partSetsReady = true;
 
-		if (embeddedActions !== null)
-		{
-			this._structure.initActions(this._assetLibrary, embeddedActions);
-		}
+        if(embeddedActions !== null)
+        {
+            this._structure.initActions(this._assetLibrary, embeddedActions);
+        }
 
-		this._structure.initAnimation(this.getEmbeddedAvatarAssetContent('HabboAvatarAnimation'));
-		this._animationsReady = true;
-		this._structure.initFigureData(this.getEmbeddedAvatarAssetContent('HabboAvatarFigure'));
+        this._structure.initAnimation(this.getEmbeddedAvatarAssetContent('HabboAvatarAnimation'));
+        this._animationsReady = true;
+        this._structure.initFigureData(this.getEmbeddedAvatarAssetContent('HabboAvatarFigure'));
 
-		this.checkReady();
-	}
+        this.checkReady();
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-	public onConfigurationComplete(): void
-	{
-		// Can now be invoked twice (the immediate isInitialized() check above, and
-		// the 'complete' event handler) if configuration finishes loading between
-		// those two — make sure the actual work only happens once.
-		if (this._configurationCompleteHandled) return;
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
+    public onConfigurationComplete(): void
+    {
+        // Can now be invoked twice (the immediate isInitialized() check above, and
+        // the 'complete' event handler) if configuration finishes loading between
+        // those two — make sure the actual work only happens once.
+        if(this._configurationCompleteHandled) return;
 
-		this._configurationCompleteHandled = true;
+        this._configurationCompleteHandled = true;
 
-		void this.loadActions();
-		this.loadFigureData();
-		this.initDownloadManagers();
-	}
+        void this.loadActions();
+        this.loadFigureData();
+        this.initDownloadManagers();
+    }
 
-	/**
+    /**
 	 * AS3 requestActions()/onAvatarActionsLoaded(): loads HabboAvatarActions XML and updates actions.
 	 *
 	 * @see sources/win63_version/habbo/avatar/class_49.as::requestActions()
 	 * @see sources/win63_version/habbo/avatar/class_49.as::onAvatarActionsLoaded()
 	 */
-	private async loadActions(): Promise<void>
-	{
-		try
-		{
-			let data = this.getEmbeddedAvatarAssetContent('HabboAvatarActions', false);
+    private async loadActions(): Promise<void>
+    {
+        try
+        {
+            let data = this.getEmbeddedAvatarAssetContent('HabboAvatarActions', false);
 
-			if (data === null)
-			{
-				const url = this.getAvatarActionsUrl();
+            if(data === null)
+            {
+                const url = this.getAvatarActionsUrl();
 
-				if (url !== '')
-				{
-					data = await this.loadXmlFromUrl(url, 'HabboAvatarActions');
-				}
-			}
+                if(url !== '')
+                {
+                    data = await this.loadXmlFromUrl(url, 'HabboAvatarActions');
+                }
+            }
 
-			if (data !== null)
-			{
-				this._structure.updateActions(data);
-				this._actionsReady = true;
-				this.checkReady();
-			}
-		}
-		catch (error)
-		{
-			log.error('Failed to load actions data', error);
-		}
-	}
+            if(data !== null)
+            {
+                this._structure.updateActions(data);
+                this._actionsReady = true;
+                this.checkReady();
+            }
+        }
+        catch (error)
+        {
+            log.error('Failed to load actions data', error);
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
-	private getEmbeddedAvatarAssetContent(assetName: string, warnIfMissing: boolean = true): unknown | null
-	{
-		if (!this._assetLibrary || !this._assetLibrary.hasAsset(assetName))
-		{
-			if (warnIfMissing)
-			{
-				log.warn(`Missing embedded avatar asset: ${assetName}`);
-			}
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
+    private getEmbeddedAvatarAssetContent(assetName: string, warnIfMissing: boolean = true): unknown | null
+    {
+        if(!this._assetLibrary || !this._assetLibrary.hasAsset(assetName))
+        {
+            if(warnIfMissing)
+            {
+                log.warn(`Missing embedded avatar asset: ${assetName}`);
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		return this._assetLibrary.getAssetByName(assetName)?.content ?? null;
-	}
+        return this._assetLibrary.getAssetByName(assetName)?.content ?? null;
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-	private loadFigureData(): void
-	{
-		const url = this._configuration?.getProperty('external.figurepartlist.txt') ?? '';
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
+    private loadFigureData(): void
+    {
+        const url = this._configuration?.getProperty('external.figurepartlist.txt') ?? '';
 
-		if (url === '')
-		{
-			return;
-		}
+        if(url === '')
+        {
+            return;
+        }
 
-		this._structureDownload = new AvatarStructureDownload(url, this._structure.figureData as unknown as IStructureData);
-		this._structureDownload.once(AvatarStructureDownload.STRUCTURE_DONE, () =>
-		{
-			this._structureDownload = null;
-			this._structure.init();
-			this._structureReady = true;
-			this.checkReady();
-		});
-	}
+        this._structureDownload = new AvatarStructureDownload(url, this._structure.figureData as unknown as IStructureData);
+        this._structureDownload.once(AvatarStructureDownload.STRUCTURE_DONE, () =>
+        {
+            this._structureDownload = null;
+            this._structure.init();
+            this._structureReady = true;
+            this.checkReady();
+        });
+    }
 
-	private getAvatarActionsUrl(): string
-	{
-		if (!this._configuration)
-		{
-			return '';
-		}
+    private getAvatarActionsUrl(): string
+    {
+        if(!this._configuration)
+        {
+            return '';
+        }
 
-		const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
+        const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
 
-		if (this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl))
-		{
-			return dynamicAvatarUrl + 'HabboAvatarActions.xml';
-		}
+        if(this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl))
+        {
+            return dynamicAvatarUrl + 'HabboAvatarActions.xml';
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	private getEffectMapUrl(): string
-	{
-		if (!this._configuration)
-		{
-			return '';
-		}
+    private getEffectMapUrl(): string
+    {
+        if(!this._configuration)
+        {
+            return '';
+        }
 
-		const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
+        const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
 
-		return this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl) ? dynamicAvatarUrl + 'effectmap.xml' : '';
-	}
+        return this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl) ? dynamicAvatarUrl + 'effectmap.xml' : '';
+    }
 
-	private async loadXmlFromUrl(url: string, assetName: string): Promise<Document | null>
-	{
-		const response = await fetch(url);
+    private async loadXmlFromUrl(url: string, assetName: string): Promise<Document | null>
+    {
+        const response = await fetch(url);
 
-		if (!response.ok)
-		{
-			throw new Error(`${assetName} fetch failed: ${response.status} ${response.statusText}`);
-		}
+        if(!response.ok)
+        {
+            throw new Error(`${assetName} fetch failed: ${response.status} ${response.statusText}`);
+        }
 
-		const text = await response.text();
-		const document = parseXmlDocument(text);
+        const text = await response.text();
+        const document = parseXmlDocument(text);
 
-		if (document === null)
-		{
-			throw new Error(`${assetName} is not valid XML`);
-		}
+        if(document === null)
+        {
+            throw new Error(`${assetName} is not valid XML`);
+        }
 
-		return document;
-	}
+        return document;
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-	private initDownloadManagers(): void
-	{
-		const avatarDownloadUrl = this.getAvatarDownloadUrlTemplate(
-			'flash.dynamic.avatar.download.url',
-			'flash.dynamic.avatar.download.name.template');
-		const effectDownloadUrl = avatarDownloadUrl;
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
+    private initDownloadManagers(): void
+    {
+        const avatarDownloadUrl = this.getAvatarDownloadUrlTemplate(
+            'flash.dynamic.avatar.download.url',
+            'flash.dynamic.avatar.download.name.template');
+        const effectDownloadUrl = avatarDownloadUrl;
 
-		if (!this._assetLibrary)
-		{
-			log.error('AssetLibrary not available for download managers');
+        if(!this._assetLibrary)
+        {
+            log.error('AssetLibrary not available for download managers');
 
-			return;
-		}
+            return;
+        }
 
-		// Connect alias collection to asset library for sprite resolution
-		this._aliasCollection.setAssetLibrary(this._assetLibrary);
+        // Connect alias collection to asset library for sprite resolution
+        this._aliasCollection.setAssetLibrary(this._assetLibrary);
 
-		if (this._avatarAssetDownloadManager === null)
-		{
-			this._mandatoryLibrariesReady = false;
-			this._avatarAssetDownloadManager = new AvatarAssetDownloadManager(
-				avatarDownloadUrl,
-				this._structure,
-				this._assetLibrary,
-				this._aliasCollection,
-				() => this._isReady,
-				() =>
-				{
-					this._mandatoryLibrariesReady = true;
-					this.checkReady();
-				}
-			);
+        if(this._avatarAssetDownloadManager === null)
+        {
+            this._mandatoryLibrariesReady = false;
+            this._avatarAssetDownloadManager = new AvatarAssetDownloadManager(
+                avatarDownloadUrl,
+                this._structure,
+                this._assetLibrary,
+                this._aliasCollection,
+                () => this._isReady,
+                () =>
+                {
+                    this._mandatoryLibrariesReady = true;
+                    this.checkReady();
+                }
+            );
 
-			this.loadFigureMap();
-		}
+            this.loadFigureMap();
+        }
 
-		if (this._effectAssetDownloadManager === null)
-		{
-			this._effectAssetDownloadManager = new EffectAssetDownloadManager(
-				effectDownloadUrl,
-				this._structure,
-				this._assetLibrary
-			);
+        if(this._effectAssetDownloadManager === null)
+        {
+            this._effectAssetDownloadManager = new EffectAssetDownloadManager(
+                effectDownloadUrl,
+                this._structure,
+                this._assetLibrary
+            );
 
-			this.loadEffectMap();
-		}
-	}
+            this.loadEffectMap();
+        }
+    }
 
-	private getAvatarDownloadUrlTemplate(downloadUrlKey: string, nameTemplateKey: string): string
-	{
-		if (!this._configuration)
-		{
-			return '';
-		}
+    private getAvatarDownloadUrlTemplate(downloadUrlKey: string, nameTemplateKey: string): string
+    {
+        if(!this._configuration)
+        {
+            return '';
+        }
 
-		const downloadUrl = this._configuration.getProperty(downloadUrlKey);
+        const downloadUrl = this._configuration.getProperty(downloadUrlKey);
 
-		if (!this.isResolvedDownloadUrlTemplate(downloadUrl))
-		{
-			return '';
-		}
+        if(!this.isResolvedDownloadUrlTemplate(downloadUrl))
+        {
+            return '';
+        }
 
-		return downloadUrl + this._configuration.getProperty(nameTemplateKey);
-	}
+        return downloadUrl + this._configuration.getProperty(nameTemplateKey);
+    }
 
-	private isResolvedDownloadUrlTemplate(url: string): boolean
-	{
-		return !!url && url.indexOf('${') < 0;
-	}
+    private isResolvedDownloadUrlTemplate(url: string): boolean
+    {
+        return !!url && url.indexOf('${') < 0;
+    }
 
-	private async loadFigureMap(): Promise<void>
-	{
-		try
-		{
-			const url = this._configuration?.getProperty('flash.dynamic.avatar.download.configuration') ?? '';
+    private async loadFigureMap(): Promise<void>
+    {
+        try
+        {
+            const url = this._configuration?.getProperty('flash.dynamic.avatar.download.configuration') ?? '';
 
-			if (url === '' || !this._avatarAssetDownloadManager)
-			{
-				return;
-			}
+            if(url === '' || !this._avatarAssetDownloadManager)
+            {
+                return;
+            }
 
-			const response = await fetch(url);
+            const response = await fetch(url);
 
-			if (!response.ok)
-			{
-				throw new Error(`Figure map fetch failed: ${response.status} ${response.statusText}`);
-			}
+            if(!response.ok)
+            {
+                throw new Error(`Figure map fetch failed: ${response.status} ${response.statusText}`);
+            }
 
-			const text = await response.text();
-			let data = this.parseFigureMapXml(text);
-			const trimmed = text.trim();
+            const text = await response.text();
+            let data = this.parseFigureMapXml(text);
+            const trimmed = text.trim();
 
-			if (data === null && (trimmed.startsWith('{') || trimmed.startsWith('[')))
-			{
-				data = JSON.parse(trimmed);
-			}
+            if(data === null && (trimmed.startsWith('{') || trimmed.startsWith('[')))
+            {
+                data = JSON.parse(trimmed);
+            }
 
-			if (data === null)
-			{
-				throw new Error('Figure map is not valid XML');
-			}
+            if(data === null)
+            {
+                throw new Error('Figure map is not valid XML');
+            }
 
-			this._avatarAssetDownloadManager.loadFigureMap(data);
-			this._figureMapReady = true;
-			this.checkReady();
-		}
-		catch (error)
-		{
-			log.error('Failed to load figure map', error);
-		}
-	}
+            this._avatarAssetDownloadManager.loadFigureMap(data);
+            this._figureMapReady = true;
+            this.checkReady();
+        }
+        catch (error)
+        {
+            log.error('Failed to load figure map', error);
+        }
+    }
 
-	/**
+    /**
 	 * Parses figure map XML into the JSON format expected by generateMap.
 	 *
 	 * AS3 uses XML natively. The figure map XML format is:
 	 * <map><lib id="..." revision="..."><part type="..." id="..."/></lib></map>
 	 */
-	private parseFigureMapXml(xmlText: string): any | null
-	{
-		try
-		{
-			const parser = new DOMParser();
-			const doc = parser.parseFromString(xmlText, 'text/xml');
-			const libElements = doc.querySelectorAll('lib');
+    private parseFigureMapXml(xmlText: string): any | null
+    {
+        try
+        {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xmlText, 'text/xml');
+            const libElements = doc.querySelectorAll('lib');
 
-			if (libElements.length === 0) return null;
+            if(libElements.length === 0) return null;
 
-			const libraries: any[] = [];
+            const libraries: any[] = [];
 
-			for (const libEl of libElements)
-			{
-				const id = libEl.getAttribute('id') || '';
-				const revision = libEl.getAttribute('revision') || '';
-				const parts: any[] = [];
+            for(const libEl of libElements)
+            {
+                const id = libEl.getAttribute('id') || '';
+                const revision = libEl.getAttribute('revision') || '';
+                const parts: any[] = [];
 
-				const partElements = libEl.querySelectorAll('part');
+                const partElements = libEl.querySelectorAll('part');
 
-				for (const partEl of partElements)
-				{
-					parts.push({
-						type: partEl.getAttribute('type') || '',
-						id: partEl.getAttribute('id') || ''
-					});
-				}
+                for(const partEl of partElements)
+                {
+                    parts.push({
+                        type: partEl.getAttribute('type') || '',
+                        id: partEl.getAttribute('id') || ''
+                    });
+                }
 
-				libraries.push({id, revision, parts});
-			}
+                libraries.push({id, revision, parts});
+            }
 
-			log.info(`Parsed XML figure map: ${libraries.length} libraries`);
+            log.info(`Parsed XML figure map: ${libraries.length} libraries`);
 
-			return {libraries};
-		}
-		catch (error)
-		{
-			log.error('XML parsing error', error);
+            return {libraries};
+        }
+        catch (error)
+        {
+            log.error('XML parsing error', error);
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-	private async loadEffectMap(): Promise<void>
-	{
-		try
-		{
-			const url = this.getEffectMapUrl();
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
+    private async loadEffectMap(): Promise<void>
+    {
+        try
+        {
+            const url = this.getEffectMapUrl();
 
-			if (url !== '' && this._effectAssetDownloadManager)
-			{
-				const data = await this.loadXmlFromUrl(url, 'effectmap');
+            if(url !== '' && this._effectAssetDownloadManager)
+            {
+                const data = await this.loadXmlFromUrl(url, 'effectmap');
 
-				if (data !== null)
-				{
-					this._effectAssetDownloadManager.loadEffectMap(data);
-				}
-			}
+                if(data !== null)
+                {
+                    this._effectAssetDownloadManager.loadEffectMap(data);
+                }
+            }
 
-			this._effectMapReady = true;
-			this.checkReady();
-		}
-		catch (error)
-		{
-			log.error('Failed to load effect map', error);
-		}
-	}
+            this._effectMapReady = true;
+            this.checkReady();
+        }
+        catch (error)
+        {
+            log.error('Failed to load effect map', error);
+        }
+    }
 
-	private checkReady(): void
-	{
-		if (this._isReady) return;
+    private checkReady(): void
+    {
+        if(this._isReady) return;
 
-		if (this._geometryReady &&
+        if(this._geometryReady &&
 			this._partSetsReady &&
 			this._actionsReady &&
 			this._animationsReady &&
@@ -643,48 +643,48 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 			this._figureMapReady &&
 			this._mandatoryLibrariesReady &&
 			this._effectMapReady)
-		{
-			this._isReady = true;
+        {
+            this._isReady = true;
 
-			log.info('Avatar render system ready');
-			this.events.emit(AvatarRenderEvent.AVATAR_RENDER_READY);
-			this._avatarAssetDownloadManager?.processInitBuffer();
-			this.purgeInitDownloadBuffer();
-		}
-	}
+            log.info('Avatar render system ready');
+            this.events.emit(AvatarRenderEvent.AVATAR_RENDER_READY);
+            this._avatarAssetDownloadManager?.processInitBuffer();
+            this.purgeInitDownloadBuffer();
+        }
+    }
 
-	private purgeInitDownloadBuffer(): void
-	{
-		if (!this._avatarAssetDownloadManager) return;
+    private purgeInitDownloadBuffer(): void
+    {
+        if(!this._avatarAssetDownloadManager) return;
 
-		const buffer = this._pendingFigureDownloads;
+        const buffer = this._pendingFigureDownloads;
 
-		this._pendingFigureDownloads = [];
+        this._pendingFigureDownloads = [];
 
-		for (const [figure, listener] of buffer)
-		{
-			if (listener !== null && !listener.disposed)
-			{
-				this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
-			}
-		}
-	}
+        for(const [figure, listener] of buffer)
+        {
+            if(listener !== null && !listener.disposed)
+            {
+                this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
+            }
+        }
+    }
 
-	private validateAvatarFigure(figure: AvatarFigureContainer, gender: string): void
-	{
-		const mandatoryTypes = this._structure.getMandatorySetTypeIds(gender, 0);
+    private validateAvatarFigure(figure: AvatarFigureContainer, gender: string): void
+    {
+        const mandatoryTypes = this._structure.getMandatorySetTypeIds(gender, 0);
 
-		for (const partType of mandatoryTypes)
-		{
-			if (!figure.hasPartType(partType))
-			{
-				const defaultPartSet = this._structure.getDefaultPartSet(partType, gender);
+        for(const partType of mandatoryTypes)
+        {
+            if(!figure.hasPartType(partType))
+            {
+                const defaultPartSet = this._structure.getDefaultPartSet(partType, gender);
 
-				if (defaultPartSet)
-				{
-					figure.updatePart(partType, defaultPartSet.id, [0]);
-				}
-			}
-		}
-	}
+                if(defaultPartSet)
+                {
+                    figure.updatePart(partType, defaultPartSet.id, [0]);
+                }
+            }
+        }
+    }
 }

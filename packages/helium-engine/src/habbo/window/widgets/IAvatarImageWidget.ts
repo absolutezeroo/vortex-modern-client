@@ -10,35 +10,34 @@ import type {IWidget} from './IWidget';
  */
 export interface IAvatarImageWidget extends IWidget
 {
-	/**
+    /**
 	 * The avatar figure string (e.g. "hd-180-1.ch-210-66.lg-270-82.sh-290-81").
 	 */
-	figure: string;
+    figure: string;
 
-	/**
+    /**
 	 * The rendering scale: "h" (normal) or "sh" (small/half).
 	 */
-	scale: string;
+    scale: string;
 
-	/**
+    /**
 	 * Whether to render only the avatar head.
 	 */
-	onlyHead: boolean;
+    onlyHead: boolean;
 
-	/**
+    /**
 	 * Whether to use the cropped image variant.
 	 */
-	cropped: boolean;
+    cropped: boolean;
 
-	/**
+    /**
 	 * The avatar facing direction (0-7).
 	 */
-	direction: number;
+    direction: number;
 
-	/**
+    /**
 	 * The user ID for click-to-profile behavior.
 	 * Set to 0 to disable click handling.
 	 */
-	userId: number;
+    userId: number;
 }
-

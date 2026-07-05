@@ -9,8 +9,8 @@ import {CompetitionEntryMessageParser} from '../../parser/quest/CompetitionEntry
  */
 export class CompetitionEntryMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, CompetitionEntryMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, CompetitionEntryMessageParser);
+    }
 }

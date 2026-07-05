@@ -12,11 +12,11 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  */
 export interface IWidget extends IDisposable
 {
-	/**
+    /**
 	 * Widget properties getter/setter.
 	 *
 	 * Get: returns current widget properties as PropertyStruct array.
 	 * Set: applies PropertyStruct array to update widget state.
 	 */
-	properties: PropertyStruct[];
+    properties: PropertyStruct[];
 }

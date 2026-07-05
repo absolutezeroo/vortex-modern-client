@@ -8,22 +8,22 @@
  */
 export class ImageLoaderEvent
 {
-	private _loader: HTMLImageElement;
-	private _url: string;
+    private _loader: HTMLImageElement;
+    private _url: string;
 
-	constructor(loader: HTMLImageElement, url: string)
-	{
-		this._loader = loader;
-		this._url = url;
-	}
+    constructor(loader: HTMLImageElement, url: string)
+    {
+        this._loader = loader;
+        this._url = url;
+    }
 
-	get loader(): HTMLImageElement
-	{
-		return this._loader;
-	}
+    get loader(): HTMLImageElement
+    {
+        return this._loader;
+    }
 
-	get url(): string
-	{
-		return this._url;
-	}
+    get url(): string
+    {
+        return this._url;
+    }
 }

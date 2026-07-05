@@ -13,52 +13,52 @@ import {FurnitureDataParser} from './FurnitureDataParser';
 
 export class ObjectDataUpdateMessageParser implements IMessageParser
 {
-	private _id: number = 0;
+    private _id: number = 0;
 
-	get id(): number
-	{
-		return this._id;
-	}
+    get id(): number
+    {
+        return this._id;
+    }
 
-	private _state: number = 0;
+    private _state: number = 0;
 
-	get state(): number
-	{
-		return this._state;
-	}
+    get state(): number
+    {
+        return this._state;
+    }
 
-	private _data: IStuffData = new LegacyStuffData();
+    private _data: IStuffData = new LegacyStuffData();
 
-	get data(): IStuffData
-	{
-		return this._data;
-	}
+    get data(): IStuffData
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._state = 0;
-		this._data = new LegacyStuffData();
-		return true;
-	}
+    flush(): boolean
+    {
+        this._state = 0;
+        this._data = new LegacyStuffData();
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		const idStr = wrapper.readString();
-		this._id = parseInt(idStr, 10);
+        const idStr = wrapper.readString();
+        this._id = parseInt(idStr, 10);
 
-		this._data = FurnitureDataParser.parseStuffData(wrapper);
+        this._data = FurnitureDataParser.parseStuffData(wrapper);
 
-		const stateNum = parseFloat(this._data.getLegacyString());
-		if (!isNaN(stateNum))
-		{
-			this._state = parseInt(this._data.getLegacyString(), 10);
-		}
+        const stateNum = parseFloat(this._data.getLegacyString());
+        if(!isNaN(stateNum))
+        {
+            this._state = parseInt(this._data.getLegacyString(), 10);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

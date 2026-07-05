@@ -10,30 +10,30 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class MOTDNotificationEventParser implements IMessageParser
 {
-	private _messages: string[] = [];
+    private _messages: string[] = [];
 
-	get messages(): string[]
-	{
-		return this._messages;
-	}
+    get messages(): string[]
+    {
+        return this._messages;
+    }
 
-	flush(): boolean
-	{
-		this._messages = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._messages = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._messages.push(wrapper.readString());
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._messages.push(wrapper.readString());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -5,8 +5,8 @@ import type {WindowEvent} from './WindowEvent';
  */
 interface EventListenerEntry
 {
-	listener: Function;
-	priority: number;
+    listener: Function;
+    priority: number;
 }
 
 /**
@@ -19,22 +19,22 @@ interface EventListenerEntry
  */
 export class WindowEventDispatcher
 {
-	// ── Instance fields ──────────────────────────────────────────────
+    // ── Instance fields ──────────────────────────────────────────────
 
-	private _listeners: Map<string, EventListenerEntry[]> = new Map();
-	private _disposed: boolean = false;
+    private _listeners: Map<string, EventListenerEntry[]> = new Map();
+    private _disposed: boolean = false;
 
-	// ── Accessors ────────────────────────────────────────────────────
+    // ── Accessors ────────────────────────────────────────────────────
 
-	/** Whether this dispatcher has been disposed. */
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    /** Whether this dispatcher has been disposed. */
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	// ── Methods ──────────────────────────────────────────────────────
+    // ── Methods ──────────────────────────────────────────────────────
 
-	/**
+    /**
 	 * Registers an event listener for the given event type.
 	 *
 	 * If the same callback is already registered for this type it is not
@@ -45,77 +45,77 @@ export class WindowEventDispatcher
 	 * @param listener - The callback function
 	 * @param priority - Listener priority (higher fires first, default 0)
 	 */
-	public addEventListener(type: string, listener: Function, priority: number = 0): void
-	{
-		let entries = this._listeners.get(type);
-		const entry: EventListenerEntry = {listener, priority};
+    public addEventListener(type: string, listener: Function, priority: number = 0): void
+    {
+        let entries = this._listeners.get(type);
+        const entry: EventListenerEntry = {listener, priority};
 
-		if (!entries)
-		{
-			entries = [entry];
-			this._listeners.set(type, entries);
-		}
-		else
-		{
-			for (const existing of entries)
-			{
-				if (existing.listener === listener)
-				{
-					return;
-				}
-			}
+        if(!entries)
+        {
+            entries = [entry];
+            this._listeners.set(type, entries);
+        }
+        else
+        {
+            for(const existing of entries)
+            {
+                if(existing.listener === listener)
+                {
+                    return;
+                }
+            }
 
-			let inserted = false;
+            let inserted = false;
 
-			for (let i = 0; i < entries.length; i++)
-			{
-				if (priority > entries[i].priority)
-				{
-					entries.splice(i, 0, entry);
-					inserted = true;
-					break;
-				}
-			}
+            for(let i = 0; i < entries.length; i++)
+            {
+                if(priority > entries[i].priority)
+                {
+                    entries.splice(i, 0, entry);
+                    inserted = true;
+                    break;
+                }
+            }
 
-			if (!inserted)
-			{
-				entries.push(entry);
-			}
-		}
-	}
+            if(!inserted)
+            {
+                entries.push(entry);
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Removes a previously registered event listener.
 	 *
 	 * @param type - The event type string
 	 * @param listener - The callback function to remove
 	 */
-	public removeEventListener(type: string, listener: Function): void
-	{
-		if (this._disposed) return;
+    public removeEventListener(type: string, listener: Function): void
+    {
+        if(this._disposed) return;
 
-		const entries = this._listeners.get(type);
+        const entries = this._listeners.get(type);
 
-		if (entries)
-		{
-			for (let i = 0; i < entries.length; i++)
-			{
-				if (entries[i].listener === listener)
-				{
-					entries.splice(i, 1);
+        if(entries)
+        {
+            for(let i = 0; i < entries.length; i++)
+            {
+                if(entries[i].listener === listener)
+                {
+                    entries.splice(i, 1);
 
-					if (entries.length === 0)
-					{
-						this._listeners.delete(type);
-					}
+                    if(entries.length === 0)
+                    {
+                        this._listeners.delete(type);
+                    }
 
-					return;
-				}
-			}
-		}
-	}
+                    return;
+                }
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Dispatches a window event to all registered listeners of its type.
 	 *
 	 * Listeners are invoked in priority order. Returns `true` if the
@@ -124,59 +124,59 @@ export class WindowEventDispatcher
 	 * @param event - The window event to dispatch
 	 * @returns `true` if the event was not prevented
 	 */
-	public dispatchEvent(event: WindowEvent): boolean
-	{
-		if (this._disposed) return false;
+    public dispatchEvent(event: WindowEvent): boolean
+    {
+        if(this._disposed) return false;
 
-		const entries = this._listeners.get(event.type);
+        const entries = this._listeners.get(event.type);
 
-		if (entries)
-		{
-			const callbacks: Function[] = [];
+        if(entries)
+        {
+            const callbacks: Function[] = [];
 
-			for (const entry of entries)
-			{
-				callbacks.push(entry.listener);
-			}
+            for(const entry of entries)
+            {
+                callbacks.push(entry.listener);
+            }
 
-			for (const callback of callbacks)
-			{
-				callback(event);
-			}
-		}
+            for(const callback of callbacks)
+            {
+                callback(event);
+            }
+        }
 
-		return !event.isDefaultPrevented();
-	}
+        return !event.isDefaultPrevented();
+    }
 
-	/**
+    /**
 	 * Returns whether any listener is registered for the given event type.
 	 *
 	 * @param type - The event type string
 	 * @returns `true` if at least one listener exists
 	 */
-	public hasEventListener(type: string): boolean
-	{
-		if (this._disposed) return false;
+    public hasEventListener(type: string): boolean
+    {
+        if(this._disposed) return false;
 
-		return this._listeners.has(type);
-	}
+        return this._listeners.has(type);
+    }
 
-	/**
+    /**
 	 * Disposes this dispatcher, clearing all listener references.
 	 */
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		for (const [, entries] of this._listeners)
-		{
-			for (const entry of entries)
-			{
-				(entry as { listener: Function | null }).listener = null;
-			}
-		}
+        for(const [, entries] of this._listeners)
+        {
+            for(const entry of entries)
+            {
+                (entry as { listener: Function | null }).listener = null;
+            }
+        }
 
-		this._listeners.clear();
-		this._disposed = true;
-	}
+        this._listeners.clear();
+        this._disposed = true;
+    }
 }

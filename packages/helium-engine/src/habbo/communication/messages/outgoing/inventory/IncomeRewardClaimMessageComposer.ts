@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class IncomeRewardClaimMessageComposer extends MessageComposer<[number]>
 {
-	private _data: [number];
+    private _data: [number];
 
-	constructor(rewardId: number)
-	{
-		super();
-		this._data = [rewardId];
-	}
+    constructor(rewardId: number)
+    {
+        super();
+        this._data = [rewardId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

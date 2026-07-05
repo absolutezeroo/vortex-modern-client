@@ -14,9 +14,9 @@ import {RoomSessionState} from './IRoomSession';
 import {RoomSession} from './RoomSession';
 import {RoomSessionEvent} from './events/RoomSessionEvent';
 import {
-	RoomNetworkOpenConnectionMessageComposer
+    RoomNetworkOpenConnectionMessageComposer
 } from '../communication/messages/outgoing/room/session/RoomNetworkOpenConnectionMessageComposer';
-import {BaseHandler} from './handler/BaseHandler';
+import type {BaseHandler} from './handler/BaseHandler';
 import {RoomSessionHandler, RoomSessionHandlerState} from './handler/RoomSessionHandler';
 import {RoomPermissionsHandler} from './handler/RoomPermissionsHandler';
 import {RoomDataHandler} from './handler/RoomDataHandler';
@@ -54,442 +54,442 @@ const log = Logger.getLogger('RoomSessionManager');
  */
 export class RoomSessionManager extends Component implements IRoomSessionManager, IRoomHandlerListener
 {
-	private _communication: IHabboCommunicationManager | null = null;
-	private _roomEngine: IRoomEngine | null = null;
-	private _habboTracking: IHabboTracking | null = null;
-	private _freeFlowChat: IHabboFreeFlowChat | null = null;
-	private _avatarRenderer: IAvatarRenderManager | null = null;
-	private _handlers: BaseHandler[] = [];
-	private _sessions: Map<string, RoomSession> = new Map();
-	private _pendingSession: RoomSession | null = null;
+    private _communication: IHabboCommunicationManager | null = null;
+    private _roomEngine: IRoomEngine | null = null;
+    private _habboTracking: IHabboTracking | null = null;
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
+    private _avatarRenderer: IAvatarRenderManager | null = null;
+    private _handlers: BaseHandler[] = [];
+    private _sessions: Map<string, RoomSession> = new Map();
+    private _pendingSession: RoomSession | null = null;
 
-	constructor(context: IContext)
-	{
-		super(context);
-	}
+    constructor(context: IContext)
+    {
+        super(context);
+    }
 
-	private _sessionEvents: EventEmitter = new EventEmitter();
+    private _sessionEvents: EventEmitter = new EventEmitter();
 
-	get sessionEvents(): EventEmitter
-	{
-		return this._sessionEvents;
-	}
+    get sessionEvents(): EventEmitter
+    {
+        return this._sessionEvents;
+    }
 
-	private _sessionStarting: boolean = false;
+    private _sessionStarting: boolean = false;
 
-	get sessionStarting(): boolean
-	{
-		return this._sessionStarting;
-	}
+    get sessionStarting(): boolean
+    {
+        return this._sessionStarting;
+    }
 
-	private _initialized: boolean = false;
+    private _initialized: boolean = false;
 
-	/**
+    /**
 	 * Whether the manager is fully initialized
 	 * In AS3 this also checks room engine initialization
 	 */
-	get initialized(): boolean
-	{
-		return this._initialized && this.allRequiredDependenciesInjected;
-	}
+    get initialized(): boolean
+    {
+        return this._initialized && this.allRequiredDependenciesInjected;
+    }
 
-	protected override get dependencies(): Array<ComponentDependency<any>>
-	{
-		return [
-			new ComponentDependency(
-				IID_HabboCommunicationManager,
-				(manager: IHabboCommunicationManager | null) =>
-				{
-					this._communication = manager;
-				},
-				true
-			),
-			new ComponentDependency(
-				IID_HabboTracking,
-				(tracking: IHabboTracking | null) =>
-				{
-					this._habboTracking = tracking;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboFreeFlowChat,
-				(chat: IHabboFreeFlowChat | null) =>
-				{
-					this._freeFlowChat = chat;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_RoomEngine,
-				(engine: IRoomEngine | null) =>
-				{
-					this._roomEngine = engine;
-				},
-				false, // Not required
-				[
-					{
-						type: RoomEngineEvent.REE_ENGINE_INITIALIZED,
-						callback: this.onRoomEngineInitialized.bind(this),
-					},
-				]
-			),
-			new ComponentDependency(
-				IID_AvatarRenderManager,
-				(renderer: IAvatarRenderManager | null) =>
-				{
-					this._avatarRenderer = renderer;
-				},
-				false
-			),
-		];
-	}
+    protected override get dependencies(): Array<ComponentDependency<any>>
+    {
+        return [
+            new ComponentDependency(
+                IID_HabboCommunicationManager,
+                (manager: IHabboCommunicationManager | null) =>
+                {
+                    this._communication = manager;
+                },
+                true
+            ),
+            new ComponentDependency(
+                IID_HabboTracking,
+                (tracking: IHabboTracking | null) =>
+                {
+                    this._habboTracking = tracking;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (chat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = chat;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomEngine,
+                (engine: IRoomEngine | null) =>
+                {
+                    this._roomEngine = engine;
+                },
+                false, // Not required
+                [
+                    {
+                        type: RoomEngineEvent.REE_ENGINE_INITIALIZED,
+                        callback: this.onRoomEngineInitialized.bind(this),
+                    },
+                ]
+            ),
+            new ComponentDependency(
+                IID_AvatarRenderManager,
+                (renderer: IAvatarRenderManager | null) =>
+                {
+                    this._avatarRenderer = renderer;
+                },
+                false
+            ),
+        ];
+    }
 
-	/**
+    /**
 	 * Go to a room - creates and starts a new room session
 	 */
-	gotoRoom(roomId: number, password: string = '', roomResources: string = '', skipOpc: boolean = false): boolean
-	{
-		const session = new RoomSession();
+    gotoRoom(roomId: number, password: string = '', roomResources: string = '', skipOpc: boolean = false): boolean
+    {
+        const session = new RoomSession();
 
-		session.roomId = roomId;
-		session.roomPassword = password;
-		session.roomResources = roomResources;
-		session.skipOpc = skipOpc;
+        session.roomId = roomId;
+        session.roomPassword = password;
+        session.roomResources = roomResources;
+        session.skipOpc = skipOpc;
 
-		return this.createSession(session);
-	}
+        return this.createSession(session);
+    }
 
-	/**
+    /**
 	 * Go to a room via network (for room forwarding)
 	 *
 	 * @see sources/win63_version/habbo/session/RoomSessionManager.as gotoRoomNetwork()
 	 */
-	gotoRoomNetwork(roomId: number, homeRoomId: number): boolean
-	{
-		const session = new RoomSession();
+    gotoRoomNetwork(roomId: number, homeRoomId: number): boolean
+    {
+        const session = new RoomSession();
 
-		session.roomId = 1;
-		session.roomPassword = '';
-		session.openConnectionComposer = new RoomNetworkOpenConnectionMessageComposer(roomId, homeRoomId);
+        session.roomId = 1;
+        session.roomPassword = '';
+        session.openConnectionComposer = new RoomNetworkOpenConnectionMessageComposer(roomId, homeRoomId);
 
-		return this.createSession(session);
-	}
+        return this.createSession(session);
+    }
 
-	/**
+    /**
 	 * Start an existing session
 	 */
-	startSession(session: IRoomSession): boolean
-	{
-		if (session.state === RoomSessionState.STARTED)
-		{
-			return false;
-		}
+    startSession(session: IRoomSession): boolean
+    {
+        if(session.state === RoomSessionState.STARTED)
+        {
+            return false;
+        }
 
-		if ((session as RoomSession).isGameSession)
-		{
-			return true;
-		}
+        if((session as RoomSession).isGameSession)
+        {
+            return true;
+        }
 
-		if (session.start())
-		{
-			this._sessionStarting = false;
-			this._sessionEvents.emit(RoomSessionEvent.RSE_STARTED, new RoomSessionEvent(RoomSessionEvent.RSE_STARTED, session));
-			this.updateHandlers(session);
+        if(session.start())
+        {
+            this._sessionStarting = false;
+            this._sessionEvents.emit(RoomSessionEvent.RSE_STARTED, new RoomSessionEvent(RoomSessionEvent.RSE_STARTED, session));
+            this.updateHandlers(session);
 
-			log.info(`Room session started: ${session.roomId}`);
+            log.info(`Room session started: ${session.roomId}`);
 
-			return true;
-		}
+            return true;
+        }
 
-		this.disposeSession(session.roomId);
+        this.disposeSession(session.roomId);
 
-		this._sessionStarting = false;
+        this._sessionStarting = false;
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
 	 * Get an active session by room ID
 	 */
-	getSession(roomId: number): IRoomSession | null
-	{
-		const key = this.getRoomIdentifier(roomId);
+    getSession(roomId: number): IRoomSession | null
+    {
+        const key = this.getRoomIdentifier(roomId);
 
-		return this._sessions.get(key) ?? null;
-	}
+        return this._sessions.get(key) ?? null;
+    }
 
-	/**
+    /**
 	 * Dispose a session
 	 */
-	disposeSession(roomId: number, disposeEngine: boolean = true): void
-	{
-		const key = this.getRoomIdentifier(roomId);
-		const session = this._sessions.get(key);
+    disposeSession(roomId: number, disposeEngine: boolean = true): void
+    {
+        const key = this.getRoomIdentifier(roomId);
+        const session = this._sessions.get(key);
 
-		if (session)
-		{
-			this._sessions.delete(key);
-			this._sessionEvents.emit(RoomSessionEvent.RSE_ENDED, new RoomSessionEvent(RoomSessionEvent.RSE_ENDED, session), disposeEngine);
+        if(session)
+        {
+            this._sessions.delete(key);
+            this._sessionEvents.emit(RoomSessionEvent.RSE_ENDED, new RoomSessionEvent(RoomSessionEvent.RSE_ENDED, session), disposeEngine);
 
-			session.dispose();
+            session.dispose();
 
-			// Dispose room engine content if requested
-			if (disposeEngine && this._roomEngine)
-			{
-				this._roomEngine.disposeRoomInstance(roomId);
-			}
+            // Dispose room engine content if requested
+            if(disposeEngine && this._roomEngine)
+            {
+                this._roomEngine.disposeRoomInstance(roomId);
+            }
 
-			log.info(`Room session disposed: ${roomId}`);
-		}
-	}
+            log.info(`Room session disposed: ${roomId}`);
+        }
+    }
 
-	/**
+    /**
 	 * Start a game session
 	 */
-	startGameSession(): void
-	{
-		const session = new RoomSession();
+    startGameSession(): void
+    {
+        const session = new RoomSession();
 
-		session.roomId = 1;
-		session.isGameSession = true;
+        session.roomId = 1;
+        session.isGameSession = true;
 
-		if (this._communication?.connection)
-		{
-			session.connection = this._communication.connection;
-		}
+        if(this._communication?.connection)
+        {
+            session.connection = this._communication.connection;
+        }
 
-		if (this._habboTracking)
-		{
-			session.habboTracking = this._habboTracking;
-		}
+        if(this._habboTracking)
+        {
+            session.habboTracking = this._habboTracking;
+        }
 
-		const key = this.getRoomIdentifier(session.roomId);
+        const key = this.getRoomIdentifier(session.roomId);
 
-		this._sessions.set(key, session);
+        this._sessions.set(key, session);
 
-		this._sessionEvents.emit(RoomSessionEvent.RSE_CREATED, new RoomSessionEvent(RoomSessionEvent.RSE_CREATED, session));
+        this._sessionEvents.emit(RoomSessionEvent.RSE_CREATED, new RoomSessionEvent(RoomSessionEvent.RSE_CREATED, session));
 
-		log.info('Game session started');
-	}
+        log.info('Game session started');
+    }
 
-	/**
+    /**
 	 * Dispose the game session
 	 */
-	disposeGameSession(): void
-	{
-		const key = this.getRoomIdentifier(1);
-		const session = this._sessions.get(key);
+    disposeGameSession(): void
+    {
+        const key = this.getRoomIdentifier(1);
+        const session = this._sessions.get(key);
 
-		if (session && session.isGameSession)
-		{
-			this.disposeSession(1, false);
-		}
-	}
+        if(session && session.isGameSession)
+        {
+            this.disposeSession(1, false);
+        }
+    }
 
-	/**
+    /**
 	 * Called by handlers when session state changes
 	 */
-	sessionUpdate(roomId: number, type: string): void
-	{
-		const session = this.getSession(roomId);
+    sessionUpdate(roomId: number, type: string): void
+    {
+        const session = this.getSession(roomId);
 
-		if (session !== null)
-		{
-			switch (type)
-			{
-				case RoomSessionHandlerState.RS_CONNECTED:
-				case RoomSessionHandlerState.RS_READY:
-					// Session connected/ready - no action needed
-					break;
-				case RoomSessionHandlerState.RS_DISCONNECTED:
-					this.disposeSession(roomId);
-					break;
-			}
-		}
+        if(session !== null)
+        {
+            switch(type)
+            {
+                case RoomSessionHandlerState.RS_CONNECTED:
+                case RoomSessionHandlerState.RS_READY:
+                    // Session connected/ready - no action needed
+                    break;
+                case RoomSessionHandlerState.RS_DISCONNECTED:
+                    this.disposeSession(roomId);
+                    break;
+            }
+        }
 
-		log.debug(`Session update: room=${roomId}, type=${type}`);
-	}
+        log.debug(`Session update: room=${roomId}, type=${type}`);
+    }
 
-	/**
+    /**
 	 * Called by handlers when session needs reinitialization
 	 */
-	sessionReinitialize(oldRoomId: number, newRoomId: number): void
-	{
-		const oldKey = this.getRoomIdentifier(oldRoomId);
-		const session = this._sessions.get(oldKey);
+    sessionReinitialize(oldRoomId: number, newRoomId: number): void
+    {
+        const oldKey = this.getRoomIdentifier(oldRoomId);
+        const session = this._sessions.get(oldKey);
 
-		if (session)
-		{
-			this._sessions.delete(oldKey);
+        if(session)
+        {
+            this._sessions.delete(oldKey);
 
-			session.reset(newRoomId);
+            session.reset(newRoomId);
 
-			const newKey = this.getRoomIdentifier(newRoomId);
+            const newKey = this.getRoomIdentifier(newRoomId);
 
-			// Remove any existing session at new key
-			const existingSession = this._sessions.get(newKey);
+            // Remove any existing session at new key
+            const existingSession = this._sessions.get(newKey);
 
-			if (existingSession)
-			{
-				existingSession.dispose();
-			}
+            if(existingSession)
+            {
+                existingSession.dispose();
+            }
 
-			this._sessions.set(newKey, session);
+            this._sessions.set(newKey, session);
 
-			this.updateHandlers(session);
-		}
+            this.updateHandlers(session);
+        }
 
-		log.debug(`Session reinitialize: ${oldRoomId} -> ${newRoomId}`);
-	}
+        log.debug(`Session reinitialize: ${oldRoomId} -> ${newRoomId}`);
+    }
 
-	override dispose(): void
-	{
-		if (this.disposed) return;
+    override dispose(): void
+    {
+        if(this.disposed) return;
 
-		// Dispose all sessions
-		for (const [key, session] of this._sessions)
-		{
-			session.dispose();
+        // Dispose all sessions
+        for(const [key, session] of this._sessions)
+        {
+            session.dispose();
 
-			this._sessions.delete(key);
-		}
+            this._sessions.delete(key);
+        }
 
-		// Dispose all handlers
-		for (const handler of this._handlers)
-		{
-			handler.dispose();
-		}
+        // Dispose all handlers
+        for(const handler of this._handlers)
+        {
+            handler.dispose();
+        }
 
-		this._handlers = [];
+        this._handlers = [];
 
-		this._sessionEvents.removeAllListeners();
+        this._sessionEvents.removeAllListeners();
 
-		super.dispose();
+        super.dispose();
 
-		log.info('RoomSessionManager disposed');
-	}
+        log.info('RoomSessionManager disposed');
+    }
 
-	protected override initComponent(): void
-	{
-		this.createHandlers();
+    protected override initComponent(): void
+    {
+        this.createHandlers();
 
-		this._initialized = true;
+        this._initialized = true;
 
-		this.executePendingSessionRequest();
+        this.executePendingSessionRequest();
 
-		log.info('RoomSessionManager initialized');
-	}
+        log.info('RoomSessionManager initialized');
+    }
 
-	/**
+    /**
 	 * Called when room engine is initialized
 	 */
-	private onRoomEngineInitialized(..._args: unknown[]): void
-	{
-		log.debug('Room engine initialized');
+    private onRoomEngineInitialized(..._args: unknown[]): void
+    {
+        log.debug('Room engine initialized');
 
-		// Execute any pending session requests now that engine is ready
-		this.executePendingSessionRequest();
-	}
+        // Execute any pending session requests now that engine is ready
+        this.executePendingSessionRequest();
+    }
 
-	private createHandlers(): void
-	{
-		if (!this._communication)
-		{
-			return;
-		}
+    private createHandlers(): void
+    {
+        if(!this._communication)
+        {
+            return;
+        }
 
-		const connection = this._communication.connection;
+        const connection = this._communication.connection;
 
-		// Create handlers in AS3 order
-		// @see sources/win63_version/habbo/session/RoomSessionManager.as line 159-175
-		this._handlers.push(new RoomSessionHandler(connection, this));
-		this._handlers.push(new RoomChatHandler(connection, this));
-		this._handlers.push(new RoomUsersHandler(connection, this));
-		this._handlers.push(new RoomPermissionsHandler(connection, this));
-		this._handlers.push(new AvatarEffectsHandler(connection, this));
-		this._handlers.push(new RoomDataHandler(connection, this));
-		this._handlers.push(new PresentHandler(connection, this));
-		this._handlers.push(new GenericErrorHandler(connection, this));
-		this._handlers.push(new PollHandler(connection, this));
-		this._handlers.push(new WordQuizHandler(connection, this));
-		this._handlers.push(new RoomDimmerPresetsHandler(connection, this));
-		this._handlers.push(new PetPackageHandler(connection, this));
+        // Create handlers in AS3 order
+        // @see sources/win63_version/habbo/session/RoomSessionManager.as line 159-175
+        this._handlers.push(new RoomSessionHandler(connection, this));
+        this._handlers.push(new RoomChatHandler(connection, this));
+        this._handlers.push(new RoomUsersHandler(connection, this));
+        this._handlers.push(new RoomPermissionsHandler(connection, this));
+        this._handlers.push(new AvatarEffectsHandler(connection, this));
+        this._handlers.push(new RoomDataHandler(connection, this));
+        this._handlers.push(new PresentHandler(connection, this));
+        this._handlers.push(new GenericErrorHandler(connection, this));
+        this._handlers.push(new PollHandler(connection, this));
+        this._handlers.push(new WordQuizHandler(connection, this));
+        this._handlers.push(new RoomDimmerPresetsHandler(connection, this));
+        this._handlers.push(new PetPackageHandler(connection, this));
 
-		log.debug(`Created ${this._handlers.length} handlers`);
-	}
+        log.debug(`Created ${this._handlers.length} handlers`);
+    }
 
-	private createSession(session: RoomSession): boolean
-	{
-		if (!this.initialized)
-		{
-			log.debug(`Not initialized, creating pending session for room: ${session.roomId}`);
+    private createSession(session: RoomSession): boolean
+    {
+        if(!this.initialized)
+        {
+            log.debug(`Not initialized, creating pending session for room: ${session.roomId}`);
 
-			this._pendingSession = session;
+            this._pendingSession = session;
 
-			return false;
-		}
+            return false;
+        }
 
-		const key = this.getRoomIdentifier(session.roomId);
+        const key = this.getRoomIdentifier(session.roomId);
 
-		this._sessionStarting = true;
+        this._sessionStarting = true;
 
-		// Dispose existing session for this room
-		if (this._sessions.has(key))
-		{
-			this.disposeSession(session.roomId, false);
-		}
+        // Dispose existing session for this room
+        if(this._sessions.has(key))
+        {
+            this.disposeSession(session.roomId, false);
+        }
 
-		// Set connection
-		if (this._communication?.connection)
-		{
-			session.connection = this._communication.connection;
-		}
+        // Set connection
+        if(this._communication?.connection)
+        {
+            session.connection = this._communication.connection;
+        }
 
-		// Propagate tracking to session
-		if (this._habboTracking)
-		{
-			session.habboTracking = this._habboTracking;
-		}
+        // Propagate tracking to session
+        if(this._habboTracking)
+        {
+            session.habboTracking = this._habboTracking;
+        }
 
-		this._sessions.set(key, session);
+        this._sessions.set(key, session);
 
-		this._sessionEvents.emit(RoomSessionEvent.RSE_CREATED, new RoomSessionEvent(RoomSessionEvent.RSE_CREATED, session));
+        this._sessionEvents.emit(RoomSessionEvent.RSE_CREATED, new RoomSessionEvent(RoomSessionEvent.RSE_CREATED, session));
 
-		log.info(`Room session created: ${session.roomId}`);
+        log.info(`Room session created: ${session.roomId}`);
 
-		// Start the session
-		this.startSession(session);
+        // Start the session
+        this.startSession(session);
 
-		return true;
-	}
+        return true;
+    }
 
-	private executePendingSessionRequest(): void
-	{
-		if (this.initialized && this._pendingSession !== null)
-		{
-			this.createSession(this._pendingSession);
+    private executePendingSessionRequest(): void
+    {
+        if(this.initialized && this._pendingSession !== null)
+        {
+            this.createSession(this._pendingSession);
 
-			this._pendingSession = null;
-		}
-	}
+            this._pendingSession = null;
+        }
+    }
 
-	private updateHandlers(session: IRoomSession): void
-	{
-		if (session !== null && this._handlers !== null)
-		{
-			for (const handler of this._handlers)
-			{
-				if (handler !== null)
-				{
-					handler.roomId = session.roomId;
-				}
-			}
-		}
-	}
+    private updateHandlers(session: IRoomSession): void
+    {
+        if(session !== null && this._handlers !== null)
+        {
+            for(const handler of this._handlers)
+            {
+                if(handler !== null)
+                {
+                    handler.roomId = session.roomId;
+                }
+            }
+        }
+    }
 
-	private getRoomIdentifier(roomId: number): string
-	{
-		return `room_${roomId}`;
-	}
+    private getRoomIdentifier(roomId: number): string
+    {
+        return `room_${roomId}`;
+    }
 }

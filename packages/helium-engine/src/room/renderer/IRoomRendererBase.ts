@@ -11,13 +11,13 @@ import type {IRoomObject} from '../object/IRoomObject';
 
 export interface IRoomRendererBase
 {
-	dispose(): void;
+    dispose(): void;
 
-	reset(): void;
+    reset(): void;
 
-	feedRoomObject(object: IRoomObject): void;
+    feedRoomObject(object: IRoomObject): void;
 
-	removeRoomObject(object: IRoomObject): void;
+    removeRoomObject(object: IRoomObject): void;
 
-	update(time: number): void;
+    update(time: number): void;
 }

@@ -12,15 +12,15 @@ import {MoveTo} from './MoveTo';
  */
 export class MoveBy extends MoveTo
 {
-	constructor(target: IWindow, duration: number, dx: number, dy: number)
-	{
-		super(target, duration, dx, dy);
-	}
+    constructor(target: IWindow, duration: number, dx: number, dy: number)
+    {
+        super(target, duration, dx, dy);
+    }
 
-	public override start(): void
-	{
-		this._targetX = this._target!.x + this._targetX;
-		this._targetY = this._target!.y + this._targetY;
-		super.start();
-	}
+    public override start(): void
+    {
+        this._targetX = this._target!.x + this._targetX;
+        this._targetY = this._target!.y + this._targetY;
+        super.start();
+    }
 }

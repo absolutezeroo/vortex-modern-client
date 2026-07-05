@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UpdateClothingChangeFurnitureComposer extends MessageComposer<ConstructorParameters<typeof UpdateClothingChangeFurnitureComposer>>
 {
-	private _data: ConstructorParameters<typeof UpdateClothingChangeFurnitureComposer>;
+    private _data: ConstructorParameters<typeof UpdateClothingChangeFurnitureComposer>;
 
-	constructor(objectId: number, gender: string, figure: string)
-	{
-		super();
-		this._data = [objectId, gender, figure];
-	}
+    constructor(objectId: number, gender: string, figure: string)
+    {
+        super();
+        this._data = [objectId, gender, figure];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

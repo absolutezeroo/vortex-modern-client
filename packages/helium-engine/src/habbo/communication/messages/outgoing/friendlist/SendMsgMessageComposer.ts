@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SendMsgMessageComposer extends MessageComposer<ConstructorParameters<typeof SendMsgMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof SendMsgMessageComposer>;
+    private _data: ConstructorParameters<typeof SendMsgMessageComposer>;
 
-	constructor(recipientId: number, message: string, clientMessageId: number)
-	{
-		super();
-		this._data = [recipientId, message, clientMessageId];
-	}
+    constructor(recipientId: number, message: string, clientMessageId: number)
+    {
+        super();
+        this._data = [recipientId, message, clientMessageId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

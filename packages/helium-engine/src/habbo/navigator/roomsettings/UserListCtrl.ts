@@ -12,8 +12,8 @@ const DISPLAY_LIMIT = 200;
 /** Minimal user data from room settings (class_2565). */
 export interface IRoomSettingsUserData
 {
-	readonly userId: number;
-	readonly userName: string;
+    readonly userId: number;
+    readonly userName: string;
 }
 
 /**
@@ -24,202 +24,202 @@ export interface IRoomSettingsUserData
  */
 export class UserListCtrl
 {
-	private static readonly DISPLAY_LIMIT: number = DISPLAY_LIMIT;
+    private static readonly DISPLAY_LIMIT: number = DISPLAY_LIMIT;
 
-	protected _navigator: IHabboTransitionalNavigator;
-	private _isFriendList: boolean;
-	protected _userCount: number = 0;
+    protected _navigator: IHabboTransitionalNavigator;
+    private _isFriendList: boolean;
+    protected _userCount: number = 0;
 
-	constructor(navigator: IHabboTransitionalNavigator, isFriendList: boolean)
-	{
-		this._navigator = navigator;
-		this._isFriendList = isFriendList;
-	}
+    constructor(navigator: IHabboTransitionalNavigator, isFriendList: boolean)
+    {
+        this._navigator = navigator;
+        this._isFriendList = isFriendList;
+    }
 
-	get disposed(): boolean
-	{
-		return this._navigator === null;
-	}
+    get disposed(): boolean
+    {
+        return this._navigator === null;
+    }
 
-	get userCount(): number
-	{
-		return this._userCount;
-	}
+    get userCount(): number
+    {
+        return this._userCount;
+    }
 
-	refresh(list: IItemListWindow, users: IRoomSettingsUserData[], filter: string, highlightUserId: number): void
-	{
-		const filtered: IRoomSettingsUserData[] = [];
+    refresh(list: IItemListWindow, users: IRoomSettingsUserData[], filter: string, highlightUserId: number): void
+    {
+        const filtered: IRoomSettingsUserData[] = [];
 
-		for(const user of users)
-		{
-			if(filter === '' || user.userName.toLowerCase().indexOf(filter) > -1)
-			{
-				filtered.push(user);
-			}
+        for(const user of users)
+        {
+            if(filter === '' || user.userName.toLowerCase().indexOf(filter) > -1)
+            {
+                filtered.push(user);
+            }
 
-			if(filtered.length >= DISPLAY_LIMIT) break;
-		}
+            if(filtered.length >= DISPLAY_LIMIT) break;
+        }
 
-		list.autoArrangeItems = false;
+        list.autoArrangeItems = false;
 
-		let i = 0;
+        let i = 0;
 
-		while(true)
-		{
-			const done = this.refreshEntry(list, i, filtered[i] ?? null, highlightUserId);
+        while(true)
+        {
+            const done = this.refreshEntry(list, i, filtered[i] ?? null, highlightUserId);
 
-			if(done) break;
+            if(done) break;
 
-			i++;
-		}
+            i++;
+        }
 
-		list.autoArrangeItems = true;
-		(list as unknown as { invalidate?(): void }).invalidate?.();
+        list.autoArrangeItems = true;
+        (list as unknown as { invalidate?(): void }).invalidate?.();
 
-		this._userCount = filtered.length;
-	}
+        this._userCount = filtered.length;
+    }
 
-	protected getRowView(): IWindowContainer
-	{
-		const layoutName = this._isFriendList ? 'ros_friend' : 'ros_flat_controller';
+    protected getRowView(): IWindowContainer
+    {
+        const layoutName = this._isFriendList ? 'ros_friend' : 'ros_flat_controller';
 
-		return this._navigator.getXmlWindow(layoutName) as IWindowContainer;
-	}
+        return this._navigator.getXmlWindow(layoutName) as IWindowContainer;
+    }
 
-	protected getBgColor(index: number, highlighted: boolean): number
-	{
-		if(highlighted) return 0xFFBBCCFF;
+    protected getBgColor(index: number, highlighted: boolean): number
+    {
+        if(highlighted) return 0xFFBBCCFF;
 
-		return index % 2 !== 0 ? 0xFFFFFFFF : 0xFFEEEEE1;
-	}
+        return index % 2 !== 0 ? 0xFFFFFFFF : 0xFFEEEEE1;
+    }
 
-	protected onBgMouseClick(event: WindowEvent): void
-	{
-		const region = event.target as IWindowContainer;
-		const userId = region.id;
+    protected onBgMouseClick(event: WindowEvent): void
+    {
+        const region = event.target as IWindowContainer;
+        const userId = region.id;
 
-		if(this._isFriendList)
-		{
-			this._navigator.send(new AssignRightsMessageComposer(userId));
-		}
-		else
-		{
-			this._navigator.send(new RemoveRightsMessageComposer([userId]));
-		}
-	}
+        if(this._isFriendList)
+        {
+            this._navigator.send(new AssignRightsMessageComposer(userId));
+        }
+        else
+        {
+            this._navigator.send(new RemoveRightsMessageComposer([userId]));
+        }
+    }
 
-	private refreshEntry(
-		list: IItemListWindow,
-		index: number,
-		user: IRoomSettingsUserData | null,
-		highlightUserId: number
-	): boolean
-	{
-		let entry = list.getListItemAt(index) as IWindowContainer | null;
+    private refreshEntry(
+        list: IItemListWindow,
+        index: number,
+        user: IRoomSettingsUserData | null,
+        highlightUserId: number
+    ): boolean
+    {
+        let entry = list.getListItemAt(index) as IWindowContainer | null;
 
-		if(entry === null)
-		{
-			if(user === null) return true;
+        if(entry === null)
+        {
+            if(user === null) return true;
 
-			entry = this.getListEntry(index);
-			list.addListItem(entry);
-		}
+            entry = this.getListEntry(index);
+            list.addListItem(entry);
+        }
 
-		if(user !== null)
-		{
-			entry.color = this.getBgColor(index, user.userId === highlightUserId);
-			this.refreshEntryDetails(entry, user);
-			entry.visible = true;
-			entry.height = 20;
-		}
-		else
-		{
-			entry.height = 0;
-			entry.visible = false;
-		}
+        if(user !== null)
+        {
+            entry.color = this.getBgColor(index, user.userId === highlightUserId);
+            this.refreshEntryDetails(entry, user);
+            entry.visible = true;
+            entry.height = 20;
+        }
+        else
+        {
+            entry.height = 0;
+            entry.visible = false;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private getListEntry(index: number): IWindowContainer
-	{
-		const entry = this.getRowView();
+    private getListEntry(index: number): IWindowContainer
+    {
+        const entry = this.getRowView();
 
-		const bg = entry.findChildByName('bg_region');
+        const bg = entry.findChildByName('bg_region');
 
-		if(bg)
-		{
-			bg.addEventListener('WME_CLICK', (e: WindowEvent) => this.onBgMouseClick(e));
-			bg.addEventListener('WME_OVER', (e: WindowEvent) => this._onBgMouseOver(e));
-			bg.addEventListener('WME_OUT', (e: WindowEvent) => this._onBgMouseOut(e));
-		}
+        if(bg)
+        {
+            bg.addEventListener('WME_CLICK', (e: WindowEvent) => this.onBgMouseClick(e));
+            bg.addEventListener('WME_OVER', (e: WindowEvent) => this._onBgMouseOver(e));
+            bg.addEventListener('WME_OUT', (e: WindowEvent) => this._onBgMouseOut(e));
+        }
 
-		// TODO: wire user_info_region click via class_2323.setup() equivalent
-		const infoRegion = entry.findChildByName('user_info_region');
+        // TODO: wire user_info_region click via class_2323.setup() equivalent
+        const infoRegion = entry.findChildByName('user_info_region');
 
-		if(infoRegion)
-		{
-			infoRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._onUserInfoMouseClick(e));
-		}
+        if(infoRegion)
+        {
+            infoRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._onUserInfoMouseClick(e));
+        }
 
-		entry.id = index;
+        entry.id = index;
 
-		return entry;
-	}
+        return entry;
+    }
 
-	private refreshEntryDetails(entry: IWindowContainer, user: IRoomSettingsUserData): void
-	{
-		const nameEl = entry.findChildByName('user_name_txt');
+    private refreshEntryDetails(entry: IWindowContainer, user: IRoomSettingsUserData): void
+    {
+        const nameEl = entry.findChildByName('user_name_txt');
 
-		if(nameEl) nameEl.caption = user.userName;
+        if(nameEl) nameEl.caption = user.userName;
 
-		const bg = entry.findChildByName('bg_region');
+        const bg = entry.findChildByName('bg_region');
 
-		if(bg) bg.id = user.userId;
+        if(bg) bg.id = user.userId;
 
-		const infoRegion = entry.findChildByName('user_info_region');
+        const infoRegion = entry.findChildByName('user_info_region');
 
-		if(infoRegion) infoRegion.id = user.userId;
-	}
+        if(infoRegion) infoRegion.id = user.userId;
+    }
 
-	private _onBgMouseOver = (event: WindowEvent): void =>
-	{
-		const region = event.target as IWindowContainer;
-		const row = region.parent as IWindowContainer | null;
+    private _onBgMouseOver = (event: WindowEvent): void =>
+    {
+        const region = event.target as IWindowContainer;
+        const row = region.parent as IWindowContainer | null;
 
-		if(row === null) return;
+        if(row === null) return;
 
-		row.color = this.getBgColor(-1, true);
+        row.color = this.getBgColor(-1, true);
 
-		const arrow = row.findChildByName('arrow_icon');
+        const arrow = row.findChildByName('arrow_icon');
 
-		if(arrow) arrow.visible = true;
-	};
+        if(arrow) arrow.visible = true;
+    };
 
-	private _onBgMouseOut = (event: WindowEvent): void =>
-	{
-		const region = event.target as IWindowContainer;
-		const row = region.parent as IWindowContainer | null;
+    private _onBgMouseOut = (event: WindowEvent): void =>
+    {
+        const region = event.target as IWindowContainer;
+        const row = region.parent as IWindowContainer | null;
 
-		if(row === null) return;
+        if(row === null) return;
 
-		row.color = this.getBgColor(row.id, false);
+        row.color = this.getBgColor(row.id, false);
 
-		const arrow = row.findChildByName('arrow_icon');
+        const arrow = row.findChildByName('arrow_icon');
 
-		if(arrow) arrow.visible = false;
-	};
+        if(arrow) arrow.visible = false;
+    };
 
-	private _onUserInfoMouseClick = (event: WindowEvent): void =>
-	{
-		const target = event.target as IWindow;
+    private _onUserInfoMouseClick = (event: WindowEvent): void =>
+    {
+        const target = event.target as IWindow;
 
-		this._navigator.trackGoogle('extendedProfile', 'navigator_roomSettingsUsersList');
-		this._navigator.send(new GetExtendedProfileMessageComposer(target.id));
-	};
+        this._navigator.trackGoogle('extendedProfile', 'navigator_roomSettingsUsersList');
+        this._navigator.send(new GetExtendedProfileMessageComposer(target.id));
+    };
 
-	dispose(): void
-	{
-		this._navigator = null!;
-	}
+    dispose(): void
+    {
+        this._navigator = null!;
+    }
 }

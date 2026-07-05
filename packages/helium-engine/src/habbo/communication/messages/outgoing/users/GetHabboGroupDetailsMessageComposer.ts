@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetHabboGroupDetailsMessageComposer extends MessageComposer<ConstructorParameters<typeof GetHabboGroupDetailsMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetHabboGroupDetailsMessageComposer>;
+    private _data: ConstructorParameters<typeof GetHabboGroupDetailsMessageComposer>;
 
-	constructor(groupId: number, openDetails: boolean)
-	{
-		super();
+    constructor(groupId: number, openDetails: boolean)
+    {
+        super();
 
-		this._data = [groupId, openDetails];
-	}
+        this._data = [groupId, openDetails];
+    }
 
-	getMessageArray(): [number, boolean]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number, boolean]
+    {
+        return this._data;
+    }
 }

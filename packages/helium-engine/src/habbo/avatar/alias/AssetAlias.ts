@@ -6,51 +6,51 @@
  */
 export class AssetAlias
 {
-	constructor(data: any)
-	{
-		this._name = String(data.name ?? '');
-		this._link = String(data.link ?? '');
-		this._flipH = Boolean(parseInt(data.fliph));
-		this._flipV = Boolean(parseInt(data.flipv));
-	}
+    constructor(data: any)
+    {
+        this._name = String(data.name ?? '');
+        this._link = String(data.link ?? '');
+        this._flipH = Boolean(parseInt(data.fliph));
+        this._flipV = Boolean(parseInt(data.flipv));
+    }
 
-	private _name: string;
+    private _name: string;
 
-	/**
+    /**
 	 * The alias name.
 	 */
-	public get name(): string
-	{
-		return this._name;
-	}
+    public get name(): string
+    {
+        return this._name;
+    }
 
-	private _link: string;
+    private _link: string;
 
-	/**
+    /**
 	 * The linked asset name this alias points to.
 	 */
-	public get link(): string
-	{
-		return this._link;
-	}
+    public get link(): string
+    {
+        return this._link;
+    }
 
-	private _flipH: boolean;
+    private _flipH: boolean;
 
-	/**
+    /**
 	 * Whether the asset should be flipped horizontally.
 	 */
-	public get flipH(): boolean
-	{
-		return this._flipH;
-	}
+    public get flipH(): boolean
+    {
+        return this._flipH;
+    }
 
-	private _flipV: boolean;
+    private _flipV: boolean;
 
-	/**
+    /**
 	 * Whether the asset should be flipped vertically.
 	 */
-	public get flipV(): boolean
-	{
-		return this._flipV;
-	}
+    public get flipV(): boolean
+    {
+        return this._flipV;
+    }
 }

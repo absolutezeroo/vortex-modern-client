@@ -14,114 +14,114 @@ const log = Logger.getLogger('MeMenuSoundSettingsSlider');
  */
 export class MeMenuSoundSettingsSlider
 {
-	private _owner: { saveVolume(value: number, preview: boolean): void } | null;
-	private _referenceWidth: number = 100;
-	private _currentValue: number = 0;
+    private _owner: { saveVolume(value: number, preview: boolean): void } | null;
+    private _referenceWidth: number = 100;
+    private _currentValue: number = 0;
 
-	constructor(
-		owner: { saveVolume(value: number, preview: boolean): void },
-		minValue: number = 0,
-		maxValue: number = 1
-	)
-	{
-		this._owner = owner;
-		this._minValue = minValue;
-		this._maxValue = maxValue;
+    constructor(
+        owner: { saveVolume(value: number, preview: boolean): void },
+        minValue: number = 0,
+        maxValue: number = 1
+    )
+    {
+        this._owner = owner;
+        this._minValue = minValue;
+        this._maxValue = maxValue;
 
-		log.debug('MeMenuSoundSettingsSlider constructed');
-	}
+        log.debug('MeMenuSoundSettingsSlider constructed');
+    }
 
-	private _minValue: number;
+    private _minValue: number;
 
-	/**
+    /**
 	 * The minimum value
 	 */
-	get minValue(): number
-	{
-		return this._minValue;
-	}
+    get minValue(): number
+    {
+        return this._minValue;
+    }
 
-	private _maxValue: number;
+    private _maxValue: number;
 
-	/**
+    /**
 	 * The maximum value
 	 */
-	get maxValue(): number
-	{
-		return this._maxValue;
-	}
+    get maxValue(): number
+    {
+        return this._maxValue;
+    }
 
-	/**
+    /**
 	 * The current slider value
 	 */
-	get value(): number
-	{
-		return this._currentValue;
-	}
+    get value(): number
+    {
+        return this._currentValue;
+    }
 
-	/**
+    /**
 	 * Set the slider value
 	 *
 	 * @param value The value to set (between min and max)
 	 */
-	public setValue(value: number): void
-	{
-		this._currentValue = Math.max(this._minValue, Math.min(this._maxValue, value));
-	}
+    public setValue(value: number): void
+    {
+        this._currentValue = Math.max(this._minValue, Math.min(this._maxValue, value));
+    }
 
-	/**
+    /**
 	 * Set the reference width for position calculations
 	 *
 	 * @param width The reference width in pixels
 	 */
-	public setReferenceWidth(width: number): void
-	{
-		this._referenceWidth = width;
-	}
+    public setReferenceWidth(width: number): void
+    {
+        this._referenceWidth = width;
+    }
 
-	/**
+    /**
 	 * Get the slider position in pixels for a given value
 	 *
 	 * @param value The value
 	 * @returns Position in pixels
 	 */
-	public getSliderPosition(value: number): number
-	{
-		return Math.trunc(this._referenceWidth * ((value - this._minValue) / (this._maxValue - this._minValue)));
-	}
+    public getSliderPosition(value: number): number
+    {
+        return Math.trunc(this._referenceWidth * ((value - this._minValue) / (this._maxValue - this._minValue)));
+    }
 
-	/**
+    /**
 	 * Convert a pixel position to a value
 	 *
 	 * @param position Position in pixels
 	 * @returns The corresponding value
 	 */
-	public getValueFromPosition(position: number): number
-	{
-		return (position / this._referenceWidth) * (this._maxValue - this._minValue) + this._minValue;
-	}
+    public getValueFromPosition(position: number): number
+    {
+        return (position / this._referenceWidth) * (this._maxValue - this._minValue) + this._minValue;
+    }
 
-	/**
+    /**
 	 * Handle slider relocation (drag)
 	 *
 	 * @param position The new position in pixels
 	 */
-	public onRelocated(position: number): void
-	{
-		const value = this.getValueFromPosition(position);
-		this._currentValue = value;
+    public onRelocated(position: number): void
+    {
+        const value = this.getValueFromPosition(position);
+        this._currentValue = value;
 
-		if (this._owner)
-		{
-			this._owner.saveVolume(value, false);
-		}
-	}
+        if(this._owner)
+        {
+            this._owner.saveVolume(value, false);
+        }
+    }
 
-	/**
+    /**
 	 * Dispose of this slider
 	 */
-	public dispose(): void
-	{
-		this._owner = null;
-	}
+    public dispose(): void
+    {
+        this._owner = null;
+    }
 }

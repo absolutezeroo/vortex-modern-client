@@ -9,13 +9,13 @@ import {BlockListMessageParser} from '../../parser/users/BlockListMessageParser'
  */
 export class BlockListMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, BlockListMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, BlockListMessageParser);
+    }
 
-	get blockedUserIds(): number[]
-	{
-		return (this._parser as BlockListMessageParser).blockedUsers;
-	}
+    get blockedUserIds(): number[]
+    {
+        return (this._parser as BlockListMessageParser).blockedUsers;
+    }
 }

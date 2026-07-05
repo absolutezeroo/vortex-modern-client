@@ -9,31 +9,31 @@ import {FurniListItemParser} from './FurniListItemParser';
  */
 export class FurniListAddOrUpdateMessageParser implements IMessageParser
 {
-	private _items: FurniListItemParser[] = [];
+    private _items: FurniListItemParser[] = [];
 
-	get items(): FurniListItemParser[]
-	{
-		return this._items;
-	}
+    get items(): FurniListItemParser[]
+    {
+        return this._items;
+    }
 
-	flush(): boolean
-	{
-		this._items = [];
+    flush(): boolean
+    {
+        this._items = [];
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._items = [];
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._items = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._items.push(new FurniListItemParser(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._items.push(new FurniListItemParser(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

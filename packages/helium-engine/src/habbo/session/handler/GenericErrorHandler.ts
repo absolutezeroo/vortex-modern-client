@@ -22,77 +22,77 @@ import {RoomSessionErrorMessageEvent} from '../events/RoomSessionErrorMessageEve
  */
 export class GenericErrorHandler extends BaseHandler
 {
-	private _messageEvents: IMessageEvent[] = [];
+    private _messageEvents: IMessageEvent[] = [];
 
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
 
-		if (connection === null)
-		{
-			return;
-		}
+        if(connection === null)
+        {
+            return;
+        }
 
-		this.addMessageEvent(connection, new GenericErrorMessageEvent(this.onGenericError.bind(this)));
-	}
+        this.addMessageEvent(connection, new GenericErrorMessageEvent(this.onGenericError.bind(this)));
+    }
 
-	override dispose(): void
-	{
-		if (this.connection)
-		{
-			for (const event of this._messageEvents)
-			{
-				this.connection.removeMessageEvent(event);
-			}
-		}
-		this._messageEvents = [];
+    override dispose(): void
+    {
+        if(this.connection)
+        {
+            for(const event of this._messageEvents)
+            {
+                this.connection.removeMessageEvent(event);
+            }
+        }
+        this._messageEvents = [];
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	private addMessageEvent(connection: IConnection, event: IMessageEvent): void
-	{
-		connection.addMessageEvent(event);
-		this._messageEvents.push(event);
-	}
+    private addMessageEvent(connection: IConnection, event: IMessageEvent): void
+    {
+        connection.addMessageEvent(event);
+        this._messageEvents.push(event);
+    }
 
-	private onGenericError(event: IMessageEvent): void
-	{
-		const genericEvent = event as GenericErrorMessageEvent;
-		if (genericEvent === null)
-		{
-			return;
-		}
+    private onGenericError(event: IMessageEvent): void
+    {
+        const genericEvent = event as GenericErrorMessageEvent;
+        if(genericEvent === null)
+        {
+            return;
+        }
 
-		const parser = genericEvent.parser as GenericErrorMessageParser;
-		if (parser === null)
-		{
-			return;
-		}
+        const parser = genericEvent.parser as GenericErrorMessageParser;
+        if(parser === null)
+        {
+            return;
+        }
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null)
-		{
-			return;
-		}
+        const session = this.listener.getSession(this.roomId);
+        if(session === null)
+        {
+            return;
+        }
 
-		switch (parser.errorCode - 4008)
-		{
-			case 0:
-			{
-				const errorType = RoomSessionErrorMessageEvent.KICKED_BY_OWNER;
+        switch(parser.errorCode - 4008)
+        {
+            case 0:
+            {
+                const errorType = RoomSessionErrorMessageEvent.KICKED_BY_OWNER;
 
-				if (this.listener && this.listener.sessionEvents)
-				{
-					this.listener.sessionEvents.emit(
-						errorType,
-						new RoomSessionErrorMessageEvent(errorType, session)
-					);
-				}
-				return;
-			}
-			default:
-				return;
-		}
-	}
+                if(this.listener && this.listener.sessionEvents)
+                {
+                    this.listener.sessionEvents.emit(
+                        errorType,
+                        new RoomSessionErrorMessageEvent(errorType, session)
+                    );
+                }
+                return;
+            }
+            default:
+                return;
+        }
+    }
 }

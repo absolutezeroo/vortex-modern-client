@@ -5,16 +5,16 @@
  */
 export interface IHabboModeration
 {
-	/**
+    /**
 	 * Called when a user is selected in the UI for moderation.
 	 *
 	 * @param userId - The ID of the selected user
 	 * @param userName - The name of the selected user
 	 */
-	userSelected(userId: number, userName: string): void;
+    userSelected(userId: number, userName: string): void;
 
-	/**
+    /**
 	 * Whether the current user has moderator privileges.
 	 */
-	get isModerator(): boolean;
+    get isModerator(): boolean;
 }

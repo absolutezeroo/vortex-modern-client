@@ -11,12 +11,12 @@ import type {IDisposable} from '@core';
  */
 export interface IHeliumLoadingScreen extends IDisposable
 {
-	/**
+    /**
 	 * Update the loading bar progress.
 	 *
 	 * @param progress - Progress ratio from 0.0 to 1.0
 	 *
 	 * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
 	 */
-	updateLoadingBar(progress: number): void;
+    updateLoadingBar(progress: number): void;
 }

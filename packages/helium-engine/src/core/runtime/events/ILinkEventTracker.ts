@@ -8,16 +8,16 @@
  */
 export interface ILinkEventTracker
 {
-	/**
+    /**
 	 * The URL prefix pattern this tracker handles (e.g. "navigator/", "catalog/").
 	 * An empty string matches all links.
 	 */
-	readonly linkPattern: string;
+    readonly linkPattern: string;
 
-	/**
+    /**
 	 * Called when a link matching this tracker's pattern is received
 	 *
 	 * @param link The full link string
 	 */
-	linkReceived(link: string): void;
+    linkReceived(link: string): void;
 }

@@ -10,29 +10,29 @@ import {RoomObjectRoomAdEvent} from '@habbo/room/events/RoomObjectRoomAdEvent';
 
 export class FurnitureRoomBillboardLogic extends FurnitureRoomBrandingLogic
 {
-	constructor()
-	{
-		super();
-		this._hasClickUrl = true;
-	}
+    constructor()
+    {
+        super();
+        this._hasClickUrl = true;
+    }
 
-	protected override getAdClickUrl(model: { getString(key: string): string | null }): string | null
-	{
-		return model.getString('furniture_branding_url');
-	}
+    protected override getAdClickUrl(model: { getString(key: string): string | null }): string | null
+    {
+        return model.getString('furniture_branding_url');
+    }
 
-	protected override handleAdClick(_id: number, _type: string, url: string): void
-	{
-		if (url.indexOf('http') === 0)
-		{
-			window.open(url, '_blank');
-		}
-		else if (this.eventDispatcher !== null)
-		{
-			this.eventDispatcher.emit(
-				RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK,
-				new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK, this.object, '', url)
-			);
-		}
-	}
+    protected override handleAdClick(_id: number, _type: string, url: string): void
+    {
+        if(url.indexOf('http') === 0)
+        {
+            window.open(url, '_blank');
+        }
+        else if(this.eventDispatcher !== null)
+        {
+            this.eventDispatcher.emit(
+                RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK,
+                new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK, this.object, '', url)
+            );
+        }
+    }
 }

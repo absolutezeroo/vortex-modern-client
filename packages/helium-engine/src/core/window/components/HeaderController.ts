@@ -4,7 +4,7 @@ import type {IHeaderWindow} from './IHeaderWindow';
 import type {ILabelWindow} from './ILabelWindow';
 import type {IItemListWindow} from './IItemListWindow';
 import {ContainerController} from './ContainerController';
-import {WindowEvent} from '../events/WindowEvent';
+import type {WindowEvent} from '../events/WindowEvent';
 import {WindowController} from '../WindowController';
 
 /**
@@ -17,80 +17,80 @@ import {WindowController} from '../WindowController';
  */
 export class HeaderController extends ContainerController implements IHeaderWindow
 {
-	private static readonly TAG_TITLE_ELEMENT: string = '_TITLE';
-	private static readonly TAG_CONTROLS_ELEMENT: string = '_CONTROLS';
+    private static readonly TAG_TITLE_ELEMENT: string = '_TITLE';
+    private static readonly TAG_CONTROLS_ELEMENT: string = '_CONTROLS';
 
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0,
-		dynamicStyle: string = ''
-	)
-	{
-		param = param | 0x01;
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0,
+        dynamicStyle: string = ''
+    )
+    {
+        param = param | 0x01;
 
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
-	}
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
 
-	/**
+    /**
 	 * Returns the title label window.
 	 */
-	public get title(): ILabelWindow
-	{
-		return this.findChildByTag(HeaderController.TAG_TITLE_ELEMENT) as unknown as ILabelWindow;
-	}
+    public get title(): ILabelWindow
+    {
+        return this.findChildByTag(HeaderController.TAG_TITLE_ELEMENT) as unknown as ILabelWindow;
+    }
 
-	/**
+    /**
 	 * Returns the controls item list window.
 	 */
-	public get controls(): IItemListWindow
-	{
-		return this.findChildByTag(HeaderController.TAG_CONTROLS_ELEMENT) as unknown as IItemListWindow;
-	}
+    public get controls(): IItemListWindow
+    {
+        return this.findChildByTag(HeaderController.TAG_CONTROLS_ELEMENT) as unknown as IItemListWindow;
+    }
 
-	public override get caption(): string
-	{
-		return super.caption;
-	}
+    public override get caption(): string
+    {
+        return super.caption;
+    }
 
-	public override set caption(value: string)
-	{
-		super.caption = value;
+    public override set caption(value: string)
+    {
+        super.caption = value;
 
-		try
-		{
-			this.title.text = value;
-		}
-		catch (_e: unknown)
-		{
-			// Ignored
-		}
-	}
+        try
+        {
+            this.title.text = value;
+        }
+        catch (_e: unknown)
+        {
+            // Ignored
+        }
+    }
 
-	public override get color(): number
-	{
-		return super.color;
-	}
+    public override get color(): number
+    {
+        return super.color;
+    }
 
-	public override set color(value: number)
-	{
-		super.color = value;
+    public override set color(value: number)
+    {
+        super.color = value;
 
-		const colorized: IWindow[] = [];
+        const colorized: IWindow[] = [];
 
-		this.groupChildrenWithTag(WindowController.TAG_COLORIZE, colorized, -1);
+        this.groupChildrenWithTag(WindowController.TAG_COLORIZE, colorized, -1);
 
-		for (const child of colorized)
-		{
-			child.color = value;
-		}
-	}
+        for(const child of colorized)
+        {
+            child.color = value;
+        }
+    }
 }

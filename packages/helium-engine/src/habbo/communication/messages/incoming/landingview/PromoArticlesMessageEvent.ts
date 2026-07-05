@@ -8,8 +8,8 @@ import {PromoArticlesMessageParser} from '../../parser/landingview/PromoArticles
  */
 export class PromoArticlesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PromoArticlesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PromoArticlesMessageParser);
+    }
 }

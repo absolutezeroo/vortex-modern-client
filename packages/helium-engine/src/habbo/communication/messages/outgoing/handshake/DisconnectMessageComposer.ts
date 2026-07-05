@@ -8,18 +8,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class DisconnectMessageComposer extends MessageComposer<ConstructorParameters<typeof DisconnectMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof DisconnectMessageComposer>;
+    private _data: ConstructorParameters<typeof DisconnectMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

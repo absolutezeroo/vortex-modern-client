@@ -8,6 +8,6 @@ import type {IDropMenuWindow} from './IDropMenuWindow';
  */
 export interface IDropListItemWindow extends IWindow
 {
-	readonly menu: IDropMenuWindow | null;
-	value: IWindow | null;
+    readonly menu: IDropMenuWindow | null;
+    value: IWindow | null;
 }

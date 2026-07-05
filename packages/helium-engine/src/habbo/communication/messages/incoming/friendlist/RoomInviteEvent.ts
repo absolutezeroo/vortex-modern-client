@@ -10,8 +10,8 @@ import {RoomInviteEventParser} from '../../parser/friendlist/RoomInviteEventPars
  */
 export class RoomInviteEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomInviteEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomInviteEventParser);
+    }
 }

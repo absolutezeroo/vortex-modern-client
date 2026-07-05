@@ -24,88 +24,88 @@ import {RoomSessionPollEvent} from '../events/RoomSessionPollEvent';
  */
 export class PollHandler extends BaseHandler
 {
-	private _messageEvents: IMessageEvent[] = [];
+    private _messageEvents: IMessageEvent[] = [];
 
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
 
-		if (connection === null)
-		{
-			return;
-		}
+        if(connection === null)
+        {
+            return;
+        }
 
-		this.addMessageEvent(connection, new PollContentsEvent(this.onPollContentsEvent.bind(this)));
-		this.addMessageEvent(connection, new PollOfferEvent(this.onPollOfferEvent.bind(this)));
-		this.addMessageEvent(connection, new PollErrorEvent(this.onPollErrorEvent.bind(this)));
-	}
+        this.addMessageEvent(connection, new PollContentsEvent(this.onPollContentsEvent.bind(this)));
+        this.addMessageEvent(connection, new PollOfferEvent(this.onPollOfferEvent.bind(this)));
+        this.addMessageEvent(connection, new PollErrorEvent(this.onPollErrorEvent.bind(this)));
+    }
 
-	override dispose(): void
-	{
-		if (this.connection)
-		{
-			for (const event of this._messageEvents)
-			{
-				this.connection.removeMessageEvent(event);
-			}
-		}
-		this._messageEvents = [];
+    override dispose(): void
+    {
+        if(this.connection)
+        {
+            for(const event of this._messageEvents)
+            {
+                this.connection.removeMessageEvent(event);
+            }
+        }
+        this._messageEvents = [];
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 
-	private addMessageEvent(connection: IConnection, event: IMessageEvent): void
-	{
-		connection.addMessageEvent(event);
-		this._messageEvents.push(event);
-	}
+    private addMessageEvent(connection: IConnection, event: IMessageEvent): void
+    {
+        connection.addMessageEvent(event);
+        this._messageEvents.push(event);
+    }
 
-	private onPollOfferEvent(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onPollOfferEvent(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null) return;
+        const session = this.listener.getSession(this.roomId);
+        if(session === null) return;
 
-		const parser = (event as PollOfferEvent).parser as PollOfferEventParser;
+        const parser = (event as PollOfferEvent).parser as PollOfferEventParser;
 
-		const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.OFFER, session, parser.id);
-		pollEvent.headline = parser.headline;
-		pollEvent.summary = parser.summary;
+        const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.OFFER, session, parser.id);
+        pollEvent.headline = parser.headline;
+        pollEvent.summary = parser.summary;
 
-		this.listener.sessionEvents.emit(RoomSessionPollEvent.OFFER, pollEvent);
-	}
+        this.listener.sessionEvents.emit(RoomSessionPollEvent.OFFER, pollEvent);
+    }
 
-	private onPollErrorEvent(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onPollErrorEvent(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null) return;
+        const session = this.listener.getSession(this.roomId);
+        if(session === null) return;
 
-		const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.ERROR, session, -1);
-		pollEvent.headline = '???';
-		pollEvent.summary = '???';
+        const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.ERROR, session, -1);
+        pollEvent.headline = '???';
+        pollEvent.summary = '???';
 
-		this.listener.sessionEvents.emit(RoomSessionPollEvent.ERROR, pollEvent);
-	}
+        this.listener.sessionEvents.emit(RoomSessionPollEvent.ERROR, pollEvent);
+    }
 
-	private onPollContentsEvent(event: IMessageEvent): void
-	{
-		if (!event) return;
+    private onPollContentsEvent(event: IMessageEvent): void
+    {
+        if(!event) return;
 
-		const session = this.listener.getSession(this.roomId);
-		if (session === null) return;
+        const session = this.listener.getSession(this.roomId);
+        if(session === null) return;
 
-		const parser = (event as PollContentsEvent).parser as PollContentsEventParser;
+        const parser = (event as PollContentsEvent).parser as PollContentsEventParser;
 
-		const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.CONTENT, session, parser.id);
-		pollEvent.startMessage = parser.startMessage;
-		pollEvent.endMessage = parser.endMessage;
-		pollEvent.numQuestions = parser.numQuestions;
-		pollEvent.questionArray = parser.questionArray;
-		pollEvent.npsPoll = parser.npsPoll;
+        const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.CONTENT, session, parser.id);
+        pollEvent.startMessage = parser.startMessage;
+        pollEvent.endMessage = parser.endMessage;
+        pollEvent.numQuestions = parser.numQuestions;
+        pollEvent.questionArray = parser.questionArray;
+        pollEvent.npsPoll = parser.npsPoll;
 
-		this.listener.sessionEvents.emit(RoomSessionPollEvent.CONTENT, pollEvent);
-	}
+        this.listener.sessionEvents.emit(RoomSessionPollEvent.CONTENT, pollEvent);
+    }
 }

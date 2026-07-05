@@ -8,34 +8,34 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class IgnoredUsersMessageParser implements IMessageParser
 {
-	private _ignoredUsers: number[] = [];
+    private _ignoredUsers: number[] = [];
 
-	get ignoredUsers(): number[]
-	{
-		return this._ignoredUsers.slice();
-	}
+    get ignoredUsers(): number[]
+    {
+        return this._ignoredUsers.slice();
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._ignoredUsers = [];
+        this._ignoredUsers = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._ignoredUsers.push(wrapper.readInt());
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._ignoredUsers.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

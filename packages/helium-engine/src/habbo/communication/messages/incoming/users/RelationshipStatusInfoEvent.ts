@@ -10,18 +10,18 @@ import {RelationshipStatusInfoMessageParser} from '../../parser/users/Relationsh
  */
 export class RelationshipStatusInfoEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RelationshipStatusInfoMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RelationshipStatusInfoMessageParser);
+    }
 
-	get userId(): number
-	{
-		return (this._parser as RelationshipStatusInfoMessageParser).userId;
-	}
+    get userId(): number
+    {
+        return (this._parser as RelationshipStatusInfoMessageParser).userId;
+    }
 
-	get relationshipStatusMap(): Map<number, RelationshipStatusInfo>
-	{
-		return (this._parser as RelationshipStatusInfoMessageParser).relationshipStatusMap;
-	}
+    get relationshipStatusMap(): Map<number, RelationshipStatusInfo>
+    {
+        return (this._parser as RelationshipStatusInfoMessageParser).relationshipStatusMap;
+    }
 }

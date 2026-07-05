@@ -7,38 +7,38 @@
  */
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import {FurnitureWallData} from '@habbo/communication/messages/incoming/room/engine/FurnitureWallData';
+import type {FurnitureWallData} from '@habbo/communication/messages/incoming/room/engine/FurnitureWallData';
 import {WallDataParser} from './WallDataParser';
 
 export class ItemAddMessageParser implements IMessageParser
 {
-	private _data: FurnitureWallData | null = null;
+    private _data: FurnitureWallData | null = null;
 
-	get data(): FurnitureWallData | null
-	{
-		if (this._data !== null)
-		{
-			this._data.setReadOnly();
-		}
-		return this._data;
-	}
+    get data(): FurnitureWallData | null
+    {
+        if(this._data !== null)
+        {
+            this._data.setReadOnly();
+        }
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._data = WallDataParser.parseItemData(wrapper);
-		this._data.ownerName = wrapper.readString();
+        this._data = WallDataParser.parseItemData(wrapper);
+        this._data.ownerName = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

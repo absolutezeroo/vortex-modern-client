@@ -9,8 +9,8 @@ import {IssuePickFailedMessageParser} from '../../parser/moderation/IssuePickFai
  */
 export class IssuePickFailedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IssuePickFailedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IssuePickFailedMessageParser);
+    }
 }

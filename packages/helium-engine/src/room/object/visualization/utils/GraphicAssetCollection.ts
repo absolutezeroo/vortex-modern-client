@@ -14,86 +14,86 @@ import {GraphicAssetPalette} from './GraphicAssetPalette';
 
 export class GraphicAssetCollection implements IGraphicAssetCollection
 {
-	private static readonly PALETTE_ASSET_DISPOSE_THRESHOLD: number = 10;
+    private static readonly PALETTE_ASSET_DISPOSE_THRESHOLD: number = 10;
 
-	private _name: string = '';
-	private _assets: Map<string, GraphicAsset> = new Map();
-	private _palettes: Map<string, GraphicAssetPalette> = new Map();
-	// AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::var_2811
-	private _paletteXML: Map<string, Record<string, unknown>> = new Map();
-	private _paletteAssetNames: string[] = [];
-	private _textures: Map<string, Texture> = new Map();
-	private _referenceCount: number = 0;
-	private _lastReferenceTimestamp: number = 0;
-	private _disposed: boolean = false;
+    private _name: string = '';
+    private _assets: Map<string, GraphicAsset> = new Map();
+    private _palettes: Map<string, GraphicAssetPalette> = new Map();
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::var_2811
+    private _paletteXML: Map<string, Record<string, unknown>> = new Map();
+    private _paletteAssetNames: string[] = [];
+    private _textures: Map<string, Texture> = new Map();
+    private _referenceCount: number = 0;
+    private _lastReferenceTimestamp: number = 0;
+    private _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	dispose(): void
-	{
-		if (this._disposed)
-		{
-			return;
-		}
+    dispose(): void
+    {
+        if(this._disposed)
+        {
+            return;
+        }
 
-		this._disposed = true;
+        this._disposed = true;
 
-		for (const palette of this._palettes.values())
-		{
-			if (palette !== null)
-			{
-				palette.dispose();
-			}
-		}
+        for(const palette of this._palettes.values())
+        {
+            if(palette !== null)
+            {
+                palette.dispose();
+            }
+        }
 
-		this._palettes.clear();
-		this._paletteXML.clear();
-		this.disposePaletteAssets();
+        this._palettes.clear();
+        this._paletteXML.clear();
+        this.disposePaletteAssets();
 
-		for (const asset of this._assets.values())
-		{
-			if (asset !== null)
-			{
-				asset.recycle();
-			}
-		}
+        for(const asset of this._assets.values())
+        {
+            if(asset !== null)
+            {
+                asset.recycle();
+            }
+        }
 
-		this._assets.clear();
-		this._textures.clear();
-	}
+        this._assets.clear();
+        this._textures.clear();
+    }
 
-	addReference(): void
-	{
-		this._referenceCount++;
-		this._lastReferenceTimestamp = Date.now();
-	}
+    addReference(): void
+    {
+        this._referenceCount++;
+        this._lastReferenceTimestamp = Date.now();
+    }
 
-	removeReference(): void
-	{
-		this._referenceCount--;
+    removeReference(): void
+    {
+        this._referenceCount--;
 
-		if (this._referenceCount <= 0)
-		{
-			this._referenceCount = 0;
-			this._lastReferenceTimestamp = Date.now();
-			this.disposePaletteAssets(false);
-		}
-	}
+        if(this._referenceCount <= 0)
+        {
+            this._referenceCount = 0;
+            this._lastReferenceTimestamp = Date.now();
+            this.disposePaletteAssets(false);
+        }
+    }
 
-	getReferenceCount(): number
-	{
-		return this._referenceCount;
-	}
+    getReferenceCount(): number
+    {
+        return this._referenceCount;
+    }
 
-	getLastReferenceTimestamp(): number
-	{
-		return this._lastReferenceTimestamp;
-	}
+    getLastReferenceTimestamp(): number
+    {
+        return this._lastReferenceTimestamp;
+    }
 
-	/**
+    /**
 	 * Define assets from a Nitro JSON asset bundle.
 	 *
 	 * Expected data format (from Nitro bundles):
@@ -104,522 +104,522 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
 	 * }
 	 * ```
 	 */
-	define(data: Record<string, unknown>): boolean
-	{
-		if (data === null)
-		{
-			return false;
-		}
+    define(data: Record<string, unknown>): boolean
+    {
+        if(data === null)
+        {
+            return false;
+        }
 
-		const palettes = (data['palettes'] ?? data['palette'] ?? null) as Record<string, Record<string, unknown>> | null;
+        const palettes = (data['palettes'] ?? data['palette'] ?? null) as Record<string, Record<string, unknown>> | null;
 
-		if (palettes)
-		{
-			this.definePalettes(palettes);
-		}
+        if(palettes)
+        {
+            this.definePalettes(palettes);
+        }
 
-		const assets = data['assets'] ?? data['asset'] ?? null;
+        const assets = data['assets'] ?? data['asset'] ?? null;
 
-		if (!assets)
-		{
-			return false;
-		}
+        if(!assets)
+        {
+            return false;
+        }
 
-		this.defineAssets(assets);
+        this.defineAssets(assets);
 
-		return true;
-	}
+        return true;
+    }
 
-	getAsset(name: string): IGraphicAsset | null
-	{
-		const existing = this._assets.get(name);
+    getAsset(name: string): IGraphicAsset | null
+    {
+        const existing = this._assets.get(name);
 
-		if (existing)
-		{
-			return existing;
-		}
+        if(existing)
+        {
+            return existing;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	getAssetWithPalette(name: string, paletteName: string): IGraphicAsset | null
-	{
-		const key = name + '@' + paletteName;
-		let asset = this.getAsset(key);
+    getAssetWithPalette(name: string, paletteName: string): IGraphicAsset | null
+    {
+        const key = name + '@' + paletteName;
+        let asset = this.getAsset(key);
 
-		if (asset === null)
-		{
-			const original = this.getAsset(name);
+        if(asset === null)
+        {
+            const original = this.getAsset(name);
 
-			if (original === null || !original.usesPalette)
-			{
-				return original;
-			}
+            if(original === null || !original.usesPalette)
+            {
+                return original;
+            }
 
-			const palette = this._palettes.get(paletteName);
+            const palette = this._palettes.get(paletteName);
 
-			if (!palette)
-			{
-				return original;
-			}
+            if(!palette)
+            {
+                return original;
+            }
 
-			// For palette colorization, we would need to create a new texture
-			// by applying the palette to the original texture's pixels.
-			// For now, return the original asset as palette support requires
-			// canvas-based pixel manipulation at runtime.
-			const libraryKey = original.libraryAssetName + '@' + paletteName;
-			let palettizedTexture: Texture | null = this._textures.get(libraryKey) ?? null;
+            // For palette colorization, we would need to create a new texture
+            // by applying the palette to the original texture's pixels.
+            // For now, return the original asset as palette support requires
+            // canvas-based pixel manipulation at runtime.
+            const libraryKey = original.libraryAssetName + '@' + paletteName;
+            let palettizedTexture: Texture | null = this._textures.get(libraryKey) ?? null;
 
-			if (!palettizedTexture && original.texture)
-			{
-				palettizedTexture = this.colorizePalette(original.texture, palette);
+            if(!palettizedTexture && original.texture)
+            {
+                palettizedTexture = this.colorizePalette(original.texture, palette);
 
-				if (palettizedTexture)
-				{
-					this._textures.set(libraryKey, palettizedTexture);
-				}
-			}
+                if(palettizedTexture)
+                {
+                    this._textures.set(libraryKey, palettizedTexture);
+                }
+            }
 
-			if (palettizedTexture)
-			{
-				this._paletteAssetNames.push(key);
+            if(palettizedTexture)
+            {
+                this._paletteAssetNames.push(key);
 
-				const paletteAsset = GraphicAsset.allocate(
-					key,
-					libraryKey,
-					palettizedTexture,
-					original.flipH,
-					original.flipV,
-					original.originalOffsetX,
-					original.originalOffsetY,
-					false
-				);
+                const paletteAsset = GraphicAsset.allocate(
+                    key,
+                    libraryKey,
+                    palettizedTexture,
+                    original.flipH,
+                    original.flipV,
+                    original.originalOffsetX,
+                    original.originalOffsetY,
+                    false
+                );
 
-				this._assets.set(key, paletteAsset);
-				asset = paletteAsset;
-			}
-		}
+                this._assets.set(key, paletteAsset);
+                asset = paletteAsset;
+            }
+        }
 
-		return asset;
-	}
+        return asset;
+    }
 
-	getPaletteNames(): string[]
-	{
-		return Array.from(this._palettes.keys());
-	}
+    getPaletteNames(): string[]
+    {
+        return Array.from(this._palettes.keys());
+    }
 
-	// AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getPaletteColors()
-	getPaletteColors(paletteName: string): [number, number] | null
-	{
-		const palette = this._palettes.get(paletteName);
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getPaletteColors()
+    getPaletteColors(paletteName: string): [number, number] | null
+    {
+        const palette = this._palettes.get(paletteName);
 
-		if (palette !== null && palette !== undefined)
-		{
-			return [palette.primaryColor, palette.secondaryColor];
-		}
+        if(palette !== null && palette !== undefined)
+        {
+            return [palette.primaryColor, palette.secondaryColor];
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	// AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getPaletteXML()
-	getPaletteXML(paletteName: string): Record<string, unknown> | null
-	{
-		return this._paletteXML.get(paletteName) ?? null;
-	}
+    // AS3: sources/win63_version/room/object/visualization/utils/GraphicAssetCollection.as::getPaletteXML()
+    getPaletteXML(paletteName: string): Record<string, unknown> | null
+    {
+        return this._paletteXML.get(paletteName) ?? null;
+    }
 
-	addAsset(
-		name: string,
-		texture: Texture,
-		override: boolean,
-		offsetX: number = 0,
-		offsetY: number = 0,
-		flipH: boolean = false,
-		flipV: boolean = false
-	): boolean
-	{
-		if (name === null || texture === null)
-		{
-			return false;
-		}
+    addAsset(
+        name: string,
+        texture: Texture,
+        override: boolean,
+        offsetX: number = 0,
+        offsetY: number = 0,
+        flipH: boolean = false,
+        flipV: boolean = false
+    ): boolean
+    {
+        if(name === null || texture === null)
+        {
+            return false;
+        }
 
-		const existing = this._textures.get(name);
+        const existing = this._textures.get(name);
 
-		if (!existing)
-		{
-			this._textures.set(name, texture);
+        if(!existing)
+        {
+            this._textures.set(name, texture);
 
-			return this.createAsset(name, name, texture, flipH, flipV, offsetX, offsetY, false);
-		}
+            return this.createAsset(name, name, texture, flipH, flipV, offsetX, offsetY, false);
+        }
 
-		if (override)
-		{
-			this._textures.set(name, texture);
-			return true;
-		}
+        if(override)
+        {
+            this._textures.set(name, texture);
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	disposeAsset(name: string): void
-	{
-		const asset = this._assets.get(name);
+    disposeAsset(name: string): void
+    {
+        const asset = this._assets.get(name);
 
-		if (asset !== null && asset !== undefined)
-		{
-			this._assets.delete(name);
-			this._textures.delete(asset.libraryAssetName);
-			asset.recycle();
-		}
-	}
+        if(asset !== null && asset !== undefined)
+        {
+            this._assets.delete(name);
+            this._textures.delete(asset.libraryAssetName);
+            asset.recycle();
+        }
+    }
 
-	/**
+    /**
 	 * Define assets from Nitro JSON spritesheet data and register textures.
 	 *
 	 * @param textures Textures from spritesheet (keys prefixed with libraryName)
 	 * @param assetData Asset definitions from bundle JSON
 	 * @param libraryName The library/collection name used to prefix texture lookups
 	 */
-	defineFromSpritesheet(
-		textures: Map<string, Texture>,
-		assetData: unknown,
-		libraryName: string = ''
-	): void
-	{
-		this._name = libraryName;
+    defineFromSpritesheet(
+        textures: Map<string, Texture>,
+        assetData: unknown,
+        libraryName: string = ''
+    ): void
+    {
+        this._name = libraryName;
 
-		for (const [name, texture] of textures)
-		{
-			this._textures.set(name, texture);
-		}
+        for(const [name, texture] of textures)
+        {
+            this._textures.set(name, texture);
+        }
 
-		if (assetData)
-		{
-			this.defineAssets(assetData);
-		}
-	}
+        if(assetData)
+        {
+            this.defineAssets(assetData);
+        }
+    }
 
-	private defineAssets(assets: unknown): void
-	{
-		for (const [name, assetDef] of GraphicAssetCollection.getAssetDefinitions(assets))
-		{
-			if (name.length === 0)
-			{
-				continue;
-			}
+    private defineAssets(assets: unknown): void
+    {
+        for(const [name, assetDef] of GraphicAssetCollection.getAssetDefinitions(assets))
+        {
+            if(name.length === 0)
+            {
+                continue;
+            }
 
-			let source = GraphicAssetCollection.getString(assetDef, 'source');
-			const flipH = GraphicAssetCollection.getNumber(assetDef, 'flipH', 0, 'flip_h') > 0 && source.length > 0;
-			const flipV = GraphicAssetCollection.getNumber(assetDef, 'flipV', 0, 'flip_v') > 0 && source.length > 0;
-			const usesPalette = GraphicAssetCollection.getNumber(assetDef, 'usesPalette', 0, 'uses_palette') !== 0;
-			const offsetX = -GraphicAssetCollection.getNumber(assetDef, 'x', 0);
-			const offsetY = -GraphicAssetCollection.getNumber(assetDef, 'y', 0);
+            let source = GraphicAssetCollection.getString(assetDef, 'source');
+            const flipH = GraphicAssetCollection.getNumber(assetDef, 'flipH', 0, 'flip_h') > 0 && source.length > 0;
+            const flipV = GraphicAssetCollection.getNumber(assetDef, 'flipV', 0, 'flip_v') > 0 && source.length > 0;
+            const usesPalette = GraphicAssetCollection.getNumber(assetDef, 'usesPalette', 0, 'uses_palette') !== 0;
+            const offsetX = -GraphicAssetCollection.getNumber(assetDef, 'x', 0);
+            const offsetY = -GraphicAssetCollection.getNumber(assetDef, 'y', 0);
 
-			if (source.length === 0)
-			{
-				source = name;
-			}
+            if(source.length === 0)
+            {
+                source = name;
+            }
 
-			// Nitro bundle spritesheet frames are prefixed with the library name:
-			// e.g., frame = "table_silo_med_table_silo_med_64_a_0_0"
-			// while asset source = "table_silo_med_64_a_0_0"
-			// So we prepend the library name when looking up textures.
-			let textureName = source;
+            // Nitro bundle spritesheet frames are prefixed with the library name:
+            // e.g., frame = "table_silo_med_table_silo_med_64_a_0_0"
+            // while asset source = "table_silo_med_64_a_0_0"
+            // So we prepend the library name when looking up textures.
+            let textureName = source;
 
-			if (this._name.length > 0)
-			{
-				textureName = this._name + '_' + source;
-			}
+            if(this._name.length > 0)
+            {
+                textureName = this._name + '_' + source;
+            }
 
-			// Some spritesheets key their frames with the original file extension
-			// (e.g. "tile_cursor_tile_cursor_64_a_0_0.png") while asset definitions
-			// never include it — try both forms.
-			const texture = this._textures.get(textureName)
+            // Some spritesheets key their frames with the original file extension
+            // (e.g. "tile_cursor_tile_cursor_64_a_0_0.png") while asset definitions
+            // never include it — try both forms.
+            const texture = this._textures.get(textureName)
 				|| this._textures.get(textureName + '.png')
 				|| this._textures.get(source)
 				|| this._textures.get(source + '.png')
 				|| null;
 
-			if (texture !== null)
-			{
-				if (!this.createAsset(name, source, texture, flipH, flipV, offsetX, offsetY, usesPalette))
-				{
-					const existing = this.getAsset(name);
+            if(texture !== null)
+            {
+                if(!this.createAsset(name, source, texture, flipH, flipV, offsetX, offsetY, usesPalette))
+                {
+                    const existing = this.getAsset(name);
 
-					if (existing !== null && existing.assetName !== existing.libraryAssetName)
-					{
-						this.replaceAsset(name, source, texture, flipH, flipV, offsetX, offsetY, usesPalette);
-					}
-				}
-			}
-		}
-	}
+                    if(existing !== null && existing.assetName !== existing.libraryAssetName)
+                    {
+                        this.replaceAsset(name, source, texture, flipH, flipV, offsetX, offsetY, usesPalette);
+                    }
+                }
+            }
+        }
+    }
 
-	private static getAssetDefinitions(assets: unknown): Array<[string, Record<string, unknown>]>
-	{
-		const definitions: Array<[string, Record<string, unknown>]> = [];
+    private static getAssetDefinitions(assets: unknown): Array<[string, Record<string, unknown>]>
+    {
+        const definitions: Array<[string, Record<string, unknown>]> = [];
 
-		if (Array.isArray(assets))
-		{
-			for (const value of assets)
-			{
-				const assetDef = GraphicAssetCollection.asRecord(value);
+        if(Array.isArray(assets))
+        {
+            for(const value of assets)
+            {
+                const assetDef = GraphicAssetCollection.asRecord(value);
 
-				if (assetDef === null)
-				{
-					continue;
-				}
+                if(assetDef === null)
+                {
+                    continue;
+                }
 
-				const name = GraphicAssetCollection.getString(assetDef, 'name');
+                const name = GraphicAssetCollection.getString(assetDef, 'name');
 
-				if (name.length > 0)
-				{
-					definitions.push([name, assetDef]);
-				}
-			}
+                if(name.length > 0)
+                {
+                    definitions.push([name, assetDef]);
+                }
+            }
 
-			return definitions;
-		}
+            return definitions;
+        }
 
-		const assetRecord = GraphicAssetCollection.asRecord(assets);
+        const assetRecord = GraphicAssetCollection.asRecord(assets);
 
-		if (assetRecord === null)
-		{
-			return definitions;
-		}
+        if(assetRecord === null)
+        {
+            return definitions;
+        }
 
-		const directName = GraphicAssetCollection.getString(assetRecord, 'name');
+        const directName = GraphicAssetCollection.getString(assetRecord, 'name');
 
-		if (directName.length > 0)
-		{
-			definitions.push([directName, assetRecord]);
+        if(directName.length > 0)
+        {
+            definitions.push([directName, assetRecord]);
 
-			return definitions;
-		}
+            return definitions;
+        }
 
-		const nestedAssets = assetRecord['asset'];
+        const nestedAssets = assetRecord['asset'];
 
-		if (Array.isArray(nestedAssets))
-		{
-			return GraphicAssetCollection.getAssetDefinitions(nestedAssets);
-		}
+        if(Array.isArray(nestedAssets))
+        {
+            return GraphicAssetCollection.getAssetDefinitions(nestedAssets);
+        }
 
-		for (const name in assetRecord)
-		{
-			const assetDef = GraphicAssetCollection.asRecord(assetRecord[name]);
+        for(const name in assetRecord)
+        {
+            const assetDef = GraphicAssetCollection.asRecord(assetRecord[name]);
 
-			if (assetDef !== null)
-			{
-				definitions.push([name, assetDef]);
-			}
-		}
+            if(assetDef !== null)
+            {
+                definitions.push([name, assetDef]);
+            }
+        }
 
-		return definitions;
-	}
+        return definitions;
+    }
 
-	private static asRecord(value: unknown): Record<string, unknown> | null
-	{
-		if (value === null || value === undefined || typeof value !== 'object' || Array.isArray(value))
-		{
-			return null;
-		}
+    private static asRecord(value: unknown): Record<string, unknown> | null
+    {
+        if(value === null || value === undefined || typeof value !== 'object' || Array.isArray(value))
+        {
+            return null;
+        }
 
-		return value as Record<string, unknown>;
-	}
+        return value as Record<string, unknown>;
+    }
 
-	private static getString(data: Record<string, unknown>, key: string): string
-	{
-		const value = data[key];
+    private static getString(data: Record<string, unknown>, key: string): string
+    {
+        const value = data[key];
 
-		if (typeof value === 'string')
-		{
-			return value;
-		}
+        if(typeof value === 'string')
+        {
+            return value;
+        }
 
-		if (value !== null && value !== undefined)
-		{
-			return String(value);
-		}
+        if(value !== null && value !== undefined)
+        {
+            return String(value);
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	private static getNumber(data: Record<string, unknown>, key: string, defaultValue: number, fallbackKey: string | null = null): number
-	{
-		let value = data[key];
+    private static getNumber(data: Record<string, unknown>, key: string, defaultValue: number, fallbackKey: string | null = null): number
+    {
+        let value = data[key];
 
-		if ((value === null || value === undefined) && fallbackKey !== null)
-		{
-			value = data[fallbackKey];
-		}
+        if((value === null || value === undefined) && fallbackKey !== null)
+        {
+            value = data[fallbackKey];
+        }
 
-		if (typeof value === 'number')
-		{
-			return value;
-		}
+        if(typeof value === 'number')
+        {
+            return value;
+        }
 
-		if (typeof value === 'string' && value.length > 0)
-		{
-			const parsed = Number(value);
+        if(typeof value === 'string' && value.length > 0)
+        {
+            const parsed = Number(value);
 
-			if (!Number.isNaN(parsed))
-			{
-				return parsed;
-			}
-		}
+            if(!Number.isNaN(parsed))
+            {
+                return parsed;
+            }
+        }
 
-		return defaultValue;
-	}
+        return defaultValue;
+    }
 
-	private definePalettes(palettes: Record<string, Record<string, unknown>>): void
-	{
-		for (const id in palettes)
-		{
-			if (this._palettes.has(id))
-			{
-				continue;
-			}
+    private definePalettes(palettes: Record<string, Record<string, unknown>>): void
+    {
+        for(const id in palettes)
+        {
+            if(this._palettes.has(id))
+            {
+                continue;
+            }
 
-			const paletteDef = palettes[id];
-			const source = paletteDef['source'] as string;
+            const paletteDef = palettes[id];
+            const source = paletteDef['source'] as string;
 
-			if (!source)
-			{
-				continue;
-			}
+            if(!source)
+            {
+                continue;
+            }
 
-			// In Nitro bundles, palette data comes as an array of RGB values
-			const paletteData = (paletteDef['rgb'] ?? null) as number[] | null;
+            // In Nitro bundles, palette data comes as an array of RGB values
+            const paletteData = (paletteDef['rgb'] ?? null) as number[] | null;
 
-			if (!paletteData)
-			{
-				continue;
-			}
+            if(!paletteData)
+            {
+                continue;
+            }
 
-			let primaryColor = 0xFFFFFF;
-			let secondaryColor = 0xFFFFFF;
+            let primaryColor = 0xFFFFFF;
+            let secondaryColor = 0xFFFFFF;
 
-			const color1 = paletteDef['color1'] as string;
+            const color1 = paletteDef['color1'] as string;
 
-			if (color1 && color1.length > 0)
-			{
-				primaryColor = parseInt(color1, 16);
-				secondaryColor = primaryColor;
-			}
+            if(color1 && color1.length > 0)
+            {
+                primaryColor = parseInt(color1, 16);
+                secondaryColor = primaryColor;
+            }
 
-			const color2 = paletteDef['color2'] as string;
+            const color2 = paletteDef['color2'] as string;
 
-			if (color2 && color2.length > 0)
-			{
-				secondaryColor = parseInt(color2, 16);
-			}
+            if(color2 && color2.length > 0)
+            {
+                secondaryColor = parseInt(color2, 16);
+            }
 
-			const bytes = new Uint8Array(paletteData);
-			const palette = new GraphicAssetPalette(bytes, primaryColor, secondaryColor);
+            const bytes = new Uint8Array(paletteData);
+            const palette = new GraphicAssetPalette(bytes, primaryColor, secondaryColor);
 
-			this._palettes.set(id, palette);
-			this._paletteXML.set(id, paletteDef);
-		}
-	}
+            this._palettes.set(id, palette);
+            this._paletteXML.set(id, paletteDef);
+        }
+    }
 
-	private createAsset(
-		name: string,
-		libraryName: string,
-		texture: Texture,
-		flipH: boolean,
-		flipV: boolean,
-		offsetX: number,
-		offsetY: number,
-		usesPalette: boolean
-	): boolean
-	{
-		if (this._assets.has(name))
-		{
-			return false;
-		}
+    private createAsset(
+        name: string,
+        libraryName: string,
+        texture: Texture,
+        flipH: boolean,
+        flipV: boolean,
+        offsetX: number,
+        offsetY: number,
+        usesPalette: boolean
+    ): boolean
+    {
+        if(this._assets.has(name))
+        {
+            return false;
+        }
 
-		const asset = GraphicAsset.allocate(name, libraryName, texture, flipH, flipV, offsetX, offsetY, usesPalette);
-		this._assets.set(name, asset);
+        const asset = GraphicAsset.allocate(name, libraryName, texture, flipH, flipV, offsetX, offsetY, usesPalette);
+        this._assets.set(name, asset);
 
-		return true;
-	}
+        return true;
+    }
 
-	private replaceAsset(
-		name: string,
-		libraryName: string,
-		texture: Texture,
-		flipH: boolean,
-		flipV: boolean,
-		offsetX: number,
-		offsetY: number,
-		usesPalette: boolean
-	): boolean
-	{
-		const existing = this._assets.get(name);
+    private replaceAsset(
+        name: string,
+        libraryName: string,
+        texture: Texture,
+        flipH: boolean,
+        flipV: boolean,
+        offsetX: number,
+        offsetY: number,
+        usesPalette: boolean
+    ): boolean
+    {
+        const existing = this._assets.get(name);
 
-		if (existing)
-		{
-			this._assets.delete(name);
-			existing.recycle();
-		}
+        if(existing)
+        {
+            this._assets.delete(name);
+            existing.recycle();
+        }
 
-		return this.createAsset(name, libraryName, texture, flipH, flipV, offsetX, offsetY, usesPalette);
-	}
+        return this.createAsset(name, libraryName, texture, flipH, flipV, offsetX, offsetY, usesPalette);
+    }
 
-	private colorizePalette(texture: Texture, palette: GraphicAssetPalette): Texture | null
-	{
-		try
-		{
-			const canvas = document.createElement('canvas');
-			const w = texture.width;
-			const h = texture.height;
+    private colorizePalette(texture: Texture, palette: GraphicAssetPalette): Texture | null
+    {
+        try
+        {
+            const canvas = document.createElement('canvas');
+            const w = texture.width;
+            const h = texture.height;
 
-			canvas.width = w;
-			canvas.height = h;
+            canvas.width = w;
+            canvas.height = h;
 
-			const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d');
 
-			if (!ctx)
-			{
-				return null;
-			}
+            if(!ctx)
+            {
+                return null;
+            }
 
-			// Draw original texture to canvas
-			const source = texture.source;
+            // Draw original texture to canvas
+            const source = texture.source;
 
-			if (source && source.resource)
-			{
-				ctx.drawImage(source.resource as CanvasImageSource, 0, 0);
-			}
-			else
-			{
-				return null;
-			}
+            if(source && source.resource)
+            {
+                ctx.drawImage(source.resource as CanvasImageSource, 0, 0);
+            }
+            else
+            {
+                return null;
+            }
 
-			const imageData = ctx.getImageData(0, 0, w, h);
-			palette.colorizePixels(imageData);
-			ctx.putImageData(imageData, 0, 0);
+            const imageData = ctx.getImageData(0, 0, w, h);
+            palette.colorizePixels(imageData);
+            ctx.putImageData(imageData, 0, 0);
 
-			return Texture.from(canvas);
-		}
-		catch
-		{
-			return null;
-		}
-	}
+            return Texture.from(canvas);
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
-	private disposePaletteAssets(force: boolean = true): void
-	{
-		if (this._paletteAssetNames !== null)
-		{
-			if (force || this._paletteAssetNames.length > GraphicAssetCollection.PALETTE_ASSET_DISPOSE_THRESHOLD)
-			{
-				for (const name of this._paletteAssetNames)
-				{
-					this.disposeAsset(name);
-				}
+    private disposePaletteAssets(force: boolean = true): void
+    {
+        if(this._paletteAssetNames !== null)
+        {
+            if(force || this._paletteAssetNames.length > GraphicAssetCollection.PALETTE_ASSET_DISPOSE_THRESHOLD)
+            {
+                for(const name of this._paletteAssetNames)
+                {
+                    this.disposeAsset(name);
+                }
 
-				this._paletteAssetNames = [];
-			}
-		}
-	}
+                this._paletteAssetNames = [];
+            }
+        }
+    }
 }

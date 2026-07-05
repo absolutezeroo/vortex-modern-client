@@ -9,16 +9,16 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectAvatarPetGestureUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(gesture: string)
-	{
-		super(null, null);
-		this._gesture = gesture;
-	}
+    constructor(gesture: string)
+    {
+        super(null, null);
+        this._gesture = gesture;
+    }
 
-	private _gesture: string;
+    private _gesture: string;
 
-	get gesture(): string
-	{
-		return this._gesture;
-	}
+    get gesture(): string
+    {
+        return this._gesture;
+    }
 }

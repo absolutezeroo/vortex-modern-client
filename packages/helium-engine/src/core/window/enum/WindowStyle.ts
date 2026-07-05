@@ -7,8 +7,8 @@
  * @see sources/win63_2021_version/com/sulake/core/window/enum/_SafeStr_142.as
  */
 export const WindowStyle =
-	{
-		DEFAULT: 0,
-	} as const;
+    {
+        DEFAULT: 0,
+    } as const;
 
 export type WindowStyleValue = typeof WindowStyle[keyof typeof WindowStyle];

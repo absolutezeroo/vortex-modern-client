@@ -19,302 +19,302 @@ export type ActionDefinitionResolver = (actionId: string) => IActionDefinition |
  */
 export class Animation implements IAnimation
 {
-	private static readonly EMPTY_ARRAY: any[] = [];
-	private _description: string;
-	private _frames: AnimationLayerData[][] = [];
-	private _overriddenActions: Map<string, string> | null = null;
-	private _overrideFrames: Map<string, AnimationLayerData[][]> | null = null;
+    private static readonly EMPTY_ARRAY: any[] = [];
+    private _description: string;
+    private _frames: AnimationLayerData[][] = [];
+    private _overriddenActions: Map<string, string> | null = null;
+    private _overrideFrames: Map<string, AnimationLayerData[][]> | null = null;
 
-	constructor(actionResolver: ActionDefinitionResolver, data: any)
-	{
-		this._id = String(data.name || '');
-		this._description = data.desc ? String(data.desc) : this._id;
-		this._resetOnToggle = Boolean(data.resetOnToggle);
+    constructor(actionResolver: ActionDefinitionResolver, data: any)
+    {
+        this._id = String(data.name || '');
+        this._description = data.desc ? String(data.desc) : this._id;
+        this._resetOnToggle = Boolean(data.resetOnToggle);
 
-		if (data.sprites)
-		{
-			this._spriteData = [];
+        if(data.sprites)
+        {
+            this._spriteData = [];
 
-			for (const spriteData of data.sprites)
-			{
-				this._spriteData.push(new SpriteDataContainer(this, spriteData));
-			}
-		}
+            for(const spriteData of data.sprites)
+            {
+                this._spriteData.push(new SpriteDataContainer(this, spriteData));
+            }
+        }
 
-		if (data.avatars && data.avatars.length > 0)
-		{
-			this._avatarData = new AvatarDataContainer(data.avatars[0]);
-		}
+        if(data.avatars && data.avatars.length > 0)
+        {
+            this._avatarData = new AvatarDataContainer(data.avatars[0]);
+        }
 
-		if (data.directions && data.directions.length > 0)
-		{
-			this._directionData = new DirectionDataContainer(data.directions[0]);
-		}
+        if(data.directions && data.directions.length > 0)
+        {
+            this._directionData = new DirectionDataContainer(data.directions[0]);
+        }
 
-		if (data.removes)
-		{
-			this._removeData = [];
+        if(data.removes)
+        {
+            this._removeData = [];
 
-			for (const removeItem of data.removes)
-			{
-				this._removeData.push(String(removeItem.id));
-			}
-		}
+            for(const removeItem of data.removes)
+            {
+                this._removeData.push(String(removeItem.id));
+            }
+        }
 
-		if (data.adds)
-		{
-			this._addData = [];
+        if(data.adds)
+        {
+            this._addData = [];
 
-			for (const addItem of data.adds)
-			{
-				this._addData.push(new AddDataContainer(addItem));
-			}
-		}
+            for(const addItem of data.adds)
+            {
+                this._addData.push(new AddDataContainer(addItem));
+            }
+        }
 
-		if (data.overrides)
-		{
-			this._overrideFrames = new Map();
-			this._overriddenActions = new Map();
+        if(data.overrides)
+        {
+            this._overrideFrames = new Map();
+            this._overriddenActions = new Map();
 
-			for (const overrideData of data.overrides)
-			{
-				const name = String(overrideData.name);
-				const overrideName = String(overrideData.override);
+            for(const overrideData of data.overrides)
+            {
+                const name = String(overrideData.name);
+                const overrideName = String(overrideData.override);
 
-				this._overriddenActions.set(overrideName, name);
+                this._overriddenActions.set(overrideName, name);
 
-				const frames: AnimationLayerData[][] = [];
+                const frames: AnimationLayerData[][] = [];
 
-				this.parseFrames(frames, overrideData.frames || [], actionResolver);
-				this._overrideFrames.set(name, frames);
-			}
-		}
+                this.parseFrames(frames, overrideData.frames || [], actionResolver);
+                this._overrideFrames.set(name, frames);
+            }
+        }
 
-		this.parseFrames(this._frames, data.frames || [], actionResolver);
-	}
+        this.parseFrames(this._frames, data.frames || [], actionResolver);
+    }
 
-	private _id: string;
+    private _id: string;
 
-	public get id(): string
-	{
-		return this._id;
-	}
+    public get id(): string
+    {
+        return this._id;
+    }
 
-	private _spriteData: ISpriteDataContainer[] | null = null;
+    private _spriteData: ISpriteDataContainer[] | null = null;
 
-	public get spriteData(): ISpriteDataContainer[]
-	{
-		return this._spriteData || [];
-	}
+    public get spriteData(): ISpriteDataContainer[]
+    {
+        return this._spriteData || [];
+    }
 
-	private _avatarData: AvatarDataContainer | null = null;
+    private _avatarData: AvatarDataContainer | null = null;
 
-	public get avatarData(): AvatarDataContainer | null
-	{
-		return this._avatarData;
-	}
+    public get avatarData(): AvatarDataContainer | null
+    {
+        return this._avatarData;
+    }
 
-	private _directionData: DirectionDataContainer | null = null;
+    private _directionData: DirectionDataContainer | null = null;
 
-	public get directionData(): DirectionDataContainer | null
-	{
-		return this._directionData;
-	}
+    public get directionData(): DirectionDataContainer | null
+    {
+        return this._directionData;
+    }
 
-	private _removeData: string[] | null = null;
+    private _removeData: string[] | null = null;
 
-	public get removeData(): string[]
-	{
-		return this._removeData || Animation.EMPTY_ARRAY;
-	}
+    public get removeData(): string[]
+    {
+        return this._removeData || Animation.EMPTY_ARRAY;
+    }
 
-	private _addData: AddDataContainer[] | null = null;
+    private _addData: AddDataContainer[] | null = null;
 
-	public get addData(): AddDataContainer[]
-	{
-		return this._addData || Animation.EMPTY_ARRAY as AddDataContainer[];
-	}
+    public get addData(): AddDataContainer[]
+    {
+        return this._addData || Animation.EMPTY_ARRAY as AddDataContainer[];
+    }
 
-	private _resetOnToggle: boolean = false;
+    private _resetOnToggle: boolean = false;
 
-	public get resetOnToggle(): boolean
-	{
-		return this._resetOnToggle;
-	}
+    public get resetOnToggle(): boolean
+    {
+        return this._resetOnToggle;
+    }
 
-	public frameCount(overrideAction: string | null = null): number
-	{
-		if (!overrideAction) return this._frames.length;
+    public frameCount(overrideAction: string | null = null): number
+    {
+        if(!overrideAction) return this._frames.length;
 
-		if (this._overrideFrames)
-		{
-			const frames = this._overrideFrames.get(overrideAction);
+        if(this._overrideFrames)
+        {
+            const frames = this._overrideFrames.get(overrideAction);
 
-			if (frames) return frames.length;
-		}
+            if(frames) return frames.length;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	public hasOverriddenActions(): boolean
-	{
-		if (!this._overriddenActions) return false;
+    public hasOverriddenActions(): boolean
+    {
+        if(!this._overriddenActions) return false;
 
-		return this._overriddenActions.size > 0;
-	}
+        return this._overriddenActions.size > 0;
+    }
 
-	public overriddenActionNames(): string[] | null
-	{
-		if (!this._overriddenActions) return null;
+    public overriddenActionNames(): string[] | null
+    {
+        if(!this._overriddenActions) return null;
 
-		return [...this._overriddenActions.keys()];
-	}
+        return [...this._overriddenActions.keys()];
+    }
 
-	public overridingAction(name: string): string | null
-	{
-		if (!this._overriddenActions) return null;
+    public overridingAction(name: string): string | null
+    {
+        if(!this._overriddenActions) return null;
 
-		return this._overriddenActions.get(name) || null;
-	}
+        return this._overriddenActions.get(name) || null;
+    }
 
-	public getAnimatedBodyPartIds(frameIndex: number, overrideAction: string | null = null): string[]
-	{
-		const ids: string[] = [];
+    public getAnimatedBodyPartIds(frameIndex: number, overrideAction: string | null = null): string[]
+    {
+        const ids: string[] = [];
 
-		for (const layerData of this.getFrame(frameIndex, overrideAction))
-		{
-			if (layerData.type === AnimationLayerData.BODYPART)
-			{
-				ids.push(layerData.id);
-			}
-			else if (layerData.type === AnimationLayerData.FX && this._addData)
-			{
-				for (const addData of this._addData)
-				{
-					if (addData.id === layerData.id)
-					{
-						ids.push(addData.align);
-					}
-				}
-			}
-		}
+        for(const layerData of this.getFrame(frameIndex, overrideAction))
+        {
+            if(layerData.type === AnimationLayerData.BODYPART)
+            {
+                ids.push(layerData.id);
+            }
+            else if(layerData.type === AnimationLayerData.FX && this._addData)
+            {
+                for(const addData of this._addData)
+                {
+                    if(addData.id === layerData.id)
+                    {
+                        ids.push(addData.align);
+                    }
+                }
+            }
+        }
 
-		return ids;
-	}
+        return ids;
+    }
 
-	public getLayerData(frameIndex: number, partId: string, overrideAction: string | null = null): AnimationLayerData | null
-	{
-		for (const layerData of this.getFrame(frameIndex, overrideAction))
-		{
-			if (layerData.id === partId) return layerData;
+    public getLayerData(frameIndex: number, partId: string, overrideAction: string | null = null): AnimationLayerData | null
+    {
+        for(const layerData of this.getFrame(frameIndex, overrideAction))
+        {
+            if(layerData.id === partId) return layerData;
 
-			if (layerData.type === AnimationLayerData.FX && this._addData)
-			{
-				for (const addData of this._addData)
-				{
-					if (addData.align === partId && addData.id === layerData.id)
-					{
-						return layerData;
-					}
-				}
-			}
-		}
+            if(layerData.type === AnimationLayerData.FX && this._addData)
+            {
+                for(const addData of this._addData)
+                {
+                    if(addData.align === partId && addData.id === layerData.id)
+                    {
+                        return layerData;
+                    }
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public getAddData(id: string): AddDataContainer | null
-	{
-		if (this._addData)
-		{
-			for (const addData of this._addData)
-			{
-				if (addData.id === id) return addData;
-			}
-		}
+    public getAddData(id: string): AddDataContainer | null
+    {
+        if(this._addData)
+        {
+            for(const addData of this._addData)
+            {
+                if(addData.id === id) return addData;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public hasAvatarData(): boolean
-	{
-		return this._avatarData != null;
-	}
+    public hasAvatarData(): boolean
+    {
+        return this._avatarData != null;
+    }
 
-	public hasDirectionData(): boolean
-	{
-		return this._directionData != null;
-	}
+    public hasDirectionData(): boolean
+    {
+        return this._directionData != null;
+    }
 
-	public hasAddData(): boolean
-	{
-		return this._addData != null;
-	}
+    public hasAddData(): boolean
+    {
+        return this._addData != null;
+    }
 
-	public toString(): string
-	{
-		return this._description;
-	}
+    public toString(): string
+    {
+        return this._description;
+    }
 
-	private parseFrames(target: AnimationLayerData[][], framesData: any[], actionResolver: ActionDefinitionResolver): void
-	{
-		for (const frameData of framesData)
-		{
-			let repeats = 1;
+    private parseFrames(target: AnimationLayerData[][], framesData: any[], actionResolver: ActionDefinitionResolver): void
+    {
+        for(const frameData of framesData)
+        {
+            let repeats = 1;
 
-			if (frameData.repeats && frameData.repeats > 1)
-			{
-				repeats = parseInt(frameData.repeats);
-			}
+            if(frameData.repeats && frameData.repeats > 1)
+            {
+                repeats = parseInt(frameData.repeats);
+            }
 
-			for (let i = 0; i < repeats; i++)
-			{
-				const layerDataList: AnimationLayerData[] = [];
+            for(let i = 0; i < repeats; i++)
+            {
+                const layerDataList: AnimationLayerData[] = [];
 
-				if (frameData.bodyparts)
-				{
-					for (const bpData of frameData.bodyparts)
-					{
-						const actionDef = actionResolver(String(bpData.action || ''));
+                if(frameData.bodyparts)
+                {
+                    for(const bpData of frameData.bodyparts)
+                    {
+                        const actionDef = actionResolver(String(bpData.action || ''));
 
-						layerDataList.push(new AnimationLayerData(bpData, AnimationLayerData.BODYPART, actionDef));
-					}
-				}
+                        layerDataList.push(new AnimationLayerData(bpData, AnimationLayerData.BODYPART, actionDef));
+                    }
+                }
 
-				if (frameData.fxs)
-				{
-					for (const fxData of frameData.fxs)
-					{
-						const actionDef = actionResolver(String(fxData.action || ''));
+                if(frameData.fxs)
+                {
+                    for(const fxData of frameData.fxs)
+                    {
+                        const actionDef = actionResolver(String(fxData.action || ''));
 
-						layerDataList.push(new AnimationLayerData(fxData, AnimationLayerData.FX, actionDef));
-					}
-				}
+                        layerDataList.push(new AnimationLayerData(fxData, AnimationLayerData.FX, actionDef));
+                    }
+                }
 
-				target.push(layerDataList);
-			}
-		}
-	}
+                target.push(layerDataList);
+            }
+        }
+    }
 
-	private getFrame(index: number, overrideAction: string | null = null): AnimationLayerData[]
-	{
-		if (!overrideAction)
-		{
-			if (this._frames.length > 0)
-			{
-				return this._frames[index % this._frames.length];
-			}
-		}
-		else if (this._overrideFrames)
-		{
-			const frames = this._overrideFrames.get(overrideAction);
+    private getFrame(index: number, overrideAction: string | null = null): AnimationLayerData[]
+    {
+        if(!overrideAction)
+        {
+            if(this._frames.length > 0)
+            {
+                return this._frames[index % this._frames.length];
+            }
+        }
+        else if(this._overrideFrames)
+        {
+            const frames = this._overrideFrames.get(overrideAction);
 
-			if (frames && frames.length > 0)
-			{
-				return frames[index % frames.length];
-			}
-		}
+            if(frames && frames.length > 0)
+            {
+                return frames[index % frames.length];
+            }
+        }
 
-		return [];
-	}
+        return [];
+    }
 }

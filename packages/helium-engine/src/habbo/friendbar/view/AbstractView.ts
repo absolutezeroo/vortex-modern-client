@@ -20,50 +20,50 @@ import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
  */
 export class AbstractView extends Component
 {
-	protected _windowManager: IHabboWindowManager | null = null;
-	protected _avatarManager: IAvatarRenderManager | null = null;
-	protected _localizationManager: IHabboLocalizationManager | null = null;
-	protected _sessionDataManager: ISessionDataManager | null = null;
+    protected _windowManager: IHabboWindowManager | null = null;
+    protected _avatarManager: IAvatarRenderManager | null = null;
+    protected _localizationManager: IHabboLocalizationManager | null = null;
+    protected _sessionDataManager: ISessionDataManager | null = null;
 
-	constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
-	{
-		super(context, flags, assetLibrary);
-	}
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
+    {
+        super(context, flags, assetLibrary);
+    }
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	protected override get dependencies(): Array<ComponentDependency<any>>
-	{
-		return [
-			...super.dependencies,
-			new ComponentDependency(
-				IID_SessionDataManager,
-				(manager: ISessionDataManager | null) =>
-				{
-					this._sessionDataManager = manager;
-				}
-			),
-			new ComponentDependency(
-				IID_AvatarRenderManager,
-				(manager: IAvatarRenderManager | null) =>
-				{
-					this._avatarManager = manager;
-				},
-				false
-			),
-			new ComponentDependency(
-				IID_HabboWindowManager,
-				(manager: IHabboWindowManager | null) =>
-				{
-					this._windowManager = manager;
-				}
-			),
-			new ComponentDependency(
-				IID_HabboLocalizationManager,
-				(manager: IHabboLocalizationManager | null) =>
-				{
-					this._localizationManager = manager;
-				}
-			),
-		];
-	}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    protected override get dependencies(): Array<ComponentDependency<any>>
+    {
+        return [
+            ...super.dependencies,
+            new ComponentDependency(
+                IID_SessionDataManager,
+                (manager: ISessionDataManager | null) =>
+                {
+                    this._sessionDataManager = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_AvatarRenderManager,
+                (manager: IAvatarRenderManager | null) =>
+                {
+                    this._avatarManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_HabboLocalizationManager,
+                (manager: IHabboLocalizationManager | null) =>
+                {
+                    this._localizationManager = manager;
+                }
+            ),
+        ];
+    }
 }

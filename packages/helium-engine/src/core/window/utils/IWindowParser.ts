@@ -8,7 +8,7 @@ import type {IDisposable} from "../../runtime/IDisposable";
  */
 export interface IWindowParser extends IDisposable
 {
-	parseAndConstruct(layout: string | Document | Element, parent: IWindow, namedWindows: Map<string, IWindow> | null): IWindow | null;
+    parseAndConstruct(layout: string | Document | Element, parent: IWindow, namedWindows: Map<string, IWindow> | null): IWindow | null;
 
-	windowToXMLString(window: IWindow): string;
+    windowToXMLString(window: IWindow): string;
 }

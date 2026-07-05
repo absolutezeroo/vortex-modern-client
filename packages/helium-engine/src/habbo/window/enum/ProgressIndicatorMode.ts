@@ -5,10 +5,10 @@
  */
 export class ProgressIndicatorMode
 {
-	public static readonly POSITION: string = 'position';
-	public static readonly PROGRESS: string = 'progress';
-	public static readonly ALL: string[] = [
-		ProgressIndicatorMode.POSITION,
-		ProgressIndicatorMode.PROGRESS
-	];
+    public static readonly POSITION: string = 'position';
+    public static readonly PROGRESS: string = 'progress';
+    public static readonly ALL: string[] = [
+        ProgressIndicatorMode.POSITION,
+        ProgressIndicatorMode.PROGRESS
+    ];
 }

@@ -1,15 +1,15 @@
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {
-	FriendListFragmentMessageEvent
+    FriendListFragmentMessageEvent
 } from '@habbo/communication/messages/incoming/friendlist/FriendListFragmentMessageEvent';
 import type {
-	FriendListUpdateMessageEvent
+    FriendListUpdateMessageEvent
 } from '@habbo/communication/messages/incoming/friendlist/FriendListUpdateMessageEvent';
 import type {
-	FriendListFragmentMessageParser
+    FriendListFragmentMessageParser
 } from '@habbo/communication/messages/parser/friendlist/FriendListFragmentMessageParser';
 import type {
-	FriendListUpdateMessageParser
+    FriendListUpdateMessageParser
 } from '@habbo/communication/messages/parser/friendlist/FriendListUpdateMessageParser';
 import {FriendEntryData} from './FriendEntryData';
 
@@ -21,67 +21,67 @@ import {FriendEntryData} from './FriendEntryData';
  */
 export class RoomSettingsFriendListManager
 {
-	private _friendMap: Map<number, string> = new Map();
-	private _cachedList: FriendEntryData[] | null = null;
+    private _friendMap: Map<number, string> = new Map();
+    private _cachedList: FriendEntryData[] | null = null;
 
-	/**
+    /**
 	 * Get the sorted friend list. Lazily built and cached until invalidated.
 	 */
-	get list(): FriendEntryData[]
-	{
-		if (this._cachedList === null)
-		{
-			this._cachedList = [];
+    get list(): FriendEntryData[]
+    {
+        if(this._cachedList === null)
+        {
+            this._cachedList = [];
 
-			for (const [userId, userName] of this._friendMap)
-			{
-				this._cachedList.push(new FriendEntryData(userId, userName));
-			}
+            for(const [userId, userName] of this._friendMap)
+            {
+                this._cachedList.push(new FriendEntryData(userId, userName));
+            }
 
-			this._cachedList.sort((a, b) => a.userName.localeCompare(b.userName));
-		}
+            this._cachedList.sort((a, b) => a.userName.localeCompare(b.userName));
+        }
 
-		return this._cachedList;
-	}
+        return this._cachedList;
+    }
 
-	/**
+    /**
 	 * Handle a friend list fragment message. Populates the friend map.
 	 */
-	onFriendsListFragment(event: IMessageEvent): void
-	{
-		const parser = (event as FriendListFragmentMessageEvent).parser as FriendListFragmentMessageParser;
+    onFriendsListFragment(event: IMessageEvent): void
+    {
+        const parser = (event as FriendListFragmentMessageEvent).parser as FriendListFragmentMessageParser;
 
-		if (!parser)
-		{
-			return;
-		}
+        if(!parser)
+        {
+            return;
+        }
 
-		for (const friend of parser.friendFragment)
-		{
-			this._friendMap.set(friend.id, friend.name);
-		}
-	}
+        for(const friend of parser.friendFragment)
+        {
+            this._friendMap.set(friend.id, friend.name);
+        }
+    }
 
-	/**
+    /**
 	 * Handle a friend list update message. Processes removals and additions.
 	 */
-	onFriendListUpdate(event: IMessageEvent): void
-	{
-		const parser = (event as FriendListUpdateMessageEvent).parser as FriendListUpdateMessageParser;
+    onFriendListUpdate(event: IMessageEvent): void
+    {
+        const parser = (event as FriendListUpdateMessageEvent).parser as FriendListUpdateMessageParser;
 
-		for (const removedId of parser.removedFriendIds)
-		{
-			this._friendMap.delete(removedId);
-		}
+        for(const removedId of parser.removedFriendIds)
+        {
+            this._friendMap.delete(removedId);
+        }
 
-		for (const addedFriend of parser.addedFriends)
-		{
-			this._friendMap.set(addedFriend.id, addedFriend.name);
-		}
+        for(const addedFriend of parser.addedFriends)
+        {
+            this._friendMap.set(addedFriend.id, addedFriend.name);
+        }
 
-		if (parser.removedFriendIds.length > 0 || parser.addedFriends.length > 0)
-		{
-			this._cachedList = null;
-		}
-	}
+        if(parser.removedFriendIds.length > 0 || parser.addedFriends.length > 0)
+        {
+            this._cachedList = null;
+        }
+    }
 }

@@ -7,28 +7,28 @@
  */
 export class PlaneBitmapData
 {
-	constructor(bitmap: HTMLCanvasElement | null, timeStamp: number)
-	{
-		this._bitmap = bitmap;
-		this._timeStamp = timeStamp;
-	}
+    constructor(bitmap: HTMLCanvasElement | null, timeStamp: number)
+    {
+        this._bitmap = bitmap;
+        this._timeStamp = timeStamp;
+    }
 
-	private _bitmap: HTMLCanvasElement | null;
+    private _bitmap: HTMLCanvasElement | null;
 
-	get bitmap(): HTMLCanvasElement | null
-	{
-		return this._bitmap;
-	}
+    get bitmap(): HTMLCanvasElement | null
+    {
+        return this._bitmap;
+    }
 
-	private _timeStamp: number;
+    private _timeStamp: number;
 
-	get timeStamp(): number
-	{
-		return this._timeStamp;
-	}
+    get timeStamp(): number
+    {
+        return this._timeStamp;
+    }
 
-	dispose(): void
-	{
-		this._bitmap = null;
-	}
+    dispose(): void
+    {
+        this._bitmap = null;
+    }
 }

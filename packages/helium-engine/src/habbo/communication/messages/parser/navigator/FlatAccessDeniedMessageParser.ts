@@ -8,34 +8,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FlatAccessDeniedMessageParser implements IMessageParser
 {
-	private _flatId: number = 0;
+    private _flatId: number = 0;
 
-	get flatId(): number
-	{
-		return this._flatId;
-	}
+    get flatId(): number
+    {
+        return this._flatId;
+    }
 
-	private _userName: string | null = null;
+    private _userName: string | null = null;
 
-	get userName(): string | null
-	{
-		return this._userName;
-	}
+    get userName(): string | null
+    {
+        return this._userName;
+    }
 
-	flush(): boolean
-	{
-		this._flatId = 0;
-		this._userName = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._flatId = 0;
+        this._userName = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._flatId = wrapper.readInt();
-		if (wrapper.bytesAvailable > 0)
-		{
-			this._userName = wrapper.readString();
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._flatId = wrapper.readInt();
+        if(wrapper.bytesAvailable > 0)
+        {
+            this._userName = wrapper.readString();
+        }
+        return true;
+    }
 }

@@ -9,17 +9,16 @@ import type {IToolTipWindow} from './IToolTipWindow';
  */
 export interface IInteractiveWindow extends IWindow
 {
-	toolTipCaption: string;
-	toolTipDelay: number;
-	toolTipIsDynamic: boolean;
-	interactiveCursorDisabled: boolean;
+    toolTipCaption: string;
+    toolTipDelay: number;
+    toolTipIsDynamic: boolean;
+    interactiveCursorDisabled: boolean;
 
-	showToolTip(toolTip: IToolTipWindow): void;
+    showToolTip(toolTip: IToolTipWindow): void;
 
-	hideToolTip(): void;
+    hideToolTip(): void;
 
-	setMouseCursorForState(state: number, cursor: number): number;
+    setMouseCursorForState(state: number, cursor: number): number;
 
-	getMouseCursorByState(state: number): number;
+    getMouseCursorByState(state: number): number;
 }
-

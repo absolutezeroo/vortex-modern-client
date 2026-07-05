@@ -18,13 +18,13 @@ export type EventClass = new (callback: MessageEventCallback) => IMessageEvent;
  */
 export interface IMessageConfiguration
 {
-	/**
+    /**
 	 * Map of message ID to incoming event class
 	 */
-	readonly events: Map<number, EventClass>;
+    readonly events: Map<number, EventClass>;
 
-	/**
+    /**
 	 * Map of message ID to outgoing composer class
 	 */
-	readonly composers: Map<number, ComposerClass>;
+    readonly composers: Map<number, ComposerClass>;
 }

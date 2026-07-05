@@ -10,13 +10,13 @@ import {HabboRoomRenderer} from './HabboRoomRenderer';
 
 export class HabboRoomRendererFactory extends RoomRendererFactory
 {
-	constructor(context: IContext)
-	{
-		super(context);
-	}
+    constructor(context: IContext)
+    {
+        super(context);
+    }
 
-	override createRenderer(): IRoomRenderer
-	{
-		return new HabboRoomRenderer();
-	}
+    override createRenderer(): IRoomRenderer
+    {
+        return new HabboRoomRenderer();
+    }
 }

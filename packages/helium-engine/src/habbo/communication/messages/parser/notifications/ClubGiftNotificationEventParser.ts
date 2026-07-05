@@ -10,25 +10,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ClubGiftNotificationEventParser implements IMessageParser
 {
-	private _numGifts: number = 0;
+    private _numGifts: number = 0;
 
-	get numGifts(): number
-	{
-		return this._numGifts;
-	}
+    get numGifts(): number
+    {
+        return this._numGifts;
+    }
 
-	flush(): boolean
-	{
-		this._numGifts = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._numGifts = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._numGifts = wrapper.readInt();
+        this._numGifts = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

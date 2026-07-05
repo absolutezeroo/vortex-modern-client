@@ -8,8 +8,8 @@
  */
 export class HabboHelpTutorialEvent
 {
-	public static readonly AVATAR_TUTORIAL_START: string = 'HHTPNUFWE_AVATAR_TUTORIAL_START';
-	public static readonly LIGHT_CLOTHES_ICON: string = 'HHTPNUFWE_LIGHT_CLOTHES_ICON';
-	public static readonly DONE_AVATAR_EDITOR_OPENING: string = 'HHTE_DONE_AVATAR_EDITOR_OPENING';
-	public static readonly DONE_AVATAR_EDITOR_CLOSING: string = 'HHTE_DONE_AVATAR_EDITOR_CLOSING';
+    public static readonly AVATAR_TUTORIAL_START: string = 'HHTPNUFWE_AVATAR_TUTORIAL_START';
+    public static readonly LIGHT_CLOTHES_ICON: string = 'HHTPNUFWE_LIGHT_CLOTHES_ICON';
+    public static readonly DONE_AVATAR_EDITOR_OPENING: string = 'HHTE_DONE_AVATAR_EDITOR_OPENING';
+    public static readonly DONE_AVATAR_EDITOR_CLOSING: string = 'HHTE_DONE_AVATAR_EDITOR_CLOSING';
 }

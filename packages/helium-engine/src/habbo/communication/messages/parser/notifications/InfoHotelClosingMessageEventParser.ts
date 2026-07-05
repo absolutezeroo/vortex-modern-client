@@ -10,25 +10,25 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class InfoHotelClosingMessageEventParser implements IMessageParser
 {
-	private _minutesUntilClosing: number = 0;
+    private _minutesUntilClosing: number = 0;
 
-	get minutesUntilClosing(): number
-	{
-		return this._minutesUntilClosing;
-	}
+    get minutesUntilClosing(): number
+    {
+        return this._minutesUntilClosing;
+    }
 
-	flush(): boolean
-	{
-		this._minutesUntilClosing = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._minutesUntilClosing = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._minutesUntilClosing = wrapper.readInt();
+        this._minutesUntilClosing = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

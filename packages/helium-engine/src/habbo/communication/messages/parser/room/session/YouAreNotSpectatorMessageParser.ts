@@ -8,26 +8,26 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class YouAreNotSpectatorMessageParser implements IMessageParser
 {
-	private _flatId: number = 0;
+    private _flatId: number = 0;
 
-	get flatId(): number
-	{
-		return this._flatId;
-	}
+    get flatId(): number
+    {
+        return this._flatId;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._flatId = wrapper.readInt();
-		return true;
-	}
+        this._flatId = wrapper.readInt();
+        return true;
+    }
 }

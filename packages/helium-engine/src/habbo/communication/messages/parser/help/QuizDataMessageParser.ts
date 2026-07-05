@@ -8,40 +8,40 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class QuizDataMessageParser implements IMessageParser
 {
-	private _quizCode: string = '';
+    private _quizCode: string = '';
 
-	get quizCode(): string
-	{
-		return this._quizCode;
-	}
+    get quizCode(): string
+    {
+        return this._quizCode;
+    }
 
-	private _questionIds: Array<number> = [];
+    private _questionIds: Array<number> = [];
 
-	get questionIds(): Array<number>
-	{
-		return this._questionIds;
-	}
+    get questionIds(): Array<number>
+    {
+        return this._questionIds;
+    }
 
-	flush(): boolean
-	{
-		this._quizCode = '';
-		this._questionIds = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._quizCode = '';
+        this._questionIds = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._quizCode = wrapper.readString();
-		this._questionIds = [];
+        this._quizCode = wrapper.readString();
+        this._questionIds = [];
 
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._questionIds.push(wrapper.readInt());
-		}
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._questionIds.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

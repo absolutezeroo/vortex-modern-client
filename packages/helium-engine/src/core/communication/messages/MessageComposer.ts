@@ -7,17 +7,17 @@ import type {IMessageComposer} from './IMessageComposer';
  */
 export abstract class MessageComposer<T extends unknown[] = unknown[]> implements IMessageComposer<T>
 {
-	protected _disposed: boolean = false;
+    protected _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	abstract getMessageArray(): T;
+    abstract getMessageArray(): T;
 
-	dispose(): void
-	{
-		this._disposed = true;
-	}
+    dispose(): void
+    {
+        this._disposed = true;
+    }
 }

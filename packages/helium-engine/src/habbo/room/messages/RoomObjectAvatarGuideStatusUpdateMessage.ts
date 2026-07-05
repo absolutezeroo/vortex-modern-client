@@ -9,16 +9,16 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectAvatarGuideStatusUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(guideStatus: number)
-	{
-		super(null, null);
-		this._guideStatus = guideStatus;
-	}
+    constructor(guideStatus: number)
+    {
+        super(null, null);
+        this._guideStatus = guideStatus;
+    }
 
-	private _guideStatus: number;
+    private _guideStatus: number;
 
-	get guideStatus(): number
-	{
-		return this._guideStatus;
-	}
+    get guideStatus(): number
+    {
+        return this._guideStatus;
+    }
 }

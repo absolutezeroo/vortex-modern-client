@@ -9,8 +9,8 @@ import {MaintenanceStatusMessageEventParser} from '../../parser/availability/Mai
  */
 export class MaintenanceStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, MaintenanceStatusMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, MaintenanceStatusMessageEventParser);
+    }
 }

@@ -3,13 +3,13 @@ import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomHandlerListener} from '../IRoomHandlerListener';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {
-	YouAreControllerMessageEvent,
-	YouAreNotControllerMessageEvent,
-	YouAreOwnerMessageEvent,
+    YouAreControllerMessageEvent,
+    YouAreNotControllerMessageEvent,
+    YouAreOwnerMessageEvent,
 } from '../../communication/messages/incoming/room/permissions';
-import {
-	YouAreControllerMessageParser,
-	YouAreNotControllerMessageParser,
+import type {
+    YouAreControllerMessageParser,
+    YouAreNotControllerMessageParser,
 } from '../../communication/messages/parser/room/permissions';
 
 /**
@@ -21,67 +21,67 @@ import {
  */
 export class RoomPermissionsHandler extends BaseHandler
 {
-	constructor(connection: IConnection | null, listener: IRoomHandlerListener)
-	{
-		super(connection, listener);
+    constructor(connection: IConnection | null, listener: IRoomHandlerListener)
+    {
+        super(connection, listener);
 
-		if (connection === null)
-		{
-			return;
-		}
+        if(connection === null)
+        {
+            return;
+        }
 
-		connection.addMessageEvent(new YouAreControllerMessageEvent(this.onYouAreController.bind(this)));
-		connection.addMessageEvent(new YouAreNotControllerMessageEvent(this.onYouAreNotController.bind(this)));
-		connection.addMessageEvent(new YouAreOwnerMessageEvent(this.onYouAreOwner.bind(this)));
-	}
+        connection.addMessageEvent(new YouAreControllerMessageEvent(this.onYouAreController.bind(this)));
+        connection.addMessageEvent(new YouAreNotControllerMessageEvent(this.onYouAreNotController.bind(this)));
+        connection.addMessageEvent(new YouAreOwnerMessageEvent(this.onYouAreOwner.bind(this)));
+    }
 
-	private onYouAreController(event: IMessageEvent): void
-	{
-		const parser = event.parser as YouAreControllerMessageParser;
+    private onYouAreController(event: IMessageEvent): void
+    {
+        const parser = event.parser as YouAreControllerMessageParser;
 
-		if (!parser)
-		{
-			return;
-		}
+        if(!parser)
+        {
+            return;
+        }
 
-		const session = this.listener?.getSession(parser.flatId);
+        const session = this.listener?.getSession(parser.flatId);
 
-		if (!session)
-		{
-			return;
-		}
+        if(!session)
+        {
+            return;
+        }
 
-		session.roomControllerLevel = parser.roomControllerLevel;
-	}
+        session.roomControllerLevel = parser.roomControllerLevel;
+    }
 
-	private onYouAreNotController(event: IMessageEvent): void
-	{
-		const parser = event.parser as YouAreNotControllerMessageParser;
+    private onYouAreNotController(event: IMessageEvent): void
+    {
+        const parser = event.parser as YouAreNotControllerMessageParser;
 
-		if (!parser)
-		{
-			return;
-		}
+        if(!parser)
+        {
+            return;
+        }
 
-		const session = this.listener?.getSession(parser.flatId);
+        const session = this.listener?.getSession(parser.flatId);
 
-		if (!session)
-		{
-			return;
-		}
+        if(!session)
+        {
+            return;
+        }
 
-		session.roomControllerLevel = 0;
-	}
+        session.roomControllerLevel = 0;
+    }
 
-	private onYouAreOwner(_event: IMessageEvent): void
-	{
-		const session = this.listener?.getSession(this.roomId);
+    private onYouAreOwner(_event: IMessageEvent): void
+    {
+        const session = this.listener?.getSession(this.roomId);
 
-		if (!session)
-		{
-			return;
-		}
+        if(!session)
+        {
+            return;
+        }
 
-		session.isRoomOwner = true;
-	}
+        session.isRoomOwner = true;
+    }
 }

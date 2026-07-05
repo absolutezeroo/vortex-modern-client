@@ -8,24 +8,24 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionPartnerIsTypingMessageParser implements IMessageParser
 {
-	private _isTyping: boolean = false;
+    private _isTyping: boolean = false;
 
-	get isTyping(): boolean
-	{
-		return this._isTyping;
-	}
+    get isTyping(): boolean
+    {
+        return this._isTyping;
+    }
 
-	flush(): boolean
-	{
-		this._isTyping = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._isTyping = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._isTyping = wrapper.readBoolean();
-		return true;
-	}
+        this._isTyping = wrapper.readBoolean();
+        return true;
+    }
 }

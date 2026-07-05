@@ -10,66 +10,66 @@ import {PatternMatchData} from './PatternMatchData';
  */
 export class IssueInfoMessageParser implements IMessageParser
 {
-	private _issueData: IssueInfoData | null = null;
+    private _issueData: IssueInfoData | null = null;
 
-	get issueData(): IssueInfoData | null
-	{
-		return this._issueData;
-	}
+    get issueData(): IssueInfoData | null
+    {
+        return this._issueData;
+    }
 
-	flush(): boolean
-	{
-		this._issueData = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._issueData = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const issueId = wrapper.readInt();
-		const state = wrapper.readInt();
-		const categoryId = wrapper.readInt();
-		const reportedCategoryId = wrapper.readInt();
-		const issueAgeInMilliseconds = wrapper.readInt();
-		const priority = wrapper.readInt();
-		const groupingId = wrapper.readInt();
-		const reporterUserId = wrapper.readInt();
-		const reporterUserName = wrapper.readString();
-		const reportedUserId = wrapper.readInt();
-		const reportedUserName = wrapper.readString();
-		const pickerUserId = wrapper.readInt();
-		const pickerUserName = wrapper.readString();
-		const message = wrapper.readString();
-		const chatRecordId = wrapper.readInt();
+        const issueId = wrapper.readInt();
+        const state = wrapper.readInt();
+        const categoryId = wrapper.readInt();
+        const reportedCategoryId = wrapper.readInt();
+        const issueAgeInMilliseconds = wrapper.readInt();
+        const priority = wrapper.readInt();
+        const groupingId = wrapper.readInt();
+        const reporterUserId = wrapper.readInt();
+        const reporterUserName = wrapper.readString();
+        const reportedUserId = wrapper.readInt();
+        const reportedUserName = wrapper.readString();
+        const pickerUserId = wrapper.readInt();
+        const pickerUserName = wrapper.readString();
+        const message = wrapper.readString();
+        const chatRecordId = wrapper.readInt();
 
-		const patternCount = wrapper.readInt();
-		const patterns: PatternMatchData[] = [];
+        const patternCount = wrapper.readInt();
+        const patterns: PatternMatchData[] = [];
 
-		for (let i = 0; i < patternCount; i++)
-		{
-			patterns.push(new PatternMatchData(wrapper));
-		}
+        for(let i = 0; i < patternCount; i++)
+        {
+            patterns.push(new PatternMatchData(wrapper));
+        }
 
-		this._issueData = new IssueInfoData(
-			issueId,
-			state,
-			categoryId,
-			reportedCategoryId,
-			issueAgeInMilliseconds,
-			priority,
-			groupingId,
-			reporterUserId,
-			reporterUserName,
-			reportedUserId,
-			reportedUserName,
-			pickerUserId,
-			pickerUserName,
-			message,
-			chatRecordId,
-			patterns
-		);
+        this._issueData = new IssueInfoData(
+            issueId,
+            state,
+            categoryId,
+            reportedCategoryId,
+            issueAgeInMilliseconds,
+            priority,
+            groupingId,
+            reporterUserId,
+            reporterUserName,
+            reportedUserId,
+            reportedUserName,
+            pickerUserId,
+            pickerUserName,
+            message,
+            chatRecordId,
+            patterns
+        );
 
-		return true;
-	}
+        return true;
+    }
 }

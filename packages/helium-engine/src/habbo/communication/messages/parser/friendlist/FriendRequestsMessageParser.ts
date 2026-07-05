@@ -10,40 +10,40 @@ import {FriendRequestData} from './FriendRequestData';
  */
 export class FriendRequestsMessageParser implements IMessageParser
 {
-	private _totalReqCount: number = 0;
+    private _totalReqCount: number = 0;
 
-	get totalReqCount(): number
-	{
-		return this._totalReqCount;
-	}
+    get totalReqCount(): number
+    {
+        return this._totalReqCount;
+    }
 
-	private _reqs: FriendRequestData[] = [];
+    private _reqs: FriendRequestData[] = [];
 
-	get reqs(): FriendRequestData[]
-	{
-		return this._reqs;
-	}
+    get reqs(): FriendRequestData[]
+    {
+        return this._reqs;
+    }
 
-	flush(): boolean
-	{
-		this._totalReqCount = 0;
-		this._reqs = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._totalReqCount = 0;
+        this._reqs = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._totalReqCount = wrapper.readInt();
+        this._totalReqCount = wrapper.readInt();
 
-		const displayCount = wrapper.readInt();
+        const displayCount = wrapper.readInt();
 
-		for (let i = 0; i < displayCount; i++)
-		{
-			this._reqs.push(new FriendRequestData(wrapper));
-		}
+        for(let i = 0; i < displayCount; i++)
+        {
+            this._reqs.push(new FriendRequestData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

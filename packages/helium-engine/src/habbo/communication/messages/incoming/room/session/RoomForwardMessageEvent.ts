@@ -9,8 +9,8 @@ import {RoomForwardMessageParser} from '@habbo/communication/messages/parser/roo
  */
 export class RoomForwardMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomForwardMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomForwardMessageParser);
+    }
 }

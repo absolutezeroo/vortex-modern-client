@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ConvertGlobalRoomIdMessageComposer extends MessageComposer<ConstructorParameters<typeof ConvertGlobalRoomIdMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ConvertGlobalRoomIdMessageComposer>;
+    private _data: ConstructorParameters<typeof ConvertGlobalRoomIdMessageComposer>;
 
-	constructor(flatId: string)
-	{
-		super();
+    constructor(flatId: string)
+    {
+        super();
 
-		this._data = [flatId];
-	}
+        this._data = [flatId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

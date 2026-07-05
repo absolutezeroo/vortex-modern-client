@@ -8,27 +8,27 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class HanditemConfigurationMessageParser implements IMessageParser
 {
-	private _isHanditemControlBlocked: boolean = false;
+    private _isHanditemControlBlocked: boolean = false;
 
-	get isHanditemControlBlocked(): boolean
-	{
-		return this._isHanditemControlBlocked;
-	}
+    get isHanditemControlBlocked(): boolean
+    {
+        return this._isHanditemControlBlocked;
+    }
 
-	flush(): boolean
-	{
-		this._isHanditemControlBlocked = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._isHanditemControlBlocked = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._isHanditemControlBlocked = wrapper.readBoolean();
-		return true;
-	}
+        this._isHanditemControlBlocked = wrapper.readBoolean();
+        return true;
+    }
 }

@@ -9,8 +9,8 @@ import {PopularRoomTagsResultMessageParser} from '../../parser/navigator/Popular
  */
 export class PopularRoomTagsResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PopularRoomTagsResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PopularRoomTagsResultMessageParser);
+    }
 }

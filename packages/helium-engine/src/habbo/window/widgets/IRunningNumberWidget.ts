@@ -10,26 +10,25 @@ import type {IWidget} from './IWidget';
  */
 export interface IRunningNumberWidget extends IWidget
 {
-	/**
+    /**
 	 * The target number to animate towards.
 	 */
-	number: number;
-	/**
+    number: number;
+    /**
 	 * The number of display digits (leading zeros).
 	 */
-	digits: number;
-	/**
+    digits: number;
+    /**
 	 * The color style index.
 	 */
-	colorStyle: number;
-	/**
+    colorStyle: number;
+    /**
 	 * The update frequency in milliseconds.
 	 */
-	updateFrequency: number;
+    updateFrequency: number;
 
-	/**
+    /**
 	 * Set the initial number (skips animation).
 	 */
-	set initialNumber(value: number);
+    set initialNumber(value: number);
 }
-

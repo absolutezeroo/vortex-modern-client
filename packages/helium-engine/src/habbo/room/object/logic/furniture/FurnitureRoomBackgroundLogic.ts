@@ -9,8 +9,8 @@ import {FurnitureRoomBrandingLogic} from './FurnitureRoomBrandingLogic';
 
 export class FurnitureRoomBackgroundLogic extends FurnitureRoomBrandingLogic
 {
-	protected override getAdClickUrl(_model: { getString(key: string): string | null }): string | null
-	{
-		return null;
-	}
+    protected override getAdClickUrl(_model: { getString(key: string): string | null }): string | null
+    {
+        return null;
+    }
 }

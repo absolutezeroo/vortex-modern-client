@@ -9,13 +9,13 @@ import {HabboGroupDeactivatedMessageParser} from '../../parser/users/HabboGroupD
  */
 export class HabboGroupDeactivatedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboGroupDeactivatedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboGroupDeactivatedMessageParser);
+    }
 
-	get groupId(): number
-	{
-		return (this._parser as HabboGroupDeactivatedMessageParser).groupId;
-	}
+    get groupId(): number
+    {
+        return (this._parser as HabboGroupDeactivatedMessageParser).groupId;
+    }
 }

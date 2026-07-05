@@ -5,5 +5,5 @@
  */
 export interface IBinarySearchTest
 {
-	test(index: number): boolean;
+    test(index: number): boolean;
 }

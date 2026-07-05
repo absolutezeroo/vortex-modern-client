@@ -7,76 +7,76 @@ import {getXmlAttribute, getXmlRoot} from '../structure/AvatarXmlUtils';
  */
 export class ActionType
 {
-	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::ActionType()
-	constructor(data: any)
-	{
-		const element = getXmlRoot(data);
-		const value = element ? getXmlAttribute(element, 'value') : data.value;
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::ActionType()
+    constructor(data: any)
+    {
+        const element = getXmlRoot(data);
+        const value = element ? getXmlAttribute(element, 'value') : data.value;
 
-		this._id = parseInt(value) || 0;
-		this._value = parseInt(value) || 0;
-		this._prevents = [];
-		this._preventHeadTurn = true;
-		this._isAnimated = true;
+        this._id = parseInt(value) || 0;
+        this._value = parseInt(value) || 0;
+        this._prevents = [];
+        this._preventHeadTurn = true;
+        this._isAnimated = true;
 
-		const prevents = element ? getXmlAttribute(element, 'prevents') : String(data.prevents ?? '');
+        const prevents = element ? getXmlAttribute(element, 'prevents') : String(data.prevents ?? '');
 
-		if (prevents !== '')
-		{
-			this._prevents = prevents.split(',');
-		}
+        if(prevents !== '')
+        {
+            this._prevents = prevents.split(',');
+        }
 
-		this._preventHeadTurn = (element ? getXmlAttribute(element, 'preventheadturn') : String(data.preventheadturn)) === 'true';
+        this._preventHeadTurn = (element ? getXmlAttribute(element, 'preventheadturn') : String(data.preventheadturn)) === 'true';
 
-		const animated = element ? getXmlAttribute(element, 'animated') : String(data.animated ?? '');
+        const animated = element ? getXmlAttribute(element, 'animated') : String(data.animated ?? '');
 
-		if (animated === '')
-		{
-			this._isAnimated = true;
-		}
-		else
-		{
-			this._isAnimated = (animated === 'true');
-		}
-	}
+        if(animated === '')
+        {
+            this._isAnimated = true;
+        }
+        else
+        {
+            this._isAnimated = (animated === 'true');
+        }
+    }
 
-	private _id: number;
+    private _id: number;
 
-	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get id()
-	public get id(): number
-	{
-		return this._id;
-	}
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get id()
+    public get id(): number
+    {
+        return this._id;
+    }
 
-	private _value: number;
+    private _value: number;
 
-	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get value()
-	public get value(): number
-	{
-		return this._value;
-	}
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get value()
+    public get value(): number
+    {
+        return this._value;
+    }
 
-	private _prevents: string[];
+    private _prevents: string[];
 
-	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get prevents()
-	public get prevents(): string[]
-	{
-		return this._prevents;
-	}
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get prevents()
+    public get prevents(): string[]
+    {
+        return this._prevents;
+    }
 
-	private _preventHeadTurn: boolean;
+    private _preventHeadTurn: boolean;
 
-	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get preventHeadTurn()
-	public get preventHeadTurn(): boolean
-	{
-		return this._preventHeadTurn;
-	}
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get preventHeadTurn()
+    public get preventHeadTurn(): boolean
+    {
+        return this._preventHeadTurn;
+    }
 
-	private _isAnimated: boolean;
+    private _isAnimated: boolean;
 
-	// AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get isAnimated()
-	public get isAnimated(): boolean
-	{
-		return this._isAnimated;
-	}
+    // AS3: sources/win63_version/habbo/avatar/actions/ActionType.as::get isAnimated()
+    public get isAnimated(): boolean
+    {
+        return this._isAnimated;
+    }
 }

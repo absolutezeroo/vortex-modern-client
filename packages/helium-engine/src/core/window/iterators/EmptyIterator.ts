@@ -10,19 +10,19 @@ import type {IIterator} from '../utils/IIterator';
  */
 export class EmptyIterator implements IIterator
 {
-	public static readonly INSTANCE: EmptyIterator = new EmptyIterator();
+    public static readonly INSTANCE: EmptyIterator = new EmptyIterator();
 
-	public next(): IWindow | null
-	{
-		return null;
-	}
+    public next(): IWindow | null
+    {
+        return null;
+    }
 
-	public reset(): void
-	{
-	}
+    public reset(): void
+    {
+    }
 
-	public count(): number
-	{
-		return 0;
-	}
+    public count(): number
+    {
+        return 0;
+    }
 }

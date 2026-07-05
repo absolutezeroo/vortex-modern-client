@@ -12,102 +12,102 @@ import {DelayedCall} from './DelayedCall';
  */
 export class Juggler implements IAnimatable
 {
-	public static readonly REMOVE_FROM_JUGGLER: string = 'REMOVE_FROM_JUGGLER';
+    public static readonly REMOVE_FROM_JUGGLER: string = 'REMOVE_FROM_JUGGLER';
 
-	private _animatables: (IAnimatable | null)[] = [];
-	private _animatableSet: Set<IAnimatable> = new Set();
-	private _elapsedTime: number = 0;
+    private _animatables: (IAnimatable | null)[] = [];
+    private _animatableSet: Set<IAnimatable> = new Set();
+    private _elapsedTime: number = 0;
 
-	/**
+    /**
 	 * The total elapsed time since this juggler was created.
 	 */
-	get elapsedTime(): number
-	{
-		return this._elapsedTime;
-	}
+    get elapsedTime(): number
+    {
+        return this._elapsedTime;
+    }
 
-	/**
+    /**
 	 * Add an animatable object to the juggler.
 	 * If the object is already added, this is a no-op.
 	 *
 	 * @param animatable The animatable object to add
 	 */
-	add(animatable: IAnimatable | null): void
-	{
-		if (animatable && !this._animatableSet.has(animatable))
-		{
-			this._animatableSet.add(animatable);
-			this._animatables[this._animatables.length] = animatable;
+    add(animatable: IAnimatable | null): void
+    {
+        if(animatable && !this._animatableSet.has(animatable))
+        {
+            this._animatableSet.add(animatable);
+            this._animatables[this._animatables.length] = animatable;
 
-			if (animatable instanceof DelayedCall)
-			{
-				animatable.onRemove = () => this.remove(animatable);
-			}
-		}
-	}
+            if(animatable instanceof DelayedCall)
+            {
+                animatable.onRemove = () => this.remove(animatable);
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Check if the juggler contains a given animatable.
 	 *
 	 * @param animatable The animatable to check
 	 * @returns True if the animatable is in the juggler
 	 */
-	contains(animatable: IAnimatable): boolean
-	{
-		return this._animatableSet.has(animatable);
-	}
+    contains(animatable: IAnimatable): boolean
+    {
+        return this._animatableSet.has(animatable);
+    }
 
-	/**
+    /**
 	 * Remove an animatable object from the juggler.
 	 *
 	 * @param animatable The animatable to remove
 	 */
-	remove(animatable: IAnimatable | null): void
-	{
-		if (animatable === null)
-		{
-			return;
-		}
+    remove(animatable: IAnimatable | null): void
+    {
+        if(animatable === null)
+        {
+            return;
+        }
 
-		if (animatable instanceof DelayedCall)
-		{
-			animatable.onRemove = null;
-		}
+        if(animatable instanceof DelayedCall)
+        {
+            animatable.onRemove = null;
+        }
 
-		if (!this._animatableSet.delete(animatable))
-		{
-			return;
-		}
+        if(!this._animatableSet.delete(animatable))
+        {
+            return;
+        }
 
-		const index = this._animatables.indexOf(animatable);
+        const index = this._animatables.indexOf(animatable);
 
-		if (index !== -1)
-		{
-			this._animatables[index] = null;
-		}
-	}
+        if(index !== -1)
+        {
+            this._animatables[index] = null;
+        }
+    }
 
-	/**
+    /**
 	 * Remove all animatable objects from the juggler.
 	 */
-	purge(): void
-	{
-		for (let i = this._animatables.length - 1; i >= 0; i--)
-		{
-			const animatable = this._animatables[i];
+    purge(): void
+    {
+        for(let i = this._animatables.length - 1; i >= 0; i--)
+        {
+            const animatable = this._animatables[i];
 
-			if (animatable instanceof DelayedCall)
-			{
-				animatable.onRemove = null;
-			}
+            if(animatable instanceof DelayedCall)
+            {
+                animatable.onRemove = null;
+            }
 
-			this._animatables[i] = null;
-		}
+            this._animatables[i] = null;
+        }
 
-		this._animatableSet.clear();
-	}
+        this._animatableSet.clear();
+    }
 
-	/**
+    /**
 	 * Schedule a delayed function call.
 	 *
 	 * @param callback The function to call after the delay
@@ -115,20 +115,20 @@ export class Juggler implements IAnimatable
 	 * @param args Additional arguments to pass to the callback
 	 * @returns The created DelayedCall, or null if callback is null
 	 */
-	delayCall(callback: ((...args: unknown[]) => void) | null, delay: number, ...args: unknown[]): DelayedCall | null
-	{
-		if (callback === null)
-		{
-			return null;
-		}
+    delayCall(callback: ((...args: unknown[]) => void) | null, delay: number, ...args: unknown[]): DelayedCall | null
+    {
+        if(callback === null)
+        {
+            return null;
+        }
 
-		const delayedCall = new DelayedCall(callback, delay, args);
-		this.add(delayedCall);
+        const delayedCall = new DelayedCall(callback, delay, args);
+        this.add(delayedCall);
 
-		return delayedCall;
-	}
+        return delayedCall;
+    }
 
-	/**
+    /**
 	 * Schedule a repeated function call.
 	 *
 	 * @param callback The function to call at each interval
@@ -137,70 +137,70 @@ export class Juggler implements IAnimatable
 	 * @param args Additional arguments to pass to the callback
 	 * @returns The created DelayedCall, or null if callback is null
 	 */
-	repeatCall(callback: ((...args: unknown[]) => void) | null, interval: number, count: number = 0, ...args: unknown[]): DelayedCall | null
-	{
-		if (callback === null)
-		{
-			return null;
-		}
+    repeatCall(callback: ((...args: unknown[]) => void) | null, interval: number, count: number = 0, ...args: unknown[]): DelayedCall | null
+    {
+        if(callback === null)
+        {
+            return null;
+        }
 
-		const delayedCall = new DelayedCall(callback, interval, args);
-		delayedCall.repeatCount = count;
-		this.add(delayedCall);
+        const delayedCall = new DelayedCall(callback, interval, args);
+        delayedCall.repeatCount = count;
+        this.add(delayedCall);
 
-		return delayedCall;
-	}
+        return delayedCall;
+    }
 
-	/**
+    /**
 	 * Advance all contained animatables by the given time delta.
 	 * Null entries (removed animatables) are compacted during this call.
 	 *
 	 * @param time The time delta in seconds
 	 */
-	advanceTime(time: number): void
-	{
-		let i = 0;
-		let numObjects = this._animatables.length;
-		let currentIndex = 0;
+    advanceTime(time: number): void
+    {
+        let i = 0;
+        let numObjects = this._animatables.length;
+        let currentIndex = 0;
 
-		this._elapsedTime += time;
+        this._elapsedTime += time;
 
-		if (numObjects === 0)
-		{
-			return;
-		}
+        if(numObjects === 0)
+        {
+            return;
+        }
 
-		i = 0;
+        i = 0;
 
-		while (i < numObjects)
-		{
-			const animatable = this._animatables[i];
+        while(i < numObjects)
+        {
+            const animatable = this._animatables[i];
 
-			if (animatable)
-			{
-				if (currentIndex !== i)
-				{
-					this._animatables[currentIndex] = animatable;
-					this._animatables[i] = null;
-				}
+            if(animatable)
+            {
+                if(currentIndex !== i)
+                {
+                    this._animatables[currentIndex] = animatable;
+                    this._animatables[i] = null;
+                }
 
-				animatable.advanceTime(time);
-				currentIndex++;
-			}
+                animatable.advanceTime(time);
+                currentIndex++;
+            }
 
-			i++;
-		}
+            i++;
+        }
 
-		if (currentIndex !== i)
-		{
-			numObjects = this._animatables.length;
+        if(currentIndex !== i)
+        {
+            numObjects = this._animatables.length;
 
-			while (i < numObjects)
-			{
-				this._animatables[currentIndex++] = this._animatables[i++];
-			}
+            while(i < numObjects)
+            {
+                this._animatables[currentIndex++] = this._animatables[i++];
+            }
 
-			this._animatables.length = currentIndex;
-		}
-	}
+            this._animatables.length = currentIndex;
+        }
+    }
 }

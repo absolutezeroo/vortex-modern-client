@@ -9,8 +9,8 @@ import {MOTDNotificationEventParser} from '../../parser/notifications/MOTDNotifi
  */
 export class MOTDNotificationEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, MOTDNotificationEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, MOTDNotificationEventParser);
+    }
 }

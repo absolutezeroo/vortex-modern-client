@@ -9,8 +9,8 @@ import {ApproveNameMessageParser} from '../../parser/users/ApproveNameMessagePar
  */
 export class ApproveNameMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ApproveNameMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ApproveNameMessageParser);
+    }
 }

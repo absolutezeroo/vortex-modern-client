@@ -11,26 +11,26 @@ import {WindowEvent} from './WindowEvent';
  */
 export class WindowLinkEvent extends WindowEvent
 {
-	public static readonly WE_LINK: string = 'WE_LINK';
+    public static readonly WE_LINK: string = 'WE_LINK';
 
-	private static readonly _linkPool: WindowLinkEvent[] = [];
+    private static readonly _linkPool: WindowLinkEvent[] = [];
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._type = WindowLinkEvent.WE_LINK;
-	}
+        this._type = WindowLinkEvent.WE_LINK;
+    }
 
-	private _link: string = '';
+    private _link: string = '';
 
-	/** The link URL string. */
-	public get link(): string
-	{
-		return this._link;
-	}
+    /** The link URL string. */
+    public get link(): string
+    {
+        return this._link;
+    }
 
-	/**
+    /**
 	 * Allocates a WindowLinkEvent from the pool or creates a new one.
 	 *
 	 * @param link - The link URL string
@@ -38,34 +38,34 @@ export class WindowLinkEvent extends WindowEvent
 	 * @param related - The related window
 	 * @returns A pooled or new WindowLinkEvent instance
 	 */
-	public static allocateLink(link: string, window: IWindow | null, related: IWindow | null): WindowLinkEvent
-	{
-		const event: WindowLinkEvent = (WindowLinkEvent._linkPool.length > 0)
-			? WindowLinkEvent._linkPool.pop()!
-			: new WindowLinkEvent();
+    public static allocateLink(link: string, window: IWindow | null, related: IWindow | null): WindowLinkEvent
+    {
+        const event: WindowLinkEvent = (WindowLinkEvent._linkPool.length > 0)
+            ? WindowLinkEvent._linkPool.pop()!
+            : new WindowLinkEvent();
 
-		event._link = link;
-		event._window = window;
-		event._related = related;
-		event._recycled = false;
-		event._poolRef = WindowLinkEvent._linkPool;
+        event._link = link;
+        event._window = window;
+        event._related = related;
+        event._recycled = false;
+        event._poolRef = WindowLinkEvent._linkPool;
 
-		return event;
-	}
+        return event;
+    }
 
-	/**
+    /**
 	 * Creates a clone of this link event via the pool.
 	 */
-	public override clone(): WindowEvent
-	{
-		return WindowLinkEvent.allocateLink(this._link, this._window, this._related);
-	}
+    public override clone(): WindowEvent
+    {
+        return WindowLinkEvent.allocateLink(this._link, this._window, this._related);
+    }
 
-	/**
+    /**
 	 * Returns a string representation of this link event.
 	 */
-	public override toString(): string
-	{
-		return `WindowLinkEvent { type: ${this._type} link: ${this._link} cancelable: ${this._cancelable} window: ${this._window} }`;
-	}
+    public override toString(): string
+    {
+        return `WindowLinkEvent { type: ${this._type} link: ${this._link} cancelable: ${this._cancelable} window: ${this._window} }`;
+    }
 }

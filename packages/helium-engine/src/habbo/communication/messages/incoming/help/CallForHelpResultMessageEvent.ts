@@ -9,8 +9,8 @@ import {CallForHelpResultMessageParser} from '../../parser/help/CallForHelpResul
  */
 export class CallForHelpResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CallForHelpResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CallForHelpResultMessageParser);
+    }
 }

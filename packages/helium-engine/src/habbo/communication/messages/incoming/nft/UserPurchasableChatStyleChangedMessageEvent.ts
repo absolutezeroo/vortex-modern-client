@@ -9,8 +9,8 @@ import {UserPurchasableChatStyleChangedMessageParser} from '../../parser/nft/Use
  */
 export class UserPurchasableChatStyleChangedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserPurchasableChatStyleChangedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserPurchasableChatStyleChangedMessageParser);
+    }
 }

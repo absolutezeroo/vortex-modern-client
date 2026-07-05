@@ -10,39 +10,39 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 
 export interface IRoomUI
 {
-	/**
+    /**
 	 * Creates a desktop for the given room session.
 	 */
-	createDesktop(session: IRoomSession): IRoomDesktop;
+    createDesktop(session: IRoomSession): IRoomDesktop;
 
-	/**
+    /**
 	 * Disposes a desktop by room identifier.
 	 */
-	disposeDesktop(identifier: string): void;
+    disposeDesktop(identifier: string): void;
 
-	/**
+    /**
 	 * Gets a desktop by room identifier.
 	 */
-	getDesktop(identifier: string): IRoomDesktop | null;
+    getDesktop(identifier: string): IRoomDesktop | null;
 
-	/**
+    /**
 	 * Gets the active canvas ID for a room.
 	 */
-	getActiveCanvasId(roomId: number): number;
+    getActiveCanvasId(roomId: number): number;
 
-	/**
+    /**
 	 * Sets visibility of the active desktop.
 	 */
-	set visible(value: boolean);
+    set visible(value: boolean);
 
-	/**
+    /**
 	 * Triggers bottom bar resize.
 	 */
-	// AS3: sources/win63_version/habbo/ui/IRoomUI.as::triggerbottomBarResize()
-	triggerbottomBarResize(): void;
+    // AS3: sources/win63_version/habbo/ui/IRoomUI.as::triggerbottomBarResize()
+    triggerbottomBarResize(): void;
 
-	/**
+    /**
 	 * TS alias kept for existing callers; delegates to the AS3-named API.
 	 */
-	triggerBottomBarResize(): void;
+    triggerBottomBarResize(): void;
 }

@@ -10,29 +10,29 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class UserRemoveMessageParser implements IMessageParser
 {
-	private _roomIndex: number = 0;
+    private _roomIndex: number = 0;
 
-	get roomIndex(): number
-	{
-		return this._roomIndex;
-	}
+    get roomIndex(): number
+    {
+        return this._roomIndex;
+    }
 
-	flush(): boolean
-	{
-		this._roomIndex = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._roomIndex = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		const value = wrapper.readString();
-		this._roomIndex = parseInt(value, 10);
+        const value = wrapper.readString();
+        this._roomIndex = parseInt(value, 10);
 
-		return true;
-	}
+        return true;
+    }
 }

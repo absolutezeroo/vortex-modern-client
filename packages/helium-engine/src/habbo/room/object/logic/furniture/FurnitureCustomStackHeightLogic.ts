@@ -10,18 +10,18 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureCustomStackHeightLogic extends FurnitureMultiStateLogic
 {
-	override get widget(): string | null
-	{
-		return 'CUSTOM_STACK_HEIGHT';
-	}
+    override get widget(): string | null
+    {
+        return 'CUSTOM_STACK_HEIGHT';
+    }
 
-	override initialize(data: unknown): void
-	{
-		super.initialize(data);
+    override initialize(data: unknown): void
+    {
+        super.initialize(data);
 
-		if (this.object !== null && this.object.getModelController() !== null)
-		{
-			this.object.getModelController()!.setNumber(RoomObjectVariableEnum.FURNITURE_ALWAYS_STACKABLE, 1);
-		}
-	}
+        if(this.object !== null && this.object.getModelController() !== null)
+        {
+            this.object.getModelController()!.setNumber(RoomObjectVariableEnum.FURNITURE_ALWAYS_STACKABLE, 1);
+        }
+    }
 }

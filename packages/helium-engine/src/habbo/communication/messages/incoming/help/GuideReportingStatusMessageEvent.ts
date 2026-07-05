@@ -10,8 +10,8 @@ import {GuideReportingStatusMessageParser} from '../../parser/help/GuideReportin
  */
 export class GuideReportingStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideReportingStatusMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideReportingStatusMessageParser);
+    }
 }

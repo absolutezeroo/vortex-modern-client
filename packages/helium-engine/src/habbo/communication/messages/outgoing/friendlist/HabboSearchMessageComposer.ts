@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class HabboSearchMessageComposer extends MessageComposer<ConstructorParameters<typeof HabboSearchMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof HabboSearchMessageComposer>;
+    private _data: ConstructorParameters<typeof HabboSearchMessageComposer>;
 
-	constructor(searchString: string)
-	{
-		super();
-		this._data = [searchString];
-	}
+    constructor(searchString: string)
+    {
+        super();
+        this._data = [searchString];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

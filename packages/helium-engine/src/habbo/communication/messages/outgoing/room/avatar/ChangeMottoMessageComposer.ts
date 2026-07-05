@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ChangeMottoMessageComposer extends MessageComposer<ConstructorParameters<typeof ChangeMottoMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof ChangeMottoMessageComposer>;
+    private _data: ConstructorParameters<typeof ChangeMottoMessageComposer>;
 
-	constructor(motto: string)
-	{
-		super();
-		this._data = [motto];
-	}
+    constructor(motto: string)
+    {
+        super();
+        this._data = [motto];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

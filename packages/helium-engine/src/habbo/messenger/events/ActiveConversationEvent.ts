@@ -6,25 +6,25 @@
  */
 export class ActiveConversationEvent
 {
-	public static readonly ACTIVE_CONVERSATION_COUNT_CHANGED: string = 'ACCE_changed';
+    public static readonly ACTIVE_CONVERSATION_COUNT_CHANGED: string = 'ACCE_changed';
 
-	constructor(type: string, count: number, hasUnread: boolean)
-	{
-		this._activeConversationsCount = count;
-		this._hasUnread = hasUnread;
-	}
+    constructor(type: string, count: number, hasUnread: boolean)
+    {
+        this._activeConversationsCount = count;
+        this._hasUnread = hasUnread;
+    }
 
-	private _activeConversationsCount: number;
+    private _activeConversationsCount: number;
 
-	get activeConversationsCount(): number
-	{
-		return this._activeConversationsCount;
-	}
+    get activeConversationsCount(): number
+    {
+        return this._activeConversationsCount;
+    }
 
-	private _hasUnread: boolean;
+    private _hasUnread: boolean;
 
-	get hasUnread(): boolean
-	{
-		return this._hasUnread;
-	}
+    get hasUnread(): boolean
+    {
+        return this._hasUnread;
+    }
 }

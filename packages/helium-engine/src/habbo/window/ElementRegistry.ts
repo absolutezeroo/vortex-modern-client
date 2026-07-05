@@ -11,36 +11,36 @@ import {WindowStyle} from './enum/WindowStyle';
  */
 export class ElementRegistry
 {
-	/** [typeId] -> Map<style, IElementDescriptor> */
-	private _descriptors: Map<number, Map<number, IElementDescriptor>> = new Map();
+    /** [typeId] -> Map<style, IElementDescriptor> */
+    private _descriptors: Map<number, Map<number, IElementDescriptor>> = new Map();
 
-	/**
+    /**
 	 * Load element descriptors from compiled element-description.json data.
 	 *
 	 * @param data - The parsed element description JSON
 	 */
-	load(data: IElementDescriptionData): void
-	{
-		for (const element of data.elements)
-		{
-			const typeId = element.typeId;
-			const style = element.style;
+    load(data: IElementDescriptionData): void
+    {
+        for(const element of data.elements)
+        {
+            const typeId = element.typeId;
+            const style = element.style;
 
-			if (typeId < 0) continue;
+            if(typeId < 0) continue;
 
-			let styleMap = this._descriptors.get(typeId);
+            let styleMap = this._descriptors.get(typeId);
 
-			if (!styleMap)
-			{
-				styleMap = new Map();
-				this._descriptors.set(typeId, styleMap);
-			}
+            if(!styleMap)
+            {
+                styleMap = new Map();
+                this._descriptors.set(typeId, styleMap);
+            }
 
-			styleMap.set(style, element);
-		}
-	}
+            styleMap.set(style, element);
+        }
+    }
 
-	/**
+    /**
 	 * Get the element descriptor for a given type and style.
 	 * Falls back to style 0 (DEFAULT) if the requested style is not found.
 	 *
@@ -48,73 +48,73 @@ export class ElementRegistry
 	 * @param style - The style index (default 0)
 	 * @returns The descriptor, or null if not found
 	 */
-	getDescriptor(typeId: number, style: number = WindowStyle.DEFAULT): IElementDescriptor | null
-	{
-		const styleMap = this._descriptors.get(typeId);
+    getDescriptor(typeId: number, style: number = WindowStyle.DEFAULT): IElementDescriptor | null
+    {
+        const styleMap = this._descriptors.get(typeId);
 
-		if (!styleMap) return null;
+        if(!styleMap) return null;
 
-		const descriptor = styleMap.get(style);
+        const descriptor = styleMap.get(style);
 
-		if (descriptor) return descriptor;
+        if(descriptor) return descriptor;
 
-		if (style !== WindowStyle.DEFAULT)
-		{
-			return styleMap.get(WindowStyle.DEFAULT) ?? null;
-		}
+        if(style !== WindowStyle.DEFAULT)
+        {
+            return styleMap.get(WindowStyle.DEFAULT) ?? null;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Get the default attributes for a given type and style.
 	 *
 	 * @param typeId - The element type ID
 	 * @param style - The style index (default 0)
 	 * @returns The defaults, or null if not found
 	 */
-	getDefaults(typeId: number, style: number = WindowStyle.DEFAULT): IElementDefaults | null
-	{
-		return this.getDescriptor(typeId, style)?.defaults ?? null;
-	}
+    getDefaults(typeId: number, style: number = WindowStyle.DEFAULT): IElementDefaults | null
+    {
+        return this.getDescriptor(typeId, style)?.defaults ?? null;
+    }
 
-	/**
+    /**
 	 * Check if a descriptor exists for the given type and style.
 	 */
-	hasDescriptor(typeId: number, style: number = WindowStyle.DEFAULT): boolean
-	{
-		return this.getDescriptor(typeId, style) !== null;
-	}
+    hasDescriptor(typeId: number, style: number = WindowStyle.DEFAULT): boolean
+    {
+        return this.getDescriptor(typeId, style) !== null;
+    }
 
-	/**
+    /**
 	 * Returns all descriptors that use the given skin asset name.
 	 *
 	 * @param assetName - The skin asset name (e.g. "habbo_skin_frame")
 	 * @returns Array of matching descriptors
 	 */
-	getDescriptorsByAsset(assetName: string): IElementDescriptor[]
-	{
-		const results: IElementDescriptor[] = [];
+    getDescriptorsByAsset(assetName: string): IElementDescriptor[]
+    {
+        const results: IElementDescriptor[] = [];
 
-		for (const styleMap of this._descriptors.values())
-		{
-			for (const descriptor of styleMap.values())
-			{
-				if (descriptor.asset === assetName)
-				{
-					results.push(descriptor);
-				}
-			}
-		}
+        for(const styleMap of this._descriptors.values())
+        {
+            for(const descriptor of styleMap.values())
+            {
+                if(descriptor.asset === assetName)
+                {
+                    results.push(descriptor);
+                }
+            }
+        }
 
-		return results;
-	}
+        return results;
+    }
 
-	/**
+    /**
 	 * Dispose and clear all descriptors.
 	 */
-	dispose(): void
-	{
-		this._descriptors.clear();
-	}
+    dispose(): void
+    {
+        this._descriptors.clear();
+    }
 }

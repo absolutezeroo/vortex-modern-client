@@ -9,70 +9,70 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class GuideSessionStartedMessageParser implements IMessageParser
 {
-	private _requesterUserId: number = 0;
+    private _requesterUserId: number = 0;
 
-	get requesterUserId(): number
-	{
-		return this._requesterUserId;
-	}
+    get requesterUserId(): number
+    {
+        return this._requesterUserId;
+    }
 
-	private _requesterName: string = '';
+    private _requesterName: string = '';
 
-	get requesterName(): string
-	{
-		return this._requesterName;
-	}
+    get requesterName(): string
+    {
+        return this._requesterName;
+    }
 
-	private _requesterFigure: string = '';
+    private _requesterFigure: string = '';
 
-	get requesterFigure(): string
-	{
-		return this._requesterFigure;
-	}
+    get requesterFigure(): string
+    {
+        return this._requesterFigure;
+    }
 
-	private _guideUserId: number = 0;
+    private _guideUserId: number = 0;
 
-	get guideUserId(): number
-	{
-		return this._guideUserId;
-	}
+    get guideUserId(): number
+    {
+        return this._guideUserId;
+    }
 
-	private _guideName: string = '';
+    private _guideName: string = '';
 
-	get guideName(): string
-	{
-		return this._guideName;
-	}
+    get guideName(): string
+    {
+        return this._guideName;
+    }
 
-	private _guideFigure: string = '';
+    private _guideFigure: string = '';
 
-	get guideFigure(): string
-	{
-		return this._guideFigure;
-	}
+    get guideFigure(): string
+    {
+        return this._guideFigure;
+    }
 
-	flush(): boolean
-	{
-		this._requesterUserId = 0;
-		this._requesterName = '';
-		this._requesterFigure = '';
-		this._guideUserId = 0;
-		this._guideName = '';
-		this._guideFigure = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._requesterUserId = 0;
+        this._requesterName = '';
+        this._requesterFigure = '';
+        this._guideUserId = 0;
+        this._guideName = '';
+        this._guideFigure = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._requesterUserId = wrapper.readInt();
-		this._requesterName = wrapper.readString();
-		this._requesterFigure = wrapper.readString();
-		this._guideUserId = wrapper.readInt();
-		this._guideName = wrapper.readString();
-		this._guideFigure = wrapper.readString();
+        this._requesterUserId = wrapper.readInt();
+        this._requesterName = wrapper.readString();
+        this._requesterFigure = wrapper.readString();
+        this._guideUserId = wrapper.readInt();
+        this._guideName = wrapper.readString();
+        this._guideFigure = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

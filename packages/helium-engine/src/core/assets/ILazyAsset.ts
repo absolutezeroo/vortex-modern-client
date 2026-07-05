@@ -9,5 +9,5 @@ import type {IAsset} from './IAsset';
  */
 export interface ILazyAsset extends IAsset
 {
-	prepareLazyContent(): void;
+    prepareLazyContent(): void;
 }

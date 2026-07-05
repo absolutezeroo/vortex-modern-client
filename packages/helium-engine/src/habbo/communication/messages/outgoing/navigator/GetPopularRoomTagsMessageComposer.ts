@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetPopularRoomTagsMessageComposer extends MessageComposer<ConstructorParameters<typeof GetPopularRoomTagsMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetPopularRoomTagsMessageComposer>;
+    private _data: ConstructorParameters<typeof GetPopularRoomTagsMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

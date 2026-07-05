@@ -7,39 +7,39 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomVisitData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._roomId = wrapper.readInt();
-		this._roomName = wrapper.readString();
-		this._enterHour = wrapper.readInt();
-		this._enterMinute = wrapper.readInt();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._roomId = wrapper.readInt();
+        this._roomName = wrapper.readString();
+        this._enterHour = wrapper.readInt();
+        this._enterMinute = wrapper.readInt();
+    }
 
-	private _roomId: number;
+    private _roomId: number;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	private _roomName: string;
+    private _roomName: string;
 
-	get roomName(): string
-	{
-		return this._roomName;
-	}
+    get roomName(): string
+    {
+        return this._roomName;
+    }
 
-	private _enterHour: number;
+    private _enterHour: number;
 
-	get enterHour(): number
-	{
-		return this._enterHour;
-	}
+    get enterHour(): number
+    {
+        return this._enterHour;
+    }
 
-	private _enterMinute: number;
+    private _enterMinute: number;
 
-	get enterMinute(): number
-	{
-		return this._enterMinute;
-	}
+    get enterMinute(): number
+    {
+        return this._enterMinute;
+    }
 }

@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  */
 export interface IFocusManagerService
 {
-	setFocus(window: IWindow | null): void;
+    setFocus(window: IWindow | null): void;
 
-	getFocus(): IWindow | null;
+    getFocus(): IWindow | null;
 }

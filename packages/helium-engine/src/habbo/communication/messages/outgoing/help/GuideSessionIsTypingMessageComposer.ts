@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GuideSessionIsTypingMessageComposer extends MessageComposer<ConstructorParameters<typeof GuideSessionIsTypingMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GuideSessionIsTypingMessageComposer>;
+    private _data: ConstructorParameters<typeof GuideSessionIsTypingMessageComposer>;
 
-	constructor(isTyping: boolean)
-	{
-		super();
-		this._data = [isTyping];
-	}
+    constructor(isTyping: boolean)
+    {
+        super();
+        this._data = [isTyping];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

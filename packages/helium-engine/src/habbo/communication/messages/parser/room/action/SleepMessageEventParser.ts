@@ -8,37 +8,37 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class SleepMessageEventParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _sleeping: boolean = false;
+    private _sleeping: boolean = false;
 
-	get sleeping(): boolean
-	{
-		return this._sleeping;
-	}
+    get sleeping(): boolean
+    {
+        return this._sleeping;
+    }
 
-	flush(): boolean
-	{
-		this._userId = 0;
-		this._sleeping = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = 0;
+        this._sleeping = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._userId = wrapper.readInt();
-		this._sleeping = wrapper.readBoolean();
+        this._userId = wrapper.readInt();
+        this._sleeping = wrapper.readBoolean();
 
-		return true;
-	}
+        return true;
+    }
 }

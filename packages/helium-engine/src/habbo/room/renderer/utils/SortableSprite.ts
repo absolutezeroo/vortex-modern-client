@@ -13,61 +13,61 @@ import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSpri
 
 export class SortableSprite
 {
-	public static readonly Z_INFINITY: number = 100000000;
+    public static readonly Z_INFINITY: number = 100000000;
 
-	public name: string = '';
+    public name: string = '';
 
-	private _x: number = 0;
+    private _x: number = 0;
 
-	get x(): number
-	{
-		return this._x;
-	}
+    get x(): number
+    {
+        return this._x;
+    }
 
-	set x(value: number)
-	{
-		this._x = value;
-	}
+    set x(value: number)
+    {
+        this._x = value;
+    }
 
-	private _y: number = 0;
+    private _y: number = 0;
 
-	get y(): number
-	{
-		return this._y;
-	}
+    get y(): number
+    {
+        return this._y;
+    }
 
-	set y(value: number)
-	{
-		this._y = value;
-	}
+    set y(value: number)
+    {
+        this._y = value;
+    }
 
-	private _z: number = 0;
+    private _z: number = 0;
 
-	get z(): number
-	{
-		return this._z;
-	}
+    get z(): number
+    {
+        return this._z;
+    }
 
-	set z(value: number)
-	{
-		this._z = value;
-	}
+    set z(value: number)
+    {
+        this._z = value;
+    }
 
-	private _sprite: IRoomObjectSprite | null = null;
+    private _sprite: IRoomObjectSprite | null = null;
 
-	get sprite(): IRoomObjectSprite | null
-	{
-		return this._sprite;
-	}
+    get sprite(): IRoomObjectSprite | null
+    {
+        return this._sprite;
+    }
 
-	set sprite(value: IRoomObjectSprite | null)
-	{
-		this._sprite = value;
-	}
+    set sprite(value: IRoomObjectSprite | null)
+    {
+        this._sprite = value;
+    }
 
-	dispose(): void
-	{
-		this._sprite = null;
-		this._z = -(SortableSprite.Z_INFINITY);
-	}
+    dispose(): void
+    {
+        this._sprite = null;
+        this._z = -(SortableSprite.Z_INFINITY);
+    }
 }

@@ -9,26 +9,26 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectGroupBadgeUpdateMessage extends RoomObjectUpdateMessage
 {
-	public static readonly BADGE_LOADED = 'ROGBUM_BADGE_LOADED';
+    public static readonly BADGE_LOADED = 'ROGBUM_BADGE_LOADED';
 
-	constructor(badgeId: string, assetName: string)
-	{
-		super(null, null);
-		this._badgeId = badgeId;
-		this._assetName = assetName;
-	}
+    constructor(badgeId: string, assetName: string)
+    {
+        super(null, null);
+        this._badgeId = badgeId;
+        this._assetName = assetName;
+    }
 
-	private _badgeId: string;
+    private _badgeId: string;
 
-	get badgeId(): string
-	{
-		return this._badgeId;
-	}
+    get badgeId(): string
+    {
+        return this._badgeId;
+    }
 
-	private _assetName: string;
+    private _assetName: string;
 
-	get assetName(): string
-	{
-		return this._assetName;
-	}
+    get assetName(): string
+    {
+        return this._assetName;
+    }
 }

@@ -9,8 +9,8 @@ import {UserBannedMessageEventParser} from '../../parser/notifications/UserBanne
  */
 export class UserBannedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserBannedMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserBannedMessageEventParser);
+    }
 }

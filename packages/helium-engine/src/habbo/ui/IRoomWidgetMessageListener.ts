@@ -7,8 +7,8 @@
  */
 export interface IRoomWidgetMessageListener
 {
-	/**
+    /**
 	 * Processes a widget message and returns an update event, or null.
 	 */
-	processWidgetMessage(message: unknown): unknown;
+    processWidgetMessage(message: unknown): unknown;
 }

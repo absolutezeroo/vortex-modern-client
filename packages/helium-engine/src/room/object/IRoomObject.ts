@@ -12,29 +12,29 @@ import type {IRoomObjectVisualization} from './visualization/IRoomObjectVisualiz
 
 export interface IRoomObject
 {
-	getId(): number;
+    getId(): number;
 
-	getInstanceId(): number;
+    getInstanceId(): number;
 
-	getType(): string;
+    getType(): string;
 
-	isInitialized(): boolean;
+    isInitialized(): boolean;
 
-	getLocation(): IVector3d;
+    getLocation(): IVector3d;
 
-	getDirection(): IVector3d;
+    getDirection(): IVector3d;
 
-	getModel(): IRoomObjectModel;
+    getModel(): IRoomObjectModel;
 
-	getVisualization(): IRoomObjectVisualization | null;
+    getVisualization(): IRoomObjectVisualization | null;
 
-	getMouseHandler(): IRoomObjectMouseHandler | null;
+    getMouseHandler(): IRoomObjectMouseHandler | null;
 
-	getAvatarLibraryAssetName(): string;
+    getAvatarLibraryAssetName(): string;
 
-	getState(index: number): number;
+    getState(index: number): number;
 
-	getUpdateID(): number;
+    getUpdateID(): number;
 
-	tearDown(): void;
+    tearDown(): void;
 }

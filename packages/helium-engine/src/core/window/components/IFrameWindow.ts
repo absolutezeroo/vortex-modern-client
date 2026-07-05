@@ -15,15 +15,15 @@ import type {IWindow} from '../IWindow';
  */
 export interface IFrameWindow extends IWindowContainer
 {
-	readonly title: ILabelWindow;
-	readonly header: IHeaderWindow;
-	readonly content: IWindowContainer;
-	readonly margins: IMargins;
-	readonly scaler: IScalerWindow;
-	readonly menuButton: IWindow | null;
-	menuButtonVisible: boolean;
-	helpButtonAction: Function;
-	helpPage: string;
+    readonly title: ILabelWindow;
+    readonly header: IHeaderWindow;
+    readonly content: IWindowContainer;
+    readonly margins: IMargins;
+    readonly scaler: IScalerWindow;
+    readonly menuButton: IWindow | null;
+    menuButtonVisible: boolean;
+    helpButtonAction: Function;
+    helpPage: string;
 
-	resizeToFitContent(): void;
+    resizeToFitContent(): void;
 }

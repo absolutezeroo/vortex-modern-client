@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RequestFurniInventoryComposer extends MessageComposer<ConstructorParameters<typeof RequestFurniInventoryComposer>>
 {
-	private _data: ConstructorParameters<typeof RequestFurniInventoryComposer>;
+    private _data: ConstructorParameters<typeof RequestFurniInventoryComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

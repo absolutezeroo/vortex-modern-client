@@ -12,15 +12,15 @@ import type {IGestureAgentService} from './IGestureAgentService';
  */
 export interface IInternalWindowServices
 {
-	getMouseDraggingService(): IMouseDraggingService;
+    getMouseDraggingService(): IMouseDraggingService;
 
-	getMouseScalingService(): IMouseScalingService;
+    getMouseScalingService(): IMouseScalingService;
 
-	getMouseListenerService(): IMouseListenerService;
+    getMouseListenerService(): IMouseListenerService;
 
-	getFocusManagerService(): IFocusManagerService;
+    getFocusManagerService(): IFocusManagerService;
 
-	getToolTipAgentService(): IToolTipAgentService;
+    getToolTipAgentService(): IToolTipAgentService;
 
-	getGestureAgentService(): IGestureAgentService;
+    getGestureAgentService(): IGestureAgentService;
 }

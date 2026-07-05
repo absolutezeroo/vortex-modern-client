@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class EditEventMessageComposer extends MessageComposer<ConstructorParameters<typeof EditEventMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof EditEventMessageComposer>;
+    private _data: ConstructorParameters<typeof EditEventMessageComposer>;
 
-	constructor(categoryId: number, eventName: string, eventDescription: string)
-	{
-		super();
+    constructor(categoryId: number, eventName: string, eventDescription: string)
+    {
+        super();
 
-		this._data = [categoryId, eventName, eventDescription];
-	}
+        this._data = [categoryId, eventName, eventDescription];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

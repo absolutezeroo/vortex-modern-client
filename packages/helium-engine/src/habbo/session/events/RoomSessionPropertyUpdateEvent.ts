@@ -8,11 +8,11 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionPropertyUpdateEvent extends RoomSessionEvent
 {
-	public static readonly RSDUE_ALLOW_PETS = 'RSDUE_ALLOW_PETS';
-	public static readonly RSDUE_SETTINGS = 'RSDUE_SETTINGS';
+    public static readonly RSDUE_ALLOW_PETS = 'RSDUE_ALLOW_PETS';
+    public static readonly RSDUE_SETTINGS = 'RSDUE_SETTINGS';
 
-	constructor(type: string, session: IRoomSession)
-	{
-		super(type, session);
-	}
+    constructor(type: string, session: IRoomSession)
+    {
+        super(type, session);
+    }
 }

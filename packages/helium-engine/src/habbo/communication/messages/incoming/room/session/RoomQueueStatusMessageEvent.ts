@@ -9,8 +9,8 @@ import {RoomQueueStatusMessageParser} from '@habbo/communication/messages/parser
  */
 export class RoomQueueStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomQueueStatusMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomQueueStatusMessageParser);
+    }
 }

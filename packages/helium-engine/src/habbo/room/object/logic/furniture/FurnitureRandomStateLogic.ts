@@ -6,51 +6,51 @@
  * Logic for random state furniture (e.g. dice-like with random result).
  */
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
-import {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
+import type {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
 import {FurnitureLogic} from './FurnitureLogic';
 import {RoomObjectStateChangeEvent} from '@habbo/room/events/RoomObjectStateChangeEvent';
 
 export class FurnitureRandomStateLogic extends FurnitureLogic
 {
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void
-	{
-		if (event === null || geometry === null)
-		{
-			return;
-		}
+    override mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void
+    {
+        if(event === null || geometry === null)
+        {
+            return;
+        }
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		if (event.type !== 'doubleClick')
-		{
-			super.mouseEvent(event, geometry);
-		}
-		else
-		{
-			this.useObject();
-		}
-	}
+        if(event.type !== 'doubleClick')
+        {
+            super.mouseEvent(event, geometry);
+        }
+        else
+        {
+            this.useObject();
+        }
+    }
 
-	override useObject(): void
-	{
-		if (this.eventDispatcher !== null && this.object !== null)
-		{
-			this.eventDispatcher.emit(
-				RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM,
-				new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM, this.object)
-			);
-		}
-	}
+    override useObject(): void
+    {
+        if(this.eventDispatcher !== null && this.object !== null)
+        {
+            this.eventDispatcher.emit(
+                RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM,
+                new RoomObjectStateChangeEvent(RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM, this.object)
+            );
+        }
+    }
 }

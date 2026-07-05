@@ -5,27 +5,27 @@
  */
 export class InterstitialEvent
 {
-	static readonly INTERSTITIAL_SHOW = 'AE_INTERSTITIAL_SHOW';
-	static readonly INTERSTITIAL_NOT_SHOWN = 'AE_INTERSTITIAL_NOT_SHOWN';
-	static readonly INTERSTITIAL_COMPLETE = 'AE_INTERSTITIAL_COMPLETE';
+    static readonly INTERSTITIAL_SHOW = 'AE_INTERSTITIAL_SHOW';
+    static readonly INTERSTITIAL_NOT_SHOWN = 'AE_INTERSTITIAL_NOT_SHOWN';
+    static readonly INTERSTITIAL_COMPLETE = 'AE_INTERSTITIAL_COMPLETE';
 
-	constructor(type: string, status: string = '')
-	{
-		this._type = type;
-		this._status = status;
-	}
+    constructor(type: string, status: string = '')
+    {
+        this._type = type;
+        this._status = status;
+    }
 
-	private _type: string;
+    private _type: string;
 
-	get type(): string
-	{
-		return this._type;
-	}
+    get type(): string
+    {
+        return this._type;
+    }
 
-	private _status: string;
+    private _status: string;
 
-	get status(): string
-	{
-		return this._status;
-	}
+    get status(): string
+    {
+        return this._status;
+    }
 }

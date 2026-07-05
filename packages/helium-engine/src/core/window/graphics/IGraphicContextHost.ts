@@ -7,9 +7,9 @@ import type {IGraphicContext} from './IGraphicContext';
  */
 export interface IGraphicContextHost
 {
-	readonly name: string;
+    readonly name: string;
 
-	getGraphicContext(createIfMissing: boolean): IGraphicContext | null;
+    getGraphicContext(createIfMissing: boolean): IGraphicContext | null;
 
-	hasGraphicsContext(): boolean;
+    hasGraphicsContext(): boolean;
 }

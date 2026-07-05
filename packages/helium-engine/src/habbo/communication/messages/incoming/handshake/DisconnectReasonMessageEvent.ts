@@ -10,8 +10,8 @@ import {DisconnectReasonMessageParser} from '../../parser/handshake/DisconnectRe
  */
 export class DisconnectReasonMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, DisconnectReasonMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, DisconnectReasonMessageParser);
+    }
 }

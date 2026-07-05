@@ -8,52 +8,52 @@
  */
 export class UserRegistryItem
 {
-	constructor(userId: number, userName: string, figure: string, roomId: number, roomName: string = '')
-	{
-		this._userId = userId;
-		this._userName = userName;
-		this._figure = figure;
-		this._roomId = roomId;
-		this._roomName = roomName;
-	}
+    constructor(userId: number, userName: string, figure: string, roomId: number, roomName: string = '')
+    {
+        this._userId = userId;
+        this._userName = userName;
+        this._figure = figure;
+        this._roomId = roomId;
+        this._roomName = roomName;
+    }
 
-	private _userId: number;
+    private _userId: number;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _userName: string;
+    private _userName: string;
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 
-	private _figure: string;
+    private _figure: string;
 
-	get figure(): string
-	{
-		return this._figure;
-	}
+    get figure(): string
+    {
+        return this._figure;
+    }
 
-	private _roomId: number;
+    private _roomId: number;
 
-	get roomId(): number
-	{
-		return this._roomId;
-	}
+    get roomId(): number
+    {
+        return this._roomId;
+    }
 
-	private _roomName: string;
+    private _roomName: string;
 
-	get roomName(): string
-	{
-		return this._roomName;
-	}
+    get roomName(): string
+    {
+        return this._roomName;
+    }
 
-	set roomName(value: string)
-	{
-		this._roomName = value;
-	}
+    set roomName(value: string)
+    {
+        this._roomName = value;
+    }
 }

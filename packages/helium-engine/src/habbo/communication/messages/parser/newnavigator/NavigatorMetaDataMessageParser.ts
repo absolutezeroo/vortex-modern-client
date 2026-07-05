@@ -9,29 +9,29 @@ import {NavigatorTopLevelContext} from '../../incoming/newnavigator';
  */
 export class NavigatorMetaDataMessageParser implements IMessageParser
 {
-	private _topLevelContexts: NavigatorTopLevelContext[] = [];
+    private _topLevelContexts: NavigatorTopLevelContext[] = [];
 
-	get topLevelContexts(): NavigatorTopLevelContext[]
-	{
-		return this._topLevelContexts;
-	}
+    get topLevelContexts(): NavigatorTopLevelContext[]
+    {
+        return this._topLevelContexts;
+    }
 
-	flush(): boolean
-	{
-		this._topLevelContexts = [];
+    flush(): boolean
+    {
+        this._topLevelContexts = [];
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		const count = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._topLevelContexts.push(new NavigatorTopLevelContext(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._topLevelContexts.push(new NavigatorTopLevelContext(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -7,8 +7,8 @@ import {ClubGiftInfoEventParser} from '../../parser/catalog/ClubGiftInfoEventPar
  */
 export class ClubGiftInfoEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ClubGiftInfoEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ClubGiftInfoEventParser);
+    }
 }

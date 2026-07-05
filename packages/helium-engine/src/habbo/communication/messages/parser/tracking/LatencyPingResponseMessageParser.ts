@@ -8,24 +8,24 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class LatencyPingResponseMessageParser implements IMessageParser
 {
-	private _requestId: number = -1;
+    private _requestId: number = -1;
 
-	get requestId(): number
-	{
-		return this._requestId;
-	}
+    get requestId(): number
+    {
+        return this._requestId;
+    }
 
-	flush(): boolean
-	{
-		this._requestId = -1;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._requestId = -1;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._requestId = wrapper.readInt();
-		return true;
-	}
+        this._requestId = wrapper.readInt();
+        return true;
+    }
 }

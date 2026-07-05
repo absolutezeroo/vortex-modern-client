@@ -12,64 +12,64 @@ import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 
 export class FurnitureIceStormLogic extends FurnitureMultiStateLogic
 {
-	private _nextState: number = 0;
-	private _nextStateExtra: number = 0;
-	private _nextStateTimeStamp: number = 0;
+    private _nextState: number = 0;
+    private _nextStateExtra: number = 0;
+    private _nextStateTimeStamp: number = 0;
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		if (message === null)
-		{
-			return;
-		}
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        if(message === null)
+        {
+            return;
+        }
 
-		const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+        const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-		if ('state' in message && 'data' in message && typeof dataMessage.state === 'number')
-		{
-			this.handleDelayedStateUpdate(dataMessage);
-			return;
-		}
+        if('state' in message && 'data' in message && typeof dataMessage.state === 'number')
+        {
+            this.handleDelayedStateUpdate(dataMessage);
+            return;
+        }
 
-		super.processUpdateMessage(message);
-	}
+        super.processUpdateMessage(message);
+    }
 
-	override update(time: number): void
-	{
-		if (this._nextStateTimeStamp > 0 && time >= this._nextStateTimeStamp)
-		{
-			this._nextStateTimeStamp = 0;
+    override update(time: number): void
+    {
+        if(this._nextStateTimeStamp > 0 && time >= this._nextStateTimeStamp)
+        {
+            this._nextStateTimeStamp = 0;
 
-			const stuffData = new LegacyStuffData();
-			stuffData.setString(String(this._nextState));
+            const stuffData = new LegacyStuffData();
+            stuffData.setString(String(this._nextState));
 
-			const newMessage = new RoomObjectDataUpdateMessage(this._nextState, stuffData, this._nextStateExtra);
-			super.processUpdateMessage(newMessage as unknown as RoomObjectUpdateMessage);
-		}
+            const newMessage = new RoomObjectDataUpdateMessage(this._nextState, stuffData, this._nextStateExtra);
+            super.processUpdateMessage(newMessage as unknown as RoomObjectUpdateMessage);
+        }
 
-		super.update(time);
-	}
+        super.update(time);
+    }
 
-	private handleDelayedStateUpdate(message: RoomObjectDataUpdateMessage): void
-	{
-		const actualState = Math.trunc(message.state / 1000);
-		const delay = message.state % 1000;
+    private handleDelayedStateUpdate(message: RoomObjectDataUpdateMessage): void
+    {
+        const actualState = Math.trunc(message.state / 1000);
+        const delay = message.state % 1000;
 
-		if (delay === 0)
-		{
-			this._nextStateTimeStamp = 0;
+        if(delay === 0)
+        {
+            this._nextStateTimeStamp = 0;
 
-			const stuffData = new LegacyStuffData();
-			stuffData.setString(String(actualState));
+            const stuffData = new LegacyStuffData();
+            stuffData.setString(String(actualState));
 
-			const newMessage = new RoomObjectDataUpdateMessage(actualState, stuffData, message.extra);
-			super.processUpdateMessage(newMessage as unknown as RoomObjectUpdateMessage);
-		}
-		else
-		{
-			this._nextState = actualState;
-			this._nextStateExtra = message.extra;
-			this._nextStateTimeStamp = this.lastUpdateTime + delay;
-		}
-	}
+            const newMessage = new RoomObjectDataUpdateMessage(actualState, stuffData, message.extra);
+            super.processUpdateMessage(newMessage as unknown as RoomObjectUpdateMessage);
+        }
+        else
+        {
+            this._nextState = actualState;
+            this._nextStateExtra = message.extra;
+            this._nextStateTimeStamp = this.lastUpdateTime + delay;
+        }
+    }
 }

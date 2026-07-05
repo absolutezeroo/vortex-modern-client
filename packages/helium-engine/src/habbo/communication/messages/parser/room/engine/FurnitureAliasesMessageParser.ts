@@ -10,62 +10,62 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class FurnitureAliasesMessageParser implements IMessageParser
 {
-	private _names: string[] = [];
-	private _aliases: string[] = [];
+    private _names: string[] = [];
+    private _aliases: string[] = [];
 
-	get aliasCount(): number
-	{
-		return this._names.length;
-	}
+    get aliasCount(): number
+    {
+        return this._names.length;
+    }
 
-	getName(index: number): string | null
-	{
-		if (index < 0 || index >= this._names.length)
-		{
-			return null;
-		}
+    getName(index: number): string | null
+    {
+        if(index < 0 || index >= this._names.length)
+        {
+            return null;
+        }
 
-		return this._names[index];
-	}
+        return this._names[index];
+    }
 
-	getAlias(index: number): string | null
-	{
-		if (index < 0 || index >= this._aliases.length)
-		{
-			return null;
-		}
+    getAlias(index: number): string | null
+    {
+        if(index < 0 || index >= this._aliases.length)
+        {
+            return null;
+        }
 
-		return this._aliases[index];
-	}
+        return this._aliases[index];
+    }
 
-	flush(): boolean
-	{
-		this._names = [];
-		this._aliases = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._names = [];
+        this._aliases = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._names = [];
-		this._aliases = [];
+        this._names = [];
+        this._aliases = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const name = wrapper.readString();
-			const alias = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const name = wrapper.readString();
+            const alias = wrapper.readString();
 
-			this._names.push(name);
-			this._aliases.push(alias);
-		}
+            this._names.push(name);
+            this._aliases.push(alias);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -9,8 +9,8 @@ import {ItemRemoveMessageParser} from '@habbo/communication/messages/parser/room
 
 export class ItemRemoveMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ItemRemoveMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ItemRemoveMessageParser);
+    }
 }

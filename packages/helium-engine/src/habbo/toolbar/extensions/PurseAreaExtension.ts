@@ -176,7 +176,7 @@ export class PurseAreaExtension
 
         this._windowManager?.hideMatchingHint(window.name);
 
-            switch(this.getActionName(window))
+        switch(this.getActionName(window))
         {
             case 'help_button':
                 this._toolbar.toggleWindowVisibility(PurseAreaExtension.MENU_HELP);

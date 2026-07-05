@@ -7,8 +7,8 @@ import {RoomEventCancelMessageParser} from '../../parser/navigator/RoomEventCanc
  */
 export class RoomEventCancelMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, RoomEventCancelMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, RoomEventCancelMessageParser);
+    }
 }

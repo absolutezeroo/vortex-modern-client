@@ -6,63 +6,63 @@
  */
 export class GenericNotificationItemData
 {
-	private _title: string = '';
+    private _title: string = '';
 
-	get title(): string
-	{
-		return this._title;
-	}
+    get title(): string
+    {
+        return this._title;
+    }
 
-	set title(value: string)
-	{
-		this._title = value;
-	}
+    set title(value: string)
+    {
+        this._title = value;
+    }
 
-	private _timeStamp: number = 0;
+    private _timeStamp: number = 0;
 
-	get timeStamp(): number
-	{
-		return this._timeStamp;
-	}
+    get timeStamp(): number
+    {
+        return this._timeStamp;
+    }
 
-	set timeStamp(value: number)
-	{
-		this._timeStamp = value;
-	}
+    set timeStamp(value: number)
+    {
+        this._timeStamp = value;
+    }
 
-	private _description: string = '';
+    private _description: string = '';
 
-	get description(): string
-	{
-		return this._description;
-	}
+    get description(): string
+    {
+        return this._description;
+    }
 
-	set description(value: string)
-	{
-		this._description = value;
-	}
+    set description(value: string)
+    {
+        this._description = value;
+    }
 
-	private _buttonAction: string = '';
+    private _buttonAction: string = '';
 
-	get buttonAction(): string
-	{
-		return this._buttonAction;
-	}
+    get buttonAction(): string
+    {
+        return this._buttonAction;
+    }
 
-	set buttonAction(value: string)
-	{
-		this._buttonAction = value;
-	}
+    set buttonAction(value: string)
+    {
+        this._buttonAction = value;
+    }
 
-	private _buttonCaption: string = '';
+    private _buttonCaption: string = '';
 
-	get buttonCaption(): string
-	{
-		return this._buttonCaption;
-	}
+    get buttonCaption(): string
+    {
+        return this._buttonCaption;
+    }
 
-	set buttonCaption(value: string)
-	{
-		this._buttonCaption = value;
-	}
+    set buttonCaption(value: string)
+    {
+        this._buttonCaption = value;
+    }
 }

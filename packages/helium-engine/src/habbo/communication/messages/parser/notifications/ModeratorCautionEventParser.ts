@@ -10,34 +10,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ModeratorCautionEventParser implements IMessageParser
 {
-	private _message: string = '';
+    private _message: string = '';
 
-	get message(): string
-	{
-		return this._message;
-	}
+    get message(): string
+    {
+        return this._message;
+    }
 
-	private _url: string = '';
+    private _url: string = '';
 
-	get url(): string
-	{
-		return this._url;
-	}
+    get url(): string
+    {
+        return this._url;
+    }
 
-	flush(): boolean
-	{
-		this._message = '';
-		this._url = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._message = '';
+        this._url = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._message = wrapper.readString();
-		this._url = wrapper.readString();
+        this._message = wrapper.readString();
+        this._url = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

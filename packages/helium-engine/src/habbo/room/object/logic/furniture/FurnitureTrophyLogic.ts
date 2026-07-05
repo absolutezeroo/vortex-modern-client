@@ -10,23 +10,23 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 
 export class FurnitureTrophyLogic extends FurnitureLogic
 {
-	constructor()
-	{
-		super();
-		this.widgetType = 'trophy';
-	}
+    constructor()
+    {
+        super();
+        this.widgetType = 'trophy';
+    }
 
-	override useObject(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    override useObject(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		// Open trophy widget
-		this.eventDispatcher.emit(
-			RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
-			new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
-		);
-	}
+        // Open trophy widget
+        this.eventDispatcher.emit(
+            RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
+            new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
+        );
+    }
 }

@@ -10,8 +10,8 @@ import {InitDiffieHandshakeMessageParser} from '../../parser/handshake/InitCrypt
  */
 export class InitDiffieHandshakeMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, InitDiffieHandshakeMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, InitDiffieHandshakeMessageParser);
+    }
 }

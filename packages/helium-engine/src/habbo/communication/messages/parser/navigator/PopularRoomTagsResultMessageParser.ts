@@ -9,22 +9,22 @@ import {PopularTagsData} from '../../incoming/navigator';
  */
 export class PopularRoomTagsResultMessageParser implements IMessageParser
 {
-	private _data: PopularTagsData | null = null;
+    private _data: PopularTagsData | null = null;
 
-	get data(): PopularTagsData | null
-	{
-		return this._data;
-	}
+    get data(): PopularTagsData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._data = new PopularTagsData(wrapper);
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._data = new PopularTagsData(wrapper);
+        return true;
+    }
 }

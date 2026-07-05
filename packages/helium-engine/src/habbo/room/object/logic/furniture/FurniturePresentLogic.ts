@@ -10,23 +10,23 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 
 export class FurniturePresentLogic extends FurnitureLogic
 {
-	constructor()
-	{
-		super();
-		this.widgetType = 'present';
-	}
+    constructor()
+    {
+        super();
+        this.widgetType = 'present';
+    }
 
-	override useObject(): void
-	{
-		if (this.object === null || this.eventDispatcher === null)
-		{
-			return;
-		}
+    override useObject(): void
+    {
+        if(this.object === null || this.eventDispatcher === null)
+        {
+            return;
+        }
 
-		// Open present widget
-		this.eventDispatcher.emit(
-			RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
-			new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
-		);
-	}
+        // Open present widget
+        this.eventDispatcher.emit(
+            RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
+            new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET, this.object)
+        );
+    }
 }

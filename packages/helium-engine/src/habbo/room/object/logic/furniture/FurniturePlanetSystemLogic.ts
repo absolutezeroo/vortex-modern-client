@@ -9,20 +9,20 @@ import {FurnitureLogic} from './FurnitureLogic';
 
 export class FurniturePlanetSystemLogic extends FurnitureLogic
 {
-	override initialize(data: unknown): void
-	{
-		super.initialize(data);
+    override initialize(data: unknown): void
+    {
+        super.initialize(data);
 
-		if (data === null)
-		{
-			return;
-		}
+        if(data === null)
+        {
+            return;
+        }
 
-		const config = data as { planetsystem?: string };
+        const config = data as { planetsystem?: string };
 
-		if (config.planetsystem)
-		{
-			this.object?.getModelController()?.setString('furniture_planetsystem_data', config.planetsystem);
-		}
-	}
+        if(config.planetsystem)
+        {
+            this.object?.getModelController()?.setString('furniture_planetsystem_data', config.planetsystem);
+        }
+    }
 }

@@ -9,8 +9,8 @@ import {GuideSessionErrorMessageParser} from '../../parser/help/GuideSessionErro
  */
 export class GuideSessionErrorMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, GuideSessionErrorMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, GuideSessionErrorMessageParser);
+    }
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetRelationshipStatusMessageComposer extends MessageComposer<ConstructorParameters<typeof SetRelationshipStatusMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof SetRelationshipStatusMessageComposer>;
+    private _data: ConstructorParameters<typeof SetRelationshipStatusMessageComposer>;
 
-	constructor(friendId: number, relationshipStatus: number)
-	{
-		super();
-		this._data = [friendId, relationshipStatus];
-	}
+    constructor(friendId: number, relationshipStatus: number)
+    {
+        super();
+        this._data = [friendId, relationshipStatus];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -8,35 +8,35 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class OpenPetPackageRequestedMessageEventParser implements IMessageParser
 {
-	private _objectId: number = -1;
+    private _objectId: number = -1;
 
-	get objectId(): number
-	{
-		return this._objectId;
-	}
+    get objectId(): number
+    {
+        return this._objectId;
+    }
 
-	private _figureData: unknown = null;
+    private _figureData: unknown = null;
 
-	get figureData(): unknown
-	{
-		return this._figureData;
-	}
+    get figureData(): unknown
+    {
+        return this._figureData;
+    }
 
-	flush(): boolean
-	{
-		this._objectId = -1;
-		this._figureData = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._objectId = -1;
+        this._figureData = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._objectId = wrapper.readInt();
+        this._objectId = wrapper.readInt();
 
-		// TODO: Parse figureData (obfuscated class_1657 in AS3)
+        // TODO: Parse figureData (obfuscated class_1657 in AS3)
 
-		return true;
-	}
+        return true;
+    }
 }

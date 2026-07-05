@@ -8,31 +8,31 @@
  */
 export class FilterMode
 {
-	static readonly DEFAULT: number = 0;
-	static readonly OWNER: number = 1;
-	static readonly ROOMNAME: number = 2;
-	static readonly TAG: number = 3;
-	static readonly GROUP: number = 4;
-	static readonly ANYTHING: number = 5;
+    static readonly DEFAULT: number = 0;
+    static readonly OWNER: number = 1;
+    static readonly ROOMNAME: number = 2;
+    static readonly TAG: number = 3;
+    static readonly GROUP: number = 4;
+    static readonly ANYTHING: number = 5;
 
-	static readonly FILTER_PREFIX: string[] = ['', 'owner:', 'roomname:', 'tag:', 'group:', ''];
+    static readonly FILTER_PREFIX: string[] = ['', 'owner:', 'roomname:', 'tag:', 'group:', ''];
 
-	/**
+    /**
 	 * Detect which filter mode is present at the start of the input string.
 	 *
 	 * @param input - The raw filter string from the search input
 	 * @returns The filter mode index matching a prefix, or DEFAULT (0) if none
 	 */
-	static filterInInput(input: string): number
-	{
-		for (let i = 1; i < FilterMode.FILTER_PREFIX.length; i++)
-		{
-			if (input.indexOf(FilterMode.FILTER_PREFIX[i]) === 0)
-			{
-				return i;
-			}
-		}
+    static filterInInput(input: string): number
+    {
+        for(let i = 1; i < FilterMode.FILTER_PREFIX.length; i++)
+        {
+            if(input.indexOf(FilterMode.FILTER_PREFIX[i]) === 0)
+            {
+                return i;
+            }
+        }
 
-		return FilterMode.DEFAULT;
-	}
+        return FilterMode.DEFAULT;
+    }
 }

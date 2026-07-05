@@ -6,9 +6,9 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export interface PendingCall
 {
-	callId: string;
-	timestamp: string;
-	message: string;
+    callId: string;
+    timestamp: string;
+    message: string;
 }
 
 /**
@@ -19,41 +19,41 @@ export interface PendingCall
  */
 export class CallForHelpPendingCallsMessageParser implements IMessageParser
 {
-	private _calls: PendingCall[] = [];
+    private _calls: PendingCall[] = [];
 
-	get calls(): PendingCall[]
-	{
-		return this._calls;
-	}
+    get calls(): PendingCall[]
+    {
+        return this._calls;
+    }
 
-	get callCount(): number
-	{
-		return this._calls.length;
-	}
+    get callCount(): number
+    {
+        return this._calls.length;
+    }
 
-	flush(): boolean
-	{
-		this._calls = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._calls = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._calls = [];
+        this._calls = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const callId = wrapper.readString();
-			const timestamp = wrapper.readString();
-			const message = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const callId = wrapper.readString();
+            const timestamp = wrapper.readString();
+            const message = wrapper.readString();
 
-			this._calls.push({callId, timestamp, message});
-		}
+            this._calls.push({callId, timestamp, message});
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

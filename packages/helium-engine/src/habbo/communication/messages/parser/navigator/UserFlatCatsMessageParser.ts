@@ -9,27 +9,27 @@ import {FlatCategory} from '../../incoming/navigator';
  */
 export class UserFlatCatsMessageParser implements IMessageParser
 {
-	private _nodes: FlatCategory[] = [];
+    private _nodes: FlatCategory[] = [];
 
-	get nodes(): FlatCategory[]
-	{
-		return this._nodes;
-	}
+    get nodes(): FlatCategory[]
+    {
+        return this._nodes;
+    }
 
-	flush(): boolean
-	{
-		this._nodes = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._nodes = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._nodes = [];
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._nodes.push(new FlatCategory(wrapper));
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._nodes = [];
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._nodes.push(new FlatCategory(wrapper));
+        }
+        return true;
+    }
 }

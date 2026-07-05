@@ -13,36 +13,36 @@ import type {IRoomWidgetMessageListener} from '@habbo/ui/IRoomWidgetMessageListe
 
 export interface IRoomWidget
 {
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::get state()
-	readonly state: number;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::get state()
+    readonly state: number;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::initialize()
-	initialize(state?: number): void;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::initialize()
+    initialize(state?: number): void;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::dispose()
-	dispose(): void;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::dispose()
+    dispose(): void;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::set messageListener()
-	messageListener: IRoomWidgetMessageListener | null;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::set messageListener()
+    messageListener: IRoomWidgetMessageListener | null;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::registerUpdateEvents()
-	registerUpdateEvents(dispatcher: EventEmitter): void;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::registerUpdateEvents()
+    registerUpdateEvents(dispatcher: EventEmitter): void;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::unregisterUpdateEvents()
-	unregisterUpdateEvents(dispatcher: EventEmitter): void;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::unregisterUpdateEvents()
+    unregisterUpdateEvents(dispatcher: EventEmitter): void;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::get mainWindow()
-	readonly mainWindow: IWindow | null;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::get mainWindow()
+    readonly mainWindow: IWindow | null;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::release()
-	release(): void;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::release()
+    release(): void;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::reuse()
-	reuse(desktop: IRoomDesktop): void;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::reuse()
+    reuse(desktop: IRoomDesktop): void;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::set reusable() / get reusable()
-	reusable: boolean;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::set reusable() / get reusable()
+    reusable: boolean;
 
-	// AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::set widgetType() / get widgetType()
-	widgetType: string;
+    // AS3: sources/win63_version/habbo/ui/widget/IRoomWidget.as::set widgetType() / get widgetType()
+    widgetType: string;
 }

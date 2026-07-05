@@ -5,25 +5,25 @@
  */
 export class BadgeImageReadyEvent
 {
-	public static readonly BADGE_IMAGE_READY = 'BIRE_BADGE_IMAGE_READY';
+    public static readonly BADGE_IMAGE_READY = 'BIRE_BADGE_IMAGE_READY';
 
-	constructor(badgeId: string, badgeImage: unknown = null)
-	{
-		this._badgeId = badgeId;
-		this._badgeImage = badgeImage;
-	}
+    constructor(badgeId: string, badgeImage: unknown = null)
+    {
+        this._badgeId = badgeId;
+        this._badgeImage = badgeImage;
+    }
 
-	private _badgeId: string;
+    private _badgeId: string;
 
-	get badgeId(): string
-	{
-		return this._badgeId;
-	}
+    get badgeId(): string
+    {
+        return this._badgeId;
+    }
 
-	private _badgeImage: unknown;
+    private _badgeImage: unknown;
 
-	get badgeImage(): unknown
-	{
-		return this._badgeImage;
-	}
+    get badgeImage(): unknown
+    {
+        return this._badgeImage;
+    }
 }

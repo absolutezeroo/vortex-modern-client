@@ -9,8 +9,8 @@ import {ChatReviewSessionVotingStatusMessageParser} from '../../parser/help/Chat
  */
 export class ChatReviewSessionVotingStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, ChatReviewSessionVotingStatusMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, ChatReviewSessionVotingStatusMessageParser);
+    }
 }

@@ -9,64 +9,64 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
  */
 export class HabbletLinkHandler
 {
-	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::_windowManager
-	private _windowManager: IHabboWindowManager;
+    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::_windowManager
+    private _windowManager: IHabboWindowManager;
 
-	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::HabbletLinkHandler()
-	constructor(windowManager: IHabboWindowManager)
-	{
-		this._windowManager = windowManager;
-	}
+    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::HabbletLinkHandler()
+    constructor(windowManager: IHabboWindowManager)
+    {
+        this._windowManager = windowManager;
+    }
 
-	// TS-only: explicit disposed flag (AS3 uses _windowManager == null check)
-	private _disposed: boolean = false;
+    // TS-only: explicit disposed flag (AS3 uses _windowManager == null check)
+    private _disposed: boolean = false;
 
-	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get disposed()
-	public get disposed(): boolean
-	{
-		return this._windowManager == null;
-	}
+    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._windowManager == null;
+    }
 
-	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get linkPattern()
-	public get linkPattern(): string
-	{
-		return 'habblet/';
-	}
+    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::get linkPattern()
+    public get linkPattern(): string
+    {
+        return 'habblet/';
+    }
 
-	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
-	public linkReceived(link: string): void
-	{
-		const parts = link.split('/');
+    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
+    public linkReceived(link: string): void
+    {
+        const parts = link.split('/');
 
-		// AS3: if(_loc2_.length < 2) return
-		if (parts.length < 2) return;
+        // AS3: if(_loc2_.length < 2) return
+        if(parts.length < 2) return;
 
-		const action = parts[1];
+        const action = parts[1];
 
-		if (action === 'open')
-		{
-			// AS3: if(_loc2_.length > 2) _loc3_ = _loc2_[2]
-			const target = parts.length > 2 ? parts[2] : null;
+        if(action === 'open')
+        {
+            // AS3: if(_loc2_.length > 2) _loc3_ = _loc2_[2]
+            const target = parts.length > 2 ? parts[2] : null;
 
-			if (target === 'credits')
-			{
-				// TODO(AS3): HabboWebTools.openWebPageAndMinimizeClient()
-				// sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
-			}
-			else if (target)
-			{
-				// TODO(AS3): HabboWebTools.openWebHabblet(target)
-				// sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
-			}
-		}
-	}
+            if(target === 'credits')
+            {
+                // TODO(AS3): HabboWebTools.openWebPageAndMinimizeClient()
+                // sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
+            }
+            else if(target)
+            {
+                // TODO(AS3): HabboWebTools.openWebHabblet(target)
+                // sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::linkReceived()
+            }
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::dispose()
-	public dispose(): void
-	{
-		if (this._disposed) return;
+    // AS3: sources/win63_version/habbo/window/handlers/HabbletLinkHandler.as::dispose()
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
-		this._windowManager = null!;
-	}
+        this._disposed = true;
+        this._windowManager = null!;
+    }
 }

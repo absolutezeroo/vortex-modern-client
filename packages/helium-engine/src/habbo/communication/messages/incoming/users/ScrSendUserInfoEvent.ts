@@ -9,8 +9,8 @@ import {ScrSendUserInfoMessageParser} from '../../parser/users/ScrSendUserInfoMe
  */
 export class ScrSendUserInfoEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ScrSendUserInfoMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ScrSendUserInfoMessageParser);
+    }
 }

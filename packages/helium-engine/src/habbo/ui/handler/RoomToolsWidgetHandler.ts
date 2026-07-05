@@ -22,164 +22,164 @@ import type {RoomToolsWidget} from '@habbo/ui/widget/roomtools/RoomToolsWidget';
 
 export class RoomToolsWidgetHandler implements IRoomWidgetHandler
 {
-	private _disposed: boolean = false;
-	private _communicationManagerMessageEvents: IMessageEvent[] = [];
-	private _communicationManager: IHabboCommunicationManager | null = null;
-	private _navigatorRef: IHabboNavigator | null = null;
-	private _widget: RoomToolsWidget | null = null;
-	private _container: IRoomWidgetHandlerContainer | null = null;
+    private _disposed: boolean = false;
+    private _communicationManagerMessageEvents: IMessageEvent[] = [];
+    private _communicationManager: IHabboCommunicationManager | null = null;
+    private _navigatorRef: IHabboNavigator | null = null;
+    private _widget: RoomToolsWidget | null = null;
+    private _container: IRoomWidgetHandlerContainer | null = null;
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set widget()
-	public set widget(value: RoomToolsWidget | null)
-	{
-		this._widget = value;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set widget()
+    public set widget(value: RoomToolsWidget | null)
+    {
+        this._widget = value;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::onRoomInfo()
-	private onRoomInfo = (event: IMessageEvent): void =>
-	{
-		const parser = (event as GetGuestRoomResultMessageEvent).getParser<GetGuestRoomResultMessageParser>();
-		const data = parser.data;
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::onRoomInfo()
+    private onRoomInfo = (event: IMessageEvent): void =>
+    {
+        const parser = (event as GetGuestRoomResultMessageEvent).getParser<GetGuestRoomResultMessageParser>();
+        const data = parser.data;
 
-		if(data)
-		{
-			this._widget?.updateRoomData(data);
-		}
+        if(data)
+        {
+            this._widget?.updateRoomData(data);
+        }
 
-		if(parser.enterRoom && data && this._widget)
-		{
-			const ownerLine = data.showOwner
-				? `${this._widget.localizations?.getLocalizationWithParams('room.tool.room.owner.prefix', 'By') ?? 'By'} ${data.ownerName}`
-				: this._widget.localizations?.getLocalizationWithParams('room.tool.public.room', 'Public room') ?? 'Public room';
+        if(parser.enterRoom && data && this._widget)
+        {
+            const ownerLine = data.showOwner
+                ? `${this._widget.localizations?.getLocalizationWithParams('room.tool.room.owner.prefix', 'By') ?? 'By'} ${data.ownerName}`
+                : this._widget.localizations?.getLocalizationWithParams('room.tool.public.room', 'Public room') ?? 'Public room';
 
-			this._widget.showRoomInfo(true, data.roomName, ownerLine, data.tags);
-			this._widget.storeRoomData(data);
-			this._widget.enterNewRoom(data.flatId);
-		}
-	};
+            this._widget.showRoomInfo(true, data.roomName, ownerLine, data.tags);
+            this._widget.storeRoomData(data);
+            this._widget.enterNewRoom(data.flatId);
+        }
+    };
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::toggleRoomInfoWindow()
-	public toggleRoomInfoWindow(): void
-	{
-		this._navigatorRef?.toggleRoomInfoVisibility();
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::toggleRoomInfoWindow()
+    public toggleRoomInfoWindow(): void
+    {
+        this._navigatorRef?.toggleRoomInfoVisibility();
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::goToPrivateRoom()
-	public goToPrivateRoom(flatId: number): void
-	{
-		this._navigatorRef?.goToPrivateRoom(flatId);
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::goToPrivateRoom()
+    public goToPrivateRoom(flatId: number): void
+    {
+        this._navigatorRef?.goToPrivateRoom(flatId);
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get type()
-	public get type(): string
-	{
-		return 'RWE_ROOM_TOOLS';
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get type()
+    public get type(): string
+    {
+        return 'RWE_ROOM_TOOLS';
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set container() / get container()
-	public set container(value: IRoomWidgetHandlerContainer | null)
-	{
-		this._container = value;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set container() / get container()
+    public set container(value: IRoomWidgetHandlerContainer | null)
+    {
+        this._container = value;
+    }
 
-	public get container(): IRoomWidgetHandlerContainer | null
-	{
-		return this._container;
-	}
+    public get container(): IRoomWidgetHandlerContainer | null
+    {
+        return this._container;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::getWidgetMessages()
-	public getWidgetMessages(): string[]
-	{
-		return ['RWZTM_ZOOM_TOGGLE'];
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::getWidgetMessages()
+    public getWidgetMessages(): string[]
+    {
+        return ['RWZTM_ZOOM_TOGGLE'];
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::processWidgetMessage()
-	public processWidgetMessage(_message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
-	{
-		return null;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::processWidgetMessage()
+    public processWidgetMessage(_message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
+    {
+        return null;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::getProcessedEvents()
-	public getProcessedEvents(): string[]
-	{
-		return [];
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::getProcessedEvents()
+    public getProcessedEvents(): string[]
+    {
+        return [];
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::processEvent()
-	public processEvent(_event: unknown): void
-	{
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::processEvent()
+    public processEvent(_event: unknown): void
+    {
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::update()
-	public update(): void
-	{
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::update()
+    public update(): void
+    {
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::dispose()
-	public dispose(): void
-	{
-		this._disposed = true;
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::dispose()
+    public dispose(): void
+    {
+        this._disposed = true;
 
-		if(this._communicationManager)
-		{
-			for(const event of this._communicationManagerMessageEvents)
-			{
-				this._communicationManager.removeMessageEvent(event);
-			}
+        if(this._communicationManager)
+        {
+            for(const event of this._communicationManagerMessageEvents)
+            {
+                this._communicationManager.removeMessageEvent(event);
+            }
 
-			this._communicationManagerMessageEvents = [];
-			this._communicationManager = null;
-		}
+            this._communicationManagerMessageEvents = [];
+            this._communicationManager = null;
+        }
 
-		this._navigatorRef = null;
-		this._widget = null;
-	}
+        this._navigatorRef = null;
+        this._widget = null;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get disposed()
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set navigator() / get navigator()
-	public set navigator(value: IHabboNavigator | null)
-	{
-		this._navigatorRef = value;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set navigator() / get navigator()
+    public set navigator(value: IHabboNavigator | null)
+    {
+        this._navigatorRef = value;
+    }
 
-	public get navigator(): IHabboNavigator | null
-	{
-		return this._navigatorRef;
-	}
+    public get navigator(): IHabboNavigator | null
+    {
+        return this._navigatorRef;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get sessionDataManager()
-	public get sessionDataManager(): ISessionDataManager | null
-	{
-		return this._container?.sessionDataManager ?? null;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get sessionDataManager()
+    public get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._container?.sessionDataManager ?? null;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set communicationManager()
-	public set communicationManager(value: IHabboCommunicationManager | null)
-	{
-		this._communicationManager = value;
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set communicationManager()
+    public set communicationManager(value: IHabboCommunicationManager | null)
+    {
+        this._communicationManager = value;
 
-		if(this._communicationManager)
-		{
-			const event = this._communicationManager.addMessageEvent(new GetGuestRoomResultMessageEvent(this.onRoomInfo));
+        if(this._communicationManager)
+        {
+            const event = this._communicationManager.addMessageEvent(new GetGuestRoomResultMessageEvent(this.onRoomInfo));
 
-			this._communicationManagerMessageEvents.push(event);
-		}
-	}
+            this._communicationManagerMessageEvents.push(event);
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::rateRoom()
-	public rateRoom(): void
-	{
-		this._container?.connection?.send(new RateFlatMessageComposer(1));
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::rateRoom()
+    public rateRoom(): void
+    {
+        this._container?.connection?.send(new RateFlatMessageComposer(1));
+    }
 
-	// AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get canRate()
-	public get canRate(): boolean
-	{
-		return this._navigatorRef?.canRateRoom() ?? false;
-	}
+    // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::get canRate()
+    public get canRate(): boolean
+    {
+        return this._navigatorRef?.canRateRoom() ?? false;
+    }
 }

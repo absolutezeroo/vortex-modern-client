@@ -15,83 +15,83 @@ const log = Logger.getLogger('MeMenuSettingsMenuView');
  */
 export class MeMenuSettingsMenuView
 {
-	private _controller: MeMenuController | null = null;
-	private _toolbarView: ToolbarView | null = null;
+    private _controller: MeMenuController | null = null;
+    private _toolbarView: ToolbarView | null = null;
 
-	constructor()
-	{
-		log.debug('MeMenuSettingsMenuView constructed');
-	}
+    constructor()
+    {
+        log.debug('MeMenuSettingsMenuView constructed');
+    }
 
-	private _visible: boolean = true;
+    private _visible: boolean = true;
 
-	/**
+    /**
 	 * Whether the view is visible
 	 */
-	get visible(): boolean
-	{
-		return this._visible;
-	}
+    get visible(): boolean
+    {
+        return this._visible;
+    }
 
-	set visible(value: boolean)
-	{
-		this._visible = value;
-	}
+    set visible(value: boolean)
+    {
+        this._visible = value;
+    }
 
-	/**
+    /**
 	 * The parent controller
 	 */
-	get widget(): MeMenuController | null
-	{
-		return this._controller;
-	}
+    get widget(): MeMenuController | null
+    {
+        return this._controller;
+    }
 
-	/**
+    /**
 	 * Initialize the settings menu view
 	 *
 	 * @param controller The parent me menu controller
 	 * @param toolbarView The toolbar view for positioning
 	 */
-	public init(controller: MeMenuController, toolbarView: ToolbarView): void
-	{
-		this._controller = controller;
-		this._toolbarView = toolbarView;
-	}
+    public init(controller: MeMenuController, toolbarView: ToolbarView): void
+    {
+        this._controller = controller;
+        this._toolbarView = toolbarView;
+    }
 
-	/**
+    /**
 	 * Handle a button click
 	 *
 	 * @param buttonName The button name
 	 */
-	public onButtonClick(buttonName: string): void
-	{
-		if (!this._controller) return;
+    public onButtonClick(buttonName: string): void
+    {
+        if(!this._controller) return;
 
-		switch (buttonName)
-		{
-			case 'character_settings':
-				// In AS3: HabboWebTools.openAvatars()
-				break;
-			case 'sound_settings':
-				// Open sound settings sub-view
-				this._visible = false;
-				break;
-			case 'chat_settings':
-				// Open chat settings sub-view
-				break;
-			case 'back':
-				// Show parent me menu controller window
-				this.dispose();
-				break;
-		}
-	}
+        switch(buttonName)
+        {
+            case 'character_settings':
+                // In AS3: HabboWebTools.openAvatars()
+                break;
+            case 'sound_settings':
+                // Open sound settings sub-view
+                this._visible = false;
+                break;
+            case 'chat_settings':
+                // Open chat settings sub-view
+                break;
+            case 'back':
+                // Show parent me menu controller window
+                this.dispose();
+                break;
+        }
+    }
 
-	/**
+    /**
 	 * Dispose of this view
 	 */
-	public dispose(): void
-	{
-		this._controller = null;
-		this._toolbarView = null;
-	}
+    public dispose(): void
+    {
+        this._controller = null;
+        this._toolbarView = null;
+    }
 }

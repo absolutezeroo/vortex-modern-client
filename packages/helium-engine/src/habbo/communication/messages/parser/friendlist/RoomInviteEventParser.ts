@@ -9,34 +9,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomInviteEventParser implements IMessageParser
 {
-	private _senderId: number = 0;
+    private _senderId: number = 0;
 
-	get senderId(): number
-	{
-		return this._senderId;
-	}
+    get senderId(): number
+    {
+        return this._senderId;
+    }
 
-	private _messageText: string = '';
+    private _messageText: string = '';
 
-	get messageText(): string
-	{
-		return this._messageText;
-	}
+    get messageText(): string
+    {
+        return this._messageText;
+    }
 
-	flush(): boolean
-	{
-		this._senderId = 0;
-		this._messageText = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._senderId = 0;
+        this._messageText = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._senderId = wrapper.readInt();
-		this._messageText = wrapper.readString();
+        this._senderId = wrapper.readInt();
+        this._messageText = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

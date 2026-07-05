@@ -23,130 +23,130 @@ const log = Logger.getLogger('MeMenuNewIconLoader');
  */
 export class MeMenuNewIconLoader implements IAvatarImageListener
 {
-	private _toolbar: HabboToolbar | null;
-	private _fullBitmap: ImageBitmap | null = null;
-	private _userObjectEvent: UserObjectMessageEvent | null = null;
-	private _figureUpdateEvent: FigureUpdateMessageEvent | null = null;
-	private readonly _onAvatarRenderReady = (): void =>
-	{
-		this._currentFigure = '';
-		this.setMeMenuToolbarIcon();
-	};
+    private _toolbar: HabboToolbar | null;
+    private _fullBitmap: ImageBitmap | null = null;
+    private _userObjectEvent: UserObjectMessageEvent | null = null;
+    private _figureUpdateEvent: FigureUpdateMessageEvent | null = null;
+    private readonly _onAvatarRenderReady = (): void =>
+    {
+        this._currentFigure = '';
+        this.setMeMenuToolbarIcon();
+    };
 
-	constructor(toolbar: HabboToolbar)
-	{
-		this._toolbar = toolbar;
+    constructor(toolbar: HabboToolbar)
+    {
+        this._toolbar = toolbar;
 
-		this._userObjectEvent = new UserObjectMessageEvent(this.onUserObjectEvent.bind(this));
-		this._figureUpdateEvent = new FigureUpdateMessageEvent(this.onFigureUpdateEvent.bind(this));
-		this._toolbar.communicationManager?.addHabboConnectionMessageEvent(this._userObjectEvent);
-		this._toolbar.communicationManager?.addHabboConnectionMessageEvent(this._figureUpdateEvent);
-		this._toolbar.avatarRenderManager?.events.on(AvatarRenderEvent.AVATAR_RENDER_READY, this._onAvatarRenderReady);
+        this._userObjectEvent = new UserObjectMessageEvent(this.onUserObjectEvent.bind(this));
+        this._figureUpdateEvent = new FigureUpdateMessageEvent(this.onFigureUpdateEvent.bind(this));
+        this._toolbar.communicationManager?.addHabboConnectionMessageEvent(this._userObjectEvent);
+        this._toolbar.communicationManager?.addHabboConnectionMessageEvent(this._figureUpdateEvent);
+        this._toolbar.avatarRenderManager?.events.on(AvatarRenderEvent.AVATAR_RENDER_READY, this._onAvatarRenderReady);
 
-		this.setMeMenuToolbarIcon();
+        this.setMeMenuToolbarIcon();
 
-		log.debug('MeMenuNewIconLoader constructed');
-	}
+        log.debug('MeMenuNewIconLoader constructed');
+    }
 
-	private _currentFigure: string = '';
+    private _currentFigure: string = '';
 
-	/**
+    /**
 	 * The current figure string being displayed
 	 */
-	get currentFigure(): string
-	{
-		return this._currentFigure;
-	}
+    get currentFigure(): string
+    {
+        return this._currentFigure;
+    }
 
-	/**
+    /**
 	 * Whether the loader is disposed
 	 */
-	get disposed(): boolean
-	{
-		return this._toolbar == null;
-	}
+    get disposed(): boolean
+    {
+        return this._toolbar == null;
+    }
 
-	/**
+    /**
 	 * Called when the avatar image becomes ready (IAvatarImageListener)
 	 *
 	 * @param _key The avatar image key
 	 * @see sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as avatarImageReady()
 	 */
-	public avatarImageReady(_key: string): void
-	{
-		this._currentFigure = '';
-		this.setMeMenuToolbarIcon();
-	}
+    public avatarImageReady(_key: string): void
+    {
+        this._currentFigure = '';
+        this.setMeMenuToolbarIcon();
+    }
 
-	/**
+    /**
 	 * Handle user object event (initial login)
 	 *
 	 * @param figure The user's figure string
 	 */
-	public onUserObject(figure: string): void
-	{
-		this.setMeMenuToolbarIcon(figure);
-	}
+    public onUserObject(figure: string): void
+    {
+        this.setMeMenuToolbarIcon(figure);
+    }
 
-	/**
+    /**
 	 * Handle figure update event
 	 *
 	 * @param figure The new figure string
 	 */
-	public onFigureUpdate(figure: string): void
-	{
-		if (this.disposed) return;
+    public onFigureUpdate(figure: string): void
+    {
+        if(this.disposed) return;
 
-		this.setMeMenuToolbarIcon(figure);
-	}
+        this.setMeMenuToolbarIcon(figure);
+    }
 
-	/**
+    /**
 	 * Dispose of this icon loader
 	 *
 	 * @see sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as dispose()
 	 */
-	public dispose(): void
-	{
-		if (this.disposed) return;
+    public dispose(): void
+    {
+        if(this.disposed) return;
 
-		if (this._userObjectEvent)
-		{
-			this._toolbar?.communicationManager?.removeHabboConnectionMessageEvent(this._userObjectEvent);
-			this._userObjectEvent = null;
-		}
+        if(this._userObjectEvent)
+        {
+            this._toolbar?.communicationManager?.removeHabboConnectionMessageEvent(this._userObjectEvent);
+            this._userObjectEvent = null;
+        }
 
-		if (this._figureUpdateEvent)
-		{
-			this._toolbar?.communicationManager?.removeHabboConnectionMessageEvent(this._figureUpdateEvent);
-			this._figureUpdateEvent = null;
-		}
+        if(this._figureUpdateEvent)
+        {
+            this._toolbar?.communicationManager?.removeHabboConnectionMessageEvent(this._figureUpdateEvent);
+            this._figureUpdateEvent = null;
+        }
 
-		this._toolbar?.avatarRenderManager?.events.off(AvatarRenderEvent.AVATAR_RENDER_READY, this._onAvatarRenderReady);
+        this._toolbar?.avatarRenderManager?.events.off(AvatarRenderEvent.AVATAR_RENDER_READY, this._onAvatarRenderReady);
 
-		if (this._fullBitmap)
-		{
-			this._fullBitmap.close();
-			this._fullBitmap = null;
-		}
+        if(this._fullBitmap)
+        {
+            this._fullBitmap.close();
+            this._fullBitmap = null;
+        }
 
-		this._toolbar = null;
-	}
+        this._toolbar = null;
+    }
 
-	private onUserObjectEvent(event: IMessageEvent): void
-	{
-		const parser = event.parser as UserObjectMessageParser;
+    private onUserObjectEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as UserObjectMessageParser;
 
-		this.onUserObject(parser.figure);
-	}
+        this.onUserObject(parser.figure);
+    }
 
-	private onFigureUpdateEvent(event: IMessageEvent): void
-	{
-		const parser = event.parser as FigureUpdateMessageParser;
+    private onFigureUpdateEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as FigureUpdateMessageParser;
 
-		this.onFigureUpdate(parser.figure);
-	}
+        this.onFigureUpdate(parser.figure);
+    }
 
-	/**
+    /**
 	 * Render the avatar and set it as the toolbar icon bitmap.
 	 *
 	 * Uses AvatarRenderManager to create a cropped avatar image,
@@ -156,59 +156,58 @@ export class MeMenuNewIconLoader implements IAvatarImageListener
 	 * @param figure Optional figure string override
 	 * @see sources/win63_version/habbo/toolbar/memenu/MeMenuNewIconLoader.as setMeMenuToolbarIcon()
 	 */
-	private setMeMenuToolbarIcon(figure?: string): void
-	{
-		if (!this._toolbar) return;
+    private setMeMenuToolbarIcon(figure?: string): void
+    {
+        if(!this._toolbar) return;
 
-		const avatarRenderManager = this._toolbar.avatarRenderManager;
-		const currentFigure = figure ?? this._toolbar.sessionDataManager?.figure ?? '';
+        const avatarRenderManager = this._toolbar.avatarRenderManager;
+        const currentFigure = figure ?? this._toolbar.sessionDataManager?.figure ?? '';
 
-		if (!currentFigure) return;
+        if(!currentFigure) return;
 
-		let faceBitmap: ImageBitmap | null = null;
+        let faceBitmap: ImageBitmap | null = null;
 
-		if (avatarRenderManager)
-		{
-			if (currentFigure !== this._currentFigure)
-			{
-				const gender = this._toolbar.sessionDataManager?.gender ?? '';
-				const avatarImage = avatarRenderManager.createAvatarImage(currentFigure, 'h', gender, this, null);
+        if(avatarRenderManager)
+        {
+            if(currentFigure !== this._currentFigure)
+            {
+                const gender = this._toolbar.sessionDataManager?.gender ?? '';
+                const avatarImage = avatarRenderManager.createAvatarImage(currentFigure, 'h', gender, this, null);
 
-				if (avatarImage)
-				{
-					if (!avatarImage.isPlaceholder())
-					{
-						faceBitmap = HabboFaceFocuser.focusUserFace(avatarImage, 'full', 3, 1);
-					}
+                if(avatarImage)
+                {
+                    if(!avatarImage.isPlaceholder())
+                    {
+                        faceBitmap = HabboFaceFocuser.focusUserFace(avatarImage, 'full', 3, 1);
+                    }
 
-					avatarImage.dispose();
-				}
+                    avatarImage.dispose();
+                }
 
-				this._currentFigure = currentFigure;
+                this._currentFigure = currentFigure;
 
-				if (this._fullBitmap)
-				{
-					this._fullBitmap.close();
-				}
+                if(this._fullBitmap)
+                {
+                    this._fullBitmap.close();
+                }
 
-				this._fullBitmap = faceBitmap;
-			}
-			else
-			{
-				faceBitmap = this._fullBitmap;
-			}
-		}
+                this._fullBitmap = faceBitmap;
+            }
+            else
+            {
+                faceBitmap = this._fullBitmap;
+            }
+        }
 
-		if (!this._toolbar) return;
+        if(!this._toolbar) return;
 
-		let iconBitmap: ImageBitmap | null = null;
+        let iconBitmap: ImageBitmap | null = null;
 
-		if (faceBitmap)
-		{
-			iconBitmap = HabboFaceFocuser.cutCircleFromBitmap(faceBitmap, 20);
-		}
+        if(faceBitmap)
+        {
+            iconBitmap = HabboFaceFocuser.cutCircleFromBitmap(faceBitmap, 20);
+        }
 
-		this._toolbar.setIconBitmap('HTIE_ICON_MEMENU', iconBitmap);
-	}
-
+        this._toolbar.setIconBitmap('HTIE_ICON_MEMENU', iconBitmap);
+    }
 }

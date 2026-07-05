@@ -7,25 +7,25 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CloseIssueDefaultActionMessageComposer extends MessageComposer<unknown[]>
 {
-	private _data: unknown[];
+    private _data: unknown[];
 
-	constructor(issueId: number, issueIds: number[], sanctionTypeId: number)
-	{
-		super();
-		this._data = [];
-		this._data.push(issueId);
-		this._data.push(issueIds.length);
+    constructor(issueId: number, issueIds: number[], sanctionTypeId: number)
+    {
+        super();
+        this._data = [];
+        this._data.push(issueId);
+        this._data.push(issueIds.length);
 
-		for (const id of issueIds)
-		{
-			this._data.push(id);
-		}
+        for(const id of issueIds)
+        {
+            this._data.push(id);
+        }
 
-		this._data.push(sanctionTypeId);
-	}
+        this._data.push(sanctionTypeId);
+    }
 
-	getMessageArray(): unknown[]
-	{
-		return this._data;
-	}
+    getMessageArray(): unknown[]
+    {
+        return this._data;
+    }
 }

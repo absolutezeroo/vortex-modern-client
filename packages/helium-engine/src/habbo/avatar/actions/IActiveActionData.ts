@@ -7,10 +7,10 @@ import type {IActionDefinition} from './IActionDefinition';
  */
 export interface IActiveActionData
 {
-	readonly id: string;
-	readonly actionType: string;
-	actionParameter: string;
-	readonly startFrame: number;
-	definition: IActionDefinition;
-	overridingAction: string;
+    readonly id: string;
+    readonly actionType: string;
+    actionParameter: string;
+    readonly startFrame: number;
+    definition: IActionDefinition;
+    overridingAction: string;
 }

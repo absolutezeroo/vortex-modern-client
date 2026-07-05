@@ -9,8 +9,8 @@ import {FriendNotificationMessageParser} from '../../parser/friendlist/FriendNot
  */
 export class FriendNotificationMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FriendNotificationMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FriendNotificationMessageParser);
+    }
 }

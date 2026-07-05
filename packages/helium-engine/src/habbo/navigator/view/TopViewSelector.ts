@@ -14,101 +14,101 @@ import type {HabboNewNavigator} from '../HabboNewNavigator';
  */
 export class TopViewSelector
 {
-	private _navigator: HabboNewNavigator;
+    private _navigator: HabboNewNavigator;
 
-	constructor(navigator: HabboNewNavigator)
-	{
-		this._navigator = navigator;
-	}
+    constructor(navigator: HabboNewNavigator)
+    {
+        this._navigator = navigator;
+    }
 
-	private _template: ITabButtonWindow | null = null;
+    private _template: ITabButtonWindow | null = null;
 
-	set template(value: ITabButtonWindow)
-	{
-		this._template = value;
-	}
+    set template(value: ITabButtonWindow)
+    {
+        this._template = value;
+    }
 
-	private _tabContext: ITabContextWindow | null = null;
+    private _tabContext: ITabContextWindow | null = null;
 
-	set tabContext(value: ITabContextWindow)
-	{
-		this._tabContext = value;
-	}
+    set tabContext(value: ITabContextWindow)
+    {
+        this._tabContext = value;
+    }
 
-	/**
+    /**
 	 * Refresh tabs by clearing and recreating from top-level searches.
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/TopViewSelector.as refresh()
 	 */
-	refresh(): void
-	{
-		if (!this._tabContext || !this._template) return;
+    refresh(): void
+    {
+        if(!this._tabContext || !this._template) return;
 
-		this.clearTabs();
+        this.clearTabs();
 
-		const topLevelSearches = this._navigator.contextContainer.getTopLevelSearches();
+        const topLevelSearches = this._navigator.contextContainer.getTopLevelSearches();
 
-		for (let i = 0; i < topLevelSearches.length; i++)
-		{
-			const searchCode = topLevelSearches[i];
-			const tab = this._template.clone() as ITabButtonWindow;
+        for(let i = 0; i < topLevelSearches.length; i++)
+        {
+            const searchCode = topLevelSearches[i];
+            const tab = this._template.clone() as ITabButtonWindow;
 
-			tab.caption = '${navigator.toplevelview.' + searchCode + '}';
-			tab.id = i;
-			tab.procedure = this.topViewSelectorButtonProcedure;
+            tab.caption = '${navigator.toplevelview.' + searchCode + '}';
+            tab.id = i;
+            tab.procedure = this.topViewSelectorButtonProcedure;
 
-			this._tabContext.addTabItem(tab);
-		}
-	}
+            this._tabContext.addTabItem(tab);
+        }
+    }
 
-	/**
+    /**
 	 * Select a tab by its index.
 	 *
 	 * @param index - The tab index to select
 	 *
 	 * @see sources/win63_version/habbo/navigator/view/TopViewSelector.as selectTabByIndex()
 	 */
-	selectTabByIndex(index: number): void
-	{
-		if (!this._tabContext || !this._tabContext.selector) return;
+    selectTabByIndex(index: number): void
+    {
+        if(!this._tabContext || !this._tabContext.selector) return;
 
-		const tab = this._tabContext.getTabItemAt(index);
+        const tab = this._tabContext.getTabItemAt(index);
 
-		if (tab)
-		{
-			(this._tabContext.selector as { setSelected(item: IWindow): void }).setSelected(tab);
-		}
-	}
+        if(tab)
+        {
+            (this._tabContext.selector as { setSelected(item: IWindow): void }).setSelected(tab);
+        }
+    }
 
-	private clearTabs(): void
-	{
-		if (!this._tabContext) return;
+    private clearTabs(): void
+    {
+        if(!this._tabContext) return;
 
-		const count = this._tabContext.numTabItems;
+        const count = this._tabContext.numTabItems;
 
-		for (let i = 0; i < count; i++)
-		{
-			const tab = this._tabContext.getTabItemAt(0);
+        for(let i = 0; i < count; i++)
+        {
+            const tab = this._tabContext.getTabItemAt(0);
 
-			if (tab)
-			{
-				this._tabContext.removeTabItem(tab);
-			}
-		}
-	}
+            if(tab)
+            {
+                this._tabContext.removeTabItem(tab);
+            }
+        }
+    }
 
-	private topViewSelectorButtonProcedure = (event: WindowEvent, window: IWindow): void =>
-	{
-		if (event.type === 'WME_CLICK')
-		{
-			const topLevelSearches = this._navigator.contextContainer.getTopLevelSearches();
+    private topViewSelectorButtonProcedure = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type === 'WME_CLICK')
+        {
+            const topLevelSearches = this._navigator.contextContainer.getTopLevelSearches();
 
-			if (topLevelSearches.length > window.id)
-			{
-				const filterText = this._navigator.view?.currentFilterText() ?? '';
+            if(topLevelSearches.length > window.id)
+            {
+                const filterText = this._navigator.view?.currentFilterText() ?? '';
 
-				this._navigator.performSearch(topLevelSearches[window.id], '', filterText);
-			}
-		}
-	};
+                this._navigator.performSearch(topLevelSearches[window.id], '', filterText);
+            }
+        }
+    };
 }

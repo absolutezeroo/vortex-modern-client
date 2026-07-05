@@ -10,32 +10,32 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class ApproveNameMessageParser implements IMessageParser
 {
-	private _result: number = -1;
-	private _nameValidationInfo: string | null = null;
+    private _result: number = -1;
+    private _nameValidationInfo: string | null = null;
 
-	get result(): number
-	{
-		return this._result;
-	}
+    get result(): number
+    {
+        return this._result;
+    }
 
-	get nameValidationInfo(): string | null
-	{
-		return this._nameValidationInfo;
-	}
+    get nameValidationInfo(): string | null
+    {
+        return this._nameValidationInfo;
+    }
 
-	flush(): boolean
-	{
-		this._result = -1;
-		this._nameValidationInfo = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._result = -1;
+        this._nameValidationInfo = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._result = wrapper.readInt();
-		this._nameValidationInfo = wrapper.readString();
-		return true;
-	}
+        this._result = wrapper.readInt();
+        this._nameValidationInfo = wrapper.readString();
+        return true;
+    }
 }

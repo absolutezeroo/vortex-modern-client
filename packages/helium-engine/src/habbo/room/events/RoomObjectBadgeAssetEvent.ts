@@ -10,26 +10,26 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 
 export class RoomObjectBadgeAssetEvent extends RoomObjectEvent
 {
-	public static readonly LOAD_BADGE = 'ROGBE_LOAD_BADGE';
+    public static readonly LOAD_BADGE = 'ROGBE_LOAD_BADGE';
 
-	constructor(type: string, object: IRoomObject, badgeId: string, groupBadge: boolean = true)
-	{
-		super(type, object);
-		this._badgeId = badgeId;
-		this._groupBadge = groupBadge;
-	}
+    constructor(type: string, object: IRoomObject, badgeId: string, groupBadge: boolean = true)
+    {
+        super(type, object);
+        this._badgeId = badgeId;
+        this._groupBadge = groupBadge;
+    }
 
-	private _badgeId: string;
+    private _badgeId: string;
 
-	get badgeId(): string
-	{
-		return this._badgeId;
-	}
+    get badgeId(): string
+    {
+        return this._badgeId;
+    }
 
-	private _groupBadge: boolean;
+    private _groupBadge: boolean;
 
-	get groupBadge(): boolean
-	{
-		return this._groupBadge;
-	}
+    get groupBadge(): boolean
+    {
+        return this._groupBadge;
+    }
 }

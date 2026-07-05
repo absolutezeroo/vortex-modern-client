@@ -8,33 +8,33 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class GamePlayerValueMessageParser implements IMessageParser
 {
-	private _userId: number = 0;
-	private _value: number = 0;
+    private _userId: number = 0;
+    private _value: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	get value(): number
-	{
-		return this._value;
-	}
+    get value(): number
+    {
+        return this._value;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._userId = wrapper.readInt();
-		this._value = wrapper.readInt();
-		return true;
-	}
+        this._userId = wrapper.readInt();
+        this._value = wrapper.readInt();
+        return true;
+    }
 }

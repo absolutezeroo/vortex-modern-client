@@ -8,22 +8,21 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UniqueIDMessageComposer extends MessageComposer<ConstructorParameters<typeof UniqueIDMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof UniqueIDMessageComposer>;
+    private _data: ConstructorParameters<typeof UniqueIDMessageComposer>;
 
-	constructor(
-		machineId: string = '',
-		fingerprint: string = '',
-		flashVersion: string = ''
-	)
-	{
-		super();
+    constructor(
+        machineId: string = '',
+        fingerprint: string = '',
+        flashVersion: string = ''
+    )
+    {
+        super();
 
-		this._data = [machineId, fingerprint, flashVersion];
-	}
+        this._data = [machineId, fingerprint, flashVersion];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

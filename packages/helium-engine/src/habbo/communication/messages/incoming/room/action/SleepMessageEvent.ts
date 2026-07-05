@@ -9,8 +9,8 @@ import {SleepMessageEventParser} from '@habbo/communication/messages/parser/room
 
 export class SleepMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, SleepMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, SleepMessageEventParser);
+    }
 }

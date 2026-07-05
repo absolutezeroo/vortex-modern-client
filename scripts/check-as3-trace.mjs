@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+
+const MAX_BUFFER = 1024 * 1024 * 200;
 
 function git(args)
 {
-    return execFileSync('git', args, { encoding: 'utf8' });
+    return execFileSync('git', args, { encoding: 'utf8', maxBuffer: MAX_BUFFER });
 }
 
 function getStagedFiles()
@@ -33,30 +36,55 @@ function isAs3PortedFile(file)
     return rel.startsWith('habbo/') || rel.startsWith('room/') || rel.startsWith('core/window/') || rel.startsWith('core/communication/');
 }
 
-function getAddedLineNumbers(file)
+const FILE_HEADER_RE = /^\+\+\+ b\/(.+)$/;
+const HUNK_RE = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/;
+
+// One batched `git diff` call for every matched file instead of one process per file —
+// spawning a subprocess per file made this unusable on commits touching hundreds of files.
+function getAddedLineNumbersBatch(files)
 {
-    const diff = git(['diff', '--cached', '-U0', '--', file]);
-    const added = new Set();
-    const hunkRe = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/gm;
-    let match;
+    const result = new Map();
 
-    while((match = hunkRe.exec(diff)) !== null)
+    if(files.length === 0)
     {
-        const start = parseInt(match[1], 10);
-        const count = match[2] !== undefined ? parseInt(match[2], 10) : 1;
+        return result;
+    }
 
-        for(let n = start; n < start + count; n++)
+    const diff = git(['diff', '--cached', '-U0', '--diff-filter=ACMR', '--', ...files]);
+    let currentFile = null;
+
+    for(const line of diff.split('\n'))
+    {
+        const fileMatch = FILE_HEADER_RE.exec(line);
+
+        if(fileMatch)
         {
-            added.add(n);
+            currentFile = fileMatch[1];
+
+            if(!result.has(currentFile))
+            {
+                result.set(currentFile, new Set());
+            }
+
+            continue;
+        }
+
+        const hunkMatch = HUNK_RE.exec(line);
+
+        if(hunkMatch && currentFile)
+        {
+            const start = parseInt(hunkMatch[1], 10);
+            const count = hunkMatch[2] !== undefined ? parseInt(hunkMatch[2], 10) : 1;
+            const set = result.get(currentFile);
+
+            for(let n = start; n < start + count; n++)
+            {
+                set.add(n);
+            }
         }
     }
 
-    return added;
-}
-
-function getStagedContent(file)
-{
-    return git(['show', `:${file}`]);
+    return result;
 }
 
 const CLASS_OPEN_RE = /^(?:export\s+)?(?:default\s+)?(?:abstract\s+)?class\s+\w|^(?:export\s+)?interface\s+\w/;
@@ -183,16 +211,24 @@ function hasPrecedingAs3Trace(lines, declLineIndex)
     return false;
 }
 
-function checkFile(file)
+function checkFile(file, addedLines)
 {
-    const addedLines = getAddedLineNumbers(file);
-
-    if(addedLines.size === 0)
+    if(!addedLines || addedLines.size === 0)
     {
         return [];
     }
 
-    const content = getStagedContent(file);
+    let content;
+
+    try
+    {
+        content = readFileSync(file, 'utf8');
+    }
+    catch
+    {
+        return [];
+    }
+
     const lines = content.split('\n');
     const memberLines = findClassMemberLines(content);
     const findings = [];
@@ -223,7 +259,14 @@ function checkFile(file)
 function main()
 {
     const files = getStagedFiles().filter(isAs3PortedFile);
-    const allFindings = files.flatMap(checkFile);
+
+    if(files.length === 0)
+    {
+        process.exit(0);
+    }
+
+    const addedLinesByFile = getAddedLineNumbersBatch(files);
+    const allFindings = files.flatMap((file) => checkFile(file, addedLinesByFile.get(file)));
 
     if(allFindings.length > 0)
     {

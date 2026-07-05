@@ -9,21 +9,21 @@ import {BlockUserUpdateMessageParser} from '../../parser/users/BlockUserUpdateMe
  */
 export class BlockUserUpdateMessageEvent extends MessageEvent implements IMessageEvent
 {
-	static readonly UNBLOCKED: number = 0;
-	static readonly BLOCKED: number = 1;
+    static readonly UNBLOCKED: number = 0;
+    static readonly BLOCKED: number = 1;
 
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, BlockUserUpdateMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, BlockUserUpdateMessageParser);
+    }
 
-	get result(): number
-	{
-		return (this._parser as BlockUserUpdateMessageParser).result;
-	}
+    get result(): number
+    {
+        return (this._parser as BlockUserUpdateMessageParser).result;
+    }
 
-	get userId(): number
-	{
-		return (this._parser as BlockUserUpdateMessageParser).userId;
-	}
+    get userId(): number
+    {
+        return (this._parser as BlockUserUpdateMessageParser).userId;
+    }
 }

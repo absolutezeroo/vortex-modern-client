@@ -10,15 +10,15 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class EmptyStuffData extends StuffDataBase implements IStuffData
 {
-	public static readonly FORMAT_KEY = 4;
+    public static readonly FORMAT_KEY = 4;
 
-	override getLegacyString(): string
-	{
-		return '';
-	}
+    override getLegacyString(): string
+    {
+        return '';
+    }
 
-	override compare(_data: IStuffData): boolean
-	{
-		return true;
-	}
+    override compare(_data: IStuffData): boolean
+    {
+        return true;
+    }
 }

@@ -7,8 +7,8 @@ import type {IPartColor} from './IPartColor';
  */
 export interface IPalette
 {
-	readonly id: number;
-	readonly colors: Map<number, IPartColor>;
+    readonly id: number;
+    readonly colors: Map<number, IPartColor>;
 
-	getColor(colorId: number): IPartColor | null;
+    getColor(colorId: number): IPartColor | null;
 }

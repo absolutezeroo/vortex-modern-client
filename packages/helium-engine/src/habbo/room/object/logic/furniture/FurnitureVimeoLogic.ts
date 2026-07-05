@@ -9,8 +9,8 @@ import {FurnitureLogic} from './FurnitureLogic';
 
 export class FurnitureVimeoLogic extends FurnitureLogic
 {
-	override get widget(): string | null
-	{
-		return 'VIMEO';
-	}
+    override get widget(): string | null
+    {
+        return 'VIMEO';
+    }
 }

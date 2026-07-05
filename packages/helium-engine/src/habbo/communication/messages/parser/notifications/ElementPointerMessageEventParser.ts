@@ -11,28 +11,28 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ElementPointerMessageEventParser implements IMessageParser
 {
-	// AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::_key
-	private _key: string = '';
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::_key
+    private _key: string = '';
 
-	// AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::get key()
-	public get key(): string
-	{
-		return this._key;
-	}
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::get key()
+    public get key(): string
+    {
+        return this._key;
+    }
 
-	// AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::flush()
-	public flush(): boolean
-	{
-		this._key = '';
-		return true;
-	}
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::flush()
+    public flush(): boolean
+    {
+        this._key = '';
+        return true;
+    }
 
-	// AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::parse()
-	public parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    // AS3: sources/win63_version/habbo/communication/messages/parser/notifications/ElementPointerMessageEventParser.as::parse()
+    public parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._key = wrapper.readString();
-		return true;
-	}
+        this._key = wrapper.readString();
+        return true;
+    }
 }

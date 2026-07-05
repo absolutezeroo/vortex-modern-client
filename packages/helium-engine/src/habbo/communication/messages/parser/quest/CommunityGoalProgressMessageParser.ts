@@ -9,24 +9,24 @@ import {CommunityGoalProgressData} from './CommunityGoalProgressData';
  */
 export class CommunityGoalProgressMessageParser implements IMessageParser
 {
-	private _data: CommunityGoalProgressData | null = null;
+    private _data: CommunityGoalProgressData | null = null;
 
-	get data(): CommunityGoalProgressData | null
-	{
-		return this._data;
-	}
+    get data(): CommunityGoalProgressData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new CommunityGoalProgressData(wrapper);
-		return true;
-	}
+        this._data = new CommunityGoalProgressData(wrapper);
+        return true;
+    }
 }

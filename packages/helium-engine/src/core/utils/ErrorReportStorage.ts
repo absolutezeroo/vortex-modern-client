@@ -7,30 +7,30 @@
  */
 export class ErrorReportStorage
 {
-	private static _data: Map<string, string> = new Map();
+    private static _data: Map<string, string> = new Map();
 
-	static setDebugData(key: string, value: string): void
-	{
-		this._data.set(key, value);
-	}
+    static setDebugData(key: string, value: string): void
+    {
+        this._data.set(key, value);
+    }
 
-	static getDebugData(key: string): string | null
-	{
-		return this._data.get(key) ?? null;
-	}
+    static getDebugData(key: string): string | null
+    {
+        return this._data.get(key) ?? null;
+    }
 
-	static removeDebugData(key: string): void
-	{
-		this._data.delete(key);
-	}
+    static removeDebugData(key: string): void
+    {
+        this._data.delete(key);
+    }
 
-	static getAllDebugData(): Map<string, string>
-	{
-		return new Map(this._data);
-	}
+    static getAllDebugData(): Map<string, string>
+    {
+        return new Map(this._data);
+    }
 
-	static clear(): void
-	{
-		this._data.clear();
-	}
+    static clear(): void
+    {
+        this._data.clear();
+    }
 }

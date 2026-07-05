@@ -9,30 +9,30 @@ import {CompetitionEntryData} from './CompetitionEntryData';
  */
 export class CompetitionEntryMessageParser implements IMessageParser
 {
-	private _prizes: Array<CompetitionEntryData> = [];
+    private _prizes: Array<CompetitionEntryData> = [];
 
-	get prizes(): Array<CompetitionEntryData>
-	{
-		return this._prizes;
-	}
+    get prizes(): Array<CompetitionEntryData>
+    {
+        return this._prizes;
+    }
 
-	flush(): boolean
-	{
-		this._prizes = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._prizes = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._prizes.push(new CompetitionEntryData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._prizes.push(new CompetitionEntryData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

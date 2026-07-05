@@ -8,7 +8,7 @@
  */
 export class MathUtils
 {
-	/**
+    /**
 	 * Normalize a value to a 0-1 range between min and max.
 	 *
 	 * @param value The value to normalize
@@ -16,12 +16,12 @@ export class MathUtils
 	 * @param max The maximum of the range
 	 * @returns The normalized value (0-1)
 	 */
-	static normalize(value: number, min: number, max: number): number
-	{
-		return (value - min) / (max - min);
-	}
+    static normalize(value: number, min: number, max: number): number
+    {
+        return (value - min) / (max - min);
+    }
 
-	/**
+    /**
 	 * Linearly interpolate between min and max by t.
 	 *
 	 * @param t The interpolation factor (0-1)
@@ -29,12 +29,12 @@ export class MathUtils
 	 * @param max The end value
 	 * @returns The interpolated value
 	 */
-	static lerp(t: number, min: number, max: number): number
-	{
-		return t * (max - min) + min;
-	}
+    static lerp(t: number, min: number, max: number): number
+    {
+        return t * (max - min) + min;
+    }
 
-	/**
+    /**
 	 * Clamp a value between min and max.
 	 *
 	 * @param value The value to clamp
@@ -42,12 +42,12 @@ export class MathUtils
 	 * @param max The maximum bound (default 1)
 	 * @returns The clamped value
 	 */
-	static clamp(value: number, min: number = 0, max: number = 1): number
-	{
-		return Math.max(min, Math.min(max, value));
-	}
+    static clamp(value: number, min: number = 0, max: number = 1): number
+    {
+        return Math.max(min, Math.min(max, value));
+    }
 
-	/**
+    /**
 	 * Map a value from one range to another.
 	 *
 	 * @param value The input value
@@ -57,8 +57,8 @@ export class MathUtils
 	 * @param outMax The output range maximum
 	 * @returns The mapped value
 	 */
-	static map(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number
-	{
-		return MathUtils.lerp(MathUtils.normalize(value, inMin, inMax), outMin, outMax);
-	}
+    static map(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number
+    {
+        return MathUtils.lerp(MathUtils.normalize(value, inMin, inMax), outMin, outMax);
+    }
 }

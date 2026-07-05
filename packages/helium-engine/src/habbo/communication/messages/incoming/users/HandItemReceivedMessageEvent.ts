@@ -9,18 +9,18 @@ import {HandItemReceivedMessageParser} from '../../parser/users/HandItemReceived
  */
 export class HandItemReceivedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HandItemReceivedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HandItemReceivedMessageParser);
+    }
 
-	get giverUserId(): number
-	{
-		return (this._parser as HandItemReceivedMessageParser).giverUserId;
-	}
+    get giverUserId(): number
+    {
+        return (this._parser as HandItemReceivedMessageParser).giverUserId;
+    }
 
-	get handItemType(): number
-	{
-		return (this._parser as HandItemReceivedMessageParser).handItemType;
-	}
+    get handItemType(): number
+    {
+        return (this._parser as HandItemReceivedMessageParser).handItemType;
+    }
 }

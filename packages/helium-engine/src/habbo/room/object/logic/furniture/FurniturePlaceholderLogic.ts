@@ -9,14 +9,14 @@ import {FurnitureLogic} from './FurnitureLogic';
 
 export class FurniturePlaceholderLogic extends FurnitureLogic
 {
-	override getEventTypes(): string[]
-	{
-		// Placeholder furniture doesn't dispatch events
-		return [];
-	}
+    override getEventTypes(): string[]
+    {
+        // Placeholder furniture doesn't dispatch events
+        return [];
+    }
 
-	override useObject(): void
-	{
-		// Placeholder furniture can't be used
-	}
+    override useObject(): void
+    {
+        // Placeholder furniture can't be used
+    }
 }

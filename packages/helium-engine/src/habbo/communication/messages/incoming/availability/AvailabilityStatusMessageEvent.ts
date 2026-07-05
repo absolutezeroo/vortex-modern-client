@@ -10,8 +10,8 @@ import {AvailabilityStatusMessageParser} from '../../parser/availability/Availab
  */
 export class AvailabilityStatusMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AvailabilityStatusMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AvailabilityStatusMessageParser);
+    }
 }

@@ -21,36 +21,36 @@ const log = Logger.getLogger('AssetAliasCollection');
  */
 export class AssetAliasCollection
 {
-	private _aliases: Map<string, AssetAlias>;
-	private _collections: Map<string, GraphicAssetCollection>;
-	private _assetLibrary: IAssetLibrary | null;
+    private _aliases: Map<string, AssetAlias>;
+    private _collections: Map<string, GraphicAssetCollection>;
+    private _assetLibrary: IAssetLibrary | null;
 
-	constructor()
-	{
-		this._aliases = new Map();
-		this._collections = new Map();
-		this._assetLibrary = null;
-	}
+    constructor()
+    {
+        this._aliases = new Map();
+        this._collections = new Map();
+        this._assetLibrary = null;
+    }
 
-	/**
+    /**
 	 * Sets the asset library reference for looking up loaded NitroAssets.
 	 */
-	public setAssetLibrary(assetLibrary: IAssetLibrary): void
-	{
-		this._assetLibrary = assetLibrary;
-	}
+    public setAssetLibrary(assetLibrary: IAssetLibrary): void
+    {
+        this._assetLibrary = assetLibrary;
+    }
 
-	public init(): void
-	{
-		// Initialization handled by onAvatarAssetsLibraryReady
-	}
+    public init(): void
+    {
+        // Initialization handled by onAvatarAssetsLibraryReady
+    }
 
-	public reset(): void
-	{
-		this.init();
-	}
+    public reset(): void
+    {
+        this.init();
+    }
 
-	/**
+    /**
 	 * Called when an avatar asset library finishes loading.
 	 * Extracts aliases and assets from the loaded .nitro bundle,
 	 * creates a GraphicAssetCollection, and registers it.
@@ -60,80 +60,80 @@ export class AssetAliasCollection
 	 *
 	 * @param libraryName - The name of the loaded library (e.g. "hh_human_body")
 	 */
-	public onAvatarAssetsLibraryReady(libraryName: string): void
-	{
-		if (!this._assetLibrary) return;
+    public onAvatarAssetsLibraryReady(libraryName: string): void
+    {
+        if(!this._assetLibrary) return;
 
-		const nitroAsset = this._assetLibrary.getAssetByName(libraryName) as NitroAsset | null;
+        const nitroAsset = this._assetLibrary.getAssetByName(libraryName) as NitroAsset | null;
 
-		if (!nitroAsset) return;
+        if(!nitroAsset) return;
 
-		const jsonData = nitroAsset.jsonData;
-		const textures = nitroAsset.textures;
+        const jsonData = nitroAsset.jsonData;
+        const textures = nitroAsset.textures;
 
-		if (!jsonData) return;
+        if(!jsonData) return;
 
-		// Register aliases from this library
-		if (jsonData.aliases)
-		{
-			for (const aliasName in jsonData.aliases)
-			{
-				const aliasData = jsonData.aliases[aliasName];
+        // Register aliases from this library
+        if(jsonData.aliases)
+        {
+            for(const aliasName in jsonData.aliases)
+            {
+                const aliasData = jsonData.aliases[aliasName];
 
-				this._aliases.set(aliasName, new AssetAlias({
-					name: aliasName,
-					link: aliasData.link || '',
-					fliph: aliasData.flipH ? 1 : 0,
-					flipv: aliasData.flipV ? 1 : 0
-				}));
-			}
-		}
+                this._aliases.set(aliasName, new AssetAlias({
+                    name: aliasName,
+                    link: aliasData.link || '',
+                    fliph: aliasData.flipH ? 1 : 0,
+                    flipv: aliasData.flipV ? 1 : 0
+                }));
+            }
+        }
 
-		// Create GraphicAssetCollection from this library's textures and asset defs
-		if (textures.size > 0 && jsonData.assets)
-		{
-			const collection = new GraphicAssetCollection();
+        // Create GraphicAssetCollection from this library's textures and asset defs
+        if(textures.size > 0 && jsonData.assets)
+        {
+            const collection = new GraphicAssetCollection();
 
-			collection.defineFromSpritesheet(textures, jsonData.assets as Record<string, Record<string, unknown>>, libraryName);
+            collection.defineFromSpritesheet(textures, jsonData.assets as Record<string, Record<string, unknown>>, libraryName);
 
-			this._collections.set(libraryName, collection);
-		}
-	}
+            this._collections.set(libraryName, collection);
+        }
+    }
 
-	public addAlias(name: string, link: string, flipH: boolean = false, flipV: boolean = false): void
-	{
-		const alias = new AssetAlias({name, link, fliph: flipH ? 1 : 0, flipv: flipV ? 1 : 0});
+    public addAlias(name: string, link: string, flipH: boolean = false, flipV: boolean = false): void
+    {
+        const alias = new AssetAlias({name, link, fliph: flipH ? 1 : 0, flipv: flipV ? 1 : 0});
 
-		this._aliases.set(name, alias);
-	}
+        this._aliases.set(name, alias);
+    }
 
-	public hasAlias(name: string): boolean
-	{
-		return this._aliases.has(name);
-	}
+    public hasAlias(name: string): boolean
+    {
+        return this._aliases.has(name);
+    }
 
-	/**
+    /**
 	 * Resolves an asset name through alias chains (max 5 hops).
 	 *
 	 * @see AS3 AssetAliasCollection.getAssetName() lines 88-99
 	 */
-	public getAssetName(name: string): string
-	{
-		let result = name;
-		let depth = 5;
+    public getAssetName(name: string): string
+    {
+        let result = name;
+        let depth = 5;
 
-		while (this.hasAlias(result) && depth >= 0)
-		{
-			const alias = this._aliases.get(result)!;
+        while(this.hasAlias(result) && depth >= 0)
+        {
+            const alias = this._aliases.get(result)!;
 
-			result = alias.link;
-			depth--;
-		}
+            result = alias.link;
+            depth--;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
+    /**
 	 * Resolves an asset name through aliases, then searches all registered
 	 * GraphicAssetCollections for the actual texture + offset data.
 	 *
@@ -143,53 +143,53 @@ export class AssetAliasCollection
 	 * @param name - The asset name (may be an alias)
 	 * @returns The graphic asset with texture and offsets, or null
 	 */
-	public getAsset(name: string): IGraphicAsset | null
-	{
-		const resolvedName = this.getAssetName(name);
+    public getAsset(name: string): IGraphicAsset | null
+    {
+        const resolvedName = this.getAssetName(name);
 
-		// Search all registered collections
-		for (const collection of this._collections.values())
-		{
-			const asset = collection.getAsset(resolvedName);
+        // Search all registered collections
+        for(const collection of this._collections.values())
+        {
+            const asset = collection.getAsset(resolvedName);
 
-			if (asset) return asset;
-		}
+            if(asset) return asset;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Gets the flip state for an alias name.
 	 */
-	public getAliasFlipH(name: string): boolean
-	{
-		let result = name;
-		let flipH = false;
-		let depth = 5;
+    public getAliasFlipH(name: string): boolean
+    {
+        let result = name;
+        let flipH = false;
+        let depth = 5;
 
-		while (this.hasAlias(result) && depth >= 0)
-		{
-			const alias = this._aliases.get(result)!;
+        while(this.hasAlias(result) && depth >= 0)
+        {
+            const alias = this._aliases.get(result)!;
 
-			if (alias.flipH) flipH = !flipH;
+            if(alias.flipH) flipH = !flipH;
 
-			result = alias.link;
-			depth--;
-		}
+            result = alias.link;
+            depth--;
+        }
 
-		return flipH;
-	}
+        return flipH;
+    }
 
-	public dispose(): void
-	{
-		this._aliases.clear();
+    public dispose(): void
+    {
+        this._aliases.clear();
 
-		for (const collection of this._collections.values())
-		{
-			collection.dispose();
-		}
+        for(const collection of this._collections.values())
+        {
+            collection.dispose();
+        }
 
-		this._collections.clear();
-		this._assetLibrary = null;
-	}
+        this._collections.clear();
+        this._assetLibrary = null;
+    }
 }

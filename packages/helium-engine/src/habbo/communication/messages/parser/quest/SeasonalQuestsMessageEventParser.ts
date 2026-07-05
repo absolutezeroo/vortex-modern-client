@@ -11,30 +11,30 @@ import {QuestMessageData} from './QuestMessageData';
  */
 export class SeasonalQuestsMessageEventParser implements IMessageParser
 {
-	private _quests: QuestMessageData[] = [];
+    private _quests: QuestMessageData[] = [];
 
-	get quests(): QuestMessageData[]
-	{
-		return this._quests;
-	}
+    get quests(): QuestMessageData[]
+    {
+        return this._quests;
+    }
 
-	flush(): boolean
-	{
-		this._quests = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._quests = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const count: number = wrapper.readInt();
+        const count: number = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._quests.push(new QuestMessageData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._quests.push(new QuestMessageData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

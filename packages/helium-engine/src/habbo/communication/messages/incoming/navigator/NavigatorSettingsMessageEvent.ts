@@ -7,8 +7,8 @@ import {NavigatorSettingsMessageParser} from '../../parser/navigator/NavigatorSe
  */
 export class NavigatorSettingsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NavigatorSettingsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NavigatorSettingsMessageParser);
+    }
 }

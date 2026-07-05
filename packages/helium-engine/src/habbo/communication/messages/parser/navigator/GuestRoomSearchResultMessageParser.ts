@@ -9,22 +9,22 @@ import {GuestRoomSearchResultData} from '../../incoming/navigator';
  */
 export class GuestRoomSearchResultMessageParser implements IMessageParser
 {
-	private _data: GuestRoomSearchResultData | null = null;
+    private _data: GuestRoomSearchResultData | null = null;
 
-	get data(): GuestRoomSearchResultData | null
-	{
-		return this._data;
-	}
+    get data(): GuestRoomSearchResultData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._data = new GuestRoomSearchResultData(wrapper);
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._data = new GuestRoomSearchResultData(wrapper);
+        return true;
+    }
 }

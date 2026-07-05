@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	LoginFailedHotelClosedMessageEventParser
+    LoginFailedHotelClosedMessageEventParser
 } from '../../parser/availability/LoginFailedHotelClosedMessageEventParser';
 
 /**
@@ -11,8 +11,8 @@ import {
  */
 export class LoginFailedHotelClosedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, LoginFailedHotelClosedMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, LoginFailedHotelClosedMessageEventParser);
+    }
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetCfhStatusMessageComposer extends MessageComposer<ConstructorParameters<typeof GetCfhStatusMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetCfhStatusMessageComposer>;
+    private _data: ConstructorParameters<typeof GetCfhStatusMessageComposer>;
 
-	constructor(openHelp: boolean)
-	{
-		super();
-		this._data = [openHelp];
-	}
+    constructor(openHelp: boolean)
+    {
+        super();
+        this._data = [openHelp];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

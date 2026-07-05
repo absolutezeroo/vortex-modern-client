@@ -7,8 +7,8 @@ import {Exception} from './Exception';
  */
 export class InvalidComponentException extends Exception
 {
-	constructor(message: string)
-	{
-		super(message);
-	}
+    constructor(message: string)
+    {
+        super(message);
+    }
 }

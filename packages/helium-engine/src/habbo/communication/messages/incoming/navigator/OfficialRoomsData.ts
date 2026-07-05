@@ -9,41 +9,41 @@ import {OfficialRoomEntryData} from './OfficialRoomEntryData';
  */
 export class OfficialRoomsData implements INavigatorSearchResultData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._entries.push(new OfficialRoomEntryData(wrapper));
-		}
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._entries.push(new OfficialRoomEntryData(wrapper));
+        }
+    }
 
-	private _entries: OfficialRoomEntryData[] = [];
+    private _entries: OfficialRoomEntryData[] = [];
 
-	get entries(): OfficialRoomEntryData[]
-	{
-		return this._entries;
-	}
+    get entries(): OfficialRoomEntryData[]
+    {
+        return this._entries;
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	dispose(): void
-	{
-		if (this._disposed)
-		{
-			return;
-		}
-		this._disposed = true;
+    dispose(): void
+    {
+        if(this._disposed)
+        {
+            return;
+        }
+        this._disposed = true;
 
-		for (const entry of this._entries)
-		{
-			entry.dispose();
-		}
-		this._entries = [];
-	}
+        for(const entry of this._entries)
+        {
+            entry.dispose();
+        }
+        this._entries = [];
+    }
 }

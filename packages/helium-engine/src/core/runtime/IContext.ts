@@ -24,27 +24,27 @@ export type InterfaceCallback<T = unknown> = (iid: IID<T>, instance: T) => void;
  */
 export interface IContext extends IDisposable
 {
-	/**
+    /**
 	 * Event emitter for context-level events
 	 */
-	readonly events: EventEmitter;
+    readonly events: EventEmitter;
 
-	/**
+    /**
 	 * Root context (top of the hierarchy)
 	 */
-	readonly root: IContext;
+    readonly root: IContext;
 
-	/**
+    /**
 	 * Configuration manager
 	 */
-	configuration: ICoreConfiguration | null;
+    configuration: ICoreConfiguration | null;
 
-	/**
+    /**
 	 * Asset library for this context
 	 */
-	readonly assets: IAssetLibrary | null;
+    readonly assets: IAssetLibrary | null;
 
-	/**
+    /**
 	 * Request an interface from the context.
 	 *
 	 * If the interface is available, returns the instance immediately.
@@ -54,71 +54,71 @@ export interface IContext extends IDisposable
 	 * @param callback Optional callback when interface becomes available
 	 * @returns The interface instance if available, null if queued
 	 */
-	queueInterface<T>(iid: IID<T>, callback?: InterfaceCallback<T>): T | null;
+    queueInterface<T>(iid: IID<T>, callback?: InterfaceCallback<T>): T | null;
 
-	/**
+    /**
 	 * Attach a component to this context
 	 *
 	 * @param component The component to attach
 	 * @param interfaces Array of interface IDs this component provides
 	 */
-	attachComponent(component: Component, interfaces: IID[]): void;
+    attachComponent(component: Component, interfaces: IID[]): void;
 
-	/**
+    /**
 	 * Detach a component from this context
 	 *
 	 * @param component The component to detach
 	 */
-	detachComponent(component: Component): void;
+    detachComponent(component: Component): void;
 
-	/**
+    /**
 	 * Register an update receiver to be called each frame
 	 *
 	 * @param receiver Object with update method
 	 * @param priority Update priority (lower = earlier)
 	 */
-	registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
+    registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
 
-	/**
+    /**
 	 * Remove an update receiver
 	 */
-	removeUpdateReceiver(receiver: IUpdateReceiver): void;
+    removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
-	/**
+    /**
 	 * Add a link event tracker
 	 *
 	 * @param tracker The tracker to add
 	 */
-	addLinkEventTracker(tracker: ILinkEventTracker): void;
+    addLinkEventTracker(tracker: ILinkEventTracker): void;
 
-	/**
+    /**
 	 * Remove a link event tracker
 	 *
 	 * @param tracker The tracker to remove
 	 */
-	removeLinkEventTracker(tracker: ILinkEventTracker): void;
+    removeLinkEventTracker(tracker: ILinkEventTracker): void;
 
-	/**
+    /**
 	 * Create a link event, routing it to matching trackers
 	 *
 	 * @param link The link string to route
 	 */
-	createLinkEvent(link: string): void;
+    createLinkEvent(link: string): void;
 
-	/**
+    /**
 	 * Log an error
 	 */
-	error(message: string, fatal?: boolean, code?: number, error?: Error): void;
+    error(message: string, fatal?: boolean, code?: number, error?: Error): void;
 
-	/**
+    /**
 	 * Log a warning
 	 */
-	warning(message: string): void;
+    warning(message: string): void;
 
-	/**
+    /**
 	 * Log a debug message
 	 */
-	debug(message: string): void;
+    debug(message: string): void;
 }
 
 /**
@@ -128,8 +128,8 @@ export interface IContext extends IDisposable
  */
 export interface IUpdateReceiver extends IDisposable
 {
-	/**
+    /**
 	 * Called each frame with delta time
 	 */
-	update(deltaTime: number): void;
+    update(deltaTime: number): void;
 }

@@ -9,48 +9,48 @@ import {QuestMessageData} from './QuestMessageData';
  */
 export class QuestDailyMessageParser implements IMessageParser
 {
-	private _quest: QuestMessageData | null = null;
+    private _quest: QuestMessageData | null = null;
 
-	get quest(): QuestMessageData | null
-	{
-		return this._quest;
-	}
+    get quest(): QuestMessageData | null
+    {
+        return this._quest;
+    }
 
-	private _easyQuestCount: number = 0;
+    private _easyQuestCount: number = 0;
 
-	get easyQuestCount(): number
-	{
-		return this._easyQuestCount;
-	}
+    get easyQuestCount(): number
+    {
+        return this._easyQuestCount;
+    }
 
-	private _hardQuestCount: number = 0;
+    private _hardQuestCount: number = 0;
 
-	get hardQuestCount(): number
-	{
-		return this._hardQuestCount;
-	}
+    get hardQuestCount(): number
+    {
+        return this._hardQuestCount;
+    }
 
-	flush(): boolean
-	{
-		this._quest = null;
-		this._easyQuestCount = 0;
-		this._hardQuestCount = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._quest = null;
+        this._easyQuestCount = 0;
+        this._hardQuestCount = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const hasQuest = wrapper.readBoolean();
+        const hasQuest = wrapper.readBoolean();
 
-		if (hasQuest)
-		{
-			this._quest = new QuestMessageData(wrapper);
-			this._easyQuestCount = wrapper.readInt();
-			this._hardQuestCount = wrapper.readInt();
-		}
+        if(hasQuest)
+        {
+            this._quest = new QuestMessageData(wrapper);
+            this._easyQuestCount = wrapper.readInt();
+            this._hardQuestCount = wrapper.readInt();
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

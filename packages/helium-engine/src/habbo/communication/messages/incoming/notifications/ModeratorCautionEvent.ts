@@ -9,8 +9,8 @@ import {ModeratorCautionEventParser} from '../../parser/notifications/ModeratorC
  */
 export class ModeratorCautionEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, ModeratorCautionEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, ModeratorCautionEventParser);
+    }
 }

@@ -8,22 +8,22 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class AchievementsScoreMessageParser implements IMessageParser
 {
-	private _score: number = 0;
+    private _score: number = 0;
 
-	get score(): number
-	{
-		return this._score;
-	}
+    get score(): number
+    {
+        return this._score;
+    }
 
-	flush(): boolean
-	{
-		this._score = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._score = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._score = wrapper.readInt();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._score = wrapper.readInt();
+        return true;
+    }
 }

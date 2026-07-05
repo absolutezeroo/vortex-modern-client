@@ -8,25 +8,25 @@
  */
 export interface IEncryptedLocalStorage
 {
-	/**
+    /**
 	 * Reset the encrypted storage, clearing all stored data.
 	 */
-	reset(): void;
+    reset(): void;
 
-	/**
+    /**
 	 * Store a string value with the given key.
 	 *
 	 * @param key The storage key
 	 * @param value The string value to store
 	 * @returns True if the value was successfully stored
 	 */
-	storeString(key: string, value: string): boolean;
+    storeString(key: string, value: string): boolean;
 
-	/**
+    /**
 	 * Restore a string value by its key.
 	 *
 	 * @param key The storage key
 	 * @returns The stored string value, or empty string if not found
 	 */
-	restoreString(key: string): string;
+    restoreString(key: string): string;
 }

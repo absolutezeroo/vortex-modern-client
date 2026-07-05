@@ -14,57 +14,57 @@ import type {IRoomRenderingCanvasMouseListener} from './IRoomRenderingCanvasMous
 
 export interface IRoomRenderingCanvas
 {
-	readonly width: number;
+    readonly width: number;
 
-	readonly height: number;
+    readonly height: number;
 
-	screenOffsetX: number;
+    screenOffsetX: number;
 
-	screenOffsetY: number;
+    screenOffsetY: number;
 
-	readonly scale: number;
+    readonly scale: number;
 
-	readonly geometry: IRoomGeometry;
+    readonly geometry: IRoomGeometry;
 
-	mouseListener: IRoomRenderingCanvasMouseListener | null;
+    mouseListener: IRoomRenderingCanvasMouseListener | null;
 
-	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::useMask
-	useMask: boolean;
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::useMask
+    useMask: boolean;
 
-	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::fpsCounterEnabled
-	fpsCounterEnabled: boolean;
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::fpsCounterEnabled
+    fpsCounterEnabled: boolean;
 
-	initialize(width: number, height: number): void;
+    initialize(width: number, height: number): void;
 
-	render(time: number, force?: boolean): void;
+    render(time: number, force?: boolean): void;
 
-	handleMouseEvent(
-		x: number,
-		y: number,
-		type: string,
-		altKey: boolean,
-		ctrlKey: boolean,
-		shiftKey: boolean,
-		buttonDown: boolean
-	): boolean;
+    handleMouseEvent(
+        x: number,
+        y: number,
+        type: string,
+        altKey: boolean,
+        ctrlKey: boolean,
+        shiftKey: boolean,
+        buttonDown: boolean
+    ): boolean;
 
-	setScale(scale: number, point?: { x: number; y: number } | null, offset?: { x: number; y: number } | null): void;
+    setScale(scale: number, point?: { x: number; y: number } | null, offset?: { x: number; y: number } | null): void;
 
-	getId(): number;
+    getId(): number;
 
-	update(): void;
+    update(): void;
 
-	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::takeScreenShot()
-	// AS3 signature takes no arguments (Flash's Stage/DisplayObject could be
-	// rasterized directly). PixiJS extraction requires an explicit Renderer,
-	// which this engine-side class doesn't own, so the caller must supply one.
-	takeScreenShot(renderer: Renderer): HTMLCanvasElement;
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::takeScreenShot()
+    // AS3 signature takes no arguments (Flash's Stage/DisplayObject could be
+    // rasterized directly). PixiJS extraction requires an explicit Renderer,
+    // which this engine-side class doesn't own, so the caller must supply one.
+    takeScreenShot(renderer: Renderer): HTMLCanvasElement;
 
-	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::skipSpriteVisibilityChecking()
-	skipSpriteVisibilityChecking(): void;
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::skipSpriteVisibilityChecking()
+    skipSpriteVisibilityChecking(): void;
 
-	// AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::resumeSpriteVisibilityChecking()
-	resumeSpriteVisibilityChecking(): void;
+    // AS3: sources/win63_version/room/renderer/IRoomRenderingCanvas.as::resumeSpriteVisibilityChecking()
+    resumeSpriteVisibilityChecking(): void;
 
-	dispose(): void;
+    dispose(): void;
 }

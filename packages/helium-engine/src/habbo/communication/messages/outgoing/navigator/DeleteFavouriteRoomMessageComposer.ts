@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class DeleteFavouriteRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof DeleteFavouriteRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof DeleteFavouriteRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof DeleteFavouriteRoomMessageComposer>;
 
-	constructor(roomId: number)
-	{
-		super();
+    constructor(roomId: number)
+    {
+        super();
 
-		this._data = [roomId];
-	}
+        this._data = [roomId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

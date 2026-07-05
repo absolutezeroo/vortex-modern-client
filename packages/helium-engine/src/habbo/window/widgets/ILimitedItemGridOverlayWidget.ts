@@ -10,9 +10,8 @@ import type {ILimitedItemOverlayWidget} from './ILimitedItemOverlayWidget';
  */
 export interface ILimitedItemGridOverlayWidget extends ILimitedItemOverlayWidget
 {
-	/**
+    /**
 	 * Whether the shine animation is active.
 	 */
-	animated: boolean;
+    animated: boolean;
 }
-

@@ -9,16 +9,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class Game2GameChatMessageComposer extends MessageComposer<[string]>
 {
-	private _data: [string];
+    private _data: [string];
 
-	constructor(message: string)
-	{
-		super();
-		this._data = [message];
-	}
+    constructor(message: string)
+    {
+        super();
+        this._data = [message];
+    }
 
-	getMessageArray(): [string]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string]
+    {
+        return this._data;
+    }
 }

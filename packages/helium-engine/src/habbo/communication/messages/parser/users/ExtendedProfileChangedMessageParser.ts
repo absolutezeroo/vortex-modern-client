@@ -10,23 +10,23 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class ExtendedProfileChangedMessageParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._userId = wrapper.readInt();
-		return true;
-	}
+        this._userId = wrapper.readInt();
+        return true;
+    }
 }

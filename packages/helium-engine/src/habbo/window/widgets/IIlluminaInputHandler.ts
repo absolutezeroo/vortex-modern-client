@@ -8,12 +8,11 @@
  */
 export interface IIlluminaInputHandler
 {
-	/**
+    /**
 	 * Called when the user submits input.
 	 *
 	 * @param widgetId - The widget identifier
 	 * @param message - The submitted text
 	 */
-	onInput(widgetId: string, message: string): void;
+    onInput(widgetId: string, message: string): void;
 }
-

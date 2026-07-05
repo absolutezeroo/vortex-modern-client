@@ -7,77 +7,77 @@
  */
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import {FurnitureFloorData} from '@habbo/communication/messages/incoming/room/engine/FurnitureFloorData';
+import type {FurnitureFloorData} from '@habbo/communication/messages/incoming/room/engine/FurnitureFloorData';
 import {FurnitureDataParser} from './FurnitureDataParser';
 
 export class ObjectsMessageParser implements IMessageParser
 {
-	private _objects: FurnitureFloorData[] = [];
-	private _ownerMap: Map<number, string> = new Map();
+    private _objects: FurnitureFloorData[] = [];
+    private _ownerMap: Map<number, string> = new Map();
 
-	get objectCount(): number
-	{
-		return this._objects.length;
-	}
+    get objectCount(): number
+    {
+        return this._objects.length;
+    }
 
-	getObject(index: number): FurnitureFloorData | null
-	{
-		if (index < 0 || index >= this._objects.length)
-		{
-			return null;
-		}
+    getObject(index: number): FurnitureFloorData | null
+    {
+        if(index < 0 || index >= this._objects.length)
+        {
+            return null;
+        }
 
-		const data = this._objects[index];
+        const data = this._objects[index];
 
-		if (data !== null)
-		{
-			data.setReadOnly();
-		}
+        if(data !== null)
+        {
+            data.setReadOnly();
+        }
 
-		return data;
-	}
+        return data;
+    }
 
-	flush(): boolean
-	{
-		this._objects.length = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._objects.length = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._objects.length = 0;
+        this._objects.length = 0;
 
-		// Read owner name map (reuse field to avoid allocation)
-		this._ownerMap.clear();
-		const ownerMap = this._ownerMap;
-		const ownerCount = wrapper.readInt();
+        // Read owner name map (reuse field to avoid allocation)
+        this._ownerMap.clear();
+        const ownerMap = this._ownerMap;
+        const ownerCount = wrapper.readInt();
 
-		for (let i = 0; i < ownerCount; i++)
-		{
-			const ownerId = wrapper.readInt();
-			const ownerName = wrapper.readString();
-			ownerMap.set(ownerId, ownerName);
-		}
+        for(let i = 0; i < ownerCount; i++)
+        {
+            const ownerId = wrapper.readInt();
+            const ownerName = wrapper.readString();
+            ownerMap.set(ownerId, ownerName);
+        }
 
-		// Read objects
-		const objectCount = wrapper.readInt();
+        // Read objects
+        const objectCount = wrapper.readInt();
 
-		for (let i = 0; i < objectCount; i++)
-		{
-			const data = FurnitureDataParser.parseObjectData(wrapper);
+        for(let i = 0; i < objectCount; i++)
+        {
+            const data = FurnitureDataParser.parseObjectData(wrapper);
 
-			if (data !== null)
-			{
-				data.ownerName = ownerMap.get(data.ownerId) ?? '';
-				this._objects.push(data);
-			}
-		}
+            if(data !== null)
+            {
+                data.ownerName = ownerMap.get(data.ownerId) ?? '';
+                this._objects.push(data);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

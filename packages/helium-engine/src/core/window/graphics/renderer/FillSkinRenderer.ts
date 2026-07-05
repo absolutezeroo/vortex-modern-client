@@ -11,12 +11,12 @@ import {SkinRenderer} from './SkinRenderer';
  */
 export class FillSkinRenderer extends SkinRenderer
 {
-	constructor(name: string)
-	{
-		super(name);
-	}
+    constructor(name: string)
+    {
+        super(name);
+    }
 
-	/**
+    /**
 	 * Fills the target rectangle with the window color.
 	 *
 	 * Equivalent of AS3 `param2.fillRect(param3, param1.color)`.
@@ -27,32 +27,32 @@ export class FillSkinRenderer extends SkinRenderer
 	 * @param _state - The resolved window state (unused)
 	 * @param _colorize - Colorization flag (unused)
 	 */
-	public override draw(
-		window: IWindow,
-		ctx: OffscreenCanvasRenderingContext2D,
-		rect: { x: number; y: number; width: number; height: number },
-		_state: number,
-		_colorize: boolean
-	): void
-	{
-		const color = window.color;
-		const a = ((color >> 24) & 0xFF) / 255;
-		const r = (color >> 16) & 0xFF;
-		const g = (color >> 8) & 0xFF;
-		const b = color & 0xFF;
+    public override draw(
+        window: IWindow,
+        ctx: OffscreenCanvasRenderingContext2D,
+        rect: { x: number; y: number; width: number; height: number },
+        _state: number,
+        _colorize: boolean
+    ): void
+    {
+        const color = window.color;
+        const a = ((color >> 24) & 0xFF) / 255;
+        const r = (color >> 16) & 0xFF;
+        const g = (color >> 8) & 0xFF;
+        const b = color & 0xFF;
 
-		ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-		ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-	}
+        ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+        ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+    }
 
-	/**
+    /**
 	 * FillSkinRenderer can draw any state — it just fills with color.
 	 *
 	 * @param _state - The window state (unused)
 	 * @returns Always true
 	 */
-	public override isStateDrawable(_state: number): boolean
-	{
-		return true;
-	}
+    public override isStateDrawable(_state: number): boolean
+    {
+        return true;
+    }
 }

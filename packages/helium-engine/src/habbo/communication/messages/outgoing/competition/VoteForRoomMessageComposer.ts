@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class VoteForRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof VoteForRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof VoteForRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof VoteForRoomMessageComposer>;
 
-	constructor(goalCode: string)
-	{
-		super();
+    constructor(goalCode: string)
+    {
+        super();
 
-		this._data = [goalCode];
-	}
+        this._data = [goalCode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

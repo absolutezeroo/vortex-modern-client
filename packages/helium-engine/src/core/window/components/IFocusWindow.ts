@@ -5,9 +5,9 @@
  */
 export interface IFocusWindow
 {
-	readonly focused: boolean;
+    readonly focused: boolean;
 
-	focus(): boolean;
+    focus(): boolean;
 
-	unfocus(): boolean;
+    unfocus(): boolean;
 }

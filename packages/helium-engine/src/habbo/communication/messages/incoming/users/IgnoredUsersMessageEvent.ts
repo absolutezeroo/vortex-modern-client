@@ -9,13 +9,13 @@ import {IgnoredUsersMessageParser} from '../../parser/users/IgnoredUsersMessageP
  */
 export class IgnoredUsersMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, IgnoredUsersMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, IgnoredUsersMessageParser);
+    }
 
-	get ignoredUserIds(): number[]
-	{
-		return (this._parser as IgnoredUsersMessageParser).ignoredUsers;
-	}
+    get ignoredUserIds(): number[]
+    {
+        return (this._parser as IgnoredUsersMessageParser).ignoredUsers;
+    }
 }

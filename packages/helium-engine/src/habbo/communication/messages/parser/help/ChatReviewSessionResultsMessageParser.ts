@@ -8,49 +8,49 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ChatReviewSessionResultsMessageParser implements IMessageParser
 {
-	private _winningVoteCode: number = -1;
+    private _winningVoteCode: number = -1;
 
-	get winningVoteCode(): number
-	{
-		return this._winningVoteCode;
-	}
+    get winningVoteCode(): number
+    {
+        return this._winningVoteCode;
+    }
 
-	private _ownVoteCode: number = -1;
+    private _ownVoteCode: number = -1;
 
-	get ownVoteCode(): number
-	{
-		return this._ownVoteCode;
-	}
+    get ownVoteCode(): number
+    {
+        return this._ownVoteCode;
+    }
 
-	private _finalStatus: Array<number> = [];
+    private _finalStatus: Array<number> = [];
 
-	get finalStatus(): Array<number>
-	{
-		return this._finalStatus;
-	}
+    get finalStatus(): Array<number>
+    {
+        return this._finalStatus;
+    }
 
-	flush(): boolean
-	{
-		this._winningVoteCode = -1;
-		this._ownVoteCode = -1;
-		this._finalStatus = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._winningVoteCode = -1;
+        this._ownVoteCode = -1;
+        this._finalStatus = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._winningVoteCode = wrapper.readInt();
-		this._ownVoteCode = wrapper.readInt();
-		this._finalStatus = [];
+        this._winningVoteCode = wrapper.readInt();
+        this._ownVoteCode = wrapper.readInt();
+        this._finalStatus = [];
 
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._finalStatus.push(wrapper.readInt());
-		}
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._finalStatus.push(wrapper.readInt());
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

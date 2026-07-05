@@ -9,8 +9,8 @@ import {CompetitionRoomsDataMessageParser} from '../../parser/navigator/Competit
  */
 export class CompetitionRoomsDataMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CompetitionRoomsDataMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CompetitionRoomsDataMessageParser);
+    }
 }

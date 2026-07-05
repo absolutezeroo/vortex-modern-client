@@ -1,5 +1,5 @@
-export class RoomId {
-
+export class RoomId 
+{
     private static readonly PREVIEW_ROOM_ID_BASE = 2_147_418_112;
 
     public static makeRoomPreviewerId(id: number): number

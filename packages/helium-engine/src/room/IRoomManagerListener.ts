@@ -7,23 +7,23 @@
  */
 export interface IRoomManagerListener
 {
-	/**
+    /**
 	 * Called when the room manager has been initialized.
 	 */
-	roomManagerInitialized(success: boolean): void;
+    roomManagerInitialized(success: boolean): void;
 
-	/**
+    /**
 	 * Called when content has been loaded.
 	 */
-	contentLoaded(type: string, success: boolean): void;
+    contentLoaded(type: string, success: boolean): void;
 
-	/**
+    /**
 	 * Called when a single object has been initialized.
 	 */
-	objectInitialized(roomId: string, objectId: number, category: number): void;
+    objectInitialized(roomId: string, objectId: number, category: number): void;
 
-	/**
+    /**
 	 * Called when all objects of a type have been initialized.
 	 */
-	objectsInitialized(type: string): void;
+    objectsInitialized(type: string): void;
 }

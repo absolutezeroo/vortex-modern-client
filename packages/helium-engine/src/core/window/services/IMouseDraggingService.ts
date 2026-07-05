@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  */
 export interface IMouseDraggingService
 {
-	begin(window: IWindow): void;
+    begin(window: IWindow): void;
 
-	end(window: IWindow): void;
+    end(window: IWindow): void;
 }

@@ -8,32 +8,32 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class BlockUserUpdateMessageParser implements IMessageParser
 {
-	private _result: number = -1;
-	private _userId: number = 0;
+    private _result: number = -1;
+    private _userId: number = 0;
 
-	get result(): number
-	{
-		return this._result;
-	}
+    get result(): number
+    {
+        return this._result;
+    }
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	flush(): boolean
-	{
-		this._result = -1;
-		this._userId = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._result = -1;
+        this._userId = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._result = wrapper.readInt();
-		this._userId = wrapper.readInt();
-		return true;
-	}
+        this._result = wrapper.readInt();
+        this._userId = wrapper.readInt();
+        return true;
+    }
 }

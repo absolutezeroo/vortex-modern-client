@@ -8,38 +8,38 @@ import {Vector3D} from './Vector3D';
  */
 export class Node3D
 {
-	private _needsTransform: boolean = false;
+    private _needsTransform: boolean = false;
 
-	constructor(x: number, y: number, z: number)
-	{
-		this._transformedLocation = new Vector3D();
-		this._location = new Vector3D(x, y, z);
+    constructor(x: number, y: number, z: number)
+    {
+        this._transformedLocation = new Vector3D();
+        this._location = new Vector3D(x, y, z);
 
-		if (x !== 0 || y !== 0 || z !== 0)
-		{
-			this._needsTransform = true;
-		}
-	}
+        if(x !== 0 || y !== 0 || z !== 0)
+        {
+            this._needsTransform = true;
+        }
+    }
 
-	private _location: Vector3D;
+    private _location: Vector3D;
 
-	public get location(): Vector3D
-	{
-		return this._location;
-	}
+    public get location(): Vector3D
+    {
+        return this._location;
+    }
 
-	private _transformedLocation: Vector3D;
+    private _transformedLocation: Vector3D;
 
-	public get transformedLocation(): Vector3D
-	{
-		return this._transformedLocation;
-	}
+    public get transformedLocation(): Vector3D
+    {
+        return this._transformedLocation;
+    }
 
-	public applyTransform(matrix: Matrix4x4): void
-	{
-		if (this._needsTransform)
-		{
-			this._transformedLocation = matrix.vectorMultiplication(this._location);
-		}
-	}
+    public applyTransform(matrix: Matrix4x4): void
+    {
+        if(this._needsTransform)
+        {
+            this._transformedLocation = matrix.vectorMultiplication(this._location);
+        }
+    }
 }

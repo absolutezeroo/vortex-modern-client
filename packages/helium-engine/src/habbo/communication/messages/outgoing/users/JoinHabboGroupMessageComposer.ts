@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class JoinHabboGroupMessageComposer extends MessageComposer<ConstructorParameters<typeof JoinHabboGroupMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof JoinHabboGroupMessageComposer>;
+    private _data: ConstructorParameters<typeof JoinHabboGroupMessageComposer>;
 
-	constructor(groupId: number)
-	{
-		super();
+    constructor(groupId: number)
+    {
+        super();
 
-		this._data = [groupId];
-	}
+        this._data = [groupId];
+    }
 
-	getMessageArray(): [number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [number]
+    {
+        return this._data;
+    }
 }

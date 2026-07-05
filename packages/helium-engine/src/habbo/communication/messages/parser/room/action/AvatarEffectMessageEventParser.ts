@@ -8,46 +8,46 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 
 export class AvatarEffectMessageEventParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _effectId: number = 0;
+    private _effectId: number = 0;
 
-	get effectId(): number
-	{
-		return this._effectId;
-	}
+    get effectId(): number
+    {
+        return this._effectId;
+    }
 
-	private _delayMilliSeconds: number = 0;
+    private _delayMilliSeconds: number = 0;
 
-	get delayMilliSeconds(): number
-	{
-		return this._delayMilliSeconds;
-	}
+    get delayMilliSeconds(): number
+    {
+        return this._delayMilliSeconds;
+    }
 
-	flush(): boolean
-	{
-		this._userId = 0;
-		this._effectId = 0;
-		this._delayMilliSeconds = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = 0;
+        this._effectId = 0;
+        this._delayMilliSeconds = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper === null)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper === null)
+        {
+            return false;
+        }
 
-		this._userId = wrapper.readInt();
-		this._effectId = wrapper.readInt();
-		this._delayMilliSeconds = wrapper.readInt();
+        this._userId = wrapper.readInt();
+        this._effectId = wrapper.readInt();
+        this._delayMilliSeconds = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

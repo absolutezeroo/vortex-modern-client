@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class InterstitialShownMessageComposer extends MessageComposer<ConstructorParameters<typeof InterstitialShownMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof InterstitialShownMessageComposer>;
+    private _data: ConstructorParameters<typeof InterstitialShownMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

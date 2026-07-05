@@ -11,39 +11,39 @@
  */
 export interface IFileProxy
 {
-	/**
+    /**
 	 * Clear the entire cache.
 	 */
-	clearCache(): void;
+    clearCache(): void;
 
-	/**
+    /**
 	 * Check if a cached entry exists.
 	 *
 	 * @param key - Cache key
 	 * @returns True if the entry exists
 	 */
-	cacheFileExists(key: string): boolean;
+    cacheFileExists(key: string): boolean;
 
-	/**
+    /**
 	 * Read a string from cache.
 	 *
 	 * @param key - Cache key
 	 * @returns The cached string, or null if not found
 	 */
-	readCache(key: string): string | null;
+    readCache(key: string): string | null;
 
-	/**
+    /**
 	 * Write a string to cache.
 	 *
 	 * @param key - Cache key
 	 * @param data - String data to cache
 	 */
-	writeCache(key: string, data: string): void;
+    writeCache(key: string, data: string): void;
 
-	/**
+    /**
 	 * Delete a cache directory/prefix.
 	 *
 	 * @param prefix - The prefix to delete
 	 */
-	deleteCacheDirectory(prefix: string): void;
+    deleteCacheDirectory(prefix: string): void;
 }

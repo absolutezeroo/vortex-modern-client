@@ -9,8 +9,8 @@ import {SeasonalQuestsMessageEventParser} from '../../parser/quest/SeasonalQuest
  */
 export class SeasonalQuestsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, SeasonalQuestsMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, SeasonalQuestsMessageEventParser);
+    }
 }

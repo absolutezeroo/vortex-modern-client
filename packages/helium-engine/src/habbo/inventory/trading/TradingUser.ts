@@ -5,31 +5,31 @@ import type {GroupItem} from '../items/GroupItem';
  */
 export interface TradingUser
 {
-	userId: number;
-	userName: string;
-	canTrade: boolean;
-	accepts: boolean;
-	numItems: number;
-	numCredits: number;
-	items: Map<string, GroupItem>;
+    userId: number;
+    userName: string;
+    canTrade: boolean;
+    accepts: boolean;
+    numItems: number;
+    numCredits: number;
+    items: Map<string, GroupItem>;
 }
 
 /**
  * Create empty trading user
  */
 export function createTradingUser(
-	userId: number,
-	userName: string,
-	canTrade: boolean
+    userId: number,
+    userName: string,
+    canTrade: boolean
 ): TradingUser
 {
-	return {
-		userId,
-		userName,
-		canTrade,
-		accepts: false,
-		numItems: 0,
-		numCredits: 0,
-		items: new Map(),
-	};
+    return {
+        userId,
+        userName,
+        canTrade,
+        accepts: false,
+        numItems: 0,
+        numCredits: 0,
+        items: new Map(),
+    };
 }

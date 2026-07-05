@@ -8,117 +8,117 @@ import {ClubOfferProductData} from './ClubOfferProductData';
  */
 export class ClubOfferData
 {
-	private _offerId: number = 0;
+    private _offerId: number = 0;
 
-	get offerId(): number
-	{
-		return this._offerId;
-	}
+    get offerId(): number
+    {
+        return this._offerId;
+    }
 
-	private _localizationId: string = '';
+    private _localizationId: string = '';
 
-	get localizationId(): string
-	{
-		return this._localizationId;
-	}
+    get localizationId(): string
+    {
+        return this._localizationId;
+    }
 
-	private _isRent: boolean = false;
+    private _isRent: boolean = false;
 
-	get isRent(): boolean
-	{
-		return this._isRent;
-	}
+    get isRent(): boolean
+    {
+        return this._isRent;
+    }
 
-	private _priceInCredits: number = 0;
+    private _priceInCredits: number = 0;
 
-	get priceInCredits(): number
-	{
-		return this._priceInCredits;
-	}
+    get priceInCredits(): number
+    {
+        return this._priceInCredits;
+    }
 
-	private _priceInActivityPoints: number = 0;
+    private _priceInActivityPoints: number = 0;
 
-	get priceInActivityPoints(): number
-	{
-		return this._priceInActivityPoints;
-	}
+    get priceInActivityPoints(): number
+    {
+        return this._priceInActivityPoints;
+    }
 
-	private _activityPointType: number = 0;
+    private _activityPointType: number = 0;
 
-	get activityPointType(): number
-	{
-		return this._activityPointType;
-	}
+    get activityPointType(): number
+    {
+        return this._activityPointType;
+    }
 
-	private _priceInSilver: number = 0;
+    private _priceInSilver: number = 0;
 
-	get priceInSilver(): number
-	{
-		return this._priceInSilver;
-	}
+    get priceInSilver(): number
+    {
+        return this._priceInSilver;
+    }
 
-	private _giftable: boolean = false;
+    private _giftable: boolean = false;
 
-	get giftable(): boolean
-	{
-		return this._giftable;
-	}
+    get giftable(): boolean
+    {
+        return this._giftable;
+    }
 
-	private _products: ClubOfferProductData[] = [];
+    private _products: ClubOfferProductData[] = [];
 
-	get products(): ClubOfferProductData[]
-	{
-		return this._products;
-	}
+    get products(): ClubOfferProductData[]
+    {
+        return this._products;
+    }
 
-	private _clubLevel: number = 0;
+    private _clubLevel: number = 0;
 
-	get clubLevel(): number
-	{
-		return this._clubLevel;
-	}
+    get clubLevel(): number
+    {
+        return this._clubLevel;
+    }
 
-	private _bundlePurchaseAllowed: boolean = false;
+    private _bundlePurchaseAllowed: boolean = false;
 
-	get bundlePurchaseAllowed(): boolean
-	{
-		return this._bundlePurchaseAllowed;
-	}
+    get bundlePurchaseAllowed(): boolean
+    {
+        return this._bundlePurchaseAllowed;
+    }
 
-	private _previewImage: string = '';
+    private _previewImage: string = '';
 
-	get previewImage(): string
-	{
-		return this._previewImage;
-	}
+    get previewImage(): string
+    {
+        return this._previewImage;
+    }
 
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._offerId = wrapper.readInt();
-		this._localizationId = wrapper.readString();
-		this._isRent = wrapper.readBoolean();
-		this._priceInCredits = wrapper.readInt();
-		this._priceInActivityPoints = wrapper.readInt();
-		this._activityPointType = wrapper.readInt();
-		this._priceInSilver = wrapper.readInt();
-		this._giftable = wrapper.readBoolean();
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._offerId = wrapper.readInt();
+        this._localizationId = wrapper.readString();
+        this._isRent = wrapper.readBoolean();
+        this._priceInCredits = wrapper.readInt();
+        this._priceInActivityPoints = wrapper.readInt();
+        this._activityPointType = wrapper.readInt();
+        this._priceInSilver = wrapper.readInt();
+        this._giftable = wrapper.readBoolean();
 
-		const productCount = wrapper.readInt();
+        const productCount = wrapper.readInt();
 
-		this._products = [];
+        this._products = [];
 
-		for (let i = 0; i < productCount; i++)
-		{
-			this._products.push(new ClubOfferProductData(wrapper));
-		}
+        for(let i = 0; i < productCount; i++)
+        {
+            this._products.push(new ClubOfferProductData(wrapper));
+        }
 
-		this._clubLevel = wrapper.readInt();
-		this._bundlePurchaseAllowed = wrapper.readBoolean();
+        this._clubLevel = wrapper.readInt();
+        this._bundlePurchaseAllowed = wrapper.readBoolean();
 
-		// AS3 reads a further boolean here (var_5190) that has no exposed getter
-		// on class_2138 — kept as a wire-alignment read only, matching the source.
-		wrapper.readBoolean();
+        // AS3 reads a further boolean here (var_5190) that has no exposed getter
+        // on class_2138 — kept as a wire-alignment read only, matching the source.
+        wrapper.readBoolean();
 
-		this._previewImage = wrapper.readString();
-	}
+        this._previewImage = wrapper.readString();
+    }
 }

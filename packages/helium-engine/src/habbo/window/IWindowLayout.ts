@@ -12,22 +12,22 @@
  */
 export interface IWindowLayoutAttributes
 {
-	name?: string;
-	x?: string;
-	y?: string;
-	width?: string;
-	height?: string;
-	style?: string;
-	caption?: string;
-	visible?: string;
-	tags?: string;
-	clipping?: string;
-	blend?: string;
-	color?: string;
-	background?: string;
-	widget?: string;
+    name?: string;
+    x?: string;
+    y?: string;
+    width?: string;
+    height?: string;
+    style?: string;
+    caption?: string;
+    visible?: string;
+    tags?: string;
+    clipping?: string;
+    blend?: string;
+    color?: string;
+    background?: string;
+    widget?: string;
 
-	[key: string]: string | undefined;
+    [key: string]: string | undefined;
 }
 
 /**
@@ -35,20 +35,20 @@ export interface IWindowLayoutAttributes
  */
 export interface IWindowLayoutNode
 {
-	/** Element tag name (e.g. "frame", "button", "container") */
-	tag: string;
+    /** Element tag name (e.g. "frame", "button", "container") */
+    tag: string;
 
-	/** Resolved type ID (-1 if unknown) */
-	typeId: number;
+    /** Resolved type ID (-1 if unknown) */
+    typeId: number;
 
-	/** Attribute key/value pairs */
-	attributes: IWindowLayoutAttributes;
+    /** Attribute key/value pairs */
+    attributes: IWindowLayoutAttributes;
 
-	/** Child nodes */
-	children: IWindowLayoutNode[];
+    /** Child nodes */
+    children: IWindowLayoutNode[];
 
-	/** Resolved param flags (bitwise OR of WindowParam values) */
-	params?: number;
+    /** Resolved param flags (bitwise OR of WindowParam values) */
+    params?: number;
 }
 
 /**
@@ -56,8 +56,8 @@ export interface IWindowLayoutNode
  */
 export interface IWindowLayoutFilter
 {
-	type: string;
-	attributes: Record<string, string>;
+    type: string;
+    attributes: Record<string, string>;
 }
 
 /**
@@ -65,18 +65,18 @@ export interface IWindowLayoutFilter
  */
 export interface IWindowLayout
 {
-	/** Layout name (used as identifier) */
-	name: string;
+    /** Layout name (used as identifier) */
+    name: string;
 
-	/** Source file path (for debugging) */
-	source?: string;
+    /** Source file path (for debugging) */
+    source?: string;
 
-	/** Root window node */
-	window: IWindowLayoutNode;
+    /** Root window node */
+    window: IWindowLayoutNode;
 
-	/** Variable definitions for $var substitution */
-	vars: Record<string, unknown>;
+    /** Variable definitions for $var substitution */
+    vars: Record<string, unknown>;
 
-	/** Filters to apply */
-	filters: IWindowLayoutFilter[];
+    /** Filters to apply */
+    filters: IWindowLayoutFilter[];
 }

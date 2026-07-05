@@ -8,30 +8,30 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class TradingCloseMessageParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _reason: number = 0;
+    private _reason: number = 0;
 
-	get reason(): number
-	{
-		return this._reason;
-	}
+    get reason(): number
+    {
+        return this._reason;
+    }
 
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._userId = wrapper.readInt();
-		this._reason = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._userId = wrapper.readInt();
+        this._reason = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

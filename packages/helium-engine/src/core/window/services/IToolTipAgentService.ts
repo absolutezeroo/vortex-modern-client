@@ -7,7 +7,7 @@ import type {IWindow} from '../IWindow';
  */
 export interface IToolTipAgentService
 {
-	show(window: IWindow, text: string): void;
+    show(window: IWindow, text: string): void;
 
-	hide(): void;
+    hide(): void;
 }

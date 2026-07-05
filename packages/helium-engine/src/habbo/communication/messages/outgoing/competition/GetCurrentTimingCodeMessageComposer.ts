@@ -9,17 +9,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetCurrentTimingCodeMessageComposer extends MessageComposer<ConstructorParameters<typeof GetCurrentTimingCodeMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetCurrentTimingCodeMessageComposer>;
+    private _data: ConstructorParameters<typeof GetCurrentTimingCodeMessageComposer>;
 
-	constructor(goalCode: string)
-	{
-		super();
+    constructor(goalCode: string)
+    {
+        super();
 
-		this._data = [goalCode];
-	}
+        this._data = [goalCode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

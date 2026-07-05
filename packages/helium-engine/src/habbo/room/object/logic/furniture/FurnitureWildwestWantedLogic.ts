@@ -9,8 +9,8 @@ import {FurnitureFriendFurniLogic} from './FurnitureFriendFurniLogic';
 
 export class FurnitureWildwestWantedLogic extends FurnitureFriendFurniLogic
 {
-	protected override get engravingDialogType(): number
-	{
-		return 3;
-	}
+    protected override get engravingDialogType(): number
+    {
+        return 3;
+    }
 }

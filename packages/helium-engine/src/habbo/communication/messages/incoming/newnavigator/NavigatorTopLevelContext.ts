@@ -8,34 +8,34 @@ import {NavigatorSavedSearch} from './NavigatorSavedSearch';
  */
 export class NavigatorTopLevelContext
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._searchCode = wrapper.readString();
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._searchCode = wrapper.readString();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._savedSearches.push(new NavigatorSavedSearch(wrapper));
-		}
-	}
+        for(let i = 0; i < count; i++)
+        {
+            this._savedSearches.push(new NavigatorSavedSearch(wrapper));
+        }
+    }
 
-	private _searchCode: string = '';
+    private _searchCode: string = '';
 
-	get searchCode(): string
-	{
-		return this._searchCode;
-	}
+    get searchCode(): string
+    {
+        return this._searchCode;
+    }
 
-	private _savedSearches: NavigatorSavedSearch[] = [];
+    private _savedSearches: NavigatorSavedSearch[] = [];
 
-	get savedSearches(): NavigatorSavedSearch[]
-	{
-		return this._savedSearches;
-	}
+    get savedSearches(): NavigatorSavedSearch[]
+    {
+        return this._savedSearches;
+    }
 
-	get quickLinks(): NavigatorSavedSearch[]
-	{
-		return this._savedSearches;
-	}
+    get quickLinks(): NavigatorSavedSearch[]
+    {
+        return this._savedSearches;
+    }
 }

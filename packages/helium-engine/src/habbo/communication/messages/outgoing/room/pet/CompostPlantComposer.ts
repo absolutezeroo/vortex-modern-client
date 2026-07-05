@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CompostPlantComposer extends MessageComposer<ConstructorParameters<typeof CompostPlantComposer>>
 {
-	private _data: ConstructorParameters<typeof CompostPlantComposer>;
+    private _data: ConstructorParameters<typeof CompostPlantComposer>;
 
-	constructor(petId: number)
-	{
-		super();
-		this._data = [petId];
-	}
+    constructor(petId: number)
+    {
+        super();
+        this._data = [petId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

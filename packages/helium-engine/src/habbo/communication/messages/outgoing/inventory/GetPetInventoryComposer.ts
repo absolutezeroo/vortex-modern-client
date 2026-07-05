@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetPetInventoryComposer extends MessageComposer<ConstructorParameters<typeof GetPetInventoryComposer>>
 {
-	private _data: ConstructorParameters<typeof GetPetInventoryComposer>;
+    private _data: ConstructorParameters<typeof GetPetInventoryComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

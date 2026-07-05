@@ -8,50 +8,50 @@
  */
 export class GuildSettingsData
 {
-	private _guildType: number = 0;
+    private _guildType: number = 0;
 
-	get guildType(): number
-	{
-		return this._guildType;
-	}
+    get guildType(): number
+    {
+        return this._guildType;
+    }
 
-	set guildType(value: number)
-	{
-		if (value !== this._guildType)
-		{
-			this._isModified = true;
-		}
-		this._guildType = value;
-	}
+    set guildType(value: number)
+    {
+        if(value !== this._guildType)
+        {
+            this._isModified = true;
+        }
+        this._guildType = value;
+    }
 
-	private _rightsLevel: number = 0;
+    private _rightsLevel: number = 0;
 
-	get rightsLevel(): number
-	{
-		return this._rightsLevel;
-	}
+    get rightsLevel(): number
+    {
+        return this._rightsLevel;
+    }
 
-	set rightsLevel(value: number)
-	{
-		if (value !== this._rightsLevel)
-		{
-			this._isModified = true;
-		}
-		this._rightsLevel = value;
-	}
+    set rightsLevel(value: number)
+    {
+        if(value !== this._rightsLevel)
+        {
+            this._isModified = true;
+        }
+        this._rightsLevel = value;
+    }
 
-	private _isModified: boolean = false;
+    private _isModified: boolean = false;
 
-	get isModified(): boolean
-	{
-		return this._isModified;
-	}
+    get isModified(): boolean
+    {
+        return this._isModified;
+    }
 
-	/**
+    /**
 	 * Reset the modification flag
 	 */
-	resetModified(): void
-	{
-		this._isModified = false;
-	}
+    resetModified(): void
+    {
+        this._isModified = false;
+    }
 }

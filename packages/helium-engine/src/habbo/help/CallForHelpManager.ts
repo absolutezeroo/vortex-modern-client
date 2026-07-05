@@ -12,196 +12,196 @@ const log = Logger.getLogger('CallForHelpManager');
  */
 export class CallForHelpManager
 {
-	private static readonly MAX_CHARS: number = 253;
+    private static readonly MAX_CHARS: number = 253;
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	/**
+    /**
 	 * Whether this manager has been disposed
 	 */
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	private _reportedUserId: number = -1;
+    private _reportedUserId: number = -1;
 
-	get reportedUserId(): number
-	{
-		return this._reportedUserId;
-	}
+    get reportedUserId(): number
+    {
+        return this._reportedUserId;
+    }
 
-	set reportedUserId(value: number)
-	{
-		this._reportedUserId = value;
-	}
+    set reportedUserId(value: number)
+    {
+        this._reportedUserId = value;
+    }
 
-	private _reportedUserName: string = '';
+    private _reportedUserName: string = '';
 
-	get reportedUserName(): string
-	{
-		return this._reportedUserName;
-	}
+    get reportedUserName(): string
+    {
+        return this._reportedUserName;
+    }
 
-	set reportedUserName(value: string)
-	{
-		this._reportedUserName = value;
-	}
+    set reportedUserName(value: string)
+    {
+        this._reportedUserName = value;
+    }
 
-	private _reportedRoomId: number = -1;
+    private _reportedRoomId: number = -1;
 
-	get reportedRoomId(): number
-	{
-		return this._reportedRoomId;
-	}
+    get reportedRoomId(): number
+    {
+        return this._reportedRoomId;
+    }
 
-	set reportedRoomId(value: number)
-	{
-		this._reportedRoomId = value;
-	}
+    set reportedRoomId(value: number)
+    {
+        this._reportedRoomId = value;
+    }
 
-	private _reportedRoomName: string = '';
+    private _reportedRoomName: string = '';
 
-	get reportedRoomName(): string
-	{
-		return this._reportedRoomName;
-	}
+    get reportedRoomName(): string
+    {
+        return this._reportedRoomName;
+    }
 
-	set reportedRoomName(value: string)
-	{
-		this._reportedRoomName = value;
-	}
+    set reportedRoomName(value: string)
+    {
+        this._reportedRoomName = value;
+    }
 
-	private _reportedExtraDataId: string = '';
+    private _reportedExtraDataId: string = '';
 
-	get reportedExtraDataId(): string
-	{
-		return this._reportedExtraDataId;
-	}
+    get reportedExtraDataId(): string
+    {
+        return this._reportedExtraDataId;
+    }
 
-	set reportedExtraDataId(value: string)
-	{
-		this._reportedExtraDataId = value;
-	}
+    set reportedExtraDataId(value: string)
+    {
+        this._reportedExtraDataId = value;
+    }
 
-	private _reportedRoomObjectId: number = -1;
+    private _reportedRoomObjectId: number = -1;
 
-	get reportedRoomObjectId(): number
-	{
-		return this._reportedRoomObjectId;
-	}
+    get reportedRoomObjectId(): number
+    {
+        return this._reportedRoomObjectId;
+    }
 
-	set reportedRoomObjectId(value: number)
-	{
-		this._reportedRoomObjectId = value;
-	}
+    set reportedRoomObjectId(value: number)
+    {
+        this._reportedRoomObjectId = value;
+    }
 
-	private _reportedGroupId: number = -1;
+    private _reportedGroupId: number = -1;
 
-	get reportedGroupId(): number
-	{
-		return this._reportedGroupId;
-	}
+    get reportedGroupId(): number
+    {
+        return this._reportedGroupId;
+    }
 
-	set reportedGroupId(value: number)
-	{
-		this._reportedGroupId = value;
-	}
+    set reportedGroupId(value: number)
+    {
+        this._reportedGroupId = value;
+    }
 
-	private _reportedThreadId: number = -1;
+    private _reportedThreadId: number = -1;
 
-	get reportedThreadId(): number
-	{
-		return this._reportedThreadId;
-	}
+    get reportedThreadId(): number
+    {
+        return this._reportedThreadId;
+    }
 
-	set reportedThreadId(value: number)
-	{
-		this._reportedThreadId = value;
-	}
+    set reportedThreadId(value: number)
+    {
+        this._reportedThreadId = value;
+    }
 
-	private _reportedMessageId: number = -1;
+    private _reportedMessageId: number = -1;
 
-	get reportedMessageId(): number
-	{
-		return this._reportedMessageId;
-	}
+    get reportedMessageId(): number
+    {
+        return this._reportedMessageId;
+    }
 
-	set reportedMessageId(value: number)
-	{
-		this._reportedMessageId = value;
-	}
+    set reportedMessageId(value: number)
+    {
+        this._reportedMessageId = value;
+    }
 
-	/**
+    /**
 	 * Report a bully
 	 *
 	 * @param userId The reported user ID
 	 * @param roomId The room ID where the incident occurred
 	 */
-	reportBully(userId: number, roomId: number): void
-	{
-		this._reportedUserId = userId;
-		this._reportedRoomId = roomId;
-		log.debug('Report bully - userId:', userId, 'roomId:', roomId);
-	}
+    reportBully(userId: number, roomId: number): void
+    {
+        this._reportedUserId = userId;
+        this._reportedRoomId = roomId;
+        log.debug('Report bully - userId:', userId, 'roomId:', roomId);
+    }
 
-	/**
+    /**
 	 * Report a user
 	 *
 	 * @param userId The reported user ID
 	 * @param roomId The room ID
 	 */
-	reportUser(userId: number, roomId: number): void
-	{
-		this._reportedUserId = userId;
-		this._reportedRoomId = roomId;
-		log.debug('Report user - userId:', userId, 'roomId:', roomId);
-	}
+    reportUser(userId: number, roomId: number): void
+    {
+        this._reportedUserId = userId;
+        this._reportedRoomId = roomId;
+        log.debug('Report user - userId:', userId, 'roomId:', roomId);
+    }
 
-	/**
+    /**
 	 * Report a room
 	 *
 	 * @param roomId The room ID
 	 * @param roomName The room name
 	 */
-	reportRoom(roomId: number, roomName: string): void
-	{
-		this._reportedRoomId = roomId;
-		this._reportedRoomName = roomName;
-		this._reportedUserId = -1;
-		this._reportedUserName = '';
-		log.debug('Report room - roomId:', roomId, 'roomName:', roomName);
-	}
+    reportRoom(roomId: number, roomName: string): void
+    {
+        this._reportedRoomId = roomId;
+        this._reportedRoomName = roomName;
+        this._reportedUserId = -1;
+        this._reportedUserName = '';
+        log.debug('Report room - roomId:', roomId, 'roomName:', roomName);
+    }
 
-	/**
+    /**
 	 * Report a forum thread
 	 *
 	 * @param groupId The group ID
 	 * @param threadId The thread ID
 	 */
-	reportThread(groupId: number, threadId: number): void
-	{
-		this._reportedGroupId = groupId;
-		this._reportedThreadId = threadId;
-		log.debug('Report thread - groupId:', groupId, 'threadId:', threadId);
-	}
+    reportThread(groupId: number, threadId: number): void
+    {
+        this._reportedGroupId = groupId;
+        this._reportedThreadId = threadId;
+        log.debug('Report thread - groupId:', groupId, 'threadId:', threadId);
+    }
 
-	/**
+    /**
 	 * Report a forum message
 	 *
 	 * @param groupId The group ID
 	 * @param threadId The thread ID
 	 * @param messageId The message ID
 	 */
-	reportMessage(groupId: number, threadId: number, messageId: number): void
-	{
-		this._reportedGroupId = groupId;
-		this._reportedThreadId = threadId;
-		this._reportedMessageId = messageId;
-		log.debug('Report message - groupId:', groupId, 'threadId:', threadId, 'messageId:', messageId);
-	}
+    reportMessage(groupId: number, threadId: number, messageId: number): void
+    {
+        this._reportedGroupId = groupId;
+        this._reportedThreadId = threadId;
+        this._reportedMessageId = messageId;
+        log.debug('Report message - groupId:', groupId, 'threadId:', threadId, 'messageId:', messageId);
+    }
 
-	/**
+    /**
 	 * Report a selfie
 	 *
 	 * @param extraDataId The extra data ID
@@ -210,14 +210,14 @@ export class CallForHelpManager
 	 * @param roomObjectId The room object ID
 	 * @param roomId The room ID
 	 */
-	reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): void
-	{
-		this._reportedExtraDataId = extraDataId;
-		this._reportedRoomObjectId = roomObjectId;
-		log.debug('Report selfie - extraDataId:', extraDataId, 'userId:', userId);
-	}
+    reportSelfie(extraDataId: string, description: string, userId: number, roomObjectId: number, roomId: number): void
+    {
+        this._reportedExtraDataId = extraDataId;
+        this._reportedRoomObjectId = roomObjectId;
+        log.debug('Report selfie - extraDataId:', extraDataId, 'userId:', userId);
+    }
 
-	/**
+    /**
 	 * Report a photo
 	 *
 	 * @param extraDataId The extra data ID
@@ -226,20 +226,20 @@ export class CallForHelpManager
 	 * @param roomObjectId The room object ID
 	 * @param roomId The room ID
 	 */
-	reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): void
-	{
-		this._reportedExtraDataId = extraDataId;
-		this._reportedRoomObjectId = roomObjectId;
-		log.debug('Report photo - extraDataId:', extraDataId, 'topicId:', topicId);
-	}
+    reportPhoto(extraDataId: string, topicId: number, userId: number, roomObjectId: number, roomId: number): void
+    {
+        this._reportedExtraDataId = extraDataId;
+        this._reportedRoomObjectId = roomObjectId;
+        log.debug('Report photo - extraDataId:', extraDataId, 'topicId:', topicId);
+    }
 
-	/**
+    /**
 	 * Dispose of this manager
 	 */
-	dispose(): void
-	{
-		if (this._disposed) return;
+    dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
-	}
+        this._disposed = true;
+    }
 }

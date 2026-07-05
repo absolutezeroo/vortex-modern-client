@@ -10,8 +10,8 @@ import {UserNameChangedMessageParser} from '../../parser/help/UserNameChangedMes
  */
 export class UserNameChangedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserNameChangedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserNameChangedMessageParser);
+    }
 }

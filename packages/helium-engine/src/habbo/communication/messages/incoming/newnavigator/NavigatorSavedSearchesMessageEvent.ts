@@ -9,8 +9,8 @@ import {NavigatorSavedSearchesMessageParser} from '../../parser/newnavigator';
  */
 export class NavigatorSavedSearchesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NavigatorSavedSearchesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NavigatorSavedSearchesMessageParser);
+    }
 }

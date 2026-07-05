@@ -7,25 +7,24 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CreateFlatMessageComposer extends MessageComposer<ConstructorParameters<typeof CreateFlatMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof CreateFlatMessageComposer>;
+    private _data: ConstructorParameters<typeof CreateFlatMessageComposer>;
 
-	constructor(
-		roomName: string,
-		roomDescription: string,
-		roomModel: string,
-		categoryId: number,
-		maxUsers: number,
-		tradeMode: number
-	)
-	{
-		super();
+    constructor(
+        roomName: string,
+        roomDescription: string,
+        roomModel: string,
+        categoryId: number,
+        maxUsers: number,
+        tradeMode: number
+    )
+    {
+        super();
 
-		this._data = [roomName, roomDescription, roomModel, categoryId, maxUsers, tradeMode];
-	}
+        this._data = [roomName, roomDescription, roomModel, categoryId, maxUsers, tradeMode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

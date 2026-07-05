@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	AccountSafetyLockStatusChangeMessageEventParser
+    AccountSafetyLockStatusChangeMessageEventParser
 } from '../../parser/notifications/AccountSafetyLockStatusChangeMessageEventParser';
 
 /**
@@ -11,8 +11,8 @@ import {
  */
 export class AccountSafetyLockStatusChangeMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AccountSafetyLockStatusChangeMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AccountSafetyLockStatusChangeMessageEventParser);
+    }
 }

@@ -28,27 +28,27 @@ import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
  */
 export class HabboFriendBar extends Component implements IHabboFriendBar
 {
-	constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
-	{
-		super(context, flags, assetLibrary);
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
+    {
+        super(context, flags, assetLibrary);
 
-		// Attach HabboLandingView sub-component
-		context.attachComponent(
-			new HabboLandingView(context, 0, assetLibrary),
-			[IID_HabboLandingView]
-		);
+        // Attach HabboLandingView sub-component
+        context.attachComponent(
+            new HabboLandingView(context, 0, assetLibrary),
+            [IID_HabboLandingView]
+        );
 
-		// Future sub-components (not yet implemented):
-		// context.attachComponent(new HabboFriendBarData(context, 0, assetLibrary), [IID_HabboFriendBarData]);
-		// context.attachComponent(new HabboFriendBarView(context, 0, assetLibrary), [IID_HabboFriendBarView]);
-		// context.attachComponent(new HabboTalent(context, 0, assetLibrary), [IID_HabboTalent]);
-		// context.attachComponent(new HabboEpicPopupView(context, 0, assetLibrary), [IID_HabboEpicPopupView]);
-		// context.attachComponent(new GroupForumController(context, 0, assetLibrary), [IID_HabboGroupForumController]);
-	}
+        // Future sub-components (not yet implemented):
+        // context.attachComponent(new HabboFriendBarData(context, 0, assetLibrary), [IID_HabboFriendBarData]);
+        // context.attachComponent(new HabboFriendBarView(context, 0, assetLibrary), [IID_HabboFriendBarView]);
+        // context.attachComponent(new HabboTalent(context, 0, assetLibrary), [IID_HabboTalent]);
+        // context.attachComponent(new HabboEpicPopupView(context, 0, assetLibrary), [IID_HabboEpicPopupView]);
+        // context.attachComponent(new GroupForumController(context, 0, assetLibrary), [IID_HabboGroupForumController]);
+    }
 
-	private _visible: boolean = false;
+    private _visible: boolean = false;
 
-	/**
+    /**
 	 * Set the visibility of the friend bar view.
 	 *
 	 * In AS3, this delegates to IHabboFriendBarView.
@@ -56,23 +56,23 @@ export class HabboFriendBar extends Component implements IHabboFriendBar
 	 *
 	 * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as set visible()
 	 */
-	get visible(): boolean
-	{
-		return this._visible;
-	}
+    get visible(): boolean
+    {
+        return this._visible;
+    }
 
-	set visible(value: boolean)
-	{
-		this._visible = value;
-	}
+    set visible(value: boolean)
+    {
+        this._visible = value;
+    }
 
-	/**
+    /**
 	 * Dispose the friend bar and null references.
 	 */
-	override dispose(): void
-	{
-		if (this._disposed) return;
+    override dispose(): void
+    {
+        if(this._disposed) return;
 
-		super.dispose();
-	}
+        super.dispose();
+    }
 }

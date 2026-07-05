@@ -10,49 +10,49 @@ import {RoomVisitData} from './RoomVisitData';
  */
 export class RoomVisitsMessageParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _userName: string = '';
+    private _userName: string = '';
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 
-	private _rooms: RoomVisitData[] = [];
+    private _rooms: RoomVisitData[] = [];
 
-	get rooms(): RoomVisitData[]
-	{
-		return this._rooms;
-	}
+    get rooms(): RoomVisitData[]
+    {
+        return this._rooms;
+    }
 
-	flush(): boolean
-	{
-		this._userId = 0;
-		this._userName = '';
-		this._rooms = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = 0;
+        this._userName = '';
+        this._rooms = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._userId = wrapper.readInt();
-		this._userName = wrapper.readString();
+        this._userId = wrapper.readInt();
+        this._userName = wrapper.readString();
 
-		const visitCount = wrapper.readInt();
+        const visitCount = wrapper.readInt();
 
-		for (let i = 0; i < visitCount; i++)
-		{
-			this._rooms.push(new RoomVisitData(wrapper));
-		}
+        for(let i = 0; i < visitCount; i++)
+        {
+            this._rooms.push(new RoomVisitData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

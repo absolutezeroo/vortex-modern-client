@@ -9,25 +9,25 @@ import {CfhChatlogData} from './CfhChatlogData';
  */
 export class CfhChatlogMessageParser implements IMessageParser
 {
-	private _data: CfhChatlogData | null = null;
+    private _data: CfhChatlogData | null = null;
 
-	get data(): CfhChatlogData | null
-	{
-		return this._data;
-	}
+    get data(): CfhChatlogData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new CfhChatlogData(wrapper);
+        this._data = new CfhChatlogData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

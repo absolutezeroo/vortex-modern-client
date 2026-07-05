@@ -10,8 +10,8 @@ import {GuideTicketCreationResultMessageParser} from '../../parser/help/GuideTic
  */
 export class GuideTicketCreationResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, GuideTicketCreationResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, GuideTicketCreationResultMessageParser);
+    }
 }

@@ -7,8 +7,8 @@ import {DoorbellMessageParser} from '../../parser/navigator/DoorbellMessageParse
  */
 export class DoorbellMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, DoorbellMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, DoorbellMessageParser);
+    }
 }

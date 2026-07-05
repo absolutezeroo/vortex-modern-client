@@ -10,145 +10,145 @@ import {InstantMessageRegistryItem} from './InstantMessageRegistryItem';
  */
 export class InstantMessageRegistry
 {
-	private static readonly MAX_MESSAGES_TO_STORE: number = 20;
-	private static readonly ITEMS_TO_PURGE: number = 5;
-	private static readonly PURGE_AGE_MINUTES: number = 15;
-	private static readonly MS_PER_MINUTE: number = 65500;
+    private static readonly MAX_MESSAGES_TO_STORE: number = 20;
+    private static readonly ITEMS_TO_PURGE: number = 5;
+    private static readonly PURGE_AGE_MINUTES: number = 15;
+    private static readonly MS_PER_MINUTE: number = 65500;
 
-	private _items: Map<number, InstantMessageRegistryItem[]> = new Map();
-	private _addCounter: number = 0;
-	private _purgeCounter: number = 0;
-	private _holdPurges: boolean = false;
+    private _items: Map<number, InstantMessageRegistryItem[]> = new Map();
+    private _addCounter: number = 0;
+    private _purgeCounter: number = 0;
+    private _holdPurges: boolean = false;
 
-	/**
+    /**
 	 * Set whether purges should be held (during report selection)
 	 */
-	set holdPurges(value: boolean)
-	{
-		this._holdPurges = value;
-	}
+    set holdPurges(value: boolean)
+    {
+        this._holdPurges = value;
+    }
 
-	/**
+    /**
 	 * Add an instant message to the registry
 	 *
 	 * @param userId The user ID (or chat ID for group chats)
 	 * @param userName The user name
 	 * @param text The message text
 	 */
-	addItem(userId: number, userName: string, text: string): void
-	{
-		const item = new InstantMessageRegistryItem(this._addCounter++, userId, userName, text);
+    addItem(userId: number, userName: string, text: string): void
+    {
+        const item = new InstantMessageRegistryItem(this._addCounter++, userId, userName, text);
 
-		if (this._items.has(userId))
-		{
-			const items = this._items.get(userId)!;
-			items.push(item);
-		}
-		else
-		{
-			this._items.set(userId, [item]);
-		}
+        if(this._items.has(userId))
+        {
+            const items = this._items.get(userId)!;
+            items.push(item);
+        }
+        else
+        {
+            this._items.set(userId, [item]);
+        }
 
-		this._purgeCounter++;
+        this._purgeCounter++;
 
-		if (this._purgeCounter % 3 === 0)
-		{
-			this.purgeRegistry();
-		}
-	}
+        if(this._purgeCounter % 3 === 0)
+        {
+            this.purgeRegistry();
+        }
+    }
 
-	/**
+    /**
 	 * Get all items from a specific user
 	 */
-	getItemsByUser(userId: number): InstantMessageRegistryItem[] | null
-	{
-		return this._items.get(userId) ?? null;
-	}
+    getItemsByUser(userId: number): InstantMessageRegistryItem[] | null
+    {
+        return this._items.get(userId) ?? null;
+    }
 
-	/**
+    /**
 	 * Get a specific item by user ID and index
 	 */
-	getItem(userId: number, index: number): InstantMessageRegistryItem | null
-	{
-		const items = this.getItemsByUser(userId);
+    getItem(userId: number, index: number): InstantMessageRegistryItem | null
+    {
+        const items = this.getItemsByUser(userId);
 
-		if (!items) return null;
+        if(!items) return null;
 
-		for (let i = 0; i < items.length; i++)
-		{
-			if (items[i].index === index)
-			{
-				return items[i];
-			}
-		}
+        for(let i = 0; i < items.length; i++)
+        {
+            if(items[i].index === index)
+            {
+                return items[i];
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
+    /**
 	 * Whether a user has any messages in the registry
 	 */
-	hasUserChatted(userId: number): boolean
-	{
-		const items = this.getItemsByUser(userId);
+    hasUserChatted(userId: number): boolean
+    {
+        const items = this.getItemsByUser(userId);
 
-		if (!items) return false;
+        if(!items) return false;
 
-		return items.length > 0;
-	}
+        return items.length > 0;
+    }
 
-	/**
+    /**
 	 * Whether the registry has any content
 	 */
-	hasContent(): boolean
-	{
-		return this._items.size > 0;
-	}
+    hasContent(): boolean
+    {
+        return this._items.size > 0;
+    }
 
-	/**
+    /**
 	 * Get all items in the registry
 	 */
-	getItems(): Map<number, InstantMessageRegistryItem[]>
-	{
-		return this._items;
-	}
+    getItems(): Map<number, InstantMessageRegistryItem[]>
+    {
+        return this._items;
+    }
 
-	/**
+    /**
 	 * Purge old items from the registry
 	 *
 	 * Removes items older than 15 minutes and trims to max size per user.
 	 */
-	private purgeRegistry(): void
-	{
-		if (this._holdPurges)
-		{
-			return;
-		}
+    private purgeRegistry(): void
+    {
+        if(this._holdPurges)
+        {
+            return;
+        }
 
-		const now = new Date().getTime();
+        const now = new Date().getTime();
 
-		for (const [userId, items] of this._items)
-		{
-			if (!items || items.length === 0) continue;
+        for(const [userId, items] of this._items)
+        {
+            if(!items || items.length === 0) continue;
 
-			const kept: InstantMessageRegistryItem[] = [];
+            const kept: InstantMessageRegistryItem[] = [];
 
-			for (let i = 0; i < items.length; i++)
-			{
-				const ageMinutes = (now - items[i].chatTime.getTime()) / InstantMessageRegistry.MS_PER_MINUTE;
+            for(let i = 0; i < items.length; i++)
+            {
+                const ageMinutes = (now - items[i].chatTime.getTime()) / InstantMessageRegistry.MS_PER_MINUTE;
 
-				if (ageMinutes <= InstantMessageRegistry.PURGE_AGE_MINUTES)
-				{
-					kept.push(items[i]);
-				}
-			}
+                if(ageMinutes <= InstantMessageRegistry.PURGE_AGE_MINUTES)
+                {
+                    kept.push(items[i]);
+                }
+            }
 
-			if (kept.length > InstantMessageRegistry.MAX_MESSAGES_TO_STORE)
-			{
-				kept.splice(0, kept.length - (InstantMessageRegistry.MAX_MESSAGES_TO_STORE - InstantMessageRegistry.ITEMS_TO_PURGE));
-			}
+            if(kept.length > InstantMessageRegistry.MAX_MESSAGES_TO_STORE)
+            {
+                kept.splice(0, kept.length - (InstantMessageRegistry.MAX_MESSAGES_TO_STORE - InstantMessageRegistry.ITEMS_TO_PURGE));
+            }
 
-			this._items.set(userId, kept);
-		}
-	}
+            this._items.set(userId, kept);
+        }
+    }
 }

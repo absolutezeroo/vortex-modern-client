@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetRoomChatlogMessageComposer extends MessageComposer<ConstructorParameters<typeof GetRoomChatlogMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetRoomChatlogMessageComposer>;
+    private _data: ConstructorParameters<typeof GetRoomChatlogMessageComposer>;
 
-	constructor(roomId: number, unused: number)
-	{
-		super();
-		this._data = [roomId, unused];
-	}
+    constructor(roomId: number, unused: number)
+    {
+        super();
+        this._data = [roomId, unused];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -9,54 +9,54 @@ import type {SingularNotificationController} from './SingularNotificationControl
  */
 export class HabboNotificationItem
 {
-	private _controller: SingularNotificationController | null;
+    private _controller: SingularNotificationController | null;
 
-	constructor(
-		content: string,
-		style: HabboNotificationItemStyle,
-		controller: SingularNotificationController
-	)
-	{
-		this._content = content;
-		this._style = style;
-		this._controller = controller;
-	}
+    constructor(
+        content: string,
+        style: HabboNotificationItemStyle,
+        controller: SingularNotificationController
+    )
+    {
+        this._content = content;
+        this._style = style;
+        this._controller = controller;
+    }
 
-	private _style: HabboNotificationItemStyle | null;
+    private _style: HabboNotificationItemStyle | null;
 
-	get style(): HabboNotificationItemStyle | null
-	{
-		return this._style;
-	}
+    get style(): HabboNotificationItemStyle | null
+    {
+        return this._style;
+    }
 
-	private _content: string | null;
+    private _content: string | null;
 
-	get content(): string | null
-	{
-		return this._content;
-	}
+    get content(): string | null
+    {
+        return this._content;
+    }
 
-	/**
+    /**
 	 * Execute internal link associated with this notification
 	 */
-	executeUiLinks(): void
-	{
-		if (this._style?.internalLink)
-		{
-			this._controller?.onInternalLink(this._style.internalLink);
-		}
-	}
+    executeUiLinks(): void
+    {
+        if(this._style?.internalLink)
+        {
+            this._controller?.onInternalLink(this._style.internalLink);
+        }
+    }
 
-	dispose(): void
-	{
-		this._content = null;
+    dispose(): void
+    {
+        this._content = null;
 
-		if (this._style != null)
-		{
-			this._style.dispose();
-			this._style = null;
-		}
+        if(this._style != null)
+        {
+            this._style.dispose();
+            this._style = null;
+        }
 
-		this._controller = null;
-	}
+        this._controller = null;
+    }
 }

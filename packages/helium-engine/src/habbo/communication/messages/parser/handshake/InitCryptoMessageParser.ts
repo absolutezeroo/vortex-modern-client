@@ -10,34 +10,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class InitDiffieHandshakeMessageParser implements IMessageParser
 {
-	private _encryptedPrime: string = '';
+    private _encryptedPrime: string = '';
 
-	get encryptedPrime(): string
-	{
-		return this._encryptedPrime;
-	}
+    get encryptedPrime(): string
+    {
+        return this._encryptedPrime;
+    }
 
-	private _encryptedGenerator: string = '';
+    private _encryptedGenerator: string = '';
 
-	get encryptedGenerator(): string
-	{
-		return this._encryptedGenerator;
-	}
+    get encryptedGenerator(): string
+    {
+        return this._encryptedGenerator;
+    }
 
-	flush(): boolean
-	{
-		this._encryptedPrime = '';
-		this._encryptedGenerator = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._encryptedPrime = '';
+        this._encryptedGenerator = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper.bytesAvailable < 2) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper.bytesAvailable < 2) return false;
 
-		this._encryptedPrime = wrapper.readString();
-		this._encryptedGenerator = wrapper.readString();
+        this._encryptedPrime = wrapper.readString();
+        this._encryptedGenerator = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

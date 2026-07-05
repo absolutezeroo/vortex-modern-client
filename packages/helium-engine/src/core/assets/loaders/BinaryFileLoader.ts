@@ -10,116 +10,116 @@ import {BaseFileLoader} from './BaseFileLoader';
  */
 export class BinaryFileLoader extends BaseFileLoader
 {
-	protected _abortController: AbortController | null = null;
+    protected _abortController: AbortController | null = null;
 
-	constructor(mimeType: string, url?: string, id: number = -1)
-	{
-		super(mimeType, url, id);
-	}
+    constructor(mimeType: string, url?: string, id: number = -1)
+    {
+        super(mimeType, url, id);
+    }
 
-	protected _data: ArrayBuffer | null = null;
+    protected _data: ArrayBuffer | null = null;
 
-	/**
+    /**
 	 * The loaded data as ArrayBuffer
 	 */
-	get data(): ArrayBuffer | null
-	{
-		return this._data;
-	}
+    get data(): ArrayBuffer | null
+    {
+        return this._data;
+    }
 
-	/**
+    /**
 	 * The loaded content
 	 */
-	get content(): unknown
-	{
-		return this._data;
-	}
+    get content(): unknown
+    {
+        return this._data;
+    }
 
-	/**
+    /**
 	 * The raw bytes loaded
 	 */
-	get bytes(): ArrayBuffer | null
-	{
-		return this._data;
-	}
+    get bytes(): ArrayBuffer | null
+    {
+        return this._data;
+    }
 
-	/**
+    /**
 	 * Load content from a URL
 	 */
-	load(url: string): void
-	{
-		this._url = normalizeLocalAssetUrl(url);
-		this._data = null;
-		this._errorCode = 0;
+    load(url: string): void
+    {
+        this._url = normalizeLocalAssetUrl(url);
+        this._data = null;
+        this._errorCode = 0;
 
-		// Abort any pending request
-		if (this._abortController)
-		{
-			this._abortController.abort();
-		}
+        // Abort any pending request
+        if(this._abortController)
+        {
+            this._abortController.abort();
+        }
 
-		this._abortController = new AbortController();
+        this._abortController = new AbortController();
 
-		this.handleLoadEvent('open');
+        this.handleLoadEvent('open');
 
-		fetch(this._url, {signal: this._abortController.signal})
-			.then(async (response) =>
-			{
-				if (!response.ok)
-				{
-					this._status = response.status;
-					this.handleLoadEvent('ioError', response.status);
-					return;
-				}
+        fetch(this._url, {signal: this._abortController.signal})
+            .then(async (response) =>
+            {
+                if(!response.ok)
+                {
+                    this._status = response.status;
+                    this.handleLoadEvent('ioError', response.status);
+                    return;
+                }
 
-				this._status = response.status;
-				this.handleLoadEvent('status', response.status);
+                this._status = response.status;
+                this.handleLoadEvent('status', response.status);
 
-				// Get content length for progress tracking
-				const contentLength = response.headers.get('content-length');
-				this._bytesTotal = contentLength ? parseInt(contentLength, 10) : 0;
+                // Get content length for progress tracking
+                const contentLength = response.headers.get('content-length');
+                this._bytesTotal = contentLength ? parseInt(contentLength, 10) : 0;
 
-				// Read the response as ArrayBuffer
-				this._data = await response.arrayBuffer();
-				this._bytesLoaded = this._data.byteLength;
+                // Read the response as ArrayBuffer
+                this._data = await response.arrayBuffer();
+                this._bytesLoaded = this._data.byteLength;
 
-				this.handleLoadEvent('complete');
-			})
-			.catch((error) =>
-			{
-				if (error.name === 'AbortError')
-				{
-					// Request was aborted, don't report as error
-					return;
-				}
+                this.handleLoadEvent('complete');
+            })
+            .catch((error) =>
+            {
+                if(error.name === 'AbortError')
+                {
+                    // Request was aborted, don't report as error
+                    return;
+                }
 
-				if (error.name === 'TypeError' && error.message.includes('network'))
-				{
-					this.handleLoadEvent('ioError');
-				}
-				else
-				{
-					this.handleLoadEvent('securityError');
-				}
-			});
-	}
+                if(error.name === 'TypeError' && error.message.includes('network'))
+                {
+                    this.handleLoadEvent('ioError');
+                }
+                else
+                {
+                    this.handleLoadEvent('securityError');
+                }
+            });
+    }
 
-	/**
+    /**
 	 * Dispose of this loader
 	 */
-	dispose(): void
-	{
-		if (!this._disposed)
-		{
-			// Abort any pending request
-			if (this._abortController)
-			{
-				this._abortController.abort();
-				this._abortController = null;
-			}
+    dispose(): void
+    {
+        if(!this._disposed)
+        {
+            // Abort any pending request
+            if(this._abortController)
+            {
+                this._abortController.abort();
+                this._abortController = null;
+            }
 
-			this._data = null;
-			super.dispose();
-		}
-	}
+            this._data = null;
+            super.dispose();
+        }
+    }
 }

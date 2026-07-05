@@ -10,7 +10,7 @@ import type {IRadioButtonWindow} from './IRadioButtonWindow';
  */
 export interface IRadioButtonSelectionWindow extends IWindowContainer
 {
-	readonly selected: IRadioButtonWindow | null;
+    readonly selected: IRadioButtonWindow | null;
 
-	radioButtonSelection(button: IRadioButtonWindow): void;
+    radioButtonSelection(button: IRadioButtonWindow): void;
 }

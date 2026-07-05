@@ -12,39 +12,39 @@ import {AlertView} from './AlertView';
  */
 export class SimpleAlertView extends AlertView
 {
-	private _text: string;
+    private _text: string;
 
-	constructor(navigator: IHabboTransitionalNavigator, caption: string, text: string)
-	{
-		super(navigator, 'nav_simple_alert', caption);
-		this._text = text;
-	}
+    constructor(navigator: IHabboTransitionalNavigator, caption: string, text: string)
+    {
+        super(navigator, 'nav_simple_alert', caption);
+        this._text = text;
+    }
 
-	protected override setupAlertWindow(window: IWindow): void
-	{
-		const content = (window as any).content as IWindowContainer;
+    protected override setupAlertWindow(window: IWindow): void
+    {
+        const content = (window as any).content as IWindowContainer;
 
-		if (!content) return;
+        if(!content) return;
 
-		const bodyText = content.findChildByName('body_text') as ITextWindow | null;
+        const bodyText = content.findChildByName('body_text') as ITextWindow | null;
 
-		if (bodyText)
-		{
-			bodyText.text = this._text;
-		}
+        if(bodyText)
+        {
+            bodyText.text = this._text;
+        }
 
-		const okButton = content.findChildByName('ok');
+        const okButton = content.findChildByName('ok');
 
-		if (okButton)
-		{
-			okButton.addEventListener('WME_CLICK', this.onOk);
-		}
+        if(okButton)
+        {
+            okButton.addEventListener('WME_CLICK', this.onOk);
+        }
 
-		window.tags.push('SimpleAlertView');
-	}
+        window.tags.push('SimpleAlertView');
+    }
 
-	private onOk = (_event: WindowEvent): void =>
-	{
-		this.dispose();
-	};
+    private onOk = (_event: WindowEvent): void =>
+    {
+        this.dispose();
+    };
 }

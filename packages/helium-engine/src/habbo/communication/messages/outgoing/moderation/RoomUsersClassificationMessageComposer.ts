@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RoomUsersClassificationMessageComposer extends MessageComposer<ConstructorParameters<typeof RoomUsersClassificationMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RoomUsersClassificationMessageComposer>;
+    private _data: ConstructorParameters<typeof RoomUsersClassificationMessageComposer>;
 
-	constructor(roomName: string)
-	{
-		super();
-		this._data = [roomName];
-	}
+    constructor(roomName: string)
+    {
+        super();
+        this._data = [roomName];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

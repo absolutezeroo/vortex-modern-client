@@ -8,24 +8,24 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class FurniListRemoveMessageParser implements IMessageParser
 {
-	private _itemId: number = 0;
+    private _itemId: number = 0;
 
-	get itemId(): number
-	{
-		return this._itemId;
-	}
+    get itemId(): number
+    {
+        return this._itemId;
+    }
 
-	flush(): boolean
-	{
-		this._itemId = 0;
+    flush(): boolean
+    {
+        this._itemId = 0;
 
-		return true;
-	}
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._itemId = wrapper.readInt();
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._itemId = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

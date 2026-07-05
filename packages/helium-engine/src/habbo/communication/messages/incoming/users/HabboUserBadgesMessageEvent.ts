@@ -9,18 +9,18 @@ import {HabboUserBadgesMessageParser} from '../../parser/users/HabboUserBadgesMe
  */
 export class HabboUserBadgesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HabboUserBadgesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HabboUserBadgesMessageParser);
+    }
 
-	get userId(): number
-	{
-		return (this._parser as HabboUserBadgesMessageParser).userId;
-	}
+    get userId(): number
+    {
+        return (this._parser as HabboUserBadgesMessageParser).userId;
+    }
 
-	get badges(): string[]
-	{
-		return (this._parser as HabboUserBadgesMessageParser).badges;
-	}
+    get badges(): string[]
+    {
+        return (this._parser as HabboUserBadgesMessageParser).badges;
+    }
 }

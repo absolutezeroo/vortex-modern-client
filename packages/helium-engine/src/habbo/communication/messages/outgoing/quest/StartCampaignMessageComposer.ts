@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class StartCampaignMessageComposer extends MessageComposer<ConstructorParameters<typeof StartCampaignMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof StartCampaignMessageComposer>;
+    private _data: ConstructorParameters<typeof StartCampaignMessageComposer>;
 
-	constructor(campaignCode: string)
-	{
-		super();
-		this._data = [campaignCode];
-	}
+    constructor(campaignCode: string)
+    {
+        super();
+        this._data = [campaignCode];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

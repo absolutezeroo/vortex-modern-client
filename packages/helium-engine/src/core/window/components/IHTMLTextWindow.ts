@@ -7,6 +7,6 @@ import type {IWindow} from '../IWindow';
  */
 export interface IHTMLTextWindow extends IWindow
 {
-	html: string;
-	linkTarget: string;
+    html: string;
+    linkTarget: string;
 }

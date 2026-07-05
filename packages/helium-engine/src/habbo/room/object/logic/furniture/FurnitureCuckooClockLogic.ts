@@ -13,46 +13,46 @@ import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectD
 
 export class FurnitureCuckooClockLogic extends FurnitureMultiStateLogic
 {
-	private _state: number = -1;
-	private _lastLocation: IVector3d | null = null;
+    private _state: number = -1;
+    private _lastLocation: IVector3d | null = null;
 
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectPlaySoundIdEvent.PLAY_SOUND_AT_PITCH
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectPlaySoundIdEvent.PLAY_SOUND_AT_PITCH
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		super.processUpdateMessage(message);
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        super.processUpdateMessage(message);
 
-		const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+        const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-		if ('state' in message && 'data' in message)
-		{
-			if (this._state !== -1 && dataMessage.state !== this._state)
-			{
-				this.playSoundAt(this._lastLocation?.z ?? 0);
-			}
+        if('state' in message && 'data' in message)
+        {
+            if(this._state !== -1 && dataMessage.state !== this._state)
+            {
+                this.playSoundAt(this._lastLocation?.z ?? 0);
+            }
 
-			this._state = dataMessage.state;
-		}
-		else
-		{
-			this._lastLocation = message.loc;
-		}
-	}
+            this._state = dataMessage.state;
+        }
+        else
+        {
+            this._lastLocation = message.loc;
+        }
+    }
 
-	private playSoundAt(height: number): void
-	{
-		const pitch = Math.pow(2, height - 1.2);
+    private playSoundAt(height: number): void
+    {
+        const pitch = Math.pow(2, height - 1.2);
 
-		this.eventDispatcher?.emit(
-			RoomObjectPlaySoundIdEvent.PLAY_SOUND_AT_PITCH,
-			new RoomObjectPlaySoundIdEvent(RoomObjectPlaySoundIdEvent.PLAY_SOUND_AT_PITCH, this.object!, 'FURNITURE_cuckoo_clock', pitch)
-		);
-	}
+        this.eventDispatcher?.emit(
+            RoomObjectPlaySoundIdEvent.PLAY_SOUND_AT_PITCH,
+            new RoomObjectPlaySoundIdEvent(RoomObjectPlaySoundIdEvent.PLAY_SOUND_AT_PITCH, this.object!, 'FURNITURE_cuckoo_clock', pitch)
+        );
+    }
 }

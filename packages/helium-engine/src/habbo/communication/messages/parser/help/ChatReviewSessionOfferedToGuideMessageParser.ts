@@ -8,24 +8,24 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ChatReviewSessionOfferedToGuideMessageParser implements IMessageParser
 {
-	private _acceptanceTimeout: number = -1;
+    private _acceptanceTimeout: number = -1;
 
-	get acceptanceTimeout(): number
-	{
-		return this._acceptanceTimeout;
-	}
+    get acceptanceTimeout(): number
+    {
+        return this._acceptanceTimeout;
+    }
 
-	flush(): boolean
-	{
-		this._acceptanceTimeout = -1;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._acceptanceTimeout = -1;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._acceptanceTimeout = wrapper.readInt();
-		return true;
-	}
+        this._acceptanceTimeout = wrapper.readInt();
+        return true;
+    }
 }

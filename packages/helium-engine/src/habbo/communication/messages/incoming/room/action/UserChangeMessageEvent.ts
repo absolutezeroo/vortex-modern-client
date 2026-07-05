@@ -8,13 +8,13 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	UserChangeMessageEventParser
+    UserChangeMessageEventParser
 } from '@habbo/communication/messages/parser/room/action/UserChangeMessageEventParser';
 
 export class UserChangeMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserChangeMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserChangeMessageEventParser);
+    }
 }

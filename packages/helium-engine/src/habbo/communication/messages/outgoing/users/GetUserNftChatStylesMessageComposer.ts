@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetUserNftChatStylesMessageComposer extends MessageComposer<ConstructorParameters<typeof GetUserNftChatStylesMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof GetUserNftChatStylesMessageComposer>;
+    private _data: ConstructorParameters<typeof GetUserNftChatStylesMessageComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

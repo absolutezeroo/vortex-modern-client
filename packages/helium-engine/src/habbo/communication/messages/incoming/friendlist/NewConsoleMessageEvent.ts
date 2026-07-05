@@ -10,8 +10,8 @@ import {NewConsoleMessageEventParser} from '../../parser/friendlist/NewConsoleMe
  */
 export class NewConsoleMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NewConsoleMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NewConsoleMessageEventParser);
+    }
 }

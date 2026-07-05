@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class RemoveOwnRoomRightsRoomMessageComposer extends MessageComposer<ConstructorParameters<typeof RemoveOwnRoomRightsRoomMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof RemoveOwnRoomRightsRoomMessageComposer>;
+    private _data: ConstructorParameters<typeof RemoveOwnRoomRightsRoomMessageComposer>;
 
-	constructor(roomId: number)
-	{
-		super();
+    constructor(roomId: number)
+    {
+        super();
 
-		this._data = [roomId];
-	}
+        this._data = [roomId];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -35,72 +35,72 @@ import type {OfficialRoomEntryManager} from './mainview/OfficialRoomEntryManager
  */
 export interface IHabboTransitionalNavigator extends IHabboNavigator
 {
-	readonly disposed: boolean;
-	readonly events: EventEmitter;
-	readonly assets: IAssetLibrary | null;
-	readonly windowManager: IHabboWindowManager | null;
-	readonly data: NavigatorData;
-	readonly sessionData: ISessionDataManager | null;
-	readonly tabs: Tabs;
-	readonly mainViewCtrl: ITransitionalMainViewCtrl | null;
-	readonly roomInfoViewCtrl: RoomInfoViewCtrl | null;
-	readonly roomCreateViewCtrl: RoomCreateViewCtrl | null;
-	readonly communication: IHabboCommunicationManager;
-	readonly roomSettingsCtrl: RoomSettingsCtrl | null;
-	readonly passwordInput: GuestRoomPasswordInput | null;
-	readonly doorbell: GuestRoomDoorbell | null;
-	readonly roomEventViewCtrl: RoomEventViewCtrl | null;
-	readonly officialRoomEntryManager: OfficialRoomEntryManager | null;
-	readonly toolbar: IHabboToolbar | null;
-	readonly habboHelp: IHabboHelp | null;
-	readonly roomEventInfoCtrl: RoomEventInfoCtrl | null;
-	readonly roomFilterCtrl: RoomFilterCtrl | null;
-	readonly roomSessionManager: IRoomSessionManager | null;
-	readonly enforceCategoryCtrl: EnforceCategoryCtrl | null;
+    readonly disposed: boolean;
+    readonly events: EventEmitter;
+    readonly assets: IAssetLibrary | null;
+    readonly windowManager: IHabboWindowManager | null;
+    readonly data: NavigatorData;
+    readonly sessionData: ISessionDataManager | null;
+    readonly tabs: Tabs;
+    readonly mainViewCtrl: ITransitionalMainViewCtrl | null;
+    readonly roomInfoViewCtrl: RoomInfoViewCtrl | null;
+    readonly roomCreateViewCtrl: RoomCreateViewCtrl | null;
+    readonly communication: IHabboCommunicationManager;
+    readonly roomSettingsCtrl: RoomSettingsCtrl | null;
+    readonly passwordInput: GuestRoomPasswordInput | null;
+    readonly doorbell: GuestRoomDoorbell | null;
+    readonly roomEventViewCtrl: RoomEventViewCtrl | null;
+    readonly officialRoomEntryManager: OfficialRoomEntryManager | null;
+    readonly toolbar: IHabboToolbar | null;
+    readonly habboHelp: IHabboHelp | null;
+    readonly roomEventInfoCtrl: RoomEventInfoCtrl | null;
+    readonly roomFilterCtrl: RoomFilterCtrl | null;
+    readonly roomSessionManager: IRoomSessionManager | null;
+    readonly enforceCategoryCtrl: EnforceCategoryCtrl | null;
 
-	registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
+    registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
 
-	removeUpdateReceiver(receiver: IUpdateReceiver): void;
+    removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
-	send(composer: IMessageComposer<unknown[]>): void;
+    send(composer: IMessageComposer<unknown[]>): void;
 
-	getXmlWindow(xmlFileName: string, style?: number): IWindow | null;
+    getXmlWindow(xmlFileName: string, style?: number): IWindow | null;
 
-	getText(key: string): string;
+    getText(key: string): string;
 
-	registerParameter(key: string, param: string, value: string): string;
+    registerParameter(key: string, param: string, value: string): string;
 
-	getButton(assetName: string, stateSuffix: string, callback: Function, x?: number, y?: number, index?: number): IWindowContainer | null;
+    getButton(assetName: string, stateSuffix: string, callback: Function, x?: number, y?: number, index?: number): IWindowContainer | null;
 
-	refreshButton(container: IWindowContainer, name: string, visible: boolean, callback: Function, index: number, tooltip?: string | null): void;
+    refreshButton(container: IWindowContainer, name: string, visible: boolean, callback: Function, index: number, tooltip?: string | null): void;
 
-	getButtonImage(assetName: string, suffix?: string): unknown | null;
+    getButtonImage(assetName: string, suffix?: string): unknown | null;
 
-	openCatalogClubPage(source: string): void;
+    openCatalogClubPage(source: string): void;
 
-	openCatalogRoomAdsPage(): void;
+    openCatalogRoomAdsPage(): void;
 
-	openCatalogRoomAdsExtendPage(eventName: string, eventDesc: string, eventDate: Date, eventCatId: number): void;
+    openCatalogRoomAdsExtendPage(eventName: string, eventDesc: string, eventDate: Date, eventCatId: number): void;
 
-	showFavouriteRooms(): void;
+    showFavouriteRooms(): void;
 
-	showHistoryRooms(): void;
+    showHistoryRooms(): void;
 
-	showFrequentRooms(): void;
+    showFrequentRooms(): void;
 
-	goToMainView(): void;
+    goToMainView(): void;
 
-	goToRoom(roomId: number, closeNavigator: boolean, password?: string, roomCategory?: number, skipOpc?: boolean): void;
+    goToRoom(roomId: number, closeNavigator: boolean, password?: string, roomCategory?: number, skipOpc?: boolean): void;
 
-	isPerkAllowed(perkCode: string): boolean;
+    isPerkAllowed(perkCode: string): boolean;
 
-	trackGoogle(category: string, action: string, value?: number): void;
+    trackGoogle(category: string, action: string, value?: number): void;
 
-	trackNavigationDataPoint(category: string, action: string, label?: string, value?: number): void;
+    trackNavigationDataPoint(category: string, action: string, label?: string, value?: number): void;
 
-	getBoolean(key: string): boolean;
+    getBoolean(key: string): boolean;
 
-	getInteger(key: string, defaultValue: number): number;
+    getInteger(key: string, defaultValue: number): number;
 
-	getProperty(key: string, params?: Record<string, string>): string;
+    getProperty(key: string, params?: Record<string, string>): string;
 }

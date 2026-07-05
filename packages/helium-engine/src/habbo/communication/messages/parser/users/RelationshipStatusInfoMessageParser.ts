@@ -11,41 +11,41 @@ import {RelationshipStatusInfo} from '../../incoming/users/RelationshipStatusInf
  */
 export class RelationshipStatusInfoMessageParser implements IMessageParser
 {
-	private _userId: number = 0;
-	private _relationshipStatusMap: Map<number, RelationshipStatusInfo> = new Map();
+    private _userId: number = 0;
+    private _relationshipStatusMap: Map<number, RelationshipStatusInfo> = new Map();
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	get relationshipStatusMap(): Map<number, RelationshipStatusInfo>
-	{
-		return this._relationshipStatusMap;
-	}
+    get relationshipStatusMap(): Map<number, RelationshipStatusInfo>
+    {
+        return this._relationshipStatusMap;
+    }
 
-	flush(): boolean
-	{
-		this._relationshipStatusMap.clear();
-		return true;
-	}
+    flush(): boolean
+    {
+        this._relationshipStatusMap.clear();
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if(!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._userId = wrapper.readInt();
-		this._relationshipStatusMap.clear();
+        this._userId = wrapper.readInt();
+        this._relationshipStatusMap.clear();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for(let i = 0; i < count; i++)
-		{
-			const info = new RelationshipStatusInfo(wrapper);
+        for(let i = 0; i < count; i++)
+        {
+            const info = new RelationshipStatusInfo(wrapper);
 
-			this._relationshipStatusMap.set(info.relationshipStatusType, info);
-		}
+            this._relationshipStatusMap.set(info.relationshipStatusType, info);
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

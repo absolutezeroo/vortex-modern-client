@@ -10,16 +10,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class WhisperMessageComposer extends MessageComposer<[string, number]>
 {
-	private _data: [string, number];
+    private _data: [string, number];
 
-	constructor(recipientName: string, message: string, styleId: number = 0)
-	{
-		super();
-		this._data = [recipientName + ' ' + message, styleId];
-	}
+    constructor(recipientName: string, message: string, styleId: number = 0)
+    {
+        super();
+        this._data = [recipientName + ' ' + message, styleId];
+    }
 
-	getMessageArray(): [string, number]
-	{
-		return this._data;
-	}
+    getMessageArray(): [string, number]
+    {
+        return this._data;
+    }
 }

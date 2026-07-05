@@ -9,8 +9,8 @@ import {IssueCloseNotificationMessageParser} from '../../parser/help/IssueCloseN
  */
 export class IssueCloseNotificationMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, IssueCloseNotificationMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, IssueCloseNotificationMessageParser);
+    }
 }

@@ -7,16 +7,16 @@ import type {IFigurePart} from './IFigurePart';
  */
 export interface IFigurePartSet
 {
-	readonly type: string;
-	readonly id: number;
-	readonly gender: string;
-	readonly clubLevel: number;
-	readonly isColorable: boolean;
-	readonly isSelectable: boolean;
-	readonly isPreSelectable: boolean;
-	readonly isSellable: boolean;
-	readonly parts: IFigurePart[];
-	readonly hiddenLayers: string[];
+    readonly type: string;
+    readonly id: number;
+    readonly gender: string;
+    readonly clubLevel: number;
+    readonly isColorable: boolean;
+    readonly isSelectable: boolean;
+    readonly isPreSelectable: boolean;
+    readonly isSellable: boolean;
+    readonly parts: IFigurePart[];
+    readonly hiddenLayers: string[];
 
-	getPart(type: string, id: number): IFigurePart | null;
+    getPart(type: string, id: number): IFigurePart | null;
 }

@@ -7,8 +7,8 @@ import {PetInventoryMessageParser} from '@habbo/communication/messages/parser/in
  */
 export class PetInventoryMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PetInventoryMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PetInventoryMessageParser);
+    }
 }

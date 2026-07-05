@@ -7,23 +7,23 @@ import type {IMessageDataWrapper} from '@core/communication';
  */
 export class RoomTagData
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._tagName = wrapper.readString();
-		this._userCount = wrapper.readInt();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._tagName = wrapper.readString();
+        this._userCount = wrapper.readInt();
+    }
 
-	private _tagName: string = '';
+    private _tagName: string = '';
 
-	get tagName(): string
-	{
-		return this._tagName;
-	}
+    get tagName(): string
+    {
+        return this._tagName;
+    }
 
-	private _userCount: number = 0;
+    private _userCount: number = 0;
 
-	get userCount(): number
-	{
-		return this._userCount;
-	}
+    get userCount(): number
+    {
+        return this._userCount;
+    }
 }

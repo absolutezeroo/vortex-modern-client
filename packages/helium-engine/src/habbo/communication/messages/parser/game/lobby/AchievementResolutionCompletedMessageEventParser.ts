@@ -9,34 +9,34 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  */
 export class AchievementResolutionCompletedMessageEventParser implements IMessageParser
 {
-	private _stuffCode: string = '';
+    private _stuffCode: string = '';
 
-	get stuffCode(): string
-	{
-		return this._stuffCode;
-	}
+    get stuffCode(): string
+    {
+        return this._stuffCode;
+    }
 
-	private _badgeCode: string = '';
+    private _badgeCode: string = '';
 
-	get badgeCode(): string
-	{
-		return this._badgeCode;
-	}
+    get badgeCode(): string
+    {
+        return this._badgeCode;
+    }
 
-	flush(): boolean
-	{
-		this._stuffCode = '';
-		this._badgeCode = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._stuffCode = '';
+        this._badgeCode = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._stuffCode = wrapper.readString();
-		this._badgeCode = wrapper.readString();
+        this._stuffCode = wrapper.readString();
+        this._badgeCode = wrapper.readString();
 
-		return true;
-	}
+        return true;
+    }
 }

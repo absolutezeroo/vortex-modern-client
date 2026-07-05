@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class NavigatorAddSavedSearchComposer extends MessageComposer<ConstructorParameters<typeof NavigatorAddSavedSearchComposer>>
 {
-	private _data: ConstructorParameters<typeof NavigatorAddSavedSearchComposer>;
+    private _data: ConstructorParameters<typeof NavigatorAddSavedSearchComposer>;
 
-	constructor(searchCode: string, filtering: string)
-	{
-		super();
+    constructor(searchCode: string, filtering: string)
+    {
+        super();
 
-		this._data = [searchCode, filtering];
-	}
+        this._data = [searchCode, filtering];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -18,69 +18,69 @@ import type {ICoreLocalizationManager} from '../localization/ICoreLocalizationMa
  */
 export interface IWindowContext extends IDisposable
 {
-	inputEventTrackers: IInputEventTracker[];
+    inputEventTrackers: IInputEventTracker[];
 
-	getWindowServices(): IInternalWindowServices;
+    getWindowServices(): IInternalWindowServices;
 
-	getWindowParser(): IWindowParser;
+    getWindowParser(): IWindowParser;
 
-	getWindowFactory(): IWindowFactory;
+    getWindowFactory(): IWindowFactory;
 
-	getWidgetFactory(): IWidgetFactory | null;
+    getWidgetFactory(): IWidgetFactory | null;
 
-	getDesktopWindow(): IWindow | null;
+    getDesktopWindow(): IWindow | null;
 
-	getResourceManager(): IResourceManager | null;
+    getResourceManager(): IResourceManager | null;
 
-	setLocalizationManager(localization: ICoreLocalizationManager | null): void;
+    setLocalizationManager(localization: ICoreLocalizationManager | null): void;
 
-	registerLocalizationListener(key: string, window: IWindow): void;
+    registerLocalizationListener(key: string, window: IWindow): void;
 
-	removeLocalizationListener(key: string, window: IWindow): void;
+    removeLocalizationListener(key: string, window: IWindow): void;
 
-	findWindowByName(name: string): IWindow | null;
+    findWindowByName(name: string): IWindow | null;
 
-	findWindowByTag(tag: string): IWindow | null;
+    findWindowByTag(tag: string): IWindow | null;
 
-	groupChildrenWithTag(tag: string, result: IWindow[], depth?: number): number;
+    groupChildrenWithTag(tag: string, result: IWindow[], depth?: number): number;
 
-	create(
-		name: string,
-		caption: string,
-		type: number,
-		style: number,
-		param: number,
-		rect: { x: number; y: number; width: number; height: number } | null,
-		procedure: ((event: unknown, window: IWindow) => void) | null,
-		parent: IWindow | null,
-		id: number,
-		tags?: string[] | null,
-		dynamicStyle?: string,
-		properties?: unknown[] | null
-	): IWindow;
+    create(
+        name: string,
+        caption: string,
+        type: number,
+        style: number,
+        param: number,
+        rect: { x: number; y: number; width: number; height: number } | null,
+        procedure: ((event: unknown, window: IWindow) => void) | null,
+        parent: IWindow | null,
+        id: number,
+        tags?: string[] | null,
+        dynamicStyle?: string,
+        properties?: unknown[] | null
+    ): IWindow;
 
-	update(deltaTime: number): void;
+    update(deltaTime: number): void;
 
-	render(deltaTime: number): void;
+    render(deltaTime: number): void;
 
-	destroy(window: IWindow): boolean;
+    destroy(window: IWindow): boolean;
 
-	invalidate(window: IWindow, rect: {
-		x: number;
-		y: number;
-		width: number;
-		height: number
-	} | null, flags: number): void;
+    invalidate(window: IWindow, rect: {
+        x: number;
+        y: number;
+        width: number;
+        height: number
+    } | null, flags: number): void;
 
-	getLastError(): Error | null;
+    getLastError(): Error | null;
 
-	getLastErrorCode(): number;
+    getLastErrorCode(): number;
 
-	handleError(code: number, error: Error): void;
+    handleError(code: number, error: Error): void;
 
-	flushError(): void;
+    flushError(): void;
 
-	addMouseEventTracker(tracker: IInputEventTracker): void;
+    addMouseEventTracker(tracker: IInputEventTracker): void;
 
-	removeMouseEventTracker(tracker: IInputEventTracker): void;
+    removeMouseEventTracker(tracker: IInputEventTracker): void;
 }

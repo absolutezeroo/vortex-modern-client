@@ -7,8 +7,8 @@ import {FurniListMessageParser} from '@habbo/communication/messages/parser/inven
  */
 export class FurniListMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FurniListMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FurniListMessageParser);
+    }
 }

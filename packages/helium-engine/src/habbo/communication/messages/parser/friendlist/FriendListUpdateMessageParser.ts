@@ -11,75 +11,75 @@ import {FriendData} from './FriendData';
  */
 export class FriendListUpdateMessageParser implements IMessageParser
 {
-	private _categories: FriendCategoryData[] = [];
+    private _categories: FriendCategoryData[] = [];
 
-	get categories(): FriendCategoryData[]
-	{
-		return this._categories;
-	}
+    get categories(): FriendCategoryData[]
+    {
+        return this._categories;
+    }
 
-	private _removedFriendIds: number[] = [];
+    private _removedFriendIds: number[] = [];
 
-	get removedFriendIds(): number[]
-	{
-		return this._removedFriendIds;
-	}
+    get removedFriendIds(): number[]
+    {
+        return this._removedFriendIds;
+    }
 
-	private _addedFriends: FriendData[] = [];
+    private _addedFriends: FriendData[] = [];
 
-	get addedFriends(): FriendData[]
-	{
-		return this._addedFriends;
-	}
+    get addedFriends(): FriendData[]
+    {
+        return this._addedFriends;
+    }
 
-	private _updatedFriends: FriendData[] = [];
+    private _updatedFriends: FriendData[] = [];
 
-	get updatedFriends(): FriendData[]
-	{
-		return this._updatedFriends;
-	}
+    get updatedFriends(): FriendData[]
+    {
+        return this._updatedFriends;
+    }
 
-	flush(): boolean
-	{
-		this._categories = [];
-		this._removedFriendIds = [];
-		this._addedFriends = [];
-		this._updatedFriends = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._categories = [];
+        this._removedFriendIds = [];
+        this._addedFriends = [];
+        this._updatedFriends = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		const numCategories = wrapper.readInt();
+        const numCategories = wrapper.readInt();
 
-		for (let i = 0; i < numCategories; i++)
-		{
-			this._categories.push(new FriendCategoryData(wrapper));
-		}
+        for(let i = 0; i < numCategories; i++)
+        {
+            this._categories.push(new FriendCategoryData(wrapper));
+        }
 
-		const numFriends = wrapper.readInt();
+        const numFriends = wrapper.readInt();
 
-		for (let j = 0; j < numFriends; j++)
-		{
-			const actionType = wrapper.readInt();
+        for(let j = 0; j < numFriends; j++)
+        {
+            const actionType = wrapper.readInt();
 
-			if (actionType === -1)
-			{
-				const removedFriendId = wrapper.readInt();
-				this._removedFriendIds.push(removedFriendId);
-			}
-			else if (actionType === 0)
-			{
-				this._updatedFriends.push(new FriendData(wrapper));
-			}
-			else if (actionType === 1)
-			{
-				this._addedFriends.push(new FriendData(wrapper));
-			}
-		}
+            if(actionType === -1)
+            {
+                const removedFriendId = wrapper.readInt();
+                this._removedFriendIds.push(removedFriendId);
+            }
+            else if(actionType === 0)
+            {
+                this._updatedFriends.push(new FriendData(wrapper));
+            }
+            else if(actionType === 1)
+            {
+                this._addedFriends.push(new FriendData(wrapper));
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

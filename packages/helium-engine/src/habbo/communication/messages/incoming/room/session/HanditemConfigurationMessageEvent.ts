@@ -9,8 +9,8 @@ import {HanditemConfigurationMessageParser} from '@habbo/communication/messages/
  */
 export class HanditemConfigurationMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HanditemConfigurationMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HanditemConfigurationMessageParser);
+    }
 }

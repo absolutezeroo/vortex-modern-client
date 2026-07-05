@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetRoomSessionTagsMessageComposer extends MessageComposer<ConstructorParameters<typeof SetRoomSessionTagsMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof SetRoomSessionTagsMessageComposer>;
+    private _data: ConstructorParameters<typeof SetRoomSessionTagsMessageComposer>;
 
-	constructor(tag1: string, tag2: string)
-	{
-		super();
+    constructor(tag1: string, tag2: string)
+    {
+        super();
 
-		this._data = [tag1, tag2];
-	}
+        this._data = [tag1, tag2];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

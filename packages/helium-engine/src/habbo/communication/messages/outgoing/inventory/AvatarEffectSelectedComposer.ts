@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class AvatarEffectSelectedComposer extends MessageComposer<ConstructorParameters<typeof AvatarEffectSelectedComposer>>
 {
-	private _data: ConstructorParameters<typeof AvatarEffectSelectedComposer>;
+    private _data: ConstructorParameters<typeof AvatarEffectSelectedComposer>;
 
-	constructor(effectType: number)
-	{
-		super();
+    constructor(effectType: number)
+    {
+        super();
 
-		this._data = [effectType];
-	}
+        this._data = [effectType];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

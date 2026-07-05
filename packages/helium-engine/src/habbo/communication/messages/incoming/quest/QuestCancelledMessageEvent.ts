@@ -9,8 +9,8 @@ import {QuestCancelledMessageEventParser} from '../../parser/quest/QuestCancelle
  */
 export class QuestCancelledMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, QuestCancelledMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, QuestCancelledMessageEventParser);
+    }
 }

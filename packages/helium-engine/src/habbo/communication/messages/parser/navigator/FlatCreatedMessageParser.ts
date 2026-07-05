@@ -8,31 +8,31 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FlatCreatedMessageParser implements IMessageParser
 {
-	private _flatId: number = 0;
+    private _flatId: number = 0;
 
-	get flatId(): number
-	{
-		return this._flatId;
-	}
+    get flatId(): number
+    {
+        return this._flatId;
+    }
 
-	private _flatName: string = '';
+    private _flatName: string = '';
 
-	get flatName(): string
-	{
-		return this._flatName;
-	}
+    get flatName(): string
+    {
+        return this._flatName;
+    }
 
-	flush(): boolean
-	{
-		this._flatId = 0;
-		this._flatName = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._flatId = 0;
+        this._flatName = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._flatId = wrapper.readInt();
-		this._flatName = wrapper.readString();
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._flatId = wrapper.readInt();
+        this._flatName = wrapper.readString();
+        return true;
+    }
 }

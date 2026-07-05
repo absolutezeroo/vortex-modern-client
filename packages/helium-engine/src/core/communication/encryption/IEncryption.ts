@@ -1,4 +1,4 @@
-import {ByteArray} from '../util/ByteArray';
+import type {ByteArray} from '../util/ByteArray';
 
 /**
  * Interface for encryption/decryption
@@ -6,30 +6,30 @@ import {ByteArray} from '../util/ByteArray';
  */
 export interface IEncryption
 {
-	/**
+    /**
 	 * Initialize the cipher with a key
 	 */
-	init(key: ByteArray): void;
+    init(key: ByteArray): void;
 
-	/**
+    /**
 	 * Encrypt data in-place
 	 */
-	encipher(data: ByteArray): void;
+    encipher(data: ByteArray): void;
 
-	/**
+    /**
 	 * Decrypt data in-place
 	 */
-	decipher(data: ByteArray): void;
+    decipher(data: ByteArray): void;
 
-	/**
+    /**
 	 * Mark/save current cipher state
 	 * Used when reading incomplete messages
 	 */
-	mark(): void;
+    mark(): void;
 
-	/**
+    /**
 	 * Reset to marked state
 	 * Used to restore state when message was incomplete
 	 */
-	reset(): void;
+    reset(): void;
 }

@@ -14,18 +14,18 @@ import {RoomRenderer} from './RoomRenderer';
 
 export class RoomRendererFactory extends Component implements IRoomRendererFactory
 {
-	constructor(context: IContext)
-	{
-		super(context);
-	}
+    constructor(context: IContext)
+    {
+        super(context);
+    }
 
-	/**
+    /**
 	 * Create a new room renderer.
 	 *
 	 * @see AS3 class_2015 lines 16-19
 	 */
-	createRenderer(): IRoomRenderer
-	{
-		return new RoomRenderer();
-	}
+    createRenderer(): IRoomRenderer
+    {
+        return new RoomRenderer();
+    }
 }

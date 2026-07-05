@@ -10,32 +10,32 @@ import type {IStuffData} from '../object/data/IStuffData';
 
 export class RoomObjectDataUpdateMessage extends RoomObjectUpdateMessage
 {
-	constructor(state: number, data: IStuffData | null, extra: number = NaN)
-	{
-		super(null, null);
-		this._state = state;
-		this._data = data;
-		this._extra = extra;
-	}
+    constructor(state: number, data: IStuffData | null, extra: number = NaN)
+    {
+        super(null, null);
+        this._state = state;
+        this._data = data;
+        this._extra = extra;
+    }
 
-	private _state: number;
+    private _state: number;
 
-	get state(): number
-	{
-		return this._state;
-	}
+    get state(): number
+    {
+        return this._state;
+    }
 
-	private _data: IStuffData | null;
+    private _data: IStuffData | null;
 
-	get data(): IStuffData | null
-	{
-		return this._data;
-	}
+    get data(): IStuffData | null
+    {
+        return this._data;
+    }
 
-	private _extra: number;
+    private _extra: number;
 
-	get extra(): number
-	{
-		return this._extra;
-	}
+    get extra(): number
+    {
+        return this._extra;
+    }
 }

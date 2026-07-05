@@ -7,8 +7,8 @@ import {Exception} from './Exception';
  */
 export class ComponentDisposedException extends Exception
 {
-	constructor(message: string)
-	{
-		super(message);
-	}
+    constructor(message: string)
+    {
+        super(message);
+    }
 }

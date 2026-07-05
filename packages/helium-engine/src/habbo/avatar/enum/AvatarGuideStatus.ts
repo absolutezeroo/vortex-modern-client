@@ -5,7 +5,7 @@
  */
 export class AvatarGuideStatus
 {
-	public static readonly NONE: number = 0;
-	public static readonly GUIDE: number = 1;
-	public static readonly REQUESTER: number = 2;
+    public static readonly NONE: number = 0;
+    public static readonly GUIDE: number = 1;
+    public static readonly REQUESTER: number = 2;
 }

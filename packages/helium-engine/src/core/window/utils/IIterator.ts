@@ -7,9 +7,9 @@ import type {IWindow} from '../IWindow';
  */
 export interface IIterator
 {
-	next(): IWindow | null;
+    next(): IWindow | null;
 
-	reset(): void;
+    reset(): void;
 
-	count(): number;
+    count(): number;
 }

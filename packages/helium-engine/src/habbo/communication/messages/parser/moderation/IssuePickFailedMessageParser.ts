@@ -10,59 +10,59 @@ import {IssueInfoData} from './IssueInfoData';
  */
 export class IssuePickFailedMessageParser implements IMessageParser
 {
-	private _issues: IssueInfoData[] = [];
+    private _issues: IssueInfoData[] = [];
 
-	get issues(): IssueInfoData[]
-	{
-		return this._issues;
-	}
+    get issues(): IssueInfoData[]
+    {
+        return this._issues;
+    }
 
-	private _retryEnabled: boolean = false;
+    private _retryEnabled: boolean = false;
 
-	get retryEnabled(): boolean
-	{
-		return this._retryEnabled;
-	}
+    get retryEnabled(): boolean
+    {
+        return this._retryEnabled;
+    }
 
-	private _retryCount: number = 0;
+    private _retryCount: number = 0;
 
-	get retryCount(): number
-	{
-		return this._retryCount;
-	}
+    get retryCount(): number
+    {
+        return this._retryCount;
+    }
 
-	flush(): boolean
-	{
-		this._issues = [];
-		this._retryEnabled = false;
-		this._retryCount = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._issues = [];
+        this._retryEnabled = false;
+        this._retryCount = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._issues = [];
+        this._issues = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const issueId = wrapper.readInt();
-			const pickerUserId = wrapper.readInt();
-			const pickerUserName = wrapper.readString();
+        for(let i = 0; i < count; i++)
+        {
+            const issueId = wrapper.readInt();
+            const pickerUserId = wrapper.readInt();
+            const pickerUserName = wrapper.readString();
 
-			const issueData = new IssueInfoData(
-				issueId, 0, 0, 0, 0, 0, 0, 0, '', 0, '', pickerUserId, pickerUserName, '', 0, []
-			);
+            const issueData = new IssueInfoData(
+                issueId, 0, 0, 0, 0, 0, 0, 0, '', 0, '', pickerUserId, pickerUserName, '', 0, []
+            );
 
-			this._issues.push(issueData);
-		}
+            this._issues.push(issueData);
+        }
 
-		this._retryEnabled = wrapper.readBoolean();
-		this._retryCount = wrapper.readInt();
+        this._retryEnabled = wrapper.readBoolean();
+        this._retryCount = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

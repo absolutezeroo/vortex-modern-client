@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class ModToolPreferencesComposer extends MessageComposer<ConstructorParameters<typeof ModToolPreferencesComposer>>
 {
-	private _data: ConstructorParameters<typeof ModToolPreferencesComposer>;
+    private _data: ConstructorParameters<typeof ModToolPreferencesComposer>;
 
-	constructor(x: number, y: number, width: number, height: number)
-	{
-		super();
-		this._data = [x, y, width, height];
-	}
+    constructor(x: number, y: number, width: number, height: number)
+    {
+        super();
+        this._data = [x, y, width, height];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

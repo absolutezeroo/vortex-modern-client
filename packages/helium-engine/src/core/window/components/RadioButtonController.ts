@@ -2,7 +2,7 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IRadioButtonWindow} from './IRadioButtonWindow';
 import type {ITextWindow} from './ITextWindow';
-import {WindowEvent} from '../events/WindowEvent';
+import type {WindowEvent} from '../events/WindowEvent';
 import {SelectableController} from './SelectableController';
 
 /**
@@ -16,55 +16,55 @@ import {SelectableController} from './SelectableController';
  */
 export class RadioButtonController extends SelectableController implements IRadioButtonWindow
 {
-	protected static readonly TEXT_FIELD_NAME: string = '_CAPTION_TEXT';
+    protected static readonly TEXT_FIELD_NAME: string = '_CAPTION_TEXT';
 
-	constructor(
-		name: string,
-		type: number,
-		style: number,
-		param: number,
-		context: IWindowContext,
-		rect: { x: number; y: number; width: number; height: number },
-		parent: IWindow | null = null,
-		procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
-		tags: string[] | null = null,
-		properties: unknown[] | null = null,
-		id: number = 0
-	)
-	{
-		param = param | 0x01;
-		super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
-	}
+    constructor(
+        name: string,
+        type: number,
+        style: number,
+        param: number,
+        context: IWindowContext,
+        rect: { x: number; y: number; width: number; height: number },
+        parent: IWindow | null = null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
+        tags: string[] | null = null,
+        properties: unknown[] | null = null,
+        id: number = 0
+    )
+    {
+        param = param | 0x01;
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
 
-	public override get caption(): string
-	{
-		return super.caption;
-	}
+    public override get caption(): string
+    {
+        return super.caption;
+    }
 
-	public override set caption(value: string)
-	{
-		super.caption = value;
+    public override set caption(value: string)
+    {
+        super.caption = value;
 
-		const textChild = this.getChildByName('_CAPTION_TEXT');
+        const textChild = this.getChildByName('_CAPTION_TEXT');
 
-		if (textChild !== null)
-		{
-			textChild.caption = this.caption;
-		}
-	}
+        if(textChild !== null)
+        {
+            textChild.caption = this.caption;
+        }
+    }
 
-	/**
+    /**
 	 * Syncs the _CAPTION_TEXT child width when the rectangle changes.
 	 */
-	public override setRectangle(x: number, y: number, width: number, height: number): void
-	{
-		super.setRectangle(x, y, width, height);
+    public override setRectangle(x: number, y: number, width: number, height: number): void
+    {
+        super.setRectangle(x, y, width, height);
 
-		const textChild = this.getChildByName('_CAPTION_TEXT') as ITextWindow | null;
+        const textChild = this.getChildByName('_CAPTION_TEXT') as ITextWindow | null;
 
-		if (textChild !== null)
-		{
-			textChild.width = width;
-		}
-	}
+        if(textChild !== null)
+        {
+            textChild.width = width;
+        }
+    }
 }

@@ -10,8 +10,8 @@ import {PingMessageParser} from '../../parser/handshake/PingMessageParser';
  */
 export class PingMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, PingMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PingMessageParser);
+    }
 }

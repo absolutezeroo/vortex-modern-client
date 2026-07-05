@@ -2,17 +2,17 @@ import type {HabboCommunicationEventType} from './enum/HabboCommunicationEvent';
 
 export interface IConnectionActions
 {
-	setConnecting(): void;
+    setConnecting(): void;
 
-	setConnected(): void;
+    setConnected(): void;
 
-	setAuthenticated(): void;
+    setAuthenticated(): void;
 
-	setDisconnected(): void;
+    setDisconnected(): void;
 
-	setError(message: string): void;
+    setError(message: string): void;
 
-	setLoginStep(step: HabboCommunicationEventType): void;
+    setLoginStep(step: HabboCommunicationEventType): void;
 
-	reset(): void;
+    reset(): void;
 }

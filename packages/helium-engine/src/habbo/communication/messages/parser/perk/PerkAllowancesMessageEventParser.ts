@@ -9,59 +9,59 @@ import {PerkAllowanceData} from './PerkAllowanceData';
  */
 export class PerkAllowancesMessageEventParser implements IMessageParser
 {
-	private _perks: PerkAllowanceData[] = [];
+    private _perks: PerkAllowanceData[] = [];
 
-	flush(): boolean
-	{
-		this._perks.length = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._perks.length = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper)
-		{
-			return false;
-		}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper)
+        {
+            return false;
+        }
 
-		this._perks.length = 0;
+        this._perks.length = 0;
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			const perk = new PerkAllowanceData();
-			perk.code = wrapper.readString();
-			perk.errorMessage = wrapper.readString();
-			perk.isAllowed = wrapper.readBoolean();
-			this._perks.push(perk);
-		}
+        for(let i = 0; i < count; i++)
+        {
+            const perk = new PerkAllowanceData();
+            perk.code = wrapper.readString();
+            perk.errorMessage = wrapper.readString();
+            perk.isAllowed = wrapper.readBoolean();
+            this._perks.push(perk);
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	getPerks(): PerkAllowanceData[]
-	{
-		return this._perks;
-	}
+    getPerks(): PerkAllowanceData[]
+    {
+        return this._perks;
+    }
 
-	isPerkAllowed(code: string): boolean
-	{
-		const perk = this.getPerk(code);
+    isPerkAllowed(code: string): boolean
+    {
+        const perk = this.getPerk(code);
 
-		return perk !== null && perk.isAllowed;
-	}
+        return perk !== null && perk.isAllowed;
+    }
 
-	getPerk(code: string): PerkAllowanceData | null
-	{
-		for (const perk of this._perks)
-		{
-			if (perk.code === code)
-			{
-				return perk;
-			}
-		}
+    getPerk(code: string): PerkAllowanceData | null
+    {
+        for(const perk of this._perks)
+        {
+            if(perk.code === code)
+            {
+                return perk;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

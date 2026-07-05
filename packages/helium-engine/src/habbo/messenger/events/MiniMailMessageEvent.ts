@@ -6,18 +6,18 @@
  */
 export class MiniMailMessageEvent
 {
-	public static readonly NEW: string = 'MMME_new';
-	public static readonly UNREAD: string = 'MMME_unread';
+    public static readonly NEW: string = 'MMME_new';
+    public static readonly UNREAD: string = 'MMME_unread';
 
-	constructor(type: string, unreadCount: number = -1)
-	{
-		this._unreadCount = unreadCount;
-	}
+    constructor(type: string, unreadCount: number = -1)
+    {
+        this._unreadCount = unreadCount;
+    }
 
-	private _unreadCount: number;
+    private _unreadCount: number;
 
-	get unreadCount(): number
-	{
-		return this._unreadCount;
-	}
+    get unreadCount(): number
+    {
+        return this._unreadCount;
+    }
 }

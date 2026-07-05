@@ -19,57 +19,57 @@ const log = Logger.getLogger('RoomWidgetFactory');
 
 export class RoomWidgetFactory implements IRoomWidgetFactory
 {
-	private _roomUI: RoomUI;
-	private _disposed: boolean = false;
-	// AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::var_3743 (chat widget id counter)
-	private _chatWidgetIdCounter: number = 0;
+    private _roomUI: RoomUI;
+    private _disposed: boolean = false;
+    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::var_3743 (chat widget id counter)
+    private _chatWidgetIdCounter: number = 0;
 
-	constructor(roomUI: RoomUI)
-	{
-		this._roomUI = roomUI;
-	}
+    constructor(roomUI: RoomUI)
+    {
+        this._roomUI = roomUI;
+    }
 
-	// AS3: sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as::createWidget()
-	public createWidget(type: string, handler: IRoomWidgetHandler): unknown | null
-	{
-		if(!this._roomUI || !this._roomUI.windowManager) return null;
+    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as::createWidget()
+    public createWidget(type: string, handler: IRoomWidgetHandler): unknown | null
+    {
+        if(!this._roomUI || !this._roomUI.windowManager) return null;
 
-		switch(type)
-		{
-			case 'RWE_INFOSTAND':
-				return new InfoStandWidget(
-					handler, this._roomUI.windowManager, this._roomUI.assets,
-					this._roomUI.localization, this._roomUI.config, this._roomUI.catalog
-				);
-			case 'RWE_ROOM_TOOLS':
-				return new RoomToolsWidget(handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI);
-			case 'RWE_CHAT_INPUT_WIDGET':
-				return new RoomChatInputWidget(
-					handler, this._roomUI.windowManager, this._roomUI.assets,
-					this._roomUI.localization, this._roomUI, this._roomUI.desktop
-				);
-			case 'RWE_CHAT_WIDGET':
-				return new RoomChatWidget(
-					handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization,
-					this._roomUI.config!, this._chatWidgetIdCounter++, this._roomUI
-				);
-			default:
-				log.debug(`Widget creation requested: ${type} (stub — returning null)`);
+        switch(type)
+        {
+            case 'RWE_INFOSTAND':
+                return new InfoStandWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.config, this._roomUI.catalog
+                );
+            case 'RWE_ROOM_TOOLS':
+                return new RoomToolsWidget(handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI);
+            case 'RWE_CHAT_INPUT_WIDGET':
+                return new RoomChatInputWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI, this._roomUI.desktop
+                );
+            case 'RWE_CHAT_WIDGET':
+                return new RoomChatWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization,
+                    this._roomUI.config!, this._chatWidgetIdCounter++, this._roomUI
+                );
+            default:
+                log.debug(`Widget creation requested: ${type} (stub — returning null)`);
 
-				return null;
-		}
-	}
+                return null;
+        }
+    }
 
-	public get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	public dispose(): void
-	{
-		if(this._disposed) return;
+    public dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
-		this._roomUI = null!;
-	}
+        this._disposed = true;
+        this._roomUI = null!;
+    }
 }

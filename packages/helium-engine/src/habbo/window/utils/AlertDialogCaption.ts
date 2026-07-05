@@ -10,9 +10,9 @@
  */
 export interface ICaption
 {
-	text: string;
-	toolTip: string;
-	visible: boolean;
+    text: string;
+    toolTip: string;
+    visible: boolean;
 }
 
 /**
@@ -26,46 +26,46 @@ export interface ICaption
  */
 export class AlertDialogCaption implements ICaption
 {
-	constructor(text: string, toolTip: string, visible: boolean)
-	{
-		this._text = text;
-		this._toolTip = toolTip;
-		this._visible = visible;
-	}
+    constructor(text: string, toolTip: string, visible: boolean)
+    {
+        this._text = text;
+        this._toolTip = toolTip;
+        this._visible = visible;
+    }
 
-	private _text: string;
+    private _text: string;
 
-	public get text(): string
-	{
-		return this._text;
-	}
+    public get text(): string
+    {
+        return this._text;
+    }
 
-	public set text(value: string)
-	{
-		this._text = value;
-	}
+    public set text(value: string)
+    {
+        this._text = value;
+    }
 
-	private _toolTip: string;
+    private _toolTip: string;
 
-	public get toolTip(): string
-	{
-		return this._toolTip;
-	}
+    public get toolTip(): string
+    {
+        return this._toolTip;
+    }
 
-	public set toolTip(value: string)
-	{
-		this._toolTip = value;
-	}
+    public set toolTip(value: string)
+    {
+        this._toolTip = value;
+    }
 
-	private _visible: boolean;
+    private _visible: boolean;
 
-	public get visible(): boolean
-	{
-		return this._visible;
-	}
+    public get visible(): boolean
+    {
+        return this._visible;
+    }
 
-	public set visible(value: boolean)
-	{
-		this._visible = value;
-	}
+    public set visible(value: boolean)
+    {
+        this._visible = value;
+    }
 }

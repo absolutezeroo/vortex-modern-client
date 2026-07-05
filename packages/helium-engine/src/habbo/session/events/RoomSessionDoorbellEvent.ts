@@ -8,20 +8,20 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionDoorbellEvent extends RoomSessionEvent
 {
-	public static readonly RSDE_DOORBELL = 'RSDE_DOORBELL';
-	public static readonly RSDE_REJECTED = 'RSDE_REJECTED';
-	public static readonly RSDE_ACCEPTED = 'RSDE_ACCEPTED';
+    public static readonly RSDE_DOORBELL = 'RSDE_DOORBELL';
+    public static readonly RSDE_REJECTED = 'RSDE_REJECTED';
+    public static readonly RSDE_ACCEPTED = 'RSDE_ACCEPTED';
 
-	constructor(type: string, session: IRoomSession, userName: string, openLandingPage: boolean = false)
-	{
-		super(type, session, openLandingPage);
-		this._userName = userName;
-	}
+    constructor(type: string, session: IRoomSession, userName: string, openLandingPage: boolean = false)
+    {
+        super(type, session, openLandingPage);
+        this._userName = userName;
+    }
 
-	private _userName: string;
+    private _userName: string;
 
-	get userName(): string
-	{
-		return this._userName;
-	}
+    get userName(): string
+    {
+        return this._userName;
+    }
 }

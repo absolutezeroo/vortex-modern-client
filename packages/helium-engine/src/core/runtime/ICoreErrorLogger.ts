@@ -7,13 +7,13 @@
  */
 export interface ICoreErrorLogger
 {
-	/**
+    /**
 	 * Log a fatal crash
 	 */
-	logCrash(message: string): void;
+    logCrash(message: string): void;
 
-	/**
+    /**
 	 * Log a non-fatal error
 	 */
-	logError(message: string): void;
+    logError(message: string): void;
 }

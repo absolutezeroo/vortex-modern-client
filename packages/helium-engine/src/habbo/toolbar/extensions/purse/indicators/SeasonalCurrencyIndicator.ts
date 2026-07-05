@@ -2,7 +2,7 @@ import type {HabboToolbar} from '../../../HabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
-import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import {PurseEvent} from '@habbo/catalog/purse/PurseEvent';
 import {ToolbarDisplayExtensionIds} from '../../../ToolbarDisplayExtensionIds';

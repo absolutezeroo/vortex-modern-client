@@ -9,49 +9,49 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class UserRightsMessageParser implements IMessageParser
 {
-	private _clubLevel: number = 0;
+    private _clubLevel: number = 0;
 
-	get clubLevel(): number
-	{
-		return this._clubLevel;
-	}
+    get clubLevel(): number
+    {
+        return this._clubLevel;
+    }
 
-	private _securityLevel: number = 0;
+    private _securityLevel: number = 0;
 
-	get securityLevel(): number
-	{
-		return this._securityLevel;
-	}
+    get securityLevel(): number
+    {
+        return this._securityLevel;
+    }
 
-	private _isAmbassador: boolean = false;
+    private _isAmbassador: boolean = false;
 
-	get isAmbassador(): boolean
-	{
-		return this._isAmbassador;
-	}
+    get isAmbassador(): boolean
+    {
+        return this._isAmbassador;
+    }
 
-	flush(): boolean
-	{
-		this._clubLevel = 0;
-		this._securityLevel = 0;
-		this._isAmbassador = false;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._clubLevel = 0;
+        this._securityLevel = 0;
+        this._isAmbassador = false;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (wrapper.bytesAvailable >= 4)
-		{
-			this._clubLevel = wrapper.readInt();
-		}
-		if (wrapper.bytesAvailable >= 4)
-		{
-			this._securityLevel = wrapper.readInt();
-		}
-		if (wrapper.bytesAvailable >= 1)
-		{
-			this._isAmbassador = wrapper.readBoolean();
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(wrapper.bytesAvailable >= 4)
+        {
+            this._clubLevel = wrapper.readInt();
+        }
+        if(wrapper.bytesAvailable >= 4)
+        {
+            this._securityLevel = wrapper.readInt();
+        }
+        if(wrapper.bytesAvailable >= 1)
+        {
+            this._isAmbassador = wrapper.readBoolean();
+        }
+        return true;
+    }
 }

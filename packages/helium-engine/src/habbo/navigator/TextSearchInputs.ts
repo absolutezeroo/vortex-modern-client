@@ -17,142 +17,142 @@ import {Util} from './Util';
  */
 export class TextSearchInputs
 {
-	private _navigator: IHabboTransitionalNavigator | null;
-	private _dropdown: IDropMenuWindow | null = null;
+    private _navigator: IHabboTransitionalNavigator | null;
+    private _dropdown: IDropMenuWindow | null = null;
 
-	constructor(navigator: IHabboTransitionalNavigator, container: IWindowContainer)
-	{
-		this._navigator = navigator;
+    constructor(navigator: IHabboTransitionalNavigator, container: IWindowContainer)
+    {
+        this._navigator = navigator;
 
-		const searchField = container.findChildByName('search_str') as ITextFieldWindow | null;
+        const searchField = container.findChildByName('search_str') as ITextFieldWindow | null;
 
-		if (searchField)
-		{
-			this._searchStr = new TextFieldManager(
-				navigator, searchField, 35,
-				() => this.searchRooms(),
-				navigator.getText('navigator.search.info')
-			);
-		}
+        if(searchField)
+        {
+            this._searchStr = new TextFieldManager(
+                navigator, searchField, 35,
+                () => this.searchRooms(),
+                navigator.getText('navigator.search.info')
+            );
+        }
 
-		Util.setProc(container, 'search_but', this.onSearchButtonClick);
+        Util.setProc(container, 'search_but', this.onSearchButtonClick);
 
-		this._dropdown = container.findChildByName('search_type') as IDropMenuWindow | null;
+        this._dropdown = container.findChildByName('search_type') as IDropMenuWindow | null;
 
-		if (this._dropdown)
-		{
-			const items: string[] = [];
+        if(this._dropdown)
+        {
+            const items: string[] = [];
 
-			items.push(navigator.getText('${navigator.navisel.bydefault}'));
-			items.push(navigator.getText('${navigator.navisel.byowner}'));
-			items.push(navigator.getText('${navigator.navisel.byroomname}'));
-			items.push(navigator.getText('${navigator.navisel.bytag}'));
-			items.push(navigator.getText('${navigator.navisel.bygroupname}'));
+            items.push(navigator.getText('${navigator.navisel.bydefault}'));
+            items.push(navigator.getText('${navigator.navisel.byowner}'));
+            items.push(navigator.getText('${navigator.navisel.byroomname}'));
+            items.push(navigator.getText('${navigator.navisel.bytag}'));
+            items.push(navigator.getText('${navigator.navisel.bygroupname}'));
 
-			(this._dropdown as any).populate(items);
-			(this._dropdown as any).selection = 0;
-		}
-	}
+            (this._dropdown as any).populate(items);
+            (this._dropdown as any).selection = 0;
+        }
+    }
 
-	private _searchStr: TextFieldManager | null = null;
+    private _searchStr: TextFieldManager | null = null;
 
-	get searchStr(): TextFieldManager | null
-	{
-		return this._searchStr;
-	}
+    get searchStr(): TextFieldManager | null
+    {
+        return this._searchStr;
+    }
 
-	/**
+    /**
 	 * Sets the search text and selects the corresponding dropdown type.
 	 *
 	 * @param text - Search text
 	 * @param searchType - Legacy search type code
 	 */
-	setText(text: string, searchType: number): void
-	{
-		if (this._searchStr)
-		{
-			this._searchStr.setText(text);
-		}
+    setText(text: string, searchType: number): void
+    {
+        if(this._searchStr)
+        {
+            this._searchStr.setText(text);
+        }
 
-		if (this._dropdown)
-		{
-			switch (searchType - 8)
-			{
-				case 0:
-					(this._dropdown as any).selection = 0;
-					break;
-				case 1:
-					(this._dropdown as any).selection = 3;
-					break;
-				case 2:
-					(this._dropdown as any).selection = 2;
-					break;
-				case 5:
-					(this._dropdown as any).selection = 4;
-					break;
-				case 12:
-					(this._dropdown as any).selection = 1;
-					break;
-			}
-		}
-	}
+        if(this._dropdown)
+        {
+            switch(searchType - 8)
+            {
+                case 0:
+                    (this._dropdown as any).selection = 0;
+                    break;
+                case 1:
+                    (this._dropdown as any).selection = 3;
+                    break;
+                case 2:
+                    (this._dropdown as any).selection = 2;
+                    break;
+                case 5:
+                    (this._dropdown as any).selection = 4;
+                    break;
+                case 12:
+                    (this._dropdown as any).selection = 1;
+                    break;
+            }
+        }
+    }
 
-	dispose(): void
-	{
-		if (this._searchStr)
-		{
-			this._searchStr.dispose();
-			this._searchStr = null;
-		}
+    dispose(): void
+    {
+        if(this._searchStr)
+        {
+            this._searchStr.dispose();
+            this._searchStr = null;
+        }
 
-		this._navigator = null;
-	}
+        this._navigator = null;
+    }
 
-	private onSearchButtonClick = (event: WindowEvent, _window: IWindow): void =>
-	{
-		if (event.type !== 'WME_CLICK') return;
+    private onSearchButtonClick = (event: WindowEvent, _window: IWindow): void =>
+    {
+        if(event.type !== 'WME_CLICK') return;
 
-		this.searchRooms();
-	};
+        this.searchRooms();
+    };
 
-	private searchRooms(): void
-	{
-		if (!this._searchStr || !this._navigator) return;
+    private searchRooms(): void
+    {
+        if(!this._searchStr || !this._navigator) return;
 
-		const text = this._searchStr.getText();
+        const text = this._searchStr.getText();
 
-		if (text === '') return;
+        if(text === '') return;
 
-		const mainViewCtrl = this._navigator.mainViewCtrl;
+        const mainViewCtrl = this._navigator.mainViewCtrl;
 
-		if (this._dropdown && mainViewCtrl)
-		{
-			const selection = (this._dropdown as any).selection as number;
+        if(this._dropdown && mainViewCtrl)
+        {
+            const selection = (this._dropdown as any).selection as number;
 
-			switch (selection)
-			{
-				case 0:
-					mainViewCtrl.startSearch(5, 8, text);
-					break;
-				case 1:
-					mainViewCtrl.startSearch(5, 20, text);
-					break;
-				case 2:
-					mainViewCtrl.startSearch(5, 10, text);
-					break;
-				case 3:
-					mainViewCtrl.startSearch(5, 9, text);
-					break;
-				case 4:
-					mainViewCtrl.startSearch(5, 13, text);
-					break;
-			}
-		}
-		else if (mainViewCtrl)
-		{
-			mainViewCtrl.startSearch(5, 8, text);
-		}
+            switch(selection)
+            {
+                case 0:
+                    mainViewCtrl.startSearch(5, 8, text);
+                    break;
+                case 1:
+                    mainViewCtrl.startSearch(5, 20, text);
+                    break;
+                case 2:
+                    mainViewCtrl.startSearch(5, 10, text);
+                    break;
+                case 3:
+                    mainViewCtrl.startSearch(5, 9, text);
+                    break;
+                case 4:
+                    mainViewCtrl.startSearch(5, 13, text);
+                    break;
+            }
+        }
+        else if(mainViewCtrl)
+        {
+            mainViewCtrl.startSearch(5, 8, text);
+        }
 
-		this._navigator.trackNavigationDataPoint('Search', 'search', text);
-	}
+        this._navigator.trackNavigationDataPoint('Search', 'search', text);
+    }
 }

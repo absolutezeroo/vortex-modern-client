@@ -10,64 +10,64 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from '../AvatarXmlUtil
  */
 export class Palette implements IPalette
 {
-	// AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::Palette()
-	constructor(data: any)
-	{
-		const element = getXmlRoot(data);
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::Palette()
+    constructor(data: any)
+    {
+        const element = getXmlRoot(data);
 
-		this._id = parseInt(element ? getXmlAttribute(element, 'id') : data.id) || 0;
-		this._colors = new Map();
-		this.append(data);
-	}
+        this._id = parseInt(element ? getXmlAttribute(element, 'id') : data.id) || 0;
+        this._colors = new Map();
+        this.append(data);
+    }
 
-	private _id: number;
+    private _id: number;
 
-	// AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get id()
-	public get id(): number
-	{
-		return this._id;
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get id()
+    public get id(): number
+    {
+        return this._id;
+    }
 
-	private _colors: Map<number, IPartColor>;
+    private _colors: Map<number, IPartColor>;
 
-	// AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get colors()
-	public get colors(): Map<number, IPartColor>
-	{
-		return this._colors;
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::get colors()
+    public get colors(): Map<number, IPartColor>
+    {
+        return this._colors;
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::append()
-	public append(data: any): void
-	{
-		const element = getXmlRoot(data);
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::append()
+    public append(data: any): void
+    {
+        const element = getXmlRoot(data);
 
-		if (element)
-		{
-			for (const colorElement of getXmlChildElements(element, 'color'))
-			{
-				const id = parseInt(getXmlAttribute(colorElement, 'id')) || 0;
-				this._colors.set(id, new PartColor(colorElement));
-			}
+        if(element)
+        {
+            for(const colorElement of getXmlChildElements(element, 'color'))
+            {
+                const id = parseInt(getXmlAttribute(colorElement, 'id')) || 0;
+                this._colors.set(id, new PartColor(colorElement));
+            }
 
-			return;
-		}
+            return;
+        }
 
-		const rawColors = data.colors?.color || data.colors || data.color;
+        const rawColors = data.colors?.color || data.colors || data.color;
 
-		if (!rawColors) return;
+        if(!rawColors) return;
 
-		const colors: any[] = Array.isArray(rawColors) ? rawColors : [rawColors];
+        const colors: any[] = Array.isArray(rawColors) ? rawColors : [rawColors];
 
-		for (const colorData of colors)
-		{
-			const id = parseInt(colorData.id) || 0;
-			this._colors.set(id, new PartColor(colorData));
-		}
-	}
+        for(const colorData of colors)
+        {
+            const id = parseInt(colorData.id) || 0;
+            this._colors.set(id, new PartColor(colorData));
+        }
+    }
 
-	// AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::getColor()
-	public getColor(colorId: number): IPartColor | null
-	{
-		return this._colors.get(colorId) ?? null;
-	}
+    // AS3: sources/win63_version/habbo/avatar/structure/figure/Palette.as::getColor()
+    public getColor(colorId: number): IPartColor | null
+    {
+        return this._colors.get(colorId) ?? null;
+    }
 }

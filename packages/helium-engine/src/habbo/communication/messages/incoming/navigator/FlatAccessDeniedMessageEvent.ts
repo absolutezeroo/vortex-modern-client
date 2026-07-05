@@ -9,8 +9,8 @@ import {FlatAccessDeniedMessageParser} from '../../parser/navigator/FlatAccessDe
  */
 export class FlatAccessDeniedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FlatAccessDeniedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FlatAccessDeniedMessageParser);
+    }
 }

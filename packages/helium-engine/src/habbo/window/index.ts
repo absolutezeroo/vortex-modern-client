@@ -16,16 +16,16 @@ export {WindowLayoutParser} from './WindowLayoutParser';
 
 // Types
 export type {
-	IElementDefaults,
-	IElementState,
-	IElementDescriptor,
-	IElementDescriptionData,
+    IElementDefaults,
+    IElementState,
+    IElementDescriptor,
+    IElementDescriptionData,
 } from './IElementDescriptor';
 export type {IHabboWindowManager} from './IHabboWindowManager';
 export type {IWindowInstance} from './IWindowInstance';
 export type {
-	IWindowLayoutAttributes,
-	IWindowLayoutNode,
-	IWindowLayoutFilter,
-	IWindowLayout,
+    IWindowLayoutAttributes,
+    IWindowLayoutNode,
+    IWindowLayoutFilter,
+    IWindowLayout,
 } from './IWindowLayout';

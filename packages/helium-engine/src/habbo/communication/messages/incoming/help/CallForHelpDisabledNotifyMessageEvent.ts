@@ -9,8 +9,8 @@ import {CallForHelpDisabledNotifyMessageParser} from '../../parser/help/CallForH
  */
 export class CallForHelpDisabledNotifyMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CallForHelpDisabledNotifyMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CallForHelpDisabledNotifyMessageParser);
+    }
 }

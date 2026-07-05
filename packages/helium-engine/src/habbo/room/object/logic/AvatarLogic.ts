@@ -37,583 +37,583 @@ import {RoomObjectAvatarOwnMessage} from '../../messages/RoomObjectAvatarOwnMess
 
 export class AvatarLogic extends MovingObjectLogic
 {
-	// Constants
-	private static readonly WARP_DISTANCE = 1.5;
-	private static readonly EFFECT_TYPE_SPLASH = 28;
-	private static readonly EFFECT_TYPE_SWIM = 29;
-	private static readonly EFFECT_TYPE_SPLASH_DARK = 184;
-	private static readonly EFFECT_TYPE_SWIM_DARK = 185;
-	private static readonly EFFECT_SPLASH_LENGTH = 500;
+    // Constants
+    private static readonly WARP_DISTANCE = 1.5;
+    private static readonly EFFECT_TYPE_SPLASH = 28;
+    private static readonly EFFECT_TYPE_SWIM = 29;
+    private static readonly EFFECT_TYPE_SPLASH_DARK = 184;
+    private static readonly EFFECT_TYPE_SWIM_DARK = 185;
+    private static readonly EFFECT_SPLASH_LENGTH = 500;
 
-	private static readonly CARRY_ITEM_NULL = 0;
-	private static readonly CARRY_ITEM_LAST_CONSUMABLE = 999;
-	private static readonly CARRY_ITEM_EMPTY_HAND = 999999999;
-	private static readonly CARRY_ITEM_DELAY_BEFORE_USE = 5000;
-	private static readonly CARRY_ITEM_EMPTY_HAND_ANIMATION_LENGTH = 1500;
+    private static readonly CARRY_ITEM_NULL = 0;
+    private static readonly CARRY_ITEM_LAST_CONSUMABLE = 999;
+    private static readonly CARRY_ITEM_EMPTY_HAND = 999999999;
+    private static readonly CARRY_ITEM_DELAY_BEFORE_USE = 5000;
+    private static readonly CARRY_ITEM_EMPTY_HAND_ANIMATION_LENGTH = 1500;
 
-	// Selection state
-	private _selected = false;
-	private _lastLocation: Vector3d | null = null;
+    // Selection state
+    private _selected = false;
+    private _lastLocation: Vector3d | null = null;
 
-	// Effect state
-	private _effectChangeTime = 0;
-	private _nextEffect = 0;
+    // Effect state
+    private _effectChangeTime = 0;
+    private _nextEffect = 0;
 
-	// Timed actions
-	private _talkEndTime = 0;
-	private _talkPauseTime = 0;
-	private _talkResumeTime = 0;
-	private _gestureEndTime = 0;
-	private _expressionEndTime = 0;
-	private _signEndTime = 0;
-	private _playerValueEndTime = 0;
+    // Timed actions
+    private _talkEndTime = 0;
+    private _talkPauseTime = 0;
+    private _talkResumeTime = 0;
+    private _gestureEndTime = 0;
+    private _expressionEndTime = 0;
+    private _signEndTime = 0;
+    private _playerValueEndTime = 0;
 
-	// Carry object state
-	private _carryObjectStartTime = 0;
-	private _carryObjectEndTime = 0;
-	private _allowUseCarryObject = false;
+    // Carry object state
+    private _carryObjectStartTime = 0;
+    private _carryObjectEndTime = 0;
+    private _allowUseCarryObject = false;
 
-	// Blink animation
-	private _nextBlinkTime = 0;
-	private _blinkEndTime = 0;
+    // Blink animation
+    private _nextBlinkTime = 0;
+    private _blinkEndTime = 0;
 
-	constructor()
-	{
-		super();
-		this._nextBlinkTime = Date.now() + this.getBlinkInterval();
-	}
+    constructor()
+    {
+        super();
+        this._nextBlinkTime = Date.now() + this.getBlinkInterval();
+    }
 
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectMouseEvent.ROE_MOUSE_CLICK,
-			RoomObjectMoveEvent.ROME_POSITION_CHANGED,
-			RoomObjectMouseEvent.ROE_MOUSE_ENTER,
-			RoomObjectMouseEvent.ROE_MOUSE_LEAVE,
-			RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON,
-			RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectMouseEvent.ROE_MOUSE_CLICK,
+            RoomObjectMoveEvent.ROME_POSITION_CHANGED,
+            RoomObjectMouseEvent.ROE_MOUSE_ENTER,
+            RoomObjectMouseEvent.ROE_MOUSE_LEAVE,
+            RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON,
+            RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override dispose(): void
-	{
-		if (this._selected && this.object !== null)
-		{
-			if (this.eventDispatcher !== null)
-			{
-				const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_OBJECT_REMOVED, this.object);
-				this.eventDispatcher.emit(event.type, event);
-			}
-		}
+    override dispose(): void
+    {
+        if(this._selected && this.object !== null)
+        {
+            if(this.eventDispatcher !== null)
+            {
+                const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_OBJECT_REMOVED, this.object);
+                this.eventDispatcher.emit(event.type, event);
+            }
+        }
 
-		super.dispose();
-		this._lastLocation = null;
-	}
+        super.dispose();
+        this._lastLocation = null;
+    }
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		if (message === null || this.object === null)
-		{
-			return;
-		}
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        if(message === null || this.object === null)
+        {
+            return;
+        }
 
-		super.processUpdateMessage(message);
+        super.processUpdateMessage(message);
 
-		const model = this.object.getModelController();
-		if (model === null)
-		{
-			return;
-		}
+        const model = this.object.getModelController();
+        if(model === null)
+        {
+            return;
+        }
 
-		// Avatar Update (head direction, vertical offset)
-		if (message instanceof RoomObjectAvatarUpdateMessage)
-		{
-			model.setNumber('head_direction', message.dirHead);
-			model.setNumber('figure_can_stand_up', message.canStandUp ? 1 : 0);
-			model.setNumber('figure_vertical_offset', message.baseY);
-			return;
-		}
+        // Avatar Update (head direction, vertical offset)
+        if(message instanceof RoomObjectAvatarUpdateMessage)
+        {
+            model.setNumber('head_direction', message.dirHead);
+            model.setNumber('figure_can_stand_up', message.canStandUp ? 1 : 0);
+            model.setNumber('figure_vertical_offset', message.baseY);
+            return;
+        }
 
-		// Posture (sit, lay, std)
-		if (message instanceof RoomObjectAvatarPostureUpdateMessage)
-		{
-			model.setString('figure_posture', message.postureType);
-			model.setString('figure_posture_parameter', message.parameter);
-			return;
-		}
+        // Posture (sit, lay, std)
+        if(message instanceof RoomObjectAvatarPostureUpdateMessage)
+        {
+            model.setString('figure_posture', message.postureType);
+            model.setString('figure_posture_parameter', message.parameter);
+            return;
+        }
 
-		// Chat (talk animation)
-		if (message instanceof RoomObjectAvatarChatUpdateMessage)
-		{
-			model.setNumber('figure_talk', 1);
-			this._talkEndTime = Date.now() + message.numberOfWords * 1000;
-			return;
-		}
+        // Chat (talk animation)
+        if(message instanceof RoomObjectAvatarChatUpdateMessage)
+        {
+            model.setNumber('figure_talk', 1);
+            this._talkEndTime = Date.now() + message.numberOfWords * 1000;
+            return;
+        }
 
-		// Typing indicator
-		if (message instanceof RoomObjectAvatarTypingUpdateMessage)
-		{
-			model.setNumber('figure_is_typing', message.isTyping ? 1 : 0);
-			return;
-		}
+        // Typing indicator
+        if(message instanceof RoomObjectAvatarTypingUpdateMessage)
+        {
+            model.setNumber('figure_is_typing', message.isTyping ? 1 : 0);
+            return;
+        }
 
-		// Muted state
-		if (message instanceof RoomObjectAvatarMutedUpdateMessage)
-		{
-			model.setNumber('figure_is_muted', message.isMuted ? 1 : 0);
-			return;
-		}
+        // Muted state
+        if(message instanceof RoomObjectAvatarMutedUpdateMessage)
+        {
+            model.setNumber('figure_is_muted', message.isMuted ? 1 : 0);
+            return;
+        }
 
-		// Playing game state
-		if (message instanceof RoomObjectAvatarPlayingGameMessage)
-		{
-			model.setNumber('figure_is_playing_game', message.isPlayingGame ? 1 : 0);
-			return;
-		}
+        // Playing game state
+        if(message instanceof RoomObjectAvatarPlayingGameMessage)
+        {
+            model.setNumber('figure_is_playing_game', message.isPlayingGame ? 1 : 0);
+            return;
+        }
 
-		// Head direction only
-		if (message instanceof RoomObjectAvatarDirectionUpdateMessage)
-		{
-			model.setNumber('head_direction', message.dirHead);
-			return;
-		}
+        // Head direction only
+        if(message instanceof RoomObjectAvatarDirectionUpdateMessage)
+        {
+            model.setNumber('head_direction', message.dirHead);
+            return;
+        }
 
-		// Gesture
-		if (message instanceof RoomObjectAvatarGestureUpdateMessage)
-		{
-			model.setNumber('figure_gesture', message.gesture);
-			this._gestureEndTime = Date.now() + 3000;
-			return;
-		}
+        // Gesture
+        if(message instanceof RoomObjectAvatarGestureUpdateMessage)
+        {
+            model.setNumber('figure_gesture', message.gesture);
+            this._gestureEndTime = Date.now() + 3000;
+            return;
+        }
 
-		// Expression
-		if (message instanceof RoomObjectAvatarExpressionUpdateMessage)
-		{
-			model.setNumber('figure_expression', message.expressionType);
-			const duration = this.getExpressionTime(message.expressionType);
-			if (duration > -1)
-			{
-				this._expressionEndTime = Date.now() + duration;
-			}
-			else
-			{
-				this._expressionEndTime = 0;
-			}
-			return;
-		}
+        // Expression
+        if(message instanceof RoomObjectAvatarExpressionUpdateMessage)
+        {
+            model.setNumber('figure_expression', message.expressionType);
+            const duration = this.getExpressionTime(message.expressionType);
+            if(duration > -1)
+            {
+                this._expressionEndTime = Date.now() + duration;
+            }
+            else
+            {
+                this._expressionEndTime = 0;
+            }
+            return;
+        }
 
-		// Dance
-		if (message instanceof RoomObjectAvatarDanceUpdateMessage)
-		{
-			model.setNumber('figure_dance', message.danceStyle);
-			return;
-		}
+        // Dance
+        if(message instanceof RoomObjectAvatarDanceUpdateMessage)
+        {
+            model.setNumber('figure_dance', message.danceStyle);
+            return;
+        }
 
-		// Sleep
-		if (message instanceof RoomObjectAvatarSleepUpdateMessage)
-		{
-			model.setNumber('figure_sleep', message.isSleeping ? 1 : 0);
-			return;
-		}
+        // Sleep
+        if(message instanceof RoomObjectAvatarSleepUpdateMessage)
+        {
+            model.setNumber('figure_sleep', message.isSleeping ? 1 : 0);
+            return;
+        }
 
-		// Player value (game score)
-		if (message instanceof RoomObjectAvatarPlayerValueUpdateMessage)
-		{
-			model.setNumber('figure_number_value', message.value);
-			this._playerValueEndTime = Date.now() + 3000;
-			return;
-		}
+        // Player value (game score)
+        if(message instanceof RoomObjectAvatarPlayerValueUpdateMessage)
+        {
+            model.setNumber('figure_number_value', message.value);
+            this._playerValueEndTime = Date.now() + 3000;
+            return;
+        }
 
-		// Effect
-		if (message instanceof RoomObjectAvatarEffectUpdateMessage)
-		{
-			this.updateEffect(message.effect, message.delayMilliSeconds, model);
-			return;
-		}
+        // Effect
+        if(message instanceof RoomObjectAvatarEffectUpdateMessage)
+        {
+            this.updateEffect(message.effect, message.delayMilliSeconds, model);
+            return;
+        }
 
-		// Carry object
-		if (message instanceof RoomObjectAvatarCarryObjectUpdateMessage)
-		{
-			model.setNumber('figure_carry_object', message.itemType);
-			model.setNumber('figure_use_object', 0);
-			this._carryObjectStartTime = Date.now();
+        // Carry object
+        if(message instanceof RoomObjectAvatarCarryObjectUpdateMessage)
+        {
+            model.setNumber('figure_carry_object', message.itemType);
+            model.setNumber('figure_use_object', 0);
+            this._carryObjectStartTime = Date.now();
 
-			if (message.itemType < AvatarLogic.CARRY_ITEM_EMPTY_HAND)
-			{
-				this._carryObjectEndTime = 0;
-				this._allowUseCarryObject = message.itemType <= AvatarLogic.CARRY_ITEM_LAST_CONSUMABLE;
-			}
-			else
-			{
-				this._carryObjectEndTime = this._carryObjectStartTime + AvatarLogic.CARRY_ITEM_EMPTY_HAND_ANIMATION_LENGTH;
-				this._allowUseCarryObject = false;
-			}
-			return;
-		}
+            if(message.itemType < AvatarLogic.CARRY_ITEM_EMPTY_HAND)
+            {
+                this._carryObjectEndTime = 0;
+                this._allowUseCarryObject = message.itemType <= AvatarLogic.CARRY_ITEM_LAST_CONSUMABLE;
+            }
+            else
+            {
+                this._carryObjectEndTime = this._carryObjectStartTime + AvatarLogic.CARRY_ITEM_EMPTY_HAND_ANIMATION_LENGTH;
+                this._allowUseCarryObject = false;
+            }
+            return;
+        }
 
-		// Use object
-		if (message instanceof RoomObjectAvatarUseObjectUpdateMessage)
-		{
-			model.setNumber('figure_use_object', message.itemType);
-			return;
-		}
+        // Use object
+        if(message instanceof RoomObjectAvatarUseObjectUpdateMessage)
+        {
+            model.setNumber('figure_use_object', message.itemType);
+            return;
+        }
 
-		// Sign
-		if (message instanceof RoomObjectAvatarSignUpdateMessage)
-		{
-			model.setNumber('figure_sign', message.signType);
-			this._signEndTime = Date.now() + 5000;
-			return;
-		}
+        // Sign
+        if(message instanceof RoomObjectAvatarSignUpdateMessage)
+        {
+            model.setNumber('figure_sign', message.signType);
+            this._signEndTime = Date.now() + 5000;
+            return;
+        }
 
-		// Flat control (room rights)
-		if (message instanceof RoomObjectAvatarFlatControlUpdateMessage)
-		{
-			const value = parseInt(message.rawData);
-			if (!isNaN(value) && value >= 0 && value <= 5)
-			{
-				model.setNumber('figure_flat_control', value);
-			}
-			else
-			{
-				model.setNumber('figure_flat_control', 0);
-			}
-			return;
-		}
+        // Flat control (room rights)
+        if(message instanceof RoomObjectAvatarFlatControlUpdateMessage)
+        {
+            const value = parseInt(message.rawData);
+            if(!isNaN(value) && value >= 0 && value <= 5)
+            {
+                model.setNumber('figure_flat_control', value);
+            }
+            else
+            {
+                model.setNumber('figure_flat_control', 0);
+            }
+            return;
+        }
 
-		// Figure update
-		if (message instanceof RoomObjectAvatarFigureUpdateMessage)
-		{
-			let figure = message.figure;
-			const currentFigure = model.getString('figure');
+        // Figure update
+        if(message instanceof RoomObjectAvatarFigureUpdateMessage)
+        {
+            let figure = message.figure;
+            const currentFigure = model.getString('figure');
 
-			// Preserve BDS (body shadow?) portion from current figure
-			if (currentFigure !== null && currentFigure.indexOf('.bds-') !== -1)
-			{
-				figure += currentFigure.substring(currentFigure.indexOf('.bds-'));
-			}
+            // Preserve BDS (body shadow?) portion from current figure
+            if(currentFigure !== null && currentFigure.indexOf('.bds-') !== -1)
+            {
+                figure += currentFigure.substring(currentFigure.indexOf('.bds-'));
+            }
 
-			model.setString('figure', figure);
-			model.setString('gender', message.gender);
-			return;
-		}
+            model.setString('figure', figure);
+            model.setString('gender', message.gender);
+            return;
+        }
 
-		// Selection state
-		if (message instanceof RoomObjectAvatarSelectedMessage)
-		{
-			this._selected = message.selected;
-			this._lastLocation = null;
-			return;
-		}
+        // Selection state
+        if(message instanceof RoomObjectAvatarSelectedMessage)
+        {
+            this._selected = message.selected;
+            this._lastLocation = null;
+            return;
+        }
 
-		// Guide status
-		if (message instanceof RoomObjectAvatarGuideStatusUpdateMessage)
-		{
-			model.setNumber('figure_guide_status', message.guideStatus);
-			return;
-		}
+        // Guide status
+        if(message instanceof RoomObjectAvatarGuideStatusUpdateMessage)
+        {
+            model.setNumber('figure_guide_status', message.guideStatus);
+            return;
+        }
 
-		// Own avatar marker
-		if (message instanceof RoomObjectAvatarOwnMessage)
-		{
-			model.setNumber('own_user', 1);
-			return;
-		}
-	}
+        // Own avatar marker
+        if(message instanceof RoomObjectAvatarOwnMessage)
+        {
+            model.setNumber('own_user', 1);
+            return;
+        }
+    }
 
-	override mouseEvent(event: {
-		type: string;
-		eventId?: string;
-		altKey?: boolean;
-		ctrlKey?: boolean;
-		shiftKey?: boolean;
-		buttonDown?: boolean
-	}, geometry: IRoomGeometry | null): void
-	{
-		if (this.object === null || event === null)
-		{
-			return;
-		}
+    override mouseEvent(event: {
+        type: string;
+        eventId?: string;
+        altKey?: boolean;
+        ctrlKey?: boolean;
+        shiftKey?: boolean;
+        buttonDown?: boolean
+    }, geometry: IRoomGeometry | null): void
+    {
+        if(this.object === null || event === null)
+        {
+            return;
+        }
 
-		const model = this.object.getModelController();
-		let eventType: string | null = null;
+        const model = this.object.getModelController();
+        let eventType: string | null = null;
 
-		switch (event.type)
-		{
-			case 'click':
-				eventType = RoomObjectMouseEvent.ROE_MOUSE_CLICK;
-				break;
+        switch(event.type)
+        {
+            case 'click':
+                eventType = RoomObjectMouseEvent.ROE_MOUSE_CLICK;
+                break;
 
-			case 'rollOver':
-				eventType = RoomObjectMouseEvent.ROE_MOUSE_ENTER;
-				if (model !== null)
-				{
-					model.setNumber('figure_highlight', 1);
-				}
-				if (this.eventDispatcher)
-				{
-					this.eventDispatcher.emit(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON, new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON, this.object));
-				}
-				break;
+            case 'rollOver':
+                eventType = RoomObjectMouseEvent.ROE_MOUSE_ENTER;
+                if(model !== null)
+                {
+                    model.setNumber('figure_highlight', 1);
+                }
+                if(this.eventDispatcher)
+                {
+                    this.eventDispatcher.emit(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON, new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_BUTTON, this.object));
+                }
+                break;
 
-			case 'rollOut':
-				if (model !== null)
-				{
-					model.setNumber('figure_highlight', 0);
-				}
-				eventType = RoomObjectMouseEvent.ROE_MOUSE_LEAVE;
-				if (this.eventDispatcher)
-				{
-					this.eventDispatcher.emit(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW, new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW, this.object));
-				}
-				break;
-		}
+            case 'rollOut':
+                if(model !== null)
+                {
+                    model.setNumber('figure_highlight', 0);
+                }
+                eventType = RoomObjectMouseEvent.ROE_MOUSE_LEAVE;
+                if(this.eventDispatcher)
+                {
+                    this.eventDispatcher.emit(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW, new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW, this.object));
+                }
+                break;
+        }
 
-		if (eventType !== null && this.eventDispatcher !== null)
-		{
-			const mouseEvent = new RoomObjectMouseEvent(
-				eventType,
-				this.object,
-				event.eventId ?? '',
-				event.altKey ?? false,
-				event.ctrlKey ?? false,
-				event.shiftKey ?? false,
-				event.buttonDown ?? false
-			);
-			this.eventDispatcher.emit(mouseEvent.type, mouseEvent);
-		}
-	}
+        if(eventType !== null && this.eventDispatcher !== null)
+        {
+            const mouseEvent = new RoomObjectMouseEvent(
+                eventType,
+                this.object,
+                event.eventId ?? '',
+                event.altKey ?? false,
+                event.ctrlKey ?? false,
+                event.shiftKey ?? false,
+                event.buttonDown ?? false
+            );
+            this.eventDispatcher.emit(mouseEvent.type, mouseEvent);
+        }
+    }
 
-	override update(time: number): void
-	{
-		super.update(time);
+    override update(time: number): void
+    {
+        super.update(time);
 
-		// Track position changes when selected
-		if (this._selected && this.object !== null)
-		{
-			if (this.eventDispatcher !== null)
-			{
-				const location = this.object.getLocation();
+        // Track position changes when selected
+        if(this._selected && this.object !== null)
+        {
+            if(this.eventDispatcher !== null)
+            {
+                const location = this.object.getLocation();
 
-				if (this._lastLocation === null ||
+                if(this._lastLocation === null ||
 					this._lastLocation.x !== location.x ||
 					this._lastLocation.y !== location.y ||
 					this._lastLocation.z !== location.z)
-				{
-					if (this._lastLocation === null)
-					{
-						this._lastLocation = new Vector3d();
-					}
+                {
+                    if(this._lastLocation === null)
+                    {
+                        this._lastLocation = new Vector3d();
+                    }
 
-					this._lastLocation.assign(location);
+                    this._lastLocation.assign(location);
 
-					const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_POSITION_CHANGED, this.object);
-					this.eventDispatcher.emit(event.type, event);
-				}
-			}
-		}
+                    const event = new RoomObjectMoveEvent(RoomObjectMoveEvent.ROME_POSITION_CHANGED, this.object);
+                    this.eventDispatcher.emit(event.type, event);
+                }
+            }
+        }
 
-		// Update timed actions
-		if (this.object !== null)
-		{
-			const model = this.object.getModelController();
-			if (model !== null)
-			{
-				this.updateActions(time, model);
-			}
-		}
-	}
+        // Update timed actions
+        if(this.object !== null)
+        {
+            const model = this.object.getModelController();
+            if(model !== null)
+            {
+                this.updateActions(time, model);
+            }
+        }
+    }
 
-	private updateEffect(effect: number, delay: number, model: IRoomObjectModelController): void
-	{
-		const currentEffect = model.getNumber('figure_effect');
+    private updateEffect(effect: number, delay: number, model: IRoomObjectModelController): void
+    {
+        const currentEffect = model.getNumber('figure_effect');
 
-		// Handle splash/swim transitions
-		if (effect === AvatarLogic.EFFECT_TYPE_SPLASH)
-		{
-			this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
-			this._nextEffect = AvatarLogic.EFFECT_TYPE_SWIM;
-		}
-		else if (effect === AvatarLogic.EFFECT_TYPE_SPLASH_DARK)
-		{
-			this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
-			this._nextEffect = AvatarLogic.EFFECT_TYPE_SWIM_DARK;
-		}
-		else if (currentEffect === AvatarLogic.EFFECT_TYPE_SWIM)
-		{
-			// Exit water: show splash first
-			this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
-			this._nextEffect = effect;
-			effect = AvatarLogic.EFFECT_TYPE_SPLASH;
-		}
-		else if (currentEffect === AvatarLogic.EFFECT_TYPE_SWIM_DARK)
-		{
-			this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
-			this._nextEffect = effect;
-			effect = AvatarLogic.EFFECT_TYPE_SPLASH_DARK;
-		}
-		else if (delay !== 0)
-		{
-			this._effectChangeTime = Date.now() + delay;
-			this._nextEffect = effect;
-			return;
-		}
-		else
-		{
-			this._effectChangeTime = 0;
-		}
+        // Handle splash/swim transitions
+        if(effect === AvatarLogic.EFFECT_TYPE_SPLASH)
+        {
+            this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
+            this._nextEffect = AvatarLogic.EFFECT_TYPE_SWIM;
+        }
+        else if(effect === AvatarLogic.EFFECT_TYPE_SPLASH_DARK)
+        {
+            this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
+            this._nextEffect = AvatarLogic.EFFECT_TYPE_SWIM_DARK;
+        }
+        else if(currentEffect === AvatarLogic.EFFECT_TYPE_SWIM)
+        {
+            // Exit water: show splash first
+            this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
+            this._nextEffect = effect;
+            effect = AvatarLogic.EFFECT_TYPE_SPLASH;
+        }
+        else if(currentEffect === AvatarLogic.EFFECT_TYPE_SWIM_DARK)
+        {
+            this._effectChangeTime = Date.now() + AvatarLogic.EFFECT_SPLASH_LENGTH;
+            this._nextEffect = effect;
+            effect = AvatarLogic.EFFECT_TYPE_SPLASH_DARK;
+        }
+        else if(delay !== 0)
+        {
+            this._effectChangeTime = Date.now() + delay;
+            this._nextEffect = effect;
+            return;
+        }
+        else
+        {
+            this._effectChangeTime = 0;
+        }
 
-		model.setNumber('figure_effect', effect);
-	}
+        model.setNumber('figure_effect', effect);
+    }
 
-	private updateActions(time: number, model: IRoomObjectModelController): void
-	{
-		const now = Date.now();
+    private updateActions(time: number, model: IRoomObjectModelController): void
+    {
+        const now = Date.now();
 
-		// Talk animation with pauses
-		if (this._talkEndTime > 0)
-		{
-			if (now > this._talkEndTime)
-			{
-				model.setNumber('figure_talk', 0);
-				this._talkEndTime = 0;
-				this._talkPauseTime = 0;
-				this._talkResumeTime = 0;
-			}
-			else if (this._talkResumeTime === 0 && this._talkPauseTime === 0)
-			{
-				this._talkPauseTime = now + this.getTalkingPauseInterval();
-				this._talkResumeTime = this._talkPauseTime + this.getTalkingPauseLength();
-			}
-			else if (this._talkPauseTime > 0 && now > this._talkPauseTime)
-			{
-				model.setNumber('figure_talk', 0);
-				this._talkPauseTime = 0;
-			}
-			else if (this._talkResumeTime > 0 && now > this._talkResumeTime)
-			{
-				model.setNumber('figure_talk', 1);
-				this._talkResumeTime = 0;
-			}
-		}
+        // Talk animation with pauses
+        if(this._talkEndTime > 0)
+        {
+            if(now > this._talkEndTime)
+            {
+                model.setNumber('figure_talk', 0);
+                this._talkEndTime = 0;
+                this._talkPauseTime = 0;
+                this._talkResumeTime = 0;
+            }
+            else if(this._talkResumeTime === 0 && this._talkPauseTime === 0)
+            {
+                this._talkPauseTime = now + this.getTalkingPauseInterval();
+                this._talkResumeTime = this._talkPauseTime + this.getTalkingPauseLength();
+            }
+            else if(this._talkPauseTime > 0 && now > this._talkPauseTime)
+            {
+                model.setNumber('figure_talk', 0);
+                this._talkPauseTime = 0;
+            }
+            else if(this._talkResumeTime > 0 && now > this._talkResumeTime)
+            {
+                model.setNumber('figure_talk', 1);
+                this._talkResumeTime = 0;
+            }
+        }
 
-		// Expression timeout
-		if (this._expressionEndTime > 0 && now > this._expressionEndTime)
-		{
-			model.setNumber('figure_expression', 0);
-			this._expressionEndTime = 0;
-		}
+        // Expression timeout
+        if(this._expressionEndTime > 0 && now > this._expressionEndTime)
+        {
+            model.setNumber('figure_expression', 0);
+            this._expressionEndTime = 0;
+        }
 
-		// Gesture timeout
-		if (this._gestureEndTime > 0 && now > this._gestureEndTime)
-		{
-			model.setNumber('figure_gesture', 0);
-			this._gestureEndTime = 0;
-		}
+        // Gesture timeout
+        if(this._gestureEndTime > 0 && now > this._gestureEndTime)
+        {
+            model.setNumber('figure_gesture', 0);
+            this._gestureEndTime = 0;
+        }
 
-		// Sign timeout
-		if (this._signEndTime > 0 && now > this._signEndTime)
-		{
-			model.setNumber('figure_sign', -1);
-			this._signEndTime = 0;
-		}
+        // Sign timeout
+        if(this._signEndTime > 0 && now > this._signEndTime)
+        {
+            model.setNumber('figure_sign', -1);
+            this._signEndTime = 0;
+        }
 
-		// Carry object empty hand timeout
-		if (this._carryObjectEndTime > 0)
-		{
-			if (now > this._carryObjectEndTime)
-			{
-				model.setNumber('figure_carry_object', 0);
-				model.setNumber('figure_use_object', 0);
-				this._carryObjectStartTime = 0;
-				this._carryObjectEndTime = 0;
-				this._allowUseCarryObject = false;
-			}
-		}
+        // Carry object empty hand timeout
+        if(this._carryObjectEndTime > 0)
+        {
+            if(now > this._carryObjectEndTime)
+            {
+                model.setNumber('figure_carry_object', 0);
+                model.setNumber('figure_use_object', 0);
+                this._carryObjectStartTime = 0;
+                this._carryObjectEndTime = 0;
+                this._allowUseCarryObject = false;
+            }
+        }
 
-		// Auto-use carried consumable
-		if (this._allowUseCarryObject)
-		{
-			const elapsed = now - this._carryObjectStartTime;
-			if (elapsed > AvatarLogic.CARRY_ITEM_DELAY_BEFORE_USE)
-			{
-				// Use every 10 seconds for 1 second
-				if (elapsed % 10000 < 1000)
-				{
-					model.setNumber('figure_use_object', 1);
-				}
-				else
-				{
-					model.setNumber('figure_use_object', 0);
-				}
-			}
-		}
+        // Auto-use carried consumable
+        if(this._allowUseCarryObject)
+        {
+            const elapsed = now - this._carryObjectStartTime;
+            if(elapsed > AvatarLogic.CARRY_ITEM_DELAY_BEFORE_USE)
+            {
+                // Use every 10 seconds for 1 second
+                if(elapsed % 10000 < 1000)
+                {
+                    model.setNumber('figure_use_object', 1);
+                }
+                else
+                {
+                    model.setNumber('figure_use_object', 0);
+                }
+            }
+        }
 
-		// Blink animation
-		if (now > this._nextBlinkTime)
-		{
-			model.setNumber('figure_blink', 1);
-			this._nextBlinkTime = now + this.getBlinkInterval();
-			this._blinkEndTime = now + this.getBlinkLength();
-		}
+        // Blink animation
+        if(now > this._nextBlinkTime)
+        {
+            model.setNumber('figure_blink', 1);
+            this._nextBlinkTime = now + this.getBlinkInterval();
+            this._blinkEndTime = now + this.getBlinkLength();
+        }
 
-		if (this._blinkEndTime > 0 && now > this._blinkEndTime)
-		{
-			model.setNumber('figure_blink', 0);
-			this._blinkEndTime = 0;
-		}
+        if(this._blinkEndTime > 0 && now > this._blinkEndTime)
+        {
+            model.setNumber('figure_blink', 0);
+            this._blinkEndTime = 0;
+        }
 
-		// Delayed effect
-		if (this._effectChangeTime > 0 && now > this._effectChangeTime)
-		{
-			model.setNumber('figure_effect', this._nextEffect);
-			this._effectChangeTime = 0;
-		}
+        // Delayed effect
+        if(this._effectChangeTime > 0 && now > this._effectChangeTime)
+        {
+            model.setNumber('figure_effect', this._nextEffect);
+            this._effectChangeTime = 0;
+        }
 
-		// Player value timeout
-		if (this._playerValueEndTime > 0 && now > this._playerValueEndTime)
-		{
-			model.setNumber('figure_number_value', 0);
-			this._playerValueEndTime = 0;
-		}
-	}
+        // Player value timeout
+        if(this._playerValueEndTime > 0 && now > this._playerValueEndTime)
+        {
+            model.setNumber('figure_number_value', 0);
+            this._playerValueEndTime = 0;
+        }
+    }
 
-	private getTalkingPauseInterval(): number
-	{
-		return 100 + Math.random() * 200;
-	}
+    private getTalkingPauseInterval(): number
+    {
+        return 100 + Math.random() * 200;
+    }
 
-	private getTalkingPauseLength(): number
-	{
-		return 75 + Math.random() * 75;
-	}
+    private getTalkingPauseLength(): number
+    {
+        return 75 + Math.random() * 75;
+    }
 
-	private getBlinkInterval(): number
-	{
-		return 4500 + Math.random() * 1000;
-	}
+    private getBlinkInterval(): number
+    {
+        return 4500 + Math.random() * 1000;
+    }
 
-	private getBlinkLength(): number
-	{
-		return 50 + Math.random() * 200;
-	}
+    private getBlinkLength(): number
+    {
+        return 50 + Math.random() * 200;
+    }
 
-	private getExpressionTime(expression: number): number
-	{
-		// Expression durations - some are indefinite (-1)
-		switch (expression)
-		{
-			case 1: // Wave
-			case 2: // Blow kiss
-			case 3: // Laugh
-			case 4: // Cry
-			case 5: // Idle
-			case 6: // Jump
-				return 3000;
-			default:
-				return -1;
-		}
-	}
+    private getExpressionTime(expression: number): number
+    {
+        // Expression durations - some are indefinite (-1)
+        switch(expression)
+        {
+            case 1: // Wave
+            case 2: // Blow kiss
+            case 3: // Laugh
+            case 4: // Cry
+            case 5: // Idle
+            case 6: // Jump
+                return 3000;
+            default:
+                return -1;
+        }
+    }
 }

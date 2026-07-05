@@ -10,8 +10,8 @@ import {AcceptFriendResultMessageParser} from '../../parser/friendlist/AcceptFri
  */
 export class AcceptFriendResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, AcceptFriendResultMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, AcceptFriendResultMessageParser);
+    }
 }

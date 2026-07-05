@@ -7,15 +7,15 @@ import type {IWindowContainer} from '../IWindowContainer';
  */
 export interface IBoxSizerWindow extends IWindowContainer
 {
-	setHorizontalPadding(value: number): void;
+    setHorizontalPadding(value: number): void;
 
-	setVerticalPadding(value: number): void;
+    setVerticalPadding(value: number): void;
 
-	setSpacing(value: number): void;
+    setSpacing(value: number): void;
 
-	setVertical(value: boolean): void;
+    setVertical(value: boolean): void;
 
-	setAutoRearrange(value: boolean): void;
+    setAutoRearrange(value: boolean): void;
 
-	getAutoRearrange(): boolean;
+    getAutoRearrange(): boolean;
 }

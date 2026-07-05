@@ -8,35 +8,35 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class FavouritesMessageParser implements IMessageParser
 {
-	private _limit: number = 0;
+    private _limit: number = 0;
 
-	get limit(): number
-	{
-		return this._limit;
-	}
+    get limit(): number
+    {
+        return this._limit;
+    }
 
-	private _favouriteRoomIds: number[] = [];
+    private _favouriteRoomIds: number[] = [];
 
-	get favouriteRoomIds(): number[]
-	{
-		return this._favouriteRoomIds;
-	}
+    get favouriteRoomIds(): number[]
+    {
+        return this._favouriteRoomIds;
+    }
 
-	flush(): boolean
-	{
-		this._limit = 0;
-		this._favouriteRoomIds = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._limit = 0;
+        this._favouriteRoomIds = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		this._limit = wrapper.readInt();
-		const count = wrapper.readInt();
-		for (let i = 0; i < count; i++)
-		{
-			this._favouriteRoomIds.push(wrapper.readInt());
-		}
-		return true;
-	}
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        this._limit = wrapper.readInt();
+        const count = wrapper.readInt();
+        for(let i = 0; i < count; i++)
+        {
+            this._favouriteRoomIds.push(wrapper.readInt());
+        }
+        return true;
+    }
 }

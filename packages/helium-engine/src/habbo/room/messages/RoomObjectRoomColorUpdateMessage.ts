@@ -9,42 +9,42 @@ import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 
 export class RoomObjectRoomColorUpdateMessage extends RoomObjectUpdateMessage
 {
-	public static readonly BACKGROUND_COLOR = 'RORCUM_BACKGROUND_COLOR';
+    public static readonly BACKGROUND_COLOR = 'RORCUM_BACKGROUND_COLOR';
 
-	constructor(type: string, color: number, light: number, bgOnly: boolean)
-	{
-		super(null, null);
-		this._type = type;
-		this._color = color;
-		this._light = light;
-		this._bgOnly = bgOnly;
-	}
+    constructor(type: string, color: number, light: number, bgOnly: boolean)
+    {
+        super(null, null);
+        this._type = type;
+        this._color = color;
+        this._light = light;
+        this._bgOnly = bgOnly;
+    }
 
-	private _type: string = '';
+    private _type: string = '';
 
-	get type(): string
-	{
-		return this._type;
-	}
+    get type(): string
+    {
+        return this._type;
+    }
 
-	private _color: number = 0;
+    private _color: number = 0;
 
-	get color(): number
-	{
-		return this._color;
-	}
+    get color(): number
+    {
+        return this._color;
+    }
 
-	private _light: number = 0;
+    private _light: number = 0;
 
-	get light(): number
-	{
-		return this._light;
-	}
+    get light(): number
+    {
+        return this._light;
+    }
 
-	private _bgOnly: boolean = true;
+    private _bgOnly: boolean = true;
 
-	get bgOnly(): boolean
-	{
-		return this._bgOnly;
-	}
+    get bgOnly(): boolean
+    {
+        return this._bgOnly;
+    }
 }

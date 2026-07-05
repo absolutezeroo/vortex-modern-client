@@ -7,39 +7,39 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ClubGiftEligibilityData
 {
-	private _offerId: number = 0;
+    private _offerId: number = 0;
 
-	get offerId(): number
-	{
-		return this._offerId;
-	}
+    get offerId(): number
+    {
+        return this._offerId;
+    }
 
-	private _isVip: boolean = false;
+    private _isVip: boolean = false;
 
-	get isVip(): boolean
-	{
-		return this._isVip;
-	}
+    get isVip(): boolean
+    {
+        return this._isVip;
+    }
 
-	private _daysRequired: number = 0;
+    private _daysRequired: number = 0;
 
-	get daysRequired(): number
-	{
-		return this._daysRequired;
-	}
+    get daysRequired(): number
+    {
+        return this._daysRequired;
+    }
 
-	private _isSelectable: boolean = false;
+    private _isSelectable: boolean = false;
 
-	get isSelectable(): boolean
-	{
-		return this._isSelectable;
-	}
+    get isSelectable(): boolean
+    {
+        return this._isSelectable;
+    }
 
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._offerId = wrapper.readInt();
-		this._isVip = wrapper.readBoolean();
-		this._daysRequired = wrapper.readInt();
-		this._isSelectable = wrapper.readBoolean();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._offerId = wrapper.readInt();
+        this._isVip = wrapper.readBoolean();
+        this._daysRequired = wrapper.readInt();
+        this._isSelectable = wrapper.readBoolean();
+    }
 }

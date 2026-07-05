@@ -5,7 +5,7 @@
  */
 export interface INavigatorSearchResultData
 {
-	readonly disposed: boolean;
+    readonly disposed: boolean;
 
-	dispose(): void;
+    dispose(): void;
 }

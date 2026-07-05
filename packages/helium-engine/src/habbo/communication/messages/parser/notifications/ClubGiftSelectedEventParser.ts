@@ -11,41 +11,41 @@ import {ClubGiftProductData} from '../../incoming/notifications/ClubGiftProductD
  */
 export class ClubGiftSelectedEventParser implements IMessageParser
 {
-	private _productCode: string = '';
+    private _productCode: string = '';
 
-	get productCode(): string
-	{
-		return this._productCode;
-	}
+    get productCode(): string
+    {
+        return this._productCode;
+    }
 
-	private _products: ClubGiftProductData[] = [];
+    private _products: ClubGiftProductData[] = [];
 
-	get products(): ClubGiftProductData[]
-	{
-		return this._products;
-	}
+    get products(): ClubGiftProductData[]
+    {
+        return this._products;
+    }
 
-	flush(): boolean
-	{
-		this._productCode = '';
-		this._products = [];
-		return true;
-	}
+    flush(): boolean
+    {
+        this._productCode = '';
+        this._products = [];
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._products = [];
-		this._productCode = wrapper.readString();
+        this._products = [];
+        this._productCode = wrapper.readString();
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._products.push(new ClubGiftProductData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._products.push(new ClubGiftProductData(wrapper));
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

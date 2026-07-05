@@ -6,7 +6,7 @@
  */
 export interface IProductData
 {
-	readonly type: string;
-	readonly name: string;
-	readonly description: string;
+    readonly type: string;
+    readonly name: string;
+    readonly description: string;
 }

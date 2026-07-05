@@ -7,31 +7,31 @@ import type {IMessageDataWrapper} from '@core/communication';
  */
 export class EventCategory
 {
-	constructor(wrapper: IMessageDataWrapper)
-	{
-		this._categoryId = wrapper.readInt();
-		this._categoryName = wrapper.readString();
-		this._visible = wrapper.readBoolean();
-	}
+    constructor(wrapper: IMessageDataWrapper)
+    {
+        this._categoryId = wrapper.readInt();
+        this._categoryName = wrapper.readString();
+        this._visible = wrapper.readBoolean();
+    }
 
-	private _categoryId: number = 0;
+    private _categoryId: number = 0;
 
-	get categoryId(): number
-	{
-		return this._categoryId;
-	}
+    get categoryId(): number
+    {
+        return this._categoryId;
+    }
 
-	private _categoryName: string = '';
+    private _categoryName: string = '';
 
-	get categoryName(): string
-	{
-		return this._categoryName;
-	}
+    get categoryName(): string
+    {
+        return this._categoryName;
+    }
 
-	private _visible: boolean = false;
+    private _visible: boolean = false;
 
-	get visible(): boolean
-	{
-		return this._visible;
-	}
+    get visible(): boolean
+    {
+        return this._visible;
+    }
 }

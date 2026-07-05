@@ -7,7 +7,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  */
 export interface IViewCtrl
 {
-	content: IWindowContainer | null;
+    content: IWindowContainer | null;
 
-	refresh(): void;
+    refresh(): void;
 }

@@ -7,17 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class BlockListInitComposer extends MessageComposer<ConstructorParameters<typeof BlockListInitComposer>>
 {
-	private _data: ConstructorParameters<typeof BlockListInitComposer>;
+    private _data: ConstructorParameters<typeof BlockListInitComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

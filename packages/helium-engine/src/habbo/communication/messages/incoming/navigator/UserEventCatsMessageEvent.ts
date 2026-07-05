@@ -9,8 +9,8 @@ import {UserEventCatsMessageParser} from '../../parser/navigator/UserEventCatsMe
  */
 export class UserEventCatsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserEventCatsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserEventCatsMessageParser);
+    }
 }

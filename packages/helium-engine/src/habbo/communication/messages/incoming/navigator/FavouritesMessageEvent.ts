@@ -7,8 +7,8 @@ import {FavouritesMessageParser} from '../../parser/navigator/FavouritesMessageP
  */
 export class FavouritesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FavouritesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FavouritesMessageParser);
+    }
 }

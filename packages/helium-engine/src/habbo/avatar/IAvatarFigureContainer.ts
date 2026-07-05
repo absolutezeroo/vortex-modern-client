@@ -5,17 +5,17 @@
  */
 export interface IAvatarFigureContainer
 {
-	getPartTypeIds(): string[];
+    getPartTypeIds(): string[];
 
-	hasPartType(type: string): boolean;
+    hasPartType(type: string): boolean;
 
-	getPartSetId(type: string): number;
+    getPartSetId(type: string): number;
 
-	getPartColorIds(type: string): number[] | null;
+    getPartColorIds(type: string): number[] | null;
 
-	updatePart(type: string, setId: number, colorIds: number[]): void;
+    updatePart(type: string, setId: number, colorIds: number[]): void;
 
-	removePart(type: string): void;
+    removePart(type: string): void;
 
-	getFigureString(): string;
+    getFigureString(): string;
 }

@@ -7,16 +7,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CallForHelpFromForumThreadMessageComposer extends MessageComposer<ConstructorParameters<typeof CallForHelpFromForumThreadMessageComposer>>
 {
-	private _data: ConstructorParameters<typeof CallForHelpFromForumThreadMessageComposer>;
+    private _data: ConstructorParameters<typeof CallForHelpFromForumThreadMessageComposer>;
 
-	constructor(groupId: number, threadId: number, topicId: number, message: string)
-	{
-		super();
-		this._data = [groupId, threadId, topicId, message];
-	}
+    constructor(groupId: number, threadId: number, topicId: number, message: string)
+    {
+        super();
+        this._data = [groupId, threadId, topicId, message];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

@@ -8,50 +8,50 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionConfirmPetBreedingEvent extends RoomSessionEvent
 {
-	public static readonly CONFIRM_PET_BREEDING = 'RSPFUE_CONFIRM_PET_BREEDING';
+    public static readonly CONFIRM_PET_BREEDING = 'RSPFUE_CONFIRM_PET_BREEDING';
 
-	constructor(session: IRoomSession, nestId: number, pet1: unknown, pet2: unknown, rarityCategories: unknown[], resultPetTypeId: number)
-	{
-		super(RoomSessionConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, session);
-		this._nestId = nestId;
-		this._pet1 = pet1;
-		this._pet2 = pet2;
-		this._rarityCategories = rarityCategories;
-		this._resultPetTypeId = resultPetTypeId;
-	}
+    constructor(session: IRoomSession, nestId: number, pet1: unknown, pet2: unknown, rarityCategories: unknown[], resultPetTypeId: number)
+    {
+        super(RoomSessionConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, session);
+        this._nestId = nestId;
+        this._pet1 = pet1;
+        this._pet2 = pet2;
+        this._rarityCategories = rarityCategories;
+        this._resultPetTypeId = resultPetTypeId;
+    }
 
-	private _nestId: number;
+    private _nestId: number;
 
-	get nestId(): number
-	{
-		return this._nestId;
-	}
+    get nestId(): number
+    {
+        return this._nestId;
+    }
 
-	private _pet1: unknown;
+    private _pet1: unknown;
 
-	get pet1(): unknown
-	{
-		return this._pet1;
-	}
+    get pet1(): unknown
+    {
+        return this._pet1;
+    }
 
-	private _pet2: unknown;
+    private _pet2: unknown;
 
-	get pet2(): unknown
-	{
-		return this._pet2;
-	}
+    get pet2(): unknown
+    {
+        return this._pet2;
+    }
 
-	private _rarityCategories: unknown[];
+    private _rarityCategories: unknown[];
 
-	get rarityCategories(): unknown[]
-	{
-		return this._rarityCategories;
-	}
+    get rarityCategories(): unknown[]
+    {
+        return this._rarityCategories;
+    }
 
-	private _resultPetTypeId: number;
+    private _resultPetTypeId: number;
 
-	get resultPetTypeId(): number
-	{
-		return this._resultPetTypeId;
-	}
+    get resultPetTypeId(): number
+    {
+        return this._resultPetTypeId;
+    }
 }

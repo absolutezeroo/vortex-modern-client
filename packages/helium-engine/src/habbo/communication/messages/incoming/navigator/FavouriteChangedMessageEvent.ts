@@ -9,8 +9,8 @@ import {FavouriteChangedMessageParser} from '../../parser/navigator/FavouriteCha
  */
 export class FavouriteChangedMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, FavouriteChangedMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, FavouriteChangedMessageParser);
+    }
 }

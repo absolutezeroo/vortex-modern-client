@@ -10,7 +10,7 @@ import type {IRoomObjectManager} from './IRoomObjectManager';
 
 export interface IRoomInstanceContainer
 {
-	createRoomObject(roomId: string, objectId: number, type: string, category: number): IRoomObject | null;
+    createRoomObject(roomId: string, objectId: number, type: string, category: number): IRoomObject | null;
 
-	createRoomObjectManager(): IRoomObjectManager;
+    createRoomObjectManager(): IRoomObjectManager;
 }

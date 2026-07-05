@@ -10,7 +10,7 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurniturePlanetSystemVisualization extends AnimatedFurnitureVisualization
 {
-	// TODO: Implement planet object tree hierarchy with orbital mechanics.
-	// Each planet has: radius, arcSpeed, arcOffset, height.
-	// Updates planet positions during animation based on these parameters.
+    // TODO: Implement planet object tree hierarchy with orbital mechanics.
+    // Each planet has: radius, arcSpeed, arcOffset, height.
+    // Updates planet positions during animation based on these parameters.
 }

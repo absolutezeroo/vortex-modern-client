@@ -1,7 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {
-	CompetitionEntrySubmitResultMessageEventParser
+    CompetitionEntrySubmitResultMessageEventParser
 } from '../../parser/competition/CompetitionEntrySubmitResultMessageEventParser';
 
 /**
@@ -11,8 +11,8 @@ import {
  */
 export class CompetitionEntrySubmitResultMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, CompetitionEntrySubmitResultMessageEventParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, CompetitionEntrySubmitResultMessageEventParser);
+    }
 }

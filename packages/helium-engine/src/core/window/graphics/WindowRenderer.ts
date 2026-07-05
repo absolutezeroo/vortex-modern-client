@@ -824,7 +824,8 @@ export class WindowRenderer implements IWindowRenderer
             height: Math.max(0, bottom - top),
         };
     }
-	public dispose(): void
+
+    public dispose(): void
     {
         if(this._disposed)
         {

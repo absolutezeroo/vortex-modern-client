@@ -10,21 +10,21 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureWindowLogic extends FurnitureMultiStateLogic
 {
-	override initialize(data: unknown): void
-	{
-		super.initialize(data);
+    override initialize(data: unknown): void
+    {
+        super.initialize(data);
 
-		if (data === null)
-		{
-			return;
-		}
+        if(data === null)
+        {
+            return;
+        }
 
-		const config = data as { mask?: { type?: string } };
+        const config = data as { mask?: { type?: string } };
 
-		if (config.mask?.type)
-		{
-			this.object?.getModelController()?.setNumber(RoomObjectVariableEnum.FURNITURE_USES_PLANE_MASK, 1, true);
-			this.object?.getModelController()?.setString(RoomObjectVariableEnum.FURNITURE_PLANE_MASK_TYPE, config.mask.type, true);
-		}
-	}
+        if(config.mask?.type)
+        {
+            this.object?.getModelController()?.setNumber(RoomObjectVariableEnum.FURNITURE_USES_PLANE_MASK, 1, true);
+            this.object?.getModelController()?.setString(RoomObjectVariableEnum.FURNITURE_PLANE_MASK_TYPE, config.mask.type, true);
+        }
+    }
 }

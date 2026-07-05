@@ -8,10 +8,10 @@ import type {ISelectorWindow} from './ISelectorWindow';
  */
 export interface ISelectableWindow extends IWindow
 {
-	readonly selector: ISelectorWindow | null;
-	isSelected: boolean;
+    readonly selector: ISelectorWindow | null;
+    isSelected: boolean;
 
-	select(): boolean;
+    select(): boolean;
 
-	unselect(): boolean;
+    unselect(): boolean;
 }

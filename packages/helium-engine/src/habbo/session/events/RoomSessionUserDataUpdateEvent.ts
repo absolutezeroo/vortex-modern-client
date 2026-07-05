@@ -9,18 +9,18 @@ import type {IUserData} from "../IUserData";
  */
 export class RoomSessionUserDataUpdateEvent extends RoomSessionEvent
 {
-	public static readonly RSUDUE_USER_DATA_UPDATE = 'RSUDUE_USER_DATA_UPDATE';
+    public static readonly RSUDUE_USER_DATA_UPDATE = 'RSUDUE_USER_DATA_UPDATE';
 
-	constructor(session: IRoomSession, addedUsers: IUserData[] = [])
-	{
-		super(RoomSessionUserDataUpdateEvent.RSUDUE_USER_DATA_UPDATE, session);
-		this._addedUsers = addedUsers;
-	}
+    constructor(session: IRoomSession, addedUsers: IUserData[] = [])
+    {
+        super(RoomSessionUserDataUpdateEvent.RSUDUE_USER_DATA_UPDATE, session);
+        this._addedUsers = addedUsers;
+    }
 
-	private _addedUsers: IUserData[];
+    private _addedUsers: IUserData[];
 
-	get addedUsers(): IUserData[]
-	{
-		return this._addedUsers;
-	}
+    get addedUsers(): IUserData[]
+    {
+        return this._addedUsers;
+    }
 }

@@ -14,41 +14,41 @@ import {StuffDataBase} from './StuffDataBase';
 
 export class LegacyStuffData extends StuffDataBase implements IStuffData
 {
-	public static readonly FORMAT_KEY = 0;
+    public static readonly FORMAT_KEY = 0;
 
-	private _data: string = '';
+    private _data: string = '';
 
-	override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
-	{
-		this._data = wrapper.readString();
-		super.initializeFromIncomingMessage(wrapper);
-	}
+    override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void
+    {
+        this._data = wrapper.readString();
+        super.initializeFromIncomingMessage(wrapper);
+    }
 
-	override initializeFromRoomObjectModel(model: IRoomObjectModel): void
-	{
-		super.initializeFromRoomObjectModel(model);
-		this._data = model.getString(RoomObjectVariableEnum.FURNITURE_DATA);
-	}
+    override initializeFromRoomObjectModel(model: IRoomObjectModel): void
+    {
+        super.initializeFromRoomObjectModel(model);
+        this._data = model.getString(RoomObjectVariableEnum.FURNITURE_DATA);
+    }
 
-	override writeRoomObjectModel(model: IRoomObjectModelController): void
-	{
-		super.writeRoomObjectModel(model);
-		model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT, LegacyStuffData.FORMAT_KEY);
-		model.setString(RoomObjectVariableEnum.FURNITURE_DATA, this._data);
-	}
+    override writeRoomObjectModel(model: IRoomObjectModelController): void
+    {
+        super.writeRoomObjectModel(model);
+        model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT, LegacyStuffData.FORMAT_KEY);
+        model.setString(RoomObjectVariableEnum.FURNITURE_DATA, this._data);
+    }
 
-	override getLegacyString(): string
-	{
-		return this._data;
-	}
+    override getLegacyString(): string
+    {
+        return this._data;
+    }
 
-	override compare(data: IStuffData): boolean
-	{
-		return this._data === data.getLegacyString();
-	}
+    override compare(data: IStuffData): boolean
+    {
+        return this._data === data.getLegacyString();
+    }
 
-	setString(value: string): void
-	{
-		this._data = value;
-	}
+    setString(value: string): void
+    {
+        this._data = value;
+    }
 }

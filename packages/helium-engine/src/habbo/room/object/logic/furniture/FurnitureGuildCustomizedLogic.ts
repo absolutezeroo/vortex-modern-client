@@ -7,7 +7,7 @@
  */
 import type {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
-import {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
+import type {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
 import {FurnitureMultiStateLogic} from './FurnitureMultiStateLogic';
 import {RoomObjectBadgeAssetEvent} from '@habbo/room/events/RoomObjectBadgeAssetEvent';
 import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetRequestEvent';
@@ -17,115 +17,115 @@ import type {RoomObjectSelectedMessage} from '@habbo/room/messages/RoomObjectSel
 
 export class FurnitureGuildCustomizedLogic extends FurnitureMultiStateLogic
 {
-	public static readonly GUILD_ID_STUFFDATA_KEY = 1;
-	public static readonly BADGE_CODE_STUFFDATA_KEY = 2;
-	public static readonly COLOR_1_STUFFDATA_KEY = 3;
-	public static readonly COLOR_2_STUFFDATA_KEY = 4;
+    public static readonly GUILD_ID_STUFFDATA_KEY = 1;
+    public static readonly BADGE_CODE_STUFFDATA_KEY = 2;
+    public static readonly COLOR_1_STUFFDATA_KEY = 3;
+    public static readonly COLOR_2_STUFFDATA_KEY = 4;
 
-	override getEventTypes(): string[]
-	{
-		const types = [
-			RoomObjectBadgeAssetEvent.LOAD_BADGE,
-			RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU,
-			RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU
-		];
+    override getEventTypes(): string[]
+    {
+        const types = [
+            RoomObjectBadgeAssetEvent.LOAD_BADGE,
+            RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU,
+            RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU
+        ];
 
-		return this.getAllEventTypes(super.getEventTypes(), types);
-	}
+        return this.getAllEventTypes(super.getEventTypes(), types);
+    }
 
-	override processUpdateMessage(message: RoomObjectUpdateMessage): void
-	{
-		super.processUpdateMessage(message);
+    override processUpdateMessage(message: RoomObjectUpdateMessage): void
+    {
+        super.processUpdateMessage(message);
 
-		const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
+        const dataMessage = message as unknown as RoomObjectDataUpdateMessage;
 
-		if ('data' in message && dataMessage.data !== null)
-		{
-			const data = dataMessage.data as { getValue?(index: number): string };
+        if('data' in message && dataMessage.data !== null)
+        {
+            const data = dataMessage.data as { getValue?(index: number): string };
 
-			if (data.getValue)
-			{
-				this.updateGuildId(data.getValue(1));
-				this.updateGuildBadge(data.getValue(2));
-				this.updateGuildColors(data.getValue(3), data.getValue(4));
-			}
-		}
+            if(data.getValue)
+            {
+                this.updateGuildId(data.getValue(1));
+                this.updateGuildBadge(data.getValue(2));
+                this.updateGuildColors(data.getValue(3), data.getValue(4));
+            }
+        }
 
-		const badgeMessage = message as unknown as RoomObjectGroupBadgeUpdateMessage;
+        const badgeMessage = message as unknown as RoomObjectGroupBadgeUpdateMessage;
 
-		if ('assetName' in message && 'badgeId' in message)
-		{
-			if (badgeMessage.assetName !== 'loading_icon')
-			{
-				this.object?.getModelController()?.setString('furniture_guild_customized_asset_name', badgeMessage.assetName);
-				this.update(performance.now());
-			}
-		}
+        if('assetName' in message && 'badgeId' in message)
+        {
+            if(badgeMessage.assetName !== 'loading_icon')
+            {
+                this.object?.getModelController()?.setString('furniture_guild_customized_asset_name', badgeMessage.assetName);
+                this.update(performance.now());
+            }
+        }
 
-		const selectedMessage = message as unknown as RoomObjectSelectedMessage;
+        const selectedMessage = message as unknown as RoomObjectSelectedMessage;
 
-		if ('selected' in message)
-		{
-			if (this.eventDispatcher !== null && this.object !== null && !selectedMessage.selected)
-			{
-				this.eventDispatcher.emit(
-					RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU,
-					new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU, this.object)
-				);
-			}
-		}
-	}
+        if('selected' in message)
+        {
+            if(this.eventDispatcher !== null && this.object !== null && !selectedMessage.selected)
+            {
+                this.eventDispatcher.emit(
+                    RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU,
+                    new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU, this.object)
+                );
+            }
+        }
+    }
 
-	override mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void
-	{
-		if (event === null || geometry === null)
-		{
-			return;
-		}
+    override mouseEvent(event: RoomSpriteMouseEvent, geometry: IRoomGeometry): void
+    {
+        if(event === null || geometry === null)
+        {
+            return;
+        }
 
-		if (this.object === null)
-		{
-			return;
-		}
+        if(this.object === null)
+        {
+            return;
+        }
 
-		if (event.type === 'click')
-		{
-			this.openContextMenu();
-		}
+        if(event.type === 'click')
+        {
+            this.openContextMenu();
+        }
 
-		super.mouseEvent(event, geometry);
-	}
+        super.mouseEvent(event, geometry);
+    }
 
-	protected openContextMenu(): void
-	{
-		if (this.eventDispatcher !== null && this.object !== null)
-		{
-			this.eventDispatcher.emit(
-				RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU,
-				new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU, this.object)
-			);
-		}
-	}
+    protected openContextMenu(): void
+    {
+        if(this.eventDispatcher !== null && this.object !== null)
+        {
+            this.eventDispatcher.emit(
+                RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU,
+                new RoomObjectWidgetRequestEvent(RoomObjectWidgetRequestEvent.ROWRE_GUILD_FURNI_CONTEXT_MENU, this.object)
+            );
+        }
+    }
 
-	protected updateGuildId(value: string): void
-	{
-		this.object?.getModelController()?.setNumber('furniture_guild_customized_guild_id', parseInt(value));
-	}
+    protected updateGuildId(value: string): void
+    {
+        this.object?.getModelController()?.setNumber('furniture_guild_customized_guild_id', parseInt(value));
+    }
 
-	private updateGuildColors(color1: string, color2: string): void
-	{
-		this.object?.getModelController()?.setNumber('furniture_guild_customized_color_1', parseInt(color1, 16));
-		this.object?.getModelController()?.setNumber('furniture_guild_customized_color_2', parseInt(color2, 16));
-	}
+    private updateGuildColors(color1: string, color2: string): void
+    {
+        this.object?.getModelController()?.setNumber('furniture_guild_customized_color_1', parseInt(color1, 16));
+        this.object?.getModelController()?.setNumber('furniture_guild_customized_color_2', parseInt(color2, 16));
+    }
 
-	private updateGuildBadge(badgeCode: string): void
-	{
-		if (this.eventDispatcher !== null && this.object !== null)
-		{
-			this.eventDispatcher.emit(
-				RoomObjectBadgeAssetEvent.LOAD_BADGE,
-				new RoomObjectBadgeAssetEvent(RoomObjectBadgeAssetEvent.LOAD_BADGE, this.object, badgeCode, true)
-			);
-		}
-	}
+    private updateGuildBadge(badgeCode: string): void
+    {
+        if(this.eventDispatcher !== null && this.object !== null)
+        {
+            this.eventDispatcher.emit(
+                RoomObjectBadgeAssetEvent.LOAD_BADGE,
+                new RoomObjectBadgeAssetEvent(RoomObjectBadgeAssetEvent.LOAD_BADGE, this.object, badgeCode, true)
+            );
+        }
+    }
 }

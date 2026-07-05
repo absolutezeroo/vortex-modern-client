@@ -11,8 +11,8 @@ const log = Logger.getLogger('ProductDataParser');
  */
 export interface ProductDataParserEvents
 {
-	PDP_product_data_ready: [];
-	PDP_product_data_error: [error: Error];
+    PDP_product_data_ready: [];
+    PDP_product_data_error: [error: Error];
 }
 
 /**
@@ -25,86 +25,86 @@ export interface ProductDataParserEvents
  */
 export class ProductDataParser
 {
-	private _products: Map<string, IProductData>;
-	private _disposed: boolean = false;
+    private _products: Map<string, IProductData>;
+    private _disposed: boolean = false;
 
-	constructor(url: string, products: Map<string, IProductData>)
-	{
-		this._products = products;
+    constructor(url: string, products: Map<string, IProductData>)
+    {
+        this._products = products;
 
-		this.loadData(url);
-	}
+        this.loadData(url);
+    }
 
-	private _events: EventEmitter<ProductDataParserEvents> = new EventEmitter();
+    private _events: EventEmitter<ProductDataParserEvents> = new EventEmitter();
 
-	get events(): EventEmitter<ProductDataParserEvents>
-	{
-		return this._events;
-	}
+    get events(): EventEmitter<ProductDataParserEvents>
+    {
+        return this._events;
+    }
 
-	/**
+    /**
 	 * Dispose the parser
 	 */
-	dispose(): void
-	{
-		if (this._disposed) return;
+    dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._events.removeAllListeners();
-		this._disposed = true;
-	}
+        this._events.removeAllListeners();
+        this._disposed = true;
+    }
 
-	/**
+    /**
 	 * Load and parse product data from URL
 	 * @see source_as_win63/habbo/session/product/ProductDataParser.as constructor
 	 */
-	private async loadData(url: string): Promise<void>
-	{
-		try
-		{
-			const response = await fetch(url);
+    private async loadData(url: string): Promise<void>
+    {
+        try
+        {
+            const response = await fetch(url);
 
-			if (!response.ok)
-			{
-				throw new Error(`Failed to load product data: ${response.status}`);
-			}
+            if(!response.ok)
+            {
+                throw new Error(`Failed to load product data: ${response.status}`);
+            }
 
-			const data = await response.json();
+            const data = await response.json();
 
-			this.parseJsonFormat(data);
+            this.parseJsonFormat(data);
 
-			log.info(`Parsed ${this._products.size} products`);
-			this._events.emit('PDP_product_data_ready');
-		}
-		catch (error)
-		{
-			log.error('Failed to parse product data:', error);
-			this._events.emit('PDP_product_data_error', error as Error);
-		}
-	}
+            log.info(`Parsed ${this._products.size} products`);
+            this._events.emit('PDP_product_data_ready');
+        }
+        catch (error)
+        {
+            log.error('Failed to parse product data:', error);
+            this._events.emit('PDP_product_data_error', error as Error);
+        }
+    }
 
-	/**
+    /**
 	 * Parse JSON product data format
 	 *
 	 * @see source_as_win63/habbo/session/product/ProductDataParser.as parseXmlFormat()
 	 */
-	private parseJsonFormat(data: Record<string, unknown>): void
-	{
-		const productdata = (data.productdata ?? null) as Record<string, unknown> | null;
+    private parseJsonFormat(data: Record<string, unknown>): void
+    {
+        const productdata = (data.productdata ?? null) as Record<string, unknown> | null;
 
-		if (!productdata?.product) return;
+        if(!productdata?.product) return;
 
-		const products = productdata.product as unknown[];
+        const products = productdata.product as unknown[];
 
-		for (const item of products)
-		{
-			const raw = item as Record<string, unknown>;
-			if (!raw) continue;
+        for(const item of products)
+        {
+            const raw = item as Record<string, unknown>;
+            if(!raw) continue;
 
-			const code = String(raw.code || '');
-			const name = String(raw.name || '');
-			const description = String(raw.description || '');
+            const code = String(raw.code || '');
+            const name = String(raw.name || '');
+            const description = String(raw.description || '');
 
-			this._products.set(code, new ProductData(code, name, description));
-		}
-	}
+            this._products.set(code, new ProductData(code, name, description));
+        }
+    }
 }

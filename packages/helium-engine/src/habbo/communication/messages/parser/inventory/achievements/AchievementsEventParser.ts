@@ -9,41 +9,41 @@ import {AchievementData} from '../../quest/AchievementData';
  */
 export class AchievementsEventParser implements IMessageParser
 {
-	private _achievements: AchievementData[] = [];
+    private _achievements: AchievementData[] = [];
 
-	get achievements(): AchievementData[]
-	{
-		return this._achievements;
-	}
+    get achievements(): AchievementData[]
+    {
+        return this._achievements;
+    }
 
-	private _defaultCategory: string = '';
+    private _defaultCategory: string = '';
 
-	get defaultCategory(): string
-	{
-		return this._defaultCategory;
-	}
+    get defaultCategory(): string
+    {
+        return this._defaultCategory;
+    }
 
-	flush(): boolean
-	{
-		this._achievements = [];
-		this._defaultCategory = '';
-		return true;
-	}
+    flush(): boolean
+    {
+        this._achievements = [];
+        this._defaultCategory = '';
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._achievements = [];
+        this._achievements = [];
 
-		const count = wrapper.readInt();
+        const count = wrapper.readInt();
 
-		for (let i = 0; i < count; i++)
-		{
-			this._achievements.push(new AchievementData(wrapper));
-		}
+        for(let i = 0; i < count; i++)
+        {
+            this._achievements.push(new AchievementData(wrapper));
+        }
 
-		this._defaultCategory = wrapper.readString();
-		return true;
-	}
+        this._defaultCategory = wrapper.readString();
+        return true;
+    }
 }

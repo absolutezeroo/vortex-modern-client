@@ -1,5 +1,5 @@
 import type {IWindow} from '@core/window/IWindow';
-import {WindowEvent} from '@core/window/events/WindowEvent';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {AlertDialogCallback} from './AlertDialog';
@@ -16,8 +16,8 @@ import {AlertDialog} from './AlertDialog';
  */
 export interface IAlertDialogWithLink
 {
-	linkTitle: string;
-	linkUrl: string;
+    linkTitle: string;
+    linkUrl: string;
 }
 
 /**
@@ -35,9 +35,9 @@ export interface IAlertDialogWithLink
  */
 export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWithLink
 {
-	private static readonly BUTTON_LINK: string = '_alert_button_link';
+    private static readonly BUTTON_LINK: string = '_alert_button_link';
 
-	/**
+    /**
 	 * Creates a new alert dialog with a link.
 	 *
 	 * @param windowManager - The Habbo window manager
@@ -49,69 +49,69 @@ export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWith
 	 * @param flags - Bitwise HabboAlertDialogFlag values
 	 * @param callback - Optional callback for button events
 	 */
-	constructor(
-		windowManager: IHabboWindowManager,
-		xml: string,
-		title: string,
-		summary: string,
-		linkTitle: string,
-		linkUrl: string,
-		flags: number,
-		callback: AlertDialogCallback | null
-	)
-	{
-		super(windowManager, xml, title, summary, flags, callback, false);
-		this.linkTitle = linkTitle;
-		this.linkUrl = linkUrl;
-	}
+    constructor(
+        windowManager: IHabboWindowManager,
+        xml: string,
+        title: string,
+        summary: string,
+        linkTitle: string,
+        linkUrl: string,
+        flags: number,
+        callback: AlertDialogCallback | null
+    )
+    {
+        super(windowManager, xml, title, summary, flags, callback, false);
+        this.linkTitle = linkTitle;
+        this.linkUrl = linkUrl;
+    }
 
-	protected _linkTitle: string = '';
+    protected _linkTitle: string = '';
 
-	/**
+    /**
 	 * Gets the link button display text.
 	 */
-	public get linkTitle(): string
-	{
-		return this._linkTitle;
-	}
+    public get linkTitle(): string
+    {
+        return this._linkTitle;
+    }
 
-	/**
+    /**
 	 * Sets the link button display text.
 	 */
-	public set linkTitle(value: string)
-	{
-		this._linkTitle = value;
+    public set linkTitle(value: string)
+    {
+        this._linkTitle = value;
 
-		if (this._window)
-		{
-			const linkWindow = this._window.findChildByTag('LINK');
+        if(this._window)
+        {
+            const linkWindow = this._window.findChildByTag('LINK');
 
-			if (linkWindow)
-			{
-				linkWindow.caption = this._linkTitle;
-			}
-		}
-	}
+            if(linkWindow)
+            {
+                linkWindow.caption = this._linkTitle;
+            }
+        }
+    }
 
-	protected _linkUrl: string = '';
+    protected _linkUrl: string = '';
 
-	/**
+    /**
 	 * Gets the link URL.
 	 */
-	public get linkUrl(): string
-	{
-		return this._linkUrl;
-	}
+    public get linkUrl(): string
+    {
+        return this._linkUrl;
+    }
 
-	/**
+    /**
 	 * Sets the link URL.
 	 */
-	public set linkUrl(value: string)
-	{
-		this._linkUrl = value;
-	}
+    public set linkUrl(value: string)
+    {
+        this._linkUrl = value;
+    }
 
-	/**
+    /**
 	 * Handles dialog window events.
 	 *
 	 * Intercepts the link button click to open the URL, then
@@ -120,22 +120,22 @@ export class AlertDialogWithLink extends AlertDialog implements IAlertDialogWith
 	 * @param event - The window event
 	 * @param window - The window that triggered the event
 	 */
-	protected override dialogEventProc(event: WindowEvent, window: IWindow): void
-	{
-		if (event.type === WindowMouseEvent.CLICK)
-		{
-			if (window.name === AlertDialogWithLink.BUTTON_LINK)
-			{
-				if (this._linkUrl && this._linkUrl.length > 0)
-				{
-					// In AS3: HabboWebTools.navigateToURL(linkUrl, "_empty")
-					globalThis.window?.open(this._linkUrl, '_blank');
-				}
+    protected override dialogEventProc(event: WindowEvent, window: IWindow): void
+    {
+        if(event.type === WindowMouseEvent.CLICK)
+        {
+            if(window.name === AlertDialogWithLink.BUTTON_LINK)
+            {
+                if(this._linkUrl && this._linkUrl.length > 0)
+                {
+                    // In AS3: HabboWebTools.navigateToURL(linkUrl, "_empty")
+                    globalThis.window?.open(this._linkUrl, '_blank');
+                }
 
-				return;
-			}
-		}
+                return;
+            }
+        }
 
-		super.dialogEventProc(event, window);
-	}
+        super.dialogEventProc(event, window);
+    }
 }

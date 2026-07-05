@@ -10,15 +10,15 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RestoreClientMessageEventParser implements IMessageParser
 {
-	flush(): boolean
-	{
-		return true;
-	}
+    flush(): boolean
+    {
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -5,6 +5,6 @@
  */
 export interface IOutfit
 {
-	readonly figure: string;
-	readonly gender: string;
+    readonly figure: string;
+    readonly gender: string;
 }

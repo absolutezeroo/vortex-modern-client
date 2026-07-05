@@ -27,69 +27,69 @@ export type AssetLoaderClass = new (mimeType: string, url?: string, id?: number)
  */
 export class AssetTypeDeclaration
 {
-	private readonly _mimeType: string;
-	private readonly _assetClass: AssetClass;
-	private readonly _loaderClass: AssetLoaderClass | null;
-	private readonly _fileTypes: string[];
+    private readonly _mimeType: string;
+    private readonly _assetClass: AssetClass;
+    private readonly _loaderClass: AssetLoaderClass | null;
+    private readonly _fileTypes: string[];
 
-	/**
+    /**
 	 * Create a new asset type declaration
 	 * @param mimeType The MIME type (e.g., "image/png")
 	 * @param assetClass The asset class constructor
 	 * @param loaderClass The loader class constructor (optional)
 	 * @param fileTypes File extensions that map to this type
 	 */
-	constructor(
-		mimeType: string,
-		assetClass: AssetClass,
-		loaderClass: AssetLoaderClass | null = null,
-		...fileTypes: string[]
-	)
-	{
-		this._mimeType = mimeType;
-		this._assetClass = assetClass;
-		this._loaderClass = loaderClass;
-		this._fileTypes = fileTypes.length > 0 ? fileTypes : [];
-	}
+    constructor(
+        mimeType: string,
+        assetClass: AssetClass,
+        loaderClass: AssetLoaderClass | null = null,
+        ...fileTypes: string[]
+    )
+    {
+        this._mimeType = mimeType;
+        this._assetClass = assetClass;
+        this._loaderClass = loaderClass;
+        this._fileTypes = fileTypes.length > 0 ? fileTypes : [];
+    }
 
-	/**
+    /**
 	 * The MIME type for this declaration
 	 */
-	get mimeType(): string
-	{
-		return this._mimeType;
-	}
+    get mimeType(): string
+    {
+        return this._mimeType;
+    }
 
-	/**
+    /**
 	 * The asset class constructor
 	 */
-	get assetClass(): AssetClass
-	{
-		return this._assetClass;
-	}
+    get assetClass(): AssetClass
+    {
+        return this._assetClass;
+    }
 
-	/**
+    /**
 	 * The loader class constructor
 	 */
-	get loaderClass(): AssetLoaderClass | null
-	{
-		return this._loaderClass;
-	}
+    get loaderClass(): AssetLoaderClass | null
+    {
+        return this._loaderClass;
+    }
 
-	/**
+    /**
 	 * File extensions that map to this type
 	 */
-	get fileTypes(): string[]
-	{
-		return this._fileTypes;
-	}
+    get fileTypes(): string[]
+    {
+        return this._fileTypes;
+    }
 
-	/**
+    /**
 	 * Check if a file extension matches this type
 	 * @param extension The extension to check (without dot)
 	 */
-	matchesExtension(extension: string): boolean
-	{
-		return this._fileTypes.includes(extension.toLowerCase());
-	}
+    matchesExtension(extension: string): boolean
+    {
+        return this._fileTypes.includes(extension.toLowerCase());
+    }
 }

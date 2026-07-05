@@ -10,34 +10,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RespectNotificationMessageEventParser implements IMessageParser
 {
-	private _userId: number = 0;
+    private _userId: number = 0;
 
-	get userId(): number
-	{
-		return this._userId;
-	}
+    get userId(): number
+    {
+        return this._userId;
+    }
 
-	private _respectTotal: number = 0;
+    private _respectTotal: number = 0;
 
-	get respectTotal(): number
-	{
-		return this._respectTotal;
-	}
+    get respectTotal(): number
+    {
+        return this._respectTotal;
+    }
 
-	flush(): boolean
-	{
-		this._userId = 0;
-		this._respectTotal = 0;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._userId = 0;
+        this._respectTotal = 0;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._userId = wrapper.readInt();
-		this._respectTotal = wrapper.readInt();
+        this._userId = wrapper.readInt();
+        this._respectTotal = wrapper.readInt();
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -7,18 +7,17 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CloseTradingComposer extends MessageComposer<ConstructorParameters<typeof CloseTradingComposer>>
 {
-	private _data: ConstructorParameters<typeof CloseTradingComposer>;
+    private _data: ConstructorParameters<typeof CloseTradingComposer>;
 
-	constructor()
-	{
-		super();
+    constructor()
+    {
+        super();
 
-		this._data = [];
-	}
+        this._data = [];
+    }
 
-	getMessageArray()
-	{
-		return this._data;
-	}
-
+    getMessageArray()
+    {
+        return this._data;
+    }
 }

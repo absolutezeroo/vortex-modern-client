@@ -11,25 +11,25 @@ import {AchievementNotificationData} from '../../incoming/notifications/Achievem
  */
 export class HabboAchievementNotificationMessageEventParser implements IMessageParser
 {
-	private _data: AchievementNotificationData | null = null;
+    private _data: AchievementNotificationData | null = null;
 
-	get data(): AchievementNotificationData | null
-	{
-		return this._data;
-	}
+    get data(): AchievementNotificationData | null
+    {
+        return this._data;
+    }
 
-	flush(): boolean
-	{
-		this._data = null;
-		return true;
-	}
+    flush(): boolean
+    {
+        this._data = null;
+        return true;
+    }
 
-	parse(wrapper: IMessageDataWrapper): boolean
-	{
-		if (!wrapper) return false;
+    parse(wrapper: IMessageDataWrapper): boolean
+    {
+        if(!wrapper) return false;
 
-		this._data = new AchievementNotificationData(wrapper);
+        this._data = new AchievementNotificationData(wrapper);
 
-		return true;
-	}
+        return true;
+    }
 }

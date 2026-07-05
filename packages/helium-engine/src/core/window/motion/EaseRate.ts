@@ -11,11 +11,11 @@ import type {Interval} from './Interval';
  */
 export class EaseRate extends Ease
 {
-	protected _rate: number;
+    protected _rate: number;
 
-	constructor(inner: Interval, rate: number)
-	{
-		super(inner);
-		this._rate = rate;
-	}
+    constructor(inner: Interval, rate: number)
+    {
+        super(inner);
+        this._rate = rate;
+    }
 }

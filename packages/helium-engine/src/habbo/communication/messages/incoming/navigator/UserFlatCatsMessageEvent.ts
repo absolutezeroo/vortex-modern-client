@@ -7,8 +7,8 @@ import {UserFlatCatsMessageParser} from '../../parser/navigator/UserFlatCatsMess
  */
 export class UserFlatCatsMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, UserFlatCatsMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, UserFlatCatsMessageParser);
+    }
 }

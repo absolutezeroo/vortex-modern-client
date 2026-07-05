@@ -13,25 +13,25 @@ const log = Logger.getLogger('ChatEventHandler');
  */
 export class ChatEventHandler
 {
-	private _registry: ChatRegistry;
+    private _registry: ChatRegistry;
 
-	constructor(registry: ChatRegistry)
-	{
-		this._registry = registry;
-		log.debug('ChatEventHandler initialized');
-	}
+    constructor(registry: ChatRegistry)
+    {
+        this._registry = registry;
+        log.debug('ChatEventHandler initialized');
+    }
 
-	private _disposed: boolean = false;
+    private _disposed: boolean = false;
 
-	/**
+    /**
 	 * Whether this handler has been disposed
 	 */
-	get disposed(): boolean
-	{
-		return this._disposed;
-	}
+    get disposed(): boolean
+    {
+        return this._disposed;
+    }
 
-	/**
+    /**
 	 * Handle a room chat event by adding it to the registry
 	 *
 	 * @param roomId The room ID
@@ -40,20 +40,20 @@ export class ChatEventHandler
 	 * @param userName The user name
 	 * @param text The chat message text
 	 */
-	onChatEvent(roomId: number, roomName: string, userId: number, userName: string, text: string): void
-	{
-		if (this._disposed) return;
+    onChatEvent(roomId: number, roomName: string, userId: number, userName: string, text: string): void
+    {
+        if(this._disposed) return;
 
-		this._registry.addItem(roomId, roomName, userId, userName, text);
-	}
+        this._registry.addItem(roomId, roomName, userId, userName, text);
+    }
 
-	/**
+    /**
 	 * Dispose of this handler
 	 */
-	dispose(): void
-	{
-		if (this._disposed) return;
+    dispose(): void
+    {
+        if(this._disposed) return;
 
-		this._disposed = true;
-	}
+        this._disposed = true;
+    }
 }

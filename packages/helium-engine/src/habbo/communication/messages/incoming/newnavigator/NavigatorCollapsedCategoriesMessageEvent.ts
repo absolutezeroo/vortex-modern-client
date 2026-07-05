@@ -9,8 +9,8 @@ import {NavigatorCollapsedCategoriesMessageParser} from '../../parser/newnavigat
  */
 export class NavigatorCollapsedCategoriesMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, NavigatorCollapsedCategoriesMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, NavigatorCollapsedCategoriesMessageParser);
+    }
 }

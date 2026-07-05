@@ -9,8 +9,8 @@ import {HeightMapMessageParser} from '@habbo/communication/messages/parser/room/
 
 export class HeightMapMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callback: MessageEventCallback)
-	{
-		super(callback, HeightMapMessageParser);
-	}
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, HeightMapMessageParser);
+    }
 }

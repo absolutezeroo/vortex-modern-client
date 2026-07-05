@@ -9,8 +9,8 @@ import {EpicPopupMessageParser} from '../../parser/quest/EpicPopupMessageParser'
  */
 export class EpicPopupMessageEvent extends MessageEvent implements IMessageEvent
 {
-	constructor(callBack: MessageEventCallback)
-	{
-		super(callBack, EpicPopupMessageParser);
-	}
+    constructor(callBack: MessageEventCallback)
+    {
+        super(callBack, EpicPopupMessageParser);
+    }
 }
