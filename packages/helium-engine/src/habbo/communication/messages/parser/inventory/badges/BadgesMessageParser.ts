@@ -51,30 +51,21 @@ export class BadgesMessageParser implements IMessageParser
 
 	parse(wrapper: IMessageDataWrapper): boolean
 	{
-		// Total badges count
-		const totalCount = wrapper.readInt();
+		this._totalFragments = wrapper.readInt();
+		this._fragmentNo = wrapper.readInt();
 
-		for (let i = 0; i < totalCount; i++)
-		{
-			const badgeId = wrapper.readString();
-			this._badges.push({badgeId, slotId: 0});
-		}
+		const count = wrapper.readInt();
 
-		// Active badges count
-		const activeCount = wrapper.readInt();
-
-		for (let i = 0; i < activeCount; i++)
+		for (let i = 0; i < count; i++)
 		{
 			const slotId = wrapper.readInt();
 			const badgeId = wrapper.readString();
 
-			this._activeBadgeIds.push(badgeId);
+			this._badges.push({badgeId, slotId});
 
-			// Update slot info in badges array
-			const badge = this._badges.find(b => b.badgeId === badgeId);
-			if (badge)
+			if (slotId > 0)
 			{
-				badge.slotId = slotId;
+				this._activeBadgeIds.push(badgeId);
 			}
 		}
 

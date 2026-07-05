@@ -1,3 +1,4 @@
+import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageComposer} from '@core/communication/messages/IMessageComposer';
 import type {IRoomSession, RoomSessionStateType} from './IRoomSession';
@@ -17,7 +18,6 @@ import {
 	CompostPlantComposer,
 	CreditFurniRedeemMessageComposer,
 	DanceMessageComposer,
-	DismountPetComposer,
 	Game2GameChatMessageComposer,
 	GetPetCommandsComposer,
 	HarvestPetComposer,
@@ -56,6 +56,8 @@ import {
 } from '../communication/messages/outgoing/moderation';
 import {IUserDataManager} from "@habbo/session/IUserDataManager";
 import {UserDataManager} from "@habbo/session/UserDataManager";
+
+const log = Logger.getLogger('RoomSession');
 
 /**
  * Ban duration types
@@ -218,6 +220,11 @@ export class RoomSession implements IRoomSession
 		if (value >= 0 && value <= 5)
 		{
 			this._roomControllerLevel = value;
+		}
+		else
+		{
+			log.warn(`Invalid roomControllerLevel ${value}, setting to ROOM_CONTROL_LEVEL_NONE instead`);
+			this._roomControllerLevel = 0;
 		}
 	}
 
@@ -551,28 +558,28 @@ export class RoomSession implements IRoomSession
 		this._connection.send(new OpenPetPackageMessageComposer(objectId, name));
 	}
 
-	sendRoomDimmerGetPresetsMessage(_itemId: number): void
+	sendRoomDimmerGetPresetsMessage(itemId: number): void
 	{
 		if (this._connection === null) return;
 
-		this._connection.send(new RoomDimmerGetPresetsComposer());
+		this._connection.send(new RoomDimmerGetPresetsComposer(itemId));
 	}
 
-	sendRoomDimmerSavePresetMessage(_itemId: number, presetId: number, type: number, color: number, light: boolean, brightness: number): void
+	sendRoomDimmerSavePresetMessage(itemId: number, presetId: number, type: number, color: number, light: boolean, brightness: number): void
 	{
 		if(this._connection === null) return;
 
 		const hexPadded = '000000' + color.toString(16).toUpperCase();
 		const colorHex = '#' + hexPadded.substring(hexPadded.length - 6);
 
-		this._connection.send(new RoomDimmerSavePresetComposer(presetId, type, colorHex, brightness, light));
+		this._connection.send(new RoomDimmerSavePresetComposer(presetId, type, colorHex, brightness, light, itemId));
 	}
 
-	sendRoomDimmerChangeStateMessage(_itemId: number): void
+	sendRoomDimmerChangeStateMessage(itemId: number): void
 	{
 		if (this._connection === null) return;
 
-		this._connection.send(new RoomDimmerChangeStateComposer());
+		this._connection.send(new RoomDimmerChangeStateComposer(itemId));
 	}
 
 	sendUpdateClothingChangeFurniture(objectId: number, gender: string, figure: string): void
@@ -656,23 +663,7 @@ export class RoomSession implements IRoomSession
 	{
 		if (this._connection === null) return;
 
-		let banType: number;
-
-		switch (duration)
-		{
-			case BanDuration.HOUR:
-				banType = 1;
-				break;
-			case BanDuration.DAY:
-				banType = 2;
-				break;
-			case BanDuration.PERMANENT:
-			default:
-				banType = 0;
-				break;
-		}
-
-		this._connection.send(new BanUserWithDurationMessageComposer(userId, banType, this._roomId));
+		this._connection.send(new BanUserWithDurationMessageComposer(userId, duration, this._roomId));
 	}
 
 	muteUser(userId: number, minutes: number): void
@@ -721,7 +712,7 @@ export class RoomSession implements IRoomSession
 	{
 		if (this._connection === null) return;
 
-		this._connection.send(new MountPetComposer(petId));
+		this._connection.send(new MountPetComposer(petId, true));
 	}
 
 	togglePetRidingPermission(petId: number): void
@@ -735,7 +726,7 @@ export class RoomSession implements IRoomSession
 	{
 		if (this._connection === null) return;
 
-		this._connection.send(new DismountPetComposer(petId));
+		this._connection.send(new MountPetComposer(petId, false));
 	}
 
 	removeSaddleFromPet(petId: number): void

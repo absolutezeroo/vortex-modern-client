@@ -486,6 +486,22 @@ export class FurniModel implements IFurniModel
 		return null;
 	}
 
+	// AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::removeFurnis()
+	removeFurnis(itemIds: number[]): boolean
+	{
+		let removedAny = false;
+
+		for (const itemId of itemIds)
+		{
+			if (this.removeFurni(itemId) !== null)
+			{
+				removedAny = true;
+			}
+		}
+
+		return removedAny;
+	}
+
 	clearFurniList(): void
 	{
 		for (const group of this._furniData)

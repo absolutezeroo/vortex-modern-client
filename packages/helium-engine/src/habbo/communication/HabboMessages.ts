@@ -94,6 +94,7 @@ import {
 	FurniListInvalidateMessageEvent,
 	FurniListMessageEvent,
 	FurniListRemoveMessageEvent,
+	FurniListRemoveMultipleMessageEvent,
 	PetInventoryMessageEvent,
 	TradingAcceptMessageEvent,
 	TradingCloseMessageEvent,
@@ -649,6 +650,7 @@ export class HabboMessages implements IMessageConfiguration
 		this._events.set(227, FurniListMessageEvent);
 		this._events.set(1319, FurniListAddOrUpdateMessageEvent);
 		this._events.set(2763, FurniListRemoveMessageEvent);
+		this._events.set(149, FurniListRemoveMultipleMessageEvent);
 		this._events.set(3790, FurniListInvalidateMessageEvent);
 
 		// === INVENTORY - BADGES ===
@@ -984,7 +986,7 @@ export class HabboMessages implements IMessageConfiguration
 
 		// === ROOM PET ===
 		this._composers.set(1581, PickUpPetComposer);
-		this._composers.set(1036, MountPetComposer); // Also used for dismount (same ID, server toggles)
+		this._composers.set(1036, MountPetComposer); // Also used for dismount — AS3 sends an explicit `mount` boolean, same message ID for both
 		this._composers.set(3575, TogglePetRidingPermissionComposer);
 		this._composers.set(186, RemoveSaddleFromPetComposer);
 		this._composers.set(2161, GetPetCommandsComposer);

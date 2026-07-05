@@ -1,11 +1,11 @@
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
-import {FurniListItemParser} from '../furni/FurniListItemParser';
+import {TradingFurniItemParser} from './TradingFurniItemParser';
 
 export interface TradingUserItems
 {
 	userId: number;
-	items: FurniListItemParser[];
+	items: TradingFurniItemParser[];
 	numItems: number;
 	numCredits: number;
 }
@@ -49,12 +49,12 @@ export class TradingItemListMessageParser implements IMessageParser
 	private parseUserItems(wrapper: IMessageDataWrapper): TradingUserItems
 	{
 		const userId = wrapper.readInt();
-		const items: FurniListItemParser[] = [];
+		const items: TradingFurniItemParser[] = [];
 		const count = wrapper.readInt();
 
 		for (let i = 0; i < count; i++)
 		{
-			items.push(new FurniListItemParser(wrapper));
+			items.push(new TradingFurniItemParser(wrapper));
 		}
 
 		const numItems = wrapper.readInt();

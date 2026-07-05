@@ -44,10 +44,12 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {FurniListMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListMessageEvent';
 import {FurniListAddOrUpdateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListAddOrUpdateMessageEvent';
 import {FurniListRemoveMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMessageEvent';
+import {FurniListRemoveMultipleMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListRemoveMultipleMessageEvent';
 import {FurniListInvalidateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListInvalidateMessageEvent';
 import {FurniListMessageParser} from '../communication/messages/parser/inventory/furni/FurniListMessageParser';
 import {FurniListAddOrUpdateMessageParser} from '../communication/messages/parser/inventory/furni/FurniListAddOrUpdateMessageParser';
 import {FurniListRemoveMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMessageParser';
+import {FurniListRemoveMultipleMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMultipleMessageParser';
 import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
 import type {FurnitureItemData} from './items/FurnitureItemData';
 import {FurnitureItem} from './items/FurnitureItem';
@@ -630,6 +632,7 @@ export class HabboInventory extends Component implements IHabboInventory
 			this._communication.addMessageEvent(new FurniListMessageEvent(this.onFurniList)),
 			this._communication.addMessageEvent(new FurniListAddOrUpdateMessageEvent(this.onFurniListAddOrUpdate)),
 			this._communication.addMessageEvent(new FurniListRemoveMessageEvent(this.onFurniListRemove)),
+			this._communication.addMessageEvent(new FurniListRemoveMultipleMessageEvent(this.onFurniListRemoveMultiple)),
 			this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate))
 		);
 	}
@@ -677,6 +680,19 @@ export class HabboInventory extends Component implements IHabboInventory
 		if (!parser || !this._furniModel) return;
 
 		this._furniModel.removeFurni(parser.itemId);
+	};
+
+	// AS3: sources/win63_version/habbo/inventory/class_1762.as::onFurniListRemoveMultiple()
+	private onFurniListRemoveMultiple = (event: IMessageEvent): void =>
+	{
+		const parser = event.parser as FurniListRemoveMultipleMessageParser | null;
+
+		if (!parser || !this._furniModel) return;
+
+		if (this._furniModel.removeFurnis(parser.stripIds))
+		{
+			this._furniModel.resetUnseenItems();
+		}
 	};
 
 	private onFurniListInvalidate = (_event: IMessageEvent): void =>

@@ -1,21 +1,24 @@
 import {MessageComposer} from '@core/communication/messages/MessageComposer';
 
 /**
- * Mount a pet in the room
+ * Mount or dismount a pet in the room.
  *
- * Based on AS3: com.sulake.habbo.communication.messages.outgoing.room.pet.MountPetComposer
+ * AS3 has a single composer with a `mount` boolean flag — there is no separate
+ * dismount message, the server does not toggle state on its own.
+ *
+ * @see sources/win63_version/habbo/communication/messages/outgoing/room/engine/MountPetMessageComposer.as
  */
-export class MountPetComposer extends MessageComposer<ConstructorParameters<typeof MountPetComposer>>
+export class MountPetComposer extends MessageComposer<[number, boolean]>
 {
-	private _data: ConstructorParameters<typeof MountPetComposer>;
+	private _data: [number, boolean];
 
-	constructor(petId: number)
+	constructor(petId: number, mount: boolean)
 	{
 		super();
-		this._data = [petId];
+		this._data = [petId, mount];
 	}
 
-	getMessageArray()
+	getMessageArray(): [number, boolean]
 	{
 		return this._data;
 	}

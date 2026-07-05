@@ -9,6 +9,7 @@ export interface PetData
 		typeId: number;
 		paletteId: number;
 		color: string;
+		breedId: number;
 		customParts: number[];
 	};
 	level: number;
@@ -60,22 +61,23 @@ export class PetInventoryMessageParser implements IMessageParser
 			const id = wrapper.readInt();
 			const name = wrapper.readString();
 
-			// Pet figure data
+			// Pet figure data (AS3: class_2486)
 			const typeId = wrapper.readInt();
 			const paletteId = wrapper.readInt();
 			const color = wrapper.readString();
+			const breedId = wrapper.readInt();
 
-			// Custom parts
+			// Custom parts: 3 ints per part
 			const customPartCount = wrapper.readInt();
 			const customParts: number[] = [];
 			for (let j = 0; j < customPartCount; j++)
 			{
 				customParts.push(wrapper.readInt());
+				customParts.push(wrapper.readInt());
+				customParts.push(wrapper.readInt());
 			}
 
-			// Other pet data
-			wrapper.readBoolean(); // hasCustomLayerPart
-			wrapper.readInt(); // petRarity
+			const level = wrapper.readInt();
 
 			this._pets.push({
 				id,
@@ -84,9 +86,10 @@ export class PetInventoryMessageParser implements IMessageParser
 					typeId,
 					paletteId,
 					color,
+					breedId,
 					customParts,
 				},
-				level: 1, // Level comes in separate message
+				level,
 			});
 		}
 

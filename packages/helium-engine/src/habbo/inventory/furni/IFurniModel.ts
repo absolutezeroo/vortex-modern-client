@@ -44,6 +44,12 @@ export interface IFurniModel
 	removeFurni(itemId: number): GroupItem | null;
 
 	/**
+	 * Remove multiple furniture items by ID.
+	 * Returns true if any item was actually removed.
+	 */
+	removeFurnis(itemIds: number[]): boolean;
+
+	/**
 	 * Clear all furniture
 	 */
 	clearFurniList(): void;

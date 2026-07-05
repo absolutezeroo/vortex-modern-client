@@ -1,6 +1,5 @@
 export * from './PickUpPetComposer';
 export * from './MountPetComposer';
-export * from './DismountPetComposer';
 export * from './TogglePetRidingPermissionComposer';
 export * from './RemoveSaddleFromPetComposer';
 export * from './GetPetCommandsComposer';

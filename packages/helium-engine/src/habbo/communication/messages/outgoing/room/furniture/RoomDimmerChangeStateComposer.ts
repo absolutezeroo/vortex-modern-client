@@ -5,10 +5,18 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  *
  * @see source_as_win63/habbo/communication/messages/outgoing/room/furniture/RoomDimmerChangeStateMessageComposer.as
  */
-export class RoomDimmerChangeStateComposer extends MessageComposer
+export class RoomDimmerChangeStateComposer extends MessageComposer<[number]>
 {
-	getMessageArray()
+	private _data: [number];
+
+	constructor(objectId: number)
 	{
-		return [];
+		super();
+		this._data = [objectId];
+	}
+
+	getMessageArray(): [number]
+	{
+		return this._data;
 	}
 }

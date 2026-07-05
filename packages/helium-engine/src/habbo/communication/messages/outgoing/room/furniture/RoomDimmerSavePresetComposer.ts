@@ -7,17 +7,19 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  *
  * @see source_as_win63/habbo/communication/messages/outgoing/room/furniture/RoomDimmerSavePresetMessageComposer.as
  */
-export class RoomDimmerSavePresetComposer extends MessageComposer<ConstructorParameters<typeof RoomDimmerSavePresetComposer>>
-{
-	private _data: ConstructorParameters<typeof RoomDimmerSavePresetComposer>;
+type RoomDimmerSavePresetMessageArray = [number, number, string, number, boolean, boolean, number];
 
-	constructor(presetNumber: number, effectTypeId: number, color: string, brightness: number, apply: boolean)
+export class RoomDimmerSavePresetComposer extends MessageComposer<RoomDimmerSavePresetMessageArray>
+{
+	private _data: RoomDimmerSavePresetMessageArray;
+
+	constructor(presetNumber: number, effectTypeId: number, color: string, brightness: number, apply: boolean, objectId: number)
 	{
 		super();
-		this._data = [presetNumber, effectTypeId, color, brightness, apply];
+		this._data = [presetNumber, effectTypeId, color, brightness, apply, false, objectId];
 	}
 
-	getMessageArray()
+	getMessageArray(): RoomDimmerSavePresetMessageArray
 	{
 		return this._data;
 	}

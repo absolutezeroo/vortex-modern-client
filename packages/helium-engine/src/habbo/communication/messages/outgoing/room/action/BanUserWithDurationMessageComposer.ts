@@ -1,21 +1,24 @@
 import {MessageComposer} from '@core/communication/messages/MessageComposer';
 
 /**
- * Ban a user from the room with a duration
+ * Ban a user from the room with a duration.
  *
- * Based on AS3: com.sulake.habbo.communication.messages.outgoing.room.action.BanUserWithDurationMessageComposer
+ * `banType` is the AS3 string constant (`BanDuration.HOUR`/`DAY`/`PERMANENT`), sent
+ * as-is on the wire — not a numeric code.
+ *
+ * @see sources/win63_version/habbo/communication/messages/outgoing/room/action/BanUserWithDurationMessageComposer.as
  */
-export class BanUserWithDurationMessageComposer extends MessageComposer<[number, number, number]>
+export class BanUserWithDurationMessageComposer extends MessageComposer<[number, number, string]>
 {
-	private _data: [number, number, number];
+	private _data: [number, number, string];
 
-	constructor(userId: number, banType: number, roomId: number)
+	constructor(userId: number, banType: string, roomId: number = 0)
 	{
 		super();
-		this._data = [userId, banType, roomId];
+		this._data = [userId, roomId, banType];
 	}
 
-	getMessageArray(): [number, number, number]
+	getMessageArray(): [number, number, string]
 	{
 		return this._data;
 	}
