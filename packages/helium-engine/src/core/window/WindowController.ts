@@ -1525,7 +1525,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 				return true;
 			}
 
-			if (!event.isPropagationStopped())
+			if (!event.isWindowOperationPrevented())
 			{
 				if (this.hasEventListener(event.type))
 				{

@@ -3035,15 +3035,19 @@ export class RoomEngine extends Component implements IRoomEngine,
 
 			// AS3: RoomObjectEventHandler.as::handleObjectMove()/handleFurnitureMove()
 			// Snaps the semi-transparent object to whichever tile the mouse is
-			// over; keeps the object's original z rather than recomputing a
-			// FurniStackingHeightMap height (see modifyRoomObject()'s OBJECT_MOVE
-			// TODO(AS3)).
+			// over, at that tile's own floor height (event.tileZ — the same value
+			// the tile cursor above is positioned at) rather than the object's
+			// original z. This ignores any furniture already stacked on the
+			// hovered tile (that would need FurniStackingHeightMap, see
+			// modifyRoomObject()'s OBJECT_MOVE TODO(AS3)), so it's only exact
+			// over empty floor — good enough given the server is authoritative
+			// on the final position anyway.
 			if (this._pendingMove)
 			{
-				const {objectId, category, originalLocation} = this._pendingMove;
+				const {objectId, category} = this._pendingMove;
 				const object = this.getRoomObject(this._activeRoomId, objectId, category) as IRoomObjectController | null;
 
-				object?.setLocation(new Vector3d(tileX + 0.5, tileY + 0.5, originalLocation.z));
+				object?.setLocation(new Vector3d(tileX + 0.5, tileY + 0.5, tileZ));
 			}
 		}
 		else if (event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)

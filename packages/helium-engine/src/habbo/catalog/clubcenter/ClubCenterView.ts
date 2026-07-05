@@ -258,6 +258,10 @@ export class ClubCenterView implements IAvatarImageListener
 	{
 		if (event.type !== WindowMouseEvent.DOWN || !this._manager) return;
 
+		// TEMP DEBUG - remove after diagnosing drag issue
+		// eslint-disable-next-line no-console
+		console.log('[ClubCenter DEBUG] WME_DOWN target:', window.name, 'params:', (window as unknown as {testParamFlag: (f: number) => boolean}).testParamFlag?.(0x8101), 'frame === window:', window === this._window);
+
 		event.stopImmediatePropagation();
 		event.stopPropagation();
 

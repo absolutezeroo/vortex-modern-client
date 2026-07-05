@@ -67,7 +67,6 @@ export class WindowEvent
 	private static readonly _pool: WindowEvent[] = [];
 
 	protected _prevented: boolean = false;
-	protected _propagationStopped: boolean = false;
 	protected _recycled: boolean = false;
 	protected _poolRef: WindowEvent[] = WindowEvent._pool;
 
@@ -150,7 +149,6 @@ export class WindowEvent
 		this._related = null;
 		this._recycled = true;
 		this._prevented = false;
-		this._propagationStopped = false;
 		this._poolRef.push(this);
 	}
 
@@ -207,41 +205,19 @@ export class WindowEvent
 	}
 
 	/**
-	 * Stops propagation of this event to registered listeners.
-	 *
-	 * AS3's decompiled class_1758 has stopPropagation()/stopImmediatePropagation()
-	 * set the exact same flag as preventWindowOperation() (var_1166) — but the
-	 * decompiled WindowController.update() control flow around that flag is
-	 * provably corrupted (an unreachable `while(true)` with a `goto` out of it,
-	 * i.e. a decompiler artifact, not real bytecode), and conflating the two
-	 * produces behavior that contradicts live Habbo: a click handler that only
-	 * calls stopPropagation() (never preventDefault()) ends up silently
-	 * cancelling the window's own default mouse-down handling (drag-init,
-	 * activation) too — see ClubCenterView.onInput(), which is draggable on
-	 * live Habbo despite stopping propagation on every WME_DOWN. Kept as a
-	 * separate flag so stopping propagation can no longer suppress a default
-	 * window operation that was never actually preventDefault()-ed.
+	 * Stops propagation of this event.
 	 */
 	public stopPropagation(): void
 	{
-		this._propagationStopped = true;
+		this._prevented = true;
 	}
 
 	/**
-	 * Stops immediate propagation of this event to registered listeners.
-	 * See {@link stopPropagation} for why this no longer implies preventDefault().
+	 * Stops immediate propagation of this event.
 	 */
 	public stopImmediatePropagation(): void
 	{
-		this._propagationStopped = true;
-	}
-
-	/**
-	 * Returns whether propagation to registered listeners has been stopped.
-	 */
-	public isPropagationStopped(): boolean
-	{
-		return this._propagationStopped;
+		this._prevented = true;
 	}
 
 	/**
