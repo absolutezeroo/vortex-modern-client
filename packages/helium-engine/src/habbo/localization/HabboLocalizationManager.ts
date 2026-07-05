@@ -1,11 +1,13 @@
 import type {IContext} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
+import {Core} from '@core/Core';
 import {CoreLocalizationManager} from '@core/localization';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboLocalizationManager} from './IHabboLocalizationManager';
 import {BadgeBaseAndLevel} from './BadgeBaseAndLevel';
 import {HabboCommunicationEvent, type HabboCommunicationEventType} from '@habbo/communication/enum';
+import {HabboConfigurationFlags} from '@habbo/configuration/enum/HabboConfigurationFlags';
 
 const log = Logger.getLogger('HabboLocalization');
 
@@ -25,16 +27,17 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
 
 	private _isLocalizationInitialized: boolean = false;
 	private _badgePointLimits: Map<string, number> = new Map();
-	private _externalVariablesUrl: string = '';
-	private _externalVariablesHash: string = '';
 	private _configurationManager: IHabboConfigurationManager | null = null;
 	private _communicationManager: IHabboCommunicationManager | null = null;
 	private _skipExternals: boolean = false;
 	private _boundOnLoginStep: ((step: HabboCommunicationEventType) => void) | null = null;
 
-	constructor(context: IContext)
+	// AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as constructor
+	constructor(context: IContext, flags: number = 0)
 	{
-		super(context);
+		super(context, flags);
+
+		this._skipExternals = (flags & HabboConfigurationFlags.SKIP_EXTERNAL_VARIABLES) > 0;
 	}
 
 	/**
@@ -113,14 +116,16 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
 		return this.getLocalization(key, defaultValue);
 	}
 
+	// AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as::getExternalVariablesUrl()
 	getExternalVariablesUrl(): string
 	{
-		return this._externalVariablesUrl;
+		return this.getGameDataResources()?.externalVariablesUrl ?? '';
 	}
 
+	// AS3: sources/win63_version/habbo/localization/HabboLocalizationManager.as::getExternalVariablesHash()
 	getExternalVariablesHash(): string
 	{
-		return this._externalVariablesHash;
+		return this.getGameDataResources()?.externalVariablesHash ?? '';
 	}
 
 	override getActiveEnvironmentId(): string
@@ -253,21 +258,13 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
 		this.events.once('failed', () =>
 		{
 			this._isLocalizationInitialized = false;
-			log.error('Failed loading localization data');
+			Core.crash('Failed loading gamedata hashes', 8);
 		});
 
 		const hashesUrl = this._configurationManager.getProperty('gamedata.hashes.url');
 		const environmentId = this._configurationManager.getProperty('environment.id');
 
-		if (hashesUrl)
-		{
-			super.loadLocalizationFromURL(hashesUrl, environmentId);
-		}
-		else
-		{
-			// AS3: sources/flash_version/src/com/sulake/habbo/localization/HabboLocalizationManager.as::requestLocalizationInit()
-			super.loadExternalTexts(this._configurationManager.getProperty('external.texts.txt'));
-		}
+		super.loadLocalizationFromURL(hashesUrl, environmentId);
 	}
 
 	protected override initComponent(): void

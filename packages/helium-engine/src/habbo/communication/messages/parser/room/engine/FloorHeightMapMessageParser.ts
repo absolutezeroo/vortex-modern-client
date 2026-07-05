@@ -56,6 +56,30 @@ export class FloorHeightMapMessageParser implements IMessageParser
 		return this._areaHideData;
 	}
 
+	// AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/FloorHeightMapMessageEventParser.as::get cameraInitX()
+	private _cameraInitX: number = 0;
+
+	get cameraInitX(): number
+	{
+		return this._cameraInitX;
+	}
+
+	// AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/FloorHeightMapMessageEventParser.as::get cameraInitY()
+	private _cameraInitY: number = 0;
+
+	get cameraInitY(): number
+	{
+		return this._cameraInitY;
+	}
+
+	// AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/FloorHeightMapMessageEventParser.as::get cameraInitZ()
+	private _cameraInitZ: number = 0;
+
+	get cameraInitZ(): number
+	{
+		return this._cameraInitZ;
+	}
+
 	getTileHeight(x: number, y: number): number
 	{
 		if (x < 0 || x >= this._width || y < 0 || y >= this._height)
@@ -76,6 +100,9 @@ export class FloorHeightMapMessageParser implements IMessageParser
 		this._text = '';
 		this._fixedWallsHeight = -1;
 		this._areaHideData = [];
+		this._cameraInitX = 0;
+		this._cameraInitY = 0;
+		this._cameraInitZ = 0;
 
 		return true;
 	}
@@ -126,6 +153,11 @@ export class FloorHeightMapMessageParser implements IMessageParser
 			{length: areaHideCount},
 			() => new AreaHideMessageData(wrapper)
 		);
+
+		// AS3: sources/win63_version/habbo/communication/messages/parser/room/engine/FloorHeightMapMessageEventParser.as::parse()
+		this._cameraInitX = wrapper.readInt();
+		this._cameraInitY = wrapper.readInt();
+		this._cameraInitZ = wrapper.readFloat();
 
 		return true;
 	}

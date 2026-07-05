@@ -1,10 +1,11 @@
-import {Component, ComponentDependency, type IContext} from '@core/runtime';
+import {Component, ComponentDependency, type IContext, type ICore} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
 import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import type {IHabboConfigurationManager} from './IHabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {HabboProperty} from './enum/HabboProperty';
+import {HabboConfigurationFlags} from './enum/HabboConfigurationFlags';
 
 const log = Logger.getLogger('Configuration');
 
@@ -33,13 +34,18 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 	private _isConfigReadOnly: boolean = false;
 	private _embeddedConfigurationAssets: Map<string, string> = new Map();
 	private _localization: IHabboLocalizationManager | null = null;
+	private _skipExternalVariables: boolean = false;
+	private _skipLocalizations: boolean = false;
 
 	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::HabboConfigurationManager()
-	constructor(context: IContext)
+	constructor(context: IContext, flags: number = 0)
 	{
-		super(context);
+		super(context, flags);
 
 		context.configuration = this;
+
+		this._skipExternalVariables = (flags & HabboConfigurationFlags.SKIP_EXTERNAL_VARIABLES) > 0;
+		this._skipLocalizations = (flags & HabboConfigurationFlags.SKIP_LOCALIZATIONS) > 0;
 	}
 
 	setEmbeddedConfigurationAssets(assets: Record<string, string>): void
@@ -276,12 +282,29 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 		this.parseCommonVariables();
 		this.parseLocalizationVariables();
 		this.setProperty(HabboProperty.CLIENT_URL, 'app:/');
+		this.parseArguments();
 		this.setDefaults();
 		this.updateEnvironmentVariables();
 
 		if (!this.propertyExists(HabboProperty.ENVIRONMENT_ID))
 		{
 			this.initEmbeddedConfigurations();
+		}
+
+		if (!this._isConfigLoaded && this._skipExternalVariables)
+		{
+			this._isConfigLoaded = true;
+			this.unlock();
+			this.events.emit('complete');
+		}
+		else if (!this._isConfigLoaded && this._skipLocalizations)
+		{
+			void this.initConfigurationDownload().catch((error) =>
+			{
+				const err = error instanceof Error ? error : new Error(String(error));
+
+				log.error(`Configuration download after resetAll failed: ${err.message}`);
+			});
 		}
 	}
 
@@ -618,6 +641,21 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 	private parseLocalizationVariables(): void
 	{
 		this.parseConfigurationAsset('localization_configuration');
+	}
+
+	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseArguments()
+	private parseArguments(): void
+	{
+		const core = this.context as ICore;
+
+		if (!core.arguments) return;
+
+		for (const [key, value] of core.arguments)
+		{
+			this.setProperty(key.replace(/_/g, '.'), String(value));
+		}
+
+		core.clearArguments();
 	}
 
 	// AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::setDefaults()

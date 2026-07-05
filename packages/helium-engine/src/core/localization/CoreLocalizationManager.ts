@@ -34,9 +34,9 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 	protected _activeEnvironmentId: string = '';
 	protected _gameDataResources: GameDataResources | null = null;
 
-	constructor(context: IContext)
+	constructor(context: IContext, flags: number = 0)
 	{
-		super(context);
+		super(context, flags);
 	}
 
 	public registerLocalizationDefinition(id: string, name: string, url: string, code: string): void

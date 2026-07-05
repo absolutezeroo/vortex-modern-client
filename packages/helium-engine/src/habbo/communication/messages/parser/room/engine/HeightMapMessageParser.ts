@@ -107,7 +107,7 @@ export class HeightMapMessageParser implements IMessageParser
 
 		this._width = wrapper.readInt();
 		const total = wrapper.readInt();
-		this._height = total / this._width;
+		this._height = Math.trunc(total / this._width);
 		this._data = new Array(total);
 
 		for (let i = 0; i < total; i++)
