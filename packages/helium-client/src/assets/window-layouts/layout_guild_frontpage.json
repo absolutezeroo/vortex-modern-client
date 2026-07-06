@@ -1,6 +1,6 @@
 {
   "name": "layout_guild_frontpage",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1730_layout_guild_frontpage.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\159_ctlg_guild_frontpage.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_guild_frontpage"
         },
@@ -27,7 +27,7 @@
               "y": "288",
               "width": "359",
               "height": "163",
-              "params": "16",
+              "params": "1040",
               "style": "0",
               "name": "ctlg_teaserimg_1"
             },
@@ -43,9 +43,9 @@
             "typeId": 15,
             "attributes": {
               "x": "15",
-              "y": "152",
-              "width": "74",
-              "height": "17",
+              "y": "32",
+              "width": "106",
+              "height": "21",
               "params": "16",
               "style": "3",
               "name": "ctlg_special_txt",
@@ -54,8 +54,10 @@
             "children": [],
             "vars": {
               "auto_size": "left",
-              "text_style": "u_bold",
+              "text_style": "u_headline_medium",
               "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
               "spacing": 0,
               "leading": 0
             }
@@ -65,9 +67,9 @@
             "typeId": 15,
             "attributes": {
               "x": "15",
-              "y": "176",
+              "y": "76",
               "width": "335",
-              "height": "82",
+              "height": "44",
               "params": "16",
               "style": "3",
               "name": "ctlg_description",
@@ -75,6 +77,7 @@
             },
             "children": [],
             "vars": {
+              "auto_size": "left",
               "mouse_wheel_enabled": false,
               "word_wrap": true,
               "spacing": 0,
@@ -86,10 +89,10 @@
             "typeId": 4,
             "attributes": {
               "x": "49",
-              "y": "251",
+              "y": "231",
               "width": "267",
               "height": "45",
-              "params": "16",
+              "params": "1040",
               "style": "0",
               "name": "buyGuildWidget"
             },
@@ -98,7 +101,7 @@
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "23",
+                  "x": "19",
                   "y": "2",
                   "width": "213",
                   "height": "28",

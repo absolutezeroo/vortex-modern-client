@@ -1,6 +1,6 @@
 {
-  "name": "ctlg_default_3x3",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\221_ctlg_default_3x3.xml",
+  "name": "layout_badge_display",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\287_ctlg_badge_display.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,21 +14,39 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
-          "color": "0x0ff00ff"
+          "name": "ctlg_badgedisplay"
         },
         "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "5",
+              "y": "405",
+              "width": "107",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "ctlg_selectproduct",
+              "caption": "${catalog_selectproduct}"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_small"
+            }
+          },
           {
             "tag": "container",
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "120",
+              "y": "0",
               "width": "360",
-              "height": "180",
+              "height": "240",
               "params": "16",
-              "style": "102",
+              "style": "0",
               "name": "productViewWidget"
             },
             "children": []
@@ -37,50 +55,8 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "0",
-              "y": "305",
-              "width": "360",
-              "height": "120",
-              "params": "16",
-              "style": "102",
-              "name": "itemGridWidget"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "0",
-              "y": "430",
-              "width": "360",
-              "height": "30",
-              "params": "16",
-              "style": "102",
-              "name": "purchaseWidget"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "183",
-              "y": "123",
-              "width": "175",
-              "height": "25",
-              "params": "0",
-              "style": "0",
-              "name": "activityPointDisplayWidget"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "114",
-              "y": "118",
+              "x": "99",
+              "y": "13",
               "width": "142",
               "height": "73",
               "params": "16",
@@ -94,12 +70,12 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "120",
+              "y": "430",
               "width": "360",
-              "height": "155",
+              "height": "30",
               "params": "16",
               "style": "0",
-              "name": "bundlePurchaseExtraInfoWidget"
+              "name": "purchaseWidget"
             },
             "children": []
           },
@@ -108,12 +84,12 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "275",
-              "width": "180",
-              "height": "25",
-              "params": "147456",
+              "y": "245",
+              "width": "175",
+              "height": "175",
+              "params": "16",
               "style": "0",
-              "name": "spinnerWidget"
+              "name": "itemGridWidget"
             },
             "children": []
           },
@@ -122,27 +98,12 @@
             "typeId": 4,
             "attributes": {
               "x": "180",
-              "y": "275",
-              "width": "180",
-              "height": "25",
-              "params": "147456",
-              "style": "0",
-              "name": "totalPriceWidget"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "187",
-              "y": "122",
-              "width": "174",
-              "height": "40",
+              "y": "20",
+              "width": "170",
+              "height": "30",
               "params": "0",
               "style": "0",
-              "name": "limitedItemWidget",
-              "visible": "false"
+              "name": "limitedItemWidget"
             },
             "children": [
               {
@@ -154,7 +115,7 @@
                   "width": "200",
                   "height": "40",
                   "params": "147472",
-                  "style": "0",
+                  "style": "3",
                   "name": "unique_item_overlay_container"
                 },
                 "children": [],
@@ -165,18 +126,55 @@
             ]
           },
           {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "190",
+              "y": "401",
+              "width": "100",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "ctlg_selectbadge",
+              "caption": "${catalog_selectbadge}"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_small"
+            }
+          },
+          {
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "0",
-              "y": "425",
-              "width": "360",
-              "height": "30",
-              "params": "0",
-              "style": "3",
-              "name": "soldLtdItemsWidget"
+              "x": "180",
+              "y": "245",
+              "width": "180",
+              "height": "175",
+              "params": "16",
+              "style": "0",
+              "name": "userBadgeSelectorWidget"
             },
-            "children": []
+            "children": [
+              {
+                "tag": "scrollable_itemgrid_vertical",
+                "typeId": 140,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "180",
+                  "height": "175",
+                  "params": "16",
+                  "style": "3",
+                  "name": "badgeGrid"
+                },
+                "children": [],
+                "vars": {
+                  "spacing": 1,
+                  "scale_to_fit_items": true
+                }
+              }
+            ]
           }
         ]
       }

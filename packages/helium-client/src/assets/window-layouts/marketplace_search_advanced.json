@@ -1,6 +1,6 @@
 {
   "name": "marketplace_search_advanced",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1718_marketplace_search_advanced.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\288_marketplace_search_simple.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

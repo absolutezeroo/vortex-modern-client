@@ -1,6 +1,6 @@
 {
   "name": "club_buy_vip_item",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1668_club_buy_vip_item.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\250_club_buy_info_item.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

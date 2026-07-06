@@ -1,6 +1,6 @@
 {
   "name": "habbo_orderinfo_gift_checked",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1641_habbo_orderinfo_gift_checked.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\229_habbo_orderinfo_dialog.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

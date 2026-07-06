@@ -1,0 +1,141 @@
+{
+  "name": "layout_pets3",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\271_ctlg_pets3.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "2064",
+          "style": "0",
+          "name": "ctlg_pets2"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "10",
+              "y": "10",
+              "width": "340",
+              "height": "440",
+              "params": "2064",
+              "style": "2",
+              "color": "0xff8899a2"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "20",
+                  "y": "10",
+                  "width": "57",
+                  "height": "57",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ctlg_teaserimg_1"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}catalogue/ctlg_pet_note.gif",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "85",
+                  "y": "26",
+                  "width": "242",
+                  "height": "21",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_1",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "text_style": "u_headline_medium",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "20",
+                  "y": "72",
+                  "width": "307",
+                  "height": "124",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_2",
+                  "caption": "${lorem.content}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "20",
+                  "y": "270",
+                  "width": "306",
+                  "height": "138",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_3",
+                  "caption": "${lorem.newline}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 16777215,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

@@ -1,6 +1,6 @@
 {
   "name": "marketplace_search_simple",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\288_marketplace_search_simple.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\244_marketplace_search_simple.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -19,241 +19,37 @@
         },
         "children": [
           {
-            "tag": "container",
-            "typeId": 4,
+            "tag": "text",
+            "typeId": 10,
             "attributes": {
-              "x": "10",
-              "y": "10",
-              "width": "340",
-              "height": "20",
+              "x": "0",
+              "y": "23",
+              "width": "360",
+              "height": "17",
               "params": "16",
-              "style": "0",
-              "name": "text_search_container"
-            },
-            "children": [
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "3",
-                  "width": "102",
-                  "height": "16",
-                  "params": "16",
-                  "style": "3",
-                  "caption": "${catalog.marketplace.search_name}"
-                },
-                "children": [],
-                "vars": {
-                  "text_color": 6710886,
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "border",
-                "typeId": 30,
-                "attributes": {
-                  "x": "120",
-                  "y": "0",
-                  "width": "220",
-                  "height": "20",
-                  "params": "16",
-                  "style": "0"
-                },
-                "children": [
-                  {
-                    "tag": "input",
-                    "typeId": 77,
-                    "attributes": {
-                      "x": "6",
-                      "y": "2",
-                      "width": "210",
-                      "height": "16",
-                      "params": "1",
-                      "style": "3",
-                      "name": "search_input"
-                    },
-                    "children": [],
-                    "vars": {
-                      "always_show_selection": true,
-                      "mouse_wheel_enabled": false,
-                      "spacing": 0,
-                      "leading": 0
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "10",
-              "y": "35",
-              "width": "340",
-              "height": "20",
-              "params": "16",
-              "style": "0",
-              "name": "price_container"
-            },
-            "children": [
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "3",
-                  "width": "102",
-                  "height": "16",
-                  "params": "16",
-                  "style": "3",
-                  "caption": "${catalog.marketplace.search_price}"
-                },
-                "children": [],
-                "vars": {
-                  "text_color": 6710886,
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "border",
-                "typeId": 30,
-                "attributes": {
-                  "x": "120",
-                  "y": "0",
-                  "width": "70",
-                  "height": "20",
-                  "params": "16",
-                  "style": "0"
-                },
-                "children": [
-                  {
-                    "tag": "input",
-                    "typeId": 77,
-                    "attributes": {
-                      "x": "6",
-                      "y": "3",
-                      "width": "60",
-                      "height": "16",
-                      "params": "1",
-                      "style": "3",
-                      "name": "min_price_input"
-                    },
-                    "children": [],
-                    "vars": {
-                      "always_show_selection": true,
-                      "mouse_wheel_enabled": false,
-                      "restrict": "0-9",
-                      "spacing": 0,
-                      "leading": 0
-                    }
-                  }
-                ]
-              },
-              {
-                "tag": "border",
-                "typeId": 30,
-                "attributes": {
-                  "x": "270",
-                  "y": "0",
-                  "width": "70",
-                  "height": "20",
-                  "params": "16",
-                  "style": "0"
-                },
-                "children": [
-                  {
-                    "tag": "input",
-                    "typeId": 77,
-                    "attributes": {
-                      "x": "6",
-                      "y": "3",
-                      "width": "60",
-                      "height": "16",
-                      "params": "1",
-                      "style": "3",
-                      "name": "max_price_input"
-                    },
-                    "children": [],
-                    "vars": {
-                      "always_show_selection": true,
-                      "mouse_wheel_enabled": false,
-                      "restrict": "0-9",
-                      "spacing": 0,
-                      "leading": 0
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "10",
-              "y": "60",
-              "width": "340",
-              "height": "24",
-              "params": "16",
-              "style": "0",
-              "name": "sort_container"
-            },
-            "children": [
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "3",
-                  "width": "102",
-                  "height": "16",
-                  "params": "16",
-                  "style": "3",
-                  "caption": "${catalog.marketplace.sort_order}"
-                },
-                "children": [],
-                "vars": {
-                  "text_color": 6710886,
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "dropmenu",
-                "typeId": 102,
-                "attributes": {
-                  "x": "120",
-                  "y": "0",
-                  "width": "220",
-                  "height": "24",
-                  "params": "17",
-                  "style": "3",
-                  "name": "sort_dropmenu"
-                },
-                "children": []
-              }
-            ]
-          },
-          {
-            "tag": "button",
-            "typeId": 60,
-            "attributes": {
-              "x": "250",
-              "y": "90",
-              "width": "100",
-              "height": "22",
-              "params": "393233",
               "style": "3",
-              "name": "search_button",
-              "caption": "${generic.search}",
-              "width_min": "100"
+              "caption": "${catalog.marketplace.sort_order}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "text_color": 6710886,
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "dropmenu",
+            "typeId": 102,
+            "attributes": {
+              "x": "70",
+              "y": "50",
+              "width": "220",
+              "height": "24",
+              "params": "17",
+              "style": "3",
+              "name": "sort_dropmenu"
             },
             "children": []
           }

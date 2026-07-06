@@ -1,6 +1,6 @@
 {
   "name": "Campaign",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1523_Campaign.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\135_QuestCampaign.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

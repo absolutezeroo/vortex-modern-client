@@ -12,6 +12,12 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const DEFAULT_INPUT = path.resolve(repoRoot, 'sources', 'win63_2023_version', 'binaryDataXml_organized', 'layouts');
 const DEFAULT_OUTPUT = path.resolve(__dirname, '../src/assets/window-layouts');
 
+// See build-asset-name-manifest.mjs for how this is generated and why it's needed.
+const UID_MANIFEST_PATH = path.resolve(__dirname, 'uid-to-name-manifest.json');
+const UID_TO_NAME = fs.existsSync(UID_MANIFEST_PATH)
+    ? JSON.parse(fs.readFileSync(UID_MANIFEST_PATH, 'utf8')).uidToName
+    : {};
+
 /**
  * Element type name -> type ID mapping.
  * Must stay in sync with compile-window-skins.mjs TYPE_MAP.
@@ -495,6 +501,15 @@ function compileLayout(xml, sourcePath, outDir)
     const layoutWidth = parseInt(layoutAttrs.width ?? '0', 10) || 0;
     const layoutHeight = parseInt(layoutAttrs.height ?? '0', 10) || 0;
 
+    // uid-based rename: the source XML's own uid GUID is stable across re-exports/renames of
+    // the same Flash library item, so if vortex-client's clean manifest (see
+    // build-asset-name-manifest.mjs) has this uid, that name is authoritative - it corrects
+    // cases where win63's export tool named the file after its unreliable internal
+    // <layout name="..."> attribute (a Flash-authoring document label, not the runtime asset
+    // name AS3 actually looks up) rather than the true embed name.
+    const sourceUid = layoutAttrs.uid ?? null;
+    const uidResolvedName = sourceUid ? UID_TO_NAME[sourceUid] : undefined;
+
     windowElements.forEach((element, index) =>
     {
         // Derive layout name from filename, stripping the module prefix.
@@ -502,7 +517,8 @@ function compileLayout(xml, sourcePath, outDir)
         //      "HabboToolbarCom_bottom_bar_left.xml"   → "bottom_bar_left"
         const basename = path.basename(sourcePath, path.extname(sourcePath));
         const underscoreIdx = basename.indexOf('_');
-        const layoutName = underscoreIdx >= 0 ? basename.substring(underscoreIdx + 1) : basename;
+        const filenameDerivedName = underscoreIdx >= 0 ? basename.substring(underscoreIdx + 1) : basename;
+        const layoutName = uidResolvedName ?? filenameDerivedName;
 
         layouts.push({
             name: layoutName + (windowElements.length > 1 ? `#${index}` : ''),

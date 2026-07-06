@@ -1,6 +1,6 @@
 {
   "name": "layout_marketplace_own_items",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1636_layout_marketplace_own_items.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\225_ctlg_marketplace.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

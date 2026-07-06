@@ -1,6 +1,6 @@
 {
   "name": "badgeDisplayWidget",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1600_badgeDisplayWidget.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\192_badgeDisplayNewWidget.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

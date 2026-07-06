@@ -1,6 +1,6 @@
 {
   "name": "habbo_orderinfo_dialog",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\229_habbo_orderinfo_dialog.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\162_habbo_orderinfo_dialog.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -11,140 +11,176 @@
         "typeId": 4,
         "attributes": {
           "x": "0",
-          "y": "105",
-          "width": "282",
-          "height": "127",
-          "params": "16",
+          "y": "0",
+          "width": "284",
+          "height": "149",
+          "params": "131088",
           "style": "0",
-          "name": "giftInfoContainer"
+          "name": "habbo_orderinfo_dialog"
         },
         "children": [
           {
-            "tag": "checkbox",
-            "typeId": 70,
+            "tag": "border",
+            "typeId": 30,
             "attributes": {
-              "x": "21",
+              "x": "0",
               "y": "0",
-              "width": "20",
-              "height": "20",
-              "params": "17",
-              "style": "3",
-              "name": "buyAsGift"
-            },
-            "children": []
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "43",
-              "y": "1",
-              "width": "78",
-              "height": "15",
-              "params": "16",
-              "style": "3",
-              "caption": "${catalog.purchase.confirmation.dialog.buyasgift.checkbox}"
-            },
-            "children": [],
-            "vars": {
-              "auto_size": "left",
-              "text_style": "u_small",
-              "mouse_wheel_enabled": false,
-              "spacing": 0,
-              "leading": 0
-            }
-          },
-          {
-            "tag": "border",
-            "typeId": 30,
-            "attributes": {
-              "x": "25",
-              "y": "24",
-              "width": "220",
-              "height": "20",
-              "params": "16",
+              "width": "284",
+              "height": "149",
+              "params": "131088",
               "style": "0"
             },
             "children": [
               {
-                "tag": "input",
-                "typeId": 77,
+                "tag": "itemlist_vertical",
+                "typeId": 50,
                 "attributes": {
-                  "x": "5",
-                  "y": "5",
-                  "width": "200",
-                  "height": "12",
-                  "params": "1",
+                  "x": "0",
+                  "y": "0",
+                  "width": "284",
+                  "height": "149",
+                  "params": "131088",
                   "style": "3",
-                  "name": "receiver"
+                  "name": "orderItemList"
                 },
-                "children": [],
-                "vars": {
-                  "always_show_selection": true,
-                  "mouse_wheel_enabled": false,
-                  "word_wrap": true,
-                  "spacing": 0,
-                  "leading": 0
-                }
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "284",
+                      "height": "80",
+                      "params": "16",
+                      "style": "0",
+                      "name": "infoContainer"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "16",
+                          "y": "14",
+                          "width": "250",
+                          "height": "15",
+                          "params": "16",
+                          "style": "3",
+                          "name": "habbo_orderinfo_text_a",
+                          "caption": "${catalog.purchase.confirmation.dialog.costs}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "16",
+                          "y": "34",
+                          "width": "250",
+                          "height": "15",
+                          "params": "16",
+                          "style": "3",
+                          "name": "habbo_orderinfo_text_b",
+                          "caption": "${catalog.purchase.confirmation.dialog.amount}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "16",
+                          "y": "54",
+                          "width": "250",
+                          "height": "26",
+                          "params": "16",
+                          "style": "3",
+                          "name": "habbo_orderinfo_text_c",
+                          "caption": "${catalog.purchase.confirmation.dialog.remaining}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "80",
+                      "width": "281",
+                      "height": "34",
+                      "params": "16",
+                      "style": "0",
+                      "name": "buttonContainer"
+                    },
+                    "children": [
+                      {
+                        "tag": "button",
+                        "typeId": 60,
+                        "attributes": {
+                          "x": "151",
+                          "y": "3",
+                          "width": "56",
+                          "height": "22",
+                          "params": "393361",
+                          "style": "3",
+                          "name": "button_cancel",
+                          "caption": "${generic.cancel}",
+                          "width_max": "130"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "button",
+                        "typeId": 60,
+                        "attributes": {
+                          "x": "80",
+                          "y": "3",
+                          "width": "35",
+                          "height": "22",
+                          "params": "131217",
+                          "style": "3",
+                          "name": "button_ok",
+                          "caption": "${generic.ok}",
+                          "width_max": "130"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
               }
             ]
-          },
-          {
-            "tag": "border",
-            "typeId": 30,
-            "attributes": {
-              "x": "25",
-              "y": "72",
-              "width": "220",
-              "height": "50",
-              "params": "16",
-              "style": "0"
-            },
-            "children": [
-              {
-                "tag": "input",
-                "typeId": 77,
-                "attributes": {
-                  "x": "5",
-                  "y": "5",
-                  "width": "200",
-                  "height": "40",
-                  "params": "1",
-                  "style": "3",
-                  "name": "message"
-                },
-                "children": [],
-                "vars": {
-                  "always_show_selection": true,
-                  "mouse_wheel_enabled": false,
-                  "word_wrap": true,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              }
-            ]
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "25",
-              "y": "47",
-              "width": "213",
-              "height": "26",
-              "params": "16",
-              "style": "3",
-              "caption": "${catalog.purchase.confirmation.dialog.buyasgift.greetings.info}"
-            },
-            "children": [],
-            "vars": {
-              "auto_size": "left",
-              "text_style": "u_small",
-              "mouse_wheel_enabled": false,
-              "word_wrap": true,
-              "spacing": 0,
-              "leading": 0
-            }
           }
         ]
       }
@@ -152,6 +188,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 282,
-  "layoutHeight": 127
+  "layoutWidth": 284,
+  "layoutHeight": 149
 }

@@ -1,6 +1,6 @@
 {
   "name": "layout_loyalty_vip_buy",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1683_layout_loyalty_vip_buy.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\265_ctlg_loyalty_vip_buy.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

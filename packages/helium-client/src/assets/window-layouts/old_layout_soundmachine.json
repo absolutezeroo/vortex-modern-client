@@ -1,0 +1,262 @@
+{
+  "name": "old_layout_soundmachine",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\243_ctlg_soundmachine.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "16",
+          "style": "0",
+          "name": "ctlg_soundmachine"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "6",
+              "y": "130",
+              "width": "130",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "ctlg_selectproduct",
+              "caption": "${catalog_selectproduct}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "5",
+              "y": "150",
+              "width": "170",
+              "height": "275",
+              "params": "16",
+              "style": "0",
+              "name": "itemGridWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "180",
+              "y": "154",
+              "width": "175",
+              "height": "274",
+              "params": "16",
+              "style": "0",
+              "name": "songDiskProductViewWidget",
+              "tags": "EMBEDDED"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "175",
+                  "height": "176",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ctlg_teaserimg_1"
+                },
+                "children": []
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "176",
+                  "width": "175",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_product_name",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "194",
+                  "width": "62",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_description",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "213",
+                  "width": "31",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_song_length",
+                  "caption": "00:00"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "235",
+                  "width": "175",
+                  "height": "36",
+                  "params": "16",
+                  "style": "0",
+                  "name": "playPreviewContainer"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "175",
+                      "height": "36",
+                      "params": "16",
+                      "style": "2",
+                      "color": "0x0cccccc"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "102",
+                      "y": "8",
+                      "width": "66",
+                      "height": "22",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "listen",
+                      "caption": "${play_preview_button}",
+                      "width_min": "66",
+                      "width_max": "66"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "9",
+                      "y": "11",
+                      "width": "85",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "name": "play_preview_text",
+                      "caption": "${play_preview}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "text_style": "u_small",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "180",
+              "y": "118",
+              "width": "142",
+              "height": "73",
+              "params": "16",
+              "style": "0",
+              "name": "specialInfoWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "16",
+              "style": "0",
+              "name": "purchaseWidget"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

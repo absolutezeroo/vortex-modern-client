@@ -232,16 +232,12 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
-    // TS-only: the "layout_" (newer/UBUNTU) source tree renamed some page layout codes relative
-    // to the "ctlg_"/bare-code (older) source tree - AS3 itself only special-cases "frontpage4"
-    // -> "frontpage_featured" (see LAYOUT_MAGIC_PREFIX usage below), but this port's two compiled
-    // asset sets also disagree on "default_3x3" -> "default_ubuntu" (confirmed: layout_default_
-    // ubuntu.json has the same widget set as ctlg_default_3x3.json, just a taller productViewWidget
-    // region - 240px vs 180px - matching its own internal 200px-tall room canvas correctly, where
-    // ctlg_default_3x3.json's placeholder undersizes it). Only applied when preferring new naming.
+    // AS3's own literal rename: createWindow() maps "frontpage4" -> "frontpage_featured" before
+    // building the "layout_"/"old_layout_" asset name. (A previous "default_3x3" ->
+    // "default_ubuntu" entry here was a workaround for a compiled-asset naming bug - see
+    // build-asset-name-manifest.mjs - now fixed at the source instead.)
     private static readonly NEW_NAMING_RENAMES: Record<string, string> = {
         frontpage4: 'frontpage_featured',
-        default_3x3: 'default_ubuntu',
     };
 
     // AS3 loads this via assets.getAssetByName("layout_" + name / "old_layout_" + name).content +

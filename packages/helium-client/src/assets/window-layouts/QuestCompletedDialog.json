@@ -1,6 +1,6 @@
 {
   "name": "QuestCompletedDialog",
-  "source": "sources\\win63_2023_version\\binaryDataXml\\1513_QuestCompletedDialog.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\127_achievement_notification.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
