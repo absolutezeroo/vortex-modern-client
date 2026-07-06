@@ -110,7 +110,17 @@ import {
 import {MysteryBoxKeysMessageEvent,} from './messages/incoming/mysterybox';
 
 // Incoming Events - Catalog
-import {BonusRareInfoMessageEvent, BuildersClubSubscriptionStatusMessageEvent, ClubGiftInfoEvent,} from './messages/incoming/catalog';
+import {
+    BonusRareInfoMessageEvent,
+    BuildersClubSubscriptionStatusMessageEvent,
+    CatalogIndexMessageEvent,
+    CatalogPageMessageEvent,
+    ClubGiftInfoEvent,
+    NotEnoughBalanceMessageEvent,
+    PurchaseErrorMessageEvent,
+    PurchaseNotAllowedMessageEvent,
+    PurchaseOKMessageEvent,
+} from './messages/incoming/catalog';
 
 // Incoming Events - Landing View
 import {PromoArticlesMessageEvent,} from './messages/incoming/landingview';
@@ -126,8 +136,8 @@ import {
     GamePlayerValueMessageEvent,
     HanditemConfigurationMessageEvent,
     OpenConnectionMessageEvent,
-    RoomQueueStatusMessageEvent,
     RoomForwardMessageEvent,
+    RoomQueueStatusMessageEvent,
     RoomReadyMessageEvent,
     YouAreNotSpectatorMessageEvent,
     YouArePlayingGameMessageEvent,
@@ -205,9 +215,9 @@ import {
     BlockUserUpdateMessageEvent,
     ChangeEmailResultEvent,
     EmailStatusResultEvent,
-    GroupDetailsChangedMessageEvent,
     ExtendedProfileChangedMessageEvent,
     ExtendedProfileMessageEvent,
+    GroupDetailsChangedMessageEvent,
     HabboGroupBadgesMessageEvent,
     HabboGroupDeactivatedMessageEvent,
     HabboGroupDetailsMessageEvent,
@@ -362,9 +372,9 @@ import {
     GetFurnitureAliasesMessageComposer,
     GetHeightMapMessageComposer,
     MoveAvatarMessageComposer,
-    PlaceObjectMessageComposer,
     MoveObjectMessageComposer,
     PickupObjectMessageComposer,
+    PlaceObjectMessageComposer,
 } from './messages/outgoing/room/engine';
 
 // Outgoing Composers - Room Chat
@@ -467,7 +477,13 @@ import {PollAnswerComposer, PollRejectComposer, PollStartComposer,} from './mess
 import {GetPromoArticlesComposer,} from './messages/outgoing/landingview';
 
 // Outgoing Composers - Catalog
-import {GetBonusRareInfoMessageComposer, GetClubGiftMessageComposer,} from './messages/outgoing/catalog';
+import {
+    GetBonusRareInfoMessageComposer,
+    GetCatalogIndexComposer,
+    GetCatalogPageComposer,
+    GetClubGiftMessageComposer,
+    PurchaseFromCatalogComposer,
+} from './messages/outgoing/catalog';
 
 // Outgoing Composers - Quest (hall of fame)
 import {GetCommunityGoalHallOfFameMessageComposer,} from './messages/outgoing/quest';
@@ -563,9 +579,9 @@ import {
  * Habbo message configuration
  * Maps message IDs to their composer and event classes
  */
-export class HabboMessages implements IMessageConfiguration
+export class HabboMessages implements IMessageConfiguration 
 {
-    constructor()
+    constructor() 
     {
         this.registerEvents();
         this.registerComposers();
@@ -573,22 +589,22 @@ export class HabboMessages implements IMessageConfiguration
 
     private _events: Map<number, EventClass> = new Map();
 
-    get events(): Map<number, EventClass>
+    get events(): Map<number, EventClass> 
     {
         return this._events;
     }
 
     private _composers: Map<number, ComposerClass> = new Map();
 
-    get composers(): Map<number, ComposerClass>
+    get composers(): Map<number, ComposerClass> 
     {
         return this._composers;
     }
 
     /**
-	 * Register incoming message events (Server -> Client)
-	 */
-    private registerEvents(): void
+     * Register incoming message events (Server -> Client)
+     */
+    private registerEvents(): void 
     {
         // === HANDSHAKE ===
         this._events.set(2334, InitDiffieHandshakeMessageEvent);
@@ -858,6 +874,12 @@ export class HabboMessages implements IMessageConfiguration
         // === CATALOG (bonus rare) ===
         this._events.set(1984, BonusRareInfoMessageEvent);
         this._events.set(3771, ClubGiftInfoEvent);
+        this._events.set(2248, CatalogIndexMessageEvent);
+        this._events.set(1405, CatalogPageMessageEvent);
+        this._events.set(2558, PurchaseOKMessageEvent);
+        this._events.set(930, PurchaseErrorMessageEvent);
+        this._events.set(1872, PurchaseNotAllowedMessageEvent);
+        this._events.set(3883, NotEnoughBalanceMessageEvent);
 
         // === QUEST (hall of fame) ===
         this._events.set(2134, CommunityGoalHallOfFameMessageEvent);
@@ -875,9 +897,9 @@ export class HabboMessages implements IMessageConfiguration
     }
 
     /**
-	 * Register outgoing message composers (Client -> Server)
-	 */
-    private registerComposers(): void
+     * Register outgoing message composers (Client -> Server)
+     */
+    private registerComposers(): void 
     {
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
@@ -1096,6 +1118,9 @@ export class HabboMessages implements IMessageConfiguration
         // === CATALOG (bonus rare) ===
         this._composers.set(957, GetBonusRareInfoMessageComposer);
         this._composers.set(1604, GetClubGiftMessageComposer);
+        this._composers.set(1606, GetCatalogIndexComposer);
+        this._composers.set(2400, GetCatalogPageComposer);
+        this._composers.set(2697, PurchaseFromCatalogComposer);
 
         // === QUEST (hall of fame) ===
         this._composers.set(1034, GetCommunityGoalHallOfFameMessageComposer);
