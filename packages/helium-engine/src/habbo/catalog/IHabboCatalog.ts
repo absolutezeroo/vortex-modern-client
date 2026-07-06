@@ -8,6 +8,8 @@ import type {ICatalogEarnings} from './ICatalogEarnings';
 import type {IProductData} from '@habbo/session/product/IProductData';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IPurchasableOffer} from './IPurchasableOffer';
+import type {HabboCatalogUtils} from './HabboCatalogUtils';
+import type {ICatalogNavigator} from './navigation/ICatalogNavigator';
 
 /**
  * Interface for the Habbo catalog.
@@ -30,13 +32,17 @@ export interface IHabboCatalog
     readonly buildersClubEnabled: boolean;
     readonly catalogType: string;
     readonly collectorHub: unknown | null;
+    readonly utils: HabboCatalogUtils;
+    readonly currentCatalogNavigator: ICatalogNavigator | null;
+
+    getSeasonalCurrencyActivityPointType(): number;
 
     redeemVoucher(voucher: string): void;
     loadCatalogPage(pageId: number, offerId: number, catalogType: string): void;
     getRecyclerStatus(): void;
     getRecyclerPrizes(): void;
     sendRecycleItems(items: unknown[]): void;
-    toggleCatalog(pageName: string, forceOpen?: boolean, showMainWindow?: boolean): void;
+    toggleCatalog(catalogType: string, forceOpen?: boolean, showMainWindow?: boolean): void;
     openCatalog(): void;
     openCatalogPage(pageName: string, catalogType?: string | null): void;
     openRoomAdCatalogPageInExtendedMode(
@@ -82,7 +88,7 @@ export interface IHabboCatalog
     displayProductIcon(productType: string, classId: number, target: unknown): void;
     openRentConfirmationWindow(data: unknown, isWallItem: boolean, extraParam?: number, price?: number, rent?: boolean): void;
     toggleBuilderCatalog(): void;
-    getCatalogNavigator(catalogType: string): unknown | null;
+    getCatalogNavigator(catalogType: string): ICatalogNavigator | null;
     getOfferCenter(extension: unknown): unknown | null;
     itemAddedToInventory(classId: number, itemId: number, category: number): void;
     getActivityPointName(activityPointType: number): string;

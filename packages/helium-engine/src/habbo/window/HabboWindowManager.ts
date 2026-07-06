@@ -603,6 +603,16 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
+	 * Probe whether a widget layout is registered, without logging a miss.
+	 *
+	 * Equivalent to AS3's `assets.hasAsset(name)` pre-check ahead of a buildFromXML() call.
+	 */
+    public hasWidgetLayout(name: string): boolean
+    {
+        return this._widgetLayouts.has(name);
+    }
+
+    /**
 	 * Build a widget's internal window tree from a registered layout asset.
 	 *
 	 * Equivalent to AS3:

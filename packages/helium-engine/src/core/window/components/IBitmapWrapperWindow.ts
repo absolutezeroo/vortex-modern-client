@@ -28,4 +28,9 @@ export interface IBitmapWrapperWindow extends IWindow
 	 * Whether this window owns the bitmap and should dispose it.
 	 */
     disposesBitmap: boolean;
+
+    /**
+	 * The named catalog/asset-library image this bitmap was last set from.
+	 */
+    bitmapAssetName: string;
 }

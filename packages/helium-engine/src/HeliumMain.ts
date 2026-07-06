@@ -684,7 +684,7 @@ export class HeliumMain implements IHeliumMain
         ctx.attachComponent(this._notifications, []);
 
         // 12g. Catalog
-        this._catalog = new HabboCatalog(ctx);
+        this._catalog = new HabboCatalog(ctx, this._assets);
         ctx.attachComponent(this._catalog, [IID_HabboCatalog]);
 
         // 12h. Toolbar

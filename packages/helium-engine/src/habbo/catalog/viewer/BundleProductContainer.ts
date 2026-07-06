@@ -1,4 +1,5 @@
 import {Logger} from '@core/utils/Logger';
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
@@ -35,15 +36,16 @@ export class BundleProductContainer extends ProductContainer implements IItemGri
         this.setIconImage(this._dealIcon, false);
     }
 
-    populateItemGrid(grid: IItemGridWindow, layout: string): void
+    // AS3 passes a raw XML template and calls buildFromXML(layout) per bundle; this port's
+    // callers already hold a built IWindow template (from windowManager.buildWidgetLayout()),
+    // so this clones that template directly instead of rebuilding it from XML each time.
+    populateItemGrid(grid: IItemGridWindow, layout: IWindow): void
     {
-        const template = this.catalog!.windowManager!.buildFromXML(layout) as IWindowContainer;
-
         for(const product of this.offer.productContainer.products)
         {
             if(product.productType === 'b') continue;
 
-            const view = template.clone() as IWindowContainer;
+            const view = layout.clone() as unknown as IWindowContainer;
             const clubLevelIcon = view.findChildByName('clubLevelIcon');
 
             if(clubLevelIcon != null)
