@@ -483,6 +483,7 @@ import {
     GetCatalogPageComposer,
     GetClubGiftMessageComposer,
     PurchaseFromCatalogComposer,
+    BuildersClubQueryFurniCountMessageComposer,
 } from './messages/outgoing/catalog';
 
 // Outgoing Composers - Quest (hall of fame)
@@ -1121,6 +1122,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1606, GetCatalogIndexComposer);
         this._composers.set(2400, GetCatalogPageComposer);
         this._composers.set(2697, PurchaseFromCatalogComposer);
+        this._composers.set(2340, BuildersClubQueryFurniCountMessageComposer);
 
         // === QUEST (hall of fame) ===
         this._composers.set(1034, GetCommunityGoalHallOfFameMessageComposer);
