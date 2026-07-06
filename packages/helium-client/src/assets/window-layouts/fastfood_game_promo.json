@@ -1,6 +1,6 @@
 {
   "name": "fastfood_game_promo",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\811_fastfood_game_promo.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\318_fastfood_game_promo.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -40,16 +40,16 @@
                 "typeId": 23,
                 "attributes": {
                   "x": "10",
-                  "y": "0",
+                  "y": "30",
                   "width": "200",
-                  "height": "250",
+                  "height": "170",
                   "params": "16",
                   "style": "0",
                   "name": "teaser_image"
                 },
                 "children": [],
                 "vars": {
-                  "asset_uri": "${image.library.url}reception/fastfood_promo.png",
+                  "asset_uri": "${image.library.url}reception/pixrem_promo.png",
                   "pivot_point": "center",
                   "stretched_x": false,
                   "stretched_y": false
@@ -75,12 +75,12 @@
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "296",
+                  "width": "329",
                   "height": "24",
                   "params": "16",
                   "style": "100",
                   "name": "caption_txt",
-                  "caption": "${landing.view.fastfoodpromo.caption}"
+                  "caption": "${landing.view.pixelremovalpromo.caption}"
                 },
                 "children": [],
                 "vars": {
@@ -119,7 +119,7 @@
                   "params": "16",
                   "style": "100",
                   "name": "title_txt",
-                  "caption": "${landing.view.fastfoodpromo.title}"
+                  "caption": "${landing.view.pixelremovalpromo.title}"
                 },
                 "children": [],
                 "vars": {
@@ -143,7 +143,7 @@
                   "params": "16",
                   "style": "100",
                   "name": "info_txt",
-                  "caption": "${landing.view.fastfoodpromo.info}"
+                  "caption": "${landing.view.pixelremovalpromo.info}"
                 },
                 "children": [],
                 "vars": {
@@ -161,12 +161,12 @@
                 "attributes": {
                   "x": "-11",
                   "y": "61",
-                  "width": "228",
+                  "width": "246",
                   "height": "50",
                   "params": "131089",
                   "style": "100",
                   "name": "go_button",
-                  "caption": "${landing.view.fastfoodpromo.button}"
+                  "caption": "${landing.view.pixelremovalpromo.button}"
                 },
                 "children": []
               }

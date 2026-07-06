@@ -1,6 +1,6 @@
 {
   "name": "badge_layer",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\632_badge_layer.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\63_badge_layer.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

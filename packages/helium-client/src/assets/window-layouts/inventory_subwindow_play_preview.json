@@ -1,6 +1,6 @@
 {
   "name": "inventory_subwindow_play_preview",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\616_inventory_subwindow_play_preview.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\330_inventory_subwindow_play_preview.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

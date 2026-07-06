@@ -1,0 +1,582 @@
+{
+  "id": "illumina_light_skin_button_dark_recolorable",
+  "name": "illumina_light_skin_button_dark_recolorable",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\9_illumina_light_skin_button_dark_recolorable.xml",
+  "variables": {
+    "asset": "illumina_light_button_dark_recolorable"
+  },
+  "templates": [
+    {
+      "name": "illumina_light_button_dark_recolorable_template",
+      "asset": "illumina_light_button_dark_recolorable",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 0,
+            "width": 1,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 0,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 8,
+            "width": 1,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 8,
+            "width": 4,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 20,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 20,
+            "width": 1,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 20,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left_curve",
+          "type": "bitmap",
+          "region": {
+            "x": 1,
+            "y": 31,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right_curve",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 31,
+            "width": 3,
+            "height": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "illumina_light_button_dark_recolorable_pressed_template",
+      "asset": "illumina_light_button_dark_recolorable",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 50,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 50,
+            "width": 1,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 50,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 58,
+            "width": 6,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 58,
+            "width": 1,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 58,
+            "width": 4,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 70,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 70,
+            "width": 1,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 70,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left_curve",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right_curve",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "illumina_light_button_dark_recolorable_hovering_template",
+      "asset": "illumina_light_button_dark_recolorable",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 86,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 86,
+            "width": 1,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 86,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 94,
+            "width": 6,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 94,
+            "width": 1,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 94,
+            "width": 4,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 106,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 6,
+            "y": 106,
+            "width": 1,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 106,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left_curve",
+          "type": "bitmap",
+          "region": {
+            "x": 1,
+            "y": 117,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right_curve",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 117,
+            "width": 3,
+            "height": 5
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "illumina_light_button_dark_recolorable",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 6,
+            "y": 0,
+            "width": 18,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 24,
+            "y": 0,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 6,
+            "y": 8,
+            "width": 18,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 24,
+            "y": 8,
+            "width": 4,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 20,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 6,
+            "y": 20,
+            "width": 18,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 24,
+            "y": 20,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_left_curve",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 8,
+          "region": {
+            "x": 1,
+            "y": 13,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_right_curve",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 8,
+          "region": {
+            "x": 24,
+            "y": 13,
+            "width": 3,
+            "height": 5
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "illumina_light_button_dark_recolorable",
+      "template": "illumina_light_button_dark_recolorable_template"
+    },
+    {
+      "name": "hovering",
+      "layout": "illumina_light_button_dark_recolorable",
+      "template": "illumina_light_button_dark_recolorable_hovering_template"
+    },
+    {
+      "name": "pressed",
+      "layout": "illumina_light_button_dark_recolorable",
+      "template": "illumina_light_button_dark_recolorable_pressed_template"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "marketPlaceOwnItemsWidget",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\187_marketPlaceOwnItemsWidget.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\180_marketPlaceOwnItemsWidget.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

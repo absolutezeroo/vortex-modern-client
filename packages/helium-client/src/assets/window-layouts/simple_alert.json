@@ -1,6 +1,6 @@
 {
   "name": "simple_alert",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\850_simple_alert.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\225_simple_alert.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

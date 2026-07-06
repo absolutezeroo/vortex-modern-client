@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_border",
   "name": "illumina_light_skin_border",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\26_illumina_light_skin_border.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\48_illumina_light_skin_border.xml",
   "variables": {
     "asset": "illumina_light_border_etched"
   },

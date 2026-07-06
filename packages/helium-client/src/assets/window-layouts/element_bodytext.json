@@ -1,38 +1,32 @@
 {
   "name": "element_bodytext",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\788_element_bodytext.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\317_element_bodytext.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "formatted_text",
-        "typeId": 15,
+        "tag": "static_bitmap",
+        "typeId": 23,
         "attributes": {
-          "x": "0",
-          "y": "0",
-          "width": "250",
-          "height": "16",
-          "params": "144",
+          "x": "4",
+          "y": "3",
+          "width": "38",
+          "height": "38",
+          "params": "16",
           "style": "100",
-          "caption": "Desc PH",
-          "tags": "COLORABLE"
+          "name": "image"
         },
         "children": [],
         "vars": {
-          "auto_size": "left",
-          "mouse_wheel_enabled": false,
-          "multiline": true,
-          "word_wrap": true,
-          "spacing": 0,
-          "leading": 0
+          "fit_size_to_contents": true
         }
       }
     ]
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 250,
-  "layoutHeight": 16
+  "layoutWidth": 38,
+  "layoutHeight": 38
 }

@@ -1,6 +1,6 @@
 {
   "id": "habbo",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\48_habbo.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\27_habbo.xml",
   "typeMap": {
     "null": 0,
     "icon": 1,
@@ -269,6 +269,90 @@
       "states": []
     },
     {
+      "type": "gradient",
+      "typeId": 24,
+      "intent": "default",
+      "style": 0,
+      "renderer": "gradient",
+      "asset": "",
+      "layout": "",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "shape",
+      "typeId": 22,
+      "intent": "default",
+      "style": 0,
+      "renderer": "shape",
+      "asset": "",
+      "layout": "",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "stroke",
+      "typeId": 25,
+      "intent": "default",
+      "style": 0,
+      "renderer": "stroke",
+      "asset": "",
+      "layout": "",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4278190080,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "bitmap_fill",
+      "typeId": 26,
+      "intent": "default",
+      "style": 0,
+      "renderer": "bitmap_fill",
+      "asset": "",
+      "layout": "",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
       "type": "text",
       "typeId": 10,
       "intent": "default",
@@ -507,6 +591,132 @@
       "renderer": "skin",
       "asset": "habbo_skin_border_9",
       "layout": "border_9",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "border",
+      "typeId": 30,
+      "intent": "white with sharpest corners",
+      "style": 11,
+      "renderer": "skin",
+      "asset": "habbo_skin_border_slot_2",
+      "layout": "border_slot_2",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "border",
+      "typeId": 30,
+      "intent": "white with thin dark border, sharpest corners, shadow",
+      "style": 12,
+      "renderer": "skin",
+      "asset": "habbo_skin_border_12",
+      "layout": "border_12",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "border",
+      "typeId": 30,
+      "intent": "ancient border",
+      "style": 13,
+      "renderer": "skin",
+      "asset": "habbo_skin_border_13",
+      "layout": "border_13",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "border",
+      "typeId": 30,
+      "intent": "white round with grey light border",
+      "style": 14,
+      "renderer": "skin",
+      "asset": "habbo_skin_border_14",
+      "layout": "border_14",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "border",
+      "typeId": 30,
+      "intent": "recolorable round border",
+      "style": 15,
+      "renderer": "skin",
+      "asset": "habbo_skin_border_15",
+      "layout": "border_15",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "border",
+      "typeId": 30,
+      "intent": "recolorable round border 2",
+      "style": 16,
+      "renderer": "skin",
+      "asset": "habbo_skin_border_16",
+      "layout": "border_16",
       "windowLayout": "",
       "defaults": {
         "threshold": 10,
@@ -1456,6 +1666,27 @@
       "defaults": {
         "threshold": 10,
         "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "menu",
+      "style": 5,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_menu",
+      "layout": "button_menu",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
         "blend": 1,
         "color": 16777215,
         "widthMin": -2147483648,
@@ -2957,6 +3188,27 @@
       "states": []
     },
     {
+      "type": "iconbutton",
+      "typeId": -1,
+      "intent": "plus",
+      "style": 3,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_plus_3",
+      "layout": "button_plus_3",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
       "type": "frame",
       "typeId": 35,
       "intent": "light",
@@ -3090,6 +3342,27 @@
       "renderer": "skin",
       "asset": "habbo_skin_button_help_3",
       "layout": "button_help_3",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "iconbutton",
+      "typeId": -1,
+      "intent": "minus",
+      "style": 4,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_minus_3",
+      "layout": "button_minus_3",
       "windowLayout": "",
       "defaults": {
         "threshold": 0,
@@ -3293,6 +3566,27 @@
       "states": []
     },
     {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "default thin",
+      "style": 7,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_shiny_default",
+      "layout": "button_shiny",
+      "windowLayout": "habbo_window_layout_button_shiny",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
       "type": "frame",
       "typeId": 35,
       "intent": "default",
@@ -3322,6 +3616,48 @@
       "asset": "",
       "layout": "",
       "windowLayout": "illumina_light_frame_modal",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "wired",
+      "style": 102,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_frame",
+      "layout": "illumina_light_frame",
+      "windowLayout": "illumina_light_frame_wired",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "purple",
+      "style": 103,
+      "renderer": "skin",
+      "asset": "illumina_purple_skin_frame",
+      "layout": "illumina_purple_frame",
+      "windowLayout": "illumina_purple_frame",
       "defaults": {
         "threshold": 10,
         "background": false,
@@ -3629,6 +3965,69 @@
       "states": []
     },
     {
+      "type": "button",
+      "typeId": 60,
+      "intent": "purple window",
+      "style": 104,
+      "renderer": "skin",
+      "asset": "illumina_purple_skin_button",
+      "layout": "illumina_purple_button",
+      "windowLayout": "illumina_purple_button",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "button",
+      "typeId": 60,
+      "intent": "purple plain",
+      "style": 105,
+      "renderer": "skin",
+      "asset": "illumina_purple_skin_button_plain",
+      "layout": "illumina_purple_button_plain",
+      "windowLayout": "illumina_purple_button_plain",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "button",
+      "typeId": 60,
+      "intent": "dark recolorable",
+      "style": 106,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_dark_recolorable",
+      "layout": "illumina_light_button_dark_recolorable",
+      "windowLayout": "illumina_light_button_plain",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
       "type": "container_button",
       "typeId": 41,
       "intent": "landing view",
@@ -3713,6 +4112,132 @@
       "states": []
     },
     {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "multi-left",
+      "style": 104,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_multi_left",
+      "layout": "illumina_light_button_multi_left",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "multi-right",
+      "style": 105,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_multi_right",
+      "layout": "illumina_light_button_multi_right",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "multi-middle",
+      "style": 106,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_multi_middle",
+      "layout": "illumina_light_button_multi_middle",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "purple window",
+      "style": 107,
+      "renderer": "skin",
+      "asset": "illumina_purple_skin_button",
+      "layout": "illumina_purple_button",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "purple plain",
+      "style": 108,
+      "renderer": "skin",
+      "asset": "illumina_purple_skin_button_plain",
+      "layout": "illumina_purple_button_plain",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "container_button",
+      "typeId": 41,
+      "intent": "dark recolorable",
+      "style": 109,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_dark_recolorable",
+      "layout": "illumina_light_button_dark_recolorable",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
       "type": "button_group_left",
       "typeId": 67,
       "intent": "default",
@@ -3781,8 +4306,8 @@
       "intent": "default",
       "style": 100,
       "renderer": "skin",
-      "asset": "habbo_skin_dropmenu",
-      "layout": "dropmenu_frame",
+      "asset": "illumina_light_skin_dropmenu",
+      "layout": "illumina_light_dropmenu_frame",
       "windowLayout": "illumina_light_dropmenu",
       "defaults": {
         "threshold": 10,
@@ -3802,8 +4327,8 @@
       "intent": "default",
       "style": 100,
       "renderer": "skin",
-      "asset": "habbo_skin_dropmenu",
-      "layout": "dropmenu_item",
+      "asset": "illumina_light_skin_dropmenu",
+      "layout": "illumina_light_dropmenu_item",
       "windowLayout": "illumina_light_dropmenu_item",
       "defaults": {
         "threshold": 10,
@@ -4018,6 +4543,90 @@
       "defaults": {
         "threshold": 10,
         "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "close",
+      "style": 100,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_frame_close",
+      "layout": "illumina_light_button_frame_close",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "menu",
+      "style": 101,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_frame_menu",
+      "layout": "illumina_light_button_frame_menu",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "minimize",
+      "style": 102,
+      "renderer": "skin",
+      "asset": "illumina_light_skin_button_frame_minimize",
+      "layout": "illumina_light_button_frame_minimize",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "close",
+      "style": 103,
+      "renderer": "skin",
+      "asset": "illumina_purple_skin_button_frame_close",
+      "layout": "illumina_purple_button_frame_close",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
         "blend": 1,
         "color": 16777215,
         "widthMin": -2147483648,
@@ -4249,6 +4858,510 @@
       "defaults": {
         "threshold": 10,
         "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard total badges",
+      "style": 10000,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_all",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard total badges",
+      "style": 10000,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard total badges",
+      "style": 10000,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard achievement level",
+      "style": 10001,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_ach",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard achievement level",
+      "style": 10001,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard achievement level",
+      "style": 10001,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard uncommon badges",
+      "style": 10007,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_rarity_uncommon",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard uncommon badges",
+      "style": 10007,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard uncommon badges",
+      "style": 10007,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard rare badges",
+      "style": 10002,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_rarity_1",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard rare badges",
+      "style": 10002,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard rare badges",
+      "style": 10002,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard very rare badges",
+      "style": 10003,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_rarity_2",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard very rare badges",
+      "style": 10003,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard very rare badges",
+      "style": 10003,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard mythical badges",
+      "style": 10004,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_rarity_3",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard mythical badges",
+      "style": 10004,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard mythical badges",
+      "style": 10004,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard legendary badges",
+      "style": 10005,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_rarity_4",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard legendary badges",
+      "style": 10005,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard legendary badges",
+      "style": 10005,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "frame",
+      "typeId": 35,
+      "intent": "leaderboard unique badges",
+      "style": 10006,
+      "renderer": "skin",
+      "asset": "habbo_skin_frame_leaderboard_rarity_5",
+      "layout": "frame_leaderboard",
+      "windowLayout": "habbo_window_layout_frame_leaderboard",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "header",
+      "typeId": 6,
+      "intent": "leaderboard unique badges",
+      "style": 10006,
+      "renderer": "skin",
+      "asset": "habbo_skin_header_leaderboard",
+      "layout": "header_leaderboard",
+      "windowLayout": "habbo_window_layout_header_leaderboard",
+      "defaults": {
+        "threshold": 0,
+        "background": false,
+        "blend": 1,
+        "color": 4294967295,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": []
+    },
+    {
+      "type": "closebutton",
+      "typeId": 72,
+      "intent": "leaderboard unique badges",
+      "style": 10006,
+      "renderer": "skin",
+      "asset": "habbo_skin_button_close_leaderboard",
+      "layout": "button_close_leaderboard",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 0,
+        "background": true,
         "blend": 1,
         "color": 16777215,
         "widthMin": -2147483648,
@@ -5584,11 +6697,11 @@
     {
       "type": "icon",
       "typeId": 1,
-      "intent": "Pumpkin Small",
+      "intent": "Plain Pumpkin Small",
       "style": 49,
       "renderer": "skin",
       "asset": "habbo_skin_icon_set",
-      "layout": "iconPumpkinSmall",
+      "layout": "iconPlainPumpkinSmall",
       "windowLayout": "",
       "defaults": {
         "threshold": 10,
@@ -5603,7 +6716,7 @@
       "states": [
         {
           "name": "default",
-          "layout": "iconPumpkinSmall",
+          "layout": "iconPlainPumpkinSmall",
           "template": "icon_49"
         }
       ]
@@ -5611,11 +6724,11 @@
     {
       "type": "icon",
       "typeId": 1,
-      "intent": "Pumpkin Big",
+      "intent": "Plain Pumpkin Big",
       "style": 50,
       "renderer": "skin",
       "asset": "habbo_skin_icon_set",
-      "layout": "iconPumpkinBig",
+      "layout": "iconPlainPumpkinBig",
       "windowLayout": "",
       "defaults": {
         "threshold": 10,
@@ -5630,7 +6743,7 @@
       "states": [
         {
           "name": "default",
-          "layout": "iconPumpkinBig",
+          "layout": "iconPlainPumpkinBig",
           "template": "icon_50"
         }
       ]
@@ -5638,7 +6751,7 @@
     {
       "type": "icon",
       "typeId": 1,
-      "intent": "Pumpkin And Credits Big",
+      "intent": "Plain Pumpkin And Credits Big",
       "style": 51,
       "renderer": "skin",
       "asset": "habbo_skin_icon_set",
@@ -5657,7 +6770,7 @@
       "states": [
         {
           "name": "default",
-          "layout": "iconPumpkinAndCreditsBig",
+          "layout": "iconPlainPumpkinAndCreditsBig",
           "template": "icon_51"
         }
       ]
@@ -5767,6 +6880,762 @@
           "name": "default",
           "layout": "iconSeashellBig",
           "template": "icon_55"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "silver Big",
+      "style": 56,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconSilverBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconSilverBig",
+          "template": "icon_56"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "silver Small",
+      "style": 57,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconSilverSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconSilverSmall",
+          "template": "icon_57"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "flower Big",
+      "style": 58,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconSilverBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconSilverBig",
+          "template": "icon_58"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "flower Small",
+      "style": 59,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconSilverSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconSilverSmall",
+          "template": "icon_59"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "candy Big",
+      "style": 60,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconCandyBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconCandyBig",
+          "template": "icon_60"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "candy Small",
+      "style": 61,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconCandySmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconCandySmall",
+          "template": "icon_61"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "popsicle Big",
+      "style": 62,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconPopsicleBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconPopsicleBig",
+          "template": "icon_62"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "popsicle Small",
+      "style": 63,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconPopsicleSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconPopsicleSmall",
+          "template": "icon_63"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "goldfish Big",
+      "style": 64,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconGoldfishBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconGoldfishBig",
+          "template": "icon_64"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "goldfish Small",
+      "style": 65,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconGoldfishSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconGoldfishSmall",
+          "template": "icon_65"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "balloon Big",
+      "style": 66,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconBalloonBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconBalloonBig",
+          "template": "icon_66"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "balloon Small",
+      "style": 67,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconBalloonSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconBalloonSmall",
+          "template": "icon_67"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "pumpkin Big",
+      "style": 68,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconPumpkinBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconPumpkinBig",
+          "template": "icon_68"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "pumpkin Small",
+      "style": 69,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconPumpkinSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconPumpkinSmall",
+          "template": "icon_69"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "emerald Big",
+      "style": 70,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconEmeraldBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconEmeraldBig",
+          "template": "icon_70"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "emerald Small",
+      "style": 71,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconEmeraldSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconEmeraldSmall",
+          "template": "icon_71"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "easterEggs Big",
+      "style": 72,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconEasterEggsBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconEasterEggsBig",
+          "template": "icon_72"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "easterEggs Small",
+      "style": 73,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconEasterEggsSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconEasterEggsSmall",
+          "template": "icon_73"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "truffles Big",
+      "style": 74,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconTrufflesBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconTrufflesBig",
+          "template": "icon_74"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "truffles Small",
+      "style": 75,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconTrufflesSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconTrufflesSmall",
+          "template": "icon_75"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "blueBalloon Big",
+      "style": 76,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconBlueBalloonsBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconBlueBalloonsBig",
+          "template": "icon_76"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "blueBalloon Small",
+      "style": 77,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconBlueBalloonsSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconBlueBalloonsSmall",
+          "template": "icon_77"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "mushrooms Big",
+      "style": 78,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconMushroomsBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconMushroomsBig",
+          "template": "icon_78"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "mushrooms Small",
+      "style": 79,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconMushroomsSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconMushroomsSmall",
+          "template": "icon_79"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "acorn Big",
+      "style": 80,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconAcornBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconAcornBig",
+          "template": "icon_80"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "acorn Small",
+      "style": 81,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconAcornSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconAcornSmall",
+          "template": "icon_81"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "coconuts Big",
+      "style": 82,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconCoconutsBig",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconCoconutsBig",
+          "template": "icon_82"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "typeId": 1,
+      "intent": "coconuts Small",
+      "style": 83,
+      "renderer": "skin",
+      "asset": "habbo_skin_icon_set",
+      "layout": "iconCoconutsSmall",
+      "windowLayout": "",
+      "defaults": {
+        "threshold": 10,
+        "background": false,
+        "blend": 1,
+        "color": 16777215,
+        "widthMin": -2147483648,
+        "widthMax": 2147483647,
+        "heightMin": -2147483648,
+        "heightMax": 2147483647
+      },
+      "states": [
+        {
+          "name": "default",
+          "layout": "iconCoconutsSmall",
+          "template": "icon_83"
         }
       ]
     }

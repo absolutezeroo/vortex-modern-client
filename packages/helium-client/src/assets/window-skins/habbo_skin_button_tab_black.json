@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_tab_black",
   "name": "black_tab_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\30_black_tab_button_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\1_black_tab_button_skin.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

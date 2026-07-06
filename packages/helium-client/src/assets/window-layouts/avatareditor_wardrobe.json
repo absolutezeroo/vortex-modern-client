@@ -1,6 +1,6 @@
 {
   "name": "avatareditor_wardrobe",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\657_avatareditor_wardrobe.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\293_avatareditor_wardrobe.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,246 +12,12 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "164",
-          "height": "410",
+          "width": "182",
+          "height": "490",
           "params": "16",
           "style": "0"
         },
         "children": [
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "14",
-              "y": "15",
-              "width": "158",
-              "height": "17",
-              "params": "786448",
-              "style": "3",
-              "caption": "${avatareditor.wardrobe.title}"
-            },
-            "children": [],
-            "vars": {
-              "auto_size": "left",
-              "text_color": 8618622,
-              "text_style": "u_bold",
-              "mouse_wheel_enabled": false,
-              "spacing": 0,
-              "leading": 0
-            }
-          },
-          {
-            "tag": "border",
-            "typeId": 30,
-            "attributes": {
-              "x": "19",
-              "y": "67",
-              "width": "135",
-              "height": "300",
-              "params": "16",
-              "style": "4",
-              "color": "0x0cbcbcb"
-            },
-            "children": [
-              {
-                "tag": "itemlist_vertical",
-                "typeId": 50,
-                "attributes": {
-                  "x": "4",
-                  "y": "3",
-                  "width": "64",
-                  "height": "294",
-                  "params": "786449",
-                  "style": "0",
-                  "name": "hc_slots"
-                },
-                "children": [
-                  {
-                    "tag": "container",
-                    "typeId": 4,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "56",
-                      "height": "56",
-                      "params": "16",
-                      "style": "100",
-                      "name": "slot_template"
-                    },
-                    "children": [
-                      {
-                        "tag": "border",
-                        "typeId": 30,
-                        "attributes": {
-                          "x": "29",
-                          "y": "3",
-                          "width": "24",
-                          "height": "50",
-                          "params": "16",
-                          "style": "3",
-                          "color": "0x0666666",
-                          "blend": "0.3"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "region",
-                        "typeId": 5,
-                        "attributes": {
-                          "x": "3",
-                          "y": "3",
-                          "width": "22",
-                          "height": "26",
-                          "params": "17",
-                          "style": "3",
-                          "name": "set_button",
-                          "treshold": "0"
-                        },
-                        "children": [
-                          {
-                            "tag": "static_bitmap",
-                            "typeId": 23,
-                            "attributes": {
-                              "x": "0",
-                              "y": "9",
-                              "width": "22",
-                              "height": "15",
-                              "params": "16",
-                              "style": "5"
-                            },
-                            "children": [],
-                            "vars": {
-                              "asset_uri": "icons_forward_small",
-                              "pivot_point": "center",
-                              "stretched_x": false,
-                              "stretched_y": false
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "tag": "region",
-                        "typeId": 5,
-                        "attributes": {
-                          "x": "2",
-                          "y": "28",
-                          "width": "22",
-                          "height": "26",
-                          "params": "17",
-                          "style": "3",
-                          "name": "get_button",
-                          "treshold": "0"
-                        },
-                        "children": [
-                          {
-                            "tag": "static_bitmap",
-                            "typeId": 23,
-                            "attributes": {
-                              "x": "0",
-                              "y": "0",
-                              "width": "22",
-                              "height": "15",
-                              "params": "16",
-                              "style": "4"
-                            },
-                            "children": [],
-                            "vars": {
-                              "asset_uri": "icons_back_small",
-                              "pivot_point": "center",
-                              "stretched_x": false,
-                              "stretched_y": false
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "30",
-                          "y": "4",
-                          "width": "22",
-                          "height": "48",
-                          "params": "16",
-                          "style": "0",
-                          "name": "image"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "region",
-                        "typeId": 5,
-                        "attributes": {
-                          "x": "29",
-                          "y": "3",
-                          "width": "24",
-                          "height": "50",
-                          "params": "17",
-                          "style": "3",
-                          "name": "get_figure",
-                          "treshold": "0"
-                        },
-                        "children": []
-                      }
-                    ]
-                  }
-                ],
-                "vars": {
-                  "spacing": 3
-                }
-              },
-              {
-                "tag": "itemlist_vertical",
-                "typeId": 50,
-                "attributes": {
-                  "x": "70",
-                  "y": "3",
-                  "width": "64",
-                  "height": "294",
-                  "params": "786449",
-                  "style": "0",
-                  "name": "vip_slots"
-                },
-                "children": [],
-                "vars": {
-                  "spacing": 3
-                }
-              }
-            ]
-          },
-          {
-            "tag": "icon",
-            "typeId": 1,
-            "attributes": {
-              "x": "79",
-              "y": "47",
-              "width": "20",
-              "height": "15",
-              "params": "16",
-              "style": "13",
-              "name": "hc_icon"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "25",
-              "y": "22",
-              "width": "138",
-              "height": "1",
-              "params": "16",
-              "style": "0",
-              "name": "line",
-              "color": "0xffff2f2f2f",
-              "visible": "false",
-              "background": "true",
-              "width_min": "138",
-              "height_max": "1"
-            },
-            "children": []
-          },
           {
             "tag": "background",
             "typeId": 2,
@@ -259,13 +25,327 @@
               "x": "0",
               "y": "0",
               "width": "1",
-              "height": "410",
+              "height": "490",
               "params": "16",
               "style": "0",
+              "name": "splitter",
               "color": "0xffff000000",
               "background": "true"
             },
             "children": []
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "182",
+              "height": "490",
+              "params": "4194320",
+              "style": "3"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "6",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "spacing"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "6",
+                  "y": "0",
+                  "width": "168",
+                  "height": "490",
+                  "params": "16",
+                  "style": "3",
+                  "name": "main_container"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "19",
+                      "width": "186",
+                      "height": "23",
+                      "params": "786640",
+                      "style": "3",
+                      "name": "header"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "158",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${avatareditor.wardrobe.title}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_color": 8618622,
+                          "text_style": "u_bold",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "168",
+                          "y": "0",
+                          "width": "18",
+                          "height": "15",
+                          "params": "16",
+                          "style": "13",
+                          "name": "hc_icon"
+                        },
+                        "children": []
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 10,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "15",
+                      "y": "53",
+                      "width": "139",
+                      "height": "418",
+                      "params": "4194320",
+                      "style": "4",
+                      "color": "0x0cbcbcb"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "4",
+                          "y": "0",
+                          "width": "132",
+                          "height": "418",
+                          "params": "4194320",
+                          "style": "3",
+                          "name": "slots_columns_list"
+                        },
+                        "children": [
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "3",
+                              "width": "64",
+                              "height": "412",
+                              "params": "786449",
+                              "style": "0",
+                              "name": "slots_column_template"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "56",
+                                  "height": "56",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "slot_template"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "border",
+                                    "typeId": 30,
+                                    "attributes": {
+                                      "x": "29",
+                                      "y": "3",
+                                      "width": "24",
+                                      "height": "50",
+                                      "params": "16",
+                                      "style": "3",
+                                      "color": "0x0666666",
+                                      "blend": "0.3"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "region",
+                                    "typeId": 5,
+                                    "attributes": {
+                                      "x": "3",
+                                      "y": "3",
+                                      "width": "22",
+                                      "height": "26",
+                                      "params": "17",
+                                      "style": "3",
+                                      "name": "set_button",
+                                      "treshold": "0"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "static_bitmap",
+                                        "typeId": 23,
+                                        "attributes": {
+                                          "x": "0",
+                                          "y": "9",
+                                          "width": "22",
+                                          "height": "15",
+                                          "params": "16",
+                                          "style": "5"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "asset_uri": "icons_forward_small",
+                                          "pivot_point": "center",
+                                          "stretched_x": false,
+                                          "stretched_y": false
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "tag": "region",
+                                    "typeId": 5,
+                                    "attributes": {
+                                      "x": "2",
+                                      "y": "28",
+                                      "width": "22",
+                                      "height": "26",
+                                      "params": "17",
+                                      "style": "3",
+                                      "name": "get_button",
+                                      "treshold": "0"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "static_bitmap",
+                                        "typeId": 23,
+                                        "attributes": {
+                                          "x": "0",
+                                          "y": "0",
+                                          "width": "22",
+                                          "height": "15",
+                                          "params": "16",
+                                          "style": "4"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "asset_uri": "icons_back_small",
+                                          "pivot_point": "center",
+                                          "stretched_x": false,
+                                          "stretched_y": false
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "tag": "bitmap",
+                                    "typeId": 21,
+                                    "attributes": {
+                                      "x": "30",
+                                      "y": "4",
+                                      "width": "22",
+                                      "height": "48",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "image"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "region",
+                                    "typeId": 5,
+                                    "attributes": {
+                                      "x": "29",
+                                      "y": "3",
+                                      "width": "24",
+                                      "height": "50",
+                                      "params": "17",
+                                      "style": "3",
+                                      "name": "get_figure",
+                                      "treshold": "0"
+                                    },
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 3
+                            }
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "68",
+                              "y": "3",
+                              "width": "64",
+                              "height": "412",
+                              "params": "786449",
+                              "style": "0",
+                              "name": "another_column"
+                            },
+                            "children": [],
+                            "vars": {
+                              "spacing": 3
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 4,
+                          "resize_on_item_update": true
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "174",
+                  "y": "0",
+                  "width": "8",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "spacing"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "resize_on_item_update": true
+            }
           }
         ]
       }
@@ -273,6 +353,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 164,
-  "layoutHeight": 410
+  "layoutWidth": 182,
+  "layoutHeight": 490
 }

@@ -1,6 +1,6 @@
 {
   "name": "inventory_subwindow_get_more_music",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\440_inventory_subwindow_get_more_music.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\2_inventory_subwindow_get_more_music.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

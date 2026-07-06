@@ -1,6 +1,6 @@
 {
   "name": "badgeDisplayNewWidget",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\192_badgeDisplayNewWidget.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\174_badgeDisplayNewWidget.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -37,7 +37,8 @@
               "asset_uri": "catalogue_badge_background",
               "pivot_point": "center",
               "stretched_x": false,
-              "stretched_y": false
+              "stretched_y": false,
+              "fit_size_to_contents": true
             }
           },
           {
@@ -48,7 +49,7 @@
               "y": "0",
               "width": "42",
               "height": "42",
-              "params": "16",
+              "params": "2192",
               "style": "3",
               "name": "badge_image"
             },
@@ -58,6 +59,25 @@
               "badge_image:pivot_point": "center",
               "badge_image:stretched_x": false,
               "badge_image:stretched_y": false
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "42",
+              "height": "42",
+              "params": "2192",
+              "style": "3",
+              "name": "chat_style"
+            },
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
             }
           }
         ]

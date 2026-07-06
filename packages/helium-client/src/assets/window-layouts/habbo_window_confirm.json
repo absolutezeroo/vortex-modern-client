@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_confirm",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\12_habbo_window_confirm.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\190_habbo_window_confirm.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -28,12 +28,13 @@
               "x": "16",
               "y": "14",
               "width": "253",
-              "height": "17",
-              "params": "16",
+              "height": "72",
+              "params": "8388624",
               "style": "100",
               "name": "_alert_description",
               "caption": "Alert",
-              "tags": "DESCRIPTION"
+              "tags": "DESCRIPTION",
+              "height_min": "72"
             },
             "children": [],
             "vars": {
@@ -73,9 +74,9 @@
             "tag": "button_thick",
             "typeId": 61,
             "attributes": {
-              "x": "180",
+              "x": "196",
               "y": "98",
-              "width": "82",
+              "width": "50",
               "height": "28",
               "params": "918545",
               "style": "3",
@@ -110,6 +111,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 296,
-  "layoutHeight": 163
+  "layoutWidth": 300,
+  "layoutHeight": 165
 }

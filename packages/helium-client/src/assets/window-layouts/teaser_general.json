@@ -1,6 +1,6 @@
 {
   "name": "teaser_general",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\537_teaser_general.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\4_teaser_general.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -79,7 +79,7 @@
                   "params": "16",
                   "style": "0",
                   "name": "header",
-                  "caption": "${widget.furni.teaser.notify.unlocked.title}",
+                  "caption": "${widget.furni.teaser.gift.locked.title}",
                   "color": "0x0444444"
                 },
                 "children": [],
@@ -104,7 +104,7 @@
                   "params": "16",
                   "style": "0",
                   "name": "text",
-                  "caption": "${widget.furni.teaser.notify.unlocked.desc}",
+                  "caption": "${widget.furni.teaser.gift.locked.desc}",
                   "color": "0x0888888"
                 },
                 "children": [],
@@ -122,13 +122,13 @@
                 "tag": "container_button",
                 "typeId": 41,
                 "attributes": {
-                  "x": "51",
-                  "y": "172",
+                  "x": "104",
+                  "y": "173",
                   "width": "306",
                   "height": "46",
                   "params": "17",
                   "style": "0",
-                  "name": "received_ok_btn",
+                  "name": "post_btn",
                   "caption": "${widget.furni.teaser.gift.title}",
                   "width_min": "306",
                   "width_max": "306",
@@ -147,7 +147,7 @@
                       "params": "16",
                       "style": "3",
                       "name": "btn_bg_1",
-                      "caption": "${widget.furni.teaser.gift.title}",
+                      "caption": "btn_bg_1",
                       "color": "0x06d00",
                       "width_min": "300",
                       "width_max": "300",
@@ -167,7 +167,7 @@
                       "params": "16",
                       "style": "3",
                       "name": "btn_bg_2",
-                      "caption": "${widget.furni.teaser.gift.title}",
+                      "caption": "btn_bg_2",
                       "color": "0x0309d00",
                       "width_min": "294",
                       "width_max": "294",
@@ -181,13 +181,13 @@
                     "typeId": 10,
                     "attributes": {
                       "x": "6",
-                      "y": "11",
+                      "y": "10",
                       "width": "294",
                       "height": "33",
                       "params": "3932176",
                       "style": "0",
-                      "name": "open_txt",
-                      "caption": "${generic.ok}",
+                      "name": "share_txt",
+                      "caption": "${widget.furni.teaser.gift.locked.share}",
                       "width_min": "294",
                       "width_max": "294",
                       "height_min": "33",
@@ -203,6 +203,91 @@
                       "text_style": "bold",
                       "mouse_wheel_enabled": false,
                       "bold": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "12",
+                  "y": "182",
+                  "width": "80",
+                  "height": "30",
+                  "params": "17",
+                  "style": "0",
+                  "name": "skip_btn",
+                  "caption": "skip",
+                  "color": "0x0999999",
+                  "width_min": "80",
+                  "width_max": "80",
+                  "height_min": "30",
+                  "height_max": "30"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "2",
+                      "y": "2",
+                      "width": "76",
+                      "height": "26",
+                      "params": "16",
+                      "style": "3",
+                      "name": "skip_btn_bg1",
+                      "caption": "skip",
+                      "color": "0x0444444",
+                      "width_min": "76",
+                      "width_max": "76",
+                      "height_min": "26",
+                      "height_max": "26"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "4",
+                      "y": "4",
+                      "width": "72",
+                      "height": "11",
+                      "params": "16",
+                      "style": "3",
+                      "name": "skip_btn_bg2",
+                      "caption": "skip",
+                      "color": "0x0666666",
+                      "width_min": "72",
+                      "width_max": "72",
+                      "height_min": "11",
+                      "height_max": "11"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "4",
+                      "y": "6",
+                      "width": "73",
+                      "height": "23",
+                      "params": "16",
+                      "style": "0",
+                      "name": "skip",
+                      "caption": "${widget.furni.teaser.gift.locked.skip}",
+                      "color": "0x0cccccc"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "text_color": 13421772,
+                      "mouse_wheel_enabled": false
                     }
                   }
                 ]

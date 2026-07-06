@@ -1,6 +1,6 @@
 {
   "name": "styleselector_menu_new",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\418_styleselector_menu_new.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\16_styleselector_menu_new.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -13,8 +13,8 @@
           "x": "0",
           "y": "0",
           "width": "67",
-          "height": "41",
-          "params": "16",
+          "height": "70",
+          "params": "17",
           "style": "2",
           "color": "0x024231e",
           "blend": "0.8"
@@ -38,6 +38,88 @@
               "scale_to_fit_items": true,
               "resize_on_item_update": true
             }
+          },
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "6",
+              "y": "48",
+              "width": "55",
+              "height": "1",
+              "params": "1104",
+              "style": "1",
+              "name": "divider",
+              "color": "0xffffc7c7c7",
+              "visible": "false",
+              "background": "true",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "6",
+              "y": "44",
+              "width": "56",
+              "height": "26",
+              "params": "1168",
+              "style": "2",
+              "color": "0x00",
+              "blend": "0.3"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "15",
+              "y": "49",
+              "width": "51",
+              "height": "16",
+              "params": "1040",
+              "style": "0",
+              "name": "font_size_title",
+              "caption": "${widgets.chatinput.text_size}",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 17,
+              "text_color": 10066329,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "bold": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "-49",
+              "y": "48",
+              "width": "85",
+              "height": "18",
+              "params": "787536",
+              "style": "0",
+              "name": "font_size_list"
+            },
+            "children": [],
+            "vars": {
+              "spacing": 2,
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
           }
         ]
       }
@@ -46,5 +128,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 67,
-  "layoutHeight": 41
+  "layoutHeight": 70
 }

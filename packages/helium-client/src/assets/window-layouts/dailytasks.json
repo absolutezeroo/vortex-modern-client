@@ -1,0 +1,710 @@
+{
+  "name": "dailytasks",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\91_dailytasks.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "43",
+          "y": "37",
+          "width": "428",
+          "height": "553",
+          "params": "1073774593",
+          "style": "3",
+          "name": "dailytasks_frame",
+          "caption": "${dailytasks.title}",
+          "color": "0xff418db0",
+          "width_min": "428",
+          "width_max": "452"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "452",
+              "height": "453",
+              "params": "147472",
+              "style": "3",
+              "name": "main_cont",
+              "width_min": "452",
+              "width_max": "452"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "30",
+                  "height": "0",
+                  "params": "16",
+                  "style": "3",
+                  "name": "spacer"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "5",
+                  "width": "428",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "extra_cont"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "279",
+                      "y": "0",
+                      "width": "133",
+                      "height": "30",
+                      "params": "393297",
+                      "style": "3",
+                      "name": "unclaimed_btn",
+                      "caption": "${dailytasks.unclaimed}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "tool_tip_caption": "${dailytasks.unclaimed.tooltip}"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "scrollable_itemlist_vertical",
+                "typeId": 56,
+                "attributes": {
+                  "x": "13",
+                  "y": "40",
+                  "width": "426",
+                  "height": "373",
+                  "params": "144",
+                  "style": "3",
+                  "name": "tasks_list",
+                  "width_min": "426",
+                  "width_max": "426"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "402",
+                      "height": "119",
+                      "params": "16",
+                      "style": "4",
+                      "name": "task_template",
+                      "color": "0x0c6e0b4"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "6",
+                          "y": "6",
+                          "width": "274",
+                          "height": "113",
+                          "params": "16",
+                          "style": "3",
+                          "name": "left_cont"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "274",
+                              "height": "28",
+                              "params": "16",
+                              "style": "4",
+                              "name": "task_name_cont",
+                              "color": "0x04bb245"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "5",
+                                  "width": "79",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "task_title_txt",
+                                  "caption": "Quest name"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "font_size": 19,
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "bold": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "254",
+                                  "y": "4",
+                                  "width": "14",
+                                  "height": "22",
+                                  "params": "17",
+                                  "style": "0",
+                                  "name": "info_hover_region",
+                                  "color": "0x0feeeee",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "1",
+                                      "y": "0",
+                                      "width": "12",
+                                      "height": "22",
+                                      "params": "16",
+                                      "style": "3",
+                                      "caption": "?"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "font_size": 19,
+                                      "text_color": 16777215,
+                                      "mouse_wheel_enabled": false,
+                                      "bold": true,
+                                      "underline": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "tool_tip_delay": 256
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "0",
+                              "y": "28",
+                              "width": "76",
+                              "height": "76",
+                              "params": "16",
+                              "style": "3",
+                              "name": "task_bitmap",
+                              "visible": "false",
+                              "width_min": "76",
+                              "width_max": "76",
+                              "height_min": "76",
+                              "height_max": "76"
+                            },
+                            "children": [],
+                            "vars": {
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "28",
+                              "width": "76",
+                              "height": "76",
+                              "params": "16",
+                              "style": "3",
+                              "name": "task_static_bitmap",
+                              "width_min": "76",
+                              "width_max": "76",
+                              "height_min": "76",
+                              "height_max": "76"
+                            },
+                            "children": [],
+                            "vars": {
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "76",
+                              "y": "36",
+                              "width": "198",
+                              "height": "55",
+                              "params": "16",
+                              "style": "3",
+                              "name": "task_desc_txt",
+                              "caption": "Search around hotel and locate this very valuable dino egg jhg jhg jhg jh gjhg jhg jhg jhg jh gjhg jhg jhg jhg jhg jhgjhgjh gjhg jh gjhg jh gjhg jhg jhg jhg jhg jhg",
+                              "width_min": "198",
+                              "width_max": "198",
+                              "height_min": "55",
+                              "height_max": "55"
+                            },
+                            "children": [],
+                            "vars": {
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "76",
+                              "y": "83",
+                              "width": "198",
+                              "height": "29",
+                              "params": "16",
+                              "style": "3",
+                              "name": "completion_cont"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "178",
+                                  "y": "3",
+                                  "width": "20",
+                                  "height": "22",
+                                  "params": "16",
+                                  "style": "3"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "common_icon_task_completed_s",
+                                  "stretched_x": false,
+                                  "stretched_y": false,
+                                  "fit_size_to_contents": true
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "32",
+                                  "y": "6",
+                                  "width": "143",
+                                  "height": "17",
+                                  "params": "262160",
+                                  "style": "3",
+                                  "caption": "${dailytasks.task.complete}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_color": 2393355,
+                                  "mouse_wheel_enabled": false,
+                                  "bold": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "286",
+                          "y": "6",
+                          "width": "110",
+                          "height": "113",
+                          "params": "16",
+                          "style": "3",
+                          "name": "right_cont"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "110",
+                              "height": "28",
+                              "params": "16",
+                              "style": "2",
+                              "name": "reward_title_border",
+                              "color": "0x0a6ce92"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "6",
+                                  "width": "110",
+                                  "height": "17",
+                                  "params": "4194448",
+                                  "style": "3",
+                                  "name": "reward_title_text",
+                                  "caption": "${dailytasks.reward}",
+                                  "blend": "0.65"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "center",
+                                  "mouse_wheel_enabled": false,
+                                  "bold": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "32",
+                              "y": "28",
+                              "width": "44",
+                              "height": "50",
+                              "params": "933904",
+                              "style": "3",
+                              "name": "rewards_list"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "44",
+                                  "height": "50",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "reward_template",
+                                  "width_min": "44",
+                                  "width_max": "44",
+                                  "height_min": "50",
+                                  "height_max": "50"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "widget",
+                                    "typeId": 16,
+                                    "attributes": {
+                                      "x": "2",
+                                      "y": "1",
+                                      "width": "40",
+                                      "height": "40",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "reward_display_widget",
+                                      "width_min": "40",
+                                      "width_max": "40",
+                                      "height_min": "40",
+                                      "height_max": "40"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "widget_type": "product_icon"
+                                    }
+                                  },
+                                  {
+                                    "tag": "bitmap",
+                                    "typeId": 21,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "44",
+                                      "height": "50",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "reward_bitmap",
+                                      "visible": "false",
+                                      "width_min": "44",
+                                      "width_max": "44",
+                                      "height_min": "50",
+                                      "height_max": "50"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  },
+                                  {
+                                    "tag": "border",
+                                    "typeId": 30,
+                                    "attributes": {
+                                      "x": "8",
+                                      "y": "36",
+                                      "width": "28",
+                                      "height": "14",
+                                      "params": "934032",
+                                      "style": "3",
+                                      "name": "reward_amount_border",
+                                      "color": "0x07c7c7c",
+                                      "blend": "0.9",
+                                      "height_min": "14",
+                                      "height_max": "14"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "text",
+                                        "typeId": 10,
+                                        "attributes": {
+                                          "x": "0",
+                                          "y": "0",
+                                          "width": "28",
+                                          "height": "15",
+                                          "params": "16",
+                                          "style": "3",
+                                          "name": "reward_amount_text",
+                                          "caption": "x10"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "auto_size": "left",
+                                          "font_size": 17,
+                                          "text_color": 16777215,
+                                          "margin_left": 3,
+                                          "margin_top": -1,
+                                          "margin_right": 3,
+                                          "mouse_wheel_enabled": false,
+                                          "bold": true,
+                                          "spacing": 0,
+                                          "leading": 0
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 4,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "84",
+                              "width": "110",
+                              "height": "29",
+                              "params": "16",
+                              "style": "3",
+                              "name": "right_bottom_cont"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "110",
+                                  "height": "23",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "claim_button_container"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "button",
+                                    "typeId": 60,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "110",
+                                      "height": "23",
+                                      "params": "917521",
+                                      "style": "5",
+                                      "name": "claim_button",
+                                      "color": "0x01a101",
+                                      "width_min": "110",
+                                      "width_max": "110"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "3",
+                                      "y": "3",
+                                      "width": "91",
+                                      "height": "17",
+                                      "params": "786448",
+                                      "style": "3",
+                                      "name": "claim_txt",
+                                      "caption": "${dailytasks.claim}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "text_color": 16777215,
+                                      "mouse_wheel_enabled": false,
+                                      "bold": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "110",
+                                  "height": "23",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "progress_bar_wrapper",
+                                  "visible": "false",
+                                  "width_min": "110",
+                                  "width_max": "110",
+                                  "height_min": "23",
+                                  "height_max": "23"
+                                },
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 8
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "418",
+                  "width": "428",
+                  "height": "35",
+                  "params": "16",
+                  "style": "3",
+                  "name": "hc_info_cont"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "12",
+                      "y": "7",
+                      "width": "289",
+                      "height": "17",
+                      "params": "3145744",
+                      "style": "3",
+                      "name": "hc_info_text",
+                      "caption": "You get double duckets as you are an HC member!"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "etching_position": "right",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "max_lines": 2,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "305",
+                      "y": "0",
+                      "width": "107",
+                      "height": "30",
+                      "params": "393297",
+                      "style": "5",
+                      "name": "get_hc_btn",
+                      "caption": "${generic.get_hc}",
+                      "color": "0x01a101"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 5,
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 428,
+  "layoutHeight": 553
+}

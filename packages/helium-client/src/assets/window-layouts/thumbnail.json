@@ -1,6 +1,6 @@
 {
   "name": "thumbnail",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\664_thumbnail.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\294_thumbnail.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -26,12 +26,30 @@
               "y": "0",
               "width": "35",
               "height": "60",
-              "params": "131089",
+              "params": "1073872913",
               "style": "3",
               "name": "button",
               "tags": "BUTTON"
             },
             "children": []
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "33",
+              "height": "58",
+              "params": "133264",
+              "style": "3",
+              "name": "outfit_gradient",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "collectables_score_background_gradient"
+            }
           },
           {
             "tag": "bitmap",

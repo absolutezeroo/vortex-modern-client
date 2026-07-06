@@ -1,6 +1,6 @@
 {
   "name": "calendar",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\84_calendar.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\92_calendar.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -87,7 +87,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "campaign_day_generic_bg",
+                              "asset_uri": "campaign_calendar_day_generic_bg",
                               "stretched_x": false,
                               "stretched_y": false
                             }
@@ -139,7 +139,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "campaign_opened",
+                                  "asset_uri": "campaign_calendar_opened",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -200,7 +200,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "campaign_generic_lock",
+                              "asset_uri": "campaign_calendar_generic_lock",
                               "pivot_point": "center",
                               "stretched_x": false,
                               "stretched_y": false
@@ -233,7 +233,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "campaign_day_generic_bg",
+                              "asset_uri": "campaign_calendar_day_generic_bg",
                               "stretched_x": false,
                               "stretched_y": false
                             }
@@ -265,7 +265,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "campaign_day_generic_bg",
+                              "asset_uri": "campaign_calendar_day_generic_bg",
                               "stretched_x": false,
                               "stretched_y": false
                             }
@@ -297,7 +297,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "campaign_day_generic_bg",
+                              "asset_uri": "campaign_calendar_day_generic_bg",
                               "stretched_x": false,
                               "stretched_y": false
                             }
@@ -329,7 +329,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "campaign_day_generic_bg",
+                              "asset_uri": "campaign_calendar_day_generic_bg",
                               "stretched_x": false,
                               "stretched_y": false
                             }

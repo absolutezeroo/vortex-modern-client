@@ -1,0 +1,739 @@
+{
+  "id": "habbo_skin_border_15",
+  "name": "border_15",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\36_border_15.xml",
+  "variables": {
+    "asset": "habbo_border_hsv_layers"
+  },
+  "templates": [
+    {
+      "name": "border_15",
+      "asset": "habbo_border_hsv_layers",
+      "entities": [
+        {
+          "id": 0,
+          "name": "dark_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 2,
+            "y": 2,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 2,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 11,
+            "y": 2,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 2,
+            "y": 7,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 7,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 11,
+            "y": 7,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 2,
+            "y": 11,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 11,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 11,
+            "y": 11,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 2,
+            "y": 20,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 20,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 11,
+            "y": 20,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 2,
+            "y": 25,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 25,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 11,
+            "y": 25,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 2,
+            "y": 29,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 29,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 11,
+            "y": 29,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 2,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 25,
+            "y": 2,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 29,
+            "y": 2,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 7,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 25,
+            "y": 7,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 29,
+            "y": 7,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 11,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 25,
+            "y": 11,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 29,
+            "y": 11,
+            "width": 5,
+            "height": 5
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "border_15",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "dark_top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 5,
+            "y": 0,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 9,
+            "y": 0,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_mid_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 5,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_mid_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 5,
+            "y": 5,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_mid_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 9,
+            "y": 5,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_btm_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 9,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_btm_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 5,
+            "y": 9,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "dark_btm_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 9,
+            "y": 9,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 5,
+            "y": 0,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 9,
+            "y": 0,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_mid_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 5,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_mid_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 5,
+            "y": 5,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_mid_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 9,
+            "y": 5,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_btm_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 9,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_btm_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 5,
+            "y": 9,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_btm_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 9,
+            "y": 9,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 5,
+            "y": 0,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 9,
+            "y": 0,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_mid_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 5,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_mid_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 5,
+            "y": 5,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_mid_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 9,
+            "y": 5,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_btm_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 9,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_btm_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 5,
+            "y": 9,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "light_btm_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 9,
+            "y": 9,
+            "width": 5,
+            "height": 5
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "border_15",
+      "template": "border_15"
+    },
+    {
+      "name": "active",
+      "layout": "border_15",
+      "template": "border_15"
+    }
+  ]
+}

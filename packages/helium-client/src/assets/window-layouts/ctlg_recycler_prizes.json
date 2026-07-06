@@ -1,6 +1,6 @@
 {
   "name": "ctlg_recycler_prizes",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\108_ctlg_recycler_prizes.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\120_ctlg_recycler_prizes.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -13,8 +13,8 @@
           "x": "0",
           "y": "0",
           "width": "360",
-          "height": "659",
-          "params": "2064",
+          "height": "460",
+          "params": "16",
           "style": "0",
           "name": "ctlg_default_3x3"
         },
@@ -30,8 +30,7 @@
               "params": "16",
               "style": "3",
               "name": "ctlg_selectproduct",
-              "caption": "${catalog_selectproduct}",
-              "visible": "false"
+              "caption": "${catalog_selectproduct}"
             },
             "children": [],
             "vars": {
@@ -45,8 +44,8 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "100",
-              "y": "46",
+              "x": "180",
+              "y": "116",
               "width": "142",
               "height": "73",
               "params": "16",
@@ -60,13 +59,12 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "0",
+              "y": "146",
               "width": "360",
-              "height": "659",
-              "params": "2064",
+              "height": "314",
+              "params": "16",
               "style": "0",
-              "name": "recyclerPrizesWidget",
-              "tags": "WIDE"
+              "name": "recyclerPrizesWidget"
             },
             "children": [
               {
@@ -74,60 +72,39 @@
                 "typeId": 56,
                 "attributes": {
                   "x": "0",
-                  "y": "237",
-                  "width": "360",
-                  "height": "422",
-                  "params": "2064",
-                  "style": "100",
+                  "y": "0",
+                  "width": "175",
+                  "height": "314",
+                  "params": "16",
+                  "style": "3",
                   "name": "itemList"
                 },
-                "children": [],
-                "vars": {
-                  "spacing": 11
-                }
+                "children": []
               },
               {
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
-                  "x": "0",
+                  "x": "180",
                   "y": "0",
-                  "width": "360",
-                  "height": "240",
+                  "width": "180",
+                  "height": "277",
                   "params": "16",
                   "style": "0",
                   "name": "productView"
                 },
                 "children": [
                   {
-                    "tag": "widget",
-                    "typeId": 16,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "360",
-                      "height": "240",
-                      "params": "16",
-                      "style": "3",
-                      "name": "product_viewer"
-                    },
-                    "children": [],
-                    "vars": {
-                      "widget_type": "product_image"
-                    }
-                  },
-                  {
                     "tag": "bitmap",
                     "typeId": 21,
                     "attributes": {
                       "x": "0",
                       "y": "0",
-                      "width": "360",
-                      "height": "240",
+                      "width": "180",
+                      "height": "162",
                       "params": "16",
                       "style": "0",
-                      "name": "ctlg_teaserimg_1",
-                      "visible": "false"
+                      "name": "ctlg_teaserimg_1"
                     },
                     "children": [],
                     "vars": {
@@ -140,8 +117,8 @@
                     "tag": "formatted_text",
                     "typeId": 15,
                     "attributes": {
-                      "x": "10",
-                      "y": "16",
+                      "x": "0",
+                      "y": "166",
                       "width": "74",
                       "height": "17",
                       "params": "16",
@@ -162,8 +139,8 @@
                     "tag": "formatted_text",
                     "typeId": 15,
                     "attributes": {
-                      "x": "10",
-                      "y": "33",
+                      "x": "0",
+                      "y": "183",
                       "width": "162",
                       "height": "15",
                       "params": "16",
@@ -187,7 +164,7 @@
                     "typeId": 140,
                     "attributes": {
                       "x": "18",
-                      "y": "147",
+                      "y": "87",
                       "width": "142",
                       "height": "76",
                       "params": "16",
@@ -211,5 +188,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 360,
-  "layoutHeight": 659
+  "layoutHeight": 460
 }

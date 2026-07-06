@@ -1,6 +1,6 @@
 {
   "name": "spectator_mode",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\420_spectator_mode.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\346_spectator_mode.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,6 +10,7 @@
         "tag": "container",
         "typeId": 4,
         "attributes": {
+          "name": "spectator_mode_container",
           "x": "0",
           "y": "0",
           "width": "183",

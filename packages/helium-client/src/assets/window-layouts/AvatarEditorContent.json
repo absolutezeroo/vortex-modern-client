@@ -1,6 +1,6 @@
 {
   "name": "avatarEditorContent",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\658_avatarEditorContent.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\290_avatarEditorContent.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,10 +10,10 @@
         "tag": "container",
         "typeId": 4,
         "attributes": {
-          "x": "-2",
-          "y": "-4",
+          "x": "0",
+          "y": "0",
           "width": "490",
-          "height": "484",
+          "height": "490",
           "params": "4358160",
           "style": "3",
           "name": "avatarEditorContent"
@@ -36,9 +36,9 @@
                 "tag": "background",
                 "typeId": 2,
                 "attributes": {
-                  "x": "-2",
+                  "x": "0",
                   "y": "0",
-                  "width": "489",
+                  "width": "486",
                   "height": "110",
                   "params": "17",
                   "style": "0",
@@ -79,7 +79,7 @@
                 "attributes": {
                   "x": "170",
                   "y": "50",
-                  "width": "133",
+                  "width": "137",
                   "height": "16",
                   "params": "1",
                   "style": "3",
@@ -92,12 +92,64 @@
                   "auto_size": "left",
                   "font_size": 17,
                   "text_color": 1800619,
-                  "mouse_wheel_enabled": false,
                   "underline": true,
                   "spacing": 0,
                   "leading": 0,
                   "editable": false,
                   "selectable": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "424",
+              "y": "9",
+              "width": "55",
+              "height": "30",
+              "params": "16",
+              "style": "3",
+              "name": "wardrobeButtonContainer"
+            },
+            "children": [
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "55",
+                  "height": "30",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "wardrobe"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "button_shiny_regular"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "55",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "wardrobe_icon",
+                  "tags": "BITMAP"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "avatar_editor_tabs_ae_tabs_wardrobe",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
                 }
               }
             ]
@@ -119,7 +171,7 @@
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
-                  "x": "1",
+                  "x": "0",
                   "y": "4",
                   "width": "486",
                   "height": "410",
@@ -132,9 +184,9 @@
                     "tag": "tab_context",
                     "typeId": 91,
                     "attributes": {
-                      "x": "2",
+                      "x": "0",
                       "y": "5",
-                      "width": "482",
+                      "width": "486",
                       "height": "395",
                       "params": "17",
                       "style": "3",
@@ -267,7 +319,7 @@
                             "typeId": 23,
                             "attributes": {
                               "x": "0",
-                              "y": "-7",
+                              "y": "-6",
                               "width": "52",
                               "height": "42",
                               "params": "16",
@@ -290,6 +342,42 @@
                         "typeId": 94,
                         "attributes": {
                           "x": "208",
+                          "y": "0",
+                          "width": "52",
+                          "height": "46",
+                          "params": "17",
+                          "style": "3",
+                          "name": "misc"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "-4",
+                              "width": "52",
+                              "height": "42",
+                              "params": "16",
+                              "style": "3",
+                              "name": "bitmap",
+                              "tags": "BITMAP"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "avatar_editor_tabs_ae_tabs_misc",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "tab_container_button",
+                        "typeId": 94,
+                        "attributes": {
+                          "x": "260",
                           "y": "0",
                           "width": "52",
                           "height": "46",
@@ -325,7 +413,7 @@
                         "tag": "tab_container_button",
                         "typeId": 94,
                         "attributes": {
-                          "x": "260",
+                          "x": "312",
                           "y": "0",
                           "width": "52",
                           "height": "46",
@@ -361,7 +449,7 @@
                         "tag": "tab_container_button",
                         "typeId": 94,
                         "attributes": {
-                          "x": "312",
+                          "x": "364",
                           "y": "0",
                           "width": "52",
                           "height": "46",
@@ -385,7 +473,7 @@
                             },
                             "children": [],
                             "vars": {
-                              "asset_uri": "nft_pixel_icon",
+                              "asset_uri": "nft_icon_24x24",
                               "pivot_point": "center",
                               "stretched_x": false,
                               "stretched_y": false
@@ -401,7 +489,7 @@
                     "attributes": {
                       "x": "2",
                       "y": "36",
-                      "width": "482",
+                      "width": "486",
                       "height": "365",
                       "params": "16",
                       "style": "3",
@@ -451,7 +539,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_gender_male_on",
+                                  "asset_uri": "avatar_editor_tabs_gender_male_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -510,7 +598,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_gender_female_on",
+                                  "asset_uri": "avatar_editor_tabs_gender_female_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -585,7 +673,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_head_hair_on",
+                                  "asset_uri": "avatar_editor_tabs_head_hair_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -622,7 +710,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_head_hats_on",
+                                  "asset_uri": "avatar_editor_tabs_head_hats_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -659,7 +747,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_head_accessories_on",
+                                  "asset_uri": "avatar_editor_tabs_head_accessories_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -696,7 +784,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_head_eyewear_on",
+                                  "asset_uri": "avatar_editor_tabs_head_eyewear_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -733,7 +821,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_head_face_accessories_on",
+                                  "asset_uri": "avatar_editor_tabs_head_face_accessories_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -786,7 +874,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_top_shirt_on",
+                                  "asset_uri": "avatar_editor_tabs_top_shirt_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -823,7 +911,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_top_prints_on",
+                                  "asset_uri": "avatar_editor_tabs_top_prints_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -860,7 +948,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_top_jacket_on",
+                                  "asset_uri": "avatar_editor_tabs_top_jacket_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -897,7 +985,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_top_accessories_on",
+                                  "asset_uri": "avatar_editor_tabs_top_accessories_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -917,7 +1005,8 @@
                           "height": "35",
                           "params": "16",
                           "style": "3",
-                          "name": "legs_content"
+                          "name": "legs_content",
+                          "visible": "false"
                         },
                         "children": [
                           {
@@ -949,7 +1038,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_bottom_trousers_on",
+                                  "asset_uri": "avatar_editor_tabs_bottom_trousers_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -986,7 +1075,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_bottom_shoes_on",
+                                  "asset_uri": "avatar_editor_tabs_bottom_shoes_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -1023,7 +1112,7 @@
                                 },
                                 "children": [],
                                 "vars": {
-                                  "asset_uri": "avatar_editor_tabs_bottom_accessories_on",
+                                  "asset_uri": "avatar_editor_tabs_bottom_accessories_off",
                                   "pivot_point": "center",
                                   "stretched_x": false,
                                   "stretched_y": false
@@ -1201,7 +1290,8 @@
                           "height": "35",
                           "params": "16",
                           "style": "3",
-                          "name": "effects_content"
+                          "name": "effects_content",
+                          "visible": "false"
                         },
                         "children": [
                           {
@@ -1262,6 +1352,96 @@
                               "treshold": "0"
                             },
                             "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "20",
+                          "y": "10",
+                          "width": "250",
+                          "height": "35",
+                          "params": "16",
+                          "style": "3",
+                          "name": "misc_content",
+                          "visible": "false"
+                        },
+                        "children": [
+                          {
+                            "tag": "region",
+                            "typeId": 5,
+                            "attributes": {
+                              "x": "6",
+                              "y": "0",
+                              "width": "47",
+                              "height": "35",
+                              "params": "17",
+                              "style": "3",
+                              "name": "tab_pets",
+                              "treshold": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "47",
+                                  "height": "35",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "tab_pets",
+                                  "tags": "BITMAP"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "avatar_editor_tabs_icon_misc_pets_off",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "region",
+                            "typeId": 5,
+                            "attributes": {
+                              "x": "58",
+                              "y": "0",
+                              "width": "47",
+                              "height": "35",
+                              "params": "17",
+                              "style": "3",
+                              "name": "tab_misc",
+                              "treshold": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "48",
+                                  "height": "35",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "tab_misc",
+                                  "tags": "BITMAP"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "avatar_editor_tabs_icon_misc_misc_off",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              }
+                            ]
                           }
                         ]
                       }
@@ -1605,71 +1785,10 @@
                   "caption": "${avatareditor.save}",
                   "width_min": "100"
                 },
-                "children": []
-              },
-              {
-                "tag": "container",
-                "typeId": 4,
-                "attributes": {
-                  "x": "428",
-                  "y": "7",
-                  "width": "55",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "wardrobeButtonContainer"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "55",
-                      "height": "30",
-                      "params": "131089",
-                      "style": "3",
-                      "name": "wardrobe"
-                    },
-                    "children": []
-                  },
-                  {
-                    "tag": "static_bitmap",
-                    "typeId": 23,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "55",
-                      "height": "30",
-                      "params": "16",
-                      "style": "3",
-                      "name": "wardrobe_icon",
-                      "tags": "BITMAP"
-                    },
-                    "children": [],
-                    "vars": {
-                      "asset_uri": "avatar_editor_tabs_ae_tabs_wardrobe",
-                      "pivot_point": "center",
-                      "stretched_x": false,
-                      "stretched_y": false
-                    }
-                  }
-                ]
-              },
-              {
-                "tag": "container",
-                "typeId": 4,
-                "attributes": {
-                  "x": "484",
-                  "y": "4",
-                  "width": "0",
-                  "height": "380",
-                  "params": "4194320",
-                  "style": "3",
-                  "name": "sideContainer"
-                },
-                "children": []
+                "children": [],
+                "vars": {
+                  "text_style": "button_shiny_bold"
+                }
               },
               {
                 "tag": "container",
@@ -1799,7 +1918,69 @@
                       "color": "0x0aa00",
                       "width_max": "115"
                     },
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "356",
+                  "y": "345",
+                  "width": "122",
+                  "height": "20",
+                  "params": "16",
+                  "style": "3",
+                  "name": "collectible_avatar_info",
+                  "color": "0x0454545",
+                  "visible": "false",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "background",
+                    "typeId": 2,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "122",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3",
+                      "name": "collectible_avatar_info_background",
+                      "color": "0xffff454545",
+                      "background": "true"
+                    },
                     "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "3",
+                      "width": "122",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3",
+                      "name": "avatar_info_text",
+                      "caption": "Habbo Avatar",
+                      "height_min": "20"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "font_size": 16,
+                      "text_color": 16746531,
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
                   }
                 ]
               },
@@ -1839,6 +2020,20 @@
                 ]
               }
             ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "487",
+              "y": "0",
+              "width": "0",
+              "height": "490",
+              "params": "16",
+              "style": "3",
+              "name": "sideContainer"
+            },
+            "children": []
           }
         ]
       }
@@ -1847,5 +2042,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 490,
-  "layoutHeight": 484
+  "layoutHeight": 490
 }

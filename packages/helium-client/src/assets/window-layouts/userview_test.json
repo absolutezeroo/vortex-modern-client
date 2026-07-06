@@ -1,6 +1,6 @@
 {
   "name": "userview_test",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\573_userview_test.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\21_userview_test.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -442,7 +442,73 @@
                 "attributes": {
                   "x": "330",
                   "y": "0",
-                  "width": "100",
+                  "width": "132",
+                  "height": "25",
+                  "params": "17",
+                  "style": "0",
+                  "name": "move",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "132",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "move",
+                      "caption": "${infostand.button.move}",
+                      "tags": "CMD_BUTTON",
+                      "height_min": "22"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "472",
+                  "y": "0",
+                  "width": "139",
+                  "height": "25",
+                  "params": "17",
+                  "style": "0",
+                  "name": "rotate",
+                  "tags": "CMD_BUTTON_REGION"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "139",
+                      "height": "25",
+                      "params": "131089",
+                      "style": "1",
+                      "name": "rotate",
+                      "caption": "${infostand.button.rotate}",
+                      "tags": "CMD_BUTTON",
+                      "height_min": "22"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "621",
+                  "y": "0",
+                  "width": "137",
                   "height": "25",
                   "params": "17",
                   "style": "0",

@@ -1,6 +1,6 @@
 {
   "name": "illumina_light_frame",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\77_illumina_light_frame.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\214_illumina_light_frame.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -56,40 +56,19 @@
         }
       },
       {
-        "tag": "region",
-        "typeId": 5,
+        "tag": "closebutton",
+        "typeId": 72,
         "attributes": {
           "name": "header_button_close",
+          "style": "100",
           "x": "22",
           "y": "9",
           "width": "20",
           "height": "20",
-          "treshold": "0",
           "tags": "_EXCLUDE, _INTERNAL, close",
           "params": "81"
         },
-        "children": [
-          {
-            "tag": "static_bitmap",
-            "typeId": 23,
-            "attributes": {
-              "name": "header_button_image",
-              "x": "0",
-              "y": "0",
-              "width": "20",
-              "height": "20",
-              "style": "0",
-              "tags": "_EXCLUDE, _INTERNAL",
-              "params": "80"
-            },
-            "children": [],
-            "vars": {
-              "asset_uri": "illumina_light_button_frame_close_png",
-              "stretched_x": false,
-              "stretched_y": false
-            }
-          }
-        ]
+        "children": []
       },
       {
         "tag": "scaler",

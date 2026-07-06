@@ -1,6 +1,6 @@
 {
   "name": "catalog_ubuntu",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\178_catalog_ubuntu.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\173_catalog_ubuntu.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -13,7 +13,7 @@
           "x": "0",
           "y": "0",
           "width": "570",
-          "height": "600",
+          "height": "640",
           "params": "98337",
           "style": "3",
           "name": "catalog_main_container",
@@ -353,7 +353,7 @@
               "x": "8",
               "y": "124",
               "width": "184",
-              "height": "433",
+              "height": "473",
               "params": "2064",
               "style": "6",
               "name": "navigationContainer",
@@ -367,7 +367,7 @@
                   "x": "0",
                   "y": "0",
                   "width": "184",
-                  "height": "433",
+                  "height": "473",
                   "params": "2064",
                   "style": "6",
                   "blend": "0.5"
@@ -381,7 +381,7 @@
                   "x": "3",
                   "y": "5",
                   "width": "178",
-                  "height": "423",
+                  "height": "463",
                   "params": "2064",
                   "style": "3",
                   "name": "navigationList",
@@ -625,7 +625,7 @@
                         "attributes": {
                           "x": "42",
                           "y": "1",
-                          "width": "50",
+                          "width": "55",
                           "height": "17",
                           "params": "176",
                           "style": "3",
@@ -670,7 +670,7 @@
                     "typeId": 50,
                     "attributes": {
                       "x": "0",
-                      "y": "60",
+                      "y": "61",
                       "width": "178",
                       "height": "19",
                       "params": "16",
@@ -684,7 +684,7 @@
                     "typeId": 5,
                     "attributes": {
                       "x": "0",
-                      "y": "79",
+                      "y": "80",
                       "width": "180",
                       "height": "21",
                       "params": "131089",
@@ -815,9 +815,9 @@
                     "typeId": 5,
                     "attributes": {
                       "x": "0",
-                      "y": "100",
+                      "y": "101",
                       "width": "179",
-                      "height": "20",
+                      "height": "21",
                       "params": "131089",
                       "style": "0",
                       "name": "builders_club_subitem_template",
@@ -902,7 +902,7 @@
                         "attributes": {
                           "x": "42",
                           "y": "1",
-                          "width": "50",
+                          "width": "55",
                           "height": "17",
                           "params": "176",
                           "style": "3",
@@ -953,7 +953,7 @@
               "x": "200",
               "y": "96",
               "width": "360",
-              "height": "460",
+              "height": "500",
               "params": "2064",
               "style": "0",
               "name": "layoutContainer",
@@ -986,5 +986,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 570,
-  "layoutHeight": 600
+  "layoutHeight": 640
 }

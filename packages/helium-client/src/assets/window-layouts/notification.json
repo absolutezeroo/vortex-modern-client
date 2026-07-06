@@ -1,6 +1,6 @@
 {
   "name": "notification",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\450_notification.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\14_notification.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

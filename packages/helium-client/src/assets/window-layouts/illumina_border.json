@@ -1,6 +1,6 @@
 {
   "name": "illumina_border",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\843_illumina_border.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\229_illumina_border.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "30",
           "height": "30",
-          "params": "2192",
+          "params": "16",
           "style": "0"
         },
         "children": [
@@ -26,7 +26,7 @@
               "y": "0",
               "width": "30",
               "height": "30",
-              "params": "2192",
+              "params": "16",
               "style": "0",
               "name": "canvas"
             },
@@ -45,7 +45,7 @@
               "y": "0",
               "width": "30",
               "height": "30",
-              "params": "2192",
+              "params": "16",
               "style": "0",
               "name": "children"
             },

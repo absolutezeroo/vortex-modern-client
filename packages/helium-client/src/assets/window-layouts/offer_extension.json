@@ -1,6 +1,6 @@
 {
   "name": "offer_extension",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\88_offer_extension.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\85_offer_extension.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

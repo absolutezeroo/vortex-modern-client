@@ -1,6 +1,6 @@
 {
   "name": "room_invite_confirm",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\644_room_invite_confirm.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\111_room_invite_confirm.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

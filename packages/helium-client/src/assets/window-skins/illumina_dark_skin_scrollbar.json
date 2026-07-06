@@ -1,7 +1,7 @@
 {
   "id": "illumina_dark_skin_scrollbar",
   "name": "illumina_dark_scrollbar_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\68_illumina_dark_scrollbar_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\20_illumina_dark_scrollbar_skin.xml",
   "variables": {
     "width": "9"
   },

@@ -1,6 +1,6 @@
 {
   "name": "error_window",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\378_error_window.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\252_error_window.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -16,8 +16,8 @@
           "height": "147",
           "params": "32769",
           "style": "100",
-          "name": "rejected_window",
-          "caption": "${guide.help.request.rejected.title}",
+          "name": "error_window",
+          "caption": "${guide.help.request.error.title}",
           "width_min": "242",
           "width_max": "242",
           "height_min": "50"
@@ -45,8 +45,7 @@
                   "height": "35",
                   "params": "16",
                   "style": "100",
-                  "name": "heading",
-                  "caption": "${guide.help.request.rejected.heading}"
+                  "caption": "${guide.help.request.error.heading}"
                 },
                 "children": [],
                 "vars": {
@@ -69,8 +68,7 @@
                   "height": "16",
                   "params": "16",
                   "style": "100",
-                  "name": "message",
-                  "caption": "${guide.help.request.rejected.message}"
+                  "caption": "${guide.help.request.error.message}"
                 },
                 "children": [],
                 "vars": {
@@ -86,14 +84,14 @@
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "3",
+                  "x": "10",
                   "y": "51",
-                  "width": "221",
+                  "width": "207",
                   "height": "48",
                   "params": "131281",
                   "style": "101",
                   "name": "close_button",
-                  "caption": "${guide.help.request.rejected.button}",
+                  "caption": "${guide.help.request.error.button}",
                   "color": "0x0bbbbbb",
                   "height_min": "48",
                   "height_max": "48"

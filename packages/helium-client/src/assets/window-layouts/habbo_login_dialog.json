@@ -1,6 +1,6 @@
 {
   "name": "habbo_login_dialog",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\815_habbo_login_dialog.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\234_habbo_login_dialog.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -37,7 +37,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "90",
-                  "y": "97",
+                  "y": "0",
                   "width": "198",
                   "height": "46",
                   "params": "16",
@@ -59,6 +59,7 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "mouse_wheel_enabled": false,
                       "sharpness": 0,
                       "thickness": 0,
@@ -110,7 +111,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "0",
+                  "y": "49",
                   "width": "296",
                   "height": "28",
                   "params": "16",
@@ -154,7 +155,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "31",
+                  "y": "80",
                   "width": "298",
                   "height": "30",
                   "params": "16",
@@ -236,7 +237,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "64",
+                  "y": "113",
                   "width": "306",
                   "height": "30",
                   "params": "16",
@@ -379,7 +380,6 @@
                           "style": "102",
                           "name": "userlist_item",
                           "caption": "username",
-                          "color": "0x0bbbbbb",
                           "width_min": "196",
                           "width_max": "196"
                         },

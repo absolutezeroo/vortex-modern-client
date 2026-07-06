@@ -1,6 +1,6 @@
 {
   "name": "floor_plan_editor_bc",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\727_floor_plan_editor_bc.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\299_floor_plan_editor_bc.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,14 +10,18 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "0",
-          "y": "0",
+          "x": "23",
+          "y": "16",
           "width": "662",
-          "height": "609",
-          "params": "33025",
+          "height": "600",
+          "params": "98305",
           "style": "3",
           "caption": "${floor.plan.editor.title}",
-          "color": "0x0ff8d00"
+          "color": "0x0ff8d00",
+          "width_min": "662",
+          "width_max": "1380",
+          "height_min": "600",
+          "height_max": "900"
         },
         "children": [
           {
@@ -28,7 +32,7 @@
               "y": "0",
               "width": "662",
               "height": "50",
-              "params": "16",
+              "params": "144",
               "style": "1",
               "color": "0xffff4e4844",
               "background": "true"
@@ -42,7 +46,7 @@
                   "y": "2",
                   "width": "656",
                   "height": "45",
-                  "params": "16",
+                  "params": "144",
                   "style": "1",
                   "color": "0xffff2d2724",
                   "background": "true"
@@ -98,7 +102,7 @@
               "y": "57",
               "width": "344",
               "height": "448",
-              "params": "16",
+              "params": "2192",
               "style": "3",
               "name": "heightmap_border",
               "color": "0x0bdbdb5"
@@ -112,7 +116,7 @@
                   "y": "4",
                   "width": "322",
                   "height": "127",
-                  "params": "16",
+                  "params": "144",
                   "style": "3",
                   "name": "controls_container"
                 },
@@ -370,7 +374,9 @@
                       }
                     ],
                     "vars": {
-                      "spacing": 10
+                      "spacing": 10,
+                      "scroll_step_h": 25,
+                      "scroll_step_v": 25
                     }
                   },
                   {
@@ -448,7 +454,9 @@
                   }
                 ],
                 "vars": {
-                  "scale_to_fit_items": true
+                  "scale_to_fit_items": true,
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
                 }
               },
               {
@@ -459,7 +467,7 @@
                   "y": "132",
                   "width": "332",
                   "height": "304",
-                  "params": "16",
+                  "params": "2192",
                   "style": "3",
                   "name": "heightmap_bg",
                   "color": "0x00"
@@ -467,18 +475,31 @@
                 "children": []
               },
               {
-                "tag": "itemlist_horizontal",
-                "typeId": 51,
+                "tag": "itemlist_vertical",
+                "typeId": 50,
                 "attributes": {
                   "x": "0",
                   "y": "132",
                   "width": "331",
                   "height": "304",
-                  "params": "16",
+                  "params": "2192",
                   "style": "3",
                   "name": "heightmap_wrapper"
                 },
                 "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "30",
+                      "height": "29",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": []
+                  },
                   {
                     "tag": "bitmap",
                     "typeId": 21,
@@ -498,12 +519,43 @@
                       "stretched_y": false,
                       "fit_size_to_contents": true
                     }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "333",
+                      "width": "15",
+                      "height": "29",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": []
                   }
                 ],
                 "vars": {
                   "scale_to_fit_items": true,
-                  "scroll_step_h": 1,
-                  "scroll_step_v": 1
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "132",
+                  "width": "331",
+                  "height": "304",
+                  "params": "2193",
+                  "style": "3",
+                  "name": "mouse_capturer",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "interactive_cursor_disabled": true
                 }
               },
               {
@@ -514,7 +566,7 @@
                   "y": "132",
                   "width": "13",
                   "height": "304",
-                  "params": "17",
+                  "params": "2129",
                   "style": "3",
                   "name": "heightmap_scroll_vertical"
                 },
@@ -531,7 +583,7 @@
                   "y": "435",
                   "width": "332",
                   "height": "13",
-                  "params": "17",
+                  "params": "1169",
                   "style": "3",
                   "name": "heightmap_scroll_horizontal"
                 },
@@ -548,7 +600,7 @@
                   "y": "400",
                   "width": "20",
                   "height": "26",
-                  "params": "17",
+                  "params": "1041",
                   "style": "3",
                   "name": "zoom",
                   "treshold": "0"
@@ -575,6 +627,26 @@
                     }
                   }
                 ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "1034",
+                  "y": "108",
+                  "width": "30",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "caption": "hi :)",
+                  "blend": "0.2"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
               }
             ]
           },
@@ -586,7 +658,7 @@
               "y": "57",
               "width": "289",
               "height": "449",
-              "params": "16",
+              "params": "2128",
               "style": "3",
               "name": "preview_border",
               "color": "0x0bdbdb5"
@@ -759,10 +831,10 @@
                         "tag": "dropmenu",
                         "typeId": 102,
                         "attributes": {
-                          "x": "16",
+                          "x": "14",
                           "y": "30",
-                          "width": "104",
-                          "height": "21",
+                          "width": "114",
+                          "height": "25",
                           "params": "17",
                           "style": "3",
                           "name": "wall_thickness_drop"
@@ -781,10 +853,10 @@
                         "tag": "dropmenu",
                         "typeId": 102,
                         "attributes": {
-                          "x": "16",
-                          "y": "58",
-                          "width": "104",
-                          "height": "21",
+                          "x": "14",
+                          "y": "61",
+                          "width": "114",
+                          "height": "25",
                           "params": "17",
                           "style": "3",
                           "name": "floor_thickness_drop"
@@ -801,7 +873,11 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "vars": {
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
+                }
               },
               {
                 "tag": "itemlist_horizontal",
@@ -867,7 +943,6 @@
                     "children": [],
                     "vars": {
                       "auto_size": "center",
-                      "grid_fit_type": "subpixel",
                       "text_color": 6250335,
                       "text_style": "u_bold",
                       "mouse_wheel_enabled": false,
@@ -927,7 +1002,11 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "vars": {
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
+                }
               },
               {
                 "tag": "border",
@@ -937,21 +1016,21 @@
                   "y": "133",
                   "width": "275",
                   "height": "302",
-                  "params": "16",
+                  "params": "2064",
                   "style": "3",
                   "name": "preview_bitmap_border"
                 },
                 "children": []
               },
               {
-                "tag": "itemlist_horizontal",
-                "typeId": 51,
+                "tag": "itemlist_vertical",
+                "typeId": 50,
                 "attributes": {
                   "x": "1",
                   "y": "135",
                   "width": "273",
                   "height": "300",
-                  "params": "16",
+                  "params": "2064",
                   "style": "3",
                   "name": "preview_wrapper"
                 },
@@ -964,7 +1043,7 @@
                       "y": "0",
                       "width": "273",
                       "height": "300",
-                      "params": "16",
+                      "params": "17",
                       "style": "3",
                       "name": "preview_bitmap"
                     },
@@ -979,8 +1058,8 @@
                 ],
                 "vars": {
                   "scale_to_fit_items": true,
-                  "scroll_step_h": 1,
-                  "scroll_step_v": 1
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
                 }
               },
               {
@@ -991,7 +1070,7 @@
                   "y": "435",
                   "width": "280",
                   "height": "14",
-                  "params": "17",
+                  "params": "1041",
                   "style": "3",
                   "name": "preview_scroll_horizontal"
                 },
@@ -1008,13 +1087,34 @@
                   "y": "135",
                   "width": "20",
                   "height": "299",
-                  "params": "17",
+                  "params": "2065",
                   "style": "3",
                   "name": "preview_scroll_vertical"
                 },
                 "children": [],
                 "vars": {
                   "scrollable": "preview_wrapper"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "6",
+                  "y": "372",
+                  "width": "30",
+                  "height": "30",
+                  "params": "17",
+                  "style": "3",
+                  "name": "refresh",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "inventory_furni_recycle_icon",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
                 }
               }
             ]
@@ -1024,10 +1124,10 @@
             "typeId": 4,
             "attributes": {
               "x": "10",
-              "y": "530",
+              "y": "518",
               "width": "643",
               "height": "40",
-              "params": "16",
+              "params": "1168",
               "style": "3",
               "name": "main_buttons"
             },
@@ -1036,7 +1136,7 @@
                 "tag": "itemlist_horizontal",
                 "typeId": 51,
                 "attributes": {
-                  "x": "0",
+                  "x": "2",
                   "y": "0",
                   "width": "120",
                   "height": "40",
@@ -1060,24 +1160,29 @@
                       "width_min": "100",
                       "width_max": "120"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_bold"
+                    }
                   }
                 ],
                 "vars": {
                   "spacing": 5,
                   "scale_to_fit_items": true,
-                  "resize_on_item_update": true
+                  "resize_on_item_update": true,
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
                 }
               },
               {
                 "tag": "itemlist_horizontal",
                 "typeId": 51,
                 "attributes": {
-                  "x": "273",
+                  "x": "265",
                   "y": "0",
-                  "width": "370",
+                  "width": "376",
                   "height": "40",
-                  "params": "262160",
+                  "params": "262224",
                   "style": "3",
                   "name": "right_buttons"
                 },
@@ -1097,13 +1202,16 @@
                       "width_min": "90",
                       "width_max": "120"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_bold"
+                    }
                   },
                   {
                     "tag": "button_thick",
                     "typeId": 61,
                     "attributes": {
-                      "x": "125",
+                      "x": "128",
                       "y": "0",
                       "width": "120",
                       "height": "35",
@@ -1114,13 +1222,16 @@
                       "width_min": "90",
                       "width_max": "120"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_bold"
+                    }
                   },
                   {
                     "tag": "button_thick",
                     "typeId": 61,
                     "attributes": {
-                      "x": "250",
+                      "x": "256",
                       "y": "0",
                       "width": "120",
                       "height": "35",
@@ -1132,13 +1243,18 @@
                       "width_min": "90",
                       "width_max": "120"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_bold"
+                    }
                   }
                 ],
                 "vars": {
-                  "spacing": 5,
+                  "spacing": 8,
                   "scale_to_fit_items": true,
-                  "resize_on_item_update": true
+                  "resize_on_item_update": true,
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
                 }
               }
             ]
@@ -1168,5 +1284,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 662,
-  "layoutHeight": 609
+  "layoutHeight": 600
 }

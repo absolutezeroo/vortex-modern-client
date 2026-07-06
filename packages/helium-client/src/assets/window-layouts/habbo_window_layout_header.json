@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_layout_header",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\28_habbo_window_layout_header.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\224_habbo_window_layout_header.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -42,6 +42,21 @@
                 "bottom": 1
               }
             }
+          },
+          {
+            "tag": "closebutton",
+            "typeId": 72,
+            "attributes": {
+              "name": "header_button_menu",
+              "style": "5",
+              "x": "1",
+              "y": "0",
+              "width": "15",
+              "height": "15",
+              "tags": "_EXCLUDE, _INTERNAL, menu",
+              "params": "17"
+            },
+            "children": []
           },
           {
             "tag": "itemlist_horizontal",

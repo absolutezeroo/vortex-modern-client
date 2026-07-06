@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_layout_scrollable_itemlist",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\829_habbo_window_layout_scrollable_itemlist.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\207_habbo_window_layout_scrollable_itemlist.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,10 +12,10 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "31",
+          "width": "23",
           "height": "40",
           "params": "2193",
-          "style": "100",
+          "style": "0",
           "name": "_ITEMLIST",
           "tags": "_ITEMLIST, _EXCLUDE, _INTERNAL"
         },
@@ -25,12 +25,12 @@
         "tag": "scrollbar_vertical",
         "typeId": 131,
         "attributes": {
-          "x": "31",
+          "x": "23",
           "y": "0",
-          "width": "9",
+          "width": "17",
           "height": "40",
           "params": "2129",
-          "style": "100",
+          "style": "0",
           "name": "_SCROLLBAR",
           "tags": "_SCROLLBAR, _EXCLUDE, _INTERNAL"
         },

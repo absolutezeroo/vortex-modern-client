@@ -30,17 +30,17 @@
 import type {ILoginContext} from './ILoginContext';
 
 // Import flag icons
-import flagEnUrl from '../assets/images/flag_icon_en.png';
-import flagPtUrl from '../assets/images/flag_icon_pt.png';
-import flagDeUrl from '../assets/images/flag_icon_de.png';
-import flagEsUrl from '../assets/images/flag_icon_es.png';
-import flagFiUrl from '../assets/images/flag_icon_fi.png';
-import flagFrUrl from '../assets/images/flag_icon_fr.png';
-import flagItUrl from '../assets/images/flag_icon_it.png';
-import flagNlUrl from '../assets/images/flag_icon_nl.png';
-import flagTrUrl from '../assets/images/flag_icon_tr.png';
-import flagDevUrl from '../assets/images/flag_icon_dev.png';
-import flagSelectedUrl from '../assets/images/flag_icon_selected.png';
+import flagEnUrl from '../assets/images/flag_icons_en.png';
+import flagPtUrl from '../assets/images/flag_icons_pt.png';
+import flagDeUrl from '../assets/images/flag_icons_de.png';
+import flagEsUrl from '../assets/images/flag_icons_es.png';
+import flagFiUrl from '../assets/images/flag_icons_fi.png';
+import flagFrUrl from '../assets/images/flag_icons_fr.png';
+import flagItUrl from '../assets/images/flag_icons_it.png';
+import flagNlUrl from '../assets/images/flag_icons_nl.png';
+import flagTrUrl from '../assets/images/flag_icons_tr.png';
+import flagDevUrl from '../assets/images/flag_icons_dev.png';
+import flagSelectedUrl from '../assets/images/flags_icon_selected.png';
 
 /** AS3: ITEMS_PER_ROW = 9 */
 const ITEMS_PER_ROW = 9;
@@ -76,7 +76,7 @@ const FLAG_IMAGES: Record<string, string> = {
     's2': flagDevUrl,
 };
 
-export class EnvironmentView
+export class EnvironmentView 
 {
     private _context: ILoginContext;
     private _root: HTMLDivElement;
@@ -111,31 +111,49 @@ export class EnvironmentView
     private _disposed: boolean = false;
 
     /**
-	 * AS3: EnvironmentView(_arg_1:LoginFlow)
-	 */
-    constructor(context: ILoginContext)
+     * AS3: EnvironmentView(_arg_1:LoginFlow)
+     */
+    constructor(context: ILoginContext) 
     {
         this._context = context;
         this._root = document.createElement('div');
         this._loginButton = document.createElement('button');
     }
 
-    get element(): HTMLDivElement
+    get element(): HTMLDivElement 
     {
         return this._root;
     }
 
     /**
-	 * AS3: init()
-	 */
-    public init(): void
+     * AS3: get environmentId():String
+     */
+    get environmentId(): string 
+    {
+        return this._SafeStr_4557 ? this._SafeStr_4557[this._SafeStr_4556] : 'en';
+    }
+
+    /**
+     * AS3: get environmentAvailable():Boolean
+     */
+    get environmentAvailable(): boolean 
+    {
+        const currentEnvId = this._context.getProperty('environment.id');
+
+        return this._SafeStr_4557 ? this._SafeStr_4557.indexOf(currentEnvId ?? '') > -1 : false;
+    }
+
+    /**
+     * AS3: init()
+     */
+    public init(): void 
     {
         if(this._SafeStr_527) return;
 
         this._SafeStr_527 = true;
 
         // AS3: _SafeStr_4554 = new Vector.<Bitmap>()
-        if(this._SafeStr_4557 === null)
+        if(this._SafeStr_4557 === null) 
         {
             this.initEnvironmentImages();
         }
@@ -145,40 +163,21 @@ export class EnvironmentView
     }
 
     /**
-	 * AS3: initEnvironmentImages()
-	 * Reads the environment list from config property "live.environment.list".
-	 */
-    private initEnvironmentImages(): void
-    {
-        const envListStr = this._context.getProperty('live.environment.list');
-
-        if(envListStr)
-        {
-            this._SafeStr_4557 = envListStr.split('/');
-        }
-        else
-        {
-            // Default environment list matching AS3 order
-            this._SafeStr_4557 = ['en', 'pt', 'de', 'es', 'fi', 'fr', 'it', 'nl', 'tr', 'dev'];
-        }
-    }
-
-    /**
-	 * AS3: updateEnvironment()
-	 * Reads current environment.id from config and selects it.
-	 */
-    public updateEnvironment(): void
+     * AS3: updateEnvironment()
+     * Reads current environment.id from config and selects it.
+     */
+    public updateEnvironment(): void 
     {
         if(!this._SafeStr_4557) return;
 
         const currentEnvId = this._context.getProperty('environment.id');
         const index = this._SafeStr_4557.indexOf(currentEnvId ?? '');
 
-        if(index === -1)
+        if(index === -1) 
         {
             this._SafeStr_4556 = 0;
         }
-        else
+        else 
         {
             this._SafeStr_4556 = index;
         }
@@ -187,10 +186,10 @@ export class EnvironmentView
     }
 
     /**
-	 * AS3: initView()
-	 * Builds the full DOM tree: title, highlight, flags grid, name label, buttons.
-	 */
-    public initView(): void
+     * AS3: initView()
+     * Builds the full DOM tree: title, highlight, flags grid, name label, buttons.
+     */
+    public initView(): void 
     {
         if(!this._SafeStr_4557) return;
 
@@ -251,7 +250,7 @@ export class EnvironmentView
         const thumbDisplaySize = THUMB_SIZE * THUMB_SCALE; // 80px
         const gap = 5;
 
-        for(let i = 0; i < this._SafeStr_4557.length; i++)
+        for(let i = 0; i < this._SafeStr_4557.length; i++) 
         {
             const envId = this._SafeStr_4557[i];
             const container = document.createElement('div');
@@ -333,12 +332,50 @@ export class EnvironmentView
     }
 
     /**
-	 * AS3: addTitleField()
-	 * Creates title: "${connection.login.environment.choose}" — white 40px bold
-	 */
-    private addTitleField(): void
+     * AS3: dispose()
+     */
+    public dispose(): void 
     {
-        if(!this._SafeStr_4547)
+        if(this._disposed) return;
+
+        this._disposed = true;
+
+        for(const item of this._environmentImageContainers) 
+        {
+            item.removeEventListener('click', this._onEnvironmentClick);
+        }
+
+        this._loginButton.removeEventListener('click', this._onButtonSelect);
+        this._environmentImageContainers.length = 0;
+        this._root.remove();
+    }
+
+    /**
+     * AS3: initEnvironmentImages()
+     * Reads the environment list from config property "live.environment.list".
+     */
+    private initEnvironmentImages(): void 
+    {
+        const envListStr = this._context.getProperty('live.environment.list');
+
+        if(envListStr) 
+        {
+            this._SafeStr_4557 = envListStr.split('/');
+        }
+        else 
+        {
+            // Default environment list matching AS3 order
+            this._SafeStr_4557 = ['en', 'pt', 'de', 'es', 'fi', 'fr', 'it', 'nl', 'tr', 'dev'];
+        }
+    }
+
+    /**
+     * AS3: addTitleField()
+     * Creates title: "${connection.login.environment.choose}" — white 40px bold
+     */
+    private addTitleField(): void 
+    {
+        if(!this._SafeStr_4547) 
         {
             this._SafeStr_4547 = document.createElement('div');
             this._SafeStr_4547.className = 'habbo-title';
@@ -355,10 +392,10 @@ export class EnvironmentView
     }
 
     /**
-	 * AS3: onEnvironmentClick(_arg_1:Event)
-	 * Selects the clicked environment.
-	 */
-    private _onEnvironmentClick = (e: Event): void =>
+     * AS3: onEnvironmentClick(_arg_1:Event)
+     * Selects the clicked environment.
+     */
+    private _onEnvironmentClick = (e: Event): void => 
     {
         const target = e.currentTarget as HTMLDivElement;
         const index = parseInt(target.dataset.index ?? '0', 10);
@@ -366,24 +403,24 @@ export class EnvironmentView
         this._SafeStr_4556 = index;
         this.chooseEnvironment();
 
-        if(this._SafeStr_4557)
+        if(this._SafeStr_4557) 
         {
             this._context.updateEnvironment(this._SafeStr_4557[this._SafeStr_4556], true);
         }
     };
 
     /**
-	 * AS3: chooseEnvironment()
-	 * Positions the highlight sprite over the selected flag and updates description.
-	 */
-    private chooseEnvironment(): void
+     * AS3: chooseEnvironment()
+     * Positions the highlight sprite over the selected flag and updates description.
+     */
+    private chooseEnvironment(): void 
     {
         const container = this._environmentImageContainers[this._SafeStr_4556];
 
         if(!container) return;
 
         // AS3: Position _SafeStr_4558 centered over the selected container
-        if(this._SafeStr_4558)
+        if(this._SafeStr_4558) 
         {
             const containerX = parseInt(container.style.left, 10) || 0;
             const containerY = parseInt(container.style.top, 10) || 0;
@@ -405,12 +442,12 @@ export class EnvironmentView
     }
 
     /**
-	 * AS3: onButtonSelect(_arg_1:DisplayObject)
-	 * Commits environment selection and goes to Login screen.
-	 */
-    private _onButtonSelect = (): void =>
+     * AS3: onButtonSelect(_arg_1:DisplayObject)
+     * Commits environment selection and goes to Login screen.
+     */
+    private _onButtonSelect = (): void => 
     {
-        if(this._SafeStr_4557)
+        if(this._SafeStr_4557) 
         {
             this._context.updateEnvironment(this._SafeStr_4557[this._SafeStr_4556], false);
         }
@@ -419,10 +456,10 @@ export class EnvironmentView
     };
 
     /**
-	 * AS3: updateDescription()
-	 * Updates the environment name label.
-	 */
-    private updateDescription(): void
+     * AS3: updateDescription()
+     * Updates the environment name label.
+     */
+    private updateDescription(): void 
     {
         if(!this._SafeStr_4557 || !this._environmentName) return;
 
@@ -430,42 +467,5 @@ export class EnvironmentView
 
         // AS3: _environmentName.text = _context.getProperty("connection.info.name." + _local_1)
         this._environmentName.textContent = this._context.getProperty('connection.info.name.' + envId) ?? envId;
-    }
-
-    /**
-	 * AS3: get environmentId():String
-	 */
-    get environmentId(): string
-    {
-        return this._SafeStr_4557 ? this._SafeStr_4557[this._SafeStr_4556] : 'en';
-    }
-
-    /**
-	 * AS3: get environmentAvailable():Boolean
-	 */
-    get environmentAvailable(): boolean
-    {
-        const currentEnvId = this._context.getProperty('environment.id');
-
-        return this._SafeStr_4557 ? this._SafeStr_4557.indexOf(currentEnvId ?? '') > -1 : false;
-    }
-
-    /**
-	 * AS3: dispose()
-	 */
-    public dispose(): void
-    {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        for(const item of this._environmentImageContainers)
-        {
-            item.removeEventListener('click', this._onEnvironmentClick);
-        }
-
-        this._loginButton.removeEventListener('click', this._onButtonSelect);
-        this._environmentImageContainers.length = 0;
-        this._root.remove();
     }
 }

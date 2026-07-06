@@ -1,6 +1,6 @@
 {
   "name": "logout",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\93_logout.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\83_logout.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

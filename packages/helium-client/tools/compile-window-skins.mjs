@@ -692,13 +692,17 @@ function main()
 
     prepareOutputDir(args.out);
 
+    // The element-description file's numeric ID prefix (e.g. "48_habbo.xml") is assigned by
+    // whatever tool extracted this particular source tree, and is not stable across Habbo
+    // versions/re-exports - match any "<id>_habbo.xml" (or bare "habbo.xml") instead of a
+    // hardcoded ID.
     const elementDescription = fs.readdirSync(args.input)
         .map((entry) => path.join(args.input, entry))
-        .find((entry) => entry.includes('48_habbo.xml'));
-    
+        .find((entry) => /(^|[\\/])(\d+_)?habbo\.xml$/.test(entry));
+
     if (!elementDescription)
     {
-        throw new Error('Unable to locate 48_habbo.xml.');
+        throw new Error('Unable to locate the "<id>_habbo.xml" element-description file.');
     }
 
     const elementAssetId = toAssetId(elementDescription);

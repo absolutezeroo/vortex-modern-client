@@ -1,0 +1,124 @@
+{
+  "id": "habbo_skin_button_plus_3",
+  "name": "plus_button_skin_3",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\39_plus_button_skin_3.xml",
+  "variables": {
+    "asset": "habbo_skin_ubuntu"
+  },
+  "templates": [
+    {
+      "name": "default_button_mode_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_plus",
+          "type": "bitmap",
+          "region": {
+            "x": 356,
+            "y": 82,
+            "width": 22,
+            "height": 22
+          }
+        }
+      ]
+    },
+    {
+      "name": "hovering_button_mode_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_plus",
+          "type": "bitmap",
+          "region": {
+            "x": 382,
+            "y": 82,
+            "width": 22,
+            "height": 22
+          }
+        }
+      ]
+    },
+    {
+      "name": "pressed_button_mode_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_plus",
+          "type": "bitmap",
+          "region": {
+            "x": 408,
+            "y": 82,
+            "width": 22,
+            "height": 22
+          }
+        }
+      ]
+    },
+    {
+      "name": "disabled_button_mode_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_plus",
+          "type": "bitmap",
+          "region": {
+            "x": 434,
+            "y": 82,
+            "width": 22,
+            "height": 22
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "button_plus_3",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_plus",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 22,
+            "height": 22
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "button_plus_3",
+      "template": "default_button_mode_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "button_plus_3",
+      "template": "hovering_button_mode_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "button_plus_3",
+      "template": "pressed_button_mode_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "button_plus_3",
+      "template": "disabled_button_mode_3"
+    }
+  ]
+}

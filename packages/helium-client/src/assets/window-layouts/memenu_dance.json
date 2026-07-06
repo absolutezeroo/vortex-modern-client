@@ -1,34 +1,35 @@
 {
   "name": "memenu_dance",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\587_memenu_dance.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\89_memenu_dance.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "container",
-        "typeId": 4,
+        "tag": "border",
+        "typeId": 30,
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "170",
-          "height": "160",
-          "params": "16",
-          "style": "0",
-          "name": "dance_container"
+          "width": "180",
+          "height": "140",
+          "params": "0",
+          "style": "6",
+          "name": "dance_container",
+          "color": "0x079756e"
         },
         "children": [
           {
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "13",
+              "x": "20",
               "y": "5",
-              "width": "144",
-              "height": "13",
+              "width": "141",
+              "height": "17",
               "params": "786640",
-              "style": "0",
+              "style": "3",
               "name": "settings_title",
               "caption": "${widget.memenu.settings}",
               "width_max": "150"
@@ -36,11 +37,8 @@
             "children": [],
             "vars": {
               "auto_size": "left",
-              "font_face": "Volter Bold",
               "text_color": 16777215,
-              "sharpness": 0,
-              "thickness": 0,
-              "kerning": false,
+              "mouse_wheel_enabled": false,
               "spacing": 0,
               "leading": 0
             }
@@ -54,10 +52,8 @@
               "width": "160",
               "height": "1",
               "params": "16",
-              "style": "0",
-              "name": "line",
-              "color": "0xffff2f2f2f",
-              "background": "true"
+              "style": "3",
+              "name": "line"
             },
             "children": []
           },
@@ -65,12 +61,12 @@
             "tag": "button",
             "typeId": 60,
             "attributes": {
-              "x": "5",
+              "x": "10",
               "y": "55",
               "width": "160",
               "height": "22",
               "params": "131089",
-              "style": "1",
+              "style": "3",
               "name": "character_settings",
               "caption": "${widget.memenu.settings.character}",
               "width_min": "160",
@@ -82,31 +78,14 @@
             "tag": "button",
             "typeId": 60,
             "attributes": {
-              "x": "5",
+              "x": "10",
               "y": "30",
               "width": "160",
               "height": "22",
               "params": "131089",
-              "style": "1",
+              "style": "3",
               "name": "sound_settings",
               "caption": "${widget.memenu.settings.audio}",
-              "width_min": "160",
-              "width_max": "160"
-            },
-            "children": []
-          },
-          {
-            "tag": "button",
-            "typeId": 60,
-            "attributes": {
-              "x": "5",
-              "y": "80",
-              "width": "160",
-              "height": "22",
-              "params": "131089",
-              "style": "1",
-              "name": "chat_settings",
-              "caption": "${widget.memenu.settings.chat}",
               "width_min": "160",
               "width_max": "160"
             },
@@ -116,23 +95,21 @@
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "6",
-              "y": "106",
+              "x": "11",
+              "y": "81",
               "width": "159",
               "height": "20",
               "params": "16",
-              "style": "0",
+              "style": "3",
               "name": "identity_text",
-              "caption": "${widget.memenu.settings.no_identity}"
+              "caption": "${widget.memenu.settings.no_identity}",
+              "visible": "false"
             },
             "children": [],
             "vars": {
               "text_color": 16777215,
               "mouse_wheel_enabled": false,
-              "sharpness": 0,
-              "thickness": 0,
               "word_wrap": true,
-              "kerning": false,
               "spacing": 0,
               "leading": 0
             }
@@ -141,12 +118,12 @@
             "tag": "button",
             "typeId": 60,
             "attributes": {
-              "x": "5",
-              "y": "131",
+              "x": "10",
+              "y": "102",
               "width": "60",
-              "height": "22",
+              "height": "28",
               "params": "131089",
-              "style": "1",
+              "style": "3",
               "name": "back",
               "caption": "${generic.back}",
               "width_min": "60",
@@ -160,6 +137,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 170,
-  "layoutHeight": 160
+  "layoutWidth": 180,
+  "layoutHeight": 140
 }

@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_dropmenu_black",
   "name": "dropmenu_skin_black",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\93_dropmenu_skin_black.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\43_dropmenu_skin_black.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

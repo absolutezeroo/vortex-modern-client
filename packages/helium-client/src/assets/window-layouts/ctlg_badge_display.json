@@ -1,6 +1,6 @@
 {
   "name": "ctlg_badge_display",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\287_ctlg_badge_display.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\165_ctlg_badge_display.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -27,10 +27,11 @@
               "y": "405",
               "width": "107",
               "height": "15",
-              "params": "16",
+              "params": "1040",
               "style": "3",
               "name": "ctlg_selectproduct",
-              "caption": "${catalog_selectproduct}"
+              "caption": "${catalog_selectproduct}",
+              "visible": "false"
             },
             "children": [],
             "vars": {
@@ -73,7 +74,7 @@
               "y": "430",
               "width": "360",
               "height": "30",
-              "params": "16",
+              "params": "1040",
               "style": "0",
               "name": "purchaseWidget"
             },
@@ -85,9 +86,9 @@
             "attributes": {
               "x": "0",
               "y": "245",
-              "width": "175",
+              "width": "95",
               "height": "175",
-              "params": "16",
+              "params": "2064",
               "style": "0",
               "name": "itemGridWidget"
             },
@@ -133,10 +134,11 @@
               "y": "401",
               "width": "100",
               "height": "15",
-              "params": "16",
+              "params": "1040",
               "style": "3",
               "name": "ctlg_selectbadge",
-              "caption": "${catalog_selectbadge}"
+              "caption": "${catalog_selectbadge}",
+              "visible": "false"
             },
             "children": [],
             "vars": {
@@ -147,24 +149,123 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "180",
+              "x": "105",
               "y": "245",
-              "width": "180",
+              "width": "255",
               "height": "175",
-              "params": "16",
+              "params": "2064",
               "style": "0",
               "name": "userBadgeSelectorWidget"
             },
             "children": [
               {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "255",
+                  "height": "26",
+                  "params": "144",
+                  "style": "105",
+                  "name": "search_input_border"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "6",
+                      "y": "3",
+                      "width": "171",
+                      "height": "19",
+                      "params": "129",
+                      "style": "3",
+                      "name": "search_input",
+                      "width_min": "171",
+                      "width_max": "171"
+                    },
+                    "children": [],
+                    "vars": {
+                      "always_show_selection": true,
+                      "margin_top": 1,
+                      "mouse_wheel_enabled": false,
+                      "max_chars": 40,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "6",
+                      "y": "3",
+                      "width": "83",
+                      "height": "18",
+                      "params": "16",
+                      "style": "3",
+                      "name": "search_placeholder",
+                      "caption": "${generic.search}",
+                      "blend": "0.5"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 6710886,
+                      "margin_top": 1,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "232",
+                      "y": "3",
+                      "width": "19",
+                      "height": "19",
+                      "params": "81",
+                      "style": "3",
+                      "name": "cancel_search_btn",
+                      "visible": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "4",
+                          "width": "11",
+                          "height": "12",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_close",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "tag": "scrollable_itemgrid_vertical",
                 "typeId": 140,
                 "attributes": {
                   "x": "0",
-                  "y": "0",
-                  "width": "180",
-                  "height": "175",
-                  "params": "16",
+                  "y": "30",
+                  "width": "255",
+                  "height": "145",
+                  "params": "2192",
                   "style": "3",
                   "name": "badgeGrid"
                 },

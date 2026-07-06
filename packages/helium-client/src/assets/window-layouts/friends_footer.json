@@ -1,6 +1,6 @@
 {
   "name": "friends_footer",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\647_friends_footer.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\115_friends_footer.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -120,6 +120,110 @@
                       "name": "icon"
                     },
                     "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "158",
+                  "y": "4",
+                  "width": "23",
+                  "height": "22",
+                  "params": "81",
+                  "style": "0",
+                  "name": "button_search"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "5",
+                      "y": "4",
+                      "width": "13",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "icon"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "76",
+                  "y": "5",
+                  "width": "103",
+                  "height": "19",
+                  "params": "129",
+                  "style": "0",
+                  "name": "friend_search",
+                  "visible": "false",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "border": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "162",
+                  "y": "7",
+                  "width": "16",
+                  "height": "16",
+                  "params": "65",
+                  "style": "3",
+                  "name": "clear_input_region",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "background",
+                    "typeId": 2,
+                    "attributes": {
+                      "x": "2",
+                      "y": "2",
+                      "width": "11",
+                      "height": "11",
+                      "params": "16",
+                      "style": "3",
+                      "color": "0xffffffffff",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "9",
+                      "height": "9",
+                      "params": "80",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "var_picker_cancel_search",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
                   }
                 ]
               },

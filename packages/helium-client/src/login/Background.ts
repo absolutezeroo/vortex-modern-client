@@ -12,20 +12,19 @@
  * #0C5A7F before gradating to #0C3A65 at the bottom.
  * AS3 tile: beginBitmapFill(background_tiles_png) on _tileSprite
  */
-import backgroundTilesUrl from '../assets/images/HabboBackground_background_tiles.png';
+import backgroundTilesUrl from '../assets/images/background_tiles.png';
 
-export class Background
+export class Background 
 {
     private _root: HTMLDivElement;
     private _tileOverlay: HTMLDivElement | null = null;
-    private _disposed: boolean = false;
 
     /**
-	 * AS3: Background()
-	 * Registers addedToStage/removedFromStage listeners.
-	 * DOM equivalent: we create the element but defer tile setup to mount().
-	 */
-    constructor()
+     * AS3: Background()
+     * Registers addedToStage/removedFromStage listeners.
+     * DOM equivalent: we create the element but defer tile setup to mount().
+     */
+    constructor() 
     {
         this._root = document.createElement('div');
         Object.assign(this._root.style, {
@@ -41,27 +40,29 @@ export class Background
         } as Partial<CSSStyleDeclaration>);
     }
 
-    /**
-	 * Get the root DOM element.
-	 */
-    get element(): HTMLDivElement
-    {
-        return this._root;
-    }
+    private _disposed: boolean = false;
 
-    get disposed(): boolean
+    get disposed(): boolean 
     {
         return this._disposed;
     }
 
     /**
-	 * AS3: onAddedToStage(_arg_1:Event)
-	 * Creates the tile overlay sprite and calls resize().
-	 * Called when element is mounted to the DOM.
-	 */
-    public mount(): void
+     * Get the root DOM element.
+     */
+    get element(): HTMLDivElement 
     {
-        if(!this._tileOverlay)
+        return this._root;
+    }
+
+    /**
+     * AS3: onAddedToStage(_arg_1:Event)
+     * Creates the tile overlay sprite and calls resize().
+     * Called when element is mounted to the DOM.
+     */
+    public mount(): void 
+    {
+        if(!this._tileOverlay) 
         {
             // AS3: _SafeStr_4553 = new Sprite(); _SafeStr_4553.graphics.beginBitmapFill(_backgroundImage)
             // Tile overlay — background_tiles_png asset is tiled across the full area.
@@ -85,31 +86,31 @@ export class Background
     }
 
     /**
-	 * Sets the tile background image URL.
-	 * AS3: _backgroundImage = _local_2.bitmapData (from background_tiles_png embed)
-	 */
-    public setTileImage(url: string): void
+     * Sets the tile background image URL.
+     * AS3: _backgroundImage = _local_2.bitmapData (from background_tiles_png embed)
+     */
+    public setTileImage(url: string): void 
     {
-        if(this._tileOverlay)
+        if(this._tileOverlay) 
         {
             this._tileOverlay.style.backgroundImage = `url(${url})`;
         }
     }
 
     /**
-	 * AS3: resize()
-	 * Redraws the gradient and tile overlay to match stage size.
-	 * CSS handles full-screen via 100%/100%.
-	 */
-    public resize(): void
+     * AS3: resize()
+     * Redraws the gradient and tile overlay to match stage size.
+     * CSS handles full-screen via 100%/100%.
+     */
+    public resize(): void 
     {
         // CSS handles sizing via 100%/100%, nothing else needed
     }
 
     /**
-	 * AS3: dispose()
-	 */
-    public dispose(): void
+     * AS3: dispose()
+     */
+    public dispose(): void 
     {
         if(this._disposed) return;
 

@@ -1,6 +1,6 @@
 {
   "name": "vip_buy_item",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\280_vip_buy_item.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\160_vip_buy_item.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

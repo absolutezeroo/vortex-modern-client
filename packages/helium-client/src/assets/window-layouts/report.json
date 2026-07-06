@@ -1,6 +1,6 @@
 {
   "name": "report",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\364_report.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\251_report.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -155,7 +155,7 @@
                     "typeId": 41,
                     "attributes": {
                       "x": "0",
-                      "y": "45",
+                      "y": "0",
                       "width": "380",
                       "height": "40",
                       "params": "17",
@@ -195,7 +195,7 @@
                     "typeId": 41,
                     "attributes": {
                       "x": "0",
-                      "y": "90",
+                      "y": "45",
                       "width": "380",
                       "height": "40",
                       "params": "17",
@@ -312,6 +312,51 @@
                   "style": "3",
                   "name": "sanction_info_link",
                   "caption": "${help.main.my.sanction.status}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 20,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "32",
+                  "y": "434",
+                  "width": "18",
+                  "height": "19",
+                  "params": "16",
+                  "style": "3",
+                  "name": "reports_status_bitmap",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "icons_link_icon",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "54",
+                  "y": "432",
+                  "width": "354",
+                  "height": "20",
+                  "params": "1",
+                  "style": "3",
+                  "name": "reports_status",
+                  "caption": "${help.main.my.reports.status}",
                   "treshold": "0"
                 },
                 "children": [],
@@ -1012,6 +1057,7 @@
                   "height": "57",
                   "params": "16",
                   "style": "3",
+                  "name": "message_container_description",
                   "caption": "${help.emergency.main.step.one.description}"
                 },
                 "children": [],
@@ -1030,7 +1076,7 @@
                   "x": "30",
                   "y": "100",
                   "width": "390",
-                  "height": "220",
+                  "height": "120",
                   "params": "16",
                   "style": "105",
                   "name": "help_message"
@@ -1042,6 +1088,94 @@
                   "illumina_input:empty_message": "${help.emergency.main.step.one.entry.instruction}",
                   "illumina_input:multiline": true
                 }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "30",
+                  "y": "230",
+                  "width": "390",
+                  "height": "100",
+                  "params": "16",
+                  "style": "3",
+                  "name": "unlawful_message_content"
+                },
+                "children": [
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "188",
+                      "height": "29",
+                      "params": "16",
+                      "style": "105",
+                      "name": "help_message_name"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "illumina_input",
+                      "illumina_input:button_caption": "",
+                      "illumina_input:empty_message": "${connection.login.name}"
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "200",
+                      "y": "0",
+                      "width": "188",
+                      "height": "29",
+                      "params": "16",
+                      "style": "105",
+                      "name": "help_message_email"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "illumina_input",
+                      "illumina_input:button_caption": "",
+                      "illumina_input:empty_message": "${connection.login.email}"
+                    }
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "40",
+                      "width": "30",
+                      "height": "30",
+                      "params": "17",
+                      "style": "3",
+                      "name": "unlawful_message_confirm"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "20",
+                      "y": "40",
+                      "width": "370",
+                      "height": "60",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "unlawful_message_confirm_label",
+                      "caption": "${help.cfh.unlawful_activity.confirm_label}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
               }
             ]
           },

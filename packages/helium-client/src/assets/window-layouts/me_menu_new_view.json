@@ -1,6 +1,6 @@
 {
   "name": "me_menu_new_view",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\89_me_menu_new_view.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\81_me_menu_new_view.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -220,89 +220,6 @@
                       "height": "48",
                       "params": "17",
                       "style": "1",
-                      "name": "achievements",
-                      "color": "0xff3d3d3d",
-                      "treshold": "0"
-                    },
-                    "children": [
-                      {
-                        "tag": "static_bitmap",
-                        "typeId": 23,
-                        "attributes": {
-                          "x": "14",
-                          "y": "0",
-                          "width": "32",
-                          "height": "30",
-                          "params": "16",
-                          "style": "0",
-                          "name": "achievements_icon_color"
-                        },
-                        "children": [],
-                        "vars": {
-                          "asset_uri": "me_menu_me_achv",
-                          "pivot_point": "center",
-                          "stretched_x": false,
-                          "stretched_y": false
-                        }
-                      },
-                      {
-                        "tag": "text",
-                        "typeId": 10,
-                        "attributes": {
-                          "x": "0",
-                          "y": "32",
-                          "width": "60",
-                          "height": "14",
-                          "params": "786640",
-                          "style": "0",
-                          "name": "field_text",
-                          "caption": "${widget.memenu.achievements}",
-                          "width_max": "60"
-                        },
-                        "children": [],
-                        "vars": {
-                          "auto_size": "left",
-                          "font_size": 9,
-                          "text_color": 16777215,
-                          "text_style": "u_regular",
-                          "mouse_wheel_enabled": false,
-                          "spacing": 0,
-                          "leading": 0
-                        }
-                      },
-                      {
-                        "tag": "static_bitmap",
-                        "typeId": 23,
-                        "attributes": {
-                          "x": "14",
-                          "y": "0",
-                          "width": "32",
-                          "height": "30",
-                          "params": "16",
-                          "style": "0",
-                          "name": "achievements_icon_grey"
-                        },
-                        "children": [],
-                        "vars": {
-                          "asset_uri": "me_menu_me_achv",
-                          "pivot_point": "center",
-                          "stretched_x": false,
-                          "stretched_y": false,
-                          "greyscale": true
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "tag": "region",
-                    "typeId": 5,
-                    "attributes": {
-                      "x": "196",
-                      "y": "2",
-                      "width": "60",
-                      "height": "48",
-                      "params": "17",
-                      "style": "1",
                       "name": "minimail",
                       "color": "0xff3d3d3d",
                       "treshold": "0"
@@ -380,7 +297,7 @@
                     "tag": "region",
                     "typeId": 5,
                     "attributes": {
-                      "x": "264",
+                      "x": "196",
                       "y": "2",
                       "width": "60",
                       "height": "48",
@@ -463,7 +380,7 @@
                     "tag": "region",
                     "typeId": 5,
                     "attributes": {
-                      "x": "332",
+                      "x": "264",
                       "y": "2",
                       "width": "60",
                       "height": "48",
@@ -540,7 +457,7 @@
                     "tag": "region",
                     "typeId": 5,
                     "attributes": {
-                      "x": "400",
+                      "x": "332",
                       "y": "2",
                       "width": "60",
                       "height": "48",
@@ -623,7 +540,7 @@
                     "tag": "region",
                     "typeId": 5,
                     "attributes": {
-                      "x": "468",
+                      "x": "400",
                       "y": "2",
                       "width": "60",
                       "height": "48",
@@ -703,6 +620,89 @@
                     ]
                   },
                   {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "468",
+                      "y": "2",
+                      "width": "60",
+                      "height": "48",
+                      "params": "17",
+                      "style": "1",
+                      "name": "collectibles",
+                      "color": "0xff3d3d3d",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "14",
+                          "y": "0",
+                          "width": "32",
+                          "height": "30",
+                          "params": "16",
+                          "style": "0",
+                          "name": "collectibles_icon_color"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "me_menu_me_cabinet",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "6",
+                          "y": "32",
+                          "width": "49",
+                          "height": "14",
+                          "params": "786640",
+                          "style": "0",
+                          "name": "field_text",
+                          "caption": "${memenu.collectibles}",
+                          "width_max": "60"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "font_size": 9,
+                          "text_color": 16777215,
+                          "text_style": "u_regular",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "14",
+                          "y": "0",
+                          "width": "32",
+                          "height": "30",
+                          "params": "16",
+                          "style": "0",
+                          "name": "collectibles_icon_grey"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "me_menu_me_cabinet",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "greyscale": true
+                        }
+                      }
+                    ]
+                  },
+                  {
                     "tag": "container",
                     "typeId": 4,
                     "attributes": {
@@ -711,7 +711,8 @@
                       "width": "7",
                       "height": "30",
                       "params": "16",
-                      "style": "3"
+                      "style": "3",
+                      "name": "spacer"
                     },
                     "children": []
                   }

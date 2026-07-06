@@ -1,6 +1,6 @@
 {
   "name": "ctlg_recycler_info",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\127_ctlg_recycler_info.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\153_ctlg_recycler_info.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "2064",
+          "params": "16",
           "style": "0",
           "name": "ctlg_recycler_info"
         },
@@ -24,10 +24,10 @@
             "typeId": 30,
             "attributes": {
               "x": "10",
-              "y": "10",
+              "y": "140",
               "width": "340",
-              "height": "440",
-              "params": "2064",
+              "height": "310",
+              "params": "16",
               "style": "2",
               "color": "0x0fbc362"
             },
@@ -86,7 +86,7 @@
                   "x": "15",
                   "y": "72",
                   "width": "307",
-                  "height": "138",
+                  "height": "283",
                   "params": "16",
                   "style": "3",
                   "name": "ctlg_special_txt",
@@ -94,7 +94,6 @@
                 },
                 "children": [],
                 "vars": {
-                  "auto_size": "left",
                   "text_color": 16777215,
                   "mouse_wheel_enabled": false,
                   "multiline": true,

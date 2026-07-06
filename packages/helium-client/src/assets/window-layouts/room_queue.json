@@ -1,6 +1,6 @@
 {
   "name": "room_queue",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\412_room_queue.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\360_room_queue.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,37 +10,35 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "110",
-          "y": "57",
-          "width": "323",
-          "height": "251",
+          "x": "47",
+          "y": "33",
+          "width": "229",
+          "height": "118",
           "params": "32769",
           "style": "3",
           "caption": "${room.queue.title}",
-          "color": "0x0418db0"
+          "color": "0xff418db0"
         },
         "children": [
           {
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "21",
-              "y": "23",
-              "width": "268",
-              "height": "42",
+              "x": "0",
+              "y": "21",
+              "width": "217",
+              "height": "17",
               "params": "16",
               "style": "0",
               "name": "info_text",
-              "caption": "${002_lorem_ipsum_content}"
+              "caption": "Your position in the queue: 5"
             },
             "children": [],
             "vars": {
-              "font_face": "Volter Bold",
+              "auto_size": "center",
+              "text_style": "u_bold",
               "mouse_wheel_enabled": false,
-              "sharpness": 0,
-              "thickness": 0,
               "word_wrap": true,
-              "kerning": false,
               "spacing": 0,
               "leading": 0
             }
@@ -56,10 +54,12 @@
               "params": "16",
               "style": "0",
               "name": "spectator_info",
-              "caption": "${room.queue.spectator.info}"
+              "caption": "${room.queue.spectator.info}",
+              "visible": "false"
             },
             "children": [],
             "vars": {
+              "antialias_type": "advanced",
               "mouse_wheel_enabled": false,
               "sharpness": 0,
               "thickness": 0,
@@ -73,8 +73,8 @@
             "tag": "button",
             "typeId": 60,
             "attributes": {
-              "x": "74",
-              "y": "107",
+              "x": "31",
+              "y": "50",
               "width": "154",
               "height": "27",
               "params": "917521",
@@ -95,7 +95,8 @@
               "params": "917521",
               "style": "3",
               "name": "change_button",
-              "caption": "${room.queue.spectatormode}"
+              "caption": "${room.queue.spectatormode}",
+              "visible": "false"
             },
             "children": []
           }
@@ -115,13 +116,13 @@
           "margin_left": 6,
           "margin_top": 25,
           "margin_right": 6,
-          "margin_bottom": 7
+          "margin_bottom": 5
         }
       }
     ]
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 323,
-  "layoutHeight": 251
+  "layoutWidth": 229,
+  "layoutHeight": 118
 }

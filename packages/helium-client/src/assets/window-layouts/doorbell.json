@@ -1,6 +1,6 @@
 {
   "name": "doorbell",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\721_doorbell.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\349_doorbell.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,14 +10,15 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "131",
-          "y": "129",
-          "width": "270",
-          "height": "182",
+          "x": "95",
+          "y": "55",
+          "width": "249",
+          "height": "165",
           "params": "32769",
           "style": "3",
-          "caption": "${navigator.doorbell.title}",
-          "color": "0x0418db0"
+          "caption": "${widgets.doorbell.title}",
+          "color": "0x0418db0",
+          "tags": "room_widget_doorbell"
         },
         "children": [
           {
@@ -25,41 +26,13 @@
             "typeId": 10,
             "attributes": {
               "x": "10",
-              "y": "14",
-              "width": "64",
-              "height": "17",
-              "params": "16",
+              "y": "13",
+              "width": "215",
+              "height": "32",
+              "params": "144",
               "style": "0",
-              "name": "room_name",
-              "caption": "Roomname"
-            },
-            "children": [],
-            "vars": {
-              "antialias_type": "advanced",
-              "auto_size": "left",
-              "font_face": "Ubuntu",
-              "font_size": 18,
-              "mouse_wheel_enabled": false,
-              "sharpness": 0,
-              "thickness": 0,
-              "bold": true,
-              "kerning": false,
-              "spacing": 0,
-              "leading": 0
-            }
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "10",
-              "y": "35",
-              "width": "240",
-              "height": "66",
-              "params": "2192",
-              "style": "0",
-              "name": "info",
-              "caption": "${navigator.doorbell.info}"
+              "caption": "${widgets.doorbell.info}",
+              "color": "0x0ff0000"
             },
             "children": [],
             "vars": {
@@ -80,73 +53,48 @@
             "typeId": 4,
             "attributes": {
               "x": "10",
-              "y": "108",
-              "width": "240",
-              "height": "36",
+              "y": "48",
+              "width": "217",
+              "height": "82",
               "params": "16",
               "style": "0",
+              "name": "user_list_container",
               "color": "0xffffeaece8",
               "background": "true"
             },
             "children": [
               {
-                "tag": "region",
-                "typeId": 5,
+                "tag": "itemlist_vertical",
+                "typeId": 50,
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "86",
-                  "height": "36",
-                  "params": "131221",
+                  "width": "200",
+                  "height": "82",
+                  "params": "17",
                   "style": "0",
-                  "name": "cancel_region",
-                  "treshold": "0"
-                },
-                "children": [
-                  {
-                    "tag": "text",
-                    "typeId": 10,
-                    "attributes": {
-                      "x": "3",
-                      "y": "8",
-                      "width": "83",
-                      "height": "17",
-                      "params": "4194322",
-                      "style": "0",
-                      "name": "cancel",
-                      "caption": "${generic.cancel}"
-                    },
-                    "children": [],
-                    "vars": {
-                      "antialias_type": "advanced",
-                      "auto_size": "left",
-                      "font_face": "Ubuntu",
-                      "font_size": 18,
-                      "mouse_wheel_enabled": false,
-                      "sharpness": 0,
-                      "thickness": 0,
-                      "underline": true,
-                      "kerning": false,
-                      "spacing": 0,
-                      "leading": 0
-                    }
-                  }
-                ]
-              },
-              {
-                "tag": "button",
-                "typeId": 60,
-                "attributes": {
-                  "x": "45",
-                  "y": "4",
-                  "width": "190",
-                  "height": "28",
-                  "params": "393233",
-                  "style": "3",
-                  "name": "ring",
-                  "caption": "${navigator.doorbell.button.ring}"
+                  "name": "user_list",
+                  "caption": "${widgets.doorbell.title}"
                 },
                 "children": []
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "200",
+                  "y": "0",
+                  "width": "17",
+                  "height": "82",
+                  "params": "17",
+                  "style": "0",
+                  "name": "scrollbar",
+                  "caption": "${widgets.doorbell.title}"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "user_list"
+                }
               }
             ]
           }
@@ -173,6 +121,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 270,
-  "layoutHeight": 182
+  "layoutWidth": 249,
+  "layoutHeight": 165
 }

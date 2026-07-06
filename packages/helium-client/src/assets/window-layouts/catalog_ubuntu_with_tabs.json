@@ -1,6 +1,6 @@
 {
   "name": "catalog_ubuntu_with_tabs",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\179_catalog_ubuntu_with_tabs.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\147_catalog_ubuntu_with_tabs.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -390,7 +390,7 @@
                 },
                 "children": [
                   {
-                    "tag": "itemlist_vertical",
+                    "tag": "itemlist",
                     "typeId": 50,
                     "attributes": {
                       "x": "0",
@@ -626,7 +626,7 @@
                         "attributes": {
                           "x": "42",
                           "y": "1",
-                          "width": "50",
+                          "width": "55",
                           "height": "17",
                           "params": "176",
                           "style": "3",
@@ -667,7 +667,7 @@
                     ]
                   },
                   {
-                    "tag": "itemlist_vertical",
+                    "tag": "itemlist",
                     "typeId": 50,
                     "attributes": {
                       "x": "0",
@@ -903,7 +903,7 @@
                         "attributes": {
                           "x": "42",
                           "y": "1",
-                          "width": "50",
+                          "width": "55",
                           "height": "17",
                           "params": "176",
                           "style": "3",

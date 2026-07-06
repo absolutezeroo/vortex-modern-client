@@ -1,6 +1,6 @@
 {
   "name": "purchase_confirmation",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\230_purchase_confirmation.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\175_purchase_confirmation.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,11 +10,11 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "9",
-          "y": "12",
+          "x": "11",
+          "y": "9",
           "width": "325",
-          "height": "291",
-          "params": "35073",
+          "height": "339",
+          "params": "34817",
           "style": "3",
           "caption": "${catalog.purchase_confirmation.title}",
           "color": "0xff418db0",
@@ -23,20 +23,20 @@
         },
         "children": [
           {
-            "tag": "itemlist",
+            "tag": "itemlist_vertical",
             "typeId": 50,
             "attributes": {
               "x": "0",
               "y": "8",
               "width": "323",
-              "height": "235",
+              "height": "294",
               "params": "8538256",
               "style": "0",
               "name": "content"
             },
             "children": [
               {
-                "tag": "itemlist",
+                "tag": "itemlist_vertical",
                 "typeId": 50,
                 "attributes": {
                   "x": "0",
@@ -89,15 +89,32 @@
                               "caption": "Confirm purchase"
                             },
                             "children": []
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "126",
+                              "height": "152",
+                              "params": "16",
+                              "style": "3",
+                              "name": "nft_image"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "product_image"
+                            }
                           }
                         ]
                       },
                       {
-                        "tag": "itemlist",
+                        "tag": "itemlist_vertical",
                         "typeId": 50,
                         "attributes": {
                           "x": "143",
-                          "y": "15",
+                          "y": "8",
                           "width": "176",
                           "height": "116",
                           "params": "3145744",
@@ -224,7 +241,8 @@
                                 },
                                 "children": []
                               }
-                            ]
+                            ],
+                            "vars": {}
                           }
                         ],
                         "vars": {
@@ -295,11 +313,83 @@
                 ]
               },
               {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "9",
+                  "y": "208",
+                  "width": "304",
+                  "height": "49",
+                  "params": "144",
+                  "style": "3",
+                  "name": "raffle_container"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "304",
+                      "height": "49",
+                      "params": "2192",
+                      "style": "4",
+                      "color": "0x0ebf9fc"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "10",
+                          "y": "9",
+                          "width": "233",
+                          "height": "30",
+                          "params": "3145744",
+                          "style": "3",
+                          "name": "raffle_text",
+                          "caption": "${catalog.purchase.confirmation.dialog.raffling}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "etching_position": "left",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "260",
+                      "y": "6",
+                      "width": "34",
+                      "height": "37",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "unique_item_large_tile_upright",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
                 "tag": "itemlist_horizontal",
                 "typeId": 51,
                 "attributes": {
                   "x": "13",
-                  "y": "208",
+                  "y": "267",
                   "width": "315",
                   "height": "27",
                   "params": "131088",
@@ -373,7 +463,7 @@
           "margin_left": 1,
           "margin_top": 25,
           "margin_right": 1,
-          "margin_bottom": 1
+          "margin_bottom": 5
         }
       }
     ]
@@ -381,5 +471,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 325,
-  "layoutHeight": 291
+  "layoutHeight": 339
 }

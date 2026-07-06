@@ -1,6 +1,6 @@
 {
   "name": "dynamic_widget_grid",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\743_dynamic_widget_grid.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\309_dynamic_widget_grid.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -13,20 +13,20 @@
           "x": "170",
           "y": "0",
           "width": "1011",
-          "height": "681",
+          "height": "771",
           "params": "147472",
           "style": "0",
           "name": "dynamic_widget_grid_container"
         },
         "children": [
           {
-            "tag": "itemlist",
+            "tag": "itemlist_vertical",
             "typeId": 50,
             "attributes": {
               "x": "86",
               "y": "4",
               "width": "925",
-              "height": "677",
+              "height": "767",
               "params": "16",
               "style": "0",
               "name": "widgetlist_fromtop"
@@ -39,7 +39,7 @@
                   "x": "-1",
                   "y": "0",
                   "width": "800",
-                  "height": "40",
+                  "height": "75",
                   "params": "147472",
                   "style": "0",
                   "name": "widget_slot_1"
@@ -51,9 +51,9 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "50",
+                  "y": "85",
                   "width": "800",
-                  "height": "620",
+                  "height": "682",
                   "params": "147472",
                   "style": "0",
                   "name": "center_slots_container"
@@ -66,14 +66,14 @@
                       "x": "0",
                       "y": "1",
                       "width": "800",
-                      "height": "619",
+                      "height": "681",
                       "params": "16400",
                       "style": "0",
                       "name": "widget_slots_center_scrollable"
                     },
                     "children": [
                       {
-                        "tag": "itemlist",
+                        "tag": "itemlist_vertical",
                         "typeId": 50,
                         "attributes": {
                           "x": "0",
@@ -101,7 +101,7 @@
                             "children": []
                           },
                           {
-                            "tag": "itemlist",
+                            "tag": "itemlist_vertical",
                             "typeId": 50,
                             "attributes": {
                               "x": "0",
@@ -155,7 +155,7 @@
                         },
                         "children": [
                           {
-                            "tag": "itemlist",
+                            "tag": "itemlist_vertical",
                             "typeId": 50,
                             "attributes": {
                               "x": "0",
@@ -182,7 +182,7 @@
                                 "children": []
                               },
                               {
-                                "tag": "itemlist",
+                                "tag": "itemlist_vertical",
                                 "typeId": 50,
                                 "attributes": {
                                   "x": "0",
@@ -229,43 +229,14 @@
                       "scale_to_fit_items": true,
                       "resize_on_item_update": true
                     }
-                  },
-                  {
-                    "tag": "container",
-                    "typeId": 4,
-                    "attributes": {
-                      "x": "0",
-                      "y": "619",
-                      "width": "800",
-                      "height": "1",
-                      "params": "16",
-                      "style": "100",
-                      "name": "scroll_extra_space_container"
-                    },
-                    "children": []
                   }
                 ]
               }
             ],
             "vars": {
-              "spacing": 10
-            }
-          },
-          {
-            "tag": "scrollbar_vertical",
-            "typeId": 131,
-            "attributes": {
-              "x": "912",
-              "y": "4",
-              "width": "10",
-              "height": "677",
-              "params": "17",
-              "style": "100",
-              "name": "center_container_scrollbar"
-            },
-            "children": [],
-            "vars": {
-              "scrollable": "widgetlist_fromtop"
+              "spacing": 10,
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
             }
           }
         ]
@@ -275,5 +246,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 1011,
-  "layoutHeight": 681
+  "layoutHeight": 771
 }

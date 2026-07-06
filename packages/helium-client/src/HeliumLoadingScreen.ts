@@ -14,8 +14,8 @@
  */
 
 import type {IHeliumLoadingScreen} from 'helium-engine';
-import splashBgUrl from './assets/images/splash_bg_class.png';
-import splashTopUrl from './assets/images/splash_top_class.png';
+import splashBgUrl from './assets/images/splash_bg.png';
+import splashTopUrl from './assets/images/splash_top.png';
 
 // Lazy glob — only the selected splash image is fetched at runtime
 const splashModules = import.meta.glob('./assets/images/splash_img*.png') as Record<string, () => Promise<{
@@ -84,7 +84,7 @@ const LOADING_TEXTS: string[] = [
  * @see sources/win63_2021_version/HabboLoadingScreen.as
  * @see sources/win63_2021_version/IHabboLoadingScreen.as
  */
-export class HeliumLoadingScreen implements IHeliumLoadingScreen
+export class HeliumLoadingScreen implements IHeliumLoadingScreen 
 {
     private _root: HTMLDivElement;
     private _splashContainer: HTMLDivElement;
@@ -107,7 +107,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
 
     private _timerId: number = 0;
 
-    constructor()
+    constructor() 
     {
         this._textIndex = this.randomNumber(0, LOADING_TEXTS.length - 1);
 
@@ -148,7 +148,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
         // Insert into DOM immediately
         const container = document.getElementById('helium-ui');
 
-        if(container)
+        if(container) 
         {
             container.appendChild(this._root);
         }
@@ -166,26 +166,26 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     private _disposed: boolean = false;
 
     /**
-	 * Whether this loading screen has been disposed.
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as disposed getter
-	 */
-    get disposed(): boolean
+     * Whether this loading screen has been disposed.
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as disposed getter
+     */
+    get disposed(): boolean 
     {
         return this._disposed;
     }
 
     /**
-	 * Update the loading bar progress percentage text.
-	 *
-	 * AS3: updateLoadingBar(progress) sets the percentage label text.
-	 *
-	 * @param ratio - Progress ratio from 0.0 to 1.0
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as updateLoadingBar() line 391
-	 * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
-	 */
-    public updateLoadingBar(ratio: number): void
+     * Update the loading bar progress percentage text.
+     *
+     * AS3: updateLoadingBar(progress) sets the percentage label text.
+     *
+     * @param ratio - Progress ratio from 0.0 to 1.0
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as updateLoadingBar() line 391
+     * @see sources/win63_2021_version/IHabboLoadingScreen.as updateLoadingBar()
+     */
+    public updateLoadingBar(ratio: number): void 
     {
         if(this._disposed) return;
 
@@ -193,11 +193,11 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Removes the loading screen overlay from the DOM.
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as line 219
-	 */
-    public dispose(): void
+     * Removes the loading screen overlay from the DOM.
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as line 219
+     */
+    public dispose(): void 
     {
         if(this._disposed) return;
 
@@ -205,7 +205,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
 
         window.removeEventListener('resize', this._onResize);
 
-        if(this._timerId)
+        if(this._timerId) 
         {
             clearInterval(this._timerId);
             this._timerId = 0;
@@ -215,16 +215,16 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Creates the PhotoSplashScreen container with bg, random image, and top overlay.
-	 *
-	 * AS3 structure (PhotoSplashScreen.as):
-	 * - splashBgClass bitmap (background)
-	 * - splashImg[random 1-30] bitmap at (96, 51)
-	 * - splashTopClass bitmap (overlay)
-	 *
-	 * @see sources/win63_2021_version/splash/PhotoSplashScreen.as
-	 */
-    private createSplashScreen(): HTMLDivElement
+     * Creates the PhotoSplashScreen container with bg, random image, and top overlay.
+     *
+     * AS3 structure (PhotoSplashScreen.as):
+     * - splashBgClass bitmap (background)
+     * - splashImg[random 1-30] bitmap at (96, 51)
+     * - splashTopClass bitmap (overlay)
+     *
+     * @see sources/win63_2021_version/splash/PhotoSplashScreen.as
+     */
+    private createSplashScreen(): HTMLDivElement 
     {
         const container = document.createElement('div');
 
@@ -243,7 +243,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
         } as Partial<CSSStyleDeclaration>);
 
         // Re-position after bg image loads (needed for accurate splash dimensions)
-        bg.onload = (): void =>
+        bg.onload = (): void => 
         {
             this.positionElements();
         };
@@ -254,7 +254,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
         const splashIndex = 1 + Math.floor(Math.random() * 30);
         const splashKey = Object.keys(splashModules).find(k => k.includes(`splash_img${splashIndex}.png`));
 
-        if(splashKey)
+        if(splashKey) 
         {
             const img = document.createElement('img');
 
@@ -266,7 +266,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
             } as Partial<CSSStyleDeclaration>);
 
             // Lazy load — only fetches this one image
-            splashModules[splashKey]().then(mod =>
+            splashModules[splashKey]().then(mod => 
             {
                 img.src = mod.default;
             });
@@ -290,10 +290,10 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Creates the loading text label.
-	 * AS3: LoaderUI.createTextField(_local_11, 28, 0xFFFFFF, true, false, false, false, "center")
-	 */
-    private createTextLabel(): HTMLDivElement
+     * Creates the loading text label.
+     * AS3: LoaderUI.createTextField(_local_11, 28, 0xFFFFFF, true, false, false, false, "center")
+     */
+    private createTextLabel(): HTMLDivElement 
     {
         const el = document.createElement('div');
 
@@ -312,23 +312,23 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Creates the loading bar matching AS3's exact structure.
-	 *
-	 * AS3 drawing (updateLoadingBarProgression):
-	 * - fileLoadingBar: white 1px outline, 400x25px
-	 * - fileBarSprite child at (4,4):
-	 *   - Black rect at (-1,-1), size (396, 21) — inner background
-	 *   - Top fill at (0,0), size (fillW, 8), color 0xBACAD3
-	 *   - Bottom fill at (0,8), size (fillW, 9), color 0x8CA1AD
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as lines 68-76, 359-388
-	 */
+     * Creates the loading bar matching AS3's exact structure.
+     *
+     * AS3 drawing (updateLoadingBarProgression):
+     * - fileLoadingBar: white 1px outline, 400x25px
+     * - fileBarSprite child at (4,4):
+     *   - Black rect at (-1,-1), size (396, 21) — inner background
+     *   - Top fill at (0,0), size (fillW, 8), color 0xBACAD3
+     *   - Bottom fill at (0,8), size (fillW, 9), color 0x8CA1AD
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as lines 68-76, 359-388
+     */
     private createLoadingBar(): {
         outer: HTMLDivElement;
         track: HTMLDivElement;
         fillTop: HTMLDivElement;
         fillBottom: HTMLDivElement
-    }
+    } 
     {
         // Outer bar — white 1px border outline, 400x25
         const outer = document.createElement('div');
@@ -389,10 +389,10 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Creates the percentage label.
-	 * AS3: LoaderUI.createTextField("0%", 14, 0x999999, ...)
-	 */
-    private createPercentLabel(): HTMLDivElement
+     * Creates the percentage label.
+     * AS3: LoaderUI.createTextField("0%", 14, 0x999999, ...)
+     */
+    private createPercentLabel(): HTMLDivElement 
     {
         const el = document.createElement('div');
 
@@ -410,10 +410,10 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Creates the version label (top-right).
-	 * AS3: LoaderUI.createTextField("Habbo Air for Flash", 12, 0x999999, ..., "right")
-	 */
-    private createVersionLabel(): HTMLDivElement
+     * Creates the version label (top-right).
+     * AS3: LoaderUI.createTextField("Habbo Air for Flash", 12, 0x999999, ..., "right")
+     */
+    private createVersionLabel(): HTMLDivElement 
     {
         const el = document.createElement('div');
 
@@ -431,18 +431,18 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Positions all loading screen elements, centered on screen.
-	 *
-	 * Faithful reproduction of AS3 positionLoadingScreenDisplayElements().
-	 *
-	 * AS3 vertical centering logic (lines 286-356):
-	 * 1. First pass: _local_1 = splash.height + bar.height (only these two for centering)
-	 * 2. Center: startY = int((stageH - _local_1) / 2) - spacing*2
-	 * 3. Position sequentially: splash → text(+50) → bar(+spacing) → percent(+spacing/2)
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as line 262
-	 */
-    private positionElements(): void
+     * Positions all loading screen elements, centered on screen.
+     *
+     * Faithful reproduction of AS3 positionLoadingScreenDisplayElements().
+     *
+     * AS3 vertical centering logic (lines 286-356):
+     * 1. First pass: _local_1 = splash.height + bar.height (only these two for centering)
+     * 2. Center: startY = int((stageH - _local_1) / 2) - spacing*2
+     * 3. Position sequentially: splash → text(+50) → bar(+spacing) → percent(+spacing/2)
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as line 262
+     */
+    private positionElements(): void 
     {
         const stageW = window.innerWidth;
         const stageH = window.innerHeight;
@@ -490,23 +490,23 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Fake progress bar animation timer callback (AS3: 750ms Timer).
-	 *
-	 * AS3 onBarProgressEvent() logic (lines 164-198):
-	 * - When barProgression == 100 && shouldChangeText: rotate text, reset to 0
-	 * - When barProgression < 100: increment by min(random(35, min(random(45,55))), 100-bar)
-	 * - When barProgression hits 100: set shouldChangeText, advance text index
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as line 164
-	 */
-    private onBarProgressEvent(): void
+     * Fake progress bar animation timer callback (AS3: 750ms Timer).
+     *
+     * AS3 onBarProgressEvent() logic (lines 164-198):
+     * - When barProgression == 100 && shouldChangeText: rotate text, reset to 0
+     * - When barProgression < 100: increment by min(random(35, min(random(45,55))), 100-bar)
+     * - When barProgression hits 100: set shouldChangeText, advance text index
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as line 164
+     */
+    private onBarProgressEvent(): void 
     {
         if(this._disposed) return;
 
-        if(this._barProgression === 100)
+        if(this._barProgression === 100) 
         {
             // AS3 lines 170-186: change text if flagged, then reset
-            if(this._shouldChangeText)
+            if(this._shouldChangeText) 
             {
                 this._textLabel.textContent = LOADING_TEXTS[this._textIndex];
                 this._shouldChangeText = false;
@@ -520,7 +520,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
 
             this._barProgression = 0;
         }
-        else
+        else 
         {
             // AS3 line 190: _barProgression + min(random(35, min(random(45,55))), 100-bar)
             const increment = Math.min(
@@ -532,7 +532,7 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
         }
 
         // AS3 lines 192-196: when hitting 100, flag text change and advance index
-        if(this._barProgression === 100)
+        if(this._barProgression === 100) 
         {
             this._shouldChangeText = true;
             this._textIndex = (this._textIndex + 1) % LOADING_TEXTS.length;
@@ -542,16 +542,16 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Renders the bar fill at the given ratio.
-	 *
-	 * AS3 updateLoadingBarProgression (lines 359-388):
-	 * - fillWidth = (400 - 4 - 4) * ratio = 392 * ratio
-	 * - Top half: beginFill(0xBACAD3), drawRect(0, 0, fillW, 8)
-	 * - Bottom half: beginFill(0x8CA1AD), drawRect(0, 8, fillW, 9)
-	 *
-	 * @param ratio - Fill ratio from 0.0 to 1.0
-	 */
-    private updateLoadingBarProgression(ratio: number): void
+     * Renders the bar fill at the given ratio.
+     *
+     * AS3 updateLoadingBarProgression (lines 359-388):
+     * - fillWidth = (400 - 4 - 4) * ratio = 392 * ratio
+     * - Top half: beginFill(0xBACAD3), drawRect(0, 0, fillW, 8)
+     * - Bottom half: beginFill(0x8CA1AD), drawRect(0, 8, fillW, 9)
+     *
+     * @param ratio - Fill ratio from 0.0 to 1.0
+     */
+    private updateLoadingBarProgression(ratio: number): void 
     {
         const fillWidth = Math.floor(BAR_INNER_WIDTH * ratio);
 
@@ -560,19 +560,19 @@ export class HeliumLoadingScreen implements IHeliumLoadingScreen
     }
 
     /**
-	 * Returns a random integer between min and max (inclusive).
-	 *
-	 * @see sources/win63_2021_version/HabboLoadingScreen.as line 200
-	 */
-    private randomNumber(min: number, max: number): number
+     * Returns a random integer between min and max (inclusive).
+     *
+     * @see sources/win63_2021_version/HabboLoadingScreen.as line 200
+     */
+    private randomNumber(min: number, max: number): number 
     {
         return Math.floor(Math.random() * ((max - min) + 1)) + min;
     }
 
     /** Bound resize handler. */
-    private _onResize = (): void =>
+    private _onResize = (): void => 
     {
-        if(!this._disposed)
+        if(!this._disposed) 
         {
             this.positionElements();
         }

@@ -1,6 +1,6 @@
 {
   "name": "friend_entry",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\645_friend_entry.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\114_friend_entry.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,7 +12,7 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "242",
+          "width": "102",
           "height": "20",
           "params": "145",
           "style": "0",
@@ -29,7 +29,7 @@
             "attributes": {
               "x": "38",
               "y": "3",
-              "width": "38",
+              "width": "39",
               "height": "13",
               "params": "16",
               "style": "0",
@@ -60,7 +60,7 @@
             "tag": "region",
             "typeId": 5,
             "attributes": {
-              "x": "223",
+              "x": "83",
               "y": "2",
               "width": "16",
               "height": "14",
@@ -92,7 +92,7 @@
             "tag": "region",
             "typeId": 5,
             "attributes": {
-              "x": "206",
+              "x": "66",
               "y": "2",
               "width": "16",
               "height": "14",
@@ -124,7 +124,7 @@
             "tag": "region",
             "typeId": 5,
             "attributes": {
-              "x": "177",
+              "x": "37",
               "y": "2",
               "width": "26",
               "height": "16",
@@ -179,15 +179,20 @@
             "tag": "bitmap",
             "typeId": 21,
             "attributes": {
-              "x": "0",
+              "x": "-2",
               "y": "0",
               "width": "20",
               "height": "20",
-              "params": "16",
+              "params": "3932176",
               "style": "0",
               "name": "face"
             },
-            "children": []
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
           },
           {
             "tag": "bitmap",
@@ -274,6 +279,52 @@
               "name": "pager"
             },
             "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "47",
+              "y": "0",
+              "width": "49",
+              "height": "16",
+              "params": "409681",
+              "style": "3",
+              "name": "select_all_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "3",
+                  "width": "49",
+                  "height": "13",
+                  "params": "16",
+                  "style": "3",
+                  "name": "select_all_text",
+                  "caption": "${friendlist.select_all}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "text_style": "regular",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ],
+            "vars": {
+              "interactive_cursor_disabled": true
+            }
           }
         ]
       }
@@ -281,6 +332,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 242,
+  "layoutWidth": 102,
   "layoutHeight": 20
 }

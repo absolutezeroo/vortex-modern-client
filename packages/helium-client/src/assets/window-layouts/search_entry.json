@@ -1,6 +1,6 @@
 {
   "name": "search_entry",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\640_search_entry.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\113_search_entry.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -51,8 +51,14 @@
             },
             "children": [],
             "vars": {
+              "antialias_type": "advanced",
               "font_face": "Volter Bold",
-              "mouse_wheel_enabled": false
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
             }
           },
           {
@@ -114,14 +120,20 @@
             },
             "children": [],
             "vars": {
-              "mouse_wheel_enabled": false
+              "antialias_type": "advanced",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
             }
           },
           {
             "tag": "bitmap",
             "typeId": 21,
             "attributes": {
-              "x": "0",
+              "x": "-2",
               "y": "0",
               "width": "20",
               "height": "20",
@@ -165,6 +177,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 20,
+  "layoutWidth": 190,
   "layoutHeight": 20
 }

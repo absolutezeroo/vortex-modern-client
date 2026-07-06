@@ -1,6 +1,6 @@
 {
   "name": "trophy_general",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\495_trophy_general.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\386_trophy_general.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -127,9 +127,9 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "130",
+              "x": "110",
               "y": "4",
-              "width": "80",
+              "width": "120",
               "height": "18",
               "params": "131072",
               "style": "0",
@@ -143,14 +143,14 @@
                 "tag": "text",
                 "typeId": 10,
                 "attributes": {
-                  "x": "18",
+                  "x": "0",
                   "y": "1",
-                  "width": "44",
+                  "width": "120",
                   "height": "17",
                   "params": "786432",
                   "style": "1",
-                  "name": "${widget.furni.trophy.title}",
-                  "caption": "${widget.furni.trophy.title}",
+                  "name": "title",
+                  "caption": "Trophy",
                   "color": "0x00"
                 },
                 "children": [],

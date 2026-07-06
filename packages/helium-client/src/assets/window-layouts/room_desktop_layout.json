@@ -1,6 +1,6 @@
 {
   "name": "room_desktop_layout",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\400_room_desktop_layout.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\26_room_desktop_layout.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -46,21 +46,6 @@
               "params": "2192",
               "style": "0",
               "name": "background_widgets"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "0",
-              "y": "0",
-              "width": "960",
-              "height": "300",
-              "params": "131088",
-              "style": "0",
-              "name": "container_1",
-              "tags": "room_widget_chat"
             },
             "children": []
           },

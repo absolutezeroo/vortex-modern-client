@@ -1,19 +1,19 @@
 {
   "name": "furni_view",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\585_furni_view.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\367_furni_view.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "itemlist_vertical",
+        "tag": "itemlist",
         "typeId": 50,
         "attributes": {
           "x": "0",
           "y": "0",
           "width": "429",
-          "height": "497",
+          "height": "97",
           "params": "16",
           "style": "0"
         },
@@ -25,9 +25,9 @@
               "x": "0",
               "y": "0",
               "width": "190",
-              "height": "390",
+              "height": "372",
               "params": "16",
-              "style": "1",
+              "style": "2",
               "name": "info_border"
             },
             "children": [
@@ -48,14 +48,14 @@
                 "children": []
               },
               {
-                "tag": "itemlist_vertical",
+                "tag": "itemlist",
                 "typeId": 50,
                 "attributes": {
                   "x": "10",
                   "y": "10",
                   "width": "170",
-                  "height": "389",
-                  "params": "16",
+                  "height": "355",
+                  "params": "8388624",
                   "style": "0",
                   "name": "infostand_element_list"
                 },
@@ -75,7 +75,35 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "font_face": "Volter Bold",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "17",
+                      "width": "159",
+                      "height": "12",
+                      "params": "144",
+                      "style": "0",
+                      "name": "name_extra_text",
+                      "caption": "Chest name",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
                       "text_color": 16777215,
                       "mouse_wheel_enabled": false,
                       "sharpness": 0,
@@ -103,11 +131,70 @@
                     "children": []
                   },
                   {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "137",
+                      "y": "23",
+                      "width": "31",
+                      "height": "15",
+                      "params": "262224",
+                      "style": "3",
+                      "name": "wired_chest_elements"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "-3",
+                          "width": "13",
+                          "height": "18",
+                          "params": "16",
+                          "style": "3",
+                          "name": "locked_icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "forum_forum_locked",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "16",
+                          "y": "0",
+                          "width": "15",
+                          "height": "15",
+                          "params": "16",
+                          "style": "3",
+                          "name": "wired_icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "${image.library.url}catalogue/icon_80.png",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 3,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
                     "tag": "container",
                     "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "23",
+                      "y": "43",
                       "width": "170",
                       "height": "130",
                       "params": "16",
@@ -370,7 +457,40 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "209",
+                      "y": "178",
+                      "width": "170",
+                      "height": "18",
+                      "params": "16",
+                      "style": "0",
+                      "name": "nft_indicator"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "18",
+                          "height": "18",
+                          "params": "16",
+                          "style": "3",
+                          "name": "nft_icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "201",
                       "width": "170",
                       "height": "1",
                       "params": "16",
@@ -386,7 +506,7 @@
                     "typeId": 5,
                     "attributes": {
                       "x": "0",
-                      "y": "215",
+                      "y": "207",
                       "width": "170",
                       "height": "17",
                       "params": "17",
@@ -442,6 +562,7 @@
                         },
                         "children": [],
                         "vars": {
+                          "antialias_type": "advanced",
                           "text_color": 16777215,
                           "mouse_wheel_enabled": false,
                           "sharpness": 0,
@@ -451,6 +572,27 @@
                           "spacing": 0,
                           "leading": 0
                         }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "15",
+                          "height": "15",
+                          "params": "3932176",
+                          "style": "3",
+                          "name": "temp_icon",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "${image.library.url}catalogue/icon_80.png",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
                       }
                     ]
                   },
@@ -459,7 +601,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "237",
+                      "y": "229",
                       "width": "170",
                       "height": "1",
                       "params": "16",
@@ -475,7 +617,7 @@
                     "typeId": 5,
                     "attributes": {
                       "x": "0",
-                      "y": "243",
+                      "y": "235",
                       "width": "170",
                       "height": "40",
                       "params": "17",
@@ -519,6 +661,7 @@
                         },
                         "children": [],
                         "vars": {
+                          "antialias_type": "advanced",
                           "text_color": 16777215,
                           "mouse_wheel_enabled": false,
                           "sharpness": 0,
@@ -540,7 +683,7 @@
                     "typeId": 10,
                     "attributes": {
                       "x": "0",
-                      "y": "288",
+                      "y": "280",
                       "width": "170",
                       "height": "23",
                       "params": "16",
@@ -550,6 +693,7 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "text_color": 16777215,
                       "margin_top": 6,
                       "mouse_wheel_enabled": false,
@@ -566,38 +710,180 @@
                     "typeId": 51,
                     "attributes": {
                       "x": "0",
-                      "y": "316",
+                      "y": "308",
                       "width": "170",
-                      "height": "22",
+                      "height": "23",
                       "params": "16",
                       "style": "100",
                       "name": "purchase_buttons"
                     },
                     "children": [
                       {
-                        "tag": "button",
-                        "typeId": 60,
+                        "tag": "container_button",
+                        "typeId": 41,
                         "attributes": {
                           "x": "0",
                           "y": "0",
-                          "width": "125",
-                          "height": "22",
-                          "params": "131089",
+                          "width": "90",
+                          "height": "23",
+                          "params": "17",
+                          "style": "0",
+                          "name": "bc_place_button"
+                        },
+                        "children": [
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "5",
+                              "y": "0",
+                              "width": "79",
+                              "height": "22",
+                              "params": "4194320",
+                              "style": "3"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "2",
+                                  "width": "20",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "infostand_furni_place",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "4",
+                                  "width": "59",
+                                  "height": "13",
+                                  "params": "16",
+                                  "style": "3",
+                                  "caption": "${infostand.button.place_more}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "antialias_type": "advanced",
+                                  "auto_size": "left",
+                                  "text_style": "regular",
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "resize_on_item_update": true
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "tool_tip_caption": "${infostand.button.place_more.tooltip}"
+                        }
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "95",
+                          "y": "0",
+                          "width": "72",
+                          "height": "23",
+                          "params": "17",
                           "style": "0",
                           "name": "catalog_button",
-                          "caption": "${infostand.button.buy}",
                           "tags": "catalog"
                         },
-                        "children": []
+                        "children": [
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "2",
+                              "y": "0",
+                              "width": "64",
+                              "height": "22",
+                              "params": "4194320",
+                              "style": "3"
+                            },
+                            "children": [
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "3",
+                                  "width": "20",
+                                  "height": "18",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "icon"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "infostand_furni_shop",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "4",
+                                  "width": "44",
+                                  "height": "13",
+                                  "params": "16",
+                                  "style": "3",
+                                  "caption": "${infostand.button.buy}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "antialias_type": "advanced",
+                                  "auto_size": "left",
+                                  "text_style": "regular",
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "kerning": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "resize_on_item_update": true
+                            }
+                          }
+                        ]
                       },
                       {
                         "tag": "button",
                         "typeId": 60,
                         "attributes": {
-                          "x": "130",
+                          "x": "172",
                           "y": "0",
-                          "width": "128",
-                          "height": "22",
+                          "width": "130",
+                          "height": "23",
                           "params": "131089",
                           "style": "0",
                           "name": "rent_button",
@@ -609,10 +895,10 @@
                         "tag": "button",
                         "typeId": 60,
                         "attributes": {
-                          "x": "263",
+                          "x": "307",
                           "y": "0",
-                          "width": "141",
-                          "height": "22",
+                          "width": "143",
+                          "height": "23",
                           "params": "131089",
                           "style": "0",
                           "name": "extend_button",
@@ -624,10 +910,10 @@
                         "tag": "button",
                         "typeId": 60,
                         "attributes": {
-                          "x": "409",
+                          "x": "455",
                           "y": "0",
-                          "width": "141",
-                          "height": "22",
+                          "width": "143",
+                          "height": "23",
                           "params": "131089",
                           "style": "0",
                           "name": "buyout_button",
@@ -645,7 +931,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "343",
+                      "y": "336",
                       "width": "170",
                       "height": "1",
                       "params": "16",
@@ -661,9 +947,37 @@
                     "typeId": 10,
                     "attributes": {
                       "x": "0",
-                      "y": "349",
+                      "y": "342",
                       "width": "170",
-                      "height": "40",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "chest_item_count",
+                      "caption": "Items:",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "342",
+                      "width": "170",
+                      "height": "13",
                       "params": "16",
                       "style": "0",
                       "name": "furni_details_text",
@@ -671,6 +985,8 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
                       "text_color": 16777215,
                       "mouse_wheel_enabled": false,
                       "sharpness": 0,
@@ -684,7 +1000,6 @@
                 ],
                 "vars": {
                   "spacing": 5,
-                  "scale_to_fit_items": true,
                   "resize_on_item_update": true
                 }
               }
@@ -695,7 +1010,7 @@
             "typeId": 30,
             "attributes": {
               "x": "0",
-              "y": "400",
+              "y": "0",
               "width": "190",
               "height": "62",
               "params": "17",
@@ -733,7 +1048,7 @@
                     "children": []
                   },
                   {
-                    "tag": "itemlist_vertical",
+                    "tag": "itemlist",
                     "typeId": 50,
                     "attributes": {
                       "x": "0",
@@ -809,7 +1124,8 @@
                           }
                         ]
                       }
-                    ]
+                    ],
+                    "vars": {}
                   }
                 ]
               }
@@ -820,7 +1136,7 @@
             "typeId": 51,
             "attributes": {
               "x": "0",
-              "y": "472",
+              "y": "72",
               "width": "1280",
               "height": "25",
               "params": "16",
@@ -834,7 +1150,7 @@
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "132",
+                  "width": "134",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
@@ -847,9 +1163,9 @@
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "142",
+                  "x": "144",
                   "y": "0",
-                  "width": "139",
+                  "width": "141",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
@@ -862,9 +1178,9 @@
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "291",
+                  "x": "295",
                   "y": "0",
-                  "width": "137",
+                  "width": "139",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
@@ -877,9 +1193,9 @@
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "438",
+                  "x": "444",
                   "y": "0",
-                  "width": "173",
+                  "width": "175",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
@@ -892,14 +1208,29 @@
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "621",
+                  "x": "629",
                   "y": "0",
-                  "width": "125",
+                  "width": "126",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
                   "name": "use",
                   "caption": "${infostand.button.use}"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "765",
+                  "y": "0",
+                  "width": "59",
+                  "height": "25",
+                  "params": "131089",
+                  "style": "1",
+                  "name": "wired_inspect",
+                  "caption": "${infostand.button.wired_inspect}"
                 },
                 "children": []
               }
@@ -920,5 +1251,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 429,
-  "layoutHeight": 497
+  "layoutHeight": 97
 }

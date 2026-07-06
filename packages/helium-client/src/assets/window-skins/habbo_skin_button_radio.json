@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_radio",
   "name": "illumina_light_radio_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\61_illumina_light_radio_button_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\45_illumina_light_radio_button_skin.xml",
   "variables": {
     "asset": "illumina_light_radio_button"
   },
