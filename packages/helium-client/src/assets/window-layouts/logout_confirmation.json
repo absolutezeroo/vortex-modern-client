@@ -1,6 +1,6 @@
 {
   "name": "logout_confirmation",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\81_logout_confirmation.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\164_logout_confirmation.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

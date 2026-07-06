@@ -1,41 +1,41 @@
 {
   "id": "habbo_skin_button_radio",
-  "name": "illumina_light_radio_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\45_illumina_light_radio_button_skin.xml",
+  "name": "radio_button_skin",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\27_radio_button_skin.xml",
   "variables": {
-    "asset": "illumina_light_radio_button"
+    "asset": "habbo_blue_skin"
   },
   "templates": [
     {
       "name": "default_btn_mode",
-      "asset": "illumina_light_radio_button",
+      "asset": "habbo_blue_skin",
       "entities": [
         {
           "id": 0,
-          "name": "radio_button",
+          "name": "radio_btn",
           "type": "bitmap",
           "region": {
-            "x": 0,
+            "x": 428,
             "y": 0,
-            "width": 11,
-            "height": 12
+            "width": 16,
+            "height": 16
           }
         }
       ]
     },
     {
       "name": "pressed_btn_mode",
-      "asset": "illumina_light_radio_button",
+      "asset": "habbo_blue_skin",
       "entities": [
         {
           "id": 0,
-          "name": "radio_button",
+          "name": "radio_btn",
           "type": "bitmap",
           "region": {
-            "x": 0,
-            "y": 12,
-            "width": 11,
-            "height": 12
+            "x": 428,
+            "y": 16,
+            "width": 16,
+            "height": 16
           }
         }
       ]
@@ -49,7 +49,7 @@
       "entities": [
         {
           "id": 0,
-          "name": "radio_button",
+          "name": "radio_btn",
           "colorize": true,
           "color": 0,
           "blend": 4294967295,
@@ -57,9 +57,9 @@
           "scaleV": 0,
           "region": {
             "x": 0,
-            "y": 2,
-            "width": 11,
-            "height": 12
+            "y": 0,
+            "width": 16,
+            "height": 16
           }
         }
       ]

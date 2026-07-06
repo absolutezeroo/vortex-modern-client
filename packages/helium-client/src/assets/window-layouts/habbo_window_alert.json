@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_alert",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\824_habbo_window_alert.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\427_habbo_window_alert.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -28,12 +28,13 @@
               "x": "27",
               "y": "14",
               "width": "210",
-              "height": "17",
+              "height": "57",
               "params": "8388624",
               "style": "0",
               "name": "_alert_summary",
               "caption": "Alert",
-              "tags": "DESCRIPTION"
+              "tags": "DESCRIPTION",
+              "height_min": "57"
             },
             "children": [],
             "vars": {

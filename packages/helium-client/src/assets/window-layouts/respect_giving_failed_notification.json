@@ -1,6 +1,6 @@
 {
   "name": "respect_giving_failed_notification",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\11_respect_giving_failed_notification.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\25_respect_giving_failed_notification.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

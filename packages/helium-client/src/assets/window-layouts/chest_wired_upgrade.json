@@ -1,6 +1,6 @@
 {
   "name": "chest_wired_upgrade",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\42_chest_wired_upgrade.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\84_chest_wired_upgrade.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

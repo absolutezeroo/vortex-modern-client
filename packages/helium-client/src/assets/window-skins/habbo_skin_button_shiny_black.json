@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_shiny_black",
   "name": "black_default_button_shiny_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\41_black_default_button_shiny_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\91_black_default_button_shiny_skin.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

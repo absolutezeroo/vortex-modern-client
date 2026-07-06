@@ -1,6 +1,6 @@
 {
   "name": "chatinput_window_new",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\543_chatinput_window_new.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\16_chatinput_window_new.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -36,30 +36,12 @@
             },
             "children": [
               {
-                "tag": "closebutton",
-                "typeId": 72,
-                "attributes": {
-                  "x": "449",
-                  "y": "68",
-                  "width": "20",
-                  "height": "25",
-                  "params": "1",
-                  "style": "4",
-                  "name": "helpbutton",
-                  "background": "true",
-                  "treshold": "0",
-                  "height_min": "25",
-                  "height_max": "25"
-                },
-                "children": []
-              },
-              {
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
                   "y": "60",
-                  "width": "451",
+                  "width": "471",
                   "height": "57",
                   "params": "16",
                   "style": "3",
@@ -70,7 +52,7 @@
                     "tag": "border",
                     "typeId": 30,
                     "attributes": {
-                      "x": "51",
+                      "x": "11",
                       "y": "0",
                       "width": "400",
                       "height": "38",
@@ -115,7 +97,6 @@
                           "antialias_type": "advanced",
                           "font_face": "Ubuntu",
                           "font_size": 20,
-                          "grid_fit_type": "subpixel",
                           "text_color": 16711680,
                           "mouse_wheel_enabled": false,
                           "sharpness": 0,
@@ -130,14 +111,14 @@
                         "tag": "input",
                         "typeId": 77,
                         "attributes": {
-                          "x": "10",
+                          "x": "50",
                           "y": "7",
                           "width": "326",
                           "height": "24",
                           "params": "1",
                           "style": "0",
                           "name": "chat_input",
-                          "caption": "${widgets.chatinput.default}",
+                          "caption": "3widgets.chatinput.default",
                           "clipping": "false",
                           "treshold": "0",
                           "tags": "FIT:chatInputField"
@@ -172,7 +153,8 @@
                       "params": "1",
                       "style": "3",
                       "name": "styles",
-                      "clipping": "false"
+                      "clipping": "false",
+                      "treshold": "0"
                     },
                     "children": [
                       {
@@ -236,8 +218,146 @@
                         "children": []
                       }
                     ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "427",
+                      "y": "0",
+                      "width": "41",
+                      "height": "38",
+                      "params": "1",
+                      "style": "3",
+                      "dynamic_style": "lifted_hover",
+                      "name": "chat_extra_button",
+                      "clipping": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "41",
+                          "height": "38",
+                          "params": "16",
+                          "style": "3",
+                          "tags": "#icon"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "36",
+                              "height": "38",
+                              "params": "16",
+                              "style": "3",
+                              "name": "chat_extra_bg",
+                              "clipping": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "habbicons_sticky_note",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552,
+                              "fit_size_to_contents": true
+                            }
+                          },
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "3",
+                              "y": "3",
+                              "width": "30",
+                              "height": "30",
+                              "params": "16",
+                              "style": "3",
+                              "name": "chat_extra_set_icon"
+                            },
+                            "children": [],
+                            "vars": {
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "23",
+                              "y": "2",
+                              "width": "18",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "name": "chat_extra_icon",
+                              "clipping": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "habbicons_clip",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552,
+                              "fit_size_to_contents": true
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "24",
+                              "y": "26",
+                              "width": "12",
+                              "height": "12",
+                              "params": "16",
+                              "style": "3",
+                              "name": "chat_extra_bg",
+                              "clipping": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "habbicons_sticky_note2",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "etching_color": 1207959552,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ]
+                      }
+                    ]
                   }
                 ]
+              },
+              {
+                "tag": "closebutton",
+                "typeId": 72,
+                "attributes": {
+                  "x": "382",
+                  "y": "68",
+                  "width": "20",
+                  "height": "25",
+                  "params": "1",
+                  "style": "4",
+                  "name": "helpbutton",
+                  "background": "true",
+                  "treshold": "0",
+                  "height_min": "25",
+                  "height_max": "25"
+                },
+                "children": []
               }
             ]
           },
@@ -246,12 +366,35 @@
             "typeId": 4,
             "attributes": {
               "x": "2",
-              "y": "0",
+              "y": "-6",
               "width": "160",
-              "height": "100",
+              "height": "60",
               "params": "1179648",
               "style": "0",
               "name": "chatstyles_menu"
+            },
+            "children": [],
+            "filters": [
+              {
+                "type": "DropShadowFilter",
+                "attributes": {
+                  "distance": "4",
+                  "alpha": "0.6"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "2",
+              "y": "-6",
+              "width": "270",
+              "height": "260",
+              "params": "1179648",
+              "style": "0",
+              "name": "habbicon_menu"
             },
             "children": [],
             "filters": [

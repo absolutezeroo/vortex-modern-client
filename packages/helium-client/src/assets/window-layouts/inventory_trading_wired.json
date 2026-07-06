@@ -1,6 +1,6 @@
 {
   "name": "inventory_trading_wired",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\90_inventory_trading_wired.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\190_inventory_trading_wired.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

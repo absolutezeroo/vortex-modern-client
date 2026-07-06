@@ -1,6 +1,6 @@
 {
   "name": "iro_tag",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\268_iro_tag.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\585_iro_tag.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,56 +12,77 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "230",
-          "height": "49",
-          "params": "17",
+          "width": "38",
+          "height": "14",
+          "params": "81",
           "style": "0",
-          "name": "guild_info",
-          "background": "true",
+          "name": "tag",
           "treshold": "0"
         },
         "children": [
           {
-            "tag": "widget",
-            "typeId": 16,
+            "tag": "bitmap",
+            "typeId": 21,
             "attributes": {
               "x": "0",
-              "y": "5",
-              "width": "39",
-              "height": "39",
+              "y": "0",
+              "width": "4",
+              "height": "14",
               "params": "16",
               "style": "0",
-              "name": "guild_badge"
+              "name": "bg_l"
             },
-            "children": [],
-            "vars": {
-              "widget_type": "badge_image",
-              "badge_image:type": "group",
-              "badge_image:pivot_point": "center",
-              "badge_image:stretched_x": false,
-              "badge_image:stretched_y": false
-            }
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "4",
+              "y": "0",
+              "width": "28",
+              "height": "14",
+              "params": "144",
+              "style": "0",
+              "name": "bg_m"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "32",
+              "y": "0",
+              "width": "5",
+              "height": "14",
+              "params": "80",
+              "style": "0",
+              "name": "bg_r"
+            },
+            "children": []
           },
           {
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "45",
-              "y": "1",
-              "width": "170",
-              "height": "46",
+              "x": "1",
+              "y": "0",
+              "width": "9",
+              "height": "15",
               "params": "16",
-              "style": "1",
-              "name": "guild_base_txt",
-              "caption": "${navigator.guildbase}"
+              "style": "0",
+              "name": "txt",
+              "caption": "0",
+              "color": "0x01a7aaf"
             },
             "children": [],
             "vars": {
-              "text_style": "u_regular",
+              "auto_size": "left",
+              "grid_fit_type": "subpixel",
+              "text_color": 930105,
+              "text_style": "u_small",
               "mouse_wheel_enabled": false,
-              "multiline": true,
-              "word_wrap": true,
-              "underline": true,
               "spacing": 0,
               "leading": 0
             }
@@ -72,6 +93,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 230,
-  "layoutHeight": 49
+  "layoutWidth": 38,
+  "layoutHeight": 14
 }

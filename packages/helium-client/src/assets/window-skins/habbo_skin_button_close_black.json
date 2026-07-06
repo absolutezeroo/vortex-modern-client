@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_close_black",
   "name": "black_close_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\34_black_close_button_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\77_black_close_button_skin.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

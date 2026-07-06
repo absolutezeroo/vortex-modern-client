@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_border_infobox",
   "name": "illumina_light_skin_border_infobox",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\6_illumina_light_skin_border_infobox.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\17_illumina_light_skin_border_infobox.xml",
   "variables": {
     "asset": "illumina_light_border_infobox"
   },

@@ -1,6 +1,6 @@
 {
   "name": "start_panel",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\39_start_panel.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\80_start_panel.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

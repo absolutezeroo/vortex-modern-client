@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_layout_frame_3",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\831_habbo_window_layout_frame_3.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\430_habbo_window_layout_frame_3.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -11,10 +11,10 @@
         "typeId": 6,
         "attributes": {
           "name": "titlebar",
-          "x": "6",
-          "y": "6",
-          "width": "50",
-          "height": "27",
+          "x": "76",
+          "y": "3",
+          "width": "41",
+          "height": "32",
           "tags": "_HEADER, _EXCLUDE, _INTERNAL, _COLORIZE",
           "params": "-2147483247"
         },
@@ -25,28 +25,12 @@
         "typeId": 4,
         "attributes": {
           "name": "content_area",
-          "x": "3",
-          "y": "36",
-          "width": "58",
-          "height": "25",
+          "x": "10",
+          "y": "52",
+          "width": "173",
+          "height": "69",
           "tags": "_CONTENT, _INTERNAL, _EXCLUDE",
           "params": "12585104"
-        },
-        "children": []
-      },
-      {
-        "tag": "scaler",
-        "typeId": 120,
-        "attributes": {
-          "name": "_FRAME_SCALER",
-          "x": "41",
-          "y": "40",
-          "width": "20",
-          "height": "20",
-          "visible": "true",
-          "treshold": "0",
-          "tags": "_SCALER, _EXCLUDE, _INTERNAL, _COLORIZE",
-          "params": "1136"
         },
         "children": []
       }
@@ -66,6 +50,6 @@
       }
     }
   ],
-  "layoutWidth": 64,
-  "layoutHeight": 64
+  "layoutWidth": 193,
+  "layoutHeight": 130
 }

@@ -1,6 +1,6 @@
 {
   "name": "container_view",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\51_container_view.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\92_container_view.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,9 +12,9 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "1000",
+          "width": "0",
           "height": "0",
-          "params": "147473",
+          "params": "16",
           "style": "3",
           "name": "container"
         },
@@ -24,6 +24,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 1000,
+  "layoutWidth": 0,
   "layoutHeight": 0
 }

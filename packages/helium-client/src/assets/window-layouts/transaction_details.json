@@ -1,6 +1,6 @@
 {
   "name": "transaction_details",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\59_transaction_details.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\113_transaction_details.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

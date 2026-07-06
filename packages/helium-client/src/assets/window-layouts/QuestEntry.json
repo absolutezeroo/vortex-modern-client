@@ -1,6 +1,6 @@
 {
   "name": "QuestEntry",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\131_QuestEntry.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\63_QuestEntry.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

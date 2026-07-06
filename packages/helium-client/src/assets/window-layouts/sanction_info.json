@@ -1,6 +1,6 @@
 {
   "name": "sanction_info",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\345_sanction_info.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\521_sanction_info.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,11 +10,11 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "0",
-          "y": "0",
-          "width": "460",
-          "height": "360",
-          "params": "166145",
+          "x": "11",
+          "y": "3",
+          "width": "450",
+          "height": "359",
+          "params": "35073",
           "style": "3",
           "caption": "${help.sanction.info.title}",
           "color": "0xff418db0",
@@ -23,18 +23,71 @@
         },
         "children": [
           {
-            "tag": "itemlist_vertical",
-            "typeId": 50,
+            "tag": "scrollable_itemlist_vertical",
+            "typeId": 56,
             "attributes": {
-              "x": "18",
-              "y": "13",
-              "width": "420",
-              "height": "252",
+              "x": "10",
+              "y": "10",
+              "width": "426",
+              "height": "254",
               "params": "16",
               "style": "3",
-              "name": "main_contents_list",
-              "width_min": "420",
-              "width_max": "420"
+              "name": "main_contents_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "404",
+                  "height": "19",
+                  "params": "8536080",
+                  "style": "3",
+                  "name": "sanction_info",
+                  "caption": "sanction info",
+                  "clipping": "false"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 20,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "19",
+                  "width": "404",
+                  "height": "1",
+                  "params": "16",
+                  "style": "3",
+                  "name": "divider",
+                  "color": "0x00"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "270",
+              "width": "426",
+              "height": "40",
+              "params": "16",
+              "style": "3",
+              "name": "bottom"
             },
             "children": [
               {
@@ -44,206 +97,16 @@
                   "x": "0",
                   "y": "0",
                   "width": "420",
-                  "height": "41",
+                  "height": "17",
                   "params": "16",
                   "style": "3",
-                  "name": "probation_reminder_title",
-                  "caption": "${help.sanction.probation.reminder}",
-                  "visible": "false"
+                  "name": "sanction_info_disclaimer",
+                  "caption": "${help.sanction.info.disclaimer}"
                 },
                 "children": [],
                 "vars": {
-                  "font_size": 22,
-                  "text_style": "u_bold",
+                  "text_color": 6908265,
                   "mouse_wheel_enabled": false,
-                  "multiline": true,
-                  "word_wrap": true,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "41",
-                  "width": "420",
-                  "height": "76",
-                  "params": "8536080",
-                  "style": "3",
-                  "name": "no_sanction_info",
-                  "caption": "${help.sanction.current.none}",
-                  "visible": "false",
-                  "clipping": "false"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "text_style": "u_bold",
-                  "mouse_wheel_enabled": false,
-                  "multiline": true,
-                  "word_wrap": true,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "41",
-                  "width": "420",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "custom_mute_info",
-                  "caption": "${help.sanction.custom.mute}",
-                  "visible": "false"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "text_style": "u_bold",
-                  "mouse_wheel_enabled": false,
-                  "multiline": true,
-                  "word_wrap": true,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "41",
-                  "width": "420",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "trade_lock_info",
-                  "caption": "${trade.locked.until}",
-                  "visible": "false"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "text_style": "u_bold",
-                  "mouse_wheel_enabled": false,
-                  "multiline": true,
-                  "word_wrap": true,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "0",
-                  "width": "420",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "last_sanction_type",
-                  "caption": "..."
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "text_style": "u_bold",
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "30",
-                  "width": "420",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "sanction_start_time",
-                  "caption": "${generic.start.time}"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "60",
-                  "width": "420",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "sanction_reason",
-                  "caption": "${generic.reason}"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "90",
-                  "width": "420",
-                  "height": "30",
-                  "params": "16",
-                  "style": "3",
-                  "name": "probation_info",
-                  "caption": "${help.sanction.probation.days.left}"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "text_style": "u_bold",
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "120",
-                  "width": "420",
-                  "height": "45",
-                  "params": "16",
-                  "style": "3",
-                  "name": "next_sanction",
-                  "caption": "...",
-                  "height_max": "45"
-                },
-                "children": [],
-                "vars": {
-                  "font_size": 20,
-                  "mouse_wheel_enabled": false,
-                  "multiline": true,
-                  "word_wrap": true,
                   "spacing": 0,
                   "leading": 0
                 }
@@ -253,7 +116,7 @@
                 "typeId": 51,
                 "attributes": {
                   "x": "0",
-                  "y": "165",
+                  "y": "19",
                   "width": "420",
                   "height": "30",
                   "params": "16",
@@ -302,50 +165,27 @@
                       "leading": 0
                     }
                   }
-                ]
+                ],
+                "vars": {}
               },
               {
                 "tag": "button_thick",
                 "typeId": 61,
                 "attributes": {
-                  "x": "157",
-                  "y": "195",
+                  "x": "327",
+                  "y": "0",
                   "width": "99",
                   "height": "40",
-                  "params": "917649",
+                  "params": "393297",
                   "style": "5",
                   "name": "ok_button",
                   "caption": "${generic.got.it}",
-                  "color": "0x09900"
+                  "color": "0x09900",
+                  "width_min": "99"
                 },
                 "children": []
-              },
-              {
-                "tag": "text",
-                "typeId": 10,
-                "attributes": {
-                  "x": "0",
-                  "y": "235",
-                  "width": "420",
-                  "height": "17",
-                  "params": "16",
-                  "style": "3",
-                  "name": "sanction_info_disclaimer",
-                  "caption": "${help.sanction.info.disclaimer}"
-                },
-                "children": [],
-                "vars": {
-                  "text_color": 6908265,
-                  "mouse_wheel_enabled": false,
-                  "spacing": 0,
-                  "leading": 0
-                }
               }
-            ],
-            "vars": {
-              "scale_to_fit_items": true,
-              "resize_on_item_update": true
-            }
+            ]
           }
         ],
         "filters": [
@@ -364,6 +204,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 540,
-  "layoutHeight": 360
+  "layoutWidth": 450,
+  "layoutHeight": 359
 }

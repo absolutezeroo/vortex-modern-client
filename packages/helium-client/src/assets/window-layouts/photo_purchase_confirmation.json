@@ -1,6 +1,6 @@
 {
   "name": "photo_purchase_confirmation",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\395_photo_purchase_confirmation.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\38_photo_purchase_confirmation.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -13,8 +13,8 @@
           "x": "9",
           "y": "2",
           "width": "340",
-          "height": "683",
-          "params": "166145",
+          "height": "686",
+          "params": "164097",
           "style": "3",
           "caption": "${camera.confirm_phase.title}",
           "color": "0x0555555"
@@ -27,7 +27,7 @@
               "x": "10",
               "y": "39",
               "width": "325",
-              "height": "637",
+              "height": "640",
               "params": "12732432",
               "style": "0",
               "name": "contentlist"
@@ -132,7 +132,7 @@
                   "x": "0",
                   "y": "349",
                   "width": "316",
-                  "height": "59",
+                  "height": "62",
                   "params": "147472",
                   "style": "2",
                   "name": "competition_wrapper",
@@ -150,7 +150,7 @@
                       "x": "6",
                       "y": "4",
                       "width": "309",
-                      "height": "55",
+                      "height": "58",
                       "params": "8388624",
                       "style": "0",
                       "name": "properties_itemlist",
@@ -200,7 +200,6 @@
                         "children": [],
                         "vars": {
                           "text_color": 16777215,
-                          "mouse_wheel_enabled": false,
                           "multiline": true,
                           "word_wrap": true,
                           "spacing": 0,
@@ -234,7 +233,10 @@
                       "height_min": "27",
                       "height_max": "27"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
                   }
                 ]
               },
@@ -243,7 +245,7 @@
                 "typeId": 30,
                 "attributes": {
                   "x": "0",
-                  "y": "414",
+                  "y": "417",
                   "width": "316",
                   "height": "55",
                   "params": "147472",
@@ -538,7 +540,10 @@
                       "height_min": "27",
                       "height_max": "27"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
                   }
                 ]
               },
@@ -547,7 +552,7 @@
                 "typeId": 30,
                 "attributes": {
                   "x": "0",
-                  "y": "475",
+                  "y": "478",
                   "width": "316",
                   "height": "83",
                   "params": "147472",
@@ -753,7 +758,10 @@
                       "height_min": "27",
                       "height_max": "27"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
                   }
                 ]
               },
@@ -762,7 +770,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "564",
+                  "y": "567",
                   "width": "320",
                   "height": "17",
                   "params": "147472",
@@ -800,7 +808,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "587",
+                  "y": "590",
                   "width": "311",
                   "height": "17",
                   "params": "147472",
@@ -853,7 +861,7 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "610",
+                  "y": "613",
                   "width": "325",
                   "height": "27",
                   "params": "16",
@@ -879,7 +887,10 @@
                       "height_min": "27",
                       "height_max": "27"
                     },
-                    "children": []
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
                   }
                 ]
               }
@@ -913,5 +924,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 340,
-  "layoutHeight": 683
+  "layoutHeight": 686
 }

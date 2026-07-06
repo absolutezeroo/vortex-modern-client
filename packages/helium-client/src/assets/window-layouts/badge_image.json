@@ -1,6 +1,6 @@
 {
   "name": "badge_image",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\199_badge_image.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\431_badge_image.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,25 +14,10 @@
           "y": "0",
           "width": "30",
           "height": "30",
-          "params": "16",
+          "params": "2196",
           "style": "0"
         },
         "children": [
-          {
-            "tag": "border",
-            "typeId": 30,
-            "attributes": {
-              "x": "0",
-              "y": "0",
-              "width": "30",
-              "height": "30",
-              "params": "16",
-              "style": "107",
-              "name": "border",
-              "tags": "_COLORIZE"
-            },
-            "children": []
-          },
           {
             "tag": "static_bitmap",
             "typeId": 23,
@@ -41,10 +26,25 @@
               "y": "0",
               "width": "30",
               "height": "30",
-              "params": "16",
+              "params": "2192",
               "style": "0",
-              "name": "bitmap",
-              "tags": "_COLORIZE"
+              "name": "bitmap"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "30",
+              "height": "30",
+              "params": "2193",
+              "style": "0",
+              "name": "region",
+              "visible": "false",
+              "treshold": "0"
             },
             "children": []
           }

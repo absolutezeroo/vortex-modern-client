@@ -1,6 +1,6 @@
 {
   "name": "ui_help_modal",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\430_ui_help_modal.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\55_ui_help_modal.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

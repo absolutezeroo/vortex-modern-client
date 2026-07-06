@@ -1,6 +1,6 @@
 {
   "name": "marketplace_offer_details",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\240_marketplace_offer_details.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\300_marketplace_offer_details.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

@@ -1,6 +1,6 @@
 {
   "name": "Quest",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\140_Quest.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\77_Quest.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -33,36 +33,96 @@
               "name": "quest_header",
               "color": "0x08e8e8e"
             },
-            "children": []
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "80",
-              "y": "11",
-              "width": "208",
-              "height": "18",
-              "params": "786448",
-              "style": "0",
-              "name": "quest_header_txt",
-              "caption": "Frienship Quest 8/16: Share Love"
-            },
-            "children": [],
-            "vars": {
-              "antialias_type": "advanced",
-              "auto_size": "left",
-              "font_face": "Ubuntu",
-              "font_size": 19,
-              "text_color": 16777215,
-              "mouse_wheel_enabled": false,
-              "sharpness": 0,
-              "thickness": 0,
-              "bold": true,
-              "kerning": false,
-              "spacing": 0,
-              "leading": 0
-            }
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "20",
+                  "y": "5",
+                  "width": "208",
+                  "height": "18",
+                  "params": "16",
+                  "style": "0",
+                  "name": "quest_header_txt",
+                  "caption": "Frienship Quest 8/16: Share Love"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 19,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "285",
+                  "y": "0",
+                  "width": "56",
+                  "height": "30",
+                  "params": "409616",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "6",
+                      "width": "37",
+                      "height": "17",
+                      "params": "262160",
+                      "style": "0",
+                      "name": "timeleft_txt",
+                      "caption": "5 days"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "42",
+                      "y": "4",
+                      "width": "14",
+                      "height": "20",
+                      "params": "17",
+                      "style": "3",
+                      "name": "hourglass_icon"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 5
+                }
+              }
+            ]
           },
           {
             "tag": "button_thick",
@@ -263,7 +323,6 @@
               "antialias_type": "advanced",
               "font_face": "Ubuntu",
               "font_size": 18,
-              "mouse_wheel_enabled": false,
               "multiline": true,
               "sharpness": 0,
               "thickness": 0,

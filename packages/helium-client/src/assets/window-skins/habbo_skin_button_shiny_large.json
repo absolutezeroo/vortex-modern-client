@@ -1,0 +1,596 @@
+{
+  "id": "habbo_skin_button_shiny_large",
+  "name": "large_button_shiny_skin",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\93_large_button_shiny_skin.xml",
+  "variables": {
+    "asset": "habbo_skin_ubuntu"
+  },
+  "templates": [
+    {
+      "name": "default_button_shiny_large",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 110,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 116,
+            "y": 190,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 116,
+            "y": 196,
+            "width": 8,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 116,
+            "y": 217,
+            "width": 8,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 124,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 124,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 124,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "pressed_button_shiny_large",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 140,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 140,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 140,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 146,
+            "y": 190,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 146,
+            "y": 196,
+            "width": 8,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 146,
+            "y": 217,
+            "width": 8,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 154,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 154,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 154,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "hovering_button_shiny_large",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 170,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 170,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 170,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 176,
+            "y": 190,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 176,
+            "y": 196,
+            "width": 8,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 176,
+            "y": 217,
+            "width": 8,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 184,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 184,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 184,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "disabled_button_shiny_large",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 206,
+            "y": 190,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_center",
+          "type": "bitmap",
+          "region": {
+            "x": 206,
+            "y": 196,
+            "width": 8,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_center",
+          "type": "bitmap",
+          "region": {
+            "x": 206,
+            "y": 217,
+            "width": 8,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 214,
+            "y": 190,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_right",
+          "type": "bitmap",
+          "region": {
+            "x": 214,
+            "y": 196,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_right",
+          "type": "bitmap",
+          "region": {
+            "x": 214,
+            "y": 217,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "button_shiny_large",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 6,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 27,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "id": 1,
+          "name": "top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 6,
+            "y": 0,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "id": 1,
+          "name": "mid_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 6,
+            "y": 6,
+            "width": 8,
+            "height": 21
+          }
+        },
+        {
+          "id": 1,
+          "name": "btm_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 6,
+            "y": 27,
+            "width": 8,
+            "height": 7
+          }
+        },
+        {
+          "id": 2,
+          "name": "top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 14,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "id": 2,
+          "name": "mid_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 14,
+            "y": 6,
+            "width": 6,
+            "height": 21
+          }
+        },
+        {
+          "id": 2,
+          "name": "btm_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 14,
+            "y": 27,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "button_shiny_large",
+      "template": "default_button_shiny_large"
+    },
+    {
+      "name": "pressed",
+      "layout": "button_shiny_large",
+      "template": "pressed_button_shiny_large"
+    },
+    {
+      "name": "hovering",
+      "layout": "button_shiny_large",
+      "template": "hovering_button_shiny_large"
+    },
+    {
+      "name": "disabled",
+      "layout": "button_shiny_large",
+      "template": "disabled_button_shiny_large"
+    }
+  ]
+}

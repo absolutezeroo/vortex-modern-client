@@ -1,6 +1,6 @@
 {
   "name": "badge_editor",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\630_badge_editor.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\125_badge_editor.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

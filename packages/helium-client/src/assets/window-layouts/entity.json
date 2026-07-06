@@ -1,6 +1,6 @@
 {
   "name": "entity",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\808_entity.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\659_entity.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -168,8 +168,7 @@
               }
             ],
             "vars": {
-              "scale_to_fit_items": true,
-              "resize_on_item_update": true
+              "scale_to_fit_items": true
             }
           }
         ]

@@ -1,0 +1,266 @@
+{
+  "id": "illumina_light_skin_border_sunk",
+  "name": "illumina_light_skin_border_sunk",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\30_illumina_light_skin_border_sunk.xml",
+  "variables": {
+    "asset": "illumina_light_border_sunk"
+  },
+  "templates": [
+    {
+      "name": "illumina_light_border_sunk_template",
+      "asset": "illumina_light_border_sunk",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 12,
+            "y": 0,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 24,
+            "y": 0,
+            "width": 6,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "center_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 14,
+            "width": 8,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 8,
+            "y": 14,
+            "width": 21,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "center_right",
+          "type": "bitmap",
+          "region": {
+            "x": 29,
+            "y": 14,
+            "width": 1,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "bottom_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 26,
+            "width": 8,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 8,
+            "y": 26,
+            "width": 18,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "bottom_right",
+          "type": "bitmap",
+          "region": {
+            "x": 26,
+            "y": 26,
+            "width": 4,
+            "height": 4
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "illumina_light_border_sunk",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top_left",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_center",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 12,
+            "y": 0,
+            "width": 12,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "top_right",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 24,
+            "y": 0,
+            "width": 6,
+            "height": 14
+          }
+        },
+        {
+          "id": 0,
+          "name": "center_left",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 14,
+            "width": 8,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "center_center",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 8,
+            "y": 14,
+            "width": 21,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "center_right",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 29,
+            "y": 14,
+            "width": 1,
+            "height": 12
+          }
+        },
+        {
+          "id": 0,
+          "name": "bottom_left",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 26,
+            "width": 8,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "bottom_center",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 8,
+            "y": 26,
+            "width": 18,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "bottom_right",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 26,
+            "y": 26,
+            "width": 4,
+            "height": 4
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "illumina_light_border_sunk",
+      "template": "illumina_light_border_sunk_template"
+    }
+  ]
+}

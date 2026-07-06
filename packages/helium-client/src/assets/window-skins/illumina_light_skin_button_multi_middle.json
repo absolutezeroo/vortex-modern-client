@@ -1,0 +1,246 @@
+{
+  "id": "illumina_light_skin_button_multi_middle",
+  "name": "illumina_light_skin_button_multi_right",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\58_illumina_light_skin_button_multi_right.xml",
+  "variables": {
+    "asset": "illumina_light_button_multi"
+  },
+  "templates": [
+    {
+      "name": "illumina_light_button_multi_middle_template",
+      "asset": "illumina_light_button_multi",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 5,
+            "width": 1,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 9,
+            "width": 1,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 19,
+            "width": 1,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_etch_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 56,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "illumina_light_button_multi_middle_hovering_template",
+      "asset": "illumina_light_button_multi",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 25,
+            "width": 1,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 29,
+            "width": 1,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 39,
+            "width": 1,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_etch_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 56,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "illumina_light_button_multi_middle_pressed_template",
+      "asset": "illumina_light_button_multi",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 34,
+            "y": 25,
+            "width": 1,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 34,
+            "y": 29,
+            "width": 1,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 34,
+            "y": 39,
+            "width": 1,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_etch_center",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 56,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "illumina_light_button_multi_middle",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 11,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_center_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 4,
+            "width": 11,
+            "height": 10
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_bottom_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 14,
+            "width": 11,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "button_etch_center",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 18,
+            "width": 11,
+            "height": 1
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "illumina_light_button_multi_middle",
+      "template": "illumina_light_button_multi_middle_template"
+    },
+    {
+      "name": "hovering",
+      "layout": "illumina_light_button_multi_middle",
+      "template": "illumina_light_button_multi_middle_hovering_template"
+    },
+    {
+      "name": "pressed",
+      "layout": "illumina_light_button_multi_middle",
+      "template": "illumina_light_button_multi_middle_pressed_template"
+    }
+  ]
+}

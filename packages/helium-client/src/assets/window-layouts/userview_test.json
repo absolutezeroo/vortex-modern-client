@@ -1,6 +1,6 @@
 {
   "name": "userview_test",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\21_userview_test.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\790_userview_test.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -25,7 +25,7 @@
               "x": "0",
               "y": "0",
               "width": "190",
-              "height": "350",
+              "height": "357",
               "params": "17",
               "style": "1",
               "name": "info_border"
@@ -63,13 +63,32 @@
                 "children": []
               },
               {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "2",
+                  "y": "64",
+                  "width": "92",
+                  "height": "63",
+                  "params": "0",
+                  "style": "3",
+                  "name": "sticker_croco"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "sticker_croco",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
                 "tag": "itemlist_vertical",
                 "typeId": 50,
                 "attributes": {
                   "x": "10",
                   "y": "10",
                   "width": "170",
-                  "height": "330",
+                  "height": "277",
                   "params": "16",
                   "style": "0",
                   "name": "infostand_element_list",
@@ -77,30 +96,51 @@
                 },
                 "children": [
                   {
-                    "tag": "text",
-                    "typeId": 10,
+                    "tag": "region",
+                    "typeId": 5,
                     "attributes": {
-                      "x": "0",
+                      "x": "18",
                       "y": "0",
-                      "width": "4",
-                      "height": "4",
-                      "params": "146",
+                      "width": "135",
+                      "height": "12",
+                      "params": "17",
                       "style": "0",
-                      "name": "name_text",
-                      "color": "0x03d3d3d",
-                      "background": "true"
+                      "name": "profile_link",
+                      "treshold": "0"
                     },
-                    "children": [],
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "4",
+                          "height": "4",
+                          "params": "146",
+                          "style": "0",
+                          "name": "name_text",
+                          "color": "0x03d3d3d",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "antialias_type": "advanced",
+                          "auto_size": "left",
+                          "font_face": "Volter Bold",
+                          "text_color": 16777215,
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
                     "vars": {
-                      "auto_size": "left",
-                      "font_face": "Volter Bold",
-                      "text_color": 16777215,
-                      "mouse_wheel_enabled": false,
-                      "sharpness": 0,
-                      "thickness": 0,
-                      "kerning": false,
-                      "spacing": 0,
-                      "leading": 0
+                      "tool_tip_caption": "${infostand.profile.link.tooltip}",
+                      "tool_tip_delay": 256
                     }
                   },
                   {
@@ -108,7 +148,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "7",
+                      "y": "15",
                       "width": "170",
                       "height": "1",
                       "params": "16",
@@ -124,12 +164,12 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "-16",
-                      "y": "11",
+                      "y": "19",
                       "width": "193",
                       "height": "132",
                       "params": "16",
                       "style": "0",
-                      "name": "description_container",
+                      "name": "image_and_badges_container",
                       "color": "0x06d6d6d",
                       "background": "true"
                     },
@@ -164,25 +204,6 @@
                         },
                         "children": [
                           {
-                            "tag": "static_bitmap",
-                            "typeId": 23,
-                            "attributes": {
-                              "x": "0",
-                              "y": "0",
-                              "width": "66",
-                              "height": "127",
-                              "params": "16",
-                              "style": "100"
-                            },
-                            "children": [],
-                            "vars": {
-                              "asset_uri": "infostand_bot_info_bg",
-                              "pivot_point": "center",
-                              "stretched_x": false,
-                              "stretched_y": false
-                            }
-                          },
-                          {
                             "tag": "widget",
                             "typeId": 16,
                             "attributes": {
@@ -192,7 +213,8 @@
                               "height": "84",
                               "params": "3282",
                               "style": "0",
-                              "name": "avatar_image"
+                              "name": "avatar_image",
+                              "visible": "false"
                             },
                             "children": [],
                             "vars": {
@@ -201,24 +223,134 @@
                               "avatar_image:direction": "southwest"
                             }
                           }
-                        ]
+                        ],
+                        "vars": {
+                          "tool_tip_caption": "${infostand.profile.link.tooltip}",
+                          "tool_tip_delay": 256
+                        }
                       },
                       {
                         "tag": "widget",
                         "typeId": 16,
                         "attributes": {
-                          "x": "116",
-                          "y": "21",
+                          "x": "88",
+                          "y": "1",
                           "width": "42",
                           "height": "42",
-                          "params": "17",
+                          "params": "1",
                           "style": "0",
-                          "name": "badge"
+                          "name": "badge_0",
+                          "treshold": "0"
                         },
                         "children": [],
                         "vars": {
                           "widget_type": "badge_image",
-                          "badge_image:badge_id": "BOT",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "131",
+                          "y": "1",
+                          "width": "42",
+                          "height": "42",
+                          "params": "17",
+                          "style": "0",
+                          "name": "badge_group",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "badge_image",
+                          "badge_image:type": "group",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "88",
+                          "y": "44",
+                          "width": "42",
+                          "height": "42",
+                          "params": "1",
+                          "style": "0",
+                          "name": "badge_1",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "badge_image",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "131",
+                          "y": "44",
+                          "width": "42",
+                          "height": "42",
+                          "params": "1",
+                          "style": "0",
+                          "name": "badge_2",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "badge_image",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "88",
+                          "y": "87",
+                          "width": "42",
+                          "height": "42",
+                          "params": "1",
+                          "style": "0",
+                          "name": "badge_3",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "badge_image",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "131",
+                          "y": "87",
+                          "width": "42",
+                          "height": "42",
+                          "params": "1",
+                          "style": "0",
+                          "name": "badge_4",
+                          "treshold": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "badge_image",
                           "badge_image:pivot_point": "center",
                           "badge_image:stretched_x": false,
                           "badge_image:stretched_y": false
@@ -231,13 +363,154 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "146",
+                      "y": "154",
                       "width": "170",
                       "height": "1",
                       "params": "16",
                       "style": "0",
-                      "name": "handitem_spacer",
+                      "name": "motto_spacer",
                       "color": "0xffff333333",
+                      "background": "true",
+                      "treshold": "0"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "158",
+                      "width": "170",
+                      "height": "57",
+                      "params": "17",
+                      "style": "0",
+                      "name": "motto_container",
+                      "color": "0x0666666",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "3",
+                          "y": "19",
+                          "width": "17",
+                          "height": "18",
+                          "params": "3088",
+                          "style": "0",
+                          "name": "changemotto.image"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "common_small_pen"
+                        }
+                      },
+                      {
+                        "tag": "input",
+                        "typeId": 77,
+                        "attributes": {
+                          "x": "20",
+                          "y": "2",
+                          "width": "140",
+                          "height": "53",
+                          "params": "1",
+                          "style": "0",
+                          "name": "motto_text"
+                        },
+                        "children": [],
+                        "vars": {
+                          "always_show_selection": true,
+                          "antialias_type": "advanced",
+                          "text_color": 16777215,
+                          "margin_top": 6,
+                          "mouse_wheel_enabled": false,
+                          "max_chars": 38,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "word_wrap": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "218",
+                      "width": "170",
+                      "height": "1",
+                      "params": "16",
+                      "style": "0",
+                      "name": "badges_rank_spacer",
+                      "color": "0xffff333333",
+                      "visible": "false",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "158",
+                      "width": "170",
+                      "height": "15",
+                      "params": "17",
+                      "style": "3",
+                      "name": "badges_rank_region",
+                      "visible": "false",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "170",
+                          "height": "15",
+                          "params": "16",
+                          "style": "0",
+                          "name": "badges_rank_text",
+                          "caption": "${infostand.text.badges_rank}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "antialias_type": "advanced",
+                          "font_face": "Volter Bold",
+                          "text_color": 16777215,
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "word_wrap": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "218",
+                      "width": "170",
+                      "height": "1",
+                      "params": "16",
+                      "style": "0",
+                      "name": "score_spacer",
+                      "color": "0xffff333333",
+                      "visible": "false",
                       "background": "true"
                     },
                     "children": []
@@ -247,16 +520,90 @@
                     "typeId": 10,
                     "attributes": {
                       "x": "0",
-                      "y": "150",
+                      "y": "222",
+                      "width": "170",
+                      "height": "15",
+                      "params": "16",
+                      "style": "0",
+                      "name": "score_text",
+                      "caption": "${infostand.text.achievement_score}",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "font_face": "Volter Bold",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "240",
+                      "width": "170",
+                      "height": "15",
+                      "params": "16",
+                      "style": "0",
+                      "name": "score_value",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "font_face": "Volter Bold",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "word_wrap": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "218",
+                      "width": "170",
+                      "height": "1",
+                      "params": "16",
+                      "style": "0",
+                      "name": "handitem_spacer",
+                      "color": "0xffff333333",
+                      "visible": "false",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "222",
                       "width": "170",
                       "height": "17",
                       "params": "16",
                       "style": "0",
-                      "name": "handitem_text",
-                      "caption": "${infostand.text.handitem}"
+                      "name": "handitem_txt",
+                      "caption": "${infostand.text.handitem}",
+                      "visible": "false"
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "text_color": 16777215,
                       "mouse_wheel_enabled": false,
                       "sharpness": 0,
@@ -268,272 +615,301 @@
                     }
                   },
                   {
-                    "tag": "text",
-                    "typeId": 10,
+                    "tag": "container",
+                    "typeId": 4,
                     "attributes": {
                       "x": "0",
-                      "y": "170",
+                      "y": "218",
                       "width": "170",
-                      "height": "31",
+                      "height": "1",
                       "params": "16",
                       "style": "0",
-                      "name": "description_text"
+                      "name": "generic_spacer",
+                      "color": "0xffff333333",
+                      "background": "true"
                     },
-                    "children": [],
-                    "vars": {
-                      "text_color": 16777215,
-                      "mouse_wheel_enabled": false,
-                      "multiline": true,
-                      "sharpness": 0,
-                      "thickness": 0,
-                      "word_wrap": true,
-                      "kerning": false,
-                      "spacing": 0,
-                      "leading": 0
-                    }
+                    "children": []
                   },
                   {
-                    "tag": "text",
-                    "typeId": 10,
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
                     "attributes": {
                       "x": "0",
-                      "y": "204",
-                      "width": "126",
-                      "height": "13",
+                      "y": "222",
+                      "width": "170",
+                      "height": "55",
                       "params": "16",
                       "style": "0",
-                      "name": "owner_text",
-                      "caption": "${infostand.text.botowner}"
+                      "name": "relationship_status_container"
                     },
-                    "children": [],
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "172",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "relationship_heart",
+                          "visible": "false"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "17",
+                              "height": "14",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "relationship_status_heart",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "link",
+                            "typeId": 14,
+                            "attributes": {
+                              "x": "17",
+                              "y": "0",
+                              "width": "48",
+                              "height": "13",
+                              "params": "1",
+                              "style": "100",
+                              "name": "heart_randomusername",
+                              "caption": "user PH",
+                              "treshold": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "antialias_type": "advanced",
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "text_style": "bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "underline": true,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "65",
+                              "y": "0",
+                              "width": "170",
+                              "height": "13",
+                              "params": "16",
+                              "style": "100",
+                              "name": "heart_others",
+                              "caption": "${infostand.relstatus.heart.others}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "regular",
+                              "text_color": 16777215
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "scale_to_fit_items": true
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "172",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "relationship_smile",
+                          "visible": "false"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "17",
+                              "height": "14",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "relationship_status_smile",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "link",
+                            "typeId": 14,
+                            "attributes": {
+                              "x": "17",
+                              "y": "0",
+                              "width": "48",
+                              "height": "13",
+                              "params": "1",
+                              "style": "100",
+                              "name": "smile_randomusername",
+                              "caption": "user PH",
+                              "treshold": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "antialias_type": "advanced",
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "text_style": "bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "underline": true,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "65",
+                              "y": "0",
+                              "width": "166",
+                              "height": "13",
+                              "params": "16",
+                              "style": "100",
+                              "name": "smile_others",
+                              "caption": "${infostand.relstatus.smile.others}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "regular",
+                              "text_color": 16777215
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "scale_to_fit_items": true
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "172",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "relationship_bobba",
+                          "visible": "false"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "17",
+                              "height": "14",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "relationship_status_bobba",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "link",
+                            "typeId": 14,
+                            "attributes": {
+                              "x": "17",
+                              "y": "0",
+                              "width": "48",
+                              "height": "13",
+                              "params": "1",
+                              "style": "100",
+                              "name": "bobba_randomusername",
+                              "caption": "user PH",
+                              "treshold": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "antialias_type": "advanced",
+                              "auto_size": "left",
+                              "text_color": 16777215,
+                              "text_style": "bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "underline": true,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "65",
+                              "y": "0",
+                              "width": "172",
+                              "height": "13",
+                              "params": "16",
+                              "style": "100",
+                              "name": "bobba_others",
+                              "caption": "${infostand.relstatus.bobba.others}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "regular",
+                              "text_color": 16777215
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "scale_to_fit_items": true
+                        }
+                      }
+                    ],
                     "vars": {
-                      "auto_size": "left",
-                      "text_color": 16777215,
-                      "mouse_wheel_enabled": false,
-                      "sharpness": 0,
-                      "thickness": 0,
-                      "kerning": false,
-                      "spacing": 0,
-                      "leading": 0
+                      "spacing": 3,
+                      "scale_to_fit_items": true
                     }
                   }
                 ],
                 "vars": {
-                  "spacing": 3
+                  "spacing": 3,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
                 }
-              }
-            ]
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "0",
-              "y": "360",
-              "width": "1800",
-              "height": "25",
-              "params": "16",
-              "style": "0",
-              "name": "button_list"
-            },
-            "children": [
-              {
-                "tag": "region",
-                "typeId": 5,
-                "attributes": {
-                  "x": "0",
-                  "y": "0",
-                  "width": "100",
-                  "height": "25",
-                  "params": "17",
-                  "style": "0",
-                  "name": "whisper",
-                  "tags": "CMD_BUTTON_REGION"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "145",
-                      "height": "25",
-                      "params": "131089",
-                      "style": "1",
-                      "name": "whisper",
-                      "caption": "${infostand.button.whisper}",
-                      "tags": "CMD_BUTTON",
-                      "height_min": "22"
-                    },
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "tag": "region",
-                "typeId": 5,
-                "attributes": {
-                  "x": "110",
-                  "y": "0",
-                  "width": "100",
-                  "height": "25",
-                  "params": "17",
-                  "style": "0",
-                  "name": "ignore",
-                  "tags": "CMD_BUTTON_REGION"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "137",
-                      "height": "25",
-                      "params": "131089",
-                      "style": "1",
-                      "name": "ignore",
-                      "caption": "${infostand.button.ignore}",
-                      "tags": "CMD_BUTTON",
-                      "height_min": "22"
-                    },
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "tag": "region",
-                "typeId": 5,
-                "attributes": {
-                  "x": "220",
-                  "y": "0",
-                  "width": "100",
-                  "height": "25",
-                  "params": "17",
-                  "style": "0",
-                  "name": "unignore",
-                  "tags": "CMD_BUTTON_REGION"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "149",
-                      "height": "25",
-                      "params": "131089",
-                      "style": "1",
-                      "name": "unignore",
-                      "caption": "${infostand.button.unignore}",
-                      "tags": "CMD_BUTTON",
-                      "height_min": "22"
-                    },
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "tag": "region",
-                "typeId": 5,
-                "attributes": {
-                  "x": "330",
-                  "y": "0",
-                  "width": "132",
-                  "height": "25",
-                  "params": "17",
-                  "style": "0",
-                  "name": "move",
-                  "tags": "CMD_BUTTON_REGION"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "132",
-                      "height": "25",
-                      "params": "131089",
-                      "style": "1",
-                      "name": "move",
-                      "caption": "${infostand.button.move}",
-                      "tags": "CMD_BUTTON",
-                      "height_min": "22"
-                    },
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "tag": "region",
-                "typeId": 5,
-                "attributes": {
-                  "x": "472",
-                  "y": "0",
-                  "width": "139",
-                  "height": "25",
-                  "params": "17",
-                  "style": "0",
-                  "name": "rotate",
-                  "tags": "CMD_BUTTON_REGION"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "139",
-                      "height": "25",
-                      "params": "131089",
-                      "style": "1",
-                      "name": "rotate",
-                      "caption": "${infostand.button.rotate}",
-                      "tags": "CMD_BUTTON",
-                      "height_min": "22"
-                    },
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "tag": "region",
-                "typeId": 5,
-                "attributes": {
-                  "x": "621",
-                  "y": "0",
-                  "width": "137",
-                  "height": "25",
-                  "params": "17",
-                  "style": "0",
-                  "name": "pick",
-                  "tags": "CMD_BUTTON_REGION"
-                },
-                "children": [
-                  {
-                    "tag": "button",
-                    "typeId": 60,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "137",
-                      "height": "25",
-                      "params": "131089",
-                      "style": "1",
-                      "name": "pick",
-                      "caption": "${infostand.button.pickup}",
-                      "tags": "CMD_BUTTON",
-                      "height_min": "22"
-                    },
-                    "children": []
-                  }
-                ]
               }
             ]
           }

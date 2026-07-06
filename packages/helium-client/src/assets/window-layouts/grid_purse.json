@@ -1,6 +1,6 @@
 {
   "name": "grid_purse",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\91_grid_purse.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\173_grid_purse.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -50,14 +50,14 @@
             "children": []
           },
           {
-            "tag": "itemlist",
+            "tag": "itemlist_vertical",
             "typeId": 50,
             "attributes": {
               "x": "7",
-              "y": "4",
+              "y": "9",
               "width": "52",
               "height": "55",
-              "params": "3145728",
+              "params": "0",
               "style": "0",
               "name": "purse_itemlist",
               "height_max": "62"
@@ -276,7 +276,7 @@
             "attributes": {
               "x": "64",
               "y": "7",
-              "width": "90",
+              "width": "101",
               "height": "28",
               "params": "16",
               "style": "2",
@@ -290,8 +290,8 @@
             "typeId": 5,
             "attributes": {
               "x": "64",
-              "y": "12",
-              "width": "90",
+              "y": "8",
+              "width": "101",
               "height": "26",
               "params": "1",
               "style": "0",
@@ -304,8 +304,8 @@
                 "tag": "label",
                 "typeId": 12,
                 "attributes": {
-                  "x": "33",
-                  "y": "0",
+                  "x": "38",
+                  "y": "4",
                   "width": "25",
                   "height": "17",
                   "params": "786640",
@@ -325,11 +325,11 @@
                 "tag": "text",
                 "typeId": 10,
                 "attributes": {
-                  "x": "27",
-                  "y": "0",
+                  "x": "25",
+                  "y": "4",
                   "width": "50",
                   "height": "28",
-                  "params": "802832",
+                  "params": "16400",
                   "style": "3",
                   "name": "days",
                   "caption": "23 d.",
@@ -356,7 +356,7 @@
                 "typeId": 23,
                 "attributes": {
                   "x": "5",
-                  "y": "0",
+                  "y": "4",
                   "width": "20",
                   "height": "18",
                   "params": "16",
@@ -383,7 +383,7 @@
             "attributes": {
               "x": "64",
               "y": "39",
-              "width": "90",
+              "width": "101",
               "height": "28",
               "params": "16",
               "style": "2",
@@ -397,13 +397,13 @@
             "typeId": 5,
             "attributes": {
               "x": "64",
-              "y": "44",
-              "width": "90",
+              "y": "40",
+              "width": "101",
               "height": "26",
               "params": "1",
               "style": "0",
               "dynamic_style": "brightness_and_shadow_under",
-              "name": "vault_button",
+              "name": "earnings_button",
               "treshold": "0"
             },
             "children": [
@@ -411,18 +411,15 @@
                 "tag": "text",
                 "typeId": 10,
                 "attributes": {
-                  "x": "27",
-                  "y": "0",
-                  "width": "50",
-                  "height": "28",
-                  "params": "802832",
+                  "x": "25",
+                  "y": "4",
+                  "width": "79",
+                  "height": "17",
+                  "params": "16400",
                   "style": "3",
-                  "name": "vault",
-                  "caption": "${earnings.vault.title}",
-                  "tags": "#icon",
-                  "width_max": "50",
-                  "height_min": "28",
-                  "height_max": "28"
+                  "name": "earnings",
+                  "caption": "${earnings.title}",
+                  "tags": "#icon"
                 },
                 "children": [],
                 "vars": {
@@ -430,9 +427,6 @@
                   "text_color": 49604,
                   "text_style": "u_bold",
                   "mouse_wheel_enabled": false,
-                  "multiline": true,
-                  "word_wrap": true,
-                  "max_lines": 2,
                   "spacing": 0,
                   "leading": 0
                 }
@@ -442,7 +436,7 @@
                 "typeId": 23,
                 "attributes": {
                   "x": "5",
-                  "y": "0",
+                  "y": "4",
                   "width": "20",
                   "height": "18",
                   "params": "16",
@@ -451,23 +445,46 @@
                 },
                 "children": [],
                 "vars": {
-                  "asset_uri": "pursearea_vault_icon",
+                  "asset_uri": "pursearea_icon_earnings",
                   "pivot_point": "center",
                   "stretched_x": false,
                   "stretched_y": false,
                   "etching_color": 1207959552
                 }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "1",
+                  "y": "0",
+                  "width": "10",
+                  "height": "11",
+                  "params": "16",
+                  "style": "3",
+                  "name": "earnings_unseen_indicator",
+                  "visible": "false",
+                  "tags": "#icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "pursearea_unseen_indicator",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "etching_color": 1207959552,
+                  "fit_size_to_contents": true
+                }
               }
             ],
             "vars": {
-              "tool_tip_caption": "${earnings.vault.title}"
+              "tool_tip_caption": "${earnings.title}"
             }
           },
           {
             "tag": "background",
             "typeId": 2,
             "attributes": {
-              "x": "159",
+              "x": "169",
               "y": "11",
               "width": "1",
               "height": "55",
@@ -480,10 +497,10 @@
             "children": []
           },
           {
-            "tag": "itemlist",
+            "tag": "itemlist_vertical",
             "typeId": 50,
             "attributes": {
-              "x": "165",
+              "x": "174",
               "y": "8",
               "width": "63",
               "height": "62",
@@ -498,7 +515,7 @@
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "61",
+                  "width": "50",
                   "height": "19",
                   "params": "129",
                   "style": "0",
@@ -506,8 +523,8 @@
                   "caption": "${toolbar.help}",
                   "color": "0x0217bb5",
                   "clipping": "false",
-                  "width_min": "61",
-                  "width_max": "62"
+                  "width_min": "50",
+                  "width_max": "50"
                 },
                 "children": [
                   {
@@ -538,7 +555,7 @@
                 "attributes": {
                   "x": "0",
                   "y": "21",
-                  "width": "61",
+                  "width": "50",
                   "height": "19",
                   "params": "1",
                   "style": "0",
@@ -552,7 +569,7 @@
                     "tag": "static_bitmap",
                     "typeId": 23,
                     "attributes": {
-                      "x": "26",
+                      "x": "18",
                       "y": "0",
                       "width": "15",
                       "height": "20",
@@ -578,7 +595,7 @@
                 "attributes": {
                   "x": "0",
                   "y": "42",
-                  "width": "61",
+                  "width": "50",
                   "height": "19",
                   "params": "1",
                   "style": "0",
@@ -592,7 +609,7 @@
                     "tag": "static_bitmap",
                     "typeId": 23,
                     "attributes": {
-                      "x": "1",
+                      "x": "-5",
                       "y": "1",
                       "width": "61",
                       "height": "18",

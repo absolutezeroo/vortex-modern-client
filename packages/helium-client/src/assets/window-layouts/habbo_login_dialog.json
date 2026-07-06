@@ -1,6 +1,6 @@
 {
   "name": "habbo_login_dialog",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\234_habbo_login_dialog.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\484_habbo_login_dialog.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

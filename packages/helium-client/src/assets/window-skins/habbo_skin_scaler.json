@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_scaler",
   "name": "default_scaler_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\33_default_scaler_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\76_default_scaler_skin.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

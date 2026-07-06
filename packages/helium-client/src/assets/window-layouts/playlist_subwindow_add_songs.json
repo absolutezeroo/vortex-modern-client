@@ -1,6 +1,6 @@
 {
   "name": "playlist_subwindow_add_songs",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\498_playlist_subwindow_add_songs.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\6_playlist_subwindow_add_songs.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

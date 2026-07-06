@@ -1,6 +1,6 @@
 {
   "name": "landing_view_default_dynamic_layout",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\747_landing_view_default_dynamic_layout.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\785_landing_view_default_dynamic_layout.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -16,7 +16,6 @@
           "height": "822",
           "params": "0",
           "style": "0",
-          "dynamic_style": "",
           "color": "0xffff000000",
           "background": "true"
         },
@@ -31,7 +30,6 @@
               "height": "822",
               "params": "2192",
               "style": "0",
-              "dynamic_style": "",
               "name": "content_background",
               "color": "0xffffaae0f0",
               "background": "true"
@@ -47,7 +45,6 @@
                   "height": "1",
                   "params": "2192",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "background_gradient_top"
                 },
                 "children": [],
@@ -60,13 +57,12 @@
                 "tag": "static_bitmap",
                 "typeId": 23,
                 "attributes": {
-                  "x": "3",
+                  "x": "0",
                   "y": "-366",
                   "width": "1172",
                   "height": "1150",
                   "params": "1168",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "background_gradient"
                 },
                 "children": [],
@@ -86,7 +82,6 @@
                   "height": "407",
                   "params": "1311824",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "background_right"
                 },
                 "children": [],
@@ -108,7 +103,6 @@
                   "height": "670",
                   "params": "16",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "left-right_divider",
                   "visible": "false"
                 },
@@ -128,7 +122,6 @@
                   "height": "341",
                   "params": "1049616",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "background_horizon"
                 },
                 "children": [],
@@ -150,7 +143,6 @@
                   "height": "822",
                   "params": "2192",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "moving_objects_container",
                   "color": "0x00",
                   "background": "true"
@@ -167,7 +159,6 @@
                   "height": "11",
                   "params": "147472",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "placeholder_dynamic_widget_slots"
                 },
                 "children": []
@@ -182,7 +173,6 @@
                   "height": "1",
                   "params": "2064",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "background_hotel_top"
                 },
                 "children": [],
@@ -202,7 +192,6 @@
                   "height": "998",
                   "params": "1049616",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "background_left"
                 },
                 "children": [],
@@ -224,7 +213,6 @@
                   "height": "10",
                   "params": "1040",
                   "style": "4",
-                  "dynamic_style": "",
                   "name": "widget_placeholder_avatarimage"
                 },
                 "children": []
@@ -239,7 +227,6 @@
                   "height": "10",
                   "params": "1040",
                   "style": "4",
-                  "dynamic_style": "",
                   "name": "widget_placeholder_bottom_slot"
                 },
                 "children": []
@@ -254,7 +241,6 @@
                   "height": "50",
                   "params": "1168",
                   "style": "0",
-                  "dynamic_style": "",
                   "color": "0xffff333333",
                   "background": "true"
                 },
@@ -270,7 +256,6 @@
                   "height": "200",
                   "params": "16",
                   "style": "0",
-                  "dynamic_style": "",
                   "name": "logo"
                 },
                 "children": [],
@@ -291,7 +276,6 @@
                   "height": "101",
                   "params": "16",
                   "style": "3",
-                  "dynamic_style": "",
                   "name": "warning",
                   "caption": "Warning! Always edit .original. file, then save it as working and delete background bitmaps!",
                   "treshold": "20"

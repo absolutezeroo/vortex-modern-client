@@ -1,6 +1,6 @@
 {
   "name": "item_popup",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\334_item_popup.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\196_item_popup.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -16,7 +16,9 @@
           "height": "90",
           "params": "0",
           "style": "0",
-          "name": "item_popup_content"
+          "name": "item_popup_content",
+          "width_min": "203",
+          "width_max": "203"
         },
         "children": [
           {
@@ -72,6 +74,26 @@
             "children": []
           },
           {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "17",
+              "y": "171",
+              "width": "20",
+              "height": "20",
+              "params": "16",
+              "style": "3",
+              "name": "nft_overlay_icon",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "collectables_icon_curator_stamp_small",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
             "tag": "widget",
             "typeId": 16,
             "attributes": {
@@ -86,6 +108,23 @@
             "children": [],
             "vars": {
               "widget_type": "limited_item_overlay_preview"
+            }
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "16",
+              "y": "29",
+              "width": "170",
+              "height": "146",
+              "params": "16",
+              "style": "3",
+              "name": "nft_image"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "product_image"
             }
           }
         ]

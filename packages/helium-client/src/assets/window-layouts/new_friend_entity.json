@@ -1,6 +1,6 @@
 {
   "name": "new_friend_entity",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\803_new_friend_entity.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\505_new_friend_entity.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -124,8 +124,8 @@
                             "tag": "bitmap",
                             "typeId": 21,
                             "attributes": {
-                              "x": "20",
-                              "y": "30",
+                              "x": "19",
+                              "y": "29",
                               "width": "10",
                               "height": "10",
                               "params": "3932160",

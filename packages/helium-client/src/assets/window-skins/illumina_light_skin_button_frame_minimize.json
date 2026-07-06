@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_button_frame_minimize",
   "name": "illumina_light_skin_button_plain",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\31_illumina_light_skin_button_plain.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\71_illumina_light_skin_button_plain.xml",
   "variables": {
     "asset": "illumina_light_button_frame_minimize"
   },

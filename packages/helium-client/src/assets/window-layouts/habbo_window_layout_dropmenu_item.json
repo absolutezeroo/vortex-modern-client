@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_layout_dropmenu_item",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\206_habbo_window_layout_dropmenu_item.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\445_habbo_window_layout_dropmenu_item.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -15,12 +15,15 @@
           "y": "0",
           "width": "8",
           "height": "12",
+          "background": "false",
+          "treshold": "0",
           "tags": "_EXCLUDE, _INTERNAL, title",
           "params": "-2147480560"
         },
         "children": [],
         "vars": {
           "text_style": "regular",
+          "text_color": 4294967295,
           "margins": {
             "left": 4,
             "top": 1,

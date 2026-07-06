@@ -1,6 +1,6 @@
 {
   "name": "chat_bubble",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\0_chat_bubble.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\400_chat_bubble.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -125,7 +125,7 @@
                   "x": "0",
                   "y": "15",
                   "width": "207",
-                  "height": "30",
+                  "height": "18",
                   "params": "147472",
                   "style": "106"
                 },
@@ -137,7 +137,7 @@
                       "x": "0",
                       "y": "0",
                       "width": "207",
-                      "height": "30",
+                      "height": "18",
                       "params": "147473",
                       "style": "100",
                       "name": "message_region",
@@ -145,31 +145,117 @@
                     },
                     "children": [
                       {
-                        "tag": "text",
-                        "typeId": 10,
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
                         "attributes": {
                           "x": "0",
                           "y": "0",
                           "width": "207",
-                          "height": "30",
-                          "params": "16",
-                          "style": "100",
-                          "name": "message",
-                          "height_min": "30"
+                          "height": "18",
+                          "params": "147472",
+                          "style": "3",
+                          "name": "spaced_message_container"
                         },
-                        "children": [],
-                        "vars": {
-                          "auto_size": "left",
-                          "margin_left": 10,
-                          "margin_top": 7,
-                          "margin_right": 10,
-                          "margin_bottom": 7,
-                          "mouse_wheel_enabled": false,
-                          "multiline": true,
-                          "word_wrap": true,
-                          "spacing": 0,
-                          "leading": 0
-                        }
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "0",
+                              "height": "7",
+                              "params": "16",
+                              "style": "3",
+                              "name": "spacing"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "7",
+                              "width": "0",
+                              "height": "4",
+                              "params": "147472",
+                              "style": "3",
+                              "name": "message_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "207",
+                                  "height": "4",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "message_template",
+                                  "height_min": "0"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "margin_left": 10,
+                                  "margin_right": 10,
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "10",
+                                  "y": "0",
+                                  "width": "80",
+                                  "height": "80",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "habbicon_template",
+                                  "visible": "false"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "bitmap",
+                                    "typeId": 21,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "80",
+                                      "height": "80",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "habbicon_bitmap"
+                                    },
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "11",
+                              "width": "0",
+                              "height": "7",
+                              "params": "16",
+                              "style": "3",
+                              "name": "spacing"
+                            },
+                            "children": []
+                          }
+                        ]
                       }
                     ]
                   }
@@ -180,9 +266,9 @@
                 "typeId": 16,
                 "attributes": {
                   "x": "0",
-                  "y": "45",
-                  "width": "4",
-                  "height": "4",
+                  "y": "33",
+                  "width": "131",
+                  "height": "16",
                   "params": "147472",
                   "style": "100",
                   "name": "post_time",
@@ -199,7 +285,7 @@
                 "attributes": {
                   "x": "-1",
                   "y": "49",
-                  "width": "226",
+                  "width": "250",
                   "height": "16",
                   "params": "147473",
                   "style": "100",
@@ -213,7 +299,7 @@
                     "attributes": {
                       "x": "0",
                       "y": "0",
-                      "width": "226",
+                      "width": "250",
                       "height": "16",
                       "params": "16400",
                       "style": "100",

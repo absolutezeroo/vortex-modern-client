@@ -1,13 +1,13 @@
 {
   "name": "crackable_furni_view",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\390_crackable_furni_view.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\777_crackable_furni_view.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "itemlist",
+        "tag": "itemlist_vertical",
         "typeId": 50,
         "attributes": {
           "x": "0",
@@ -27,8 +27,9 @@
               "width": "190",
               "height": "271",
               "params": "16",
-              "style": "1",
-              "name": "info_border"
+              "style": "2",
+              "name": "info_border",
+              "color": "0x03d3d3d"
             },
             "children": [
               {
@@ -48,7 +49,7 @@
                 "children": []
               },
               {
-                "tag": "itemlist",
+                "tag": "itemlist_vertical",
                 "typeId": 50,
                 "attributes": {
                   "x": "10",
@@ -75,6 +76,7 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "font_face": "Volter Bold",
                       "text_color": 16777215,
                       "mouse_wheel_enabled": false,
@@ -179,6 +181,7 @@
                         },
                         "children": [],
                         "vars": {
+                          "antialias_type": "advanced",
                           "text_color": 16777215,
                           "mouse_wheel_enabled": false,
                           "sharpness": 0,
@@ -222,6 +225,7 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "text_color": 16777215,
                       "mouse_wheel_enabled": false,
                       "sharpness": 0,
@@ -247,6 +251,7 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "text_color": 16777215,
                       "margin_top": 6,
                       "mouse_wheel_enabled": false,
@@ -277,7 +282,7 @@
                         "attributes": {
                           "x": "0",
                           "y": "0",
-                          "width": "125",
+                          "width": "60",
                           "height": "22",
                           "params": "131089",
                           "style": "0",
@@ -285,63 +290,79 @@
                           "caption": "${infostand.button.buy}",
                           "tags": "catalog"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_regular"
+                        }
                       },
                       {
                         "tag": "button",
                         "typeId": 60,
                         "attributes": {
-                          "x": "130",
+                          "x": "65",
                           "y": "0",
-                          "width": "128",
+                          "width": "130",
                           "height": "22",
                           "params": "131089",
                           "style": "0",
                           "name": "rent_button",
                           "caption": "${infostand.button.rent}"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_regular"
+                        }
                       },
                       {
                         "tag": "button",
                         "typeId": 60,
                         "attributes": {
-                          "x": "263",
+                          "x": "200",
                           "y": "0",
-                          "width": "141",
+                          "width": "143",
                           "height": "22",
                           "params": "131089",
                           "style": "0",
                           "name": "extend_button",
                           "caption": "${infostand.button.extend}"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_regular"
+                        }
                       },
                       {
                         "tag": "button",
                         "typeId": 60,
                         "attributes": {
-                          "x": "409",
+                          "x": "348",
                           "y": "0",
-                          "width": "141",
+                          "width": "143",
                           "height": "22",
                           "params": "131089",
                           "style": "0",
                           "name": "buyout_button",
                           "caption": "${infostand.button.buyout}"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_regular"
+                        }
                       }
                     ],
                     "vars": {
-                      "spacing": 5
+                      "spacing": 5,
+                      "scroll_step_h": 25,
+                      "scroll_step_v": 25
                     }
                   }
                 ],
                 "vars": {
                   "spacing": 5,
                   "scale_to_fit_items": true,
-                  "resize_on_item_update": true
+                  "resize_on_item_update": true,
+                  "scroll_step_h": 25,
+                  "scroll_step_v": 25
                 }
               }
             ]
@@ -365,70 +386,86 @@
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "132",
+                  "width": "134",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
                   "name": "move",
                   "caption": "${infostand.button.move}"
                 },
-                "children": []
+                "children": [],
+                "vars": {
+                  "text_style": "button_regular"
+                }
               },
               {
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "142",
+                  "x": "144",
                   "y": "0",
-                  "width": "139",
+                  "width": "141",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
                   "name": "rotate",
                   "caption": "${infostand.button.rotate}"
                 },
-                "children": []
+                "children": [],
+                "vars": {
+                  "text_style": "button_regular"
+                }
               },
               {
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "291",
+                  "x": "295",
                   "y": "0",
-                  "width": "137",
+                  "width": "139",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
                   "name": "pickup",
                   "caption": "${infostand.button.pickup}"
                 },
-                "children": []
+                "children": [],
+                "vars": {
+                  "text_style": "button_regular"
+                }
               },
               {
                 "tag": "button",
                 "typeId": 60,
                 "attributes": {
-                  "x": "438",
+                  "x": "444",
                   "y": "0",
-                  "width": "125",
+                  "width": "126",
                   "height": "25",
                   "params": "131089",
                   "style": "1",
                   "name": "use",
                   "caption": "${infostand.button.use}"
                 },
-                "children": []
+                "children": [],
+                "vars": {
+                  "text_style": "button_regular"
+                }
               }
             ],
             "vars": {
-              "spacing": 10
+              "spacing": 10,
+              "scroll_step_h": 25,
+              "scroll_step_v": 25
             }
           }
         ],
         "vars": {
           "spacing": 10,
           "scale_to_fit_items": true,
-          "resize_on_item_update": true
+          "resize_on_item_update": true,
+          "scroll_step_h": 25,
+          "scroll_step_v": 25
         }
       }
     ]

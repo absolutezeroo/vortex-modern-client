@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_bubble_pointer_down_7",
   "name": "bubble_pointer_down_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\16_bubble_pointer_down_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\35_bubble_pointer_down_skin.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },

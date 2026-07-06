@@ -1,6 +1,6 @@
 {
   "name": "purchaseWidget",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\170_purchaseWidget.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\290_purchaseWidget.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

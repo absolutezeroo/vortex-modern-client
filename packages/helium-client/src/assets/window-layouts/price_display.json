@@ -1,6 +1,6 @@
 {
   "name": "price_display",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\206_price_display.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\265_price_display.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,7 +12,7 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "55",
+          "width": "60",
           "height": "21",
           "params": "147472",
           "style": "0",
@@ -20,10 +20,24 @@
         },
         "children": [
           {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "1",
+              "height": "1",
+              "params": "16",
+              "style": "3",
+              "name": "spacing"
+            },
+            "children": []
+          },
+          {
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "0",
+              "x": "2",
               "y": "1",
               "width": "4",
               "height": "4",
@@ -45,11 +59,11 @@
             "tag": "icon",
             "typeId": 1,
             "attributes": {
-              "x": "5",
+              "x": "7",
               "y": "0",
               "width": "22",
               "height": "22",
-              "params": "16",
+              "params": "3296272",
               "style": "0",
               "name": "unit_0"
             },
@@ -59,7 +73,7 @@
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "28",
+              "x": "30",
               "y": "1",
               "width": "4",
               "height": "4",
@@ -81,13 +95,27 @@
             "tag": "icon",
             "typeId": 1,
             "attributes": {
-              "x": "33",
+              "x": "35",
               "y": "0",
               "width": "22",
               "height": "22",
-              "params": "16",
+              "params": "3295248",
               "style": "0",
               "name": "unit_1"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "58",
+              "y": "0",
+              "width": "2",
+              "height": "1",
+              "params": "16",
+              "style": "3",
+              "name": "spacing"
             },
             "children": []
           }
@@ -100,6 +128,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 55,
+  "layoutWidth": 60,
   "layoutHeight": 21
 }

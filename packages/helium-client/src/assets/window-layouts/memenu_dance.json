@@ -1,76 +1,131 @@
 {
   "name": "memenu_dance",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\89_memenu_dance.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\678_memenu_dance.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "border",
-        "typeId": 30,
+        "tag": "container",
+        "typeId": 4,
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "180",
-          "height": "140",
-          "params": "0",
-          "style": "6",
-          "name": "dance_container",
-          "color": "0x079756e"
+          "width": "163",
+          "height": "208",
+          "params": "16",
+          "style": "0",
+          "name": "dance_container"
         },
         "children": [
           {
-            "tag": "text",
-            "typeId": 10,
+            "tag": "border",
+            "typeId": 30,
             "attributes": {
-              "x": "20",
-              "y": "5",
-              "width": "141",
-              "height": "17",
-              "params": "786640",
-              "style": "3",
-              "name": "settings_title",
-              "caption": "${widget.memenu.settings}",
-              "width_max": "150"
-            },
-            "children": [],
-            "vars": {
-              "auto_size": "left",
-              "text_color": 16777215,
-              "mouse_wheel_enabled": false,
-              "spacing": 0,
-              "leading": 0
-            }
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "5",
-              "y": "22",
-              "width": "160",
-              "height": "1",
+              "x": "0",
+              "y": "0",
+              "width": "163",
+              "height": "181",
               "params": "16",
-              "style": "3",
-              "name": "line"
+              "style": "1",
+              "name": "dance_border"
             },
-            "children": []
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "62",
+                  "y": "5",
+                  "width": "38",
+                  "height": "13",
+                  "params": "786640",
+                  "style": "0",
+                  "name": "dance_title",
+                  "caption": "${widget.memenu.dance}",
+                  "width_max": "150"
+                },
+                "children": [],
+                "vars": {
+                  "font_face": "Volter Bold",
+                  "font_size": 9,
+                  "text_color": 16777215,
+                  "embed_fonts": true,
+                  "mouse_wheel_enabled": true,
+                  "auto_size": "left"
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "22",
+                  "width": "152",
+                  "height": "1",
+                  "params": "16",
+                  "style": "0",
+                  "name": "line",
+                  "color": "0xff2f2f2f",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "9",
+                  "y": "33",
+                  "width": "145",
+                  "height": "140",
+                  "params": "17",
+                  "style": "0",
+                  "name": "buttonContainer"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "145",
+                      "height": "50",
+                      "params": "16",
+                      "style": "0",
+                      "name": "club_info",
+                      "caption": "${widget.memenu.dance.clubinfo}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter",
+                      "font_size": 9,
+                      "text_color": 16777215,
+                      "embed_fonts": true,
+                      "word_wrap": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 4
+                }
+              }
+            ]
           },
           {
             "tag": "button",
             "typeId": 60,
             "attributes": {
-              "x": "10",
-              "y": "55",
-              "width": "160",
+              "x": "0",
+              "y": "182",
+              "width": "50",
               "height": "22",
               "params": "131089",
-              "style": "3",
-              "name": "character_settings",
-              "caption": "${widget.memenu.settings.character}",
-              "width_min": "160",
-              "width_max": "160"
+              "style": "1",
+              "name": "back_btn",
+              "caption": "${generic.back}"
             },
             "children": []
           },
@@ -78,56 +133,14 @@
             "tag": "button",
             "typeId": 60,
             "attributes": {
-              "x": "10",
-              "y": "30",
-              "width": "160",
+              "x": "52",
+              "y": "182",
+              "width": "110",
               "height": "22",
               "params": "131089",
-              "style": "3",
-              "name": "sound_settings",
-              "caption": "${widget.memenu.settings.audio}",
-              "width_min": "160",
-              "width_max": "160"
-            },
-            "children": []
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "11",
-              "y": "81",
-              "width": "159",
-              "height": "20",
-              "params": "16",
-              "style": "3",
-              "name": "identity_text",
-              "caption": "${widget.memenu.settings.no_identity}",
-              "visible": "false"
-            },
-            "children": [],
-            "vars": {
-              "text_color": 16777215,
-              "mouse_wheel_enabled": false,
-              "word_wrap": true,
-              "spacing": 0,
-              "leading": 0
-            }
-          },
-          {
-            "tag": "button",
-            "typeId": 60,
-            "attributes": {
-              "x": "10",
-              "y": "102",
-              "width": "60",
-              "height": "28",
-              "params": "131089",
-              "style": "3",
-              "name": "back",
-              "caption": "${generic.back}",
-              "width_min": "60",
-              "width_max": "60"
+              "style": "1",
+              "name": "stop_dancing_button",
+              "caption": "${widget.memenu.dance.stop}"
             },
             "children": []
           }
@@ -137,6 +150,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 180,
-  "layoutHeight": 140
+  "layoutWidth": 20,
+  "layoutHeight": 20
 }

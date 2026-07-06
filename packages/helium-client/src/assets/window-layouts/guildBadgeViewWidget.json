@@ -1,6 +1,6 @@
 {
   "name": "guildBadgeViewWidget",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\246_guildBadgeViewWidget.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\350_guildBadgeViewWidget.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

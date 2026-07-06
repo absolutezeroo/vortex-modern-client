@@ -1,6 +1,6 @@
 {
   "name": "video_viewer",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\570_video_viewer.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\12_video_viewer.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

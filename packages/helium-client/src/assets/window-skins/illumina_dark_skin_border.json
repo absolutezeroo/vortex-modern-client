@@ -1,7 +1,7 @@
 {
   "id": "illumina_dark_skin_border",
   "name": "illumina_dark_skin_border",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\47_illumina_dark_skin_border.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\117_illumina_dark_skin_border.xml",
   "variables": {
     "asset": "habbo_skin_illumina_dark"
   },

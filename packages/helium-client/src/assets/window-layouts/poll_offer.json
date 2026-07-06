@@ -1,6 +1,6 @@
 {
   "name": "poll_offer",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\512_poll_offer.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\13_poll_offer.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

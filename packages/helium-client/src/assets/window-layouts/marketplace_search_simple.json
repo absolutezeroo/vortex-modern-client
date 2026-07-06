@@ -1,6 +1,6 @@
 {
   "name": "marketplace_search_simple",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\244_marketplace_search_simple.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\242_marketplace_search_simple.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -52,6 +52,42 @@
               "name": "sort_dropmenu"
             },
             "children": []
+          },
+          {
+            "tag": "checkbox",
+            "typeId": 70,
+            "attributes": {
+              "x": "10",
+              "y": "92",
+              "width": "16",
+              "height": "15",
+              "params": "17",
+              "style": "3",
+              "name": "combine_uniques_checkbox",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "29",
+              "y": "91",
+              "width": "218",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "caption": "${catalog.marketplace.combine_uniques}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 6710886,
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
           }
         ]
       }

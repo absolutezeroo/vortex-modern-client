@@ -1,6 +1,6 @@
 {
   "name": "room_queue",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\360_room_queue.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\730_room_queue.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

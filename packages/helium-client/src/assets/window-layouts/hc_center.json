@@ -1,6 +1,6 @@
 {
   "name": "hc_center",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\279_hc_center.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\340_hc_center.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,11 +10,11 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "0",
-          "y": "0",
+          "x": "58",
+          "y": "47",
           "width": "460",
           "height": "597",
-          "params": "33025",
+          "params": "32769",
           "style": "3",
           "name": "hc_center",
           "caption": "${generic.hccenter}",
@@ -23,7 +23,7 @@
         },
         "children": [
           {
-            "tag": "itemlist_vertical",
+            "tag": "itemlist",
             "typeId": 50,
             "attributes": {
               "x": "0",
@@ -52,7 +52,7 @@
                     "typeId": 23,
                     "attributes": {
                       "x": "0",
-                      "y": "0",
+                      "y": "1",
                       "width": "459",
                       "height": "137",
                       "params": "16",
@@ -93,7 +93,10 @@
                           "caption": "${hccenter.btn.buy}",
                           "color": "0x054c32e"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_shiny_bold"
+                        }
                       },
                       {
                         "tag": "button_thick",
@@ -109,7 +112,10 @@
                           "caption": "${hccenter.btn.earn}",
                           "color": "0x03399cc"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_shiny_bold"
+                        }
                       }
                     ],
                     "vars": {
@@ -195,7 +201,6 @@
                         "children": [],
                         "vars": {
                           "text_style": "u_bold",
-                          "mouse_wheel_enabled": false,
                           "spacing": 0,
                           "leading": 0,
                           "editable": false,
@@ -216,7 +221,6 @@
                         },
                         "children": [],
                         "vars": {
-                          "mouse_wheel_enabled": false,
                           "multiline": true,
                           "word_wrap": true,
                           "spacing": 0,
@@ -233,7 +237,7 @@
                 ]
               },
               {
-                "tag": "itemlist_vertical",
+                "tag": "itemlist",
                 "typeId": 50,
                 "attributes": {
                   "x": "20",
@@ -398,7 +402,6 @@
                         "children": [],
                         "vars": {
                           "text_color": 16777215,
-                          "mouse_wheel_enabled": false,
                           "multiline": true,
                           "word_wrap": true,
                           "spacing": 0,
@@ -421,7 +424,10 @@
                           "caption": "${hccenter.btn.gifts.view}",
                           "color": "0x03399cc"
                         },
-                        "children": []
+                        "children": [],
+                        "vars": {
+                          "text_style": "button_shiny_bold"
+                        }
                       }
                     ]
                   }
@@ -483,7 +489,6 @@
                     },
                     "children": [],
                     "vars": {
-                      "mouse_wheel_enabled": false,
                       "multiline": true,
                       "word_wrap": true,
                       "spacing": 0,
@@ -634,7 +639,6 @@
                 "vars": {
                   "font_size": 22,
                   "text_color": 6828547,
-                  "mouse_wheel_enabled": false,
                   "spacing": 0,
                   "leading": 0,
                   "editable": false,
@@ -680,7 +684,6 @@
                 "vars": {
                   "font_size": 22,
                   "text_color": 6828547,
-                  "mouse_wheel_enabled": false,
                   "spacing": 0,
                   "leading": 0,
                   "editable": false,

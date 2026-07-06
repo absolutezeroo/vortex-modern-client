@@ -1,6 +1,6 @@
 {
   "name": "main_window",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\646_main_window.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\712_main_window.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -10,588 +10,245 @@
         "tag": "frame",
         "typeId": 35,
         "attributes": {
-          "x": "55",
-          "y": "140",
-          "width": "275",
-          "height": "105",
-          "params": "98305",
+          "x": "0",
+          "y": "0",
+          "width": "582",
+          "height": "437",
+          "params": "33025",
           "style": "0",
-          "name": "friendlist_window",
-          "caption": "${friendlist.friends}",
-          "color": "0xff418db0"
+          "name": "playlist.editor",
+          "caption": "${playlist.editor.title}",
+          "color": "0xff418caf",
+          "tags": "PLAYLIST_EDITOR"
         },
         "children": [
           {
-            "tag": "container",
-            "typeId": 4,
+            "tag": "border",
+            "typeId": 30,
             "attributes": {
-              "x": "1",
+              "x": "0",
               "y": "0",
-              "width": "275",
-              "height": "56",
-              "params": "0",
+              "width": "303",
+              "height": "407",
+              "params": "16",
               "style": "0",
-              "name": "main_content",
-              "caption": "${friendlist.friends}",
-              "color": "0xffff000000",
+              "name": "my_music_border",
               "background": "true"
             },
             "children": [
               {
-                "tag": "background",
-                "typeId": 2,
+                "tag": "itemgrid_vertical",
+                "typeId": 53,
                 "attributes": {
-                  "x": "0",
-                  "y": "0",
-                  "width": "273",
-                  "height": "10",
+                  "x": "2",
+                  "y": "89",
+                  "width": "277",
+                  "height": "315",
                   "params": "17",
                   "style": "0",
-                  "name": "bg",
-                  "caption": "${friendlist.friends}",
-                  "color": "0xffff000000",
-                  "background": "true"
+                  "name": "music_inventory_itemgrid",
+                  "tags": "MUSICINVENTORY"
+                },
+                "children": [],
+                "vars": {}
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "280",
+                  "y": "93",
+                  "width": "17",
+                  "height": "306",
+                  "params": "17",
+                  "style": "0",
+                  "name": "music_inventory_scrollbar"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "music_inventory_itemgrid"
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "295",
+                  "height": "79",
+                  "params": "16",
+                  "style": "2",
+                  "color": "0x060863b"
                 },
                 "children": []
               },
               {
-                "tag": "container",
-                "typeId": 4,
+                "tag": "bitmap",
+                "typeId": 21,
                 "attributes": {
-                  "x": "0",
-                  "y": "0",
-                  "width": "273",
-                  "height": "17",
-                  "params": "17",
+                  "x": "1",
+                  "y": "1",
+                  "width": "9",
+                  "height": "100",
+                  "params": "128",
                   "style": "0",
-                  "name": "flt_1",
-                  "caption": "${friendlist.friends}"
+                  "name": "music_inventory_splash_image"
                 },
-                "children": [
-                  {
-                    "tag": "container",
-                    "typeId": 4,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "273",
-                      "height": "17",
-                      "params": "1",
-                      "style": "0",
-                      "name": "header",
-                      "caption": "${friendlist.friends}",
-                      "id": "1"
-                    },
-                    "children": [
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "0",
-                          "y": "0",
-                          "width": "273",
-                          "height": "17",
-                          "params": "17",
-                          "style": "0",
-                          "name": "hdr_hilite",
-                          "caption": "${friendlist.friends}",
-                          "id": "1"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "0",
-                          "y": "0",
-                          "width": "273",
-                          "height": "17",
-                          "params": "17",
-                          "style": "0",
-                          "name": "hdr_friends",
-                          "caption": "${friendlist.friends}",
-                          "id": "1"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "text",
-                        "typeId": 10,
-                        "attributes": {
-                          "x": "4",
-                          "y": "2",
-                          "width": "219",
-                          "height": "15",
-                          "params": "0",
-                          "style": "0",
-                          "name": "caption_text",
-                          "caption": "${friendlist.friends} (0)"
-                        },
-                        "children": [],
-                        "vars": {
-                          "text_color": 6447714,
-                          "mouse_wheel_enabled": false,
-                          "sharpness": 0,
-                          "thickness": 0,
-                          "kerning": false,
-                          "spacing": 0,
-                          "leading": 0
-                        }
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "6",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_down_black",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "4",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_right_black",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "6",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_down_white",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "4",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_right_white",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "tag": "container",
-                "typeId": 4,
-                "attributes": {
-                  "x": "0",
-                  "y": "15",
-                  "width": "273",
-                  "height": "17",
-                  "params": "17",
-                  "style": "0",
-                  "name": "flt_2",
-                  "caption": "${friendlist.friends}"
-                },
-                "children": [
-                  {
-                    "tag": "container",
-                    "typeId": 4,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "273",
-                      "height": "17",
-                      "params": "1",
-                      "style": "0",
-                      "name": "header",
-                      "caption": "${friendlist.friends}",
-                      "id": "2"
-                    },
-                    "children": [
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "0",
-                          "y": "0",
-                          "width": "273",
-                          "height": "17",
-                          "params": "17",
-                          "style": "0",
-                          "name": "hdr_hilite",
-                          "caption": "${friendlist.friends}",
-                          "id": "2"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "0",
-                          "y": "0",
-                          "width": "273",
-                          "height": "17",
-                          "params": "17",
-                          "style": "0",
-                          "name": "hdr_friend_requests",
-                          "caption": "${friendlist.friends}",
-                          "id": "2"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "text",
-                        "typeId": 10,
-                        "attributes": {
-                          "x": "4",
-                          "y": "2",
-                          "width": "190",
-                          "height": "20",
-                          "params": "0",
-                          "style": "0",
-                          "name": "caption_text",
-                          "caption": "${friendlist.tab.friendrequests} (1)"
-                        },
-                        "children": [],
-                        "vars": {
-                          "text_color": 16185078,
-                          "mouse_wheel_enabled": false,
-                          "sharpness": 0,
-                          "thickness": 0,
-                          "kerning": false,
-                          "spacing": 0,
-                          "leading": 0
-                        }
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "6",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_down_black",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "4",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_right_black",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "6",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_down_white",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "4",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_right_white",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "tag": "container",
-                "typeId": 4,
-                "attributes": {
-                  "x": "0",
-                  "y": "30",
-                  "width": "273",
-                  "height": "17",
-                  "params": "17",
-                  "style": "0",
-                  "name": "flt_3",
-                  "caption": "${friendlist.friends}"
-                },
-                "children": [
-                  {
-                    "tag": "container",
-                    "typeId": 4,
-                    "attributes": {
-                      "x": "0",
-                      "y": "0",
-                      "width": "273",
-                      "height": "17",
-                      "params": "1",
-                      "style": "0",
-                      "name": "header",
-                      "caption": "${friendlist.friends}",
-                      "id": "3"
-                    },
-                    "children": [
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "0",
-                          "y": "0",
-                          "width": "273",
-                          "height": "17",
-                          "params": "17",
-                          "style": "0",
-                          "name": "hdr_hilite",
-                          "caption": "${friendlist.friends}",
-                          "id": "3"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "0",
-                          "y": "0",
-                          "width": "273",
-                          "height": "17",
-                          "params": "17",
-                          "style": "0",
-                          "name": "hdr_search",
-                          "caption": "${friendlist.friends}",
-                          "id": "3"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "text",
-                        "typeId": 10,
-                        "attributes": {
-                          "x": "4",
-                          "y": "2",
-                          "width": "190",
-                          "height": "20",
-                          "params": "0",
-                          "style": "0",
-                          "name": "caption_text",
-                          "caption": "${generic.search} (5)"
-                        },
-                        "children": [],
-                        "vars": {
-                          "text_color": 15724527,
-                          "mouse_wheel_enabled": false,
-                          "sharpness": 0,
-                          "thickness": 0,
-                          "kerning": false,
-                          "spacing": 0,
-                          "leading": 0
-                        }
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "6",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_down_black",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "4",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_right_black",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "6",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_down_white",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      },
-                      {
-                        "tag": "bitmap",
-                        "typeId": 21,
-                        "attributes": {
-                          "x": "71",
-                          "y": "4",
-                          "width": "10",
-                          "height": "10",
-                          "params": "16",
-                          "style": "0",
-                          "name": "arrow_right_white",
-                          "caption": "${friendlist.friends}"
-                        },
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "5",
-              "y": "44",
-              "width": "210",
-              "height": "30",
-              "params": "16",
-              "style": "0",
-              "name": "footer"
-            },
-            "children": [
-              {
-                "tag": "container_button",
-                "typeId": 41,
-                "attributes": {
-                  "x": "0",
-                  "y": "7",
-                  "width": "90",
-                  "height": "20",
-                  "params": "17",
-                  "style": "0",
-                  "name": "open_edit_ctgs_but",
-                  "caption": "${friendlist.friends}"
-                },
-                "children": [
-                  {
-                    "tag": "bitmap",
-                    "typeId": 21,
-                    "attributes": {
-                      "x": "5",
-                      "y": "5",
-                      "width": "10",
-                      "height": "10",
-                      "params": "17",
-                      "style": "0",
-                      "name": "open_edit_ctgs",
-                      "caption": "${friendlist.friends}"
-                    },
-                    "children": []
-                  },
-                  {
-                    "tag": "text",
-                    "typeId": 10,
-                    "attributes": {
-                      "x": "20",
-                      "y": "3",
-                      "width": "100",
-                      "height": "20",
-                      "params": "16",
-                      "style": "0",
-                      "caption": "${friendlist.settings}"
-                    },
-                    "children": [],
-                    "vars": {
-                      "mouse_wheel_enabled": false,
-                      "sharpness": 0,
-                      "thickness": 0,
-                      "kerning": false,
-                      "spacing": 0,
-                      "leading": 0
-                    }
-                  }
-                ]
+                "children": []
               },
               {
                 "tag": "text",
                 "typeId": 10,
                 "attributes": {
-                  "x": "100",
-                  "y": "11",
-                  "width": "110",
-                  "height": "20",
-                  "params": "145",
+                  "x": "96",
+                  "y": "29",
+                  "width": "234",
+                  "height": "26",
+                  "params": "16",
                   "style": "0",
-                  "name": "info_text",
-                  "caption": "PH Info"
+                  "caption": "${playlist.editor.my.music}"
                 },
                 "children": [],
                 "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 32,
                   "text_color": 16777215,
+                  "text_style": "bold",
                   "mouse_wheel_enabled": false,
-                  "sharpness": 0,
-                  "thickness": 0,
-                  "kerning": false,
-                  "spacing": 0,
-                  "leading": 0
+                  "bold": true
                 }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "1",
+                  "y": "295",
+                  "width": "278",
+                  "height": "110",
+                  "params": "0",
+                  "style": "0",
+                  "name": "preview_play_container"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "307",
+              "y": "0",
+              "width": "263",
+              "height": "407",
+              "params": "16",
+              "style": "0",
+              "name": "playlist_border",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "2",
+                  "y": "89",
+                  "width": "236",
+                  "height": "262",
+                  "params": "17",
+                  "style": "0",
+                  "name": "playlist_editor_itemlist"
+                },
+                "children": [],
+                "vars": {}
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "239",
+                  "y": "94",
+                  "width": "17",
+                  "height": "254",
+                  "params": "17",
+                  "style": "0",
+                  "name": "playlist_scrollbar"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "playlist_editor_itemlist"
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "255",
+                  "height": "79",
+                  "params": "16",
+                  "style": "2",
+                  "color": "0x034637a"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "1",
+                  "y": "1",
+                  "width": "100",
+                  "height": "100",
+                  "params": "16",
+                  "style": "0",
+                  "name": "playlist_editor_splash_image"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "96",
+                  "y": "29",
+                  "width": "217",
+                  "height": "26",
+                  "params": "16",
+                  "style": "0",
+                  "caption": "${playlist.editor.playlist}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 32,
+                  "text_color": 16777215,
+                  "text_style": "bold",
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "1",
+                  "y": "350",
+                  "width": "261",
+                  "height": "56",
+                  "params": "16",
+                  "style": "0",
+                  "name": "now_playing_container",
+                  "background": "true"
+                },
+                "children": []
               }
             ]
           }
@@ -606,18 +263,12 @@
               "blurY": "4"
             }
           }
-        ],
-        "vars": {
-          "margin_left": 0,
-          "margin_top": 25,
-          "margin_right": 0,
-          "margin_bottom": 0
-        }
+        ]
       }
     ]
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 275,
-  "layoutHeight": 105
+  "layoutWidth": 582,
+  "layoutHeight": 437
 }

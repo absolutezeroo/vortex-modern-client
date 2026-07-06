@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_border_slot_2",
   "name": "thumb_border_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\8_thumb_border_skin.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\21_thumb_border_skin.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

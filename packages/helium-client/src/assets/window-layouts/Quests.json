@@ -1,6 +1,6 @@
 {
   "name": "Quests",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\130_Quests.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\52_Quests.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -13,7 +13,7 @@
           "x": "0",
           "y": "0",
           "width": "512",
-          "height": "416",
+          "height": "448",
           "params": "32769",
           "style": "3",
           "name": "quest_main_window",
@@ -34,7 +34,8 @@
               "name": "quest_list",
               "background": "true"
             },
-            "children": []
+            "children": [],
+            "vars": {}
           },
           {
             "tag": "scrollbar_vertical",
@@ -43,7 +44,7 @@
               "x": "484",
               "y": "7",
               "width": "17",
-              "height": "364",
+              "height": "362",
               "params": "2113",
               "style": "0",
               "name": "scroller",
@@ -53,11 +54,64 @@
             "vars": {
               "scrollable": "quest_list"
             }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "7",
+              "y": "370",
+              "width": "493",
+              "height": "36",
+              "params": "1040",
+              "style": "3",
+              "name": "hc_info_cont"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "7",
+                  "y": "13",
+                  "width": "349",
+                  "height": "17",
+                  "params": "3145744",
+                  "style": "3",
+                  "name": "hc_info_text",
+                  "caption": "You get double duckets as you are an HC member!"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "etching_position": "right",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "max_lines": 2,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "368",
+                  "y": "5",
+                  "width": "107",
+                  "height": "30",
+                  "params": "393297",
+                  "style": "5",
+                  "name": "get_hc_btn",
+                  "caption": "${generic.get_hc}",
+                  "color": "0x01a101"
+                },
+                "children": []
+              }
+            ]
           }
         ],
-        "vars": {
-          "test_id_key": "quests"
-        },
         "filters": [
           {
             "type": "DropShadowFilter",
@@ -74,6 +128,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 509,
-  "layoutHeight": 416
+  "layoutWidth": 512,
+  "layoutHeight": 448
 }

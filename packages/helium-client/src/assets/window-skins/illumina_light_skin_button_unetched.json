@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_button_unetched",
   "name": "illumina_light_skin_button_unetched",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\55_illumina_light_skin_button_unetched.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\131_illumina_light_skin_button_unetched.xml",
   "variables": {
     "asset": "illumina_light_button_unetched"
   },

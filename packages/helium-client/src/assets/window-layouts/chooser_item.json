@@ -1,6 +1,6 @@
 {
   "name": "chooser_item",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\564_chooser_item.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\725_chooser_item.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -12,11 +12,11 @@
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "160",
-          "height": "20",
-          "params": "145",
+          "width": "159",
+          "height": "18",
+          "params": "131217",
           "style": "0",
-          "color": "0xffeeeeee",
+          "color": "0xffffeeeeee",
           "background": "true",
           "treshold": "0"
         },
@@ -29,17 +29,20 @@
               "y": "2",
               "width": "152",
               "height": "16",
-              "params": "16",
+              "params": "144",
               "style": "0",
               "name": "itemtext",
               "caption": "${001_lorem_ipsum_title}"
             },
             "children": [],
             "vars": {
-              "font_face": "Volter",
-              "font_size": 9,
-              "text_color": 0,
-              "embed_fonts": true
+              "antialias_type": "advanced",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
             }
           }
         ]
@@ -48,6 +51,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 20,
-  "layoutHeight": 20
+  "layoutWidth": 159,
+  "layoutHeight": 18
 }

@@ -1,6 +1,6 @@
 {
   "name": "avatar_menu_widget",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\609_avatar_menu_widget.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\40_avatar_menu_widget.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -11,9 +11,9 @@
         "typeId": 45,
         "attributes": {
           "x": "0",
-          "y": "-585",
+          "y": "-530",
           "width": "151",
-          "height": "1381",
+          "height": "1462",
           "params": "1048865",
           "style": "0",
           "color": "0x06e6b67",
@@ -27,7 +27,7 @@
               "x": "0",
               "y": "0",
               "width": "143",
-              "height": "1377",
+              "height": "1458",
               "params": "12583056",
               "style": "0",
               "name": "border",
@@ -114,7 +114,7 @@
                   "x": "2",
                   "y": "28",
                   "width": "139",
-                  "height": "1321",
+                  "height": "1402",
                   "params": "8519824",
                   "style": "0",
                   "name": "buttons"
@@ -126,6 +126,64 @@
                     "attributes": {
                       "x": "1",
                       "y": "0",
+                      "width": "137",
+                      "height": "26",
+                      "params": "144",
+                      "style": "3",
+                      "name": "open_profile",
+                      "color": "0x00",
+                      "tags": "action"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "-3",
+                          "y": "-4",
+                          "width": "143",
+                          "height": "35",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "button",
+                          "color": "0x02d2a27",
+                          "tags": "action"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "3",
+                              "y": "9",
+                              "width": "137",
+                              "height": "16",
+                              "params": "144",
+                              "style": "0",
+                              "name": "label",
+                              "caption": "${infostand.button.open_profile}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "center",
+                              "font_size": 17,
+                              "text_color": 16777215,
+                              "text_style": "u_regular",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "27",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -183,7 +241,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "27",
+                      "y": "54",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -241,7 +299,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "54",
+                      "y": "81",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -299,12 +357,12 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "81",
+                      "y": "108",
                       "width": "137",
                       "height": "26",
                       "params": "144",
                       "style": "3",
-                      "name": "stargem",
+                      "name": "respect",
                       "color": "0x00",
                       "tags": "action"
                     },
@@ -335,7 +393,65 @@
                               "params": "144",
                               "style": "0",
                               "name": "label",
-                              "caption": "${profile.give_gem}"
+                              "caption": "${infostand.button.respect}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "center",
+                              "font_size": 17,
+                              "text_color": 16777215,
+                              "text_style": "u_regular",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "135",
+                      "width": "137",
+                      "height": "26",
+                      "params": "144",
+                      "style": "3",
+                      "name": "replenish_respect",
+                      "color": "0x00",
+                      "tags": "action"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "-3",
+                          "y": "-4",
+                          "width": "143",
+                          "height": "35",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "button",
+                          "color": "0x02d2a27",
+                          "tags": "action"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "3",
+                              "y": "9",
+                              "width": "137",
+                              "height": "16",
+                              "params": "144",
+                              "style": "0",
+                              "name": "label",
+                              "caption": "${infostand.button.replenish_respect}"
                             },
                             "children": [],
                             "vars": {
@@ -378,7 +494,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "108",
+                      "y": "162",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -436,7 +552,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "135",
+                      "y": "189",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -509,7 +625,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "162",
+                      "y": "216",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -582,7 +698,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "189",
+                      "y": "243",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -640,7 +756,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "216",
+                      "y": "270",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -713,7 +829,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "243",
+                      "y": "297",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -771,7 +887,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "270",
+                      "y": "324",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -829,7 +945,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "297",
+                      "y": "351",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -887,7 +1003,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "324",
+                      "y": "378",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -960,7 +1076,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "351",
+                      "y": "405",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1018,7 +1134,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "378",
+                      "y": "432",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1076,7 +1192,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "405",
+                      "y": "459",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1134,7 +1250,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "432",
+                      "y": "486",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1192,7 +1308,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "459",
+                      "y": "513",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1250,7 +1366,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "486",
+                      "y": "540",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1308,7 +1424,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "513",
+                      "y": "567",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1366,7 +1482,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "540",
+                      "y": "594",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1424,7 +1540,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "567",
+                      "y": "621",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1497,7 +1613,7 @@
                     "typeId": 53,
                     "attributes": {
                       "x": "1",
-                      "y": "594",
+                      "y": "648",
                       "width": "137",
                       "height": "25",
                       "params": "144",
@@ -1670,7 +1786,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "620",
+                      "y": "674",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1728,7 +1844,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "647",
+                      "y": "701",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1801,7 +1917,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "674",
+                      "y": "728",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1859,7 +1975,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "701",
+                      "y": "755",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1918,7 +2034,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "728",
+                      "y": "782",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -1976,7 +2092,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "755",
+                      "y": "809",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2034,7 +2150,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "782",
+                      "y": "836",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2092,7 +2208,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "809",
+                      "y": "863",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2150,7 +2266,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "836",
+                      "y": "890",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2267,7 +2383,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "863",
+                      "y": "917",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2325,7 +2441,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "890",
+                      "y": "944",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2383,7 +2499,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "917",
+                      "y": "971",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2441,7 +2557,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "944",
+                      "y": "998",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2499,7 +2615,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1052",
+                      "y": "971",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2558,7 +2674,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "971",
+                      "y": "1025",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2631,7 +2747,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "998",
+                      "y": "1052",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2689,7 +2805,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1025",
+                      "y": "1079",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2747,7 +2863,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1052",
+                      "y": "1106",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2805,7 +2921,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1079",
+                      "y": "1133",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2863,7 +2979,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1106",
+                      "y": "1160",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2921,7 +3037,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1133",
+                      "y": "1187",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -2979,7 +3095,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1160",
+                      "y": "1214",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -3037,7 +3153,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1187",
+                      "y": "1241",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -3095,7 +3211,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1214",
+                      "y": "1268",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -3153,7 +3269,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1241",
+                      "y": "1295",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -3211,7 +3327,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1268",
+                      "y": "1322",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -3270,7 +3386,7 @@
                     "typeId": 4,
                     "attributes": {
                       "x": "1",
-                      "y": "1295",
+                      "y": "1349",
                       "width": "137",
                       "height": "26",
                       "params": "144",
@@ -3323,6 +3439,64 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "1376",
+                      "width": "137",
+                      "height": "26",
+                      "params": "144",
+                      "style": "3",
+                      "name": "wired_inspect",
+                      "color": "0x00",
+                      "tags": "action"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "-3",
+                          "y": "-4",
+                          "width": "143",
+                          "height": "35",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "button",
+                          "color": "0x02d2a27",
+                          "tags": "action"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "3",
+                              "y": "9",
+                              "width": "137",
+                              "height": "16",
+                              "params": "144",
+                              "style": "0",
+                              "name": "label",
+                              "caption": "${infostand.button.wired_inspect}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "center",
+                              "font_size": 17,
+                              "text_color": 16777215,
+                              "text_style": "u_regular",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
                   }
                 ],
                 "vars": {
@@ -3336,7 +3510,7 @@
                 "typeId": 5,
                 "attributes": {
                   "x": "3",
-                  "y": "1349",
+                  "y": "1429",
                   "width": "136",
                   "height": "18",
                   "params": "1169",
@@ -3376,5 +3550,5 @@
   "vars": {},
   "filters": [],
   "layoutWidth": 151,
-  "layoutHeight": 1381
+  "layoutHeight": 1462
 }

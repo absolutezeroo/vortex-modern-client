@@ -1,6 +1,6 @@
 {
   "name": "habbo_window_layout_header_7",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\845_habbo_window_layout_header_7.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\372_habbo_window_layout_header_7.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -57,7 +57,7 @@
               "background": "false",
               "color": "0xffffffff",
               "tags": "_EXCLUDE, _INTERNAL, _COLORIZE, _CONTROLS",
-              "params": "80"
+              "params": "262224"
             },
             "children": [
               {
@@ -83,7 +83,7 @@
                   "style": "3",
                   "x": "23",
                   "y": "0",
-                  "width": "19",
+                  "width": "21",
                   "height": "20",
                   "tags": "_EXCLUDE, _INTERNAL, close",
                   "params": "17"
@@ -92,7 +92,8 @@
               }
             ],
             "vars": {
-              "spacing": 5
+              "spacing": 5,
+              "resize_on_item_update": true
             }
           }
         ]

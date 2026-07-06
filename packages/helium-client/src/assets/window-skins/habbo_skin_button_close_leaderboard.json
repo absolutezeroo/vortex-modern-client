@@ -1,0 +1,102 @@
+{
+  "id": "habbo_skin_button_close_leaderboard",
+  "name": "close_button_skin_leaderboard",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\113_close_button_skin_leaderboard.xml",
+  "variables": {
+    "asset": "leaderboard_button_close"
+  },
+  "templates": [
+    {
+      "name": "default_button_mode_leaderboard",
+      "asset": "leaderboard_button_close",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 15,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "hovering_button_mode_leaderboard",
+      "asset": "leaderboard_button_close",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "type": "bitmap",
+          "region": {
+            "x": 18,
+            "y": 0,
+            "width": 15,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "pressed_button_mode_leaderboard",
+      "asset": "leaderboard_button_close",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "type": "bitmap",
+          "region": {
+            "x": 37,
+            "y": 0,
+            "width": 15,
+            "height": 16
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "button_close_leaderboard",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button_close",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 15,
+            "height": 16
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "button_close_leaderboard",
+      "template": "default_button_mode_leaderboard"
+    },
+    {
+      "name": "hovering",
+      "layout": "button_close_leaderboard",
+      "template": "hovering_button_mode_leaderboard"
+    },
+    {
+      "name": "pressed",
+      "layout": "button_close_leaderboard",
+      "template": "pressed_button_mode_leaderboard"
+    }
+  ]
+}

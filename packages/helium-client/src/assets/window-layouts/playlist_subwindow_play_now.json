@@ -1,6 +1,6 @@
 {
   "name": "playlist_subwindow_play_now",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\506_playlist_subwindow_play_now.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\4_playlist_subwindow_play_now.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

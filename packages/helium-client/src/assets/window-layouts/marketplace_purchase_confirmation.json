@@ -1,6 +1,6 @@
 {
   "name": "marketplace_purchase_confirmation",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\292_purchase_confirmation.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\263_purchase_confirmation.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

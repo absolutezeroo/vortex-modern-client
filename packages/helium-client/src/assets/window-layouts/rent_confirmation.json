@@ -1,6 +1,6 @@
 {
   "name": "rent_confirmation",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\259_rent_confirmation.xml",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\239_rent_confirmation.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
