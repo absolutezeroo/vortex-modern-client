@@ -1,4 +1,3 @@
-import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IHabboCatalog} from '../IHabboCatalog';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IPurchasableOffer} from '../IPurchasableOffer';
@@ -9,8 +8,10 @@ import type {IPageLocalization} from './IPageLocalization';
  *
  * @see sources/win63_version/habbo/catalog/viewer/class_2109.as
  */
-export interface ICatalogViewer extends IDisposable
+export interface ICatalogViewer
 {
+    dispose(): void;
+
     showCatalogPage(
         pageId: number,
         layoutCode: string,

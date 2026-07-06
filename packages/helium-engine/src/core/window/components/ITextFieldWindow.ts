@@ -1,5 +1,6 @@
 import type {ITextWindow} from './ITextWindow';
 import type {IInteractiveWindow} from './IInteractiveWindow';
+import type {IFocusWindow} from './IFocusWindow';
 
 /**
  * Interface for editable text field windows.
@@ -9,12 +10,11 @@ import type {IInteractiveWindow} from './IInteractiveWindow';
  *
  * @see sources/win63_2021_version/com/sulake/core/window/components/ITextFieldWindow.as
  */
-export interface ITextFieldWindow extends ITextWindow, IInteractiveWindow
+export interface ITextFieldWindow extends ITextWindow, IInteractiveWindow, IFocusWindow
 {
     editable: boolean;
     selectable: boolean;
     displayAsPassword: boolean;
-    readonly focused: boolean;
     readonly selectionBeginIndex: number;
     readonly selectionEndIndex: number;
     displayRaw: boolean;

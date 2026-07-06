@@ -9,11 +9,14 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IProductData} from '@habbo/session/product/IProductData';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
+import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {CreditBalanceEvent} from '@habbo/communication/messages/incoming/inventory/purse/CreditBalanceEvent';
 import type {CreditBalanceEventParser} from '@habbo/communication/messages/parser/inventory/purse/CreditBalanceEventParser';
 import {ActivityPointsMessageEvent} from '@habbo/communication/messages/incoming/notifications/ActivityPointsMessageEvent';
@@ -41,6 +44,10 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _localization: IHabboLocalizationManager | null = null;
     private _sessionDataManager: ISessionDataManager | null = null;
     private _avatarRenderManager: IAvatarRenderManager | null = null;
+    private _roomEngine: IRoomEngine | null = null;
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::var_39 (main window)
+    // Set once createMainWindow() (Phase 5) exists; setLeftPaneVisibility() no-ops until then.
+    private _mainWindow: IWindowContainer | null = null;
     private _messageEvents: IMessageEvent[] = [];
     private _purse: Purse = new Purse();
     private _earnings: CatalogEarnings = new CatalogEarnings();
@@ -119,6 +126,14 @@ export class HabboCatalog extends Component implements IHabboCatalog
                 },
                 false
             ),
+            new ComponentDependency(
+                IID_RoomEngine,
+                (manager: IRoomEngine | null) =>
+                {
+                    this._roomEngine = manager;
+                },
+                false
+            ),
         ];
     }
 
@@ -132,6 +147,35 @@ export class HabboCatalog extends Component implements IHabboCatalog
     get sessionDataManager(): ISessionDataManager | null
     {
         return this._sessionDataManager;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get roomEngine()
+    get roomEngine(): IRoomEngine | null
+    {
+        return this._roomEngine;
+    }
+
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::setLeftPaneVisibility()
+    // Toggles the navigator/search pane's visibility on the catalog's main window
+    // (`navigationContainer`/`searchContainer`) - real logic, but a no-op until
+    // createMainWindow() (Phase 5: real openCatalog/loadCatalogPage wiring) exists.
+    public setLeftPaneVisibility(visible: boolean): void
+    {
+        if(!this._mainWindow) return;
+
+        const navigationContainer = this._mainWindow.findChildByName('navigationContainer');
+
+        if(navigationContainer)
+        {
+            navigationContainer.visible = visible;
+        }
+
+        const searchContainer = this._mainWindow.findChildByName('searchContainer');
+
+        if(searchContainer)
+        {
+            searchContainer.visible = visible;
+        }
     }
 
     protected override initComponent(): void
