@@ -5,6 +5,9 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalogPurse} from './purse/IHabboCatalogPurse';
 import type {ICatalogEarnings} from './ICatalogEarnings';
+import type {IProductData} from '@habbo/session/product/IProductData';
+import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
+import type {IPurchasableOffer} from './IPurchasableOffer';
 
 /**
  * Interface for the Habbo catalog.
@@ -51,10 +54,12 @@ export interface IHabboCatalog
     setupInventoryForRecycler(enabled: boolean): void;
     requestInventoryFurniToRecycler(): number;
     returnInventoryFurniFromRecycler(itemId: number): boolean;
-    getProductData(localizationId: string): unknown | null;
-    getFurnitureData(classId: number, productType: string): unknown | null;
+    getProductData(localizationId: string): IProductData | null;
+    getFurnitureData(classId: number, productType: string): IFurnitureData | null;
     getPixelEffectIcon(effectId: number): ImageBitmap | null;
     getSubscriptionProductIcon(productId: number): ImageBitmap | null;
+    isDraggable(offer: IPurchasableOffer): boolean;
+    setImageFromAsset(target: unknown, assetName: string | null, onAssetReady?: ((event: unknown) => void) | null): void;
     getPurse(): IHabboCatalogPurse;
     getEarnings(): ICatalogEarnings;
     getRecycler(): unknown | null;

@@ -5,15 +5,22 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import type {IProductData} from '@habbo/session/product/IProductData';
+import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
+import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
+import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {CreditBalanceEvent} from '@habbo/communication/messages/incoming/inventory/purse/CreditBalanceEvent';
 import type {CreditBalanceEventParser} from '@habbo/communication/messages/parser/inventory/purse/CreditBalanceEventParser';
 import {ActivityPointsMessageEvent} from '@habbo/communication/messages/incoming/notifications/ActivityPointsMessageEvent';
 import type {ActivityPointsMessageParser} from '@habbo/communication/messages/parser/notifications/ActivityPointsMessageParser';
 import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
 import type {IHabboCatalog} from './IHabboCatalog';
+import type {IPurchasableOffer} from './IPurchasableOffer';
 import {CatalogEarnings} from './CatalogEarnings';
 import {Purse} from './purse/Purse';
 import {PurseEvent} from './purse/PurseEvent';
@@ -32,6 +39,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _communication: IHabboCommunicationManager | null = null;
     private _windowManager: IHabboWindowManager | null = null;
     private _localization: IHabboLocalizationManager | null = null;
+    private _sessionDataManager: ISessionDataManager | null = null;
+    private _avatarRenderManager: IAvatarRenderManager | null = null;
     private _messageEvents: IMessageEvent[] = [];
     private _purse: Purse = new Purse();
     private _earnings: CatalogEarnings = new CatalogEarnings();
@@ -94,7 +103,35 @@ export class HabboCatalog extends Component implements IHabboCatalog
                 },
                 false
             ),
+            new ComponentDependency(
+                IID_SessionDataManager,
+                (manager: ISessionDataManager | null) =>
+                {
+                    this._sessionDataManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_AvatarRenderManager,
+                (manager: IAvatarRenderManager | null) =>
+                {
+                    this._avatarRenderManager = manager;
+                },
+                false
+            ),
         ];
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get avatarRenderManager()
+    get avatarRenderManager(): IAvatarRenderManager | null
+    {
+        return this._avatarRenderManager;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get sessionDataManager()
+    get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
     }
 
     protected override initComponent(): void
@@ -197,13 +234,19 @@ export class HabboCatalog extends Component implements IHabboCatalog
         return false;
     }
 
-    public getProductData(_localizationId: string): unknown | null
+    public getProductData(localizationId: string): IProductData | null
     {
-        return null;
+        return this._sessionDataManager?.getProductData(localizationId) ?? null;
     }
 
-    public getFurnitureData(_classId: number, _productType: string): unknown | null
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getFurnitureData()
+    // The decompiled source computes the result into a local but always `return null`s
+    // instead of returning it - reconstructed to return the looked-up data.
+    public getFurnitureData(classId: number, productType: string): IFurnitureData | null
     {
+        if(productType === 's') return this._sessionDataManager?.getFloorItemData(classId) ?? null;
+        if(productType === 'i') return this._sessionDataManager?.getWallItemData(classId) ?? null;
+
         return null;
     }
 
@@ -215,6 +258,32 @@ export class HabboCatalog extends Component implements IHabboCatalog
     public getSubscriptionProductIcon(_productId: number): ImageBitmap | null
     {
         return null;
+    }
+
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::isDraggable()
+    // Real logic needs room-session state (isRoomOwner/isGuildRoom/roomControllerLevel),
+    // the active navigator page's allowDragging, and Builders Club furniture-placement
+    // status (getBuilderFurniPlaceableStatusForOffer(), itself dependent on room-session
+    // furniture counts) - none of that catalog/room-session cross-wiring exists yet.
+    // Defaulting to false (drag-and-drop disabled) rather than guessing at the gating logic.
+    public isDraggable(_offer: IPurchasableOffer): boolean
+    {
+        return false;
+    }
+
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::setImageFromAsset()
+    // Real logic loads a named asset from the asset library and, on a cache miss, retrieves
+    // it via retrievePreviewAsset() (async network fetch) before applying it - that fetch
+    // path isn't wired up yet. The synchronous cache-hit path is implemented for real.
+    public setImageFromAsset(target: unknown, assetName: string | null, _onAssetReady?: ((event: unknown) => void) | null): void
+    {
+        if(!assetName || !this.assets) return;
+
+        const asset = this.assets.getAssetByName(assetName);
+
+        if(!asset || !target) return;
+
+        (target as {bitmap: ImageBitmap | null}).bitmap = asset.content as ImageBitmap;
     }
 
     public getPurse(): Purse

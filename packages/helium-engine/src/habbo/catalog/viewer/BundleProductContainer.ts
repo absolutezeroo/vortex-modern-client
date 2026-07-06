@@ -1,0 +1,93 @@
+import {Logger} from '@core/utils/Logger';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
+import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IGridItem} from './IGridItem';
+import type {IItemGrid} from './IItemGrid';
+import {ProductContainer} from './ProductContainer';
+
+const log = Logger.getLogger('BundleProductContainer');
+
+/**
+ * A bundle offer's grid item: shows a "deal" icon and populates a sub-grid of its products.
+ *
+ * @see sources/win63_version/habbo/catalog/viewer/BundleProductContainer.as
+ */
+export class BundleProductContainer extends ProductContainer implements IItemGrid
+{
+    private _dealIcon: ImageBitmap | null = null;
+
+    override dispose(): void
+    {
+        if(this.disposed) return;
+
+        this._dealIcon = null;
+        super.dispose();
+    }
+
+    override initProductIcon(_roomEngine: IRoomEngine, _stuffData?: unknown | null): void
+    {
+        const asset = this.catalog!.assets!.getAssetByName('ctlg_pic_deal_icon_narrow');
+
+        this._dealIcon = asset ? asset.content as ImageBitmap : null;
+
+        this.setIconImage(this._dealIcon, false);
+    }
+
+    populateItemGrid(grid: IItemGridWindow, layout: string): void
+    {
+        const template = this.catalog!.windowManager!.buildFromXML(layout) as IWindowContainer;
+
+        for(const product of this.offer.productContainer.products)
+        {
+            if(product.productType === 'b') continue;
+
+            const view = template.clone() as IWindowContainer;
+            const clubLevelIcon = view.findChildByName('clubLevelIcon');
+
+            if(clubLevelIcon != null)
+            {
+                clubLevelIcon.visible = false;
+            }
+
+            grid.addGridItem(view);
+            product.view = view;
+
+            const image = product.initIcon(this);
+
+            if(image != null)
+            {
+                image.close();
+            }
+
+            product.grid = this;
+        }
+    }
+
+    setBundleCounter(count: number): void
+    {
+        const bundleCounter = this._view!.findChildByName('bundleCounter') as unknown as ITextWindow | null;
+
+        if(bundleCounter != null)
+        {
+            bundleCounter.caption = count.toString();
+        }
+    }
+
+    select(item: IGridItem, _selected: boolean): void
+    {
+        log.debug(`Product Bundle, select item: ${item}`);
+    }
+
+    startDragAndDrop(_item: IGridItem): boolean
+    {
+        return false;
+    }
+
+    override set view(view: IWindowContainer)
+    {
+        super.view = view;
+        this.setBundleCounter(999);
+    }
+}
