@@ -356,8 +356,23 @@ export class WindowParser implements IWindowParser
         const variablesNode = getDirectChildByName(node, 'variables');
         const properties = this.parseProperties(variablesNode, sharedVars);
         const isInternalLayoutChild = tags !== null && tags.indexOf('_INTERNAL') !== -1;
-        const listParent = parent as unknown as { addListItem?: (item: IWindow) => IWindow };
-        const parentIsItemList = !isInternalLayoutChild && typeof listParent.addListItem === 'function';
+        const listParent = parent as unknown as {
+            addListItemAt?: (item: IWindow, index: number) => IWindow;
+            addGridItemAt?: (item: IWindow, index: number) => IWindow;
+            numGridItems?: number;
+            numListItems?: number;
+        };
+        // AS3 appends a layout child through the parent's IIterable iterator
+        // (`iterator[iterator.length] = child`). That iterator is type-specific:
+        // ItemListIterator routes to addListItemAt, ItemGridIterator routes to
+        // addGridItemAt. A grid must therefore append cells via its grid logic
+        // (columns), not as raw addListItemAt children - otherwise grid items land
+        // as side-by-side columns instead of stacking (e.g. Club Center's
+        // status_title / status_info).
+        const parentIsItemGrid = !isInternalLayoutChild && typeof listParent.addGridItemAt === 'function';
+        const parentIsItemList = !isInternalLayoutChild
+            && !parentIsItemGrid
+            && typeof listParent.addListItemAt === 'function';
 
         const window = parent.context.create(
             name,
@@ -367,7 +382,7 @@ export class WindowParser implements IWindowParser
             param,
             {x, y, width, height},
             null,
-            parentIsItemList ? null : parent,
+            (parentIsItemList || parentIsItemGrid) ? null : parent,
             id,
             tags,
             dynamicStyle,
@@ -485,12 +500,13 @@ export class WindowParser implements IWindowParser
             }
         }
 
-        if(parentIsItemList)
+        if(parentIsItemList || parentIsItemGrid)
         {
             // AS3: sources/win63_version/core/window/utils/WindowParser.as::parseAndConstruct()
-            // Flash creates list children without a parent and appends them through the
+            // Flash creates list/grid children without a parent and appends them through the
             // IIterable iterator. Internal layout children (_ITEMLIST/_SCROLLBAR) are
             // excluded above so ScrollableItemListWindow can build its own structure first.
+            // This center-repositioning block applies to any IIterable (list OR grid).
             if(window.x !== x || window.y !== y || window.width !== width || window.height !== height)
             {
                 if((param & WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK) === WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER)
@@ -504,7 +520,25 @@ export class WindowParser implements IWindowParser
                 }
             }
 
-            listParent.addListItem!(window);
+            if(parentIsItemGrid)
+            {
+                // AS3: sources/win63_2026_crypted_version core/window/iterators/ItemGridIterator.as::setProperty()
+                // The grid's iterator appends via `iterator[iterator.length] = child`, i.e.
+                // addGridItemAt(child, numGridItems), placing the child into a column cell
+                // (grid layout) rather than adding it as a raw list column.
+                listParent.addGridItemAt!(window, listParent.numGridItems ?? 0);
+            }
+            else
+            {
+                // AS3: sources/win63_2026_crypted_version core/window/iterators/ItemListIterator.as::setProperty()
+                // Flash appends via `iterator[iterator.length] = child`, which the Proxy's
+                // setProperty forwards to addListItemAt(child, index) - NOT addListItem(). That
+                // matters: addListItemAt skips addListItem's manual running-height bookkeeping
+                // and instead lets a single, full updateScrollAreaRegion() pass (with the child
+                // already attached) compute the list's size, matching how the real client avoids
+                // committing an under-built intermediate size mid-construction.
+                listParent.addListItemAt!(window, listParent.numListItems ?? 0);
+            }
         }
 
         if(namedWindows && name)

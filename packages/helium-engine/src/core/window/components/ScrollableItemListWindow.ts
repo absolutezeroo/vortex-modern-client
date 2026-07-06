@@ -477,9 +477,9 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         this.itemList?.populate(items);
     }
 
-    public scrollWithWheel(delta: number): void
+    public scrollWithWheel(delta: number, useHorizontal: boolean): boolean
     {
-        this.itemList?.scrollWithWheel(delta);
+        return this.itemList?.scrollWithWheel(delta, useHorizontal) ?? false;
     }
 
     public override getLayoutChildTarget(): IWindow

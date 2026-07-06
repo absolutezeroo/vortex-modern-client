@@ -59,7 +59,7 @@ export const WindowType =
         SCROLLABLE_ITEMLIST_HORIZONTAL: 57,
         BUTTON: 60,
         BUTTON_THICK: 61,
-        BUTTON_ICON: 62,
+        BUTTON_ICON: 79,
         BUTTON_UP: 63,
         BUTTON_DOWN: 64,
         BUTTON_LEFT: 65,

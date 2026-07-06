@@ -33,7 +33,7 @@ export interface IItemListWindow extends IWindowContainer, IScrollableWindow
 
     stopDragging(): void;
 
-    scrollWithWheel(delta: number): void;
+    scrollWithWheel(delta: number, useHorizontal: boolean): boolean;
 
     addListItem(item: IWindow): IWindow;
 

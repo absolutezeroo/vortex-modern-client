@@ -22,14 +22,14 @@ const LAYOUT_NAME = 'club_center';
  *
  * @see sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as
  */
-export class ClubCenterView implements IAvatarImageListener
+export class ClubCenterView implements IAvatarImageListener 
 {
     private _manager: IHabboClubCenter | null;
     private _window: IWindowContainer | null = null;
     private _avatarWidget: IRoomPreviewerWidget | null = null;
     private _figure: string;
 
-    constructor(manager: IHabboClubCenter, windowManager: IHabboWindowManager, figure: string)
+    constructor(manager: IHabboClubCenter, windowManager: IHabboWindowManager, figure: string) 
     {
         this._manager = manager;
         this._figure = figure;
@@ -40,14 +40,14 @@ export class ClubCenterView implements IAvatarImageListener
 
         this._window = built;
 
-        if(!this._manager.isKickbackEnabled())
+        if(!this._manager.isKickbackEnabled()) 
         {
             this.removeElement('special_breakdown_link');
             this.removeElement('special_content');
             this.removeElement('special_content_postit');
             this._window.invalidate();
         }
-        else
+        else 
         {
             this.setElementVisibility('special_amount_icon', false);
             this.setElementVisibility('special_amount_title', false);
@@ -69,171 +69,18 @@ export class ClubCenterView implements IAvatarImageListener
         this._window.procedure = this.onInput;
     }
 
-    get disposed(): boolean
+    get disposed(): boolean 
     {
         return this._manager === null;
     }
 
-    dispose(): void
-    {
-        if(this._window)
-        {
-            this._window.removeEventListener(WindowEvent.WE_RELOCATE, this.onRelocate);
-            this._window.dispose();
-            this._window = null;
-        }
-
-        this._manager = null;
-    }
-
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::dataReceived()
-    dataReceived(
-        kickbackData: ScrKickbackData | null,
-        purse: IHabboCatalogPurse | null,
-        giftsAvailable: number,
-        clubStatus: string,
-        badgeId: string | null
-    ): void
-    {
-        this.setElementText('status_title', `\${hccenter.status.${clubStatus}}`);
-
-        const badgeWidget = (this._window?.findChildByName('hc_badge') as IWidgetWindow | null)?.widget as {badgeId: string} | null;
-
-        if(badgeWidget)
-        {
-            badgeWidget.badgeId = badgeId ?? '';
-        }
-
-        if(!kickbackData || !purse)
-        {
-            this.setElementVisibility('gift_content', false);
-            this.setElementVisibility('special_container', false);
-
-            return;
-        }
-
-        this.setElementVisibility('gift_content', true);
-
-        let info = this.getLocalization(`hccenter.status.${clubStatus}.info`);
-
-        info = info.replace('%timeleft%', this.formatMinutes(purse.minutesUntilExpiration));
-        info = info.replace('%joindate%', kickbackData.firstSubscriptionDate);
-        info = info.replace('%streakduration%', this.formatDays(kickbackData.currentHcStreak));
-        this.setElementText('status_info', info);
-
-        if(this._manager?.isKickbackEnabled())
-        {
-            if(kickbackData.timeUntilPayday < 60)
-            {
-                this.setElementText('special_time_content', this.getLocalization('hccenter.special.time.soon'));
-            }
-            else
-            {
-                this.setElementText('special_time_content', this.formatMinutes(kickbackData.timeUntilPayday));
-            }
-
-            this.setElementVisibility('special_time_content', true);
-
-            const rewardSum = kickbackData.creditRewardForMonthlySpent + kickbackData.creditRewardForStreakBonus;
-
-            if(rewardSum > 0)
-            {
-                this.setElementVisibility('special_amount_icon', true);
-                this.setElementVisibility('special_amount_title', true);
-                this.setElementVisibility('special_amount_content', true);
-                this.setElementVisibility('special_breakdown_link', true);
-                this.setElementText('special_amount_content', this.getLocalization('hccenter.special.sum').replace('%credits%', String(rewardSum)));
-            }
-        }
-
-        const giftButton = this._window?.findChildByName('btn_gift') ?? null;
-
-        if(clubStatus === ClubStatus.ACTIVE && giftsAvailable > 0)
-        {
-            if(giftButton) giftButton.caption = '${hccenter.btn.gifts.redeem}';
-
-            this.setElementText('gift_info', this.getLocalization('hccenter.unclaimedgifts').replace('%unclaimedgifts%', String(giftsAvailable)));
-        }
-        else
-        {
-            if(giftButton) giftButton.caption = '${hccenter.btn.gifts.view}';
-
-            this.setElementText('gift_info', this.getLocalization('hccenter.gift.info'));
-        }
-
-        const buyButton = this._window?.findChildByName('btn_buy') ?? null;
-
-        if(buyButton)
-        {
-            buyButton.caption = clubStatus === ClubStatus.ACTIVE ? '${hccenter.btn.extend}' : '${hccenter.btn.buy}';
-        }
-    }
-
-    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::avatarImageReady()
-    avatarImageReady(figure: string): void
-    {
-        if(figure !== this._figure) return;
-
-        this.updateAvatarPreview();
-    }
-
-    getSpecialCalloutAnchor(): IWindow | null
-    {
-        return this._window?.findChildByName('special_content_postit') ?? null;
-    }
-
-    setVideoOfferButtonVisibility(visible: boolean, enabled: boolean): void
-    {
-        const button = this._window?.findChildByName('btn_earn');
-
-        if(!button) return;
-
-        button.visible = visible;
-
-        if(enabled)
-        {
-            button.enable();
-            button.alpha = 0;
-        }
-        else
-        {
-            button.disable();
-            button.alpha = 51;
-        }
-    }
-
-    private updateAvatarPreview(): void
-    {
-        if(!this._avatarWidget) return;
-
-        const avatarImage = this._manager?.avatarRenderManager?.createAvatarImage(this._figure, 'h', '', this, null) ?? null;
-
-        if(!avatarImage) return;
-
-        avatarImage.setDirection('full', 4);
-
-        const snapshot = ClubCenterView.snapshotCroppedImage(avatarImage);
-
-        if(snapshot)
-        {
-            this._avatarWidget.showPreview(snapshot);
-        }
-
-        avatarImage.dispose();
-    }
-
-    // TS-only: AvatarImage.getCroppedImage() returns a PixiJS Texture backed
-    // directly by an OffscreenCanvas (no GPU render pass involved — see
-    // AvatarImage.ts::getCroppedImage()), so it can be drawn straight onto a
-    // plain <canvas> without needing a PixiJS Renderer instance. Copying it
-    // into an independent canvas (rather than handing out the texture itself)
     // keeps the preview valid after avatarImage.dispose() runs right below.
-    private static snapshotCroppedImage(avatarImage: IAvatarImage): HTMLCanvasElement | null
+    private static snapshotCroppedImage(avatarImage: IAvatarImage): HTMLCanvasElement | null 
     {
         const texture = avatarImage.getCroppedImage('full') as {
             width: number;
             height: number;
-            source?: {resource?: CanvasImageSource};
+            source?: { resource?: CanvasImageSource };
         } | null;
 
         const resource = texture?.source?.resource;
@@ -254,18 +101,171 @@ export class ClubCenterView implements IAvatarImageListener
         return canvas;
     }
 
-    private onInput = (event: WindowEvent, window: IWindow): void =>
+    dispose(): void 
     {
-        if(event.type !== WindowMouseEvent.DOWN || !this._manager) return;
+        if(this._window) 
+        {
+            this._window.removeEventListener(WindowEvent.WE_RELOCATE, this.onRelocate);
+            this._window.dispose();
+            this._window = null;
+        }
 
-        // TEMP DEBUG - remove after diagnosing drag issue
-        // eslint-disable-next-line no-console
-        console.log('[ClubCenter DEBUG] WME_DOWN target:', window.name, 'params:', (window as unknown as {testParamFlag: (f: number) => boolean}).testParamFlag?.(0x8101), 'frame === window:', window === this._window);
+        this._manager = null;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::dataReceived()
+    dataReceived(
+        kickbackData: ScrKickbackData | null,
+        purse: IHabboCatalogPurse | null,
+        giftsAvailable: number,
+        clubStatus: string,
+        badgeId: string | null
+    ): void 
+    {
+        this.setElementText('status_title', `\${hccenter.status.${clubStatus}}`);
+
+        const badgeWidget = (this._window?.findChildByName('hc_badge') as IWidgetWindow | null)?.widget as {
+            badgeId: string
+        } | null;
+
+        if(badgeWidget) 
+        {
+            badgeWidget.badgeId = badgeId ?? '';
+        }
+
+        if(!kickbackData || !purse) 
+        {
+            this.setElementVisibility('gift_content', false);
+            this.setElementVisibility('special_container', false);
+
+            return;
+        }
+
+        this.setElementVisibility('gift_content', true);
+
+        let info = this.getLocalization(`hccenter.status.${clubStatus}.info`);
+
+        info = info.replace('%timeleft%', this.formatMinutes(purse.minutesUntilExpiration));
+        info = info.replace('%joindate%', kickbackData.firstSubscriptionDate);
+        info = info.replace('%streakduration%', this.formatDays(kickbackData.currentHcStreak));
+        this.setElementText('status_info', info);
+
+        if(this._manager?.isKickbackEnabled()) 
+        {
+            if(kickbackData.timeUntilPayday < 60) 
+            {
+                this.setElementText('special_time_content', this.getLocalization('hccenter.special.time.soon'));
+            }
+            else 
+            {
+                this.setElementText('special_time_content', this.formatMinutes(kickbackData.timeUntilPayday));
+            }
+
+            this.setElementVisibility('special_time_content', true);
+
+            const rewardSum = kickbackData.creditRewardForMonthlySpent + kickbackData.creditRewardForStreakBonus;
+
+            if(rewardSum > 0) 
+            {
+                this.setElementVisibility('special_amount_icon', true);
+                this.setElementVisibility('special_amount_title', true);
+                this.setElementVisibility('special_amount_content', true);
+                this.setElementVisibility('special_breakdown_link', true);
+                this.setElementText('special_amount_content', this.getLocalization('hccenter.special.sum').replace('%credits%', String(rewardSum)));
+            }
+        }
+
+        const giftButton = this._window?.findChildByName('btn_gift') ?? null;
+
+        if(clubStatus === ClubStatus.ACTIVE && giftsAvailable > 0) 
+        {
+            if(giftButton) giftButton.caption = '${hccenter.btn.gifts.redeem}';
+
+            this.setElementText('gift_info', this.getLocalization('hccenter.unclaimedgifts').replace('%unclaimedgifts%', String(giftsAvailable)));
+        }
+        else 
+        {
+            if(giftButton) giftButton.caption = '${hccenter.btn.gifts.view}';
+
+            this.setElementText('gift_info', this.getLocalization('hccenter.gift.info'));
+        }
+
+        const buyButton = this._window?.findChildByName('btn_buy') ?? null;
+
+        if(buyButton) 
+        {
+            buyButton.caption = clubStatus === ClubStatus.ACTIVE ? '${hccenter.btn.extend}' : '${hccenter.btn.buy}';
+        }
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/clubcenter/ClubCenterView.as::avatarImageReady()
+    avatarImageReady(figure: string): void 
+    {
+        if(figure !== this._figure) return;
+
+        this.updateAvatarPreview();
+    }
+
+    getSpecialCalloutAnchor(): IWindow | null 
+    {
+        return this._window?.findChildByName('special_content_postit') ?? null;
+    }
+
+    setVideoOfferButtonVisibility(visible: boolean, enabled: boolean): void 
+    {
+        const button = this._window?.findChildByName('btn_earn');
+
+        if(!button) return;
+
+        button.visible = visible;
+
+        if(enabled) 
+        {
+            button.enable();
+            button.alpha = 0;
+        }
+        else 
+        {
+            button.disable();
+            button.alpha = 51;
+        }
+    }
+
+    // TS-only: AvatarImage.getCroppedImage() returns a PixiJS Texture backed
+    // directly by an OffscreenCanvas (no GPU render pass involved — see
+    // AvatarImage.ts::getCroppedImage()), so it can be drawn straight onto a
+    // plain <canvas> without needing a PixiJS Renderer instance. Copying it
+    // into an independent canvas (rather than handing out the texture itself)
+
+    private updateAvatarPreview(): void 
+    {
+        if(!this._avatarWidget) return;
+
+        const avatarImage = this._manager?.avatarRenderManager?.createAvatarImage(this._figure, 'h', '', this, null) ?? null;
+
+        if(!avatarImage) return;
+
+        avatarImage.setDirection('full', 4);
+
+        const snapshot = ClubCenterView.snapshotCroppedImage(avatarImage);
+
+        if(snapshot) 
+        {
+            this._avatarWidget.showPreview(snapshot);
+        }
+
+        avatarImage.dispose();
+    }
+
+    // AS3: sources/win63_version reacts to WME_DOWN
+    private onInput = (event: WindowEvent, window: IWindow): void => 
+    {
+        if(event.type !== WindowMouseEvent.CLICK || !this._manager) return;
 
         event.stopImmediatePropagation();
         event.stopPropagation();
 
-        switch(window.name)
+        switch(window.name) 
         {
             case 'header_button_close':
                 this._manager.removeView();
@@ -282,40 +282,38 @@ export class ClubCenterView implements IAvatarImageListener
                 break;
             case 'btn_gift':
                 this._manager.openClubGiftPage();
-                this._manager.removeView();
                 break;
             case 'btn_buy':
                 this._manager.openPurchasePage();
-                this._manager.removeView();
                 break;
             case 'btn_earn':
-                (this._manager.offerCenter as {showVideo?: () => void} | null)?.showVideo?.();
+                (this._manager.offerCenter as { showVideo?: () => void } | null)?.showVideo?.();
                 break;
             default:
                 return;
         }
     };
 
-    private onRelocate = (): void =>
+    private onRelocate = (): void => 
     {
         this._manager?.removeBreakdown();
     };
 
-    private setElementText(name: string, text: string): void
+    private setElementText(name: string, text: string): void 
     {
         const el = this._window?.findChildByName(name) as ITextWindow | null;
 
         if(el) el.text = text;
     }
 
-    private setElementVisibility(name: string, visible: boolean): void
+    private setElementVisibility(name: string, visible: boolean): void 
     {
         const el = this._window?.findChildByName(name);
 
         if(el) el.visible = visible;
     }
 
-    private removeElement(name: string): void
+    private removeElement(name: string): void 
     {
         const el = this._window?.findChildByName(name);
 
@@ -324,19 +322,19 @@ export class ClubCenterView implements IAvatarImageListener
         (el.parent as IWindowContainer).removeChild(el);
     }
 
-    private getLocalization(key: string): string
+    private getLocalization(key: string): string 
     {
         if(!this._manager?.localization) return '';
 
         return this._manager.localization.getLocalization(key, key);
     }
 
-    private formatMinutes(minutes: number): string
+    private formatMinutes(minutes: number): string 
     {
         return FriendlyTime.getShortFriendlyTime(minutes * 60);
     }
 
-    private formatDays(days: number): string
+    private formatDays(days: number): string 
     {
         return FriendlyTime.getShortFriendlyTime(days * 86400);
     }

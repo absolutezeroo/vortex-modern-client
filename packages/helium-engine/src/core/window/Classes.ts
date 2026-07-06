@@ -207,9 +207,11 @@ export class Classes
             WindowType.SCROLLBAR_SLIDER_BAR_HORIZONTAL, WindowType.SCROLLBAR_SLIDER_BAR_VERTICAL,
         ], ScrollBarLiftController as any);
 
+        // AS3: sources/win63_2026_crypted_version core/window/Classes.as::init() — maps to the
+        // plain base WindowController, not InteractiveController.
         Classes.registerMultiple([
             WindowType.SCROLLBAR_SLIDER_TRACK_HORIZONTAL, WindowType.SCROLLBAR_SLIDER_TRACK_VERTICAL,
-        ], InteractiveController as any);
+        ], WindowController as any);
 
         Classes.registerMultiple([
             WindowType.SCROLLBAR_SLIDER_BUTTON_RIGHT, WindowType.SCROLLBAR_SLIDER_BUTTON_DOWN,

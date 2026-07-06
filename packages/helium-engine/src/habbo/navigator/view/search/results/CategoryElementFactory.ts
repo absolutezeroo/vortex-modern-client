@@ -231,9 +231,9 @@ export class CategoryElementFactory
                         currentTileContainer.addEventListener('WME_WHEEL', (event: WindowEvent) =>
                         {
                             const delta = (event as unknown as { delta?: number }).delta ?? 0;
-                            const list = this._blockResultsView?.itemList as unknown as { scrollWithWheel?: (value: number) => void } | null;
+                            const list = this._blockResultsView?.itemList as unknown as { scrollWithWheel?: (value: number, useHorizontal: boolean) => boolean } | null;
 
-                            list?.scrollWithWheel?.(delta);
+                            list?.scrollWithWheel?.(delta, false);
                         });
                     }
 

@@ -38,11 +38,10 @@ export class ItemGridController extends ItemListController implements IItemGridW
         procedure: ((event: WindowEvent, window: IWindow) => void) | null = null,
         tags: string[] | null = null,
         properties: unknown[] | null = null,
-        id: number = 0,
-        dynamicStyle: string = ''
+        id: number = 0
     )
     {
-        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
+        super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
         this._isHorizontal = (type !== 54);
         this._scaleToFitItems = true;
@@ -292,7 +291,12 @@ export class ItemGridController extends ItemListController implements IItemGridW
                 }
                 break;
             case 'WME_WHEEL':
-                this.scrollWithWheel((event as WindowMouseEvent).delta * 0.5);
+            case 'WME_WHEEL_HORIZONTAL':
+                this.scrollWithWheel(
+                    this.getScrollWheelDelta(event as WindowMouseEvent) * 0.5,
+                    event.type === 'WME_WHEEL_HORIZONTAL' || !!(event as WindowMouseEvent).shiftKey
+                );
+
                 return true;
         }
 
