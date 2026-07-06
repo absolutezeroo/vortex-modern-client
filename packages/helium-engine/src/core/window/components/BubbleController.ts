@@ -28,9 +28,9 @@ export class BubbleController extends FrameController implements IBubbleWindow
     private static readonly TAG_POINTER_RIGHT_ELEMENT: string = '_POINTER_RIGHT';
 
     // AS3: sources/win63_version/core/window/components/BubbleController.as::var_81
-    private _direction: string | undefined;
+    private _direction: string | null = null;
     // AS3: sources/win63_version/core/window/components/BubbleController.as::_pointerOffset
-    private _pointerOffset: number | undefined;
+    private _pointerOffset: number | null = null;
 
     // AS3: sources/win63_version/core/window/components/BubbleController.as::BubbleController()
     constructor(
@@ -48,6 +48,12 @@ export class BubbleController extends FrameController implements IBubbleWindow
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_version/core/window/components/BubbleController.as::BubbleController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._direction ??= 'down';
         this._pointerOffset ??= 0;

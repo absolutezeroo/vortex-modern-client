@@ -11,13 +11,19 @@ import {PIVOT_NAMES, pivotFromName} from '../enum/PivotPoint';
  * Base class for bitmap-based window types. Manages a single ImageBitmap
  * with pivot, stretch, zoom, wrap, greyscale, rotation, and etching properties.
  *
- * @see sources/win63_version/core/window/components/BitmapDataController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BitmapDataController.as
  */
-export class BitmapDataController extends WindowController
+export class BitmapDataController extends WindowController 
 {
     private _pivot: number = 0;
     private _etchingPointX: number = 0;
-    private _etchingPointY: number = -1;
+    // Declared without a non-default initializer: WindowController's
+    // applyProperties() phase dispatches to our `set etching()`/
+    // `set properties()` overrides before finalize() runs, so a non-default
+    // initializer here would clobber a value already applied from
+    // `properties`. Default primed with `??=` in finalize() instead (see
+    // StrokeController for the same pattern).
+    private _etchingPointY: number | null = null;
 
     constructor(
         name: string,
@@ -32,24 +38,22 @@ export class BitmapDataController extends WindowController
         properties: unknown[] | null = null,
         id: number = 0,
         dynamicStyle: string = ''
-    )
+    ) 
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
-
-        this._hasVisualContent = true;
     }
 
     protected _bitmapData: ImageBitmap | null = null;
 
     /**
-	 * The bitmap data for this window.
-	 */
-    public get bitmapData(): ImageBitmap | null
+     * The bitmap data for this window.
+     */
+    public get bitmapData(): ImageBitmap | null 
     {
         return this._bitmapData;
     }
 
-    public set bitmapData(value: ImageBitmap | null)
+    public set bitmapData(value: ImageBitmap | null) 
     {
         this._bitmapData = value;
     }
@@ -57,14 +61,14 @@ export class BitmapDataController extends WindowController
     private _stretchedX: boolean = false;
 
     /**
-	 * Whether the bitmap is stretched horizontally.
-	 */
-    public get stretchedX(): boolean
+     * Whether the bitmap is stretched horizontally.
+     */
+    public get stretchedX(): boolean 
     {
         return this._stretchedX;
     }
 
-    public set stretchedX(value: boolean)
+    public set stretchedX(value: boolean) 
     {
         this._stretchedX = value;
     }
@@ -72,26 +76,27 @@ export class BitmapDataController extends WindowController
     private _stretchedY: boolean = false;
 
     /**
-	 * Whether the bitmap is stretched vertically.
-	 */
-    public get stretchedY(): boolean
+     * Whether the bitmap is stretched vertically.
+     */
+    public get stretchedY(): boolean 
     {
         return this._stretchedY;
     }
 
-    public set stretchedY(value: boolean)
+    public set stretchedY(value: boolean) 
     {
         this._stretchedY = value;
     }
 
-    private _zoomX: number = 1.0;
+    // Declared without a non-default initializer: see `_etchingPointY` above for why.
+    private _zoomX: number | null = null;
 
     /**
-	 * Horizontal zoom factor.
-	 */
+     * Horizontal zoom factor.
+     */
     public get zoomX(): number
     {
-        return this._zoomX;
+        return this._zoomX ?? 1.0;
     }
 
     public set zoomX(value: number)
@@ -100,17 +105,18 @@ export class BitmapDataController extends WindowController
         this.fitSize();
     }
 
-    private _zoomY: number = 1.0;
+    // Declared without a non-default initializer: see `_etchingPointY` above for why.
+    private _zoomY: number | null = null;
 
     /**
-	 * Vertical zoom factor.
-	 */
-    public get zoomY(): number
+     * Vertical zoom factor.
+     */
+    public get zoomY(): number 
     {
-        return this._zoomY;
+        return this._zoomY ?? 1.0;
     }
 
-    public set zoomY(value: number)
+    public set zoomY(value: number) 
     {
         this._zoomY = value;
         this.fitSize();
@@ -119,14 +125,14 @@ export class BitmapDataController extends WindowController
     private _fitSizeToContents: boolean = false;
 
     /**
-	 * Whether to auto-resize the window to fit the bitmap dimensions.
-	 */
-    public get fitSizeToContents(): boolean
+     * Whether to auto-resize the window to fit the bitmap dimensions.
+     */
+    public get fitSizeToContents(): boolean 
     {
         return this._fitSizeToContents;
     }
 
-    public set fitSizeToContents(value: boolean)
+    public set fitSizeToContents(value: boolean) 
     {
         this._fitSizeToContents = value;
         this.fitSize();
@@ -135,14 +141,14 @@ export class BitmapDataController extends WindowController
     private _greyscale: boolean = false;
 
     /**
-	 * Whether the bitmap is rendered in greyscale.
-	 */
-    public get greyscale(): boolean
+     * Whether the bitmap is rendered in greyscale.
+     */
+    public get greyscale(): boolean 
     {
         return this._greyscale;
     }
 
-    public set greyscale(value: boolean)
+    public set greyscale(value: boolean) 
     {
         this._greyscale = value;
     }
@@ -150,30 +156,30 @@ export class BitmapDataController extends WindowController
     private _etchingColor: number = 0;
 
     /**
-	 * The etching color used for the shadow/outline effect.
-	 */
-    public get etchingColor(): number
+     * The etching color used for the shadow/outline effect.
+     */
+    public get etchingColor(): number 
     {
         return this._etchingColor;
     }
 
-    public set etchingColor(value: number)
+    public set etchingColor(value: number) 
     {
         this._etchingColor = value;
     }
 
     /**
-	 * Returns the etching offset point as [x, y].
-	 */
-    public get etchingPoint(): { x: number; y: number }
+     * Returns the etching offset point as [x, y].
+     */
+    public get etchingPoint(): { x: number; y: number } 
     {
-        return {x: this._etchingPointX, y: this._etchingPointY};
+        return {x: this._etchingPointX, y: this._etchingPointY ?? -1};
     }
 
     /**
-	 * Sets etching from an array [color, offsetX, offsetY].
-	 */
-    public set etching(value: unknown[])
+     * Sets etching from an array [color, offsetX, offsetY].
+     */
+    public set etching(value: unknown[]) 
     {
         this._etchingColor = value[0] as number;
         this._etchingPointX = value[1] as number;
@@ -183,14 +189,14 @@ export class BitmapDataController extends WindowController
     private _wrapX: boolean = false;
 
     /**
-	 * Whether the bitmap wraps horizontally.
-	 */
-    public get wrapX(): boolean
+     * Whether the bitmap wraps horizontally.
+     */
+    public get wrapX(): boolean 
     {
         return this._wrapX;
     }
 
-    public set wrapX(value: boolean)
+    public set wrapX(value: boolean) 
     {
         this._wrapX = value;
     }
@@ -198,14 +204,14 @@ export class BitmapDataController extends WindowController
     private _wrapY: boolean = false;
 
     /**
-	 * Whether the bitmap wraps vertically.
-	 */
-    public get wrapY(): boolean
+     * Whether the bitmap wraps vertically.
+     */
+    public get wrapY(): boolean 
     {
         return this._wrapY;
     }
 
-    public set wrapY(value: boolean)
+    public set wrapY(value: boolean) 
     {
         this._wrapY = value;
     }
@@ -213,14 +219,14 @@ export class BitmapDataController extends WindowController
     private _flipX: boolean = false;
 
     /**
-	 * Whether the bitmap is flipped horizontally.
-	 */
-    public get flipX(): boolean
+     * Whether the bitmap is flipped horizontally.
+     */
+    public get flipX(): boolean 
     {
         return this._flipX;
     }
 
-    public set flipX(value: boolean)
+    public set flipX(value: boolean) 
     {
         this._flipX = value;
     }
@@ -228,14 +234,14 @@ export class BitmapDataController extends WindowController
     private _flipY: boolean = false;
 
     /**
-	 * Whether the bitmap is flipped vertically.
-	 */
-    public get flipY(): boolean
+     * Whether the bitmap is flipped vertically.
+     */
+    public get flipY(): boolean 
     {
         return this._flipY;
     }
 
-    public set flipY(value: boolean)
+    public set flipY(value: boolean) 
     {
         this._flipY = value;
     }
@@ -243,32 +249,32 @@ export class BitmapDataController extends WindowController
     private _rotation: number = 0;
 
     /**
-	 * Rotation angle for the bitmap.
-	 */
-    public get rotation(): number
+     * Rotation angle for the bitmap.
+     */
+    public get rotation(): number 
     {
         return this._rotation;
     }
 
-    public set rotation(value: number)
+    public set rotation(value: number) 
     {
         this._rotation = value;
     }
 
     /**
-	 * The pivot point for bitmap rendering.
-	 */
-    public get pivotPoint(): number
+     * The pivot point for bitmap rendering.
+     */
+    public get pivotPoint(): number 
     {
         return this._pivot;
     }
 
-    public set pivotPoint(value: number)
+    public set pivotPoint(value: number) 
     {
         this._pivot = value;
     }
 
-    public override get properties(): unknown[]
+    public override get properties(): unknown[] 
     {
         const props = super.properties;
 
@@ -289,13 +295,13 @@ export class BitmapDataController extends WindowController
         return props;
     }
 
-    public override set properties(value: unknown[])
+    public override set properties(value: unknown[]) 
     {
-        for(const item of value)
+        for(const item of value) 
         {
             const prop = item as PropertyStruct;
 
-            switch(prop.key)
+            switch(prop.key) 
             {
                 case 'pivot_point':
                     this._pivot = this.readPivotPoint(prop.value);
@@ -342,7 +348,7 @@ export class BitmapDataController extends WindowController
         super.properties = value;
     }
 
-    public override clone(): IWindow
+    public override clone(): IWindow 
     {
         const cloned = super.clone() as BitmapDataController;
 
@@ -366,7 +372,7 @@ export class BitmapDataController extends WindowController
         return cloned;
     }
 
-    public override dispose(): void
+    public override dispose(): void 
     {
         if(this._disposed) return;
 
@@ -375,18 +381,29 @@ export class BitmapDataController extends WindowController
         super.dispose();
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BitmapDataController.as::BitmapDataController()
+    protected override finalize(): void
+    {
+        super.finalize();
+
+        this._hasVisualContent = true;
+        this._etchingPointY ??= -1;
+        this._zoomX ??= 1.0;
+        this._zoomY ??= 1.0;
+    }
+
     /**
-	 * Resizes the window to match the bitmap dimensions (scaled by zoom).
-	 */
-    protected fitSize(): void
+     * Resizes the window to match the bitmap dimensions (scaled by zoom).
+     */
+    protected fitSize(): void 
     {
         if(!this._fitSizeToContents || !this._bitmapData) return;
 
-        this.width = Math.abs(this._bitmapData.width * this._zoomX);
-        this.height = Math.abs(this._bitmapData.height * this._zoomY);
+        this.width = Math.abs(this._bitmapData.width * this.zoomX);
+        this.height = Math.abs(this._bitmapData.height * this.zoomY);
     }
 
-    private readBoolean(value: unknown): boolean
+    private readBoolean(value: unknown): boolean 
     {
         if(typeof value === 'boolean') return value;
         if(typeof value === 'string') return value.toLowerCase() === 'true';
@@ -394,18 +411,18 @@ export class BitmapDataController extends WindowController
         return !!value;
     }
 
-    private readNumber(value: unknown, fallback: number): number
+    private readNumber(value: unknown, fallback: number): number 
     {
         const parsed = Number(value);
 
         return Number.isFinite(parsed) ? parsed : fallback;
     }
 
-    private readPivotPoint(value: unknown): number
+    private readPivotPoint(value: unknown): number 
     {
         if(typeof value === 'number') return value;
 
-        if(typeof value === 'string')
+        if(typeof value === 'string') 
         {
             const pivot = pivotFromName(value);
 

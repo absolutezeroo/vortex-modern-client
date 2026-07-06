@@ -29,9 +29,9 @@ type WindowRectangle = { x: number; y: number; width: number; height: number };
  * In AS3 this also extended Sprite; in TypeScript we are engine-only
  * and expose rendering metadata through an optional {@link IGraphicContext}.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/WindowController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as
  */
-export class WindowController extends WindowModel implements IWindow, IGraphicContextHost 
+export class WindowController extends WindowModel implements IWindow, IGraphicContextHost
 {
     public static readonly TAG_EXCLUDE: string = '_EXCLUDE';
     public static readonly TAG_INTERNAL: string = '_INTERNAL';
@@ -55,7 +55,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     private _propertyMap: IPropertyMap | null = null;
     private _graphicsSetup: boolean = false;
     private _dynamicStyleInstance: import('./dynamicstyle/DynamicStyle').DynamicStyle | null = null;
-    // AS3: sources/win63_version/core/window/WindowController.as::_lookupCache
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::_lookupCache
     private _lookupCache: Map<string, IWindow> | null = null;
 
     constructor(
@@ -71,7 +71,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         properties: unknown[] | null = null,
         id: number = 0,
         dynamicStyle: string = ''
-    ) 
+    )
     {
         const effectiveRect = rect ?? WindowController.resolveDefaultRectangle(context, type, style);
 
@@ -79,31 +79,66 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
         this._uniqueId = WindowController._nextUniqueId++;
         this._parentRect = {x: 0, y: 0, width: 0, height: 0};
+    }
 
-        // Step 1: Get theme property map (AS3 line 86 — before layout)
-        try 
+    /**
+     * Orchestrates the post-construction phases below, in AS3 constructor
+     * order. Called by the factory once `new` has returned (the full
+     * prototype chain's constructors, and thus every subclass field
+     * initializer, have already run) so each phase observes a fully
+     * allocated object — matching the AS3 runtime, where these same steps
+     * execute inside this base constructor while subclass fields still sit
+     * at their type-default (subclass field initializers only run after
+     * this constructor returns).
+     *
+     * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController()
+     */
+    public completeConstruction(
+        properties: unknown[] | null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null,
+        parent: IWindow | null
+    ): void
+    {
+        this.resolveTheme();
+        this.buildLayoutChildren();
+        this.applyDefaultAttributes();
+        this.applyProperties(properties);
+        this.setProcedure(procedure);
+        this.attachToParent(parent);
+        this.finalize();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (theme lookup, line 92)
+    protected resolveTheme(): void
+    {
+        try
         {
-            this._propertyMap = context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(style) ?? null;
+            this._propertyMap = this._context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(this._style) ?? null;
         }
-        catch (_) 
+        catch (_)
         {
             // Theme not available during bootstrap
         }
+    }
 
-        // Step 4: Construct layout children (AS3 lines 93-110)
-        try 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 99-116)
+    protected buildLayoutChildren(): void
+    {
+        const effectiveRect: WindowRectangle = {x: this._x, y: this._y, width: this._width, height: this._height};
+
+        try
         {
-            const factory = context.getWindowFactory();
+            const factory = this._context.getWindowFactory();
 
-            if(factory) 
+            if(factory)
             {
-                const layout = factory.getLayoutByTypeAndStyle(type, style);
+                const layout = factory.getLayoutByTypeAndStyle(this._type, this._style);
 
-                if(layout) 
+                if(layout)
                 {
-                    const parser = context.getWindowParser();
+                    const parser = this._context.getWindowParser();
 
-                    if(parser) 
+                    if(parser)
                     {
                         // Set to layout's natural size before creating children
                         // (AS3 lines 95-100)
@@ -141,36 +176,39 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
                 }
             }
         }
-        catch (err) 
+        catch (err)
         {
-            log.warn(`Layout construction failed for type="${type}" style="${style}":`, err);
+            log.warn(`Layout construction failed for type="${this._type}" style="${this._style}":`, err);
         }
+    }
 
-        // Step 5: Apply default attributes AFTER layout (AS3 lines 111-128)
-        try 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 117-134)
+    protected applyDefaultAttributes(): void
+    {
+        try
         {
-            const factory = context.getWindowFactory();
+            const factory = this._context.getWindowFactory();
 
-            if(factory) 
+            if(factory)
             {
-                const defaults = factory.getDefaultsByTypeAndStyle(type, style);
+                const defaults = factory.getDefaultsByTypeAndStyle(this._type, this._style);
 
-                if(defaults) 
+                if(defaults)
                 {
                     this._blend = defaults.blend;
                     this._mouseThreshold = defaults.threshold;
 
-                    if(this._background !== defaults.background) 
+                    if(this._background !== defaults.background)
                     {
                         this.background = defaults.background;
                     }
 
-                    if(this._fillColor !== defaults.color) 
+                    if(this._fillColor !== defaults.color)
                     {
                         this.color = defaults.color;
                     }
 
-                    if(defaults.hasRectLimits()) 
+                    if(defaults.hasRectLimits())
                     {
                         (this.limits as WindowRectLimits).assign(
                             defaults.width_min,
@@ -182,37 +220,55 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
                 }
             }
         }
-        catch (_) 
+        catch (_)
         {
             // Factory not available during bootstrap
         }
+    }
 
-        // Step 6: Apply properties (AS3 lines 129-132)
-        if(properties) 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 135-138)
+    protected applyProperties(properties: unknown[] | null): void
+    {
+        if(properties)
         {
             this.properties = properties;
         }
+    }
 
-        // Step 7: Set procedure (AS3 line 133)
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (line 139)
+    protected setProcedure(procedure: ((event: WindowEvent, window: IWindow) => void) | null): void
+    {
         this._procedure = procedure;
+    }
 
-        // AS3: ensure graphic context exists when window does not share parent context.
-        if(!this._graphicContext) 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 140-149, plus graphic context ensure at lines 94-97)
+    protected attachToParent(parent: IWindow | null): void
+    {
+        if(!this._graphicContext)
         {
             this._graphicContext = this.getGraphicContext(!this.testParamFlag(16));
         }
 
-        // Step 8: Set parent (AS3 lines 134-142)
-        if(parent !== null) 
+        if(parent !== null)
         {
             this._parent = parent as WindowController;
             (parent as WindowController).addChild(this);
 
-            if(this._graphicContext) 
+            if(this._graphicContext)
             {
                 this._context.invalidate(this, null, 1);
             }
         }
+    }
+
+    /**
+     * Post-construction hook for subclass-specific setup that must run after
+     * `applyProperties()` (matching AS3's own-class field initializers,
+     * which run after the base constructor returns). No-op by default.
+     */
+    protected finalize(): void
+    {
+        // No-op by default
     }
 
     private _ignoreMouseEvents: boolean = false;
@@ -3677,7 +3733,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns A new WindowController with the same properties
      */
-    public clone(): IWindow 
+    public clone(): IWindow
     {
         const cloned = new (this.constructor as typeof WindowController)(
             this._name,
@@ -3693,6 +3749,15 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
             this._id,
             this._dynamicStyleName
         );
+
+        // Route through the same factory phases as regular construction
+        // (theme/layout/defaults) instead of relying on the constructor,
+        // which now only stores base fields. `properties`/`parent` are
+        // applied manually below from the live source window instead, so
+        // pass null/null here — matching what the constructor used to see
+        // in this call (properties was already null; parent is always null
+        // for a clone, attached later by the caller).
+        cloned.completeConstruction(null, this._procedure, null);
 
         const properties = this.properties;
 

@@ -12,7 +12,7 @@ import {ContainerIterator} from '../iterators/ContainerIterator';
  * Extends WindowController with IWindowContainer compliance.
  * Sets up visual content flag based on background/param settings.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/ContainerController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ContainerController.as
  */
 export class ContainerController extends WindowController implements IWindowContainer
 {
@@ -31,6 +31,12 @@ export class ContainerController extends WindowController implements IWindowCont
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ContainerController.as::ContainerController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._hasVisualContent = this._background || this.testParamFlag(1) || !this.testParamFlag(16);
     }

@@ -26,16 +26,16 @@ export class ShapeController extends ContainerController
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::SHAPES
     public static readonly SHAPES: readonly string[] = ['rectangle', 'round_rectangle', 'ellipse', 'rhombus'];
 
-    // Declared without initializers: WindowController's constructor applies the
-    // incoming `properties` array via virtual dispatch to our setters *before*
-    // these field initializers would run, so a plain `= 'rectangle'` here would
-    // clobber a value set from `properties`. Defaults are primed with `??=`
-    // after `super()` instead (see BubbleController for the same pattern).
-    private _shape: string | undefined;
-    private _radius: number | undefined;
-    private _strokeColor: number | undefined;
-    private _strokeHsvShade: number | undefined;
-    private _strokeThickness: number | undefined;
+    // Declared without initializers: WindowController's applyProperties()
+    // phase dispatches to our `set properties()` override before finalize()
+    // runs, so a plain `= 'rectangle'` here would clobber a value set from
+    // `properties`. Defaults are primed with `??=` in finalize() instead
+    // (see BubbleController for the same pattern).
+    private _shape: string | null = null;
+    private _radius: number | null = null;
+    private _strokeColor: number | null = null;
+    private _strokeHsvShade: number | null = null;
+    private _strokeThickness: number | null = null;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::ShapeController()
     constructor(
@@ -53,6 +53,12 @@ export class ShapeController extends ContainerController
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/ShapeController.as::ShapeController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._hasVisualContent = true;
         this._shape ??= 'rectangle';

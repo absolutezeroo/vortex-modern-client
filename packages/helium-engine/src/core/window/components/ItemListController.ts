@@ -27,7 +27,13 @@ export class ItemListController extends WindowController implements IItemListWin
     protected _isResizing: boolean = false;
     protected _isUpdating: boolean = false;
     protected _isHorizontal: boolean = false;
-    protected _arrangeListItems: boolean = true;
+    // Declared without a non-default initializer: WindowController's
+    // applyProperties() phase dispatches to our `set properties()` override
+    // (which can write `auto_arrange_items` directly to this field) before
+    // finalize() runs, so a `= true` initializer here would clobber a value
+    // already applied from `properties`. Default primed with `??=` in
+    // finalize() instead.
+    protected _arrangeListItems: boolean | null = null;
     private _disableAutodragFlag: boolean = false;
     private _isDragging: boolean = false;
     private _dragStartX: number = 0;
@@ -55,27 +61,24 @@ export class ItemListController extends WindowController implements IItemListWin
 
         this._containerEventHandlerBound = this._containerEventHandler.bind(this);
         this._isHorizontal = (type === 51);
-        this._hasVisualContent = this._background || !this.testParamFlag(16);
-
-        // NOTE: `_container` is created lazily (see ensureContainer), NOT here. In AS3 the
-        // container is created in this constructor, but AS3 applies `properties` earlier -
-        // during super(), while its own `_container` field is still null - so a property
-        // setter that runs a layout pass (scale_to_fit_items -> updateScrollAreaRegion)
-        // finds a null container and no-ops. TS/JS runs subclass field initializers after
-        // super(), so WindowContext.create() applies our properties *after* this constructor
-        // returns; if `_container` already existed at that point, that same layout pass would
-        // reset it to 0 and corrupt the resize_on_item_update reflect-cascade math. Deferring
-        // container creation until the first list item is added keeps `_container` null
-        // throughout property application, faithfully reproducing AS3's ordering (and its
-        // order-independence w.r.t. how scale_to_fit_items / resize_on_item_update appear in
-        // the layout vars).
     }
 
-    // Creates the internal _CONTAINER on first use (see the constructor note for why this is
-    // deferred). Idempotent - safe to call from every item-adding entry point.
-    private ensureContainer(): void
+    // AS3: sources/win63_2026_crypted_version core/window/components/ItemListController.as::ItemListController()
+    //
+    // Runs after applyProperties() (as a factory phase, not embedded in the
+    // base constructor), matching the AS3 order where this same container
+    // setup executes in the constructor body after `super()` - by which
+    // point `properties` has already been applied. `_container` is null
+    // throughout applyProperties()/updateScrollAreaRegion(), and only
+    // becomes non-null here, exactly as in AS3.
+    protected override finalize(): void
     {
-        if(this._container) return;
+        super.finalize();
+
+        this._hasVisualContent = this._background || !this.testParamFlag(16);
+        this._arrangeListItems ??= true;
+        this._scrollStepH ??= 25;
+        this._scrollStepV ??= 25;
 
         this._container = this._context.create(
             '_CONTAINER',
@@ -102,11 +105,11 @@ export class ItemListController extends WindowController implements IItemListWin
         containerWin.addEventListener('WE_CHILD_VISIBILITY', this._containerEventHandlerBound);
         this._container.clipping = this.clipping;
 
-        // AS3 arms the resize_on_item_update reflect-to-parent flag on _container in the
-        // constructor. We arm both reflect flags here instead, directly (not via the setters,
-        // which would trigger a premature layout pass), from the raw field values already
-        // resolved by property application. The container is created at the item list's full
-        // height, so the flag is armed while _container matches this.height - the subsequent
+        // Arm the resize_on_item_update reflect-to-parent flag on _container
+        // directly (not via the setters, which would trigger a layout pass),
+        // from the raw field values already resolved by applyProperties().
+        // The container is created at the item list's full height, so the
+        // flag is armed while _container matches this.height - subsequent
         // per-child resize deltas then net to zero, keeping this.height correct.
         if(this._isHorizontal)
         {
@@ -284,32 +287,36 @@ export class ItemListController extends WindowController implements IItemListWin
         this.updateScrollAreaRegion();
     }
 
-    protected _scrollStepH: number = 25;
+    // Declared without a non-default initializer: `set properties()` below
+    // writes `scroll_step_h`/`scroll_step_v` directly to these fields during
+    // applyProperties(), before finalize() runs - see `_arrangeListItems`
+    // above for why a `= 25` initializer would be unsafe here.
+    protected _scrollStepH: number | null = null;
 
     /**
      * Gets the horizontal scroll step size.
      */
-    public get scrollStepH(): number 
+    public get scrollStepH(): number
     {
-        return this._scrollStepH;
+        return this._scrollStepH ?? 25;
     }
 
     /**
      * Sets the horizontal scroll step size.
      */
-    public set scrollStepH(value: number) 
+    public set scrollStepH(value: number)
     {
         this._scrollStepH = value;
     }
 
-    protected _scrollStepV: number = 25;
+    protected _scrollStepV: number | null = null;
 
     /**
      * Gets the vertical scroll step size.
      */
-    public get scrollStepV(): number 
+    public get scrollStepV(): number
     {
-        return this._scrollStepV;
+        return this._scrollStepV ?? 25;
     }
 
     /**
@@ -375,9 +382,9 @@ export class ItemListController extends WindowController implements IItemListWin
     /**
      * Gets whether items are automatically arranged.
      */
-    public get autoArrangeItems(): boolean 
+    public get autoArrangeItems(): boolean
     {
-        return this._arrangeListItems;
+        return this._arrangeListItems ?? true;
     }
 
     /**
@@ -539,8 +546,6 @@ export class ItemListController extends WindowController implements IItemListWin
      */
     public addListItem(item: IWindow): IWindow
     {
-        this.ensureContainer();
-
         if(!this._container) return item;
 
         this._isUpdating = true;
@@ -577,8 +582,6 @@ export class ItemListController extends WindowController implements IItemListWin
      */
     public addListItemAt(item: IWindow, index: number): IWindow
     {
-        this.ensureContainer();
-
         if(!this._container) return item;
 
         item = this._container.addChildAt(item, index);
@@ -770,8 +773,6 @@ export class ItemListController extends WindowController implements IItemListWin
 
     public override populate(items: IWindow[]): void
     {
-        this.ensureContainer();
-
         if(this._container)
         {
             (this._container as unknown as WindowController).populate(items);

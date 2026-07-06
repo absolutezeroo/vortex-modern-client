@@ -102,10 +102,21 @@ export class TextController extends WindowController implements ITextWindow
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
 
-        this._hasVisualContent = true;
+        // These two only depend on the constructor's own `rect` argument (not
+        // on anything another phase computes) and must already be correct
+        // before applyProperties()'s refreshTextImage() call measures text -
+        // so they stay here rather than moving to finalize().
         this._fieldWidth = rect.width;
         this._fieldHeight = rect.height;
-        this._textStyleName = this.resolveThemeTextStyle(context, style);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::TextController() (setTextFormatting(), called post-super)
+    protected override finalize(): void
+    {
+        super.finalize();
+
+        this._hasVisualContent = true;
+        this._textStyleName = this.resolveThemeTextStyle(this._context, this._style);
         this.applyTextStyle();
     }
 

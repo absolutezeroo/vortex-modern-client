@@ -82,7 +82,11 @@ export class WindowContext implements IWindowContext
         this._name = name;
         this._factory = factory;
         this._resizeHost = resizeHost ?? null;
-        this._substituteParent = new SubstituteParentController(this);
+
+        const substituteParent = new SubstituteParentController(this);
+
+        substituteParent.completeConstruction(null, null, null);
+        this._substituteParent = substituteParent;
         this._eventProcessorState = new EventProcessorState(
             WindowContext._renderer,
             null,
@@ -333,7 +337,7 @@ export class WindowContext implements IWindowContext
             return null!;
         }
 
-        if(parent == null) 
+        if(parent == null)
         {
             if(param & 0x10) // USE_PARENT_GRAPHIC_CONTEXT
             {
@@ -341,35 +345,35 @@ export class WindowContext implements IWindowContext
             }
         }
 
-        // AS3 forwards `properties` into the constructor, where the base
-        // WindowController constructor applies them (WindowController.as line ~137,
-        // `this.properties = param9`). We cannot replicate that safely: AS3 runs a
-        // subclass's field initializers *before* super(), so a subclass field is
-        // already valid when the base constructor invokes its overridden
-        // `set properties()`. TS/JS runs subclass field initializers *after*
-        // super() returns, so applying properties inside the base constructor
-        // either crashes on not-yet-initialized subclass state (e.g.
-        // DropMenuController's `_stringArray`) or gets clobbered by the field
-        // initializer that runs afterward. So we apply properties AFTER the window
-        // is fully constructed. The one class whose layout math is order-sensitive,
-        // ItemListController, keeps its internal `_container` null until its first
-        // list item is added - so this post-construction property pass sees a null
-        // container and skips the layout recalculation, exactly as AS3 does while
-        // `_container` is still null during super().
+        const resolvedParent = parent ?? this._desktop;
+
+        // The constructor now only stores base fields (name/type/style/rect/
+        // tags/id) - it makes no virtual calls and applies neither properties
+        // nor a parent. Theme resolution, layout construction, default
+        // attributes, property application, procedure assignment, and parent
+        // attachment all happen in `completeConstruction()` below, invoked
+        // once `new` has returned and every subclass field initializer up the
+        // whole prototype chain has already run. This matches the AS3
+        // runtime, where a subclass's own field initializers only take effect
+        // after the base constructor - and the property application that
+        // happens inside it - has already completed.
         window = <IWindow> new windowClass(
             name, type, style, param, this, rect,
-            parent ?? this._desktop,
+            resolvedParent,
             procedure, tags, null, id
         );
 
+        (window as unknown as {
+            completeConstruction(
+                properties: unknown[] | null,
+                procedure: ((event: unknown, window: IWindow) => void) | null,
+                parent: IWindow | null
+            ): void
+        }).completeConstruction(properties, procedure, resolvedParent);
+
         window.dynamicStyle = dynamicStyle;
 
-        if(properties && properties.length > 0) 
-        {
-            window.properties = properties;
-        }
-
-        if(caption && caption.length > 0) 
+        if(caption && caption.length > 0)
         {
             window.caption = caption;
         }

@@ -29,15 +29,15 @@ export class StrokeController extends WindowController
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::SIDE_NAMES
     public static readonly SIDE_NAMES: readonly string[] = ['top', 'right', 'bottom', 'left'];
 
-    // Declared without initializers: WindowController's constructor applies the
-    // incoming `properties` array via virtual dispatch to our setters *before*
-    // these field initializers would run, so plain initializers here would
-    // clobber a value set from `properties`. Defaults are primed with `??=`
-    // after `super()` instead (see BubbleController for the same pattern).
-    private _radius: number | undefined;
-    private _strokeThickness: number | undefined;
-    private _sides: string | undefined;
-    private _sideMask: number | undefined;
+    // Declared without initializers: WindowController's applyProperties()
+    // phase dispatches to our `set properties()` override before finalize()
+    // runs, so plain initializers here would clobber a value set from
+    // `properties`. Defaults are primed with `??=` in finalize() instead
+    // (see BubbleController for the same pattern).
+    private _radius: number | null = null;
+    private _strokeThickness: number | null = null;
+    private _sides: string | null = null;
+    private _sideMask: number | null = null;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::StrokeController()
     constructor(
@@ -55,6 +55,12 @@ export class StrokeController extends WindowController
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/StrokeController.as::StrokeController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._radius ??= 0;
         this._strokeThickness ??= 0;

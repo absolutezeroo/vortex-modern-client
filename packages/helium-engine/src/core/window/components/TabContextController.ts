@@ -14,7 +14,7 @@ import type {WindowEvent} from '../events/WindowEvent';
  * Manages a set of tab buttons through an ISelectorListWindow and
  * switches visible content in an IWindowContainer when a tab is selected.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/TabContextController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TabContextController.as
  */
 export class TabContextController extends WindowController implements ITabContextWindow
 {
@@ -40,6 +40,12 @@ export class TabContextController extends WindowController implements ITabContex
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TabContextController.as::TabContextController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         const internals: IWindow[] = [];
         this.groupChildrenWithTag('_INTERNAL', internals, -1);

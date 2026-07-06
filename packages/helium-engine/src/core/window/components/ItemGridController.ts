@@ -20,7 +20,7 @@ import {ItemGridIterator} from '../iterators/ItemGridIterator';
  * In AS3, extends ItemListController. The grid stores items in
  * column sub-lists and provides grid-level indexing across them.
  *
- * @see sources/win63_version/com/sulake/core/window/components/ItemGridController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ItemGridController.as
  */
 export class ItemGridController extends ItemListController implements IItemGridWindow
 {
@@ -44,12 +44,20 @@ export class ItemGridController extends ItemListController implements IItemGridW
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
         this._isHorizontal = (type !== 54);
-        this._scaleToFitItems = true;
 
         if(!this._isHorizontal)
         {
             throw new Error('Horizontal item grid not yet implemented!');
         }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ItemGridController.as::ItemGridController()
+    protected override finalize(): void
+    {
+        super.finalize();
+
+        this._scaleToFitItems = true;
+        this._shouldRebuildGridOnResize = true;
     }
 
     private _containerResizeToColumns: boolean = false;
@@ -93,7 +101,9 @@ export class ItemGridController extends ItemListController implements IItemGridW
         }
     }
 
-    private _shouldRebuildGridOnResize: boolean = true;
+    // Non-default value (true) primed in finalize() rather than here, to
+    // keep this field at its type-default while applyProperties() runs.
+    private _shouldRebuildGridOnResize: boolean = false;
 
     /**
 	 * Whether the grid should rebuild its structure on resize.

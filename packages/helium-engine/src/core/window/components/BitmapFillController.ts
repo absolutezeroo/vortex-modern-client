@@ -27,16 +27,16 @@ export class BitmapFillController extends StaticBitmapWrapperController
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::FILL_MODES
     public static readonly FILL_MODES: readonly string[] = ['stretch', 'tile', 'center', 'cover', 'contain'];
 
-    // Declared without initializers: WindowController's constructor applies the
-    // incoming `properties` array via virtual dispatch to our setters *before*
-    // these field initializers would run, so plain initializers here would
-    // clobber a value set from `properties`. Defaults are primed with `??=`
-    // after `super()` instead (see BubbleController for the same pattern) —
-    // here primed from the theme's property defaults, matching the AS3
-    // constructor which reads them before calling super().
-    private _fillMode: string | undefined;
-    private _tint: boolean | undefined;
-    private _spacing: number | undefined;
+    // Declared without initializers: WindowController's applyProperties()
+    // phase dispatches to our `set properties()` override before finalize()
+    // runs, so plain initializers here would clobber a value set from
+    // `properties`. Defaults are primed with `??=` in finalize() instead
+    // (see BubbleController for the same pattern) — here primed from the
+    // theme's property defaults, matching the AS3 constructor which reads
+    // them before calling super().
+    private _fillMode: string | null = null;
+    private _tint: boolean | null = null;
+    private _spacing: number | null = null;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::BitmapFillController()
     constructor(
@@ -55,8 +55,14 @@ export class BitmapFillController extends StaticBitmapWrapperController
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
+    }
 
-        const defaults = context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(style) ?? null;
+    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/BitmapFillController.as::BitmapFillController()
+    protected override finalize(): void
+    {
+        super.finalize();
+
+        const defaults = this._context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(this._style) ?? null;
 
         this._fillMode ??= BitmapFillController.normalizeFillMode(String(defaults?.getValue('fill_mode') ?? 'stretch'));
         this._tint ??= BitmapFillController.parseBoolean(defaults?.getValue('tint') ?? false);

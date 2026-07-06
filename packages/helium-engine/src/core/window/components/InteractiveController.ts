@@ -11,7 +11,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * Extends WindowController with IInteractiveWindow functionality: tooltip,
  * mouse cursor per state, and interactive event processing.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/components/InteractiveController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/InteractiveController.as
  */
 export class InteractiveController extends WindowController implements IInteractiveWindow
 {
@@ -36,11 +36,24 @@ export class InteractiveController extends WindowController implements IInteract
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
     }
 
-    protected _toolTipDelay: number = 500;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/InteractiveController.as::InteractiveController()
+    protected override finalize(): void
+    {
+        super.finalize();
+
+        this._toolTipDelay ??= 500;
+    }
+
+    // Declared without an initializer: WindowController's applyProperties()
+    // phase dispatches to our `set properties()` override (via
+    // readInteractiveWindowProperties()) before finalize() runs, so a
+    // non-default initializer here would clobber a value already applied
+    // from `properties`. Default primed with `??=` in finalize() instead.
+    protected _toolTipDelay: number | null = null;
 
     public get toolTipDelay(): number
     {
-        return this._toolTipDelay;
+        return this._toolTipDelay ?? 500;
     }
 
     public set toolTipDelay(value: number)

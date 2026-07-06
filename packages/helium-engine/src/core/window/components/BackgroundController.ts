@@ -12,7 +12,7 @@ import {ContainerIterator} from '../iterators/ContainerIterator';
  * or styled background fill. Sets background=true and color=white
  * by default.
  *
- * @see sources/win63_version/com/sulake/core/window/components/BackgroundController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BackgroundController.as
  */
 export class BackgroundController extends WindowController
 {
@@ -32,6 +32,12 @@ export class BackgroundController extends WindowController
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id, dynamicStyle);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BackgroundController.as::BackgroundController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this.background = true;
         this.color = 0xFFFFFFFF;

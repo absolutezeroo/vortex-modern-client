@@ -32,15 +32,15 @@ export class GradientController extends WindowController
         'up', 'down', 'left', 'right', 'up_left', 'up_right', 'down_left', 'down_right',
     ];
 
-    // Declared without initializers: WindowController's constructor applies the
-    // incoming `properties` array via virtual dispatch to our setters *before*
-    // these field initializers would run, so plain initializers here would
-    // clobber a value set from `properties`. Defaults are primed with `??=`
-    // after `super()` instead (see BubbleController for the same pattern).
-    private _color1: number | undefined;
-    private _color2: number | undefined;
-    private _mode: string | undefined;
-    private _direction: string | undefined;
+    // Declared without initializers: WindowController's applyProperties()
+    // phase dispatches to our `set properties()` override before finalize()
+    // runs, so plain initializers here would clobber a value set from
+    // `properties`. Defaults are primed with `??=` in finalize() instead
+    // (see BubbleController for the same pattern).
+    private _color1: number | null = null;
+    private _color2: number | null = null;
+    private _mode: string | null = null;
+    private _direction: string | null = null;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::GradientController()
     constructor(
@@ -58,6 +58,12 @@ export class GradientController extends WindowController
     )
     {
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/com/sulake/core/window/components/GradientController.as::GradientController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._color1 ??= 0xFFFFFFFF;
         this._color2 ??= 0xFF000000;

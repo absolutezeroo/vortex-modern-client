@@ -1439,7 +1439,12 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             // Inject localization manager for localization tokens in captions/text
             context.setLocalizationManager(this._localization);
 
-            // Create desktop root for this layer
+            // Create desktop root for this layer. The constructor only stores
+            // base fields now; completeConstruction() runs the theme/layout/
+            // defaults phases the same way WindowContext.create() does for
+            // every other window (the parser isn't set on `context` yet at
+            // this point, but buildLayoutChildren() already no-ops without
+            // one, matching this desktop's pre-refactor behavior).
             const desktop = new DesktopController(
                 `desktop_${i}`,
                 WindowType.CONTAINER,
@@ -1448,6 +1453,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
                 context,
                 {x: 0, y: 0, width: 0, height: 0}
             );
+
+            desktop.completeConstruction(null, null, null);
 
             context.setDesktop(desktop);
 

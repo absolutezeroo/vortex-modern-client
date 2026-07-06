@@ -13,7 +13,7 @@ import {GraphicContext} from '../graphics/GraphicContext';
  * for embedding within the window system. In the TypeScript port,
  * display objects are represented as `unknown`.
  *
- * @see sources/win63_version/core/window/components/DisplayObjectWrapperController.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DisplayObjectWrapperController.as
  */
 export class DisplayObjectWrapperController extends WindowController implements IDisplayObjectWrapper
 {
@@ -35,6 +35,12 @@ export class DisplayObjectWrapperController extends WindowController implements 
     {
         param = param & (~0x10);
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DisplayObjectWrapperController.as::DisplayObjectWrapperController()
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._hasVisualContent = false;
     }
