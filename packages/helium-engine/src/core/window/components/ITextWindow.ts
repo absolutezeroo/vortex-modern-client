@@ -29,6 +29,7 @@ export interface ITextWindow extends IWindow, IScrollableWindow
     multiline: boolean;
     wordWrap: boolean;
     autoSize: string;
+    etchingColor: number;
 
     appendText(text: string): void;
 

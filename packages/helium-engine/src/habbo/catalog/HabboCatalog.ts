@@ -320,6 +320,12 @@ export class HabboCatalog extends Component implements IHabboCatalog
         return null;
     }
 
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::useNonTabbedCatalog()
+    public useNonTabbedCatalog(): boolean
+    {
+        return this.getBoolean('client.desktop.use.non.tabbed.catalog');
+    }
+
     public getOfferCenter(_extension: unknown): unknown | null
     {
         return null;
