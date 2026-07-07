@@ -12,11 +12,17 @@
 //   game's own *Com.as manifests via lib/cryptedManifest.mjs. Additive only - run after
 //   stage 1, never overwrites an existing compiled/copied file.
 //
-// This tool: for every true field name referenced by a compiled layout/skin's
-// `asset_uri` with no matching packages/helium-client/src/assets/images/<name>.png,
-// copies real pixels from sources/win63_2026_crypted_version/src/images (a raw PNG/GIF
-// dump of the SWF library) - preferred - or aliases from an existing differently-named
-// local PNG of the same embed when the raw dump doesn't have it either.
+// This tool does two passes over sources/win63_2026_crypted_version/src/images (a raw
+// PNG dump of the SWF library, hash/obfuscated-named):
+//   1) Base population: copies every embed under its own short linkage name (e.g.
+//      "ae_tabs_effects.png") if src/assets/images/ doesn't have it yet. Most of the
+//      client's image lookups (avatar editor icons, catalog previews, badges, etc. - not
+//      just window-layout `asset_uri`) use this short name directly, so this pass alone
+//      re-populates the bulk of the ~2000+ image directory from a clean rebuild.
+//   2) True-name fill-in: for every field name referenced by a compiled layout/skin's
+//      `asset_uri` still missing after pass 1, copies/aliases it under its true *Com.as
+//      field name (which can differ from the short embed name - see
+//      lib/cryptedManifest.mjs's doc comment).
 //
 // Run with --dry-run (default) to preview, --write to actually copy files.
 import fs from 'node:fs';
@@ -120,6 +126,27 @@ function main()
 
     console.log(`Found ${embedToRawFile.size} embeds with real pixel data in ${path.relative(repoRoot, CRYPTED_IMAGES_DIR)}.`);
 
+    // Pass 1: base population under each embed's own short name.
+    let basePopulated = 0;
+
+    for(const [embedShortName, rawPath] of embedToRawFile)
+    {
+        if(existingImages.has(embedShortName.toLowerCase())) continue;
+
+        const targetPath = path.join(IMAGES_DIR, `${embedShortName}.png`);
+
+        if(args.write)
+        {
+            fs.copyFileSync(rawPath, targetPath);
+        }
+
+        existingImages.add(embedShortName.toLowerCase());
+        basePopulated++;
+    }
+
+    console.log(`${args.write ? 'Base-populated' : '[dry-run] would base-populate'} ${basePopulated} image(s) under their own embed name.`);
+
+    // Pass 2: true-name fill-in for asset_uri references.
     const referencedNames = collectAssetUriReferences([LAYOUTS_DIR, SKINS_DIR]);
 
     console.log(`Found ${referencedNames.size} distinct non-templated asset_uri references in compiled layouts/skins.`);
