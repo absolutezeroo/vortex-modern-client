@@ -39,6 +39,15 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
         this._scrollBarEventProcBound = this.scrollBarEventProc.bind(this);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ScrollableItemGridWindow.as::ScrollableItemGridWindow()
+    // See ScrollableItemListWindow.ts's identical finalize() override comment: this.scrollBar/
+    // this.itemGrid read named children built by buildLayoutChildren(), which only runs
+    // later via completeConstruction() - at constructor time no children exist yet.
+    protected override finalize(): void
+    {
+        super.finalize();
 
         if(this.scrollBar && this.itemGrid)
         {

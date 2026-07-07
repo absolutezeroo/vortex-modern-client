@@ -39,6 +39,21 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
 
         this._scrollBarEventProcBound = this.scrollBarEventProc.bind(this);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ScrollableItemListWindow.as::ScrollableItemListWindow()
+    // this.scrollBar/this.itemList read named children built by buildLayoutChildren(),
+    // which only runs later via completeConstruction() (see WindowController.ts's
+    // phase-split) - at constructor time no children exist yet, so binding the scrollbar
+    // to the item list can't happen there anymore. Without this explicit binding the
+    // scrollbar falls back to ScrollBarController.resolveScrollTarget()'s generic
+    // "parent exposes scrollH/scrollV" match, which binds it to this wrapper instead of
+    // the inner item list directly - the wrapper's own size never changes when items are
+    // added, so it never dispatches WE_RESIZED and the scrollbar thumb goes stale until
+    // something else (e.g. a button click) forces a recalculation.
+    protected override finalize(): void
+    {
+        super.finalize();
 
         const scrollBar = this.scrollBar;
         const itemList = this.itemList;
