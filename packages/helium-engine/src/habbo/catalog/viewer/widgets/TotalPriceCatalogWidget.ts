@@ -14,7 +14,7 @@ import {CatalogWidget} from './CatalogWidget';
  * Shows the running total price (credits/activity points, with a struck-through original
  * price when a bundle-quantity discount applies) next to the purchase widget.
  *
- * @see sources/win63_version/habbo/catalog/viewer/widgets/TotalPriceWidget.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as
  */
 export class TotalPriceCatalogWidget extends CatalogWidget
 {
@@ -23,6 +23,8 @@ export class TotalPriceCatalogWidget extends CatalogWidget
     private _priceCredits: number = 0;
 
     private _priceActivityPoints: number = 0;
+
+    private _priceSilver: number = 0;
 
     private _activityPointType: number = 0;
 
@@ -57,6 +59,14 @@ export class TotalPriceCatalogWidget extends CatalogWidget
     {
         if(!super.init()) return false;
 
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::init()
+        if(this.page.isBuilderPage)
+        {
+            this.window.visible = false;
+
+            return true;
+        }
+
         this.attachWidgetView('totalPriceWidget');
         this.window.visible = false;
 
@@ -80,6 +90,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
         this.window.visible = event.offer.bundlePurchaseAllowed;
         this._priceCredits = event.offer.priceInCredits;
         this._priceActivityPoints = event.offer.priceInActivityPoints;
+        this._priceSilver = event.offer.priceInSilver;
         this._activityPointType = event.offer.activityPointType;
         this._quantity = 1;
         this.clear();
@@ -107,19 +118,23 @@ export class TotalPriceCatalogWidget extends CatalogWidget
         this.window.findChildByName('currency_indicator_bitmap_left')!.visible = false;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::updateCurrencyIndicators()
     private updateCurrencyIndicators(): void
     {
         const catalog = this._catalog!;
         const creditsTotal = this._quantity * this._priceCredits;
         const activityPointsTotal = this._quantity * this._priceActivityPoints;
+        const silverTotal = this._quantity * this._priceSilver;
 
         let discountedCredits = creditsTotal;
         let discountedActivityPoints = activityPointsTotal;
+        let discountedSilver = silverTotal;
 
         if(catalog.bundleDiscountEnabled)
         {
             discountedCredits = catalog.utils.calculateBundlePrice(true, this._priceCredits, this._quantity);
             discountedActivityPoints = catalog.utils.calculateBundlePrice(true, this._priceActivityPoints, this._quantity);
+            discountedSilver = catalog.utils.calculateBundlePrice(true, this._priceSilver, this._quantity);
         }
 
         if(this._amountTextPrimary != null)
@@ -129,7 +144,9 @@ export class TotalPriceCatalogWidget extends CatalogWidget
 
         if(this._amountTextSecondary != null)
         {
-            this._amountTextSecondary.caption = (catalog.bundleDiscountEnabled ? discountedActivityPoints : activityPointsTotal).toString();
+            this._amountTextSecondary.caption = this._priceSilver > 0
+                ? (catalog.bundleDiscountEnabled ? discountedSilver : silverTotal).toString()
+                : (catalog.bundleDiscountEnabled ? discountedActivityPoints : activityPointsTotal).toString();
         }
 
         if(this._totalLeft != null)
@@ -144,16 +161,28 @@ export class TotalPriceCatalogWidget extends CatalogWidget
 
         if(this._totalRight != null)
         {
-            this._totalRight.visible = activityPointsTotal !== discountedActivityPoints;
+            if(this._priceSilver > 0)
+            {
+                this._totalRight.visible = silverTotal !== discountedSilver;
 
-            const text = this._totalRight.findChildByName('text')!;
+                const text = this._totalRight.findChildByName('text')!;
 
-            text.caption = this._totalRight.visible ? activityPointsTotal.toString() : '0';
-            this._totalRight.findChildByName('strike')!.width = text.width;
+                text.caption = this._totalRight.visible ? silverTotal.toString() : '0';
+                this._totalRight.findChildByName('strike')!.width = text.width;
+            }
+            else
+            {
+                this._totalRight.visible = activityPointsTotal !== discountedActivityPoints;
+
+                const text = this._totalRight.findChildByName('text')!;
+
+                text.caption = this._totalRight.visible ? activityPointsTotal.toString() : '0';
+                this._totalRight.findChildByName('strike')!.width = text.width;
+            }
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/TotalPriceWidget.as::createCurrencyIndicators()
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/TotalPriceWidget.as::createCurrencyIndicators()
     private createCurrencyIndicators(): void
     {
         const catalog = this._catalog!;
@@ -163,7 +192,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
         {
             let indicator: IWindow;
 
-            if(this._priceActivityPoints > 0)
+            if(this._priceActivityPoints > 0 || this._priceSilver > 0)
             {
                 this._amountTextPrimary = this.window.findChildByName('amount_text_left');
                 this._amountTextPrimary!.visible = true;
@@ -207,6 +236,17 @@ export class TotalPriceCatalogWidget extends CatalogWidget
             const indicator = this.window.findChildByName('currency_indicator_bitmap_right')!;
 
             indicator.style = ActivityPointTypeEnum.getIconStyleFor(this._activityPointType, configuration, true);
+        }
+        else if(this._priceSilver > 0)
+        {
+            this._amountTextSecondary = this.window.findChildByName('amount_text_right') as unknown as ITextWindow;
+            this._totalRight = this.window.findChildByName('total_left') as unknown as IWindowContainer | null;
+
+            if(this._totalRight != null) this._totalRight.visible = false;
+
+            const indicator = this.window.findChildByName('currency_indicator_bitmap_right')!;
+
+            indicator.style = ActivityPointTypeEnum.getIconStyleFor(ActivityPointTypeEnum.SILVER, configuration, true);
         }
 
         (this.window.findChildByName('totalprice_container') as unknown as IItemListWindow).arrangeListItems();
