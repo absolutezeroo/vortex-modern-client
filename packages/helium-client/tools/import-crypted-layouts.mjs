@@ -21,6 +21,18 @@
 // exact same parsing logic as compile-window-layouts.mjs. Existing compiled files are never
 // overwritten - this only fills in names that don't exist yet.
 //
+// EXCEPTION - generic UI-chrome templates: src/assets/window-skins/element-description.json's
+// `windowLayout` field (consumed verbatim by HabboWindowManager.getLayoutByTypeAndStyle() -
+// WindowController.buildLayoutChildren() - to build every frame/header/button/scaler/etc.'s
+// internal structure) needs the *Com.as field name minus its trailing "_xml" (confirmed by
+// cross-referencing "habbo_window_layout_frame_xml" (field) against the needed
+// "habbo_window_layout_frame" (windowLayout value) - same "_xml"-stripping rule
+// import-crypted-skins.mjs uses for skin ids, NOT the verbatim rule used everywhere else in
+// this file). After the main compile pass, a reconciliation pass reads
+// element-description.json (if compiled) and adds a "<name>.json" alias (never renames/
+// deletes the verbatim "<name>_xml.json") for every windowLayout value that's missing but
+// whose verbatim form exists.
+//
 // Run with --dry-run (default) to preview, --write to actually compile+write JSON files.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,6 +48,7 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
 const CRYPTED_LAYOUTS_DIR = path.join(CRYPTED_ROOT, 'src', 'layouts');
 const LAYOUTS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
+const ELEMENT_DESCRIPTION_PATH = path.resolve(__dirname, '../src/assets/window-skins/element-description.json');
 
 /**
  * Element type name -> type ID mapping.
@@ -544,6 +557,66 @@ function main()
     console.log(`${noFieldNames} raw files have no known *Com.as field name (not a registered widget layout, or field not found).`);
     console.log(`${notLayoutXml} files are not <layout>-rooted XML (skin XML or unrelated config - not handled by this tool).`);
     console.log(`${decodeFailed} failed to decode as XML (plain or zlib).`);
+
+    reconcileWindowLayoutAliases(args, existingNames);
+}
+
+// See module doc comment ("EXCEPTION - generic UI-chrome templates"): adds a "<name>.json"
+// alias for every element-description.json `windowLayout` value that's missing but whose
+// verbatim "<name>_xml.json" form was compiled above. Never renames/deletes the verbatim
+// copy - only additive.
+function reconcileWindowLayoutAliases(args, existingNames)
+{
+    if(!fs.existsSync(ELEMENT_DESCRIPTION_PATH))
+    {
+        console.log('\nelement-description.json not found yet - skipping windowLayout alias reconciliation (run import-crypted-skins.mjs first).');
+        return;
+    }
+
+    const elementDescription = JSON.parse(fs.readFileSync(ELEMENT_DESCRIPTION_PATH, 'utf8'));
+    const neededNames = new Set(
+        (elementDescription.elements ?? [])
+            .map((e) => e.windowLayout)
+            .filter((name) => name && name !== 'null')
+    );
+
+    let aliased = 0;
+    let stillMissing = 0;
+
+    for(const name of neededNames)
+    {
+        if(existingNames.has(name.toLowerCase())) continue;
+
+        const verbatimPath = path.join(LAYOUTS_OUT_DIR, `${name}_xml.json`);
+
+        if(!fs.existsSync(verbatimPath))
+        {
+            stillMissing++;
+            continue;
+        }
+
+        const data = JSON.parse(fs.readFileSync(verbatimPath, 'utf8'));
+
+        data.name = name;
+
+        const targetPath = path.join(LAYOUTS_OUT_DIR, `${name}.json`);
+
+        if(args.write)
+        {
+            fs.writeFileSync(targetPath, JSON.stringify(data, null, 2), 'utf8');
+            console.log(`Aliased ${name}_xml.json -> ${name}.json (windowLayout)`);
+        }
+        else
+        {
+            console.log(`[dry-run] would alias ${name}_xml.json -> ${name}.json (windowLayout)`);
+        }
+
+        aliased++;
+        existingNames.add(name.toLowerCase());
+    }
+
+    console.log(`\n${aliased} windowLayout alias(es) ${args.write ? 'created' : 'would be created'}.`);
+    console.log(`${stillMissing} windowLayout name(s) needed but no verbatim source found either (genuine content gap).`);
 }
 
 main();

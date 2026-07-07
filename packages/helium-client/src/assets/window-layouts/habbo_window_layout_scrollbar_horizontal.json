@@ -1,0 +1,73 @@
+{
+  "name": "habbo_window_layout_scrollbar_horizontal",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2683__SafeCls_1421.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "scrollbar_slider_button_left",
+        "typeId": 138,
+        "attributes": {
+          "name": "decrement",
+          "x": "0",
+          "y": "0",
+          "width": "16",
+          "height": "17",
+          "tags": "_EXCLUDE, _INTERNAL, decrement",
+          "params": "17"
+        },
+        "children": []
+      },
+      {
+        "tag": "scrollbar_slider_track_horizontal",
+        "typeId": 134,
+        "attributes": {
+          "name": "slider_track",
+          "x": "16",
+          "y": "0",
+          "width": "24",
+          "height": "17",
+          "tags": "_EXCLUDE, _INTERNAL, slider_track",
+          "params": "145"
+        },
+        "children": [
+          {
+            "tag": "scrollbar_slider_bar_horizontal",
+            "typeId": 132,
+            "attributes": {
+              "name": "slider_bar",
+              "x": "0",
+              "y": "0",
+              "width": "24",
+              "width_min": "12",
+              "height": "17",
+              "tags": "_EXCLUDE, _INTERNAL, slider_bar",
+              "params": "33073"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "tag": "scrollbar_slider_button_right",
+        "typeId": 136,
+        "attributes": {
+          "name": "increment",
+          "x": "40",
+          "y": "0",
+          "width": "16",
+          "height": "17",
+          "tags": "_EXCLUDE, _INTERNAL, increment",
+          "params": "81"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 56,
+  "layoutHeight": 17
+}

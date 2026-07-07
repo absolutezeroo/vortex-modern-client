@@ -1,0 +1,107 @@
+{
+  "name": "illumina_dark_frame",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1803_illumina_dark_frame_xml$93cfeec3c850bb3f8f0086a13c306d01797841165.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "name": "content_area",
+          "x": "1",
+          "y": "30",
+          "width": "48",
+          "height": "19",
+          "tags": "_CONTENT, _INTERNAL, _EXCLUDE",
+          "params": "12585104"
+        },
+        "children": []
+      },
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "name": "titlebar",
+          "x": "0",
+          "y": "0",
+          "width": "50",
+          "height": "30",
+          "treshold": "0",
+          "tags": "_EXCLUDE, _INTERNAL",
+          "params": "401"
+        },
+        "children": []
+      },
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "header_title_text",
+          "x": "8",
+          "y": "11",
+          "width": "20",
+          "height": "20",
+          "background": "false",
+          "tags": "_TITLE, _EXCLUDE, _INTERNAL",
+          "params": "-2147483632"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "id_frame_title",
+          "auto_size": "left",
+          "grid_fit_type": "subpixel"
+        }
+      },
+      {
+        "tag": "closebutton",
+        "typeId": 72,
+        "attributes": {
+          "name": "header_button_close",
+          "style": "100",
+          "x": "22",
+          "y": "9",
+          "width": "20",
+          "height": "20",
+          "tags": "_EXCLUDE, _INTERNAL, close",
+          "params": "81"
+        },
+        "children": []
+      },
+      {
+        "tag": "scaler",
+        "typeId": 120,
+        "attributes": {
+          "name": "_FRAME_SCALER",
+          "x": "35",
+          "y": "35",
+          "width": "20",
+          "height": "10",
+          "visible": "false",
+          "treshold": "0",
+          "tags": "_SCALER, _EXCLUDE, _INTERNAL",
+          "params": "1136"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [
+    {
+      "type": "DropShadowFilter",
+      "attributes": {
+        "distance": "0",
+        "angle": "0",
+        "color": "0",
+        "alpha": "0.35",
+        "blurX": "20",
+        "blurY": "20"
+      }
+    }
+  ],
+  "layoutWidth": 50,
+  "layoutHeight": 50
+}

@@ -1,0 +1,39 @@
+{
+  "name": "illumina_purple_button",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2566__SafeCls_1046.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_BTN_TEXT",
+          "style": "0",
+          "x": "0",
+          "y": "0",
+          "width": "28",
+          "height": "28",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147480368"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "il_button_white",
+          "margins": {
+            "left": 24,
+            "top": 14,
+            "right": 24,
+            "bottom": 14
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 48,
+  "layoutHeight": 48
+}
