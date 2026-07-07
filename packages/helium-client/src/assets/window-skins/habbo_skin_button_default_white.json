@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_default_white",
   "name": "white_default_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\103_white_default_button_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2618_habbo_skin_button_default_white_xml$b6f8177cd7320ffdec38fda1924c11901037388700.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

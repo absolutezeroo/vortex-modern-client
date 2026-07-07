@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_frame_7",
   "name": "default_frame_7_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\8_default_frame_7_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1800_habbo_skin_frame_7_xml$c6d4b029f46aab7de484bf73a979c18c319814517.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },

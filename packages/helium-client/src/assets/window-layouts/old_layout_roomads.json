@@ -1,6 +1,6 @@
 {
   "name": "old_layout_roomads",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\281_ctlg_roomads.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1548_layout_roomads_xml$51a0400ffb582652e9fd9c3ef3c4c45a396115880.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "100",
           "name": "roomads"
         },
@@ -24,7 +24,7 @@
             "typeId": 10,
             "attributes": {
               "x": "242",
-              "y": "402",
+              "y": "395",
               "width": "78",
               "height": "13",
               "params": "16",
@@ -48,7 +48,7 @@
               "y": "0",
               "width": "360",
               "height": "460",
-              "params": "16",
+              "params": "2064",
               "style": "100",
               "name": "roomAdsCatalogWidget"
             },
@@ -58,9 +58,9 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "10",
-                  "y": "70",
-                  "width": "117",
-                  "height": "17",
+                  "y": "14",
+                  "width": "142",
+                  "height": "19",
                   "params": "16",
                   "style": "3",
                   "name": "ctlg_text_1",
@@ -69,18 +69,34 @@
                 "children": [],
                 "vars": {
                   "auto_size": "left",
-                  "text_style": "u_italic",
+                  "text_style": "u_headline_small",
                   "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
                   "spacing": 0,
                   "leading": 0
                 }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "10",
+                  "y": "44",
+                  "width": "329",
+                  "height": "24",
+                  "params": "17",
+                  "style": "3",
+                  "name": "categories_list"
+                },
+                "children": []
               },
               {
                 "tag": "label",
                 "typeId": 12,
                 "attributes": {
                   "x": "10",
-                  "y": "117",
+                  "y": "83",
                   "width": "105",
                   "height": "15",
                   "params": "16",
@@ -97,7 +113,7 @@
                 "typeId": 30,
                 "attributes": {
                   "x": "10",
-                  "y": "137",
+                  "y": "102",
                   "width": "330",
                   "height": "33",
                   "params": "16",
@@ -108,10 +124,10 @@
                     "tag": "input",
                     "typeId": 77,
                     "attributes": {
-                      "x": "9",
-                      "y": "8",
-                      "width": "291",
-                      "height": "17",
+                      "x": "5",
+                      "y": "5",
+                      "width": "318",
+                      "height": "22",
                       "params": "1",
                       "style": "3",
                       "name": "name_input_text"
@@ -132,7 +148,7 @@
                 "typeId": 12,
                 "attributes": {
                   "x": "10",
-                  "y": "173",
+                  "y": "149",
                   "width": "132",
                   "height": "15",
                   "params": "16",
@@ -149,10 +165,10 @@
                 "typeId": 30,
                 "attributes": {
                   "x": "10",
-                  "y": "193",
+                  "y": "168",
                   "width": "330",
-                  "height": "145",
-                  "params": "16",
+                  "height": "144",
+                  "params": "2064",
                   "style": "105"
                 },
                 "children": [
@@ -160,10 +176,10 @@
                     "tag": "input",
                     "typeId": 77,
                     "attributes": {
-                      "x": "9",
-                      "y": "8",
-                      "width": "313",
-                      "height": "129",
+                      "x": "5",
+                      "y": "4",
+                      "width": "320",
+                      "height": "134",
                       "params": "2177",
                       "style": "3",
                       "name": "desc_input_text"
@@ -185,10 +201,10 @@
                 "typeId": 12,
                 "attributes": {
                   "x": "10",
-                  "y": "346",
+                  "y": "326",
                   "width": "130",
                   "height": "15",
-                  "params": "16",
+                  "params": "1040",
                   "style": "3",
                   "caption": "${roomad.catalog_roomname}"
                 },
@@ -202,53 +218,38 @@
                 "typeId": 102,
                 "attributes": {
                   "x": "10",
-                  "y": "364",
+                  "y": "345",
                   "width": "330",
                   "height": "24",
-                  "params": "17",
+                  "params": "1041",
                   "style": "3",
                   "name": "room_drop_menu"
                 },
                 "children": []
               },
               {
-                "tag": "border",
-                "typeId": 30,
+                "tag": "container",
+                "typeId": 4,
                 "attributes": {
-                  "x": "10",
-                  "y": "396",
-                  "width": "131",
-                  "height": "26",
-                  "params": "16400",
-                  "style": "0",
-                  "name": "totalprice_widget_border"
+                  "x": "158",
+                  "y": "384",
+                  "width": "44",
+                  "height": "18",
+                  "params": "148688",
+                  "style": "100",
+                  "name": "price_container"
                 },
-                "children": [
-                  {
-                    "tag": "container",
-                    "typeId": 4,
-                    "attributes": {
-                      "x": "43",
-                      "y": "3",
-                      "width": "44",
-                      "height": "18",
-                      "params": "131280",
-                      "style": "100",
-                      "name": "price_container"
-                    },
-                    "children": []
-                  }
-                ]
+                "children": []
               },
               {
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "430",
+                  "y": "416",
                   "width": "360",
                   "height": "30",
-                  "params": "16",
+                  "params": "1040",
                   "style": "100",
                   "name": "purchaseWidget",
                   "tags": "NO_GIFT_OPTION,ROOM_INITIATE_PURCHASE"

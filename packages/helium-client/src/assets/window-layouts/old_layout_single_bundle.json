@@ -1,6 +1,6 @@
 {
   "name": "old_layout_single_bundle",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\310_ctlg_single_bundle.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1587_layout_single_bundle_xml$e92dab9170f61634ea9e56a69a83f3ea365295436.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_single_bundle"
         },
@@ -24,7 +24,7 @@
             "typeId": 11,
             "attributes": {
               "x": "15",
-              "y": "103",
+              "y": "13",
               "width": "329",
               "height": "62",
               "params": "1",
@@ -48,7 +48,7 @@
             "typeId": 11,
             "attributes": {
               "x": "159",
-              "y": "182",
+              "y": "92",
               "width": "173",
               "height": "25",
               "params": "1",
@@ -68,29 +68,15 @@
             }
           },
           {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "0",
-              "y": "430",
-              "width": "360",
-              "height": "30",
-              "params": "16",
-              "style": "0",
-              "name": "purchaseWidget"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
+            "tag": "border",
+            "typeId": 30,
             "attributes": {
               "x": "164",
-              "y": "207",
-              "width": "176",
-              "height": "157",
-              "params": "16",
-              "style": "0",
+              "y": "117",
+              "width": "186",
+              "height": "247",
+              "params": "2064",
+              "style": "6",
               "name": "bundleGridScrollWidget",
               "tags": "EMBEDDED"
             },
@@ -99,11 +85,11 @@
                 "tag": "scrollable_itemgrid_vertical",
                 "typeId": 140,
                 "attributes": {
-                  "x": "0",
-                  "y": "0",
-                  "width": "176",
-                  "height": "157",
-                  "params": "16",
+                  "x": "4",
+                  "y": "3",
+                  "width": "178",
+                  "height": "238",
+                  "params": "2064",
                   "style": "3",
                   "name": "bundleGrid"
                 },
@@ -118,17 +104,17 @@
             "tag": "static_bitmap",
             "typeId": 23,
             "attributes": {
-              "x": "7",
-              "y": "169",
-              "width": "137",
-              "height": "218",
+              "x": "6",
+              "y": "119",
+              "width": "157",
+              "height": "238",
               "params": "16",
               "style": "100",
               "name": "ctlg_teaserimg_1"
             },
             "children": [],
             "vars": {
-              "asset_uri": "${image.library.url}catalogue/ctlg_furnimatic_image.gif",
+              "asset_uri": "${image.library.url}catalogue/small_movie_roomteaser.gif",
               "pivot_point": "center",
               "stretched_x": false,
               "stretched_y": false
@@ -142,7 +128,7 @@
               "y": "385",
               "width": "324",
               "height": "40",
-              "params": "16",
+              "params": "1040",
               "style": "3",
               "color": "0x0e0e0e0"
             },
@@ -195,8 +181,8 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "292",
-              "y": "167",
+              "x": "12",
+              "y": "125",
               "width": "40",
               "height": "40",
               "params": "0",
@@ -209,8 +195,8 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "63",
-              "y": "167",
+              "x": "74",
+              "y": "125",
               "width": "83",
               "height": "30",
               "params": "0",
@@ -233,6 +219,20 @@
                 "children": []
               }
             ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "1040",
+              "style": "0",
+              "name": "purchaseWidget"
+            },
+            "children": []
           }
         ]
       }

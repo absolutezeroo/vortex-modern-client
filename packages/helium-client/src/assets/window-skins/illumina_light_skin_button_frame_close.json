@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_button_frame_close",
   "name": "illumina_light_skin_button_plain",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\97_illumina_light_skin_button_plain.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2580_illumina_light_skin_button_frame_close_xml$88669c1d196c56144035e3611513a35b483973835.xml",
   "variables": {
     "asset": "illumina_light_button_frame_close"
   },

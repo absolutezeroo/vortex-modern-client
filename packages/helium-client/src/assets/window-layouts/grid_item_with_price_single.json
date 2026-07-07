@@ -1,6 +1,6 @@
 {
   "name": "grid_item_with_price_single",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\233_mintGridItem.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1635_gridItem_with_price_single_xml$a92ea55ce43f86b4e4cea7cb342e467746911530.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -16,7 +16,9 @@
           "height": "74",
           "params": "17",
           "style": "3",
-          "treshold": "0"
+          "treshold": "0",
+          "width_min": "53",
+          "width_max": "73"
         },
         "children": [
           {
@@ -42,7 +44,7 @@
               "y": "0",
               "width": "53",
               "height": "62",
-              "params": "16",
+              "params": "2192",
               "style": "2",
               "color": "0xffa1a19b",
               "tags": "ITEM_HILIGHT"
@@ -56,7 +58,7 @@
                   "y": "0",
                   "width": "53",
                   "height": "62",
-                  "params": "16",
+                  "params": "2192",
                   "style": "3",
                   "name": "border_outline",
                   "color": "0x063c5e9"
@@ -70,7 +72,7 @@
                       "y": "2",
                       "width": "49",
                       "height": "58",
-                      "params": "16",
+                      "params": "2192",
                       "style": "3"
                     },
                     "children": []
@@ -83,12 +85,64 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
+              "x": "6",
+              "y": "2",
+              "width": "60",
+              "height": "36",
+              "params": "16",
+              "style": "3",
+              "name": "wide_container"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "60",
+                  "height": "36",
+                  "params": "16",
+                  "style": "3",
+                  "name": "image_wide"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "8",
+              "y": "2",
+              "width": "10",
+              "height": "10",
+              "params": "16",
+              "style": "0",
+              "name": "badge_add_on"
+            },
+            "children": [],
+            "vars": {
+              "handle_bitmap_disposing": false
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
               "x": "8",
               "y": "2",
               "width": "36",
               "height": "36",
               "params": "17",
               "style": "3",
+              "name": "small_container",
               "treshold": "0"
             },
             "children": [
@@ -176,6 +230,7 @@
                 },
                 "children": [],
                 "vars": {
+                  "antialias_type": "advanced",
                   "auto_size": "left",
                   "font_face": "Volter Bold",
                   "text_color": 13421670,
@@ -215,6 +270,7 @@
                     },
                     "children": [],
                     "vars": {
+                      "antialias_type": "advanced",
                       "auto_size": "left",
                       "text_color": 13421670,
                       "mouse_wheel_enabled": false,
@@ -226,23 +282,6 @@
                     }
                   }
                 ]
-              },
-              {
-                "tag": "bitmap",
-                "typeId": 21,
-                "attributes": {
-                  "x": "0",
-                  "y": "0",
-                  "width": "10",
-                  "height": "10",
-                  "params": "16",
-                  "style": "0",
-                  "name": "badge_add_on"
-                },
-                "children": [],
-                "vars": {
-                  "handle_bitmap_disposing": false
-                }
               },
               {
                 "tag": "static_bitmap",
@@ -286,11 +325,11 @@
             "tag": "itemlist_horizontal",
             "typeId": 51,
             "attributes": {
-              "x": "7",
+              "x": "-3",
               "y": "36",
-              "width": "44",
+              "width": "54",
               "height": "19",
-              "params": "409616",
+              "params": "409680",
               "style": "3",
               "name": "totalprice_container"
             },
@@ -301,7 +340,7 @@
                 "attributes": {
                   "x": "0",
                   "y": "2",
-                  "width": "17",
+                  "width": "38",
                   "height": "17",
                   "params": "262160",
                   "style": "3",
@@ -311,7 +350,6 @@
                 "children": [],
                 "vars": {
                   "auto_size": "left",
-                  "grid_fit_type": "subpixel",
                   "mouse_wheel_enabled": false,
                   "bold": true,
                   "spacing": 0,
@@ -322,7 +360,7 @@
                 "tag": "icon",
                 "typeId": 1,
                 "attributes": {
-                  "x": "18",
+                  "x": "39",
                   "y": "4",
                   "width": "15",
                   "height": "15",

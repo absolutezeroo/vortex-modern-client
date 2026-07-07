@@ -12,12 +12,12 @@ import {WindowEvent} from '@core/window/events/WindowEvent';
  *
  * @see sources/win63_version/habbo/toolbar/BottomBackgroundBorder.as
  */
-export class BottomBackgroundBorder
+export class BottomBackgroundBorder 
 {
     private _window: IWindow | null = null;
     private _windowManager: IHabboWindowManager | null = null;
 
-    constructor(toolbar: HabboToolbar)
+    constructor(toolbar: HabboToolbar) 
     {
         const typedToolbar = toolbar as unknown as {
             windowManager?: IHabboWindowManager | null;
@@ -28,9 +28,9 @@ export class BottomBackgroundBorder
 
         if(!this._windowManager) return;
 
-        this._window = this._windowManager.buildWidgetLayout('bottom_background_border');
+        this._window = this._windowManager.buildWidgetLayout('bottom_background_border_xml');
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.ignoreMouseEvents = true;
             this._window.procedure = this.onWindowEvent;
@@ -42,21 +42,21 @@ export class BottomBackgroundBorder
     private _disposed: boolean = false;
 
     /**
-	 * Whether this border is disposed
-	 */
-    get disposed(): boolean
+     * Whether this border is disposed
+     */
+    get disposed(): boolean 
     {
         return this._disposed;
     }
 
     /**
-	 * Dispose of this border
-	 */
-    public dispose(): void
+     * Dispose of this border
+     */
+    public dispose(): void 
     {
         if(this._disposed) return;
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.dispose();
             this._window = null;
@@ -66,15 +66,15 @@ export class BottomBackgroundBorder
         this._disposed = true;
     }
 
-    private onWindowEvent = (event: WindowEvent): void =>
+    private onWindowEvent = (event: WindowEvent): void => 
     {
-        if(event.type === WindowEvent.WE_PARENT_RESIZED)
+        if(event.type === WindowEvent.WE_PARENT_RESIZED) 
         {
             this.updatePosition();
         }
     };
 
-    private updatePosition(): void
+    private updatePosition(): void 
     {
         if(!this._window) return;
 
@@ -90,13 +90,13 @@ export class BottomBackgroundBorder
         this._window.invalidate();
     }
 
-    private sendToBack(): void
+    private sendToBack(): void 
     {
         if(!this._window || !this._window.parent) return;
 
         const parent = this._window.parent as unknown as IWindowContainer;
 
-        if(typeof parent.setChildIndex === 'function')
+        if(typeof parent.setChildIndex === 'function') 
         {
             parent.setChildIndex(this._window, 0);
         }

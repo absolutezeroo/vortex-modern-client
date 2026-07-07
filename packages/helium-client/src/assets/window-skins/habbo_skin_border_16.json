@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_border_16",
   "name": "border_16",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\41_border_16.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2093__SafeCls_842.xml",
   "variables": {
     "asset": "habbo_border_hsv_layers2"
   },

@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_button_multi_middle",
   "name": "illumina_light_skin_button_multi_right",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\58_illumina_light_skin_button_multi_right.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2212_illumina_light_skin_button_multi_middle_xml$9da2e74e34ebeef9ba7caac146ae07f4843145528.xml",
   "variables": {
     "asset": "illumina_light_button_multi"
   },

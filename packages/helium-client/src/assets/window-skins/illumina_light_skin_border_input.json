@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_border_input",
   "name": "illumina_light_skin_border_input",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\62_illumina_light_skin_border_input.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2250_illumina_light_skin_border_input_xml$0fb022e1148e272c78ab317f12dc31a82076311573.xml",
   "variables": {
     "asset": "illumina_light_input_chat"
   },

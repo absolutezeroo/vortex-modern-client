@@ -1,83 +1,199 @@
 {
   "name": "notification",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\547_notification.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1049__SafeCls_1270.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "border",
-        "typeId": 30,
+        "tag": "frame",
+        "typeId": 35,
         "attributes": {
           "x": "0",
           "y": "0",
-          "width": "190",
-          "height": "66",
-          "params": "131073",
+          "width": "315",
+          "height": "191",
+          "params": "32769",
           "style": "1",
-          "tags": "border"
+          "name": "widget_notification_frame",
+          "caption": "widget.notification.header",
+          "color": "0xff4c4c4c",
+          "tags": "room_widget_teaser"
         },
         "children": [
           {
-            "tag": "bitmap",
-            "typeId": 21,
+            "tag": "border",
+            "typeId": 30,
             "attributes": {
-              "x": "8",
-              "y": "8",
-              "width": "50",
-              "height": "50",
-              "params": "3088",
+              "x": "0",
+              "y": "0",
+              "width": "303",
+              "height": "159",
+              "params": "2192",
               "style": "0",
-              "tags": "notification_icon"
+              "caption": "widget.notification.header",
+              "color": "0x04c4c4c",
+              "blend": "0"
             },
-            "children": []
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "66",
-              "y": "8",
-              "width": "116",
-              "height": "50",
-              "params": "16",
-              "style": "0",
-              "tags": "notification_text",
-              "height_min": "22"
-            },
-            "children": [],
-            "vars": {
-              "antialias_type": "advanced",
-              "font_face": "Volter Bold",
-              "text_color": 16777215,
-              "mouse_wheel_enabled": false,
-              "sharpness": 0,
-              "thickness": 0,
-              "word_wrap": true,
-              "kerning": false,
-              "spacing": 0,
-              "leading": 0
-            }
-          },
-          {
-            "tag": "static_bitmap",
-            "typeId": 23,
-            "attributes": {
-              "x": "8",
-              "y": "8",
-              "width": "50",
-              "height": "50",
-              "params": "3088",
-              "style": "0",
-              "tags": "notification_icon_static"
-            },
-            "children": [],
-            "vars": {
-              "pivot_point": "center",
-              "stretched_x": false,
-              "stretched_y": false
-            }
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "303",
+                  "height": "159",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "white_border",
+                  "caption": "widget.notification.header"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "12",
+                  "width": "284",
+                  "height": "21",
+                  "params": "16",
+                  "style": "0",
+                  "name": "text_title",
+                  "caption": "widget.notification.title",
+                  "color": "0x0666666"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 6710886,
+                  "text_style": "bold",
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "35",
+                  "width": "282",
+                  "height": "58",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "text_description",
+                  "caption": "widget.notification.description",
+                  "color": "0x0888888"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 8947848,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "101",
+                  "y": "102",
+                  "width": "100",
+                  "height": "46",
+                  "params": "787665",
+                  "style": "1",
+                  "name": "button_ok",
+                  "caption": "widget.notification.header",
+                  "height_min": "46",
+                  "height_max": "46"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "94",
+                      "height": "40",
+                      "params": "144",
+                      "style": "3",
+                      "caption": "widget.notification.header",
+                      "color": "0x06d00"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "6",
+                      "y": "6",
+                      "width": "88",
+                      "height": "17",
+                      "params": "144",
+                      "style": "3",
+                      "caption": "widget.notification.header",
+                      "color": "0x0309d00"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "37",
+                      "y": "10",
+                      "width": "25",
+                      "height": "24",
+                      "params": "3932368",
+                      "style": "0",
+                      "caption": "${ok}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "font_face": "Ubuntu",
+                      "font_size": 24,
+                      "text_color": 16777215,
+                      "text_style": "bold",
+                      "mouse_wheel_enabled": false,
+                      "bold": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "20",
+                  "y": "15",
+                  "width": "90",
+                  "height": "90",
+                  "params": "16",
+                  "style": "0",
+                  "name": "deco_img",
+                  "caption": "${widget.furni.teaser.title}",
+                  "width_min": "90",
+                  "width_max": "90",
+                  "height_min": "90",
+                  "height_max": "90"
+                },
+                "children": []
+              }
+            ]
           }
         ]
       }
@@ -85,6 +201,6 @@
   },
   "vars": {},
   "filters": [],
-  "layoutWidth": 190,
-  "layoutHeight": 66
+  "layoutWidth": 315,
+  "layoutHeight": 191
 }

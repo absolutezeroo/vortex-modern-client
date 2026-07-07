@@ -1,6 +1,6 @@
 {
   "name": "old_layout_pets",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\351_ctlg_pets.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1592_layout_pets_xml$eba4b7f0caa66c4a91734795b7a9f0bf1776878963.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_pets"
         },
@@ -24,13 +24,14 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "75",
-              "width": "359",
-              "height": "377",
-              "params": "16",
+              "y": "0",
+              "width": "360",
+              "height": "460",
+              "params": "2064",
               "style": "0",
               "name": "petsWidget",
-              "color": "0x0eeeeee"
+              "color": "0x0eeeeee",
+              "tags": "EMBEDDED"
             },
             "children": [
               {
@@ -38,12 +39,41 @@
                 "typeId": 21,
                 "attributes": {
                   "x": "0",
-                  "y": "30",
+                  "y": "0",
                   "width": "360",
-                  "height": "127",
+                  "height": "240",
                   "params": "16",
                   "style": "0",
                   "name": "ctlg_teaserimg_1"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "307",
+                  "y": "178",
+                  "width": "40",
+                  "height": "40",
+                  "params": "16",
+                  "style": "0",
+                  "name": "addOnBadgeViewWidget"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "245",
+                  "width": "360",
+                  "height": "80",
+                  "params": "16",
+                  "style": "0",
+                  "name": "colourGridWidget",
+                  "blend": "0"
                 },
                 "children": []
               },
@@ -52,7 +82,7 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "10",
-                  "y": "270",
+                  "y": "380",
                   "width": "62",
                   "height": "15",
                   "params": "16",
@@ -74,7 +104,7 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "10",
-                  "y": "135",
+                  "y": "225",
                   "width": "62",
                   "height": "15",
                   "params": "16",
@@ -96,7 +126,7 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "10",
-                  "y": "226",
+                  "y": "326",
                   "width": "62",
                   "height": "15",
                   "params": "16",
@@ -118,7 +148,7 @@
                 "typeId": 102,
                 "attributes": {
                   "x": "10",
-                  "y": "244",
+                  "y": "344",
                   "width": "340",
                   "height": "25",
                   "params": "17",
@@ -132,7 +162,7 @@
                 "typeId": 30,
                 "attributes": {
                   "x": "10",
-                  "y": "288",
+                  "y": "398",
                   "width": "340",
                   "height": "25",
                   "params": "16",
@@ -169,41 +199,13 @@
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
-                  "x": "7",
-                  "y": "152",
-                  "width": "347",
-                  "height": "73",
-                  "params": "16",
-                  "style": "0",
-                  "name": "colourGridWidget"
-                },
-                "children": []
-              },
-              {
-                "tag": "container",
-                "typeId": 4,
-                "attributes": {
                   "x": "0",
-                  "y": "345",
+                  "y": "429",
                   "width": "360",
                   "height": "30",
-                  "params": "16",
+                  "params": "1040",
                   "style": "0",
                   "name": "purchaseWidget"
-                },
-                "children": []
-              },
-              {
-                "tag": "container",
-                "typeId": 4,
-                "attributes": {
-                  "x": "30",
-                  "y": "85",
-                  "width": "40",
-                  "height": "40",
-                  "params": "16",
-                  "style": "0",
-                  "name": "addOnBadgeViewWidget"
                 },
                 "children": []
               }
@@ -214,13 +216,14 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "75",
-              "width": "359",
-              "height": "375",
-              "params": "16",
+              "y": "0",
+              "width": "360",
+              "height": "460",
+              "params": "2064",
               "style": "0",
               "name": "newPetsWidget",
-              "color": "0x0eeeeee"
+              "color": "0x0eeeeee",
+              "tags": "EMBEDDED"
             },
             "children": [
               {
@@ -228,9 +231,9 @@
                 "typeId": 21,
                 "attributes": {
                   "x": "0",
-                  "y": "30",
+                  "y": "0",
                   "width": "360",
-                  "height": "127",
+                  "height": "240",
                   "params": "16",
                   "style": "0",
                   "name": "ctlg_teaserimg_1"
@@ -242,8 +245,8 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "10",
-                  "y": "136",
-                  "width": "340",
+                  "y": "16",
+                  "width": "74",
                   "height": "17",
                   "params": "16",
                   "style": "3",
@@ -252,7 +255,7 @@
                 },
                 "children": [],
                 "vars": {
-                  "auto_size": "center",
+                  "auto_size": "left",
                   "text_style": "u_bold",
                   "mouse_wheel_enabled": false,
                   "spacing": 0,
@@ -264,8 +267,8 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "12",
-                  "y": "156",
-                  "width": "340",
+                  "y": "326",
+                  "width": "62",
                   "height": "15",
                   "params": "16",
                   "style": "3",
@@ -274,7 +277,7 @@
                 },
                 "children": [],
                 "vars": {
-                  "auto_size": "center",
+                  "auto_size": "left",
                   "text_style": "u_small",
                   "mouse_wheel_enabled": false,
                   "spacing": 0,
@@ -285,10 +288,10 @@
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
-                  "x": "5",
-                  "y": "173",
-                  "width": "350",
-                  "height": "70",
+                  "x": "0",
+                  "y": "245",
+                  "width": "360",
+                  "height": "80",
                   "params": "16",
                   "style": "0",
                   "name": "colourGridWidget"
@@ -300,8 +303,8 @@
                 "typeId": 10,
                 "attributes": {
                   "x": "12",
-                  "y": "253",
-                  "width": "339",
+                  "y": "363",
+                  "width": "62",
                   "height": "15",
                   "params": "16",
                   "style": "3",
@@ -310,7 +313,7 @@
                 },
                 "children": [],
                 "vars": {
-                  "auto_size": "center",
+                  "auto_size": "left",
                   "text_style": "u_small",
                   "mouse_wheel_enabled": false,
                   "spacing": 0,
@@ -322,7 +325,7 @@
                 "typeId": 30,
                 "attributes": {
                   "x": "10",
-                  "y": "275",
+                  "y": "385",
                   "width": "340",
                   "height": "25",
                   "params": "16",
@@ -360,10 +363,10 @@
                 "typeId": 4,
                 "attributes": {
                   "x": "0",
-                  "y": "345",
+                  "y": "429",
                   "width": "360",
                   "height": "30",
-                  "params": "16",
+                  "params": "1040",
                   "style": "0",
                   "name": "purchaseWidget"
                 },
@@ -373,8 +376,8 @@
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
-                  "x": "30",
-                  "y": "85",
+                  "x": "13",
+                  "y": "177",
                   "width": "40",
                   "height": "40",
                   "params": "16",
@@ -384,31 +387,6 @@
                 "children": []
               }
             ]
-          },
-          {
-            "tag": "text",
-            "typeId": 10,
-            "attributes": {
-              "x": "267",
-              "y": "426",
-              "width": "78",
-              "height": "15",
-              "params": "16",
-              "style": "3",
-              "name": "ctlg_price_1",
-              "caption": "0",
-              "visible": "false"
-            },
-            "children": [],
-            "vars": {
-              "auto_size": "right",
-              "text_style": "u_small",
-              "mouse_wheel_enabled": false,
-              "multiline": true,
-              "word_wrap": true,
-              "spacing": 0,
-              "leading": 0
-            }
           }
         ]
       }

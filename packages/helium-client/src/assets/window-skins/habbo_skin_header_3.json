@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_header_3",
-  "name": "header_skin_7",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\73_header_skin_7.xml",
+  "name": "header_skin_3",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2703_habbo_skin_header_3_xml$ab4c2ac5d59bffb6bf4ea2a5f53d03f01886064305.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },
@@ -26,7 +26,7 @@
   ],
   "layouts": [
     {
-      "name": "header_7",
+      "name": "header_3",
       "transparent": false,
       "blendMode": "",
       "entities": [

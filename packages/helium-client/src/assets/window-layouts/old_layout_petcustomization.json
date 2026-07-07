@@ -1,6 +1,6 @@
 {
   "name": "old_layout_petcustomization",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\360_ctlg_petcustomization.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1656_layout_petcustomization_xml$c1e4c725e2182bdededa8028bff877621828680659.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_petcustomization"
         },
@@ -30,7 +30,8 @@
               "params": "16",
               "style": "3",
               "name": "ctlg_selectproduct",
-              "caption": "${catalog_selectproduct}"
+              "caption": "${catalog_selectproduct}",
+              "visible": "false"
             },
             "children": [],
             "vars": {
@@ -42,11 +43,11 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "5",
-              "y": "150",
-              "width": "170",
-              "height": "275",
-              "params": "16",
+              "x": "0",
+              "y": "245",
+              "width": "360",
+              "height": "180",
+              "params": "2064",
               "style": "0",
               "name": "itemGridWidget"
             },
@@ -56,10 +57,10 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "180",
-              "y": "150",
-              "width": "175",
-              "height": "275",
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "240",
               "params": "16",
               "style": "0",
               "name": "petPreviewWidget"
@@ -88,8 +89,8 @@
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "175",
-                  "height": "275",
+                  "width": "360",
+                  "height": "240",
                   "params": "16",
                   "style": "0",
                   "name": "ctlg_teaserimg_1"
@@ -106,7 +107,7 @@
                 "typeId": 15,
                 "attributes": {
                   "x": "8",
-                  "y": "172",
+                  "y": "12",
                   "width": "74",
                   "height": "17",
                   "params": "16",
@@ -128,7 +129,7 @@
                 "typeId": 15,
                 "attributes": {
                   "x": "8",
-                  "y": "189",
+                  "y": "31",
                   "width": "162",
                   "height": "17",
                   "params": "16",
@@ -156,7 +157,7 @@
               "y": "430",
               "width": "360",
               "height": "30",
-              "params": "16",
+              "params": "1040",
               "style": "0",
               "name": "purchaseWidget"
             },

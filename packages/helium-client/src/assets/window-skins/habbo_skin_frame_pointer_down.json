@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_frame_pointer_down",
   "name": "frame_pointer_down_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\46_frame_pointer_down_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2140_habbo_skin_frame_pointer_down_xml$0a9b30ef11cf7b52dce22eb13ae8d88d1708052260.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },

@@ -1,6 +1,6 @@
 {
   "name": "old_layout_loyalty_vip_buy",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\361_ctlg_loyalty_vip_buy.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1620__SafeCls_1091.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_loyalty_vip_buy",
           "color": "0x2121ffffff",
@@ -25,30 +25,27 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "13",
-              "y": "67",
-              "width": "320",
-              "height": "345",
-              "params": "16",
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "460",
+              "params": "2064",
               "style": "0",
-              "name": "loyaltyVipBuyWidget"
+              "name": "loyaltyVipBuyWidget",
+              "tags": "EMBEDDED"
             },
             "children": [
               {
-                "tag": "itemlist",
+                "tag": "itemlist_vertical",
                 "typeId": 50,
                 "attributes": {
                   "x": "161",
                   "y": "3",
-                  "width": "158",
+                  "width": "188",
                   "height": "165",
                   "params": "16",
                   "style": "3",
-                  "tags": "own_items_grid",
-                  "width_min": "158",
-                  "width_max": "158",
-                  "height_min": "165",
-                  "height_max": "165"
+                  "tags": "own_items_grid"
                 },
                 "children": [
                   {
@@ -62,9 +59,7 @@
                       "params": "786576",
                       "style": "3",
                       "name": "vip_title",
-                      "caption": "${catalog.vip.buy.title}",
-                      "width_min": "158",
-                      "width_max": "158"
+                      "caption": "${catalog.vip.buy.title}"
                     },
                     "children": [],
                     "vars": {
@@ -88,9 +83,7 @@
                       "params": "786576",
                       "style": "3",
                       "name": "vip_info",
-                      "caption": "${catalog.vip.buy.info}",
-                      "width_min": "158",
-                      "width_max": "158"
+                      "caption": "${catalog.vip.buy.info}"
                     },
                     "children": [],
                     "vars": {
@@ -104,8 +97,7 @@
                   }
                 ],
                 "vars": {
-                  "spacing": 4,
-                  "scale_to_fit_items": true
+                  "spacing": 4
                 }
               },
               {
@@ -129,14 +121,31 @@
                 }
               },
               {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "19",
+                  "y": "170",
+                  "width": "316",
+                  "height": "257",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "item_list_vip"
+                },
+                "children": [],
+                "vars": {
+                  "spacing": 4
+                }
+              },
+              {
                 "tag": "text",
                 "typeId": 10,
                 "attributes": {
-                  "x": "19",
-                  "y": "330",
+                  "x": "39",
+                  "y": "433",
                   "width": "286",
                   "height": "17",
-                  "params": "786449",
+                  "params": "787473",
                   "style": "3",
                   "name": "vip_link",
                   "caption": "${catalog.vip.buy.link}",
@@ -150,25 +159,6 @@
                   "underline": true,
                   "spacing": 0,
                   "leading": 0
-                }
-              },
-              {
-                "tag": "itemlist",
-                "typeId": 50,
-                "attributes": {
-                  "x": "19",
-                  "y": "170",
-                  "width": "286",
-                  "height": "157",
-                  "params": "16",
-                  "style": "3",
-                  "name": "item_list_vip",
-                  "width_min": "286",
-                  "width_max": "286"
-                },
-                "children": [],
-                "vars": {
-                  "spacing": 4
                 }
               }
             ]

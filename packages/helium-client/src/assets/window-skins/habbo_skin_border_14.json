@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_border_14",
   "name": "border_14",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\88_border_14.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2503__SafeCls_840.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },

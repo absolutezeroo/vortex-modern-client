@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_border_raised",
   "name": "illumina_light_skin_border_raised",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\0_illumina_light_skin_border_raised.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1736__SafeCls_1034.xml",
   "variables": {
     "asset": "illumina_light_border_raised"
   },

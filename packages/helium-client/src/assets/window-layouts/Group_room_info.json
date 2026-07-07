@@ -1,6 +1,6 @@
 {
-  "name": "Group_room_info",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\117_Group_room_info.xml",
+  "name": "group_room_info",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1184__SafeCls_757.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

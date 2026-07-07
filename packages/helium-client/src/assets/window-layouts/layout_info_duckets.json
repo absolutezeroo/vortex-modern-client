@@ -1,6 +1,6 @@
 {
   "name": "layout_info_duckets",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\365_ctlg_info_duckets.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1601__SafeCls_1084.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "2064",
+          "params": "16",
           "style": "0",
           "name": "ctlg_info_duckets"
         },
@@ -24,9 +24,9 @@
             "typeId": 11,
             "attributes": {
               "x": "24",
-              "y": "19",
+              "y": "89",
               "width": "226",
-              "height": "420",
+              "height": "332",
               "params": "1",
               "style": "3",
               "name": "ctlg_description",
@@ -50,7 +50,7 @@
             "typeId": 23,
             "attributes": {
               "x": "236",
-              "y": "10",
+              "y": "80",
               "width": "123",
               "height": "360",
               "params": "0",

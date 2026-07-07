@@ -1,6 +1,6 @@
 {
   "name": "old_layout_pets3",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\322_ctlg_pets3.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1581__SafeCls_1088.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_pets2"
         },
@@ -24,10 +24,10 @@
             "typeId": 30,
             "attributes": {
               "x": "10",
-              "y": "140",
+              "y": "10",
               "width": "340",
-              "height": "310",
-              "params": "16",
+              "height": "440",
+              "params": "2064",
               "style": "2",
               "color": "0xff8899a2"
             },
@@ -53,8 +53,8 @@
                 }
               },
               {
-                "tag": "text",
-                "typeId": 10,
+                "tag": "formatted_text",
+                "typeId": 15,
                 "attributes": {
                   "x": "85",
                   "y": "26",
@@ -80,8 +80,8 @@
                 }
               },
               {
-                "tag": "text",
-                "typeId": 10,
+                "tag": "formatted_text",
+                "typeId": 15,
                 "attributes": {
                   "x": "20",
                   "y": "72",
@@ -103,11 +103,11 @@
                 }
               },
               {
-                "tag": "text",
-                "typeId": 10,
+                "tag": "formatted_text",
+                "typeId": 15,
                 "attributes": {
                   "x": "20",
-                  "y": "210",
+                  "y": "270",
                   "width": "306",
                   "height": "138",
                   "params": "16",

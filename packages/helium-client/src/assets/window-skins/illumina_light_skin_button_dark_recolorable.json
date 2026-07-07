@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_button_dark_recolorable",
   "name": "illumina_light_skin_button_dark_recolorable",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\24_illumina_light_skin_button_dark_recolorable.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1949__SafeCls_1036.xml",
   "variables": {
     "asset": "illumina_light_button_dark_recolorable"
   },

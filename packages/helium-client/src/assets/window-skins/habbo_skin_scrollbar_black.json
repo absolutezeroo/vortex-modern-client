@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_scrollbar_black",
   "name": "black_scrollbar_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\116_black_scrollbar_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2732_habbo_skin_scrollbar_black_xml$3cd64d6da50e103b29ffd40cf4bd0244767326900.xml",
   "variables": {
     "asset": "habbo_blue_skin",
     "width": "17",

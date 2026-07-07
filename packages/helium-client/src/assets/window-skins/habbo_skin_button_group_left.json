@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_group_left",
   "name": "button_group_left_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\85_button_group_left_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2484_habbo_skin_button_group_left_xml$834a1c3e92c71a1fcaa010f24df6447e579663622.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

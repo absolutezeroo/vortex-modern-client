@@ -1,14 +1,14 @@
 {
   "id": "habbo_skin_frame_leaderboard_ach",
-  "name": "default_frame_leaderboard_all_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\86_default_frame_leaderboard_all_skin.xml",
+  "name": "default_frame_leaderboard_ach_skin",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1975__SafeCls_870.xml",
   "variables": {
-    "asset": "ubuntu_frame_leaderboard_all"
+    "asset": "ubuntu_frame_leaderboard_ach"
   },
   "templates": [
     {
-      "name": "default_frame_leaderboard_all",
-      "asset": "ubuntu_frame_leaderboard_all",
+      "name": "default_frame_leaderboard_ach",
+      "asset": "ubuntu_frame_leaderboard_ach",
       "entities": [
         {
           "id": 0,
@@ -282,7 +282,7 @@
     {
       "name": "default",
       "layout": "frame_leaderboard",
-      "template": "default_frame_leaderboard_all"
+      "template": "default_frame_leaderboard_ach"
     }
   ]
 }

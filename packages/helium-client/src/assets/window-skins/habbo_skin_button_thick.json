@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_thick",
   "name": "thick_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\53_thick_button_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2183_habbo_skin_button_thick_xml$33c7702f66cf06e75581f1b68e46ecd81538926722.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

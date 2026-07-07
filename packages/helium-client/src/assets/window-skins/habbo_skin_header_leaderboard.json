@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_header_leaderboard",
   "name": "header_skin_leaderboard",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\122_header_skin_leaderboard.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2798_habbo_skin_header_leaderboard_xml$166f8b3ea8eabab412118e121d11585b754328463.xml",
   "variables": {
     "asset": "ubuntu_frame_leaderboard_all"
   },

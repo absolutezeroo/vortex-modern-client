@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_plus_3",
   "name": "plus_button_skin_3",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\87_plus_button_skin_3.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2498__SafeCls_859.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },

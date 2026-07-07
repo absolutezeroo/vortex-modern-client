@@ -22,7 +22,7 @@ const log = Logger.getLogger('SeasonalCurrencyIndicator');
  *
  * @see sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as
  */
-export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
+export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase 
 {
     private static readonly BG_COLOR_LIGHT: number = 0xFF70806D;
     private static readonly BG_COLOR_DARK: number = 0xFF4D5F4E;
@@ -31,9 +31,8 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
     private _catalog: IHabboCatalog | null;
     private _localization: IHabboLocalizationManager | null;
     private _previousBalance: number = -1;
-    private _balance: number = 0;
 
-    constructor(toolbar: HabboToolbar, windowManager: IHabboWindowManager, catalog: IHabboCatalog, localization: IHabboLocalizationManager | null)
+    constructor(toolbar: HabboToolbar, windowManager: IHabboWindowManager, catalog: IHabboCatalog, localization: IHabboLocalizationManager | null) 
     {
         super(windowManager);
 
@@ -45,46 +44,70 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         this.textElementName = 'amount';
         this.amountZeroText = localization?.getLocalization('purse.snowflakes.zero.amount.text', 'Info') ?? 'Info';
 
-        this.createWindow('purse_indicator_seasonal', null);
+        this.createWindow('purse_indicator_seasonal_xml', null);
         this.setAmount(0);
         this.initializeCurrencyLayouts();
         toolbar.extensionView?.attachExtension(ToolbarDisplayExtensionIds.SEASONAL_CURRENCY, this.window, 5);
         this.registerUpdateEvents(catalog.events);
-
-        log.debug('SeasonalCurrencyIndicator constructed');
     }
 
-    get balance(): number { return this._balance; }
+    private _balance: number = 0;
 
-    get displayedActivityPointType(): number
+    get balance(): number 
+    {
+        return this._balance;
+    }
+
+    get displayedActivityPointType(): number 
     {
         if(!this._toolbar) return 1;
 
         return this._toolbar.getInteger('seasonalcurrencyindicator.currency', 1);
     }
 
-    get currencyBackgroundColor(): number
+    get currencyBackgroundColor(): number 
     {
         if(!this._toolbar) return 0;
 
         return this.hexToNumber(this._toolbar.getProperty(`seasonalcurrency.preset.${this.currencyColor}.border`));
     }
 
-    get currencyTextColor(): number
+    get currencyTextColor(): number 
     {
         if(!this._toolbar) return 0;
 
         return this.hexToNumber(this._toolbar.getProperty(`seasonalcurrency.preset.${this.currencyColor}.font`));
     }
 
-    public onBalance = (event: PurseEvent): void =>
+    private get seasonalCurrencyId(): string 
+    {
+        if(!this._toolbar) return '';
+
+        return this._toolbar.getProperty(`seasonalcurrency.id.${this.displayedActivityPointType}`);
+    }
+
+    private get catalogPageName(): string 
+    {
+        if(!this._toolbar) return '';
+
+        return this._toolbar.getProperty('seasonalcurrencyindicator.page');
+    }
+
+    private get currencyColor(): string 
+    {
+        if(!this._toolbar) return '';
+
+        return this._toolbar.getProperty(`seasonalcurrency.${this.seasonalCurrencyId}.color`);
+    }
+
+    public onBalance = (event: PurseEvent): void => 
     {
         if(event.activityPointType !== this.displayedActivityPointType) return;
 
         this._balance = event.balance;
         this.setAmount(event.balance);
 
-        if(this._previousBalance !== -1)
+        if(this._previousBalance !== -1) 
         {
             this.animateChange(this._previousBalance, event.balance);
         }
@@ -92,7 +115,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         this._previousBalance = event.balance;
     };
 
-    public override registerUpdateEvents(dispatcher: unknown): void
+    public override registerUpdateEvents(dispatcher: unknown): void 
     {
         (dispatcher as { on?: (type: string, listener: (event: PurseEvent) => void) => void }).on?.(
             PurseEvent.ACTIVITY_POINT_BALANCE,
@@ -100,7 +123,7 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         );
     }
 
-    public override unregisterUpdateEvents(dispatcher: unknown): void
+    public override unregisterUpdateEvents(dispatcher: unknown): void 
     {
         (dispatcher as { off?: (type: string, listener: (event: PurseEvent) => void) => void }).off?.(
             PurseEvent.ACTIVITY_POINT_BALANCE,
@@ -108,16 +131,29 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         );
     }
 
-    protected override onContainerClick(_event: WindowMouseEvent): void
+    public override dispose(): void 
+    {
+        if(this._catalog) 
+        {
+            this.unregisterUpdateEvents(this._catalog.events);
+        }
+
+        this._toolbar = null;
+        this._catalog = null;
+        this._localization = null;
+        super.dispose();
+    }
+
+    protected override onContainerClick(_event: WindowMouseEvent): void 
     {
         this._catalog?.openCatalogPage(this.catalogPageName);
     }
 
-    protected override setAmount(amount: number, _minutes: number = -1): void
+    protected override setAmount(amount: number, _minutes: number = -1): void 
     {
         this._balance = amount;
 
-        if(amount === 0)
+        if(amount === 0) 
         {
             this.setTextUnderline(true);
             this.setText(this.amountZeroText ?? 'Info');
@@ -129,13 +165,13 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
         this.setText(formatPurseAmount(amount, this._localization));
     }
 
-    private initializeCurrencyLayouts(): void
+    private initializeCurrencyLayouts(): void 
     {
         if(!this.window) return;
 
         const name = this.window.findChildByName('seasonal_name');
 
-        if(name)
+        if(name) 
         {
             name.caption = this.getActivityPointName(this.displayedActivityPointType);
             name.color = this.currencyTextColor;
@@ -143,71 +179,40 @@ export class SeasonalCurrencyIndicator extends CurrencyIndicatorBase
 
         const bg = this.window.findChildByName('seasonal_bg');
 
-        if(bg)
+        if(bg) 
         {
             bg.color = this.currencyBackgroundColor;
         }
 
         const overlay = this.window.findChildByName('change_overlay');
 
-        if(overlay)
+        if(overlay) 
         {
             overlay.color = this.currencyBackgroundColor;
         }
 
-        const icon = this.window.findChildByName('seasonal_icon') as unknown as { style?: number; fitToSize?: () => void } | null;
+        const icon = this.window.findChildByName('seasonal_icon') as unknown as {
+            style?: number;
+            fitToSize?: () => void
+        } | null;
 
-        if(icon && this._toolbar?.configuration)
+        if(icon && this._toolbar?.configuration) 
         {
             icon.style = ActivityPointTypeEnum.getIconStyleFor(this.displayedActivityPointType, this._toolbar.configuration, true);
             icon.fitToSize?.();
         }
     }
 
-    private get seasonalCurrencyId(): string
-    {
-        if(!this._toolbar) return '';
-
-        return this._toolbar.getProperty(`seasonalcurrency.id.${this.displayedActivityPointType}`);
-    }
-
-    private get catalogPageName(): string
-    {
-        if(!this._toolbar) return '';
-
-        return this._toolbar.getProperty('seasonalcurrencyindicator.page');
-    }
-
-    private get currencyColor(): string
-    {
-        if(!this._toolbar) return '';
-
-        return this._toolbar.getProperty(`seasonalcurrency.${this.seasonalCurrencyId}.color`);
-    }
-
-    private getActivityPointName(type: number): string
+    private getActivityPointName(type: number): string 
     {
         return this._localization?.getLocalization(`achievements.activitypoint.${type}`, `Currency ${type}`) ?? `Currency ${type}`;
     }
 
-    private hexToNumber(value: string): number
+    private hexToNumber(value: string): number 
     {
         const normalized = value.replace('#', '').replace('0x', '');
         const parsed = parseInt(normalized, 16);
 
         return Number.isNaN(parsed) ? 0 : parsed;
-    }
-
-    public override dispose(): void
-    {
-        if(this._catalog)
-        {
-            this.unregisterUpdateEvents(this._catalog.events);
-        }
-
-        this._toolbar = null;
-        this._catalog = null;
-        this._localization = null;
-        super.dispose();
     }
 }

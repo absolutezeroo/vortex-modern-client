@@ -1,6 +1,6 @@
 {
   "name": "layout_frontpage4",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\277_ctlg_frontpage4.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1554_layout_frontpage_xml$5c13e41a5756652b54cbabec7215bb4b1603165109.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "2064",
+          "params": "16",
           "style": "0",
           "name": "ctlg_frontpage4"
         },
@@ -24,9 +24,9 @@
             "typeId": 23,
             "attributes": {
               "x": "246",
-              "y": "4",
+              "y": "64",
               "width": "103",
-              "height": "374",
+              "height": "324",
               "params": "16",
               "style": "0",
               "name": "ctlg_teaserimg_1"
@@ -44,9 +44,9 @@
             "typeId": 11,
             "attributes": {
               "x": "15",
-              "y": "10",
+              "y": "70",
               "width": "225",
-              "height": "380",
+              "height": "320",
               "params": "1",
               "style": "3",
               "name": "ctlg_txt1",
@@ -73,7 +73,7 @@
               "y": "397",
               "width": "345",
               "height": "61",
-              "params": "1040",
+              "params": "16",
               "style": "2",
               "name": "bgBorder",
               "color": "0x051bbee"

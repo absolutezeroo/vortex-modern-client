@@ -1,6 +1,6 @@
 {
   "name": "memenu_effect_unselected",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\772_memenu_effect_unselected.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\828_memenu_effect_unselected_xml$4612453356abc84a2f3b38d291ce28a1869435856.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -27,11 +27,11 @@
             "attributes": {
               "x": "0",
               "y": "0",
-              "width": "175",
+              "width": "154",
               "height": "48",
               "params": "16",
               "style": "2",
-              "blend": "0"
+              "color": "0x0666666"
             },
             "children": [
               {
@@ -63,6 +63,109 @@
                 "children": []
               },
               {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "40",
+                  "height": "40",
+                  "params": "16",
+                  "style": "0",
+                  "name": "effect_hilite"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "50",
+                  "y": "20",
+                  "width": "98",
+                  "height": "22",
+                  "params": "16",
+                  "style": "0",
+                  "name": "loader_border",
+                  "color": "0xffffffffff",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "1",
+                      "width": "96",
+                      "height": "20",
+                      "params": "16",
+                      "style": "0",
+                      "name": "loader_bg",
+                      "color": "0xffff3d3d3d",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "1",
+                          "y": "1",
+                          "width": "94",
+                          "height": "18",
+                          "params": "16",
+                          "style": "0",
+                          "name": "loader_bar",
+                          "color": "0xffff666666",
+                          "background": "true"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "94",
+                              "height": "2",
+                              "params": "16",
+                              "style": "0",
+                              "name": "loader_highlight",
+                              "color": "0xffff999999",
+                              "background": "true"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "52",
+                  "y": "24",
+                  "width": "98",
+                  "height": "13",
+                  "params": "16",
+                  "style": "0",
+                  "name": "time_left",
+                  "caption": "${widgets.memenu.effects.active.timeleft}",
+                  "blend": "0.8",
+                  "width_min": "98",
+                  "width_max": "98"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "mouse_wheel_enabled": false
+                }
+              },
+              {
                 "tag": "text",
                 "typeId": 10,
                 "attributes": {
@@ -82,21 +185,6 @@
                   "text_color": 16777215,
                   "mouse_wheel_enabled": false
                 }
-              },
-              {
-                "tag": "button",
-                "typeId": 60,
-                "attributes": {
-                  "x": "50",
-                  "y": "20",
-                  "width": "98",
-                  "height": "22",
-                  "params": "131089",
-                  "style": "1",
-                  "name": "activate_effect",
-                  "caption": "${widgets.memenu.effects.activate}"
-                },
-                "children": []
               },
               {
                 "tag": "container",

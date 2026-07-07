@@ -1,6 +1,6 @@
 {
   "name": "layout_guild_custom_furni",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\337_ctlg_guild_custom_furni.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1586_layout_guild_custom_furni_xml$47ba07c8b07831eec6d4f66c9cb053f6820418147.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "2064",
+          "params": "16",
           "style": "0",
           "name": "ctlg_default_3x3"
         },
@@ -30,8 +30,7 @@
               "params": "16",
               "style": "3",
               "name": "ctlg_selectproduct",
-              "caption": "${catalog_selectproduct}",
-              "visible": "false"
+              "caption": "${catalog_selectproduct}"
             },
             "children": [],
             "vars": {
@@ -43,11 +42,11 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "0",
-              "y": "245",
-              "width": "360",
-              "height": "125",
-              "params": "2064",
+              "x": "5",
+              "y": "150",
+              "width": "170",
+              "height": "185",
+              "params": "16",
               "style": "0",
               "name": "itemGridWidget",
               "tags": "E"
@@ -58,10 +57,10 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "0",
-              "y": "0",
-              "width": "360",
-              "height": "240",
+              "x": "180",
+              "y": "150",
+              "width": "175",
+              "height": "275",
               "params": "16",
               "style": "0",
               "name": "productViewWidget"
@@ -72,11 +71,11 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "90",
-              "y": "375",
-              "width": "180",
+              "x": "5",
+              "y": "340",
+              "width": "170",
               "height": "85",
-              "params": "1040",
+              "params": "16",
               "style": "0",
               "name": "guildSelectorWidget"
             },
@@ -86,8 +85,22 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "94",
-              "y": "18",
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "16",
+              "style": "0",
+              "name": "purchaseWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "194",
+              "y": "118",
               "width": "142",
               "height": "73",
               "params": "16",
@@ -101,7 +114,7 @@
             "typeId": 4,
             "attributes": {
               "x": "199",
-              "y": "190",
+              "y": "120",
               "width": "156",
               "height": "28",
               "params": "16",
@@ -114,27 +127,13 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "307",
-              "y": "138",
+              "x": "202",
+              "y": "378",
               "width": "40",
               "height": "40",
               "params": "0",
               "style": "0",
               "name": "guildBadgeViewWidget"
-            },
-            "children": []
-          },
-          {
-            "tag": "container",
-            "typeId": 4,
-            "attributes": {
-              "x": "0",
-              "y": "430",
-              "width": "360",
-              "height": "30",
-              "params": "1040",
-              "style": "0",
-              "name": "purchaseWidget"
             },
             "children": []
           }

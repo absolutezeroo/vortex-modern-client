@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_scrollbar",
   "name": "default_scrollbar_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\105_default_scrollbar_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2659_habbo_skin_scrollbar_xml$b25b8f59c1acbf435e8992ca53a35286297316148.xml",
   "variables": {
     "color": "0xffffff",
     "blend": "1",

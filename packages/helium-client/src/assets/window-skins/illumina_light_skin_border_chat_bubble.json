@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_border_chat_bubble",
   "name": "illumina_light_skin_border_chat_bubble",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\101_illumina_light_skin_border_chat_bubble.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2600_illumina_light_skin_border_chat_bubble_xml$52b94b975cc6b22fe8602a6a12fe4232365075436.xml",
   "variables": {
     "asset": "illumina_light_bubble_chat_bg"
   },

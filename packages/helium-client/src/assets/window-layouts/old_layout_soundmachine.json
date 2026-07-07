@@ -1,6 +1,6 @@
 {
   "name": "old_layout_soundmachine",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\315_ctlg_soundmachine.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1627_layout_soundmachine_xml$868e40194847090f8ebc48c4376105c91178923671.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_soundmachine"
         },
@@ -30,7 +30,8 @@
               "params": "16",
               "style": "3",
               "name": "ctlg_selectproduct",
-              "caption": "${catalog_selectproduct}"
+              "caption": "${catalog_selectproduct}",
+              "visible": "false"
             },
             "children": [],
             "vars": {
@@ -47,11 +48,11 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "5",
-              "y": "150",
-              "width": "170",
-              "height": "275",
-              "params": "16",
+              "x": "0",
+              "y": "245",
+              "width": "360",
+              "height": "180",
+              "params": "2064",
               "style": "0",
               "name": "itemGridWidget"
             },
@@ -61,10 +62,10 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "180",
-              "y": "154",
-              "width": "175",
-              "height": "274",
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "240",
               "params": "16",
               "style": "0",
               "name": "songDiskProductViewWidget",
@@ -77,8 +78,8 @@
                 "attributes": {
                   "x": "0",
                   "y": "0",
-                  "width": "175",
-                  "height": "176",
+                  "width": "360",
+                  "height": "240",
                   "params": "16",
                   "style": "0",
                   "name": "ctlg_teaserimg_1"
@@ -89,8 +90,8 @@
                 "tag": "formatted_text",
                 "typeId": 15,
                 "attributes": {
-                  "x": "0",
-                  "y": "176",
+                  "x": "10",
+                  "y": "16",
                   "width": "175",
                   "height": "17",
                   "params": "16",
@@ -113,8 +114,8 @@
                 "tag": "formatted_text",
                 "typeId": 15,
                 "attributes": {
-                  "x": "0",
-                  "y": "194",
+                  "x": "10",
+                  "y": "34",
                   "width": "62",
                   "height": "15",
                   "params": "16",
@@ -135,8 +136,8 @@
                 "tag": "formatted_text",
                 "typeId": 15,
                 "attributes": {
-                  "x": "0",
-                  "y": "213",
+                  "x": "10",
+                  "y": "53",
                   "width": "31",
                   "height": "15",
                   "params": "16",
@@ -157,8 +158,8 @@
                 "tag": "container",
                 "typeId": 4,
                 "attributes": {
-                  "x": "0",
-                  "y": "235",
+                  "x": "7",
+                  "y": "195",
                   "width": "175",
                   "height": "36",
                   "params": "16",
@@ -176,7 +177,8 @@
                       "height": "36",
                       "params": "16",
                       "style": "2",
-                      "color": "0x0cccccc"
+                      "color": "0x0cccccc",
+                      "blend": "0.5"
                     },
                     "children": []
                   },
@@ -203,7 +205,7 @@
                     "attributes": {
                       "x": "9",
                       "y": "11",
-                      "width": "85",
+                      "width": "64",
                       "height": "15",
                       "params": "16",
                       "style": "3",
@@ -212,7 +214,7 @@
                     },
                     "children": [],
                     "vars": {
-                      "auto_size": "center",
+                      "auto_size": "left",
                       "text_style": "u_small",
                       "mouse_wheel_enabled": false,
                       "spacing": 0,
@@ -227,8 +229,8 @@
             "tag": "container",
             "typeId": 4,
             "attributes": {
-              "x": "180",
-              "y": "118",
+              "x": "110",
+              "y": "28",
               "width": "142",
               "height": "73",
               "params": "16",
@@ -245,7 +247,7 @@
               "y": "430",
               "width": "360",
               "height": "30",
-              "params": "16",
+              "params": "1040",
               "style": "0",
               "name": "purchaseWidget"
             },

@@ -1,7 +1,7 @@
 {
   "id": "illumina_purple_skin_button",
   "name": "illumina_purple_skin_button",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\119_illumina_purple_skin_button.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2765_illumina_purple_skin_button_xml$c12e2e091b7e0baed37d6a4b6024a1eb1125424222.xml",
   "variables": {
     "asset": "illumina_purple_button_default"
   },

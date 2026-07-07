@@ -1,7 +1,7 @@
 {
   "id": "illumina_light_skin_border_balloon",
   "name": "illumina_light_skin_border_balloon",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\14_illumina_light_skin_border_balloon.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1829_illumina_light_skin_border_balloon_xml$c9d5aaf91fb2a5fb23d1c6525fb685711944134472.xml",
   "variables": {
     "asset": "illumina_light_balloon"
   },

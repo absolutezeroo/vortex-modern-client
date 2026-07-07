@@ -1,6 +1,6 @@
 {
   "name": "old_layout_trophies",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\349_ctlg_trophies.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1610__SafeCls_1099.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_trophies"
         },
@@ -24,9 +24,9 @@
             "typeId": 15,
             "attributes": {
               "x": "0",
-              "y": "70",
+              "y": "0",
               "width": "360",
-              "height": "135",
+              "height": "190",
               "params": "16",
               "style": "3",
               "name": "trophy.description",
@@ -46,9 +46,9 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "165",
+              "y": "145",
               "width": "360",
-              "height": "127",
+              "height": "135",
               "params": "16",
               "style": "0",
               "name": "trophyWidget",
@@ -62,8 +62,8 @@
                   "x": "0",
                   "y": "0",
                   "width": "360",
-                  "height": "127",
-                  "params": "16",
+                  "height": "135",
+                  "params": "2192",
                   "style": "0",
                   "name": "ctlg_teaserimg_1"
                 },
@@ -78,8 +78,8 @@
                 "tag": "container_button",
                 "typeId": 41,
                 "attributes": {
-                  "x": "130",
-                  "y": "96",
+                  "x": "115",
+                  "y": "101",
                   "width": "30",
                   "height": "30",
                   "params": "393233",
@@ -109,8 +109,8 @@
                 "tag": "container_button",
                 "typeId": 41,
                 "attributes": {
-                  "x": "190",
-                  "y": "96",
+                  "x": "210",
+                  "y": "101",
                   "width": "30",
                   "height": "30",
                   "params": "393233",
@@ -143,7 +143,7 @@
             "typeId": 4,
             "attributes": {
               "x": "0",
-              "y": "295",
+              "y": "285",
               "width": "360",
               "height": "40",
               "params": "16",
@@ -156,9 +156,9 @@
             "tag": "text",
             "typeId": 10,
             "attributes": {
-              "x": "3",
-              "y": "339",
-              "width": "356",
+              "x": "6",
+              "y": "326",
+              "width": "355",
               "height": "15",
               "params": "16",
               "style": "3",
@@ -181,10 +181,10 @@
             "typeId": 30,
             "attributes": {
               "x": "0",
-              "y": "355",
+              "y": "340",
               "width": "360",
-              "height": "70",
-              "params": "16",
+              "height": "83",
+              "params": "2064",
               "style": "5"
             },
             "children": [
@@ -195,11 +195,11 @@
                   "x": "6",
                   "y": "7",
                   "width": "349",
-                  "height": "58",
-                  "params": "16",
+                  "height": "70",
+                  "params": "2192",
                   "style": "0",
                   "name": "textInputWidget",
-                  "caption": "EMBEDDED"
+                  "tags": "EMBEDDED"
                 },
                 "children": [
                   {
@@ -209,8 +209,8 @@
                       "x": "0",
                       "y": "0",
                       "width": "349",
-                      "height": "58",
-                      "params": "1",
+                      "height": "70",
+                      "params": "2177",
                       "style": "3",
                       "name": "input_text"
                     },
@@ -238,7 +238,7 @@
               "y": "430",
               "width": "360",
               "height": "30",
-              "params": "16",
+              "params": "1040",
               "style": "0",
               "name": "purchaseWidget"
             },

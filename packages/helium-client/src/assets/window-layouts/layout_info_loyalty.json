@@ -1,6 +1,6 @@
 {
   "name": "layout_info_loyalty",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\251_ctlg_info_loyalty.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1539__SafeCls_1086.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "2064",
+          "params": "16",
           "style": "0",
           "name": "ctlg_info_loyalty"
         },
@@ -24,7 +24,7 @@
             "typeId": 11,
             "attributes": {
               "x": "24",
-              "y": "19",
+              "y": "89",
               "width": "226",
               "height": "322",
               "params": "1",
@@ -50,7 +50,7 @@
             "typeId": 23,
             "attributes": {
               "x": "237",
-              "y": "39",
+              "y": "109",
               "width": "123",
               "height": "350",
               "params": "0",

@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_checkbox_black",
   "name": "black_checkbox_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\74_black_checkbox_button_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2393_habbo_skin_button_checkbox_black_xml$b2c574dcd40f953a0e08f17e245d2de41032665410.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

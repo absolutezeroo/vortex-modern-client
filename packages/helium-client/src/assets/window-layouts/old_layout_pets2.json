@@ -1,6 +1,6 @@
 {
   "name": "old_layout_pets2",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\270_ctlg_pets2.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1536__SafeCls_1087.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
@@ -14,7 +14,7 @@
           "y": "0",
           "width": "360",
           "height": "460",
-          "params": "16",
+          "params": "2064",
           "style": "0",
           "name": "ctlg_pets2"
         },
@@ -24,10 +24,10 @@
             "typeId": 30,
             "attributes": {
               "x": "10",
-              "y": "140",
+              "y": "10",
               "width": "340",
-              "height": "310",
-              "params": "16",
+              "height": "440",
+              "params": "2064",
               "style": "2",
               "color": "0xff8899a2"
             },
@@ -86,7 +86,7 @@
                   "x": "20",
                   "y": "72",
                   "width": "297",
-                  "height": "139",
+                  "height": "138",
                   "params": "16",
                   "style": "3",
                   "name": "ctlg_text_2",
@@ -94,6 +94,7 @@
                 },
                 "children": [],
                 "vars": {
+                  "auto_size": "left",
                   "text_color": 16777215,
                   "mouse_wheel_enabled": false,
                   "multiline": true,
@@ -107,9 +108,9 @@
                 "typeId": 15,
                 "attributes": {
                   "x": "20",
-                  "y": "240",
+                  "y": "300",
                   "width": "306",
-                  "height": "44",
+                  "height": "124",
                   "params": "16",
                   "style": "3",
                   "name": "ctlg_text_3",
@@ -117,6 +118,7 @@
                 },
                 "children": [],
                 "vars": {
+                  "auto_size": "left",
                   "text_color": 16777215,
                   "mouse_wheel_enabled": false,
                   "multiline": true,

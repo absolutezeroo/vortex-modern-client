@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_border_white",
   "name": "border_white",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\81_border_white.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2444_habbo_skin_border_white_xml$6e255877e1f9ace5f8f651e078b4aebb1924474756.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

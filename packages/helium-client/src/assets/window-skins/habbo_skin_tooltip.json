@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_tooltip",
   "name": "tooltip_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\90_tooltip_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2513_habbo_skin_tooltip_xml$0128800a028cf202fa5100199bd9d12e977043351.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

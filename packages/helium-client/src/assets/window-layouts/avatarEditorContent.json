@@ -1,6 +1,6 @@
 {
-  "name": "avatarEditorContent",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\601_avatarEditorContent.xml",
+  "name": "AvatarEditorContent",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\3113__SafeCls_104.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

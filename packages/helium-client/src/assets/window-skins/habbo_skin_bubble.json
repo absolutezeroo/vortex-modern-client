@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_bubble",
   "name": "bubble_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\69_bubble_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2351_habbo_skin_bubble_xml$4cfd6a9345cd47704d18fb216974a3241850288846.xml",
   "variables": {
     "asset": "habbo_skin_ubuntu"
   },

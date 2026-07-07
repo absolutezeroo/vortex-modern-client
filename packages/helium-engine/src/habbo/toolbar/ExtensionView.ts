@@ -18,7 +18,7 @@ const log = Logger.getLogger('ExtensionView');
  * @see sources/win63_version/habbo/toolbar/ExtensionView.as
  */
 // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::ExtensionView
-export class ExtensionView implements IExtensionView
+export class ExtensionView implements IExtensionView 
 {
     // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::MARGIN
     private static readonly MARGIN: number = 3;
@@ -30,86 +30,88 @@ export class ExtensionView implements IExtensionView
     private _items: Map<string, IWindow> = new Map();
     private _orderedItems: IWindow[] = [];
     private _disposed: boolean = false;
-    private _landingView: boolean = false;
-    private _extraMargin: number = 0;
 
-    constructor(windowManager: IHabboWindowManager, toolbar: HabboToolbar)
+    constructor(windowManager: IHabboWindowManager, toolbar: HabboToolbar) 
     {
         this._toolbar = toolbar;
 
-        const container = windowManager.buildWidgetLayout('extension_grid', 1);
+        const container = windowManager.buildWidgetLayout('extension_grid_xml', 1);
 
-        if(container)
+        if(container) 
         {
             this._var104 = container as unknown as IItemListWindow;
             this._var104.clipping = false;
             const desktop = this._var104.desktop;
 
-            if(desktop)
+            if(desktop) 
             {
                 this._var104.x = desktop.width - this._var104.width - ExtensionView.MARGIN - this._extraMargin;
                 this._var104.y = ExtensionView.MARGIN;
                 this._var104.visible = true;
             }
         }
-        else
+        else 
         {
             log.error('Unable to initialize Toolbar Extension view window from xml asset');
         }
     }
 
-    public get visible(): boolean
-    {
-        return this._var104 !== null && this._var104.visible;
-    }
+    private _landingView: boolean = false;
 
-    public set visible(value: boolean)
-    {
-        if(this._var104)
-        {
-            this._var104.visible = value;
-        }
-    }
-
-    public get screenHeight(): number
-    {
-        if(!this._var104) return 0;
-
-        return this._var104.height + this._var104.y;
-    }
-
-    public get landingView(): boolean
+    public get landingView(): boolean 
     {
         return this._landingView;
     }
 
-    public set landingView(value: boolean)
+    public set landingView(value: boolean) 
     {
         this._landingView = value;
         this.refreshItemWindow();
     }
 
-    public get extraMargin(): number
+    private _extraMargin: number = 0;
+
+    public get extraMargin(): number 
     {
         return this._extraMargin;
     }
 
-    public set extraMargin(value: number)
+    public set extraMargin(value: number) 
     {
         this._extraMargin = value;
 
-        if(this._var104)
+        if(this._var104) 
         {
             const desktop = this._var104.desktop;
 
-            if(desktop)
+            if(desktop) 
             {
                 this._var104.x = desktop.width - this._var104.width - ExtensionView.MARGIN - this._extraMargin;
             }
         }
     }
 
-    public attachExtension(id: string, element: unknown, index: number = -1, params: unknown[] | null = null): void
+    public get visible(): boolean 
+    {
+        return this._var104 !== null && this._var104.visible;
+    }
+
+    public set visible(value: boolean) 
+    {
+        if(this._var104) 
+        {
+            this._var104.visible = value;
+        }
+    }
+
+    public get screenHeight(): number 
+    {
+        if(!this._var104) return 0;
+
+        return this._var104.height + this._var104.y;
+    }
+
+    public attachExtension(id: string, element: unknown, index: number = -1, params: unknown[] | null = null): void 
     {
         if(this._disposed) return;
 
@@ -119,21 +121,21 @@ export class ExtensionView implements IExtensionView
 
         this._items.set(id, window);
 
-        if(params !== null)
+        if(params !== null) 
         {
             index = this.resolveIndex(params as string[]);
         }
 
-        if(index === -1)
+        if(index === -1) 
         {
             this._orderedItems.push(window);
         }
-        else
+        else 
         {
             this._orderedItems.splice(index, 0, window);
         }
 
-        if(this._var104)
+        if(this._var104) 
         {
             this.refreshItemWindow();
         }
@@ -141,29 +143,29 @@ export class ExtensionView implements IExtensionView
         this.queueResizeEvent();
     }
 
-    public hasExtension(id: string): boolean
+    public hasExtension(id: string): boolean 
     {
         return this._items.has(id);
     }
 
     // AS3: sources/win63_version/habbo/toolbar/ExtensionView.as::refreshItemWindow()
-    public refreshItemWindow(): void
+    public refreshItemWindow(): void 
     {
         if(!this._var104) return;
 
         this._var104.removeListItems();
 
-        for(const window of this._orderedItems)
+        for(const window of this._orderedItems) 
         {
             const key = this.getKeyForWindow(window);
 
-            if(key.indexOf('new_feature') === 0)
+            if(key.indexOf('new_feature') === 0) 
             {
                 this._var104.addListItem(window);
                 continue;
             }
 
-            switch(key)
+            switch(key) 
             {
                 case 'logout_tools':
                 case 'purse_credits':
@@ -192,7 +194,7 @@ export class ExtensionView implements IExtensionView
                     }
                     break;
                 default:
-                    if(!this._landingView)
+                    if(!this._landingView) 
                     {
                         this._var104.addListItem(window);
                     }
@@ -203,7 +205,7 @@ export class ExtensionView implements IExtensionView
         this._var104.invalidate();
     }
 
-    public detachExtension(id: string): void
+    public detachExtension(id: string): void 
     {
         if(this._disposed) return;
 
@@ -211,13 +213,13 @@ export class ExtensionView implements IExtensionView
         this.queueResizeEvent();
     }
 
-    public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null
+    public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null 
     {
-        if(iconId === 'HTIE_EXT_GROUP')
+        if(iconId === 'HTIE_EXT_GROUP') 
         {
             const window = this._items.get('room_group_info') ?? null;
 
-            if(window !== null && window.visible)
+            if(window !== null && window.visible) 
             {
                 const rect = {x: 0, y: 0, width: 0, height: 0};
                 window.getGlobalRectangle(rect);
@@ -228,16 +230,16 @@ export class ExtensionView implements IExtensionView
         return null;
     }
 
-    public removeDimmers(): void
+    public removeDimmers(): void 
     {
         // Dimmer management is a Flash-specific concept not ported to Helium
     }
 
-    public getOrderedExtensionIds(): string[]
+    public getOrderedExtensionIds(): string[] 
     {
         const result: string[] = [];
 
-        for(const window of this._orderedItems)
+        for(const window of this._orderedItems) 
         {
             const key = this.getKeyForWindow(window);
 
@@ -247,18 +249,18 @@ export class ExtensionView implements IExtensionView
         return result;
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
         const keys = Array.from(this._items.keys());
 
-        for(const key of keys)
+        for(const key of keys) 
         {
             this.detachExtension(key);
         }
 
-        if(this._var104)
+        if(this._var104) 
         {
             (this._var104 as unknown as { dispose(): void }).dispose();
             this._var104 = null;
@@ -270,9 +272,9 @@ export class ExtensionView implements IExtensionView
         this._disposed = true;
     }
 
-    private getKeyForWindow(window: IWindow): string
+    private getKeyForWindow(window: IWindow): string 
     {
-        for(const [key, value] of this._items)
+        for(const [key, value] of this._items) 
         {
             if(value === window) return key;
         }
@@ -280,11 +282,11 @@ export class ExtensionView implements IExtensionView
         return '';
     }
 
-    private resolveIndex(params: string[]): number
+    private resolveIndex(params: string[]): number 
     {
-        for(let i = 0; i < this._orderedItems.length; i++)
+        for(let i = 0; i < this._orderedItems.length; i++) 
         {
-            if(params.indexOf(this._orderedItems[i].name) > -1)
+            if(params.indexOf(this._orderedItems[i].name) > -1) 
             {
                 return i;
             }
@@ -293,11 +295,11 @@ export class ExtensionView implements IExtensionView
         return -1;
     }
 
-    private queueResizeEvent(): void
+    private queueResizeEvent(): void 
     {
-        setTimeout(() =>
+        setTimeout(() => 
         {
-            if(this._toolbar)
+            if(this._toolbar) 
             {
                 const event = new ExtensionViewEvent(ExtensionViewEvent.EXTENSION_VIEW_RESIZED);
                 this._toolbar.toolbarEvents.emit(ExtensionViewEvent.EXTENSION_VIEW_RESIZED, event);

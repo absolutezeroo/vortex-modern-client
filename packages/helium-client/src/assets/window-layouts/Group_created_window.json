@@ -1,6 +1,6 @@
 {
-  "name": "Group_created_window",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\120_Group_created_window.xml",
+  "name": "group_created_window",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1187__SafeCls_753.xml",
   "window": {
     "tag": "window",
     "typeId": -1,

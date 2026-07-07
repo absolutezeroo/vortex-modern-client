@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_button_close",
   "name": "close_button_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\121_close_button_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2789_habbo_skin_button_close_xml$64e3f189ce1cc2867d0fc05b1e6e2c912063793263.xml",
   "variables": {
     "asset": "habbo_blue_skin"
   },

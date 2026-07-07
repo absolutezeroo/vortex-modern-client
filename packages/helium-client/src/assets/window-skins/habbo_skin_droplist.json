@@ -1,24 +1,24 @@
 {
   "id": "habbo_skin_droplist",
-  "name": "droplist_thick_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\47_droplist_thick_skin.xml",
+  "name": "droplist_skin",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1946_habbo_skin_droplist_xml$120fae71187d887227e21223197bc5961354635725.xml",
   "variables": {
-    "asset": "habbo_skin_ubuntu"
+    "asset": "habbo_blue_skin"
   },
   "templates": [
     {
-      "name": "droplist_thick_frame_default",
-      "asset": "habbo_skin_ubuntu",
+      "name": "droplist_frame_default",
+      "asset": "habbo_blue_skin",
       "entities": [
         {
           "id": 0,
           "name": "top_left",
           "type": "bitmap",
           "region": {
-            "x": 260,
-            "y": 10,
-            "width": 6,
-            "height": 6
+            "x": 164,
+            "y": 0,
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -26,10 +26,10 @@
           "name": "top_center",
           "type": "bitmap",
           "region": {
-            "x": 266,
-            "y": 10,
+            "x": 167,
+            "y": 0,
             "width": 1,
-            "height": 6
+            "height": 3
           }
         },
         {
@@ -37,10 +37,10 @@
           "name": "top_right",
           "type": "bitmap",
           "region": {
-            "x": 287,
-            "y": 10,
-            "width": 6,
-            "height": 6
+            "x": 185,
+            "y": 0,
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -48,9 +48,9 @@
           "name": "mid_left",
           "type": "bitmap",
           "region": {
-            "x": 260,
-            "y": 16,
-            "width": 6,
+            "x": 164,
+            "y": 3,
+            "width": 3,
             "height": 1
           }
         },
@@ -59,8 +59,8 @@
           "name": "mid_center",
           "type": "bitmap",
           "region": {
-            "x": 266,
-            "y": 16,
+            "x": 167,
+            "y": 3,
             "width": 1,
             "height": 1
           }
@@ -70,9 +70,9 @@
           "name": "mid_right",
           "type": "bitmap",
           "region": {
-            "x": 287,
-            "y": 16,
-            "width": 6,
+            "x": 185,
+            "y": 3,
+            "width": 3,
             "height": 1
           }
         },
@@ -81,10 +81,10 @@
           "name": "btm_left",
           "type": "bitmap",
           "region": {
-            "x": 260,
-            "y": 42,
-            "width": 6,
-            "height": 6
+            "x": 164,
+            "y": 19,
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -92,10 +92,10 @@
           "name": "btm_center",
           "type": "bitmap",
           "region": {
-            "x": 266,
-            "y": 42,
+            "x": 167,
+            "y": 19,
             "width": 1,
-            "height": 6
+            "height": 3
           }
         },
         {
@@ -103,10 +103,10 @@
           "name": "btm_right",
           "type": "bitmap",
           "region": {
-            "x": 287,
-            "y": 42,
-            "width": 6,
-            "height": 6
+            "x": 185,
+            "y": 19,
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -114,8 +114,8 @@
           "name": "arrow",
           "type": "bitmap",
           "region": {
-            "x": 272,
-            "y": 21,
+            "x": 168,
+            "y": 1,
             "width": 16,
             "height": 16
           }
@@ -124,7 +124,7 @@
     },
     {
       "name": "droplist_item_default",
-      "asset": "habbo_skin_ubuntu",
+      "asset": "habbo_blue_skin",
       "entities": [
         {
           "id": 0,
@@ -141,7 +141,7 @@
     },
     {
       "name": "droplist_item_hover",
-      "asset": "habbo_skin_ubuntu",
+      "asset": "habbo_blue_skin",
       "entities": [
         {
           "id": 0,
@@ -158,7 +158,7 @@
     },
     {
       "name": "droplist_item_select",
-      "asset": "habbo_skin_ubuntu",
+      "asset": "habbo_blue_skin",
       "entities": [
         {
           "id": 0,
@@ -176,7 +176,7 @@
   ],
   "layouts": [
     {
-      "name": "droplist_thick_frame",
+      "name": "droplist_frame",
       "transparent": false,
       "blendMode": "",
       "entities": [
@@ -191,8 +191,8 @@
           "region": {
             "x": 0,
             "y": 0,
-            "width": 6,
-            "height": 6
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -204,10 +204,10 @@
           "scaleH": 2,
           "scaleV": 0,
           "region": {
-            "x": 6,
+            "x": 3,
             "y": 0,
             "width": 20,
-            "height": 6
+            "height": 3
           }
         },
         {
@@ -219,10 +219,10 @@
           "scaleH": 1,
           "scaleV": 0,
           "region": {
-            "x": 26,
+            "x": 23,
             "y": 0,
-            "width": 6,
-            "height": 6
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -235,9 +235,9 @@
           "scaleV": 2,
           "region": {
             "x": 0,
-            "y": 6,
-            "width": 6,
-            "height": 20
+            "y": 3,
+            "width": 3,
+            "height": 16
           }
         },
         {
@@ -249,10 +249,10 @@
           "scaleH": 2,
           "scaleV": 2,
           "region": {
-            "x": 6,
-            "y": 6,
+            "x": 3,
+            "y": 3,
             "width": 20,
-            "height": 20
+            "height": 16
           }
         },
         {
@@ -264,10 +264,10 @@
           "scaleH": 1,
           "scaleV": 2,
           "region": {
-            "x": 26,
-            "y": 6,
-            "width": 6,
-            "height": 20
+            "x": 23,
+            "y": 3,
+            "width": 3,
+            "height": 16
           }
         },
         {
@@ -280,9 +280,9 @@
           "scaleV": 1,
           "region": {
             "x": 0,
-            "y": 26,
-            "width": 6,
-            "height": 6
+            "y": 19,
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -294,10 +294,10 @@
           "scaleH": 2,
           "scaleV": 1,
           "region": {
-            "x": 6,
-            "y": 26,
+            "x": 3,
+            "y": 19,
             "width": 20,
-            "height": 6
+            "height": 3
           }
         },
         {
@@ -309,10 +309,10 @@
           "scaleH": 1,
           "scaleV": 1,
           "region": {
-            "x": 26,
-            "y": 26,
-            "width": 6,
-            "height": 6
+            "x": 23,
+            "y": 19,
+            "width": 3,
+            "height": 3
           }
         },
         {
@@ -324,8 +324,8 @@
           "scaleH": 1,
           "scaleV": 0,
           "region": {
-            "x": 12,
-            "y": 10,
+            "x": 5,
+            "y": 2,
             "width": 16,
             "height": 16
           }
@@ -380,8 +380,8 @@
   "states": [
     {
       "name": "default",
-      "layout": "droplist_thick_frame",
-      "template": "droplist_thick_frame_default"
+      "layout": "droplist_frame",
+      "template": "droplist_frame_default"
     },
     {
       "name": "default",

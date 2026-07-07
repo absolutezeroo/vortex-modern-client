@@ -1,7 +1,7 @@
 {
   "id": "habbo_skin_icon_set",
   "name": "icon_set_skin",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\92_icon_set_skin.xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2524_habbo_skin_icon_set_xml$70c232c67195c1e7eca21666000b39f51214385630.xml",
   "variables": {
     "asset": "habbo_icons"
   },
