@@ -269,8 +269,41 @@ export class RoomPreviewer
         return -1;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewFurniture()
+    // TODO(AS3): AS3 checks getPreviewFurnitureAllowedDirections().length > 1, based on the
+    // furniture data's own valid-direction set - that data isn't exposed by the ported room
+    // engine yet. Always false until it is, so the rotate buttons show correctly disabled
+    // rather than pretending furniture rotation works.
+    canRotatePreviewFurniture(): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewFurniture()
+    // TODO(AS3): see canRotatePreviewFurniture() - needs the furniture object's allowed
+    // direction set, which the ported room engine doesn't expose yet.
+    rotatePreviewFurniture(_clockwise: boolean): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewWallItem()
+    // TODO(AS3): AS3 checks getPreviewWallItemObject() != null - needs the preview wall item's
+    // room object lookup, not wired up here yet.
+    canRotatePreviewWallItem(): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::rotatePreviewWallItem()
+    // TODO(AS3): see canRotatePreviewWallItem().
+    rotatePreviewWallItem(): boolean
+    {
+        return false;
+    }
+
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::addAvatarIntoRoom()
-    addAvatarIntoRoom(figure: string, effect: number): number
+    addAvatarIntoRoom(figure: string, effect: number = 0): number
     {
         if(this.isRoomEngineReady)
         {
@@ -352,6 +385,26 @@ export class RoomPreviewer
         if(this.isRoomEngineReady)
         {
             // Not wired yet.
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::updateAvatarDirectionAndLocation()
+    updateAvatarDirectionAndLocation(bodyDirection: number, headDirection: number, location: IVector3d | null = null): void
+    {
+        if(this.isRoomEngineReady)
+        {
+            const target = location ?? new Vector3d(RoomPreviewer.PREVIEW_OBJECT_LOCATION_X, RoomPreviewer.PREVIEW_OBJECT_LOCATION_Y, 0);
+
+            this._roomEngine!.updateRoomObjectUser(
+                this._previewRoomId,
+                RoomPreviewer.PREVIEW_OBJECT_ID,
+                target,
+                target,
+                new Vector3d(bodyDirection * 45, 0, 0),
+                headDirection * 45,
+                false,
+                0
+            );
         }
     }
 

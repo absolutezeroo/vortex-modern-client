@@ -12,6 +12,7 @@ import {Vector3d} from '@room/utils/Vector3d';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
+import {AvatarAction} from '@habbo/avatar/enum/AvatarAction';
 import type {HabboCatalog} from '../../HabboCatalog';
 import type {IPurchasableOffer} from '../../IPurchasableOffer';
 import type {IProduct} from '../IProduct';
@@ -29,7 +30,9 @@ const log = Logger.getLogger('ProductViewCatalogWidget');
 
 /**
  * Shows the currently selected offer's name/description/price and a preview (room-canvas
- * furniture/avatar render, or a static image for special products).
+ * furniture/avatar render, or a static image for special products), plus the preview
+ * interaction controls (rotate_avatar_left/right, toggle_preview_magic - avatar pose cycling,
+ * toggle_preview_zoom).
  *
  * TODO(AS3): the following AS3 sub-paths are not ported (each noted again at its call site):
  * - "i" wall-item category 2/3/4 (wallpaper/floor/landscape editing via getRoomStringValue(),
@@ -42,11 +45,43 @@ const log = Logger.getLogger('ProductViewCatalogWidget');
  *   engine methods aren't ported. Only the roomPreviewer-canvas path works.
  * - class_3172/ProductImageConfiguration's pre-rendered special-product image table.
  * - ProductDisplayWrapper (the generic default-case product renderer).
+ * - furniture/wall-item preview ROTATION specifically: RoomPreviewer.canRotatePreviewFurniture()/
+ *   rotatePreviewFurniture()/canRotatePreviewWallItem()/rotatePreviewWallItem() are stubbed to
+ *   always report "not rotatable" - they need the previewed room object's allowed-direction set,
+ *   which the ported room engine doesn't expose yet. The rotate buttons show up correctly for
+ *   these modes but stay disabled. Avatar-mode rotation, pose-cycling ("preview magic"), and zoom
+ *   are fully implemented (they only depend on RoomPreviewer.updateAvatarDirectionAndLocation(),
+ *   which is real).
  *
- * @see sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as
  */
 export class ProductViewCatalogWidget extends CatalogWidget implements IGetImageListener, IDragAndDropDoneReceiver
 {
+    private static readonly PREVIEW_MODE_NONE: number = 0;
+    private static readonly PREVIEW_MODE_AVATAR: number = 1;
+    private static readonly PREVIEW_MODE_FLOOR_FURNITURE: number = 2;
+    private static readonly PREVIEW_MODE_WALL_ITEM: number = 3;
+
+    private static readonly PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION: number = 2;
+    private static readonly PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION: number = 3;
+
+    private static readonly PREVIEW_ACTION_STAND: number = 0;
+    private static readonly PREVIEW_ACTION_WALK: number = 1;
+    private static readonly PREVIEW_ACTION_DANCE: number = 2;
+    private static readonly PREVIEW_ACTION_SIT: number = 3;
+    private static readonly PREVIEW_ACTION_LAY: number = 4;
+    private static readonly PREVIEW_ACTION_WAVE: number = 5;
+    private static readonly PREVIEW_ACTION_COUNT: number = 6;
+
+    private static readonly PREVIEW_ZOOM_NORMAL: number = 1;
+    private static readonly PREVIEW_ZOOM_IN: number = 2;
+    private static readonly PREVIEW_ZOOM_IN_CAMERA_OFFSET_Y: number = 41;
+    private static readonly PREVIEW_ZOOM_MOVE_SPEED_DENOMINATOR: number = 9;
+    private static readonly PREVIEW_ZOOM_SPEED_SLOW: number = 0.12;
+
+    private static readonly PREVIEW_SIT_OFFSETS = new Vector3d(2, 2, 0.55);
+    private static readonly PREVIEW_LAY_OFFSETS = new Vector3d(1, 1, 0.8);
+
     private _catalog: HabboCatalog | null;
 
     private _productName: IWindow | null = null;
@@ -90,6 +125,40 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     private _mouseIsDown: boolean = false;
 
+    private _rotateAvatarLeftButton: IWindow | null = null;
+
+    private _rotateAvatarRightButton: IWindow | null = null;
+
+    private _togglePreviewMagicButton: IWindow | null = null;
+
+    private _toggleZoomButton: IWindow | null = null;
+
+    private _previewMode: number = ProductViewCatalogWidget.PREVIEW_MODE_NONE;
+
+    private _floorFurnitureCanRotate: boolean = false;
+
+    private _avatarBodyDirection: number = ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION;
+
+    private _avatarHeadDirection: number = ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION;
+
+    private _avatarAction: number = ProductViewCatalogWidget.PREVIEW_ACTION_STAND;
+
+    private _zoomState: number = ProductViewCatalogWidget.PREVIEW_ZOOM_NORMAL;
+
+    private _previewZoomAnimationProgress: number = 0;
+
+    private _previewZoomAnimationTargetProgress: number = 0;
+
+    private _zoomAnimationMaxDelta: number = 0;
+
+    private _zoomAnimationLastStep: number = 0;
+
+    private _zoomAnimationDecelerating: boolean = false;
+
+    private _zoomAnimationActive: boolean = false;
+
+    private _floorRotationMonitorActive: boolean = false;
+
     constructor(window: IWindowContainer, catalog: HabboCatalog)
     {
         super(window);
@@ -104,6 +173,16 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.events.off(SetRoomPreviewerStuffDataEvent.CWE_SET_PREVIEWER_STUFFDATA, this.onStuffDataSet);
         this.events.off(CatalogWidgetSpinnerEvent.VALUE_CHANGED, this.onSpinnerEvent);
         this.events.off('TOTAL_PRICE_WIDGET_INITIALIZED', this.onTotalPriceWidgetInitialized);
+        this._rotateAvatarLeftButton?.removeEventListener('WME_CLICK', this.onRotateAvatarLeft);
+        this._rotateAvatarLeftButton = null;
+        this._rotateAvatarRightButton?.removeEventListener('WME_CLICK', this.onRotateAvatarRight);
+        this._rotateAvatarRightButton = null;
+        this._togglePreviewMagicButton?.removeEventListener('WME_CLICK', this.onTogglePreviewMagic);
+        this._togglePreviewMagicButton = null;
+        this._toggleZoomButton?.removeEventListener('WME_CLICK', this.onTogglePreviewZoom);
+        this._toggleZoomButton = null;
+        this.setFloorFurnitureRotationAvailabilityMonitorEnabled(false);
+        this.stopPreviewZoomAnimation();
         this._catalog?.roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
         this._canvasDisplayObject = null;
         this._catalog = null;
@@ -167,6 +246,39 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
                 this._roomCanvasContainer = null;
                 this._roomCanvas = null;
             }
+        }
+
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::init()
+        this._rotateAvatarLeftButton = this.window.findChildByName('rotate_avatar_left');
+
+        if(this._rotateAvatarLeftButton != null)
+        {
+            this._rotateAvatarLeftButton.visible = false;
+            this._rotateAvatarLeftButton.addEventListener('WME_CLICK', this.onRotateAvatarLeft);
+        }
+
+        this._rotateAvatarRightButton = this.window.findChildByName('rotate_avatar_right');
+
+        if(this._rotateAvatarRightButton != null)
+        {
+            this._rotateAvatarRightButton.visible = false;
+            this._rotateAvatarRightButton.addEventListener('WME_CLICK', this.onRotateAvatarRight);
+        }
+
+        this._togglePreviewMagicButton = this.window.findChildByName('toggle_preview_magic');
+
+        if(this._togglePreviewMagicButton != null)
+        {
+            this._togglePreviewMagicButton.visible = false;
+            this._togglePreviewMagicButton.addEventListener('WME_CLICK', this.onTogglePreviewMagic);
+        }
+
+        this._toggleZoomButton = this.window.findChildByName('toggle_preview_zoom');
+
+        if(this._toggleZoomButton != null)
+        {
+            this._toggleZoomButton.visible = false;
+            this._toggleZoomButton.addEventListener('WME_CLICK', this.onTogglePreviewZoom);
         }
 
         this._previewOffset = {x: this._teaserImage!.x, y: this._teaserImage!.y};
@@ -271,6 +383,490 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         }
     };
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onRotateAvatarLeft()
+    private onRotateAvatarLeft = (event: WindowMouseEvent): void =>
+    {
+        this.rotateCurrentPreview(1);
+        event.stopPropagation();
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onRotateAvatarRight()
+    private onRotateAvatarRight = (event: WindowMouseEvent): void =>
+    {
+        this.rotateCurrentPreview(-1);
+        event.stopPropagation();
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTogglePreviewMagic()
+    private onTogglePreviewMagic = (event: WindowMouseEvent): void =>
+    {
+        this.cyclePreviewAvatarAction();
+        event.stopPropagation();
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onTogglePreviewZoom()
+    private onTogglePreviewZoom = (event: WindowMouseEvent): void =>
+    {
+        this.togglePreviewZoom();
+        event.stopPropagation();
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::rotateCurrentPreview()
+    private rotateCurrentPreview(direction: number): void
+    {
+        const roomPreviewer = this._catalog?.roomPreviewer ?? null;
+
+        if(roomPreviewer == null) return;
+
+        switch(this._previewMode - 1)
+        {
+            case 0:
+                this.rotatePreviewAvatar(direction, roomPreviewer);
+
+                break;
+            case 1:
+                roomPreviewer.rotatePreviewFurniture(direction > 0);
+
+                break;
+            case 2:
+                roomPreviewer.rotatePreviewWallItem();
+
+                break;
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::rotatePreviewAvatar()
+    private rotatePreviewAvatar(direction: number, roomPreviewer: RoomPreviewer): void
+    {
+        if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR) return;
+
+        if(this._avatarAction === ProductViewCatalogWidget.PREVIEW_ACTION_SIT && this.isDiagonalAvatarDirection(this._avatarBodyDirection + direction))
+        {
+            direction *= 2;
+        }
+        else if(this._avatarAction === ProductViewCatalogWidget.PREVIEW_ACTION_LAY && !this.isValidLayingDirection(this._avatarBodyDirection + direction))
+        {
+            direction = this._avatarBodyDirection === 0 ? 2 : -this._avatarBodyDirection;
+        }
+
+        this._avatarBodyDirection = this.normalizeAvatarDirection(this._avatarBodyDirection + direction);
+        this._avatarHeadDirection = this._avatarBodyDirection;
+        this.applyPreviewAvatarDirection(roomPreviewer);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::cyclePreviewAvatarAction()
+    private cyclePreviewAvatarAction(): void
+    {
+        const roomPreviewer = this._catalog?.roomPreviewer ?? null;
+
+        if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR || roomPreviewer == null) return;
+
+        this._avatarAction = this.getNextPreviewAvatarAction(this._avatarAction);
+        this.applyPreviewAvatarAction(roomPreviewer);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::togglePreviewZoom()
+    private togglePreviewZoom(): void
+    {
+        if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR) return;
+
+        this._zoomState = this._zoomState === ProductViewCatalogWidget.PREVIEW_ZOOM_NORMAL
+            ? ProductViewCatalogWidget.PREVIEW_ZOOM_IN
+            : ProductViewCatalogWidget.PREVIEW_ZOOM_NORMAL;
+        this.animatePreviewZoomToSelection();
+        this.updatePreviewControls();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyPreviewAvatarDirection()
+    private applyPreviewAvatarDirection(roomPreviewer: RoomPreviewer): void
+    {
+        roomPreviewer.updateAvatarDirectionAndLocation(this._avatarBodyDirection, this._avatarHeadDirection, this.getPreviewAvatarLocation());
+        roomPreviewer.updatePreviewRoomView(true);
+        roomPreviewer.updateRoomEngine();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewMode()
+    private setPreviewMode(mode: number, canRotate: boolean = false): void
+    {
+        let resolvedMode = mode;
+
+        if(!this._hasRoomCanvas || this._roomCanvasContainer == null || !this._roomCanvasContainer.visible)
+        {
+            resolvedMode = ProductViewCatalogWidget.PREVIEW_MODE_NONE;
+        }
+
+        if(this._previewMode === ProductViewCatalogWidget.PREVIEW_MODE_AVATAR && resolvedMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR)
+        {
+            this.resetPreviewAvatarDirection();
+            this.resetPreviewAvatarAction();
+            this.resetPreviewZoom();
+            this.setPreviewZoomAnimationTarget(0, true);
+        }
+
+        if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_AVATAR && resolvedMode === ProductViewCatalogWidget.PREVIEW_MODE_AVATAR)
+        {
+            this._zoomState = ProductViewCatalogWidget.PREVIEW_ZOOM_IN;
+            this.setPreviewZoomAnimationTarget(1, true);
+        }
+
+        this._previewMode = resolvedMode;
+        this._floorFurnitureCanRotate = resolvedMode === ProductViewCatalogWidget.PREVIEW_MODE_FLOOR_FURNITURE && canRotate;
+        this.setFloorFurnitureRotationAvailabilityMonitorEnabled(resolvedMode === ProductViewCatalogWidget.PREVIEW_MODE_FLOOR_FURNITURE);
+
+        if(resolvedMode === ProductViewCatalogWidget.PREVIEW_MODE_AVATAR && this._previewZoomAnimationProgress !== this._previewZoomAnimationTargetProgress)
+        {
+            this.animatePreviewZoomToSelection();
+        }
+
+        this.updatePreviewControls();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setFloorFurnitureRotationAvailabilityMonitorEnabled()
+    // TS deviation: AS3 hooks the room canvas DisplayObject's own "enterFrame" event; we don't
+    // have a per-DisplayObject frame event here, so this uses the window manager's shared
+    // update-receiver loop instead (same mechanism HintManager uses for its own polling).
+    private setFloorFurnitureRotationAvailabilityMonitorEnabled(enabled: boolean): void
+    {
+        if(enabled === this._floorRotationMonitorActive) return;
+
+        const updateAware = this._catalog?.windowManager as unknown as {
+            registerUpdateReceiver?: (receiver: {update: (t: number) => void; dispose: () => void; disposed: boolean}, priority: number) => void
+            removeUpdateReceiver?: (receiver: {update: (t: number) => void; dispose: () => void; disposed: boolean}) => void
+        } | null;
+
+        if(enabled)
+        {
+            updateAware?.registerUpdateReceiver?.(this._floorRotationMonitorReceiver, 10);
+        }
+        else
+        {
+            updateAware?.removeUpdateReceiver?.(this._floorRotationMonitorReceiver);
+        }
+
+        this._floorRotationMonitorActive = enabled;
+    }
+
+    private readonly _floorRotationMonitorReceiver = {
+        update: (): void => this.onFloorFurnitureRotationAvailabilityFrame(),
+        dispose: (): void => {},
+        disposed: false,
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onFloorFurnitureRotationAvailabilityFrame()
+    private onFloorFurnitureRotationAvailabilityFrame(): void
+    {
+        const roomPreviewer = this._catalog?.roomPreviewer ?? null;
+
+        if(this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_FLOOR_FURNITURE || roomPreviewer == null)
+        {
+            this.setFloorFurnitureRotationAvailabilityMonitorEnabled(false);
+
+            return;
+        }
+
+        const canRotate = roomPreviewer.canRotatePreviewFurniture();
+
+        if(this._floorFurnitureCanRotate !== canRotate)
+        {
+            this._floorFurnitureCanRotate = canRotate;
+            this.updatePreviewControls();
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::updatePreviewControls()
+    private updatePreviewControls(): void
+    {
+        const isAvatar = this._previewMode === ProductViewCatalogWidget.PREVIEW_MODE_AVATAR;
+        const hasAnyMode = this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_NONE;
+        const canRotate = hasAnyMode && (this._previewMode !== ProductViewCatalogWidget.PREVIEW_MODE_FLOOR_FURNITURE || this._floorFurnitureCanRotate);
+
+        this.setPreviewButtonState(this._rotateAvatarLeftButton, hasAnyMode, canRotate);
+        this.setPreviewButtonState(this._rotateAvatarRightButton, hasAnyMode, canRotate);
+        this.setPreviewButtonState(this._togglePreviewMagicButton, isAvatar, isAvatar);
+        this.setPreviewButtonState(this._toggleZoomButton, isAvatar, isAvatar);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewButtonState()
+    private setPreviewButtonState(button: IWindow | null, visible: boolean, enabled: boolean): void
+    {
+        if(button == null) return;
+
+        button.visible = visible;
+
+        if(enabled)
+        {
+            button.enable();
+        }
+        else
+        {
+            button.disable();
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewAvatarDirection()
+    private resetPreviewAvatarDirection(): void
+    {
+        this._avatarBodyDirection = ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION;
+        this._avatarHeadDirection = ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewAvatarAction()
+    private resetPreviewAvatarAction(): void
+    {
+        this._avatarAction = ProductViewCatalogWidget.PREVIEW_ACTION_STAND;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::getPreviewAvatarLocation()
+    private getPreviewAvatarLocation(): Vector3d | null
+    {
+        switch(this._avatarAction - ProductViewCatalogWidget.PREVIEW_ACTION_SIT)
+        {
+            case 0:
+                return ProductViewCatalogWidget.PREVIEW_SIT_OFFSETS;
+            case 1:
+                return ProductViewCatalogWidget.PREVIEW_LAY_OFFSETS;
+            default:
+                return null;
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyPreviewAvatarAction()
+    private applyPreviewAvatarAction(roomPreviewer: RoomPreviewer): void
+    {
+        roomPreviewer.updateObjectUserAction('figure_dance', 0);
+        roomPreviewer.updateObjectUserAction('figure_expression', 0);
+
+        switch(this._avatarAction)
+        {
+            case ProductViewCatalogWidget.PREVIEW_ACTION_WALK:
+                roomPreviewer.updateUserPosture('mv');
+
+                break;
+            case ProductViewCatalogWidget.PREVIEW_ACTION_DANCE:
+                roomPreviewer.updateUserPosture('std');
+                roomPreviewer.updateObjectUserAction('figure_dance', 1);
+
+                break;
+            case ProductViewCatalogWidget.PREVIEW_ACTION_SIT:
+                roomPreviewer.updateUserPosture('sit');
+
+                break;
+            case ProductViewCatalogWidget.PREVIEW_ACTION_LAY:
+                roomPreviewer.updateUserPosture('lay');
+
+                break;
+            case ProductViewCatalogWidget.PREVIEW_ACTION_WAVE:
+                roomPreviewer.updateUserPosture('std');
+                roomPreviewer.updateObjectUserAction('figure_expression', AvatarAction.getExpressionId('wave'));
+
+                break;
+            default:
+                roomPreviewer.updateUserPosture('std');
+        }
+
+        roomPreviewer.updateAvatarDirectionAndLocation(this._avatarBodyDirection, this._avatarHeadDirection, this.getPreviewAvatarLocation());
+        roomPreviewer.updatePreviewRoomView(true);
+        roomPreviewer.updateRoomEngine();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::getNextPreviewAvatarAction()
+    private getNextPreviewAvatarAction(current: number): number
+    {
+        let next = current;
+
+        do
+        {
+            next = (next + 1) % ProductViewCatalogWidget.PREVIEW_ACTION_COUNT;
+        }
+        while(this.isPreviewAvatarActionSkippedForDirection(next, this._avatarBodyDirection));
+
+        return next;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isPreviewAvatarActionSkippedForDirection()
+    private isPreviewAvatarActionSkippedForDirection(action: number, direction: number): boolean
+    {
+        return (action === ProductViewCatalogWidget.PREVIEW_ACTION_SIT && this.isDiagonalAvatarDirection(direction))
+            || (action === ProductViewCatalogWidget.PREVIEW_ACTION_LAY && !this.isValidLayingDirection(direction));
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::resetPreviewZoom()
+    private resetPreviewZoom(): void
+    {
+        this._zoomState = ProductViewCatalogWidget.PREVIEW_ZOOM_NORMAL;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::animatePreviewZoomToSelection()
+    private animatePreviewZoomToSelection(): void
+    {
+        this.setPreviewZoomAnimationTarget(this._zoomState === ProductViewCatalogWidget.PREVIEW_ZOOM_IN ? 1 : 0);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewZoomAnimationTarget()
+    private setPreviewZoomAnimationTarget(target: number, immediate: boolean = false): void
+    {
+        const clamped = Math.max(0, Math.min(1, target));
+
+        this._previewZoomAnimationTargetProgress = clamped;
+
+        if(immediate)
+        {
+            this.stopPreviewZoomAnimation();
+            this._previewZoomAnimationProgress = clamped;
+            this._zoomAnimationMaxDelta = 0;
+            this._zoomAnimationLastStep = 0;
+            this._zoomAnimationDecelerating = false;
+            this.applyRoomCanvasZoom();
+
+            return;
+        }
+
+        const delta = Math.abs(this._previewZoomAnimationTargetProgress - this._previewZoomAnimationProgress);
+
+        if(delta <= 0)
+        {
+            this.stopPreviewZoomAnimation();
+            this._previewZoomAnimationProgress = this._previewZoomAnimationTargetProgress;
+            this._zoomAnimationLastStep = 0;
+            this._zoomAnimationDecelerating = false;
+            this.applyRoomCanvasZoom();
+
+            return;
+        }
+
+        this._zoomAnimationMaxDelta = delta;
+        this._zoomAnimationDecelerating = true;
+        this.startPreviewZoomAnimation();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::startPreviewZoomAnimation()
+    // TS deviation: driven by the window manager's shared update-receiver loop rather than a
+    // DisplayObject "enterFrame" event - see setFloorFurnitureRotationAvailabilityMonitorEnabled().
+    private startPreviewZoomAnimation(): void
+    {
+        if(this._zoomAnimationActive) return;
+
+        this._zoomAnimationActive = true;
+
+        const updateAware = this._catalog?.windowManager as unknown as {
+            registerUpdateReceiver?: (receiver: {update: (t: number) => void; dispose: () => void; disposed: boolean}, priority: number) => void
+        } | null;
+
+        updateAware?.registerUpdateReceiver?.(this._zoomAnimationReceiver, 10);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::stopPreviewZoomAnimation()
+    private stopPreviewZoomAnimation(): void
+    {
+        if(!this._zoomAnimationActive) return;
+
+        this._zoomAnimationActive = false;
+
+        const updateAware = this._catalog?.windowManager as unknown as {
+            removeUpdateReceiver?: (receiver: {update: (t: number) => void; dispose: () => void; disposed: boolean}) => void
+        } | null;
+
+        updateAware?.removeUpdateReceiver?.(this._zoomAnimationReceiver);
+    }
+
+    private readonly _zoomAnimationReceiver = {
+        update: (): void => this.onPreviewZoomAnimationFrame(),
+        dispose: (): void => {},
+        disposed: false,
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewZoomAnimationFrame()
+    private onPreviewZoomAnimationFrame(): void
+    {
+        const remaining = this._previewZoomAnimationTargetProgress - this._previewZoomAnimationProgress;
+        const distance = Math.abs(remaining);
+
+        if(distance <= ProductViewCatalogWidget.PREVIEW_ZOOM_SPEED_SLOW)
+        {
+            this._previewZoomAnimationProgress = this._previewZoomAnimationTargetProgress;
+            this._zoomAnimationLastStep = 0;
+            this._zoomAnimationDecelerating = false;
+            this.stopPreviewZoomAnimation();
+            this.applyRoomCanvasZoom();
+
+            return;
+        }
+
+        if(distance > this._zoomAnimationMaxDelta)
+        {
+            this._zoomAnimationMaxDelta = distance;
+        }
+
+        const ease = Math.sin(Math.PI * distance / this._zoomAnimationMaxDelta);
+        const speedCap = this._zoomAnimationMaxDelta / ProductViewCatalogWidget.PREVIEW_ZOOM_MOVE_SPEED_DENOMINATOR;
+        let step = ProductViewCatalogWidget.PREVIEW_ZOOM_SPEED_SLOW + (speedCap - ProductViewCatalogWidget.PREVIEW_ZOOM_SPEED_SLOW) * ease;
+
+        if(this._zoomAnimationDecelerating)
+        {
+            if(step < this._zoomAnimationLastStep)
+            {
+                step = Math.min(this._zoomAnimationLastStep, distance);
+            }
+            else
+            {
+                this._zoomAnimationDecelerating = false;
+            }
+        }
+
+        this._zoomAnimationLastStep = step;
+        this._previewZoomAnimationProgress += remaining > 0 ? step : -step;
+        this.applyRoomCanvasZoom();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::applyRoomCanvasZoom()
+    private applyRoomCanvasZoom(): void
+    {
+        if(this._roomCanvas == null || this._canvasDisplayObject == null) return;
+
+        const scale = 1 + (2 - 1) * this._previewZoomAnimationProgress;
+        const offsetY = ProductViewCatalogWidget.PREVIEW_ZOOM_IN_CAMERA_OFFSET_Y * this._previewZoomAnimationProgress;
+
+        this._canvasDisplayObject.scale.x = scale;
+        this._canvasDisplayObject.scale.y = scale;
+
+        // TS deviation: AS3 assigns _roomCanvasDisplayObject.x/y directly, relative to a wrapper
+        // Sprite that's separately positioned/clipped. Our canvas is parented onto the shared
+        // root stage and kept aligned with room_canvas's screen position every frame by
+        // syncCanvasPosition() - so the zoom offset here is applied on top of that same base
+        // position (re-read fresh, not accumulated onto whatever .x/.y already holds) to avoid
+        // drifting across repeated calls during the zoom animation.
+        const basePosition = {x: 0, y: 0};
+
+        this._roomCanvas.getGlobalPosition(basePosition);
+
+        this._canvasDisplayObject.x = basePosition.x - (this._roomCanvas.width * scale - this._roomCanvas.width) / 2;
+        this._canvasDisplayObject.y = basePosition.y - (this._roomCanvas.height * scale - this._roomCanvas.height) / 2 - offsetY;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::normalizeAvatarDirection()
+    private normalizeAvatarDirection(direction: number): number
+    {
+        let result = direction % 8;
+
+        if(result < 0) result += 8;
+
+        return result;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isDiagonalAvatarDirection()
+    private isDiagonalAvatarDirection(direction: number): boolean
+    {
+        return this.normalizeAvatarDirection(direction) % 2 !== 0;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::isValidLayingDirection()
+    private isValidLayingDirection(direction: number): boolean
+    {
+        const normalized = this.normalizeAvatarDirection(direction);
+
+        return normalized === 0 || normalized === 2;
+    }
+
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::ninjaEffectBundled()
     private static ninjaEffectBundled(event: SelectProductEvent): boolean
     {
@@ -355,12 +951,14 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
         // TODO(AS3): class_3172/ProductImageConfiguration's pre-rendered special-product image
         // table isn't ported - always falls through to the pricing-model preview below.
-        this.renderPreviewForPricingModel(offer);
+        const {mode, canRotate} = this.renderPreviewForPricingModel(offer);
+
+        this.setPreviewMode(mode, canRotate);
 
         this.window.invalidate();
     };
 
-    private renderPreviewForPricingModel(offer: IPurchasableOffer): void
+    private renderPreviewForPricingModel(offer: IPurchasableOffer): {mode: number; canRotate: boolean}
     {
         switch(offer.pricingModel)
         {
@@ -386,23 +984,23 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
                 this.setPreviewImage(null);
 
-                break;
+                return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
             case 'pricing_model_single':
             case 'pricing_model_multi':
             case 'pricing_model_furniture':
-                this.renderProductPreview(offer);
-
-                break;
+                return this.renderProductPreview(offer);
             default:
                 log.warn(`[Product View Catalog Widget] Unknown pricing model ${offer.pricingModel}`);
+
+                return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }
     }
 
-    private renderProductPreview(offer: IPurchasableOffer): void
+    private renderProductPreview(offer: IPurchasableOffer): {mode: number; canRotate: boolean}
     {
         const product = offer.product;
 
-        if(product == null) return;
+        if(product == null) return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
 
         const roomPreviewer = this._catalog!.roomPreviewer;
 
@@ -420,13 +1018,9 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         switch(product.productType)
         {
             case 's':
-                this.renderFurniturePreview(product, roomPreviewer != null && this._roomCanvas != null);
-
-                break;
+                return this.renderFurniturePreview(product, roomPreviewer, roomPreviewer != null && this._roomCanvas != null);
             case 'i':
-                this.renderWallItemPreview(product, roomPreviewer, offer);
-
-                break;
+                return this.renderWallItemPreview(product, roomPreviewer);
             case 'r':
                 // TODO(AS3): rentable/avatar-effect preview needs multi-layer sprite compositing
                 // (addEffectSprites()) - not ported, see class doc comment.
@@ -447,25 +1041,57 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
                 // TODO(AS3): ProductDisplayWrapper (generic default-case renderer) isn't ported.
                 log.warn(`[Product View Catalog Widget] Unknown Product Type: ${product.productType}`);
         }
+
+        return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
     }
 
-    private renderFurniturePreview(product: IProduct, hasRoomCanvas: boolean): void
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
+    // ("s" product-type branch)
+    private renderFurniturePreview(product: IProduct, roomPreviewer: RoomPreviewer | null, hasRoomCanvas: boolean): {mode: number; canRotate: boolean}
     {
-        const roomPreviewer = this._catalog!.roomPreviewer;
-
-        if(hasRoomCanvas && roomPreviewer != null)
-        {
-            roomPreviewer.addFurnitureIntoRoom(product.productClassId, new Vector3d(90, 0, 0), this._overrideStuffData, product.extraParam);
-        }
-        else
+        if(!hasRoomCanvas || roomPreviewer == null)
         {
             // TODO(AS3): no-room-canvas fallback needs roomEngine.getFurnitureImage(), which
             // isn't ported.
             log.warn('[Product View Catalog Widget] Furniture preview without room canvas not ported yet');
+
+            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }
+
+        const furnitureData = product.furnitureData;
+
+        if(furnitureData != null && furnitureData.category === 23)
+        {
+            const catalog = this._catalog!;
+            const floorItemData = catalog.sessionDataManager?.getFloorItemData(furnitureData.id) ?? null;
+            const avatarRenderer = catalog.avatarRenderManager;
+            const sessionDataManager = catalog.sessionDataManager;
+
+            if(floorItemData != null && avatarRenderer != null && sessionDataManager != null)
+            {
+                const figureSetIds = (floorItemData.customParams ?? '')
+                    .split(',')
+                    .map((value) => parseInt(value, 10))
+                    .filter((id) => !Number.isNaN(id) && avatarRenderer.isValidFigureSetForGender(id, sessionDataManager.gender));
+
+                const figure = avatarRenderer.getFigureStringWithFigureIds(sessionDataManager.figure, sessionDataManager.gender, figureSetIds);
+
+                roomPreviewer.addAvatarIntoRoom(figure);
+                this.applyPreviewAvatarDirection(roomPreviewer);
+                this.applyPreviewAvatarAction(roomPreviewer);
+            }
+
+            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_AVATAR, canRotate: false};
+        }
+
+        roomPreviewer.addFurnitureIntoRoom(product.productClassId, new Vector3d(90, 0, 0), this._overrideStuffData, product.extraParam);
+
+        return {mode: ProductViewCatalogWidget.PREVIEW_MODE_FLOOR_FURNITURE, canRotate: roomPreviewer.canRotatePreviewFurniture()};
     }
 
-    private renderWallItemPreview(product: IProduct, roomPreviewer: RoomPreviewer | null, _offer: IPurchasableOffer): void
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
+    // ("i" product-type branch)
+    private renderWallItemPreview(product: IProduct, roomPreviewer: RoomPreviewer | null): {mode: number; canRotate: boolean}
     {
         const furnitureData = product.furnitureData;
 
@@ -475,19 +1101,24 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             // roomEngine.getRoomStringValue(), which IRoomEngine doesn't expose yet.
             log.warn('[Product View Catalog Widget] Wall-item category 2/3/4 preview not ported yet');
 
-            return;
+            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }
 
         if(roomPreviewer != null && this._roomCanvas != null)
         {
             roomPreviewer.addWallItemIntoRoom(product.productClassId, new Vector3d(90, 0, 0), product.extraParam);
+
+            return {
+                mode: roomPreviewer.canRotatePreviewWallItem() ? ProductViewCatalogWidget.PREVIEW_MODE_WALL_ITEM : ProductViewCatalogWidget.PREVIEW_MODE_NONE,
+                canRotate: false,
+            };
         }
-        else
-        {
-            // TODO(AS3): no-room-canvas fallback needs roomEngine.getWallItemImage(), which
-            // isn't ported.
-            log.warn('[Product View Catalog Widget] Wall item preview without room canvas not ported yet');
-        }
+
+        // TODO(AS3): no-room-canvas fallback needs roomEngine.getWallItemImage(), which
+        // isn't ported.
+        log.warn('[Product View Catalog Widget] Wall item preview without room canvas not ported yet');
+
+        return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
     }
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setBundleInfoWidgetToOffer()
@@ -603,6 +1234,8 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         {
             roomPreviewer.disableUpdate = true;
         }
+
+        this.setPreviewMode(ProductViewCatalogWidget.PREVIEW_MODE_NONE);
     }
 
     onDragAndDropDone(_success: boolean, _extraParam: string): void
