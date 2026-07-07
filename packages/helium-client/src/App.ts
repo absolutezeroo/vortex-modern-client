@@ -7,7 +7,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperator';
-import type {IWindowLayout, IWindowLayoutNode, IWindowLayoutFilter, IElementDescriptionData} from '@habbo/window';
+import type {IElementDescriptionData, IWindowLayout, IWindowLayoutFilter, IWindowLayoutNode} from '@habbo/window';
 import type {RoomUI} from '@habbo/ui/RoomUI';
 import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
 import type {HeliumLoadingScreen} from './HeliumLoadingScreen';
@@ -15,16 +15,16 @@ import {AssetBundle} from './AssetBundle';
 import {LoginFlow} from './login/LoginFlow';
 import {ChangelogWindow} from './changelog/ChangelogWindow';
 import {
+    type IWindowLayoutXmlData,
     parseElementDescriptionXml,
     parseSkinXml,
-    parseWindowLayoutXml,
-    type IWindowLayoutXmlData
+    parseWindowLayoutXml
 } from './window/WindowXmlAssetParser';
 import './_index.scss';
 
 /** Atlas spritesheet names that need to be decoded as ImageBitmaps. */
 const ATLAS_NAMES = [
-    'habbo_blue_skin',
+    'habbo_skin_blue',
     'habbo_skin_ubuntu',
     'habbo_skin_illumina_dark',
     'habbo_skin_illumina_light',
@@ -41,54 +41,39 @@ const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
     'HabboAvatarPartSets',
 ];
 
-interface IWindowLayoutJsonNode extends IWindowLayoutNode
-{
-    /**
-	 * Compiled JSON layouts may carry per-node variables that are serialized
-	 * back to XML before the AS3-style layout parser consumes them.
-	 */
+interface IWindowLayoutJsonNode extends IWindowLayoutNode {
     vars?: Record<string, unknown>;
-
     children: IWindowLayoutJsonNode[];
 }
 
-interface IWindowLayoutJson extends IWindowLayout
-{
+interface IWindowLayoutJson extends IWindowLayout {
     window: IWindowLayoutJsonNode;
-
-    /**
-	 * Some compiled layout sources include these in addition to the shared interface.
-	 */
     layoutWidth?: number;
-
-    /**
-	 * Some compiled layout sources include these in addition to the shared interface.
-	 */
     layoutHeight?: number;
 }
 
-function isXmlText(value: string): boolean
+function isXmlText(value: string): boolean 
 {
     const trimmed = value.trim();
 
     return trimmed.startsWith('<');
 }
 
-function parseJson<T>(value: string): T | null
+function parseJson<T>(value: string): T | null 
 {
-    try
+    try 
     {
         return JSON.parse(value) as T;
     }
-    catch (_error)
+    catch (_error) 
     {
         return null;
     }
 }
 
-function parseElementDescriptionFromBundle(raw: string, source: string): IElementDescriptionData | null
+function parseElementDescriptionFromBundle(raw: string, source: string): IElementDescriptionData | null 
 {
-    if(isXmlText(raw))
+    if(isXmlText(raw)) 
     {
         return parseElementDescriptionXml(raw, 'habbo_element_description', source);
     }
@@ -96,9 +81,9 @@ function parseElementDescriptionFromBundle(raw: string, source: string): IElemen
     return parseJson<IElementDescriptionData>(raw);
 }
 
-function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkinData | null
+function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkinData | null 
 {
-    if(isXmlText(raw))
+    if(isXmlText(raw)) 
     {
         return parseSkinXml(raw, skinId, source);
     }
@@ -106,31 +91,31 @@ function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkin
     return parseJson<ISkinData>(raw);
 }
 
-function isPointValue(value: unknown): value is {x: number; y: number}
+function isPointValue(value: unknown): value is { x: number; y: number } 
 {
     return (
         typeof value === 'object'
-		&& value !== null
-		&& 'x' in value
-		&& 'y' in value
-		&& !('width' in value)
-		&& !('height' in value)
+        && value !== null
+        && 'x' in value
+        && 'y' in value
+        && !('width' in value)
+        && !('height' in value)
     );
 }
 
-function isRectangleValue(value: unknown): value is {x: number; y: number; width: number; height: number}
+function isRectangleValue(value: unknown): value is { x: number; y: number; width: number; height: number } 
 {
     return (
         typeof value === 'object'
-		&& value !== null
-		&& 'x' in value
-		&& 'y' in value
-		&& 'width' in value
-		&& 'height' in value
+        && value !== null
+        && 'x' in value
+        && 'y' in value
+        && 'width' in value
+        && 'height' in value
     );
 }
 
-function escapeXmlValue(value: string): string
+function escapeXmlValue(value: string): string 
 {
     return value
         .replace(/&/g, '&amp;')
@@ -141,13 +126,13 @@ function escapeXmlValue(value: string): string
         .replace(/\n/g, '&#10;');
 }
 
-function serializeAttributes(attributes: Record<string, string | undefined>): string
+function serializeAttributes(attributes: Record<string, string | undefined>): string 
 {
     const parts = [];
 
-    for(const [name, value] of Object.entries(attributes))
+    for(const [name, value] of Object.entries(attributes)) 
     {
-        if(value === undefined)
+        if(value === undefined) 
         {
             continue;
         }
@@ -158,9 +143,9 @@ function serializeAttributes(attributes: Record<string, string | undefined>): st
     return parts.length > 0 ? ` ${parts.join(' ')}` : '';
 }
 
-function serializeVariablesMap(vars: Record<string, unknown> | undefined): string
+function serializeVariablesMap(vars: Record<string, unknown> | undefined): string 
 {
-    if(!vars)
+    if(!vars) 
     {
         return '';
     }
@@ -173,33 +158,33 @@ function serializeVariablesMap(vars: Record<string, unknown> | undefined): strin
     return entries.length > 0 ? `<variables>${entries}</variables>` : '';
 }
 
-function serializeVarNode(key: string, value: unknown): string
+function serializeVarNode(key: string, value: unknown): string 
 {
     const keyAttr = ` key="${escapeXmlValue(key)}"`;
 
-    if(value === null || value === undefined)
+    if(value === null || value === undefined) 
     {
         return `<var${keyAttr} />`;
     }
 
-    if(typeof value === 'string')
+    if(typeof value === 'string') 
     {
         return `<var${keyAttr} type="String" value="${escapeXmlValue(value)}" />`;
     }
 
-    if(typeof value === 'number')
+    if(typeof value === 'number') 
     {
         const numericType = Number.isInteger(value) ? 'int' : 'number';
 
         return `<var${keyAttr} type="${numericType}" value="${String(value)}" />`;
     }
 
-    if(typeof value === 'boolean')
+    if(typeof value === 'boolean') 
     {
         return `<var${keyAttr} type="Boolean" value="${String(value)}" />`;
     }
 
-    if(Array.isArray(value))
+    if(Array.isArray(value)) 
     {
         const serialized = value
             .map((entry, i) => serializeVarNode(String(i), entry))
@@ -208,21 +193,21 @@ function serializeVarNode(key: string, value: unknown): string
         return `<var${keyAttr}><value><Array>${serialized}</Array></value></var>`;
     }
 
-    if(isPointValue(value))
+    if(isPointValue(value)) 
     {
-        const point = value as {x: number; y: number};
+        const point = value as { x: number; y: number };
 
         return `<var${keyAttr}><value><Point x="${point.x}" y="${point.y}" /></value></var>`;
     }
 
-    if(isRectangleValue(value))
+    if(isRectangleValue(value)) 
     {
-        const rect = value as {x: number; y: number; width: number; height: number};
+        const rect = value as { x: number; y: number; width: number; height: number };
 
         return `<var${keyAttr}><value><Rectangle x="${rect.x}" y="${rect.y}" width="${rect.width}" height="${rect.height}" /></value></var>`;
     }
 
-    if(typeof value === 'object')
+    if(typeof value === 'object') 
     {
         const entries = Object.entries(value as Record<string, unknown>)
             .map(([varKey, varValue]) => serializeVarNode(varKey, varValue))
@@ -234,15 +219,15 @@ function serializeVarNode(key: string, value: unknown): string
     return '';
 }
 
-function serializeFilters(filters: IWindowLayoutFilter[] | undefined): string
+function serializeFilters(filters: IWindowLayoutFilter[] | undefined): string 
 {
-    if(!filters || filters.length === 0)
+    if(!filters || filters.length === 0) 
     {
         return '';
     }
 
     const serialized = filters
-        .map((filter) =>
+        .map((filter) => 
         {
             return `<${filter.type}${serializeAttributes(
                 Object.fromEntries(
@@ -256,20 +241,20 @@ function serializeFilters(filters: IWindowLayoutFilter[] | undefined): string
     return `<filters>${serialized}</filters>`;
 }
 
-function serializeWindowLayoutNode(node: IWindowLayoutJsonNode): string
+function serializeWindowLayoutNode(node: IWindowLayoutJsonNode): string 
 {
     let xml = `<${node.tag}${serializeAttributes(node.attributes as Record<string, string>)}`;
     const varsXml = serializeVariablesMap(node.vars as Record<string, unknown> | undefined);
     const childrenXml = node.children.map((child) => serializeWindowLayoutNode(child)).join('');
 
-    if(varsXml.length === 0 && childrenXml.length === 0)
+    if(varsXml.length === 0 && childrenXml.length === 0) 
     {
         return `${xml} />`;
     }
 
     xml += `>${varsXml}`;
 
-    if(childrenXml.length > 0)
+    if(childrenXml.length > 0) 
     {
         xml += `<children>${childrenXml}</children>`;
     }
@@ -277,18 +262,18 @@ function serializeWindowLayoutNode(node: IWindowLayoutJsonNode): string
     return `${xml}</${node.tag}>`;
 }
 
-function serializeWindowLayoutToXml(layout: IWindowLayoutJson): string
+function serializeWindowLayoutToXml(layout: IWindowLayoutJson): string 
 {
     let xml = `<layout`;
 
     const layoutAttrs: Record<string, string> = {};
 
-    if(layout.layoutWidth !== undefined)
+    if(layout.layoutWidth !== undefined) 
     {
         layoutAttrs.width = String(layout.layoutWidth);
     }
 
-    if(layout.layoutHeight !== undefined)
+    if(layout.layoutHeight !== undefined) 
     {
         layoutAttrs.height = String(layout.layoutHeight);
     }
@@ -314,7 +299,7 @@ function serializeWindowLayoutToXml(layout: IWindowLayoutJson): string
  * every window/button caption silently falls back to Arial/sans-serif — no
  * console warning, since an unregistered CSS font-family is just skipped.
  */
-const WEBFONT_FACES: Array<{family: string; file: string; weight?: string; style?: string}> = [
+const WEBFONT_FACES: Array<{ family: string; file: string; weight?: string; style?: string }> = [
     {family: 'Volter (Goldfish)', file: 'webfonts/Volter.ttf', weight: 'normal'},
     {family: 'Volter (Goldfish)', file: 'webfonts/Volter Bold.ttf', weight: 'bold'},
     {family: 'Ubuntu', file: 'webfonts/Ubuntu.ttf', weight: 'normal', style: 'normal'},
@@ -324,20 +309,20 @@ const WEBFONT_FACES: Array<{family: string; file: string; weight?: string; style
     {family: 'Ubuntu Condensed', file: 'webfonts/Ubuntu-C.ttf', weight: 'normal'},
 ];
 
-async function loadWebFonts(bundle: AssetBundle): Promise<void>
+async function loadWebFonts(bundle: AssetBundle): Promise<void> 
 {
-    await Promise.all(WEBFONT_FACES.map(async ({family, file, weight, style}) =>
+    await Promise.all(WEBFONT_FACES.map(async ({family, file, weight, style}) => 
     {
         const bytes = bundle.getBytes(file);
 
-        if(!bytes)
+        if(!bytes) 
         {
             console.warn(`[HeliumApp] Webfont not found in bundle: ${file}`);
 
             return;
         }
 
-        try
+        try 
         {
             const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
             const face = new FontFace(family, buffer, {weight, style});
@@ -345,36 +330,36 @@ async function loadWebFonts(bundle: AssetBundle): Promise<void>
             await face.load();
             document.fonts.add(face);
         }
-        catch (error)
+        catch (error) 
         {
             console.warn(`[HeliumApp] Failed to load webfont ${file}:`, error);
         }
     }));
 }
 
-function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, string>
+function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, string> 
 {
     const assets: Record<string, string> = {};
     const commonConfiguration = bundle.getText('configurations/common_configuration_txt.txt');
     const localizationConfiguration = bundle.getText('configurations/localization_configuration_txt.txt');
 
-    if(commonConfiguration !== null)
+    if(commonConfiguration !== null) 
     {
         assets.common_configuration = commonConfiguration;
     }
 
-    if(localizationConfiguration !== null)
+    if(localizationConfiguration !== null) 
     {
         assets.localization_configuration = localizationConfiguration;
     }
 
     const bundleKeys = bundle.listKeys();
 
-    for(const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES)
+    for(const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES) 
     {
         const content = readEmbeddedAvatarXmlAsset(bundle, bundleKeys, assetName);
 
-        if(content !== null)
+        if(content !== null) 
         {
             assets[assetName] = content;
         }
@@ -383,7 +368,7 @@ function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, st
     return assets;
 }
 
-function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], assetName: string): string | null
+function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], assetName: string): string | null 
 {
     const candidates = [
         `configurations/${assetName}.xml`,
@@ -395,47 +380,47 @@ function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], a
         `${assetName}_xml.xml`,
     ];
 
-    for(const candidate of candidates)
+    for(const candidate of candidates) 
     {
         const content = bundle.getText(candidate);
 
-        if(content !== null)
+        if(content !== null) 
         {
             return content;
         }
     }
 
-    const suffixMatch = bundleKeys.find((key) =>
+    const suffixMatch = bundleKeys.find((key) => 
     {
         return key.endsWith(`/${assetName}.xml`)
-			|| key.endsWith(`/${assetName}_xml.xml`)
-			|| key.endsWith(`/${assetName}.json`);
+            || key.endsWith(`/${assetName}_xml.xml`)
+            || key.endsWith(`/${assetName}.json`);
     });
 
     return suffixMatch ? bundle.getText(suffixMatch) : null;
 }
 
-function parseLayoutEntries(raw: string, source: string, baseName: string): IWindowLayoutXmlData[]
+function parseLayoutEntries(raw: string, source: string, baseName: string): IWindowLayoutXmlData[] 
 {
-    if(isXmlText(raw))
+    if(isXmlText(raw)) 
     {
         return parseWindowLayoutXml(raw, baseName, source);
     }
 
     const parsed = parseJson<IWindowLayoutJson>(raw);
 
-    if(!parsed)
+    if(!parsed) 
     {
         return [];
     }
 
-    if(Array.isArray(parsed))
+    if(Array.isArray(parsed)) 
     {
         const result: IWindowLayoutXmlData[] = [];
 
-        for(const layout of parsed)
+        for(const layout of parsed) 
         {
-            if(!layout || !layout.window)
+            if(!layout || !layout.window) 
             {
                 continue;
             }
@@ -448,7 +433,7 @@ function parseLayoutEntries(raw: string, source: string, baseName: string): IWin
         return result;
     }
 
-    if(!parsed.window)
+    if(!parsed.window) 
     {
         return [];
     }
@@ -458,10 +443,9 @@ function parseLayoutEntries(raw: string, source: string, baseName: string): IWin
     return parseWindowLayoutXml(serializeWindowLayoutToXml(parsed), layoutName, source);
 }
 
-declare global
+declare global 
 {
-    interface Window
-    {
+    interface Window {
         HeliumConfig?: IHeliumConfig;
     }
 }
@@ -478,7 +462,7 @@ declare global
  * This mirrors the AS3 pattern where WindowRenderer composed everything into a
  * single BitmapData displayed as a Bitmap on the Stage.
  */
-export class HeliumApp
+export class HeliumApp 
 {
     private _canvas: HTMLCanvasElement | null = null;
     private _ctx: CanvasRenderingContext2D | null = null;
@@ -512,20 +496,20 @@ export class HeliumApp
     /** Active room ID for mouse routing. */
     private _activeRoomId: number = -1;
 
-    constructor(loadingScreen?: HeliumLoadingScreen)
+    constructor(loadingScreen?: HeliumLoadingScreen) 
     {
         this._loadingScreen = loadingScreen ?? null;
     }
 
     /**
-	 * Initializes the application.
-	 *
-	 * Bootstraps the engine, loads the asset bundle, configures skins/layouts,
-	 * creates the canvas, and starts the render loop.
-	 *
-	 * @see sources/win63_2021_version/HabboAir.as
-	 */
-    public async init(): Promise<void>
+     * Initializes the application.
+     *
+     * Bootstraps the engine, loads the asset bundle, configures skins/layouts,
+     * creates the canvas, and starts the render loop.
+     *
+     * @see sources/win63_2021_version/HabboAir.as
+     */
+    public async init(): Promise<void> 
     {
         // 1. Load bundles, then bootstrap engine with AS3 embedded configuration assets
         const CORE_RATIO = 0.6;
@@ -534,7 +518,7 @@ export class HeliumApp
                 images: 0,
                 xml: 0
             };
-        const updateBundleProgress = (): void =>
+        const updateBundleProgress = (): void => 
         {
             const ratio = (bundleProgress.images + bundleProgress.xml) / 2;
 
@@ -542,12 +526,12 @@ export class HeliumApp
         };
 
         const [imageBundle, xmlBundle] = await Promise.all([
-            AssetBundle.load('/assets-images.bundle', (ratio: number) =>
+            AssetBundle.load('/assets-images.bundle', (ratio: number) => 
             {
                 bundleProgress.images = ratio;
                 updateBundleProgress();
             }),
-            AssetBundle.load('/assets-xml.bundle', (ratio: number) =>
+            AssetBundle.load('/assets-xml.bundle', (ratio: number) => 
             {
                 bundleProgress.xml = ratio;
                 updateBundleProgress();
@@ -564,12 +548,12 @@ export class HeliumApp
         };
         const helium = await Helium.bootstrap(heliumConfig, this._loadingScreen ?? undefined);
 
-        if(import.meta.env.DEV)
+        if(import.meta.env.DEV) 
         {
             // Dev-only console access, e.g. Helium.instance.configuration.getProperty('...').
             // Helium is only ever ES-module-imported elsewhere, so without this the class
             // (and its `instance` singleton getter) isn't reachable from the browser console.
-            (window as unknown as {Helium: typeof Helium}).Helium = Helium;
+            (window as unknown as { Helium: typeof Helium }).Helium = Helium;
         }
 
         this._imageBundle = imageBundle;
@@ -586,19 +570,19 @@ export class HeliumApp
         this._changelogWindow.mount();
 
         // 2. Load element descriptions + atlas bitmaps from bundle
-        try
+        try 
         {
             const elementDescriptionXml = xmlBundle.getText('window-skins/element-description.xml')
-				?? xmlBundle.getText('window-skins/element-description.json');
+                ?? xmlBundle.getText('window-skins/element-description.json');
 
-            if(elementDescriptionXml)
+            if(elementDescriptionXml) 
             {
                 const elementDescription = parseElementDescriptionFromBundle(
                     elementDescriptionXml,
                     'window-skins/element-description.xml'
                 );
 
-                if(elementDescription)
+                if(elementDescription) 
                 {
                     helium.windowManager.loadElementDescription(elementDescription);
                 }
@@ -611,7 +595,7 @@ export class HeliumApp
 
             const atlases = new Map<string, ImageBitmap>();
 
-            for(let i = 0; i < ATLAS_NAMES.length; i++)
+            for(let i = 0; i < ATLAS_NAMES.length; i++) 
             {
                 const bmp = bitmaps[i];
 
@@ -621,16 +605,16 @@ export class HeliumApp
             // Load all skin XMLs from bundle
             const skins = new Map<string, ISkinData>();
 
-            for(const key of xmlBundle.listKeys('window-skins/'))
+            for(const key of xmlBundle.listKeys('window-skins/')) 
             {
-                if(key.endsWith('element-description.xml') || key.endsWith('element-description.json'))
+                if(key.endsWith('element-description.xml') || key.endsWith('element-description.json')) 
                 {
                     continue;
                 }
 
                 const skinXml = xmlBundle.getText(key);
 
-                if(!skinXml)
+                if(!skinXml) 
                 {
                     continue;
                 }
@@ -643,17 +627,17 @@ export class HeliumApp
 
             helium.windowManager.loadSkinAssets(skins, atlases);
         }
-        catch (error)
+        catch (error) 
         {
             console.warn('[HeliumApp] Failed to load skin/element assets:', error);
         }
 
         // 3. Register all window layouts from XML bundle
-        for(const key of xmlBundle.listKeys('window-layouts/'))
+        for(const key of xmlBundle.listKeys('window-layouts/')) 
         {
             const layoutXml = xmlBundle.getText(key);
 
-            if(!layoutXml)
+            if(!layoutXml) 
             {
                 continue;
             }
@@ -661,21 +645,21 @@ export class HeliumApp
             const layoutBaseName = key.split('/').pop()!.replace('.xml', '').replace('.json', '');
             let layouts = [];
 
-            try
+            try 
             {
                 layouts = parseLayoutEntries(layoutXml, key, layoutBaseName);
             }
-            catch (error)
+            catch (error) 
             {
                 console.warn(`[HeliumApp] Failed to parse layout XML: ${key}`, error);
                 continue;
             }
 
-            for(const layout of layouts)
+            for(const layout of layouts) 
             {
                 const name = layout.name;
 
-                if(typeof name === 'string' && name.length > 0)
+                if(typeof name === 'string' && name.length > 0) 
                 {
                     helium.windowManager.registerWidgetLayout(name, layout.xml);
                 }
@@ -685,17 +669,17 @@ export class HeliumApp
         // 4. Wait for AS3 authentication before creating the visible client UI.
         const ssoTicket = window.HeliumConfig?.connection?.ssoTicket;
 
-        if(!ssoTicket)
+        if(!ssoTicket) 
         {
             await this.showLoginFlow();
         }
-        else
+        else 
         {
             await helium.connect();
         }
 
         // 5. Dispose loading screen before creating canvas (prevents white flash)
-        if(this._loadingScreen)
+        if(this._loadingScreen) 
         {
             this._loadingScreen.dispose();
             this._loadingScreen = null;
@@ -725,78 +709,22 @@ export class HeliumApp
     }
 
     /**
-	 * Shows the login flow overlay and waits for the user to complete login.
-	 *
-	 * AS3: HabboAir creates LoginFlow when no SSO ticket is in FlashVars.
-	 * The LoginFlow runs as a standalone Sprite before the main client starts.
-	 * When complete, it provides an SSO token that is passed to the engine.
-	 *
-	 * @see sources/win63_2021_version/login/LoginFlow.as
-	 * @returns Promise that resolves when the login flow finishes
-	 */
-    private showLoginFlow(): Promise<void>
-    {
-        return new Promise((resolve, reject) =>
-        {
-            const helium = Helium.instance;
-            const loginFlow = new LoginFlow(helium.configuration);
-
-            loginFlow.init();
-
-            loginFlow.loginEvents.once(LoginFlow.LOGIN_FLOW_FINISHED_EVENT, async () =>
-            {
-                try
-                {
-                    const token = loginFlow.ssoToken;
-
-                    if(!token)
-                    {
-                        throw new Error('[HeliumApp] Login flow finished without SSO ticket');
-                    }
-
-                    // Set the SSO ticket on the communication manager
-                    helium.habboCommunication.ssoTicket = token;
-
-                    // Update the global config so connect() picks it up
-                    if(window.HeliumConfig?.connection)
-                    {
-                        window.HeliumConfig.connection.ssoTicket = token;
-                    }
-
-                    // Trigger the connection and wait for AS3 AUTHENTICATED before continuing.
-                    await helium.connect();
-
-                    loginFlow.dispose();
-                    resolve();
-                }
-                catch (error)
-                {
-                    const message = error instanceof Error ? error.message : String(error);
-
-                    loginFlow.showErrorMessage(message);
-                    reject(error);
-                }
-            });
-        });
-    }
-
-    /**
-	 * Disposes the application and cleans up resources.
-	 */
-    public dispose(): void
+     * Disposes the application and cleans up resources.
+     */
+    public dispose(): void 
     {
         if(this._disposed) return;
 
         this._disposed = true;
 
-        if(this._changelogWindow)
+        if(this._changelogWindow) 
         {
             this._changelogWindow.dispose();
             this._changelogWindow = null;
         }
 
         // Stop render loop
-        if(this._animFrameId)
+        if(this._animFrameId) 
         {
             cancelAnimationFrame(this._animFrameId);
             this._animFrameId = 0;
@@ -805,7 +733,7 @@ export class HeliumApp
         // Remove event listeners
         window.removeEventListener('resize', this._onResize);
 
-        if(this._canvas)
+        if(this._canvas) 
         {
             this._canvas.removeEventListener('mousedown', this._onMouseDown);
             this._canvas.removeEventListener('mousemove', this._onMouseMove);
@@ -814,24 +742,24 @@ export class HeliumApp
             this._canvas.removeEventListener('contextmenu', this._onContextMenu);
         }
 
-        if(this._docMoveHandler)
+        if(this._docMoveHandler) 
         {
             document.removeEventListener('mousemove', this._docMoveHandler);
         }
 
-        if(this._docUpHandler)
+        if(this._docUpHandler) 
         {
             document.removeEventListener('mouseup', this._docUpHandler);
         }
 
         // Revoke blob URLs
-        if(this._imageBundle)
+        if(this._imageBundle) 
         {
             this._imageBundle.dispose();
             this._imageBundle = null;
         }
 
-        if(this._xmlBundle)
+        if(this._xmlBundle) 
         {
             this._xmlBundle.dispose();
             this._xmlBundle = null;
@@ -848,20 +776,76 @@ export class HeliumApp
     }
 
     /**
-	 * Sets up room state tracking by listening to room engine events.
-	 * Updates `_isInRoom` to control mouse event routing.
-	 */
-    private setupRoomStateTracking(): void
+     * Shows the login flow overlay and waits for the user to complete login.
+     *
+     * AS3: HabboAir creates LoginFlow when no SSO ticket is in FlashVars.
+     * The LoginFlow runs as a standalone Sprite before the main client starts.
+     * When complete, it provides an SSO token that is passed to the engine.
+     *
+     * @see sources/win63_2021_version/login/LoginFlow.as
+     * @returns Promise that resolves when the login flow finishes
+     */
+    private showLoginFlow(): Promise<void> 
+    {
+        return new Promise((resolve, reject) => 
+        {
+            const helium = Helium.instance;
+            const loginFlow = new LoginFlow(helium.configuration);
+
+            loginFlow.init();
+
+            loginFlow.loginEvents.once(LoginFlow.LOGIN_FLOW_FINISHED_EVENT, async () => 
+            {
+                try 
+                {
+                    const token = loginFlow.ssoToken;
+
+                    if(!token) 
+                    {
+                        throw new Error('[HeliumApp] Login flow finished without SSO ticket');
+                    }
+
+                    // Set the SSO ticket on the communication manager
+                    helium.habboCommunication.ssoTicket = token;
+
+                    // Update the global config so connect() picks it up
+                    if(window.HeliumConfig?.connection) 
+                    {
+                        window.HeliumConfig.connection.ssoTicket = token;
+                    }
+
+                    // Trigger the connection and wait for AS3 AUTHENTICATED before continuing.
+                    await helium.connect();
+
+                    loginFlow.dispose();
+                    resolve();
+                }
+                catch (error) 
+                {
+                    const message = error instanceof Error ? error.message : String(error);
+
+                    loginFlow.showErrorMessage(message);
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    /**
+     * Sets up room state tracking by listening to room engine events.
+     * Updates `_isInRoom` to control mouse event routing.
+     */
+    private setupRoomStateTracking(): void 
     {
         const helium = Helium.instance;
 
-        helium.roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, (event: any) =>
+        helium.roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, (event: any) => 
         {
             this._isInRoom = true;
             this._activeRoomId = event.roomId;
         });
 
-        helium.roomEngine.events.on(RoomEngineEvent.REE_DISPOSED, (_event: any) =>
+        helium.roomEngine.events.on(RoomEngineEvent.REE_DISPOSED, (_event: any) => 
         {
             this._isInRoom = false;
             this._activeRoomId = -1;
@@ -869,19 +853,19 @@ export class HeliumApp
     }
 
     /**
-	 * Forwards a mouse event to the room engine via RoomDesktop.
-	 * Called when no UI window intercepted the event and we are in a room.
-	 */
-    private forwardToRoomEngine(x: number, y: number, type: string, e: MouseEvent): void
+     * Forwards a mouse event to the room engine via RoomDesktop.
+     * Called when no UI window intercepted the event and we are in a room.
+     */
+    private forwardToRoomEngine(x: number, y: number, type: string, e: MouseEvent): void 
     {
         const helium = Helium.instance;
 
-        try
+        try 
         {
             const roomUI = helium.roomUI as RoomUI;
             const desktop = roomUI.getDesktopForRoom(this._activeRoomId) as RoomDesktop | null;
 
-            if(desktop)
+            if(desktop) 
             {
                 desktop.canvasMouseHandler(
                     x, y, type,
@@ -897,27 +881,27 @@ export class HeliumApp
     }
 
     /**
-	 * Registers all image asset blob URLs with the engine's ResourceManager.
-	 *
-	 * Creates blob URLs from the bundle for each PNG image and registers
-	 * them with the WindowManager. The ResourceManager will lazily decode
-	 * the ImageBitmap on first request.
-	 *
-	 * @see sources/win63_version/habbo/window/ResourceManager.as
-	 */
-    private registerImageAssets(): void
+     * Registers all image asset blob URLs with the engine's ResourceManager.
+     *
+     * Creates blob URLs from the bundle for each PNG image and registers
+     * them with the WindowManager. The ResourceManager will lazily decode
+     * the ImageBitmap on first request.
+     *
+     * @see sources/win63_version/habbo/window/ResourceManager.as
+     */
+    private registerImageAssets(): void 
     {
         if(!this._imageBundle) return;
 
         const helium = Helium.instance;
 
-        for(const key of this._imageBundle.listKeys('images/'))
+        for(const key of this._imageBundle.listKeys('images/')) 
         {
             // Extract asset name: 'images/icons_toolbar_reception_normal.png' → 'icons_toolbar_reception_normal'
             const name = key.split('/').pop()!.replace('.png', '');
             const url = this._imageBundle.getUrl(key);
 
-            if(url)
+            if(url) 
             {
                 helium.windowManager.registerAssetUrl(name, url);
             }
@@ -925,9 +909,9 @@ export class HeliumApp
     }
 
     /**
-	 * Creates the canvas element and appends it to the DOM.
-	 */
-    private createCanvas(): void
+     * Creates the canvas element and appends it to the DOM.
+     */
+    private createCanvas(): void 
     {
         const container = document.getElementById('helium-ui');
 
@@ -953,18 +937,18 @@ export class HeliumApp
     }
 
     /** Bound resize handler. */
-    private _onResize = (): void =>
+    private _onResize = (): void => 
     {
         this.resizeCanvas();
     };
 
     /**
-	 * Resizes the canvas to match the viewport.
-	 *
-	 * Sets the canvas width/height attributes directly to the viewport size.
-	 * No DPR scaling — the canvas pixel buffer matches CSS pixels 1:1.
-	 */
-    private resizeCanvas(): void
+     * Resizes the canvas to match the viewport.
+     *
+     * Sets the canvas width/height attributes directly to the viewport size.
+     * No DPR scaling — the canvas pixel buffer matches CSS pixels 1:1.
+     */
+    private resizeCanvas(): void 
     {
         if(!this._canvas) return;
 
@@ -978,11 +962,11 @@ export class HeliumApp
         // Update desktop sizes in each context layer
         const helium = Helium.instance;
 
-        for(let i = 0; i < 4; i++)
+        for(let i = 0; i < 4; i++) 
         {
             const desktop = helium.windowManager.getDesktop(i);
 
-            if(desktop)
+            if(desktop) 
             {
                 desktop.width = w;
                 desktop.height = h;
@@ -991,17 +975,17 @@ export class HeliumApp
     }
 
     /**
-	 * Starts the render loop using requestAnimationFrame.
-	 */
-    private startRenderLoop(): void
+     * Starts the render loop using requestAnimationFrame.
+     */
+    private startRenderLoop(): void 
     {
-        const loop = (): void =>
+        const loop = (): void => 
         {
             if(this._disposed) return;
 
             const helium = Helium.instance;
 
-            if(helium.disposed || !helium.isReady)
+            if(helium.disposed || !helium.isReady) 
             {
                 this._animFrameId = 0;
                 return;
@@ -1016,18 +1000,18 @@ export class HeliumApp
     }
 
     /**
-	 * Renders a single frame.
-	 *
-	 * Renders all dirty windows, composites the full tree,
-	 * then blits the result onto the DOM canvas.
-	 */
-    private renderFrame(): void
+     * Renders a single frame.
+     *
+     * Renders all dirty windows, composites the full tree,
+     * then blits the result onto the DOM canvas.
+     */
+    private renderFrame(): void 
     {
         if(!this._canvas || !this._ctx) return;
 
         const helium = Helium.instance;
 
-        if(helium.disposed || !helium.isReady)
+        if(helium.disposed || !helium.isReady) 
         {
             return;
         }
@@ -1038,8 +1022,8 @@ export class HeliumApp
         if(!renderer) return;
 
         if(!this._uiCompositeDirty &&
-			!renderer.hasPendingUpdates() &&
-			renderer.renderVersion === this._lastUiRenderVersion)
+            !renderer.hasPendingUpdates() &&
+            renderer.renderVersion === this._lastUiRenderVersion) 
         {
             return;
         }
@@ -1066,9 +1050,9 @@ export class HeliumApp
     }
 
     /**
-	 * Sets up mouse event listeners on the canvas.
-	 */
-    private setupMouseEvents(): void
+     * Sets up mouse event listeners on the canvas.
+     */
+    private setupMouseEvents(): void 
     {
         if(!this._canvas) return;
 
@@ -1080,9 +1064,9 @@ export class HeliumApp
     }
 
     /**
-	 * Converts a DOM mouse event to canvas-local coordinates.
-	 */
-    private getCanvasCoords(e: MouseEvent): { x: number; y: number }
+     * Converts a DOM mouse event to canvas-local coordinates.
+     */
+    private getCanvasCoords(e: MouseEvent): { x: number; y: number } 
     {
         if(!this._canvas) return {x: 0, y: 0};
 
@@ -1095,16 +1079,16 @@ export class HeliumApp
     }
 
     /** Canvas mousedown handler. */
-    private _onMouseDown = (e: MouseEvent): void =>
+    private _onMouseDown = (e: MouseEvent): void => 
     {
         const {x, y} = this.getCanvasCoords(e);
         const helium = Helium.instance;
         const hit = helium.windowManager.findWindowAtPoint(x, y);
 
-        if(!hit)
+        if(!hit) 
         {
             // No UI window hit — forward to room engine if in a room
-            if(this._isInRoom)
+            if(this._isInRoom) 
             {
                 this.forwardToRoomEngine(x, y, 'mouse_down', e);
             }
@@ -1119,7 +1103,7 @@ export class HeliumApp
         // so that begin() (triggered inside update() below) computes the correct offset.
         const serviceManager = helium.windowManager.getServiceManager();
 
-        if(serviceManager)
+        if(serviceManager) 
         {
             (serviceManager.getMouseDraggingService() as WindowMouseOperator).setMousePosition(x, y);
             (serviceManager.getMouseScalingService() as WindowMouseOperator).setMousePosition(x, y);
@@ -1142,12 +1126,12 @@ export class HeliumApp
         event.recycle();
 
         // Register document-level handlers for drag/scale
-        if(serviceManager)
+        if(serviceManager) 
         {
             const dragger = serviceManager.getMouseDraggingService() as WindowMouseOperator;
             const scaler = serviceManager.getMouseScalingService() as WindowMouseOperator;
 
-            this._docMoveHandler = (ev: MouseEvent): void =>
+            this._docMoveHandler = (ev: MouseEvent): void => 
             {
                 const coords = this.getCanvasCoords(ev);
 
@@ -1155,13 +1139,13 @@ export class HeliumApp
                 scaler.handleMouseMove(coords.x, coords.y);
             };
 
-            this._docUpHandler = (ev: MouseEvent): void =>
+            this._docUpHandler = (ev: MouseEvent): void => 
             {
                 dragger.handleMouseUp();
                 scaler.handleMouseUp();
 
                 // Dispatch UP event to window
-                if(this._mouseDownWindow)
+                if(this._mouseDownWindow) 
                 {
                     const {x: ux, y: uy} = this.getCanvasCoords(ev);
                     const gp = {x: 0, y: 0};
@@ -1180,7 +1164,7 @@ export class HeliumApp
                     // Synthesize CLICK if mouseup is on same window as mousedown
                     const clickHit = helium.windowManager.findWindowAtPoint(ux, uy);
 
-                    if(clickHit)
+                    if(clickHit) 
                     {
                         const cp = {x: 0, y: 0};
 
@@ -1210,17 +1194,17 @@ export class HeliumApp
     };
 
     /** Canvas mousemove handler. */
-    private _onMouseMove = (e: MouseEvent): void =>
+    private _onMouseMove = (e: MouseEvent): void => 
     {
         const {x, y} = this.getCanvasCoords(e);
         const helium = Helium.instance;
         const hit = helium.windowManager.findWindowAtPoint(x, y);
 
         // Hover tracking: OVER/OUT
-        if(hit !== this._lastHoveredWindow)
+        if(hit !== this._lastHoveredWindow) 
         {
             // Send OUT to the old window
-            if(this._lastHoveredWindow && !this._lastHoveredWindow.disposed)
+            if(this._lastHoveredWindow && !this._lastHoveredWindow.disposed) 
             {
                 const outEvent = WindowMouseEvent.allocateMouse(
                     WindowMouseEvent.OUT, this._lastHoveredWindow, hit,
@@ -1233,7 +1217,7 @@ export class HeliumApp
             }
 
             // Send OVER to the new window
-            if(hit)
+            if(hit) 
             {
                 const globalPos = {x: 0, y: 0};
 
@@ -1251,7 +1235,7 @@ export class HeliumApp
         }
 
         // Send MOVE event to the hovered window
-        if(hit)
+        if(hit) 
         {
             const globalPos = {x: 0, y: 0};
 
@@ -1266,20 +1250,20 @@ export class HeliumApp
         }
 
         // Forward to room engine if no UI window hit and in a room
-        if(!hit && this._isInRoom)
+        if(!hit && this._isInRoom) 
         {
             this.forwardToRoomEngine(x, y, 'mouse_move', e);
         }
 
         // Update cursor: pointer on mouse-event-enabled windows
-        if(this._canvas)
+        if(this._canvas) 
         {
             this._canvas.style.cursor = (hit && hit.testParamFlag(1)) ? 'pointer' : 'default';
         }
     };
 
     /** Canvas mouseup handler (fallback for non-drag scenarios). */
-    private _onMouseUp = (e: MouseEvent): void =>
+    private _onMouseUp = (e: MouseEvent): void => 
     {
         // If doc-level handlers are active, they handle the UP
         if(this._docUpHandler) return;
@@ -1288,10 +1272,10 @@ export class HeliumApp
         const helium = Helium.instance;
         const hit = helium.windowManager.findWindowAtPoint(x, y);
 
-        if(!hit)
+        if(!hit) 
         {
             // Forward click to room engine if in a room
-            if(this._isInRoom)
+            if(this._isInRoom) 
             {
                 this.forwardToRoomEngine(x, y, 'click', e);
             }
@@ -1320,23 +1304,23 @@ export class HeliumApp
     };
 
     /** Canvas wheel handler. */
-    private _onWheel = (e: WheelEvent): void =>
+    private _onWheel = (e: WheelEvent): void => 
     {
         const {x, y} = this.getCanvasCoords(e);
         const helium = Helium.instance;
         const hit = helium.windowManager.findWindowAtPoint(x, y);
 
-        if(!hit)
+        if(!hit) 
         {
             // Forward wheel to room desktop for zoom if in a room and Ctrl held
-            if(this._isInRoom && e.ctrlKey)
+            if(this._isInRoom && e.ctrlKey) 
             {
-                try
+                try 
                 {
                     const roomUI = helium.roomUI as RoomUI;
                     const desktop = roomUI.getDesktopForRoom(this._activeRoomId) as RoomDesktop | null;
 
-                    if(desktop)
+                    if(desktop) 
                     {
                         desktop.handleMouseWheel(e.deltaY, x, y);
                     }
@@ -1365,7 +1349,7 @@ export class HeliumApp
     };
 
     /** Prevent right-click context menu on the canvas. */
-    private _onContextMenu = (e: Event): void =>
+    private _onContextMenu = (e: Event): void => 
     {
         e.preventDefault();
     };

@@ -426,7 +426,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
 
         try
         {
-            return this._windowManager.buildWidgetLayout(xmlFileName, layer);
+            return this._windowManager.buildWidgetLayout(xmlFileName + '_xml', layer);
         }
         catch (e)
         {

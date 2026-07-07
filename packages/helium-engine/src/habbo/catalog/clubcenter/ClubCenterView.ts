@@ -14,8 +14,6 @@ import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import {ClubStatus} from './util/ClubStatus';
 import type {IHabboClubCenter} from './IHabboClubCenter';
 
-const LAYOUT_NAME = 'club_center';
-
 /**
  * Habbo Club Center popup window: status, badge, gift count, and payday
  * summary. Buttons deep-link into the catalog buy/gift pages.
@@ -34,7 +32,7 @@ export class ClubCenterView implements IAvatarImageListener
         this._manager = manager;
         this._figure = figure;
 
-        const built = windowManager.buildWidgetLayout(LAYOUT_NAME) as IWindowContainer | null;
+        const built = windowManager.buildWidgetLayout("club_center_xml") as IWindowContainer | null;
 
         if(!built) return;
 

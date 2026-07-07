@@ -262,7 +262,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
         try
         {
-            return this._windowManager.buildWidgetLayout(name, layer);
+            return this._windowManager.buildWidgetLayout(name + '_xml', layer);
         }
         catch (e)
         {

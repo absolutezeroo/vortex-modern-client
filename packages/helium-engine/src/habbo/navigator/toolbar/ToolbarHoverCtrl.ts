@@ -15,7 +15,7 @@ import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
  *
  * @see sources/win63_version/habbo/navigator/toolbar/ToolbarHoverCtrl.as
  */
-export class ToolbarHoverCtrl
+export class ToolbarHoverCtrl 
 {
     private static readonly ITEM_BG_COLOR_OVER: number = 7433577;
     private static readonly ITEM_BG_COLOR_OUT: number = 5723213;
@@ -28,7 +28,7 @@ export class ToolbarHoverCtrl
     private _hideTimeout: ReturnType<typeof setTimeout> | null = null;
     private _isHovering: boolean = false;
 
-    constructor(navigator: IHabboTransitionalNavigator)
+    constructor(navigator: IHabboTransitionalNavigator) 
     {
         this._navigator = navigator;
 
@@ -43,7 +43,7 @@ export class ToolbarHoverCtrl
 
         this._simpleItemBase = (this._itemList as any).getListItemByTag?.('SIMPLE_ITEM') as IWindowContainer | null;
 
-        if(this._simpleItemBase)
+        if(this._simpleItemBase) 
         {
             (this._itemList as any).removeListItem?.(this._simpleItemBase);
         }
@@ -61,12 +61,12 @@ export class ToolbarHoverCtrl
     }
 
     /**
-	 * Shows the hover menu at the given position.
-	 *
-	 * @param x - X position
-	 * @param y - Y position
-	 */
-    show(x: number, y: number): void
+     * Shows the hover menu at the given position.
+     *
+     * @param x - X position
+     * @param y - Y position
+     */
+    show(x: number, y: number): void 
     {
         if(!this._window) return;
 
@@ -77,25 +77,25 @@ export class ToolbarHoverCtrl
     }
 
     /**
-	 * Hides the menu (respects hover state).
-	 */
-    hide(): void
+     * Hides the menu (respects hover state).
+     */
+    hide(): void 
     {
         if(this._disposed || this._isHovering) return;
 
         this.stopHideTimeout();
         this._isHovering = false;
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.visible = false;
         }
     }
 
     /**
-	 * Starts a delayed hide (500ms timeout).
-	 */
-    hideDelayed(): void
+     * Starts a delayed hide (500ms timeout).
+     */
+    hideDelayed(): void 
     {
         if(this._disposed || this._isHovering) return;
 
@@ -103,22 +103,22 @@ export class ToolbarHoverCtrl
     }
 
     /**
-	 * Forces the menu to hide immediately, ignoring hover state.
-	 */
-    hideForced(): void
+     * Forces the menu to hide immediately, ignoring hover state.
+     */
+    hideForced(): void 
     {
         if(this._disposed) return;
 
         this.stopHideTimeout();
         this._isHovering = false;
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.visible = false;
         }
     }
 
-    dispose(): void
+    dispose(): void 
     {
         this._disposed = true;
         this.stopHideTimeout();
@@ -129,13 +129,13 @@ export class ToolbarHoverCtrl
     }
 
     /**
-	 * Adds a simple menu item.
-	 *
-	 * @param id - Item identifier
-	 * @param label - Display text
-	 * @param callback - Click handler
-	 */
-    private addSimpleItem(id: string, label: string, callback: (event: WindowEvent) => void): void
+     * Adds a simple menu item.
+     *
+     * @param id - Item identifier
+     * @param label - Display text
+     * @param callback - Click handler
+     */
+    private addSimpleItem(id: string, label: string, callback: (event: WindowEvent) => void): void 
     {
         if(!this._simpleItemBase || !this._itemList) return;
 
@@ -145,7 +145,7 @@ export class ToolbarHoverCtrl
 
         const textWindow = item.getChildByName('text') as ITextWindow | null;
 
-        if(textWindow)
+        if(textWindow) 
         {
             textWindow.text = label;
         }
@@ -156,22 +156,22 @@ export class ToolbarHoverCtrl
         (this._itemList as any).addListItem?.(item);
     }
 
-    private startHideTimeout(): void
+    private startHideTimeout(): void 
     {
         this.stopHideTimeout();
         this._hideTimeout = setTimeout(() => this.hide(), 500);
     }
 
-    private stopHideTimeout(): void
+    private stopHideTimeout(): void 
     {
-        if(this._hideTimeout !== null)
+        if(this._hideTimeout !== null) 
         {
             clearTimeout(this._hideTimeout);
             this._hideTimeout = null;
         }
     }
 
-    private setItemBgHoverState = (event: WindowEvent): void =>
+    private setItemBgHoverState = (event: WindowEvent): void => 
     {
         const target = (event as any).target as IWindowContainer;
 
@@ -179,7 +179,7 @@ export class ToolbarHoverCtrl
 
         const bg = target.findChildByName('background');
 
-        if(bg)
+        if(bg) 
         {
             const isHover = event.type === 'WME_OVER';
 
@@ -187,56 +187,56 @@ export class ToolbarHoverCtrl
         }
     };
 
-    private onHoverOverWindow = (_event: WindowEvent): void =>
+    private onHoverOverWindow = (_event: WindowEvent): void => 
     {
         this._isHovering = true;
     };
 
-    private onHoverOutWindow = (_event: WindowEvent): void =>
+    private onHoverOutWindow = (_event: WindowEvent): void => 
     {
         this._isHovering = false;
         this.hideDelayed();
     };
 
-    private onNavigatorClick = (_event: WindowEvent): void =>
+    private onNavigatorClick = (_event: WindowEvent): void => 
     {
         this._navigator?.openNavigator();
         this._navigator?.goToMainView();
         this.hideForced();
     };
 
-    private onHomeClick = (_event: WindowEvent): void =>
+    private onHomeClick = (_event: WindowEvent): void => 
     {
         if(!this._navigator) return;
 
         const homeRoomId = this._navigator.data.homeRoomId;
 
-        if(homeRoomId > -1)
+        if(homeRoomId > -1) 
         {
             this._navigator.goToPrivateRoom(homeRoomId);
             this.hideForced();
         }
     };
 
-    private onFavouritesClick = (_event: WindowEvent): void =>
+    private onFavouritesClick = (_event: WindowEvent): void => 
     {
         this._navigator?.showFavouriteRooms();
         this.hideForced();
     };
 
-    private onCreateRoomClick = (_event: WindowEvent): void =>
+    private onCreateRoomClick = (_event: WindowEvent): void => 
     {
         this._navigator?.send(new CanCreateRoomMessageComposer());
         this.hideForced();
     };
 
-    private onHistoryClick = (_event: WindowEvent): void =>
+    private onHistoryClick = (_event: WindowEvent): void => 
     {
         this._navigator?.showHistoryRooms();
         this.hideForced();
     };
 
-    private onFrequentHistoryClick = (_event: WindowEvent): void =>
+    private onFrequentHistoryClick = (_event: WindowEvent): void => 
     {
         this._navigator?.showFrequentRooms();
         this.hideForced();
