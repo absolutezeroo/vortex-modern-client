@@ -59,6 +59,12 @@ export class WindowRendererItem
         return this._skinContainer.getTheActualState(window.type, window.style, window.state) !== this._previousState;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/WindowRendererItem.as::needsRedraw()
+    public needsRedraw(window: IWindow): boolean
+    {
+        return this._refresh || this.testForStateChange(window);
+    }
+
     /**
 	 * Marks this item as needing re-render for the given invalidation type.
 	 *
@@ -92,8 +98,12 @@ export class WindowRendererItem
                 }
                 break;
             case 16:
-                this._refresh = true;
-                changed = true;
+                // AS3 only forces a full refresh here when the window shares its
+                // parent's graphic context (no independent context to update blend
+                // on); otherwise it just sets the context's `blend` and returns
+                // false - no redraw needed. WindowComposite.ts reads window.blend
+                // fresh on every composite pass for every window regardless, so we
+                // never need to refresh the cached skin buffer for a blend change.
                 break;
             case 32:
                 changed = true;

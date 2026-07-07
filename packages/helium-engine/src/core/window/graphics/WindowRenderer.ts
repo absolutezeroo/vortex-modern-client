@@ -679,11 +679,25 @@ export class WindowRenderer implements IWindowRenderer
 
                             if(childGraphicHost?.hasGraphicsContext?.())
                             {
-                                const childGraphicContext = childGraphicHost.getGraphicContext(true);
+                                const childItem = this._rendererItems.get(child) ?? null;
 
-                                if(childGraphicContext)
+                                if(!childItem || childItem.needsRedraw(child))
                                 {
-                                    childGraphicContext.visible = true;
+                                    this.renderWindowBranch(
+                                        child,
+                                        {x: 0, y: 0, width: child.renderingWidth, height: child.renderingHeight},
+                                        visibleRegion,
+                                        child.fetchDrawBuffer() as OffscreenCanvas | null
+                                    );
+                                }
+                                else
+                                {
+                                    const childGraphicContext = childGraphicHost.getGraphicContext(true);
+
+                                    if(childGraphicContext)
+                                    {
+                                        childGraphicContext.visible = true;
+                                    }
                                 }
                             }
                         }
