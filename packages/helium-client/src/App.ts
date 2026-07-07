@@ -23,7 +23,13 @@ import {
 } from './window/WindowXmlAssetParser';
 import './_index.scss';
 
-/** Atlas spritesheet names that need to be decoded as ImageBitmaps. */
+/**
+ * Atlas spritesheet names that need to be decoded as ImageBitmaps.
+ *
+ * Every compiled window-skin template references one of these by name (the
+ * `templates[].asset` field in `window-skins/*.json`) — this must cover every
+ * distinct name any compiled skin uses, or that skin's pieces silently never render.
+ */
 const ATLAS_NAMES = [
     'habbo_blue_skin',
     'habbo_skin_ubuntu',
@@ -31,7 +37,53 @@ const ATLAS_NAMES = [
     'habbo_skin_illumina_light',
     'habbo_icons',
     'skin_ubuntu_bg_9',
+    'habbo_border_hsv_layers',
+    'habbo_border_hsv_layers2',
+    'leaderboard_button_close',
+    'ubuntu_frame_leaderboard_ach',
+    'ubuntu_frame_leaderboard_all',
+    'ubuntu_frame_leaderboard_rarity_1',
+    'ubuntu_frame_leaderboard_rarity_2',
+    'ubuntu_frame_leaderboard_rarity_3',
+    'ubuntu_frame_leaderboard_rarity_4',
+    'ubuntu_frame_leaderboard_rarity_5',
+    'ubuntu_frame_leaderboard_rarity_uncommon',
+    'illumina_dark_scrollbar_horizontal',
+    'illumina_dark_scrollbar_vertical',
+    'illumina_light_balloon',
+    'illumina_light_border_etched',
+    'illumina_light_border_frame',
+    'illumina_light_border_infobox',
+    'illumina_light_border_light',
+    'illumina_light_border_raised',
+    'illumina_light_border_sunk',
+    'illumina_light_bubble_chat_bg',
+    'illumina_light_button_default',
+    'illumina_light_button_dark_recolorable',
+    'illumina_light_button_frame_close',
+    'illumina_light_button_frame_menu',
+    'illumina_light_button_frame_minimize',
+    'illumina_light_button_multi',
+    'illumina_light_button_unetched',
+    'illumina_light_checkbox_basic',
+    'illumina_light_input_chat',
+    'illumina_light_radio_button',
+    'illumina_light_scrollbar_horizontal',
+    'illumina_light_scrollbar_vertical',
+    'illumina_light_switch',
+    'illumina_purple_border_frame',
+    'illumina_purple_button_default',
+    'illumina_purple_button_frame_close',
 ];
+
+/**
+ * Atlas names whose embedded-asset name doesn't match its file on disk.
+ * `skin_ubuntu_bg_9` is the AS3 variable name (`HabboWindowManagerCom.as`); the
+ * actual bundled file is `ubuntu_bg_9.png` (the embedded resource's own name).
+ */
+const ATLAS_FILE_OVERRIDES: Record<string, string> = {
+    skin_ubuntu_bg_9: 'ubuntu_bg_9',
+};
 
 const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
     'action_offset_lay',
@@ -592,7 +644,7 @@ export class HeliumApp
 
             // Decode atlas spritesheets as ImageBitmaps
             const bitmaps = await Promise.all(
-                ATLAS_NAMES.map(name => imageBundle.getImageBitmap(`images/${name}.png`))
+                ATLAS_NAMES.map(name => imageBundle.getImageBitmap(`images/${ATLAS_FILE_OVERRIDES[name] ?? name}.png`))
             );
 
             const atlases = new Map<string, ImageBitmap>();
