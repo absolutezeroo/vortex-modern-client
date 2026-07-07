@@ -52,7 +52,6 @@ import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
-import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 
 const log = Logger.getLogger('RoomDesktop');
 
@@ -62,52 +61,827 @@ const REUSABLE_WIDGET_TYPES = new Set([
     'RWE_EXTERNAL_IMAGE', 'RWE_CAMERA', 'RWE_ROOM_TOOLS', 'RWE_FURNITURE_CONTEXT_MENU',
 ]);
 
-export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IRoomWidgetHandlerContainer
+export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IRoomWidgetHandlerContainer 
 {
     public static readonly ROOM_VIEW_CREATED = 'ROOM_VIEW_CREATED';
     public static readonly ROOM_BACKGROUND_COLOR_CHANGED = 'ROOM_BACKGROUND_COLOR_CHANGED';
-
-    private _desktopEvents: EventEmitter;
     private _session: IRoomSession;
     private _assets: IAssetLibrary;
-    private _connection: IConnection | null;
-    private _layoutManager: RoomDesktopLayoutManager;
     private _colorTransitioner: ColorTransitioner;
     private _bgColorTransitioner: ColorTransitioner;
-
-    // Manager references (injected via setters)
-    private _windowManager: IHabboWindowManager | null = null;
-    private _roomEngine: IRoomEngine | null = null;
-    private _sessionDataManager: ISessionDataManager | null = null;
-    private _roomSessionManager: IRoomSessionManager | null = null;
-    private _config: IHabboConfigurationManager | null = null;
-    private _localization: IHabboLocalizationManager | null = null;
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toolbar
-    private _toolbar: IHabboToolbar | null = null;
     private _widgetFactory: IRoomWidgetFactory | null = null;
-    private _catalog: IHabboCatalog | null = null;
-    private _habboTracking: IHabboTracking | null = null;
-    private _habboGroupsManager: IHabboGroupsManager | null = null;
-    private _navigator: IHabboNavigator | null = null;
-    private _communicationManager: IHabboCommunicationManager | null = null;
-
     // Widget management
     private _widgets: Map<string, unknown> = new Map();
     private _widgetMessageHandlers: Map<string, IRoomWidgetHandler> = new Map();
     private _widgetEventHandlers: Map<string, IRoomWidgetHandler> = new Map();
     private _updateListeners: IRoomWidgetHandler[] = [];
-
     // Canvas state
     private _canvasIds: number[] = [];
     private _canvasWrapper: IWindow | null = null;
     private _roomViewWindow: IWindow | null = null;
     private _roomCanvasDisplayObject: Container | null = null;
+    // Color state
+    private _roomColor: number = 0xFFFFFF;
+    // Zoom state
+    private _zoomMomentum: number = 0;
+    private _zoomPivotX: number = 0;
+    private _zoomPivotY: number = 0;
+    private _zoomInProgress: boolean = false;
+    private _disposed: boolean = false;
 
-    private readonly _roomViewGeometryEventHandler = (_event: unknown): void =>
+    constructor(session: IRoomSession, assets: IAssetLibrary, connection: IConnection | null) 
+    {
+        this._desktopEvents = new EventEmitter();
+        this._session = session;
+        this._assets = assets;
+        this._connection = connection;
+
+        this._widgets = new Map();
+        this._widgetMessageHandlers = new Map();
+        this._widgetEventHandlers = new Map();
+
+        this._layoutManager = new RoomDesktopLayoutManager();
+        this._colorTransitioner = new ColorTransitioner();
+        this._bgColorTransitioner = new ColorTransitioner(0x000000, 0);
+    }
+
+    private _desktopEvents: EventEmitter;
+
+    public get desktopEvents(): EventEmitter 
+    {
+        return this._desktopEvents;
+    }
+
+    private _connection: IConnection | null;
+
+    public get connection(): IConnection | null 
+    {
+        return this._connection;
+    }
+
+    private _layoutManager: RoomDesktopLayoutManager;
+
+    public get layoutManager(): RoomDesktopLayoutManager 
+    {
+        return this._layoutManager;
+    }
+
+    // Manager references (injected via setters)
+    private _windowManager: IHabboWindowManager | null = null;
+
+    public get windowManager(): IHabboWindowManager | null 
+    {
+        return this._windowManager;
+    }
+
+    public set windowManager(value: IHabboWindowManager | null) 
+    {
+        this._windowManager = value;
+    }
+
+    private _roomEngine: IRoomEngine | null = null;
+
+    public get roomEngine(): IRoomEngine | null 
+    {
+        return this._roomEngine;
+    }
+
+    public set roomEngine(value: IRoomEngine | null) 
+    {
+        this._roomEngine = value;
+    }
+
+    private _sessionDataManager: ISessionDataManager | null = null;
+
+    public get sessionDataManager(): ISessionDataManager | null 
+    {
+        return this._sessionDataManager;
+    }
+
+    public set sessionDataManager(value: ISessionDataManager | null) 
+    {
+        this._sessionDataManager = value;
+    }
+
+    private _roomSessionManager: IRoomSessionManager | null = null;
+
+    public get roomSessionManager(): IRoomSessionManager | null 
+    {
+        return this._roomSessionManager;
+    }
+
+    public set roomSessionManager(value: IRoomSessionManager | null) 
+    {
+        this._roomSessionManager = value;
+    }
+
+    private _config: IHabboConfigurationManager | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
+    public get config(): IHabboConfigurationManager | null 
+    {
+        return this._config;
+    }
+
+    public set config(value: IHabboConfigurationManager | null) 
+    {
+        this._config = value;
+    }
+
+    private _localization: IHabboLocalizationManager | null = null;
+
+    public get localization(): IHabboLocalizationManager | null 
+    {
+        return this._localization;
+    }
+
+    public set localization(value: IHabboLocalizationManager | null) 
+    {
+        this._localization = value;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toolbar
+    private _toolbar: IHabboToolbar | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::get toolbar()
+    public get toolbar(): IHabboToolbar | null 
+    {
+        return this._toolbar;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::set toolbar()
+    public set toolbar(value: IHabboToolbar | null) 
+    {
+        if(this._toolbar) 
+        {
+            this._toolbar.toolbarEvents.off(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
+        }
+
+        this._toolbar = value;
+
+        if(this._toolbar) 
+        {
+            this._toolbar.toolbarEvents.on(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
+        }
+    }
+
+    private _catalog: IHabboCatalog | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
+    public get catalog(): IHabboCatalog | null 
+    {
+        return this._catalog;
+    }
+
+    public set catalog(value: IHabboCatalog | null) 
+    {
+        this._catalog = value;
+    }
+
+    private _habboTracking: IHabboTracking | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
+    public get habboTracking(): IHabboTracking | null 
+    {
+        return this._habboTracking;
+    }
+
+    public set habboTracking(value: IHabboTracking | null) 
+    {
+        this._habboTracking = value;
+    }
+
+    private _habboGroupsManager: IHabboGroupsManager | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
+    public get habboGroupsManager(): IHabboGroupsManager | null 
+    {
+        return this._habboGroupsManager;
+    }
+
+    public set habboGroupsManager(value: IHabboGroupsManager | null) 
+    {
+        this._habboGroupsManager = value;
+    }
+
+    private _navigator: IHabboNavigator | null = null;
+
+    public get navigator(): IHabboNavigator | null 
+    {
+        return this._navigator;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_navigator (private field, not part of IRoomWidgetHandlerContainer)
+    public set navigator(value: IHabboNavigator | null) 
+    {
+        this._navigator = value;
+    }
+
+    private _communicationManager: IHabboCommunicationManager | null = null;
+
+    public get communicationManager(): IHabboCommunicationManager | null 
+    {
+        return this._communicationManager;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_communicationManager (private field, not part of IRoomWidgetHandlerContainer)
+    public set communicationManager(value: IHabboCommunicationManager | null) 
+    {
+        this._communicationManager = value;
+    }
+
+    private _roomBackgroundColor: number = 0x000000;
+
+    public get roomBackgroundColor(): number 
+    {
+        return this._roomBackgroundColor;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
+
+    private _visible: boolean = true;
+
+    public get visible(): boolean 
+    {
+        return this._visible;
+    }
+
+    public set visible(value: boolean) 
+    {
+        this._visible = value;
+
+        if(this._layoutManager.layoutContainer) 
+        {
+            this._layoutManager.layoutContainer.visible = value;
+        }
+
+        this.syncRoomCanvasDisplayObject();
+    }
+
+    public get roomSession(): IRoomSession 
+    {
+        return this._session;
+    }
+
+    public get roomWidgetFactory(): IRoomWidgetFactory | null 
+    {
+        return this._widgetFactory;
+    }
+
+    public set roomWidgetFactory(value: IRoomWidgetFactory | null) 
+    {
+        this._widgetFactory = value;
+    }
+
+    // TODO(AS3): no concrete implementation exists yet, see IHabboUserDefinedRoomEvents.ts.
+    public get userDefinedRoomEvents(): IHabboUserDefinedRoomEvents | null 
+    {
+        return null;
+    }
+
+    public set layout(layoutName: string) 
+    {
+        this._layoutManager.setLayout(layoutName, this._windowManager!, this._config);
+    }
+
+    public getFirstCanvasId(): number 
+    {
+        return this._canvasIds.length > 0 ? this._canvasIds[0] : 1;
+    }
+
+    public getRoomViewRect(): { x: number; y: number; width: number; height: number } | null 
+    {
+        return this._layoutManager.roomViewRect;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processEvent()
+    public processEvent(event: unknown): void 
+    {
+        const eventType = (event as { type?: string } | null)?.type;
+
+        if(!eventType) return;
+
+        if(eventType === 'RWZTM_ZOOM_TOGGLE') 
+        {
+            this.toggleZoom();
+        }
+
+        const handler = this._widgetEventHandlers.get(eventType);
+
+        if(handler) 
+        {
+            handler.processEvent(event);
+        }
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processWidgetMessage()
+    public processWidgetMessage(message: unknown): unknown 
+    {
+        const messageType = (message as { type?: string } | null)?.type;
+
+        if(!messageType) return null;
+
+        const handler = this._widgetMessageHandlers.get(messageType);
+
+        return handler ? handler.processWidgetMessage(message) : null;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
+    public isOwnerOfFurniture(object: IRoomObject): boolean 
+    {
+        const ownerId = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID);
+
+        return ownerId > 0 && ownerId === this._sessionDataManager?.userId;
+    }
+
+    public addUpdateListener(handler: IRoomWidgetHandler): void 
+    {
+        if(this._updateListeners.indexOf(handler) < 0) 
+        {
+            this._updateListeners.push(handler);
+        }
+    }
+
+    public removeUpdateListener(handler: IRoomWidgetHandler): void 
+    {
+        const index = this._updateListeners.indexOf(handler);
+
+        if(index >= 0) 
+        {
+            this._updateListeners.splice(index, 1);
+        }
+    }
+
+    public init(): void 
+    {
+        log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
+    }
+
+    /**
+     * Creates the room view and canvas for rendering.
+     * Called when the room engine signals REE_INITIALIZED.
+     *
+     * @param canvasId - The canvas ID to create (typically 1)
+     */
+    public createRoomView(canvasId: number): void 
+    {
+        // Guard against double initialization (server can send height map twice)
+        if(this._canvasIds.includes(canvasId)) 
+        {
+            log.debug(`Room view already created for canvas ${canvasId}, skipping`);
+
+            return;
+        }
+
+        if(!this._roomEngine || !this._windowManager) 
+        {
+            log.warn('Cannot create room view — missing roomEngine or windowManager');
+
+            return;
+        }
+
+        const roomId = this._session.roomId;
+        const viewRect = this._layoutManager.roomViewRect;
+
+        if(!viewRect) 
+        {
+            log.warn('Cannot create room view — no room view rect');
+
+            return;
+        }
+
+        const width = viewRect.width;
+        const height = viewRect.height;
+        const scale = this._session.isGameSession ? 32 : 64;
+
+        // Create the room canvas via the engine
+        const canvasDisplayObject = this._roomEngine.createRoomCanvas(roomId, canvasId, width, height, scale);
+
+        if(!canvasDisplayObject) 
+        {
+            log.warn('Failed to create room canvas');
+
+            return;
+        }
+
+        this._canvasIds.push(canvasId);
+
+        // Build the room_view_container window tree
+        const roomViewContainer = this._windowManager.buildWidgetLayout('room_view_container_xml');
+
+        if(roomViewContainer) 
+        {
+            const containerWindow = roomViewContainer as IWindowContainer;
+
+            // Resize to match room view rect
+            containerWindow.width = viewRect.width;
+            containerWindow.height = viewRect.height;
+
+            // AS3: room_view_container.findChildByName("room_canvas_wrapper")
+            this._canvasWrapper = containerWindow.findChildByName('room_canvas_wrapper')
+                ?? containerWindow.findChildByTag('room_canvas_wrapper')
+                ?? null;
+
+            if(this._canvasWrapper) 
+            {
+                this._canvasWrapper.x = 0;
+                this._canvasWrapper.y = 0;
+                this._canvasWrapper.width = viewRect.width;
+                this._canvasWrapper.height = viewRect.height;
+                this._canvasWrapper.addEventListener(WindowMouseEvent.CLICK, this._canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.DOUBLE_CLICK, this._canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.MOVE, this._canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.DOWN, this._canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.UP, this._canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.UP_OUTSIDE, this._canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_RESIZED, this._roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_RELOCATED, this._roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RESIZED, this._roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RELOCATED, this._roomViewGeometryEventHandler);
+
+                // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
+                // var_174.setDisplayObject(_loc17_)
+                const displayObjectWrapper = this._canvasWrapper as unknown as IDisplayObjectWrapper;
+
+                if(typeof displayObjectWrapper.setDisplayObject === 'function') 
+                {
+                    displayObjectWrapper.setDisplayObject(canvasDisplayObject);
+                }
+
+                this._roomEngine.setRoomCanvasMask(roomId, canvasId, true);
+            }
+
+            // Store reference to the room view window
+            this._roomViewWindow = containerWindow;
+            this._roomCanvasDisplayObject = canvasDisplayObject;
+
+            // Add to layout
+            this._layoutManager.addRoomView(containerWindow);
+            this.syncRoomCanvasDisplayObject();
+        }
+
+        log.info(`Room view created for room ${roomId}, canvas ${canvasId} (${width}x${height})`);
+
+        // Emit event so the client can position the PixiJS canvas
+        this._desktopEvents.emit(RoomDesktop.ROOM_VIEW_CREATED, {
+            roomId,
+            canvasId,
+            viewRect,
+            container: canvasDisplayObject
+        });
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
+    // The room DisplayObject is local to room_canvas_wrapper. Pixi renders it on
+    // the root stage, so keep the root-stage container at the wrapper's global
+
+    /**
+     * Creates a widget by type code.
+     *
+     * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createWidget()
+     * TODO(AS3): only "RWE_INFOSTAND" is wired up so far; other widget types
+     * (chat, me-menu, room tools, etc.) still fall through to the stub log.
+     */
+    public createWidget(type: string): void 
+    {
+        if(this._widgets.has(type)) 
+        {
+            log.debug(`Widget already exists: ${type}`);
+
+            return;
+        }
+
+        let handler: IRoomWidgetHandler | null = null;
+
+        switch(type) 
+        {
+            case 'RWE_INFOSTAND':
+                handler = new InfoStandWidgetHandler(null);
+                break;
+            case 'RWE_ROOM_TOOLS': {
+                // AS3: sources/win63_version/habbo/ui/RoomDesktop.as:885-890
+                const roomToolsHandler = new RoomToolsWidgetHandler();
+
+                roomToolsHandler.communicationManager = this._communicationManager;
+                roomToolsHandler.navigator = this._navigator;
+                handler = roomToolsHandler;
+                break;
+            }
+            case 'RWE_CHAT_INPUT_WIDGET':
+                handler = new ChatInputWidgetHandler();
+                break;
+            case 'RWE_CHAT_WIDGET': {
+                // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
+                const chatHandler = new ChatWidgetHandler();
+
+                chatHandler.connection = this._connection;
+                handler = chatHandler;
+                break;
+            }
+            default:
+                log.debug(`Widget creation requested: ${type} (stub)`);
+
+                return;
+        }
+
+        handler.container = this;
+
+        for(const messageType of handler.getWidgetMessages()) 
+        {
+            this._widgetMessageHandlers.set(messageType, handler);
+        }
+
+        for(const eventType of [...handler.getProcessedEvents(), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET']) 
+        {
+            this._widgetEventHandlers.set(eventType, handler);
+        }
+
+        const widget = this._widgetFactory?.createWidget(type, handler) as IRoomWidget | null | undefined;
+
+        if(!widget) 
+        {
+            handler.dispose();
+
+            return;
+        }
+
+        widget.messageListener = this;
+        widget.registerUpdateEvents(this._desktopEvents);
+        // AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627) marks these widget
+        // types reusable across room transitions via a caller-side instance cache in
+        // RoomUI.createDesktopWidget() (var_1358) that calls widget.reuse(newDesktop)
+        // instead of reconstructing. That cross-room caching isn't ported yet — this
+        // only sets the flag correctly per AS3 (currently inert since nothing reads it
+        // besides this assignment) so it's ready when that follow-up lands.
+        widget.reusable = REUSABLE_WIDGET_TYPES.has(type);
+        widget.widgetType = type;
+
+        this._widgets.set(type, widget);
+        this.addUpdateListener(handler);
+
+        if(widget.mainWindow) 
+        {
+            this._layoutManager.addWidgetWindow(type, widget.mainWindow);
+        }
+
+        log.debug(`Widget created: ${type}`);
+    }
+
+    public disposeWidget(type: string): void 
+    {
+        const widget = this._widgets.get(type);
+
+        if(!widget) return;
+
+        this._widgets.delete(type);
+    }
+
+    public getWidget(type: string): unknown | null 
+    {
+        return this._widgets.get(type) ?? null;
+    }
+
+    /**
+     * Handles mouse events forwarded from the client UI layer.
+     * Converts window coordinates to engine coordinates and forwards to RoomEngine.
+     */
+    public canvasMouseHandler(x: number, y: number, type: string, altKey: boolean, ctrlKey: boolean, shiftKey: boolean, buttonDown: boolean): void 
+    {
+        if(!this._roomEngine || this._canvasIds.length === 0) return;
+
+        const canvasId = this._canvasIds[0];
+        const roomId = this._session.roomId;
+        const globalPosition = {x: 0, y: 0};
+
+        if(this._canvasWrapper) 
+        {
+            this._canvasWrapper.getGlobalPosition(globalPosition);
+        }
+
+        this._roomEngine.setActiveRoom(roomId);
+
+        this._roomEngine.handleRoomCanvasMouseEvent(
+            canvasId,
+            x - globalPosition.x,
+            y - globalPosition.y,
+            type,
+            altKey,
+            ctrlKey,
+            shiftKey,
+            buttonDown
+        );
+    }
+
+    /**
+     * Handles mouse wheel for zoom.
+     */
+    public handleMouseWheel(deltaY: number, x: number, y: number): void 
+    {
+        if(!this._roomEngine || this._canvasIds.length === 0) return;
+
+        const canvasId = this._canvasIds[0];
+        const roomId = this._session.roomId;
+        const currentScale = this._roomEngine.getRoomCanvasScale(roomId, canvasId);
+
+        // Zoom in/out based on wheel direction
+        let newScale = currentScale;
+
+        if(deltaY < 0) 
+        {
+            newScale = Math.min(currentScale * 1.1, 2.0);
+        }
+        else 
+        {
+            newScale = Math.max(currentScale / 1.1, 0.5);
+        }
+
+        if(newScale !== currentScale) 
+        {
+            this._roomEngine.setRoomCanvasScale(roomId, canvasId, newScale, {x, y});
+        }
+    }
+
+    /**
+     * Sets the room view foreground color (tint overlay).
+     */
+    public setRoomViewColor(color: number, brightness: number): void 
+    {
+        const time = Date.now();
+
+        this._colorTransitioner.startTransition(color, brightness, time);
+    }
+
+    /**
+     * Sets the room background color (CSS div behind canvas).
+     */
+    public setRoomBackgroundColor(h: number, s: number, l: number): void 
+    {
+        const time = Date.now();
+
+        // Convert HSL to packed value for the background transitioner
+        const hslPacked = ((h & 0xFF) << 16) | ((s & 0xFF) << 8) | (l & 0xFF);
+
+        this._bgColorTransitioner.startTransition(hslPacked, l, time);
+
+        this._desktopEvents.emit(RoomDesktop.ROOM_BACKGROUND_COLOR_CHANGED, {h, s, l});
+    }
+
+    /**
+     * Translates room-engine object events (REOE_*) into widget-facing
+     * RoomWidgetRoomObjectUpdateEvents (RWROUE_*) and dispatches them on
+     * `desktopEvents`, where widgets (e.g. InfoStandWidget) listen for them.
+     *
+     * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
+     */
+    public roomObjectEventHandler(event: RoomEngineObjectEvent): void 
+    {
+        let translatedType: string | null = null;
+
+        switch(event.type) 
+        {
+            case RoomEngineObjectEvent.REOE_OBJECT_SELECTED:
+                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
+                break;
+            case RoomEngineObjectEvent.REOE_OBJECT_DESELECTED:
+                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
+                break;
+            case RoomEngineObjectEvent.REOE_OBJECT_ADDED:
+                translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+                    ? RoomWidgetRoomObjectUpdateEvent.USER_ADDED
+                    : RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED;
+                break;
+            case RoomEngineObjectEvent.REOE_OBJECT_REMOVED:
+                translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+                    ? RoomWidgetRoomObjectUpdateEvent.USER_REMOVED
+                    : RoomWidgetRoomObjectUpdateEvent.FURNI_REMOVED;
+                break;
+        }
+
+        if(translatedType) 
+        {
+            const translated = new RoomWidgetRoomObjectUpdateEvent(translatedType, event.objectId, event.category, event.roomId);
+
+            this._desktopEvents.emit(translated.type, translated);
+
+            return;
+        }
+
+        const handler = this._widgetEventHandlers.get(event.type);
+
+        if(handler) 
+        {
+            handler.processEvent(event);
+        }
+    }
+
+    /**
+     * Handles room engine events (mode changes, zoom, etc.).
+     */
+    public roomEngineEventHandler(_event: RoomEngineEvent): void 
+    {
+        // Stub — will route to appropriate handling when widgets are ported
+    }
+
+    /**
+     * Called each frame by RoomUI.update().
+     * Updates color transitions, widget handlers, and zoom momentum.
+     */
+    public update(): void 
+    {
+        if(this._disposed) return;
+
+        const time = Date.now();
+
+        // Update color transitions
+        if(this._colorTransitioner.updateColor(time)) 
+        {
+            this._roomColor = this._colorTransitioner.color;
+        }
+
+        if(this._bgColorTransitioner.updateColor(time)) 
+        {
+            this._roomBackgroundColor = this._bgColorTransitioner.color;
+        }
+
+        // Update widget handlers
+        for(const listener of this._updateListeners) 
+        {
+            listener.update();
+        }
+    }
+
+    public dispose(): void 
+    {
+        if(this._disposed) return;
+
+        this._disposed = true;
+
+        log.debug(`Disposing RoomDesktop for room ${this._session.roomId}`);
+
+        if(this._toolbar) 
+        {
+            this._toolbar.toolbarEvents.off(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
+            this._toolbar = null;
+        }
+
+        // Dispose all widgets
+        for(const [type, widget] of this._widgets) 
+        {
+            if(widget && typeof (widget as any).dispose === 'function') 
+            {
+                (widget as any).dispose();
+            }
+        }
+
+        this._widgets.clear();
+        this._widgetMessageHandlers.clear();
+        this._widgetEventHandlers.clear();
+        this._updateListeners.length = 0;
+
+        if(this._canvasWrapper) 
+        {
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.CLICK, this._canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOUBLE_CLICK, this._canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.MOVE, this._canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOWN, this._canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP, this._canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP_OUTSIDE, this._canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_RESIZED, this._roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_RELOCATED, this._roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this._roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RELOCATED, this._roomViewGeometryEventHandler);
+
+            const displayObjectWrapper = this._canvasWrapper as unknown as IDisplayObjectWrapper;
+
+            if(typeof displayObjectWrapper.setDisplayObject === 'function') 
+            {
+                displayObjectWrapper.setDisplayObject(null);
+            }
+        }
+
+        // Dispose layout
+        this._layoutManager.dispose();
+
+        // Clear references
+        this._desktopEvents.removeAllListeners();
+        this._windowManager = null;
+        this._roomEngine = null;
+        this._sessionDataManager = null;
+        this._roomSessionManager = null;
+        this._config = null;
+        this._localization = null;
+        this._toolbar = null;
+        this._widgetFactory = null;
+        this._canvasWrapper = null;
+        this._roomViewWindow = null;
+        this._roomCanvasDisplayObject = null;
+    }
+
+    private readonly _roomViewGeometryEventHandler = (_event: unknown): void => 
     {
         this.syncRoomCanvasDisplayObject();
 
-        if(!this._roomEngine || !this._canvasWrapper || this._canvasIds.length === 0)
+        if(!this._roomEngine || !this._canvasWrapper || this._canvasIds.length === 0) 
         {
             return;
         }
@@ -120,12 +894,12 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         );
     };
 
-    private readonly _canvasWindowEventHandler = (event: unknown): void =>
+    private readonly _canvasWindowEventHandler = (event: unknown): void => 
     {
         const mouseEvent = event as WindowMouseEvent;
         let type = '';
 
-        switch(mouseEvent.type)
+        switch(mouseEvent.type) 
         {
             case WindowMouseEvent.CLICK:
                 type = 'click';
@@ -158,414 +932,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         );
     };
 
-    // Color state
-    private _roomColor: number = 0xFFFFFF;
-    private _roomBackgroundColor: number = 0x000000;
-
-    // Zoom state
-    private _zoomMomentum: number = 0;
-    private _zoomPivotX: number = 0;
-    private _zoomPivotY: number = 0;
-    private _zoomInProgress: boolean = false;
-
-    private _visible: boolean = true;
-    private _disposed: boolean = false;
-
-    constructor(session: IRoomSession, assets: IAssetLibrary, connection: IConnection | null)
-    {
-        this._desktopEvents = new EventEmitter();
-        this._session = session;
-        this._assets = assets;
-        this._connection = connection;
-
-        this._widgets = new Map();
-        this._widgetMessageHandlers = new Map();
-        this._widgetEventHandlers = new Map();
-
-        this._layoutManager = new RoomDesktopLayoutManager();
-        this._colorTransitioner = new ColorTransitioner();
-        this._bgColorTransitioner = new ColorTransitioner(0x000000, 0);
-    }
-
-    public get desktopEvents(): EventEmitter
-    {
-        return this._desktopEvents;
-    }
-
-    public get roomSession(): IRoomSession
-    {
-        return this._session;
-    }
-
-    public getFirstCanvasId(): number
-    {
-        return this._canvasIds.length > 0 ? this._canvasIds[0] : 1;
-    }
-
-    public getRoomViewRect(): { x: number; y: number; width: number; height: number } | null
-    {
-        return this._layoutManager.roomViewRect;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processEvent()
-    public processEvent(event: unknown): void
-    {
-        const eventType = (event as { type?: string } | null)?.type;
-
-        if(!eventType) return;
-
-        if(eventType === 'RWZTM_ZOOM_TOGGLE')
-        {
-            this.toggleZoom();
-        }
-
-        const handler = this._widgetEventHandlers.get(eventType);
-
-        if(handler)
-        {
-            handler.processEvent(event);
-        }
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processWidgetMessage()
-    public processWidgetMessage(message: unknown): unknown
-    {
-        const messageType = (message as { type?: string } | null)?.type;
-
-        if(!messageType) return null;
-
-        const handler = this._widgetMessageHandlers.get(messageType);
-
-        return handler ? handler.processWidgetMessage(message) : null;
-    }
-
-    public get sessionDataManager(): ISessionDataManager | null
-    {
-        return this._sessionDataManager;
-    }
-
-    public get roomEngine(): IRoomEngine | null
-    {
-        return this._roomEngine;
-    }
-
-    public get roomSessionManager(): IRoomSessionManager | null
-    {
-        return this._roomSessionManager;
-    }
-
-    public get roomWidgetFactory(): IRoomWidgetFactory | null
-    {
-        return this._widgetFactory;
-    }
-
-    public get localization(): IHabboLocalizationManager | null
-    {
-        return this._localization;
-    }
-
-    public get windowManager(): IHabboWindowManager | null
-    {
-        return this._windowManager;
-    }
-
-    public get connection(): IConnection | null
-    {
-        return this._connection;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::get toolbar()
-    public get toolbar(): IHabboToolbar | null
-    {
-        return this._toolbar;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
-    public get catalog(): IHabboCatalog | null
-    {
-        return this._catalog;
-    }
-
-    public set catalog(value: IHabboCatalog | null)
-    {
-        this._catalog = value;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
-    public get config(): IHabboConfigurationManager | null
-    {
-        return this._config;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()
-    public get habboTracking(): IHabboTracking | null
-    {
-        return this._habboTracking;
-    }
-
-    public set habboTracking(value: IHabboTracking | null)
-    {
-        this._habboTracking = value;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_navigator (private field, not part of IRoomWidgetHandlerContainer)
-    public set navigator(value: IHabboNavigator | null)
-    {
-        this._navigator = value;
-    }
-
-    public get navigator(): IHabboNavigator | null
-    {
-        return this._navigator;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::_communicationManager (private field, not part of IRoomWidgetHandlerContainer)
-    public set communicationManager(value: IHabboCommunicationManager | null)
-    {
-        this._communicationManager = value;
-    }
-
-    public get communicationManager(): IHabboCommunicationManager | null
-    {
-        return this._communicationManager;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
-    public get habboGroupsManager(): IHabboGroupsManager | null
-    {
-        return this._habboGroupsManager;
-    }
-
-    public set habboGroupsManager(value: IHabboGroupsManager | null)
-    {
-        this._habboGroupsManager = value;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
-    // TODO(AS3): no concrete implementation exists yet, see IHabboUserDefinedRoomEvents.ts.
-    public get userDefinedRoomEvents(): IHabboUserDefinedRoomEvents | null
-    {
-        return null;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
-    public isOwnerOfFurniture(object: IRoomObject): boolean
-    {
-        const ownerId = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID);
-
-        return ownerId > 0 && ownerId === this._sessionDataManager?.userId;
-    }
-
-    public get layoutManager(): RoomDesktopLayoutManager
-    {
-        return this._layoutManager;
-    }
-
-    public get roomBackgroundColor(): number
-    {
-        return this._roomBackgroundColor;
-    }
-
-    public addUpdateListener(handler: IRoomWidgetHandler): void
-    {
-        if(this._updateListeners.indexOf(handler) < 0)
-        {
-            this._updateListeners.push(handler);
-        }
-    }
-
-    public removeUpdateListener(handler: IRoomWidgetHandler): void
-    {
-        const index = this._updateListeners.indexOf(handler);
-
-        if(index >= 0)
-        {
-            this._updateListeners.splice(index, 1);
-        }
-    }
-
-    public set windowManager(value: IHabboWindowManager | null)
-    {
-        this._windowManager = value;
-    }
-
-    public set roomEngine(value: IRoomEngine | null)
-    {
-        this._roomEngine = value;
-    }
-
-    public set sessionDataManager(value: ISessionDataManager | null)
-    {
-        this._sessionDataManager = value;
-    }
-
-    public set roomSessionManager(value: IRoomSessionManager | null)
-    {
-        this._roomSessionManager = value;
-    }
-
-    public set config(value: IHabboConfigurationManager | null)
-    {
-        this._config = value;
-    }
-
-    public set localization(value: IHabboLocalizationManager | null)
-    {
-        this._localization = value;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::set toolbar()
-    public set toolbar(value: IHabboToolbar | null)
-    {
-        if(this._toolbar)
-        {
-            this._toolbar.toolbarEvents.off(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
-        }
-
-        this._toolbar = value;
-
-        if(this._toolbar)
-        {
-            this._toolbar.toolbarEvents.on(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
-        }
-    }
-
-    public set roomWidgetFactory(value: IRoomWidgetFactory | null)
-    {
-        this._widgetFactory = value;
-    }
-
-    public set layout(layoutName: string)
-    {
-        this._layoutManager.setLayout(layoutName, this._windowManager!, this._config);
-    }
-
-    public init(): void
-    {
-        log.debug(`RoomDesktop initialized for room ${this._session.roomId}`);
-    }
-
-    /**
-	 * Creates the room view and canvas for rendering.
-	 * Called when the room engine signals REE_INITIALIZED.
-	 *
-	 * @param canvasId - The canvas ID to create (typically 1)
-	 */
-    public createRoomView(canvasId: number): void
-    {
-        // Guard against double initialization (server can send height map twice)
-        if(this._canvasIds.includes(canvasId))
-        {
-            log.debug(`Room view already created for canvas ${canvasId}, skipping`);
-
-            return;
-        }
-
-        if(!this._roomEngine || !this._windowManager)
-        {
-            log.warn('Cannot create room view — missing roomEngine or windowManager');
-
-            return;
-        }
-
-        const roomId = this._session.roomId;
-        const viewRect = this._layoutManager.roomViewRect;
-
-        if(!viewRect)
-        {
-            log.warn('Cannot create room view — no room view rect');
-
-            return;
-        }
-
-        const width = viewRect.width;
-        const height = viewRect.height;
-        const scale = this._session.isGameSession ? 32 : 64;
-
-        // Create the room canvas via the engine
-        const canvasDisplayObject = this._roomEngine.createRoomCanvas(roomId, canvasId, width, height, scale);
-
-        if(!canvasDisplayObject)
-        {
-            log.warn('Failed to create room canvas');
-
-            return;
-        }
-
-        this._canvasIds.push(canvasId);
-
-        // Build the room_view_container window tree
-        const roomViewContainer = this._windowManager.buildWidgetLayout('room_view_container');
-
-        if(roomViewContainer)
-        {
-            const containerWindow = roomViewContainer as IWindowContainer;
-
-            // Resize to match room view rect
-            containerWindow.width = viewRect.width;
-            containerWindow.height = viewRect.height;
-
-            // AS3: room_view_container.findChildByName("room_canvas_wrapper")
-            this._canvasWrapper = containerWindow.findChildByName('room_canvas_wrapper')
-				?? containerWindow.findChildByTag('room_canvas_wrapper')
-				?? null;
-
-            if(this._canvasWrapper)
-            {
-                this._canvasWrapper.x = 0;
-                this._canvasWrapper.y = 0;
-                this._canvasWrapper.width = viewRect.width;
-                this._canvasWrapper.height = viewRect.height;
-                this._canvasWrapper.addEventListener(WindowMouseEvent.CLICK, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.DOUBLE_CLICK, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.MOVE, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.DOWN, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.UP, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.UP_OUTSIDE, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_RESIZED, this._roomViewGeometryEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_RELOCATED, this._roomViewGeometryEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RESIZED, this._roomViewGeometryEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RELOCATED, this._roomViewGeometryEventHandler);
-
-                // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
-                // var_174.setDisplayObject(_loc17_)
-                const displayObjectWrapper = this._canvasWrapper as unknown as IDisplayObjectWrapper;
-
-                if(typeof displayObjectWrapper.setDisplayObject === 'function')
-                {
-                    displayObjectWrapper.setDisplayObject(canvasDisplayObject);
-                }
-
-                this._roomEngine.setRoomCanvasMask(roomId, canvasId, true);
-            }
-
-            // Store reference to the room view window
-            this._roomViewWindow = containerWindow;
-            this._roomCanvasDisplayObject = canvasDisplayObject;
-
-            // Add to layout
-            this._layoutManager.addRoomView(containerWindow);
-            this.syncRoomCanvasDisplayObject();
-        }
-
-        log.info(`Room view created for room ${roomId}, canvas ${canvasId} (${width}x${height})`);
-
-        // Emit event so the client can position the PixiJS canvas
-        this._desktopEvents.emit(RoomDesktop.ROOM_VIEW_CREATED, {
-            roomId,
-            canvasId,
-            viewRect,
-            container: canvasDisplayObject
-        });
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
-    // The room DisplayObject is local to room_canvas_wrapper. Pixi renders it on
-    // the root stage, so keep the root-stage container at the wrapper's global
     // position to preserve the same coordinate space.
-    private syncRoomCanvasDisplayObject(): void
+    private syncRoomCanvasDisplayObject(): void 
     {
-        if(!this._roomCanvasDisplayObject || !this._canvasWrapper)
+        if(!this._roomCanvasDisplayObject || !this._canvasWrapper) 
         {
             return;
         }
@@ -579,283 +949,17 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._roomCanvasDisplayObject.visible = this._visible && this._canvasWrapper.visible;
     }
 
-    /**
-	 * Creates a widget by type code.
-	 *
-	 * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createWidget()
-	 * TODO(AS3): only "RWE_INFOSTAND" is wired up so far; other widget types
-	 * (chat, me-menu, room tools, etc.) still fall through to the stub log.
-	 */
-    public createWidget(type: string): void
-    {
-        if(this._widgets.has(type))
-        {
-            log.debug(`Widget already exists: ${type}`);
-
-            return;
-        }
-
-        let handler: IRoomWidgetHandler | null = null;
-
-        switch(type)
-        {
-            case 'RWE_INFOSTAND':
-                handler = new InfoStandWidgetHandler(null);
-                break;
-            case 'RWE_ROOM_TOOLS':
-            {
-                // AS3: sources/win63_version/habbo/ui/RoomDesktop.as:885-890
-                const roomToolsHandler = new RoomToolsWidgetHandler();
-
-                roomToolsHandler.communicationManager = this._communicationManager;
-                roomToolsHandler.navigator = this._navigator;
-                handler = roomToolsHandler;
-                break;
-            }
-            case 'RWE_CHAT_INPUT_WIDGET':
-                handler = new ChatInputWidgetHandler();
-                break;
-            case 'RWE_CHAT_WIDGET':
-            {
-                // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
-                const chatHandler = new ChatWidgetHandler();
-
-                chatHandler.connection = this._connection;
-                handler = chatHandler;
-                break;
-            }
-            default:
-                log.debug(`Widget creation requested: ${type} (stub)`);
-
-                return;
-        }
-
-        handler.container = this;
-
-        for(const messageType of handler.getWidgetMessages())
-        {
-            this._widgetMessageHandlers.set(messageType, handler);
-        }
-
-        for(const eventType of [...handler.getProcessedEvents(), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET'])
-        {
-            this._widgetEventHandlers.set(eventType, handler);
-        }
-
-        const widget = this._widgetFactory?.createWidget(type, handler) as IRoomWidget | null | undefined;
-
-        if(!widget)
-        {
-            handler.dispose();
-
-            return;
-        }
-
-        widget.messageListener = this;
-        widget.registerUpdateEvents(this._desktopEvents);
-        // AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627) marks these widget
-        // types reusable across room transitions via a caller-side instance cache in
-        // RoomUI.createDesktopWidget() (var_1358) that calls widget.reuse(newDesktop)
-        // instead of reconstructing. That cross-room caching isn't ported yet — this
-        // only sets the flag correctly per AS3 (currently inert since nothing reads it
-        // besides this assignment) so it's ready when that follow-up lands.
-        widget.reusable = REUSABLE_WIDGET_TYPES.has(type);
-        widget.widgetType = type;
-
-        this._widgets.set(type, widget);
-        this.addUpdateListener(handler);
-
-        if(widget.mainWindow)
-        {
-            this._layoutManager.addWidgetWindow(type, widget.mainWindow);
-        }
-
-        log.debug(`Widget created: ${type}`);
-    }
-
-    public disposeWidget(type: string): void
-    {
-        const widget = this._widgets.get(type);
-
-        if(!widget) return;
-
-        this._widgets.delete(type);
-    }
-
-    public getWidget(type: string): unknown | null
-    {
-        return this._widgets.get(type) ?? null;
-    }
-
-    /**
-	 * Handles mouse events forwarded from the client UI layer.
-	 * Converts window coordinates to engine coordinates and forwards to RoomEngine.
-	 */
-    public canvasMouseHandler(x: number, y: number, type: string, altKey: boolean, ctrlKey: boolean, shiftKey: boolean, buttonDown: boolean): void
-    {
-        if(!this._roomEngine || this._canvasIds.length === 0) return;
-
-        const canvasId = this._canvasIds[0];
-        const roomId = this._session.roomId;
-        const globalPosition = {x: 0, y: 0};
-
-        if(this._canvasWrapper)
-        {
-            this._canvasWrapper.getGlobalPosition(globalPosition);
-        }
-
-        this._roomEngine.setActiveRoom(roomId);
-
-        this._roomEngine.handleRoomCanvasMouseEvent(
-            canvasId,
-            x - globalPosition.x,
-            y - globalPosition.y,
-            type,
-            altKey,
-            ctrlKey,
-            shiftKey,
-            buttonDown
-        );
-    }
-
-    /**
-	 * Handles mouse wheel for zoom.
-	 */
-    public handleMouseWheel(deltaY: number, x: number, y: number): void
-    {
-        if(!this._roomEngine || this._canvasIds.length === 0) return;
-
-        const canvasId = this._canvasIds[0];
-        const roomId = this._session.roomId;
-        const currentScale = this._roomEngine.getRoomCanvasScale(roomId, canvasId);
-
-        // Zoom in/out based on wheel direction
-        let newScale = currentScale;
-
-        if(deltaY < 0)
-        {
-            newScale = Math.min(currentScale * 1.1, 2.0);
-        }
-        else
-        {
-            newScale = Math.max(currentScale / 1.1, 0.5);
-        }
-
-        if(newScale !== currentScale)
-        {
-            this._roomEngine.setRoomCanvasScale(roomId, canvasId, newScale, { x, y });
-        }
-    }
-
-    /**
-	 * Sets the room view foreground color (tint overlay).
-	 */
-    public setRoomViewColor(color: number, brightness: number): void
-    {
-        const time = Date.now();
-
-        this._colorTransitioner.startTransition(color, brightness, time);
-    }
-
-    /**
-	 * Sets the room background color (CSS div behind canvas).
-	 */
-    public setRoomBackgroundColor(h: number, s: number, l: number): void
-    {
-        const time = Date.now();
-
-        // Convert HSL to packed value for the background transitioner
-        const hslPacked = ((h & 0xFF) << 16) | ((s & 0xFF) << 8) | (l & 0xFF);
-
-        this._bgColorTransitioner.startTransition(hslPacked, l, time);
-
-        this._desktopEvents.emit(RoomDesktop.ROOM_BACKGROUND_COLOR_CHANGED, { h, s, l });
-    }
-
-    /**
-	 * Translates room-engine object events (REOE_*) into widget-facing
-	 * RoomWidgetRoomObjectUpdateEvents (RWROUE_*) and dispatches them on
-	 * `desktopEvents`, where widgets (e.g. InfoStandWidget) listen for them.
-	 *
-	 * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
-	 */
-    public roomObjectEventHandler(event: RoomEngineObjectEvent): void
-    {
-        let translatedType: string | null = null;
-
-        switch(event.type)
-        {
-            case RoomEngineObjectEvent.REOE_OBJECT_SELECTED:
-                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
-                break;
-            case RoomEngineObjectEvent.REOE_OBJECT_DESELECTED:
-                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
-                break;
-            case RoomEngineObjectEvent.REOE_OBJECT_ADDED:
-                translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
-                    ? RoomWidgetRoomObjectUpdateEvent.USER_ADDED
-                    : RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED;
-                break;
-            case RoomEngineObjectEvent.REOE_OBJECT_REMOVED:
-                translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
-                    ? RoomWidgetRoomObjectUpdateEvent.USER_REMOVED
-                    : RoomWidgetRoomObjectUpdateEvent.FURNI_REMOVED;
-                break;
-        }
-
-        if(translatedType)
-        {
-            const translated = new RoomWidgetRoomObjectUpdateEvent(translatedType, event.objectId, event.category, event.roomId);
-
-            this._desktopEvents.emit(translated.type, translated);
-
-            return;
-        }
-
-        const handler = this._widgetEventHandlers.get(event.type);
-
-        if(handler)
-        {
-            handler.processEvent(event);
-        }
-    }
-
-    /**
-	 * Handles room engine events (mode changes, zoom, etc.).
-	 */
-    public roomEngineEventHandler(_event: RoomEngineEvent): void
-    {
-        // Stub — will route to appropriate handling when widgets are ported
-    }
-
-    public set visible(value: boolean)
-    {
-        this._visible = value;
-
-        if(this._layoutManager.layoutContainer)
-        {
-            this._layoutManager.layoutContainer.visible = value;
-        }
-
-        this.syncRoomCanvasDisplayObject();
-    }
-
-    public get visible(): boolean
-    {
-        return this._visible;
-    }
-
     // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onToolbarEvent()
-    private onToolbarEvent = (event: HabboToolbarEvent): void =>
+    private onToolbarEvent = (event: HabboToolbarEvent): void => 
     {
-        if(event.type === HabboToolbarEvent.ICON_ZOOM)
+        if(event.type === HabboToolbarEvent.ICON_ZOOM) 
         {
             this.toggleZoom();
         }
     };
 
     // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::toggleZoom()
-    private toggleZoom(): void
+    private toggleZoom(): void 
     {
         if(!this._roomEngine || this._canvasIds.length === 0) return;
 
@@ -865,100 +969,5 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         const newScale = currentScale === 1 ? 0.5 : 1;
 
         this._roomEngine.setRoomCanvasScale(roomId, canvasId, newScale);
-    }
-
-    /**
-	 * Called each frame by RoomUI.update().
-	 * Updates color transitions, widget handlers, and zoom momentum.
-	 */
-    public update(): void
-    {
-        if(this._disposed) return;
-
-        const time = Date.now();
-
-        // Update color transitions
-        if(this._colorTransitioner.updateColor(time))
-        {
-            this._roomColor = this._colorTransitioner.color;
-        }
-
-        if(this._bgColorTransitioner.updateColor(time))
-        {
-            this._roomBackgroundColor = this._bgColorTransitioner.color;
-        }
-
-        // Update widget handlers
-        for(const listener of this._updateListeners)
-        {
-            listener.update();
-        }
-    }
-
-    public dispose(): void
-    {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        log.debug(`Disposing RoomDesktop for room ${this._session.roomId}`);
-
-        if(this._toolbar)
-        {
-            this._toolbar.toolbarEvents.off(HabboToolbarEvent.ICON_ZOOM, this.onToolbarEvent);
-            this._toolbar = null;
-        }
-
-        // Dispose all widgets
-        for(const [type, widget] of this._widgets)
-        {
-            if(widget && typeof (widget as any).dispose === 'function')
-            {
-                (widget as any).dispose();
-            }
-        }
-
-        this._widgets.clear();
-        this._widgetMessageHandlers.clear();
-        this._widgetEventHandlers.clear();
-        this._updateListeners.length = 0;
-
-        if(this._canvasWrapper)
-        {
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.CLICK, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOUBLE_CLICK, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.MOVE, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOWN, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP_OUTSIDE, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_RESIZED, this._roomViewGeometryEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_RELOCATED, this._roomViewGeometryEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this._roomViewGeometryEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RELOCATED, this._roomViewGeometryEventHandler);
-
-            const displayObjectWrapper = this._canvasWrapper as unknown as IDisplayObjectWrapper;
-
-            if(typeof displayObjectWrapper.setDisplayObject === 'function')
-            {
-                displayObjectWrapper.setDisplayObject(null);
-            }
-        }
-
-        // Dispose layout
-        this._layoutManager.dispose();
-
-        // Clear references
-        this._desktopEvents.removeAllListeners();
-        this._windowManager = null;
-        this._roomEngine = null;
-        this._sessionDataManager = null;
-        this._roomSessionManager = null;
-        this._config = null;
-        this._localization = null;
-        this._toolbar = null;
-        this._widgetFactory = null;
-        this._canvasWrapper = null;
-        this._roomViewWindow = null;
-        this._roomCanvasDisplayObject = null;
     }
 }

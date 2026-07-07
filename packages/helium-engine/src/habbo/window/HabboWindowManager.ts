@@ -91,7 +91,7 @@ const log = Logger.getLogger('HabboWindowManager');
  *
  * @see sources/win63_2021_version/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
-export class HabboWindowManager extends Component implements IHabboWindowManager
+export class HabboWindowManager extends Component implements IHabboWindowManager 
 {
     private static readonly NUMBER_OF_CONTEXT_LAYERS: number = 4;
     private static readonly DEFAULT_CONTEXT_LAYER_INDEX: number = 1;
@@ -116,7 +116,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _elementPointerHandler: ElementPointerHandler | null = null;
     private _initialized: boolean = false;
 
-    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null) 
     {
         super(context, flags, assetLibrary);
     }
@@ -124,9 +124,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _resourceManager: ResourceManager | null = null;
 
     /**
-	 * ResourceManager accessor (AS3 parity).
-	 */
-    public get resourceManager(): ResourceManager | null
+     * ResourceManager accessor (AS3 parity).
+     */
+    public get resourceManager(): ResourceManager | null 
     {
         return this._resourceManager;
     }
@@ -134,9 +134,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _localization: IHabboLocalizationManager | null = null;
 
     /**
-	 * Localization accessor (AS3 parity).
-	 */
-    public get localization(): IHabboLocalizationManager | null
+     * Localization accessor (AS3 parity).
+     */
+    public get localization(): IHabboLocalizationManager | null 
     {
         return this._localization;
     }
@@ -144,9 +144,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _sessionDataManager: ISessionDataManager | null = null;
 
     /**
-	 * SessionDataManager accessor (AS3 parity).
-	 */
-    public get sessionDataManager(): ISessionDataManager | null
+     * SessionDataManager accessor (AS3 parity).
+     */
+    public get sessionDataManager(): ISessionDataManager | null 
     {
         return this._sessionDataManager;
     }
@@ -154,9 +154,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _roomEngine: IRoomEngine | null = null;
 
     /**
-	 * RoomEngine accessor (AS3 parity).
-	 */
-    public get roomEngine(): IRoomEngine | null
+     * RoomEngine accessor (AS3 parity).
+     */
+    public get roomEngine(): IRoomEngine | null 
     {
         return this._roomEngine;
     }
@@ -164,9 +164,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _habboPagesStyleSheet: unknown | null = null;
 
     /**
-	 * Habbopedia stylesheet accessor (AS3 parity).
-	 */
-    public get habboPagesStyleSheet(): unknown | null
+     * Habbopedia stylesheet accessor (AS3 parity).
+     */
+    public get habboPagesStyleSheet(): unknown | null 
     {
         return this._habboPagesStyleSheet;
     }
@@ -174,11 +174,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _avatarRenderer: IAvatarRenderManager | null = null;
 
     /**
-	 * The avatar render manager.
-	 *
-	 * In AS3: HabboWindowManagerComponent.avatarRenderer
-	 */
-    public get avatarRenderer(): IAvatarRenderManager | null
+     * The avatar render manager.
+     *
+     * In AS3: HabboWindowManagerComponent.avatarRenderer
+     */
+    public get avatarRenderer(): IAvatarRenderManager | null 
     {
         return this._avatarRenderer;
     }
@@ -186,11 +186,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _communication: IHabboCommunicationManager | null = null;
 
     /**
-	 * The communication manager.
-	 *
-	 * In AS3: HabboWindowManagerComponent.communication
-	 */
-    public get communication(): IHabboCommunicationManager | null
+     * The communication manager.
+     *
+     * In AS3: HabboWindowManagerComponent.communication
+     */
+    public get communication(): IHabboCommunicationManager | null 
     {
         return this._communication;
     }
@@ -198,9 +198,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _windowEvents: EventEmitter = new EventEmitter();
 
     /**
-	 * Event emitter for window lifecycle events.
-	 */
-    get windowEvents(): EventEmitter
+     * Event emitter for window lifecycle events.
+     */
+    get windowEvents(): EventEmitter 
     {
         return this._windowEvents;
     }
@@ -208,19 +208,19 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _elementRegistry: ElementRegistry = new ElementRegistry();
 
     /**
-	 * The element registry.
-	 */
-    get elementRegistry(): ElementRegistry
+     * The element registry.
+     */
+    get elementRegistry(): ElementRegistry 
     {
         return this._elementRegistry;
     }
 
-    protected override get dependencies(): Array<ComponentDependency<any>>
+    protected override get dependencies(): Array<ComponentDependency<any>> 
     {
         return super.dependencies.concat([
             new ComponentDependency(
                 IID_SessionDataManager,
-                (manager: ISessionDataManager | null) =>
+                (manager: ISessionDataManager | null) => 
                 {
                     this._sessionDataManager = manager;
                 },
@@ -228,14 +228,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             ),
             new ComponentDependency(
                 IID_HabboLocalizationManager,
-                (manager: IHabboLocalizationManager | null) =>
+                (manager: IHabboLocalizationManager | null) => 
                 {
                     this._localization = manager;
                     WindowParser.localizationResolver = manager
                         ? ((key: string) => manager.getLocalization(key, key))
                         : null;
 
-                    for(const context of this._windowContextArray)
+                    for(const context of this._windowContextArray) 
                     {
                         context.setLocalizationManager(manager);
                     }
@@ -244,7 +244,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             ),
             new ComponentDependency(
                 IID_HabboConfigurationManager,
-                (manager: IHabboConfigurationManager | null) =>
+                (manager: IHabboConfigurationManager | null) => 
                 {
                     this._configuration = manager;
                 },
@@ -258,7 +258,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             ),
             new ComponentDependency(
                 IID_AvatarRenderManager,
-                (renderer: IAvatarRenderManager | null) =>
+                (renderer: IAvatarRenderManager | null) => 
                 {
                     this._avatarRenderer = renderer;
                 },
@@ -266,7 +266,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             ),
             new ComponentDependency(
                 IID_HabboCommunicationManager,
-                (manager: IHabboCommunicationManager | null) =>
+                (manager: IHabboCommunicationManager | null) => 
                 {
                     this.setCommunicationManager(manager);
                 },
@@ -274,7 +274,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             ),
             new ComponentDependency(
                 IID_RoomEngine,
-                (engine: IRoomEngine | null) =>
+                (engine: IRoomEngine | null) => 
                 {
                     this._roomEngine = engine;
                 },
@@ -284,17 +284,17 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Constructs the non-asset-backed skin renderer for an element descriptor's
-	 * `renderer` attribute (asset-backed "skin" renderers are created later by
-	 * {@link loadSkinAssets} via {@link BitmapSkinParser}, replacing the
-	 * `NullSkinRenderer` placeholder built here).
-	 *
-	 * AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
-	 * (renderer name → class Dictionary)
-	 */
-    private static createRendererForType(rendererType: string, rendererName: string): ISkinRenderer
+     * Constructs the non-asset-backed skin renderer for an element descriptor's
+     * `renderer` attribute (asset-backed "skin" renderers are created later by
+     * {@link loadSkinAssets} via {@link BitmapSkinParser}, replacing the
+     * `NullSkinRenderer` placeholder built here).
+     *
+     * AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
+     * (renderer name → class Dictionary)
+     */
+    private static createRendererForType(rendererType: string, rendererName: string): ISkinRenderer 
     {
-        switch(rendererType)
+        switch(rendererType) 
         {
             case 'fill':
                 return new FillSkinRenderer(rendererName);
@@ -312,14 +312,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Load element description data into the registry.
-	 */
-    loadElementDescription(data: IElementDescriptionData): void
+     * Load element description data into the registry.
+     */
+    loadElementDescription(data: IElementDescriptionData): void 
     {
         this._elementRegistry.load(data);
 
         // Populate SkinContainer from element descriptors
-        for(const element of data.elements)
+        for(const element of data.elements) 
         {
             if(element.typeId < 0) continue;
 
@@ -355,26 +355,26 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Register a layout by name.
-	 */
-    registerLayout(name: string, layout: IWindowLayout): void
+     * Register a layout by name.
+     */
+    registerLayout(name: string, layout: IWindowLayout): void 
     {
         this._layouts.set(name, layout);
         log.debug(`Layout registered: ${name}`);
     }
 
     /**
-	 * Get a registered layout by name.
-	 */
-    getLayout(name: string): IWindowLayout | null
+     * Get a registered layout by name.
+     */
+    getLayout(name: string): IWindowLayout | null 
     {
         return this._layouts.get(name) ?? null;
     }
 
     /**
-	 * Open a window from a layout.
-	 */
-    openWindow(layout: IWindowLayout, vars?: Record<string, unknown>, layer: number = WindowContextLayer.DEFAULT): IWindowInstance
+     * Open a window from a layout.
+     */
+    openWindow(layout: IWindowLayout, vars?: Record<string, unknown>, layer: number = WindowContextLayer.DEFAULT): IWindowInstance 
     {
         const resolvedTree = WindowLayoutParser.resolve(layout, vars);
 
@@ -398,9 +398,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Close a window by ID.
-	 */
-    closeWindow(id: number): void
+     * Close a window by ID.
+     */
+    closeWindow(id: number): void 
     {
         const instance = this._windows.get(id);
 
@@ -414,21 +414,21 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Get a window by ID.
-	 */
-    getWindow(id: number): IWindowInstance | null
+     * Get a window by ID.
+     */
+    getWindow(id: number): IWindowInstance | null 
     {
         return this._windows.get(id) ?? null;
     }
 
     /**
-	 * Get all open windows, optionally filtered by layer.
-	 */
-    getWindows(layer?: number): IWindowInstance[]
+     * Get all open windows, optionally filtered by layer.
+     */
+    getWindows(layer?: number): IWindowInstance[] 
     {
         const all = Array.from(this._windows.values());
 
-        if(layer !== undefined)
+        if(layer !== undefined) 
         {
             return all.filter((w) => w.layer === layer);
         }
@@ -437,11 +437,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Create a window using the core factory.
-	 *
-	 * In AS3: create(name, type, style, param, rect, procedure, dynamicStyle, id, tags, parent, properties)
-	 * Delegates to the default context layer.
-	 */
+     * Create a window using the core factory.
+     *
+     * In AS3: create(name, type, style, param, rect, procedure, dynamicStyle, id, tags, parent, properties)
+     * Delegates to the default context layer.
+     */
     public create(
         name: string,
         type: number,
@@ -454,7 +454,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         tags?: string[] | null,
         parent?: IWindow | null,
         properties?: unknown[] | null
-    ): IWindow
+    ): IWindow 
     {
         return this._defaultContext!.create(
             name, '', type, style, param, rect,
@@ -464,19 +464,19 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Destroy a window.
-	 */
-    public destroy(window: IWindow): void
+     * Destroy a window.
+     */
+    public destroy(window: IWindow): void 
     {
         window.destroy();
     }
 
     /**
-	 * AS3-compatible parser serialization.
-	 */
-    public windowToXMLString(window: IWindow): string
+     * AS3-compatible parser serialization.
+     */
+    public windowToXMLString(window: IWindow): string 
     {
-        if(!this._defaultContext)
+        if(!this._defaultContext) 
         {
             return '';
         }
@@ -485,15 +485,15 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Build a window tree from an XML layout definition.
-	 */
-    public buildFromXML(xml: string | Document | Element, layer: number = 1, _vars?: Map<string, string> | null): IWindow
+     * Build a window tree from an XML layout definition.
+     */
+    public buildFromXML(xml: string | Document | Element, layer: number = 1, _vars?: Map<string, string> | null): IWindow 
     {
         const context = this.getWindowContext(layer);
         const parser = context.getWindowParser();
         const desktop = context.getDesktopWindow();
 
-        if(parser && desktop)
+        if(parser && desktop) 
         {
             return parser.parseAndConstruct(xml, desktop, null) as IWindow;
         }
@@ -502,27 +502,27 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Show a notify dialog.
-	 */
+     * Show a notify dialog.
+     */
     public notify(
         title: string,
         message: string,
         callback: AlertDialogCallback | null,
         flags: number = 0
-    ): IAlertDialog
+    ): IAlertDialog 
     {
         return this.alert(title, message, flags, callback);
     }
 
     /**
-	 * Show an alert dialog.
-	 */
+     * Show an alert dialog.
+     */
     public alert(
         title: string,
         message: string,
         flags: number,
         callback: AlertDialogCallback | null
-    ): IAlertDialog
+    ): IAlertDialog 
     {
         const layout = this.requireWidgetLayout('habbo_window_alert', 'alert dialog');
 
@@ -530,14 +530,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Show a modal alert dialog.
-	 */
+     * Show a modal alert dialog.
+     */
     public alertWithModal(
         title: string,
         message: string,
         flags: number,
         callback: AlertDialogCallback | null
-    ): IAlertDialog
+    ): IAlertDialog 
     {
         const layout = this.requireWidgetLayout('habbo_window_alert', 'alert dialog');
 
@@ -545,8 +545,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Show an alert dialog with link.
-	 */
+     * Show an alert dialog with link.
+     */
     public alertWithLink(
         title: string,
         message: string,
@@ -554,7 +554,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         linkUrl: string,
         flags: number,
         callback: AlertDialogCallback | null
-    ): IAlertDialogWithLink
+    ): IAlertDialogWithLink 
     {
         const layout = this.requireWidgetLayout('habbo_window_alert_link', 'alert link dialog');
 
@@ -562,14 +562,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Show a confirm dialog.
-	 */
+     * Show a confirm dialog.
+     */
     public confirm(
         title: string,
         message: string,
         flags: number,
         callback: AlertDialogCallback | null
-    ): IConfirmDialog
+    ): IConfirmDialog 
     {
         const layout = this.requireWidgetLayout('habbo_window_confirm', 'confirm dialog');
 
@@ -577,14 +577,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Show a modal confirm dialog.
-	 */
+     * Show a modal confirm dialog.
+     */
     public confirmWithModal(
         title: string,
         message: string,
         flags: number,
         callback: AlertDialogCallback | null
-    ): IConfirmDialog
+    ): IConfirmDialog 
     {
         const layout = this.requireWidgetLayout('habbo_window_confirm', 'confirm dialog');
 
@@ -592,41 +592,41 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Register a widget layout XML asset by name.
-	 *
-	 * @param name - The layout asset name (e.g. "hover_bitmap", "avatar_image")
-	 * @param xml - The XML layout source
-	 */
-    public registerWidgetLayout(name: string, xml: string): void
+     * Register a widget layout XML asset by name.
+     *
+     * @param name - The layout asset name (e.g. "hover_bitmap", "avatar_image")
+     * @param xml - The XML layout source
+     */
+    public registerWidgetLayout(name: string, xml: string): void 
     {
         this._widgetLayouts.set(name, xml);
     }
 
     /**
-	 * Probe whether a widget layout is registered, without logging a miss.
-	 *
-	 * Equivalent to AS3's `assets.hasAsset(name)` pre-check ahead of a buildFromXML() call.
-	 */
-    public hasWidgetLayout(name: string): boolean
+     * Probe whether a widget layout is registered, without logging a miss.
+     *
+     * Equivalent to AS3's `assets.hasAsset(name)` pre-check ahead of a buildFromXML() call.
+     */
+    public hasWidgetLayout(name: string): boolean 
     {
         return this._widgetLayouts.has(name);
     }
 
     /**
-	 * Build a widget's internal window tree from a registered layout asset.
-	 *
-	 * Equivalent to AS3:
-	 * `buildFromXML(assets.getAssetByName("widget_xml").content as XML)`
-	 *
-	 * @param name - The layout asset name
-	 * @param layer - Context layer (default 1)
-	 * @returns The root IWindow of the built tree, or null
-	 */
-    public buildWidgetLayout(name: string, layer: number = 1): IWindow | null
+     * Build a widget's internal window tree from a registered layout asset.
+     *
+     * Equivalent to AS3:
+     * `buildFromXML(assets.getAssetByName("widget_xml").content as XML)`
+     *
+     * @param name - The layout asset name
+     * @param layer - Context layer (default 1)
+     * @returns The root IWindow of the built tree, or null
+     */
+    public buildWidgetLayout(name: string, layer: number = 1): IWindow | null 
     {
         const xml = this._widgetLayouts.get(name);
 
-        if(!xml)
+        if(!xml) 
         {
             log.warn(`Widget layout not found: ${name}`);
 
@@ -637,24 +637,24 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Build a modal dialog from an XML layout definition.
-	 *
-	 * Creates a dimmed background overlay and a centered content
-	 * window. Delegates to ModalDialog which manages the shared
-	 * modal container.
-	 *
-	 * In AS3: buildModalDialogFromXML(xml: XML): IModalDialog
-	 */
-    public buildModalDialogFromXML(xml: string): IModalDialog
+     * Build a modal dialog from an XML layout definition.
+     *
+     * Creates a dimmed background overlay and a centered content
+     * window. Delegates to ModalDialog which manages the shared
+     * modal container.
+     *
+     * In AS3: buildModalDialogFromXML(xml: XML): IModalDialog
+     */
+    public buildModalDialogFromXML(xml: string): IModalDialog 
     {
         return new ModalDialog(this, xml);
     }
 
     /**
-	 * Create a window by name, type, style, param in a given context layer.
-	 *
-	 * In AS3: createWindow(name, caption, type, style, param, rect, procedure, id, layer, dynamicStyle)
-	 */
+     * Create a window by name, type, style, param in a given context layer.
+     *
+     * In AS3: createWindow(name, caption, type, style, param, rect, procedure, id, layer, dynamicStyle)
+     */
     public createWindow(
         name: string,
         caption: string = '',
@@ -666,7 +666,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         id: number = 0,
         layer: number = 1,
         dynamicStyle: string = ''
-    ): IWindow
+    ): IWindow 
     {
         return this._windowContextArray[layer].create(
             name, caption, type, style, param, rect,
@@ -675,9 +675,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Remove a window by name from a context layer.
-	 */
-    public removeWindow(name: string, layer: number = 1): void
+     * Remove a window by name from a context layer.
+     */
+    public removeWindow(name: string, layer: number = 1): void 
     {
         const desktop = this._windowContextArray[layer]?.getDesktopWindow();
 
@@ -685,16 +685,16 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
         const child = (desktop as IWindowContainer).getChildByName?.(name) ?? null;
 
-        if(child)
+        if(child) 
         {
             child.destroy();
         }
     }
 
     /**
-	 * Get a window by name from a context layer.
-	 */
-    public getWindowByName(name: string, layer: number = 1): IWindow | null
+     * Get a window by name from a context layer.
+     */
+    public getWindowByName(name: string, layer: number = 1): IWindow | null 
     {
         const desktop = this._windowContextArray[layer]?.getDesktopWindow();
 
@@ -704,9 +704,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Get the topmost active window in a context layer.
-	 */
-    public getActiveWindow(layer: number = 1): IWindow | null
+     * Get the topmost active window in a context layer.
+     */
+    public getActiveWindow(layer: number = 1): IWindow | null 
     {
         const desktop = this._windowContextArray[layer]?.getDesktopWindow();
 
@@ -719,7 +719,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
         if(count <= 0) return null;
 
-        if((requestedIndex < 0) || (requestedIndex >= count))
+        if((requestedIndex < 0) || (requestedIndex >= count)) 
         {
             return container.getChildAt(count - 1);
         }
@@ -728,32 +728,32 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Toggle fullscreen mode.
-	 */
-    public toggleFullScreen(): void
+     * Toggle fullscreen mode.
+     */
+    public toggleFullScreen(): void 
     {
-        if(document.fullscreenElement)
+        if(document.fullscreenElement) 
         {
             document.exitFullscreen();
         }
-        else
+        else 
         {
             document.documentElement.requestFullscreen();
         }
     }
 
     /**
-	 * Get a window context by layer index.
-	 */
-    public getWindowContext(layer: number): IWindowContext
+     * Get a window context by layer index.
+     */
+    public getWindowContext(layer: number): IWindowContext 
     {
         return this._windowContextArray[layer];
     }
 
     /**
-	 * Get the desktop window for a given context layer.
-	 */
-    public getDesktop(layer: number): IWindow | null
+     * Get the desktop window for a given context layer.
+     */
+    public getDesktop(layer: number): IWindow | null 
     {
         const context = this._windowContextArray[layer];
 
@@ -761,11 +761,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Search for a window by name across all context layers.
-	 */
-    public findWindowByName(name: string): IWindow | null
+     * Search for a window by name across all context layers.
+     */
+    public findWindowByName(name: string): IWindow | null 
     {
-        for(const context of this._windowContextArray)
+        for(const context of this._windowContextArray) 
         {
             const found = context.findWindowByName(name);
 
@@ -776,11 +776,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Search for a window by tag across all context layers.
-	 */
-    public findWindowByTag(tag: string): IWindow | null
+     * Search for a window by tag across all context layers.
+     */
+    public findWindowByTag(tag: string): IWindow | null 
     {
-        for(const context of this._windowContextArray)
+        for(const context of this._windowContextArray) 
         {
             const found = context.findWindowByTag(tag);
 
@@ -791,13 +791,13 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Group windows with a matching tag across contexts.
-	 */
-    public groupWindowsWithTag(tag: string, windows: IWindow[], depth: number = 0): number
+     * Group windows with a matching tag across contexts.
+     */
+    public groupWindowsWithTag(tag: string, windows: IWindow[], depth: number = 0): number 
     {
         let count = 0;
 
-        for(const context of this._windowContextArray)
+        for(const context of this._windowContextArray) 
         {
             count += context.groupChildrenWithTag(tag, windows, depth);
         }
@@ -806,45 +806,45 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Add an input event tracker to all context layers.
-	 */
-    public addMouseEventTracker(tracker: IInputEventTracker): void
+     * Add an input event tracker to all context layers.
+     */
+    public addMouseEventTracker(tracker: IInputEventTracker): void 
     {
-        for(const context of this._windowContextArray)
+        for(const context of this._windowContextArray) 
         {
             context.addMouseEventTracker(tracker);
         }
     }
 
     /**
-	 * Remove an input event tracker from all context layers.
-	 */
-    public removeMouseEventTracker(tracker: IInputEventTracker): void
+     * Remove an input event tracker from all context layers.
+     */
+    public removeMouseEventTracker(tracker: IInputEventTracker): void 
     {
-        for(const context of this._windowContextArray)
+        for(const context of this._windowContextArray) 
         {
             context.removeMouseEventTracker(tracker);
         }
     }
 
     /**
-	 * Input event tracker callback.
-	 *
-	 * Mirrors AS3 behavior by storing click/mouse-up metadata for crash reports.
-	 */
-    public eventReceived(event: WindowEvent, window: IWindow): void
+     * Input event tracker callback.
+     *
+     * Mirrors AS3 behavior by storing click/mouse-up metadata for crash reports.
+     */
+    public eventReceived(event: WindowEvent, window: IWindow): void 
     {
-        if(!window)
+        if(!window) 
         {
             return;
         }
 
-        if(event.type === WindowMouseEvent.CLICK)
+        if(event.type === WindowMouseEvent.CLICK) 
         {
             ErrorReportStorage.setDebugData('click_time', Date.now().toString());
             ErrorReportStorage.setDebugData('click_target', `${window.name}: ${window.toString()}`);
         }
-        else if(event.type === WindowMouseEvent.UP)
+        else if(event.type === WindowMouseEvent.UP) 
         {
             ErrorReportStorage.setDebugData('mouse_up_time', Date.now().toString());
             ErrorReportStorage.setDebugData('mouse_up_target', `${window.name}: ${window.toString()}`);
@@ -852,40 +852,40 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Register a localization parameter.
-	 */
-    public registerLocalizationParameter(key: string, parameter: string, value: string, delimiter: string = '%'): void
+     * Register a localization parameter.
+     */
+    public registerLocalizationParameter(key: string, parameter: string, value: string, delimiter: string = '%'): void 
     {
         this._localization?.registerParameter(key, parameter, value, delimiter);
     }
 
     /**
-	 * Interpolates a string against runtime configuration values.
-	 *
-	 * AS3 ResourceManager resolves asset names through
-	 * HabboWindowManagerComponent.interpolate().
-	 */
-    public interpolate(value: string): string
+     * Interpolates a string against runtime configuration values.
+     *
+     * AS3 ResourceManager resolves asset names through
+     * HabboWindowManagerComponent.interpolate().
+     */
+    public interpolate(value: string): string 
     {
         return this.context.configuration?.interpolate(value) ?? value;
     }
 
     /**
-	 * Create an unseen item counter widget.
-	 */
-    public createUnseenItemCounter(): IWindowContainer | null
+     * Create an unseen item counter widget.
+     */
+    public createUnseenItemCounter(): IWindowContainer | null 
     {
-        return this.buildWidgetLayout('unseen_item_counter') as IWindowContainer | null;
+        return this.buildWidgetLayout('unseen_item_counter_xml') as IWindowContainer | null;
     }
 
     /**
-	 * Create a widget by type identifier.
-	 */
-    public createWidget(type: string, window: IWidgetWindow): IWidget | null
+     * Create a widget by type identifier.
+     */
+    public createWidget(type: string, window: IWidgetWindow): IWidget | null 
     {
         const widget = this._widgetFactory?.createWidget(type, window) ?? null;
 
-        if(!widget)
+        if(!widget) 
         {
             throw new Error(`Unknown widget type ${type}! You might need to update Glaze to be able to work on this layout.`);
         }
@@ -894,48 +894,48 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Register a hint window.
-	 */
-    public registerHintWindow(hintId: string, window: IWindow, direction: number = 1): void
+     * Register a hint window.
+     */
+    public registerHintWindow(hintId: string, window: IWindow, direction: number = 1): void 
     {
         this._hintManager?.registerWindow(hintId, window, direction);
     }
 
     /**
-	 * Unregister a hint window.
-	 */
-    public unregisterHintWindow(hintId: string): void
+     * Unregister a hint window.
+     */
+    public unregisterHintWindow(hintId: string): void 
     {
         this._hintManager?.unregisterWindow(hintId);
     }
 
     /**
-	 * Show a hint by ID.
-	 */
-    public showHint(hintId: string, rect?: { x: number; y: number; width: number; height: number } | null): void
+     * Show a hint by ID.
+     */
+    public showHint(hintId: string, rect?: { x: number; y: number; width: number; height: number } | null): void 
     {
         this._hintManager?.showHint(hintId, rect);
     }
 
     /**
-	 * Hide the current hint.
-	 */
-    public hideHint(): void
+     * Hide the current hint.
+     */
+    public hideHint(): void 
     {
         this._hintManager?.hideHint();
     }
 
     /**
-	 * Hide a hint matching the given ID.
-	 */
-    public hideMatchingHint(hintId: string): void
+     * Hide a hint matching the given ID.
+     */
+    public hideMatchingHint(hintId: string): void 
     {
         this._hintManager?.hideMatchingHint(hintId);
     }
 
     /**
-	 * Show a simple alert dialog.
-	 */
+     * Show a simple alert dialog.
+     */
     public simpleAlert(
         title: string,
         message: string,
@@ -946,7 +946,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         illustrationUrl: string | null = null,
         linkClickCallback: (() => void) | null = null,
         closeCallback: (() => void) | null = null
-    ): void
+    ): void 
     {
         new SimpleAlertDialog(
             this,
@@ -965,7 +965,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     // AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
     // TODO(AS3): AS3 opens HabboPagesViewer with the given page ID
     // sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
-    public openHelpPage(_pageId: string): void
+    public openHelpPage(_pageId: string): void 
     {
         // HabboPagesViewer integration - to be connected
     }
@@ -973,35 +973,35 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     // AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
     // TODO(AS3): AS3 opens BCFloorPlanEditor
     // sources/win63_version/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
-    public displayFloorPlanEditor(): void
+    public displayFloorPlanEditor(): void 
     {
         // BCFloorPlanEditor integration - to be connected
     }
 
     /**
-	 * Per-frame window update.
-	 *
-	 * Mirrors AS3 update ordering:
-	 * - Process input/update from top-most context to bottom
-	 * - Render from bottom context to top-most
-	 */
+     * Per-frame window update.
+     *
+     * Mirrors AS3 update ordering:
+     * - Process input/update from top-most context to bottom
+     * - Render from bottom context to top-most
+     */
     // AS3: sources/win63_version/habbo/window/HabboWindowManagerComponent.as::update()
-    public update(deltaTime: number): void
+    public update(deltaTime: number): void 
     {
         // AS3: only emits TRACKING_EVENT_INPUT when there are queued input events
-        if(WindowContext.inputEventQueue && WindowContext.inputEventQueue.length > 0)
+        if(WindowContext.inputEventQueue && WindowContext.inputEventQueue.length > 0) 
         {
             this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_INPUT);
         }
 
-        for(let i = this._windowContextArray.length - 1; i >= 0; i--)
+        for(let i = this._windowContextArray.length - 1; i >= 0; i--) 
         {
             this._windowContextArray[i].update(deltaTime);
         }
 
         this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_RENDER);
 
-        for(let i = 0; i < this._windowContextArray.length; i++)
+        for(let i = 0; i < this._windowContextArray.length; i++) 
         {
             this._windowContextArray[i].render(deltaTime);
         }
@@ -1015,22 +1015,22 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this.events.emit(HabboWindowTrackingEvent.HABBO_WINDOW_TRACKING_EVENT_SLEEP);
     }
 
-    public override purge(): void
+    public override purge(): void 
     {
         super.purge();
         this._windowRenderer?.purge();
     }
 
     /**
-	 * Composites all window layers into a single OffscreenCanvas buffer.
-	 *
-	 * Delegates to WindowComposite.composite() with the full context array.
-	 *
-	 * @param width - The target buffer width
-	 * @param height - The target buffer height
-	 * @returns The composited buffer, or null if renderer is unavailable
-	 */
-    public compositeToBuffer(width: number, height: number): OffscreenCanvas | null
+     * Composites all window layers into a single OffscreenCanvas buffer.
+     *
+     * Delegates to WindowComposite.composite() with the full context array.
+     *
+     * @param width - The target buffer width
+     * @param height - The target buffer height
+     * @returns The composited buffer, or null if renderer is unavailable
+     */
+    public compositeToBuffer(width: number, height: number): OffscreenCanvas | null 
     {
         if(!this._windowRenderer || !this._windowComposite) return null;
 
@@ -1041,15 +1041,15 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Finds the deepest visible window at the given screen point.
-	 *
-	 * Delegates to WindowComposite.findWindowAtPoint() with the full context array.
-	 *
-	 * @param x - The global X coordinate
-	 * @param y - The global Y coordinate
-	 * @returns The deepest window at the point, or null
-	 */
-    public findWindowAtPoint(x: number, y: number): IWindow | null
+     * Finds the deepest visible window at the given screen point.
+     *
+     * Delegates to WindowComposite.findWindowAtPoint() with the full context array.
+     *
+     * @param x - The global X coordinate
+     * @param y - The global Y coordinate
+     * @returns The deepest window at the point, or null
+     */
+    public findWindowAtPoint(x: number, y: number): IWindow | null 
     {
         if(!this._windowComposite) return null;
 
@@ -1057,88 +1057,88 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Returns the shared service manager for mouse drag/scale operations.
-	 *
-	 * Used by the client renderer to forward DOM mouse events.
-	 */
-    public getServiceManager(): ServiceManager | null
+     * Returns the shared service manager for mouse drag/scale operations.
+     *
+     * Used by the client renderer to forward DOM mouse events.
+     */
+    public getServiceManager(): ServiceManager | null 
     {
         return this._serviceManager;
     }
 
     /**
-	 * Returns the theme manager.
-	 *
-	 * @returns The theme manager instance
-	 */
-    public getThemeManager(): IThemeManager
+     * Returns the theme manager.
+     *
+     * @returns The theme manager instance
+     */
+    public getThemeManager(): IThemeManager 
     {
         return this._themeManager!;
     }
 
     /**
-	 * Registers a bitmap asset with the resource manager.
-	 *
-	 * Called by the client layer after loading images. Assets registered
-	 * here are available to StaticBitmapWrapperController via `assetUri`.
-	 *
-	 * @param name - The asset name
-	 * @param bitmap - The decoded ImageBitmap
-	 */
-    public registerAsset(name: string, bitmap: ImageBitmap): void
+     * Registers a bitmap asset with the resource manager.
+     *
+     * Called by the client layer after loading images. Assets registered
+     * here are available to StaticBitmapWrapperController via `assetUri`.
+     *
+     * @param name - The asset name
+     * @param bitmap - The decoded ImageBitmap
+     */
+    public registerAsset(name: string, bitmap: ImageBitmap): void 
     {
-        if(this._resourceManager)
+        if(this._resourceManager) 
         {
             this._resourceManager.registerAsset(name, bitmap);
         }
     }
 
     /**
-	 * Registers an asset URL for lazy loading.
-	 *
-	 * @param name - The asset name
-	 * @param url - The URL to fetch the image from
-	 */
-    public registerAssetUrl(name: string, url: string): void
+     * Registers an asset URL for lazy loading.
+     *
+     * @param name - The asset name
+     * @param url - The URL to fetch the image from
+     */
+    public registerAssetUrl(name: string, url: string): void 
     {
-        if(this._resourceManager)
+        if(this._resourceManager) 
         {
             this._resourceManager.registerAssetUrl(name, url);
         }
     }
 
     /**
-	 * Returns the default attributes for a given window type and style.
-	 *
-	 * @param type - The window type
-	 * @param style - The window style
-	 * @returns The default attributes, or null
-	 */
-    public getDefaultsByTypeAndStyle(type: number, style: number): DefaultAttStruct | null
+     * Returns the default attributes for a given window type and style.
+     *
+     * @param type - The window type
+     * @param style - The window style
+     * @returns The default attributes, or null
+     */
+    public getDefaultsByTypeAndStyle(type: number, style: number): DefaultAttStruct | null 
     {
         return this._skinContainer.getDefaultAttributesByTypeAndStyle(type, style);
     }
 
     /**
-	 * Returns the skin renderer for a given window type/style.
-	 */
-    public getRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null
+     * Returns the skin renderer for a given window type/style.
+     */
+    public getRendererByTypeAndStyle(type: number, style: number): ISkinRenderer | null 
     {
         return this._skinContainer.getSkinRendererByTypeAndStyle(type, style);
     }
 
     /**
-	 * Returns the window layout for a given type and style.
-	 *
-	 * First checks the SkinContainer (populated during skin loading), then
-	 * falls back to the element descriptor's windowLayout reference resolved
-	 * against the registered widget layouts.
-	 *
-	 * @param type - The window type
-	 * @param style - The window style
-	 * @returns The layout object, or null
-	 */
-    public getLayoutByTypeAndStyle(type: number, style: number): string | null
+     * Returns the window layout for a given type and style.
+     *
+     * First checks the SkinContainer (populated during skin loading), then
+     * falls back to the element descriptor's windowLayout reference resolved
+     * against the registered widget layouts.
+     *
+     * @param type - The window type
+     * @param style - The window style
+     * @returns The layout object, or null
+     */
+    public getLayoutByTypeAndStyle(type: number, style: number): string | null 
     {
         const layout = this._skinContainer.getWindowLayoutByTypeAndStyle(type, style);
 
@@ -1147,7 +1147,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         // Fall back: resolve via element descriptor's windowLayout reference
         const descriptor = this._elementRegistry.getDescriptor(type, style);
 
-        if(descriptor?.windowLayout)
+        if(descriptor?.windowLayout) 
         {
             return this._widgetLayouts.get(descriptor.windowLayout) ?? null;
         }
@@ -1156,43 +1156,43 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Returns the skin container.
-	 *
-	 * @returns The skin container instance
-	 */
-    public getSkinContainer(): SkinContainer
+     * Returns the skin container.
+     *
+     * @returns The skin container instance
+     */
+    public getSkinContainer(): SkinContainer 
     {
         return this._skinContainer;
     }
 
     /**
-	 * Returns the window renderer.
-	 *
-	 * @returns The window renderer instance, or null
-	 */
-    public getWindowRenderer(): WindowRenderer | null
+     * Returns the window renderer.
+     *
+     * @returns The window renderer instance, or null
+     */
+    public getWindowRenderer(): WindowRenderer | null 
     {
         return this._windowRenderer;
     }
 
     /**
-	 * Loads skin assets and creates BitmapSkinRenderers from skin XML data.
-	 *
-	 * For each skin JSON, the parser creates a BitmapSkinRenderer with all
-	 * templates, layouts, and state mappings. The renderer is then registered
-	 * in the SkinContainer, replacing the NullSkinRenderer placeholder
-	 * created during loadElementDescription().
-	 *
-	 * The skin map is keyed by the skin's `id` field (e.g. "habbo_skin_frame"),
-	 * which matches the element descriptor's `asset` field.
-	 *
-	 * @param skins - Map of skin id → skin JSON data
-	 * @param atlases - Map of atlas asset name → ImageBitmap
-	 */
-    public loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void
+     * Loads skin assets and creates BitmapSkinRenderers from skin XML data.
+     *
+     * For each skin JSON, the parser creates a BitmapSkinRenderer with all
+     * templates, layouts, and state mappings. The renderer is then registered
+     * in the SkinContainer, replacing the NullSkinRenderer placeholder
+     * created during loadElementDescription().
+     *
+     * The skin map is keyed by the skin's `id` field (e.g. "habbo_skin_frame"),
+     * which matches the element descriptor's `asset` field.
+     *
+     * @param skins - Map of skin id → skin JSON data
+     * @param atlases - Map of atlas asset name → ImageBitmap
+     */
+    public loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void 
     {
         // Create the window renderer now that we have skins
-        if(!this._windowRenderer)
+        if(!this._windowRenderer) 
         {
             this._windowRenderer = new WindowRenderer(this._skinContainer);
             this._windowComposite = new WindowComposite((window: IWindow) => this._windowRenderer?.getDrawBufferForRenderable(window) ?? null);
@@ -1203,12 +1203,12 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
         let loaded = 0;
 
-        for(const [skinId, skinData] of skins)
+        for(const [skinId, skinData] of skins) 
         {
             // Find all element descriptors that reference this skin asset
             const descriptors = this._elementRegistry.getDescriptorsByAsset(skinId);
 
-            if(descriptors.length === 0)
+            if(descriptors.length === 0) 
             {
                 continue;
             }
@@ -1217,16 +1217,16 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             // AS3 creates a separate renderer per descriptor, filtered to its layout.
             const rendererCache = new Map<string, ReturnType<typeof BitmapSkinParser.parse>>();
 
-            for(const descriptor of descriptors)
+            for(const descriptor of descriptors) 
             {
                 const defaults = this._skinContainer.getDefaultAttributesByTypeAndStyle(descriptor.typeId, descriptor.style);
 
-                if(defaults)
+                if(defaults) 
                 {
                     const layoutFilter = (descriptor.layout && descriptor.layout !== 'null') ? descriptor.layout : '';
                     let renderer = rendererCache.get(layoutFilter);
 
-                    if(!renderer)
+                    if(!renderer) 
                     {
                         renderer = BitmapSkinParser.parse(skinData, atlases, layoutFilter);
                         rendererCache.set(layoutFilter, renderer);
@@ -1250,9 +1250,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Dispose the window manager.
-	 */
-    dispose(): void
+     * Dispose the window manager.
+     */
+    dispose(): void 
     {
         if(this._disposed) return;
 
@@ -1260,21 +1260,21 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this.removeMouseEventTracker(this);
         this._disposed = true;
 
-        if(this._habbletLinkHandler)
+        if(this._habbletLinkHandler) 
         {
             this.context.removeLinkEventTracker(this._habbletLinkHandler);
             this._habbletLinkHandler.dispose();
             this._habbletLinkHandler = null;
         }
 
-        if(this._elementPointerHandler)
+        if(this._elementPointerHandler) 
         {
             this._elementPointerHandler.dispose();
             this._elementPointerHandler = null;
         }
 
         // Dispose window contexts
-        for(const context of this._windowContextArray)
+        for(const context of this._windowContextArray) 
         {
             context.dispose();
         }
@@ -1283,7 +1283,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this._defaultContext = null;
 
         // Clean up service manager
-        if(this._serviceManager)
+        if(this._serviceManager) 
         {
             this._serviceManager.dispose();
             this._serviceManager = null;
@@ -1291,13 +1291,13 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
         this._widgetFactory = null;
 
-        if(this._windowComposite)
+        if(this._windowComposite) 
         {
             this._windowComposite.dispose();
             this._windowComposite = null;
         }
 
-        if(this._windowRenderer)
+        if(this._windowRenderer) 
         {
             this._windowRenderer.dispose();
             this._windowRenderer = null;
@@ -1305,13 +1305,13 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         }
 
         // Clean up resource manager
-        if(this._resourceManager)
+        if(this._resourceManager) 
         {
             this._resourceManager.dispose();
             this._resourceManager = null;
         }
 
-        if(this._hintManager)
+        if(this._hintManager) 
         {
             this._hintManager.dispose();
             this._hintManager = null;
@@ -1343,44 +1343,44 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         super.dispose();
     }
 
-    protected override initComponent(): void
+    protected override initComponent(): void 
     {
         this.initContexts();
         this.addMouseEventTracker(this);
         this.registerUpdateReceiver(this, 0);
 
-        if(!this._habbletLinkHandler)
+        if(!this._habbletLinkHandler) 
         {
             this._habbletLinkHandler = new HabbletLinkHandler(this);
             this.context.addLinkEventTracker(this._habbletLinkHandler);
         }
 
-        if(this._configuration?.isInitialized())
+        if(this._configuration?.isInitialized()) 
         {
             this.onConfigurationComplete();
         }
     }
 
-    private setCommunicationManager(manager: IHabboCommunicationManager | null): void
+    private setCommunicationManager(manager: IHabboCommunicationManager | null): void 
     {
         this._communication = manager;
     }
 
-    private onConfigurationComplete(): void
+    private onConfigurationComplete(): void 
     {
-        if(this._communication && !this._elementPointerHandler)
+        if(this._communication && !this._elementPointerHandler) 
         {
             this._elementPointerHandler = new ElementPointerHandler(this);
         }
     }
 
     /**
-	 * Initialize the 4 window context layers.
-	 *
-	 * Creates a WindowContext per layer, each with its own DesktopController
-	 * root and WindowParser for XML layout building.
-	 */
-    private initContexts(): void
+     * Initialize the 4 window context layers.
+     *
+     * Creates a WindowContext per layer, each with its own DesktopController
+     * root and WindowParser for XML layout building.
+     */
+    private initContexts(): void 
     {
         if(this._initialized) return;
 
@@ -1394,25 +1394,25 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         const resourceManager = new ResourceManager(this);
         const hintManager = new HintManager(this);
         const resizeHost = {
-            get width(): number
+            get width(): number 
             {
                 return window.innerWidth;
             },
-            get height(): number
+            get height(): number 
             {
                 return window.innerHeight;
             },
-            addEventListener: (type: string, listener: (event?: Event) => void): void =>
+            addEventListener: (type: string, listener: (event?: Event) => void): void => 
             {
                 window.addEventListener(type, listener);
 
                 // AS3: ModalDialog.onResize() is driven by Stage "resize" event
-                if(type === 'resize')
+                if(type === 'resize') 
                 {
                     window.addEventListener('resize', () => ModalDialog.onResize());
                 }
             },
-            removeEventListener: (type: string, listener: (event?: Event) => void): void =>
+            removeEventListener: (type: string, listener: (event?: Event) => void): void => 
             {
                 window.removeEventListener(type, listener);
             }
@@ -1423,7 +1423,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this._resourceManager = resourceManager;
         this._hintManager = hintManager;
 
-        for(let i = 0; i < HabboWindowManager.NUMBER_OF_CONTEXT_LAYERS; i++)
+        for(let i = 0; i < HabboWindowManager.NUMBER_OF_CONTEXT_LAYERS; i++) 
         {
             const context = new WindowContext(`layer_${i}`, factory, null, resizeHost);
 
@@ -1471,11 +1471,11 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         log.info(`Window manager initialized with ${HabboWindowManager.NUMBER_OF_CONTEXT_LAYERS} context layers (${Classes.getRegisteredTypes().length} types registered)`);
     }
 
-    private requireWidgetLayout(name: string, purpose: string): string
+    private requireWidgetLayout(name: string, purpose: string): string 
     {
         const layout = this._widgetLayouts.get(name);
 
-        if(!layout)
+        if(!layout) 
         {
             throw new Error(`Failed to initialize ${purpose}; missing layout "${name}"!`);
         }
@@ -1484,15 +1484,15 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     }
 
     /**
-	 * Get the maximum z-order in a given layer.
-	 */
-    private getMaxZOrder(layer: number): number
+     * Get the maximum z-order in a given layer.
+     */
+    private getMaxZOrder(layer: number): number 
     {
         let max = -1;
 
-        for(const instance of this._windows.values())
+        for(const instance of this._windows.values()) 
         {
-            if(instance.layer === layer && instance.zOrder > max)
+            if(instance.layer === layer && instance.zOrder > max) 
             {
                 max = instance.zOrder;
             }

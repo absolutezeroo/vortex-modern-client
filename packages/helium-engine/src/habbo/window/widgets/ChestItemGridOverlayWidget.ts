@@ -18,7 +18,7 @@ import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
  *
  * @see sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as
  */
-export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
+export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget 
 {
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::TYPE
     public static readonly TYPE: string = 'chest_overlay_grid';
@@ -36,14 +36,14 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     private _numberBitmap: IWindow | null = null;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::ChestItemGridOverlayWidget()
-    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
     {
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('chest_overlay_griditem') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('chest_overlay_griditem_xml') as IWindowContainer | null;
 
-        if(root)
+        if(root) 
         {
             this._root = root;
             this._plaqueBitmap = root.findChildByName('chest_plaque_bitmap') as unknown as IStaticBitmapWrapperWindow | null;
@@ -56,7 +56,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     private _disposed: boolean = false;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get disposed()
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
@@ -64,7 +64,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     private _contentsCount: number = 0;
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get contentsCount()
-    public get contentsCount(): number
+    public get contentsCount(): number 
     {
         return this._contentsCount;
     }
@@ -76,7 +76,7 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     // RarityItemGridOverlayWidget/LimitedItemGridOverlayWidget — IHabboWindowManager
     // does not currently expose raw asset lookup to widgets, so only the numeric
     // state is tracked here, matching the existing simplification in those siblings.
-    public set contentsCount(value: number)
+    public set contentsCount(value: number) 
     {
         this._contentsCount = value;
     }
@@ -84,42 +84,42 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
     private _color: string = '';
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get color()
-    public get color(): string
+    public get color(): string 
     {
         return this._color;
     }
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set color()
-    public set color(value: string)
+    public set color(value: string) 
     {
         this._color = value;
 
-        if(this._plaqueBitmap)
+        if(this._plaqueBitmap) 
         {
             this._plaqueBitmap.assetUri = `chest_overlay_${value}_plaque`;
         }
     }
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get iterator()
-    public get iterator(): IIterator
+    public get iterator(): IIterator 
     {
         return EmptyIterator.INSTANCE;
     }
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::get properties()
-    public get properties(): PropertyStruct[]
+    public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::set properties()
-    public set properties(_values: PropertyStruct[])
+    public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
     // AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/widgets/ChestItemGridOverlayWidget.as::dispose()
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
@@ -127,13 +127,13 @@ export class ChestItemGridOverlayWidget implements IChestItemGridOverlayWidget
         this._plaqueBitmap = null;
         this._numberBitmap = null;
 
-        if(this._root)
+        if(this._root) 
         {
             this._root.dispose();
             this._root = null;
         }
 
-        if(this._widgetWindow)
+        if(this._widgetWindow) 
         {
             this._widgetWindow.rootWindow = null;
         }

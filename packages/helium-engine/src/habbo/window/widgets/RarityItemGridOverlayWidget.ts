@@ -13,7 +13,7 @@ import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
  *
  * @see sources/win63_version/habbo/window/widgets/RarityItemGridOverlayWidget.as
  */
-export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget
+export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget 
 {
     public static readonly TYPE: string = 'rarity_item_overlay_grid';
 
@@ -23,14 +23,14 @@ export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget
     private _root: IWindowContainer | null = null;
     private _plaqueBitmap: IWindow | null = null;
 
-    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
     {
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('rarity_item_overlay_griditem') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('rarity_item_overlay_griditem_xml') as IWindowContainer | null;
 
-        if(root)
+        if(root) 
         {
             this._root = root;
             this._plaqueBitmap = root.findChildByName('rarity_item_overlay_plaque_background_bitmap');
@@ -41,34 +41,34 @@ export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget
 
     private _disposed: boolean = false;
 
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
     private _rarityLevel: number = 0;
 
-    public get rarityLevel(): number
+    public get rarityLevel(): number 
     {
         return this._rarityLevel;
     }
 
-    public set rarityLevel(value: number)
+    public set rarityLevel(value: number) 
     {
         this._rarityLevel = value;
     }
 
-    public get properties(): PropertyStruct[]
+    public get properties(): PropertyStruct[] 
     {
         return [];
     }
 
-    public set properties(_values: PropertyStruct[])
+    public set properties(_values: PropertyStruct[]) 
     {
         // AS3: properties setter is a no-op for this widget
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
@@ -76,13 +76,13 @@ export class RarityItemGridOverlayWidget implements IRarityItemGridOverlayWidget
 
         this._plaqueBitmap = null;
 
-        if(this._root)
+        if(this._root) 
         {
             this._root.dispose();
             this._root = null;
         }
 
-        if(this._widgetWindow)
+        if(this._widgetWindow) 
         {
             this._widgetWindow.rootWindow = null;
         }

@@ -60,27 +60,20 @@ import {RoomWidgetFactory} from './RoomWidgetFactory';
 
 const log = Logger.getLogger('RoomUI');
 
-export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
+export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
 {
-    private _windowManager: IHabboWindowManager | null = null;
     private _roomEngine: IRoomEngine | null = null;
     private _roomSessionManager: IRoomSessionManager | null = null;
     private _sessionDataManager: ISessionDataManager | null = null;
-    private _config: IHabboConfigurationManager | null = null;
-    private _localization: IHabboLocalizationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
     private _landingView: IHabboLandingView | null = null;
-    private _catalog: IHabboCatalog | null = null;
     private _habboTracking: IHabboTracking | null = null;
     private _habboGroupsManager: IHabboGroupsManager | null = null;
-    private _navigator: IHabboNavigator | null = null;
-    private _communicationManager: IHabboCommunicationManager | null = null;
     private _widgetFactory: RoomWidgetFactory;
     private _desktops: Map<string, RoomDesktop> = new Map();
     private _currentDesktop: RoomDesktop | null = null;
-    private _isInRoom: boolean = false;
 
-    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null) 
     {
         super(context, flags, assetLibrary);
 
@@ -88,12 +81,102 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         this.registerUpdateReceiver(this, 0);
     }
 
-    protected override get dependencies(): Array<ComponentDependency<any>>
+    private _windowManager: IHabboWindowManager | null = null;
+
+    /**
+     * The window manager, used by RoomWidgetFactory to construct widgets.
+     */
+    public get windowManager(): IHabboWindowManager | null 
+    {
+        return this._windowManager;
+    }
+
+    private _config: IHabboConfigurationManager | null = null;
+
+    /**
+     * The config manager, used to construct widgets that need it (e.g. infostand).
+     */
+    public get config(): IHabboConfigurationManager | null 
+    {
+        return this._config;
+    }
+
+    private _localization: IHabboLocalizationManager | null = null;
+
+    /**
+     * The localization manager, used by RoomWidgetFactory to construct widgets.
+     */
+    public get localization(): IHabboLocalizationManager | null 
+    {
+        return this._localization;
+    }
+
+    private _catalog: IHabboCatalog | null = null;
+
+    /**
+     * The catalog manager, used to construct widgets that need it (e.g. infostand).
+     */
+    public get catalog(): IHabboCatalog | null 
+    {
+        return this._catalog;
+    }
+
+    private _navigator: IHabboNavigator | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/RoomUI.as::get navigator()
+    public get navigator(): IHabboNavigator | null 
+    {
+        return this._navigator;
+    }
+
+    private _communicationManager: IHabboCommunicationManager | null = null;
+
+    /**
+     * The communication manager, used to construct widgets that need it (e.g. room tools).
+     */
+    public get communicationManager(): IHabboCommunicationManager | null 
+    {
+        return this._communicationManager;
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomUI.as::get desktop()
+    // AS3 tracks a single active room desktop (var_22); the TS port keys desktops
+    // by room identifier in a Map to support the underlying multi-session
+    // architecture, so this exposes "the most recently created desktop" as the
+
+    private _isInRoom: boolean = false;
+
+    /**
+     * Gets whether we are currently in a room.
+     */
+    public get isInRoom(): boolean 
+    {
+        return this._isInRoom;
+    }
+
+    // AS3-equivalent single current desktop.
+    public get desktop(): IRoomDesktop | null 
+    {
+        return this._currentDesktop;
+    }
+
+    /**
+     * Sets visibility of the active desktop.
+     */
+    public set visible(value: boolean) 
+    {
+        for(const desktop of this._desktops.values()) 
+        {
+            desktop.visible = value;
+        }
+    }
+
+    protected override get dependencies(): Array<ComponentDependency<any>> 
     {
         return [
             new ComponentDependency(
                 IID_HabboWindowManager,
-                (wm: IHabboWindowManager | null) =>
+                (wm: IHabboWindowManager | null) => 
                 {
                     this._windowManager = wm;
                 },
@@ -101,11 +184,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_RoomEngine,
-                (engine: IRoomEngine | null) =>
+                (engine: IRoomEngine | null) => 
                 {
                     this._roomEngine = engine;
 
-                    if(engine)
+                    if(engine) 
                     {
                         engine.events.on(RoomEngineEvent.REE_INITIALIZED, this.roomEventHandler, this);
                         engine.events.on(RoomEngineEvent.REE_DISPOSED, this.roomEventHandler, this);
@@ -125,11 +208,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_RoomSessionManager,
-                (mgr: IRoomSessionManager | null) =>
+                (mgr: IRoomSessionManager | null) => 
                 {
                     this._roomSessionManager = mgr;
 
-                    if(mgr)
+                    if(mgr) 
                     {
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
@@ -140,7 +223,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_SessionDataManager,
-                (sdm: ISessionDataManager | null) =>
+                (sdm: ISessionDataManager | null) => 
                 {
                     this._sessionDataManager = sdm;
                 },
@@ -148,7 +231,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboConfigurationManager,
-                (config: IHabboConfigurationManager | null) =>
+                (config: IHabboConfigurationManager | null) => 
                 {
                     this._config = config;
                 },
@@ -156,7 +239,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboLocalizationManager,
-                (loc: IHabboLocalizationManager | null) =>
+                (loc: IHabboLocalizationManager | null) => 
                 {
                     this._localization = loc;
                 },
@@ -164,11 +247,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboToolbar,
-                (toolbar: IHabboToolbar | null) =>
+                (toolbar: IHabboToolbar | null) => 
                 {
                     this._toolbar = toolbar;
 
-                    for(const desktop of this._desktops.values())
+                    for(const desktop of this._desktops.values()) 
                     {
                         desktop.toolbar = toolbar;
                     }
@@ -177,7 +260,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboLandingView,
-                (lv: IHabboLandingView | null) =>
+                (lv: IHabboLandingView | null) => 
                 {
                     this._landingView = lv;
                 },
@@ -185,11 +268,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboCatalog,
-                (catalog: IHabboCatalog | null) =>
+                (catalog: IHabboCatalog | null) => 
                 {
                     this._catalog = catalog;
 
-                    for(const desktop of this._desktops.values())
+                    for(const desktop of this._desktops.values()) 
                     {
                         desktop.catalog = catalog;
                     }
@@ -198,11 +281,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboTracking,
-                (tracking: IHabboTracking | null) =>
+                (tracking: IHabboTracking | null) => 
                 {
                     this._habboTracking = tracking;
 
-                    for(const desktop of this._desktops.values())
+                    for(const desktop of this._desktops.values()) 
                     {
                         desktop.habboTracking = tracking;
                     }
@@ -211,11 +294,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboGroupsManager,
-                (groupsManager: IHabboGroupsManager | null) =>
+                (groupsManager: IHabboGroupsManager | null) => 
                 {
                     this._habboGroupsManager = groupsManager;
 
-                    for(const desktop of this._desktops.values())
+                    for(const desktop of this._desktops.values()) 
                     {
                         desktop.habboGroupsManager = groupsManager;
                     }
@@ -224,11 +307,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboNavigator,
-                (navigator: IHabboNavigator | null) =>
+                (navigator: IHabboNavigator | null) => 
                 {
                     this._navigator = navigator;
 
-                    for(const desktop of this._desktops.values())
+                    for(const desktop of this._desktops.values()) 
                     {
                         desktop.navigator = navigator;
                     }
@@ -237,11 +320,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             ),
             new ComponentDependency(
                 IID_HabboCommunicationManager,
-                (communicationManager: IHabboCommunicationManager | null) =>
+                (communicationManager: IHabboCommunicationManager | null) => 
                 {
                     this._communicationManager = communicationManager;
 
-                    for(const desktop of this._desktops.values())
+                    for(const desktop of this._desktops.values()) 
                     {
                         desktop.communicationManager = communicationManager;
                     }
@@ -252,75 +335,14 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     /**
-	 * The catalog manager, used to construct widgets that need it (e.g. infostand).
-	 */
-    public get catalog(): IHabboCatalog | null
-    {
-        return this._catalog;
-    }
-
-    /**
-	 * The config manager, used to construct widgets that need it (e.g. infostand).
-	 */
-    public get config(): IHabboConfigurationManager | null
-    {
-        return this._config;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::get navigator()
-    public get navigator(): IHabboNavigator | null
-    {
-        return this._navigator;
-    }
-
-    /**
-	 * The communication manager, used to construct widgets that need it (e.g. room tools).
-	 */
-    public get communicationManager(): IHabboCommunicationManager | null
-    {
-        return this._communicationManager;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::get desktop()
-    // AS3 tracks a single active room desktop (var_22); the TS port keys desktops
-    // by room identifier in a Map to support the underlying multi-session
-    // architecture, so this exposes "the most recently created desktop" as the
-    // AS3-equivalent single current desktop.
-    public get desktop(): IRoomDesktop | null
-    {
-        return this._currentDesktop;
-    }
-
-    /**
-	 * The window manager, used by RoomWidgetFactory to construct widgets.
-	 */
-    public get windowManager(): IHabboWindowManager | null
-    {
-        return this._windowManager;
-    }
-
-    /**
-	 * The localization manager, used by RoomWidgetFactory to construct widgets.
-	 */
-    public get localization(): IHabboLocalizationManager | null
-    {
-        return this._localization;
-    }
-
-    protected override initComponent(): void
-    {
-        log.info('RoomUI initialized');
-    }
-
-    /**
-	 * Creates a RoomDesktop for the given session.
-	 */
-    public createDesktop(session: IRoomSession): IRoomDesktop
+     * Creates a RoomDesktop for the given session.
+     */
+    public createDesktop(session: IRoomSession): IRoomDesktop 
     {
         const identifier = this.getRoomIdentifier(session.roomId);
 
         // Dispose existing desktop for this room
-        if(this._desktops.has(identifier))
+        if(this._desktops.has(identifier)) 
         {
             this.disposeDesktop(identifier);
         }
@@ -345,7 +367,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.communicationManager = this._communicationManager;
 
         // Set the layout
-        desktop.layout = 'room_desktop_layout';
+        desktop.layout = 'room_desktop_layout_xml';
 
         // Initialize
         desktop.init();
@@ -360,9 +382,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     /**
-	 * Disposes a desktop by room identifier.
-	 */
-    public disposeDesktop(identifier: string): void
+     * Disposes a desktop by room identifier.
+     */
+    public disposeDesktop(identifier: string): void 
     {
         const desktop = this._desktops.get(identifier);
 
@@ -371,7 +393,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.dispose();
         this._desktops.delete(identifier);
 
-        if(this._currentDesktop === desktop)
+        if(this._currentDesktop === desktop) 
         {
             this._currentDesktop = null;
         }
@@ -380,81 +402,138 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     /**
-	 * Gets a desktop by room identifier.
-	 */
-    public getDesktop(identifier: string): IRoomDesktop | null
+     * Gets a desktop by room identifier.
+     */
+    public getDesktop(identifier: string): IRoomDesktop | null 
     {
         return this._desktops.get(identifier) ?? null;
     }
 
     /**
-	 * Gets the active canvas ID for a room (always 1).
-	 */
-    public getActiveCanvasId(_roomId: number): number
+     * Gets the active canvas ID for a room (always 1).
+     */
+    public getActiveCanvasId(_roomId: number): number 
     {
         return 1;
     }
 
     /**
-	 * Sets visibility of the active desktop.
-	 */
-    public set visible(value: boolean)
-    {
-        for(const desktop of this._desktops.values())
-        {
-            desktop.visible = value;
-        }
-    }
-
-    /**
-	 * Triggers bottom bar resize.
-	 */
+     * Triggers bottom bar resize.
+     */
     // AS3: sources/win63_version/habbo/ui/RoomUI.as::triggerbottomBarResize()
-    public triggerbottomBarResize(): void
+    public triggerbottomBarResize(): void 
     {
         this.bottomBarResizeHandler(new FriendBarResizeEvent());
     }
 
     /**
-	 * TS alias kept for existing callers; delegates to the AS3-named API.
-	 */
-    public triggerBottomBarResize(): void
+     * TS alias kept for existing callers; delegates to the AS3-named API.
+     */
+    public triggerBottomBarResize(): void 
     {
         this.triggerbottomBarResize();
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomUI.as::bottomBarResizeHandler()
-    private bottomBarResizeHandler(event: FriendBarResizeEvent): void
+    /**
+     * Called each frame. Updates all active desktops.
+     */
+    public update(_time: number): void 
     {
-        for(const desktop of this._desktops.values())
+        for(const desktop of this._desktops.values()) 
+        {
+            desktop.update();
+        }
+    }
+
+    /**
+     * Gets a desktop for a specific room ID.
+     */
+    public getDesktopForRoom(roomId: number): RoomDesktop | null 
+    {
+        const identifier = this.getRoomIdentifier(roomId);
+
+        return this._desktops.get(identifier) ?? null;
+    }
+
+    public override dispose(): void 
+    {
+        if(this._disposed) return;
+
+        this._disposed = true;
+
+        // Remove update receiver
+        this.removeUpdateReceiver(this);
+
+        // Remove event listeners
+        if(this._roomEngine) 
+        {
+            this._roomEngine.events.off(RoomEngineEvent.REE_INITIALIZED, this.roomEventHandler, this);
+            this._roomEngine.events.off(RoomEngineEvent.REE_DISPOSED, this.roomEventHandler, this);
+            this._roomEngine.events.off(RoomEngineEvent.REE_OBJECTS_INITIALIZED, this.roomEngineEventHandler, this);
+            this._roomEngine.events.off(RoomEngineEvent.REE_NORMAL_MODE, this.roomEngineEventHandler, this);
+            this._roomEngine.events.off(RoomEngineEvent.REE_GAME_MODE, this.roomEngineEventHandler, this);
+            this._roomEngine.events.off('RERCE_ROOM_COLOR', this.roomEventHandler, this);
+            this._roomEngine.events.off('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
+            this._roomEngine.events.off('REE_ROOM_ZOOM', this.roomEventHandler, this);
+        }
+
+        if(this._roomSessionManager) 
+        {
+            this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
+            this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
+            this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
+        }
+
+        // Dispose all desktops
+        for(const [identifier, desktop] of this._desktops) 
+        {
+            desktop.dispose();
+        }
+
+        this._desktops.clear();
+
+        // Dispose widget factory
+        this._widgetFactory.dispose();
+
+        super.dispose();
+    }
+
+    protected override initComponent(): void 
+    {
+        log.info('RoomUI initialized');
+    }
+
+    // AS3: sources/win63_version/habbo/ui/RoomUI.as::bottomBarResizeHandler()
+    private bottomBarResizeHandler(event: FriendBarResizeEvent): void 
+    {
+        for(const desktop of this._desktops.values()) 
         {
             desktop.processEvent(event);
         }
     }
 
     /**
-	 * Handles room session lifecycle events.
-	 */
-    private roomSessionStateEventHandler(event: RoomSessionEvent): void
+     * Handles room session lifecycle events.
+     */
+    private roomSessionStateEventHandler(event: RoomSessionEvent): void 
     {
-        switch(event.type)
+        switch(event.type) 
         {
-            case RoomSessionEvent.RSE_CREATED:
-            {
+            case RoomSessionEvent.RSE_CREATED: {
                 log.info(`Session created for room ${event.session.roomId}`);
 
                 this.createDesktop(event.session);
 
                 // For game sessions, hide toolbar and landing view immediately
                 // AS3: RoomUI.roomSessionStateEventHandler RSE_CREATED
-                if(event.session.isGameSession)
+                if(event.session.isGameSession) 
                 {
-                    if(this._toolbar)
+                    if(this._toolbar) 
                     {
                         this._toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_HIDDEN);
                     }
 
-                    if(this._landingView)
+                    if(this._landingView) 
                     {
                         this._landingView.disable();
                     }
@@ -463,19 +542,18 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case RoomSessionEvent.RSE_STARTED:
-            {
+            case RoomSessionEvent.RSE_STARTED: {
                 log.info(`Session started for room ${event.session.roomId}`);
 
                 // Switch toolbar to room view mode
                 // AS3: RoomUI.defineToolbarState()
-                if(this._toolbar)
+                if(this._toolbar) 
                 {
                     this._toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_ROOM_VIEW);
                 }
 
                 // Disable the landing view (hotel view page)
-                if(this._landingView)
+                if(this._landingView) 
                 {
                     this._landingView.disable();
                 }
@@ -483,8 +561,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case RoomSessionEvent.RSE_ENDED:
-            {
+            case RoomSessionEvent.RSE_ENDED: {
                 log.info(`Session ended for room ${event.session.roomId}`);
 
                 const identifier = this.getRoomIdentifier(event.session.roomId);
@@ -493,17 +570,17 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
                 this._isInRoom = false;
 
-                if(event.openLandingPage)
+                if(event.openLandingPage) 
                 {
                     // Restore toolbar to hotel view mode
                     // AS3: RoomUI RSE_ENDED -> toolbar state + landingView.activate()
-                    if(this._toolbar)
+                    if(this._toolbar) 
                     {
                         this._toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_HOTEL_VIEW);
                     }
 
                     // Re-enable landing view
-                    if(this._landingView)
+                    if(this._landingView) 
                     {
                         this._landingView.activate();
                     }
@@ -515,19 +592,18 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     /**
-	 * Handles major room engine events (initialized, disposed, color, zoom).
-	 */
-    private roomEventHandler(event: RoomEngineEvent): void
+     * Handles major room engine events (initialized, disposed, color, zoom).
+     */
+    private roomEventHandler(event: RoomEngineEvent): void 
     {
         const roomId = event.roomId;
         const identifier = this.getRoomIdentifier(roomId);
         const desktop = this._desktops.get(identifier);
 
-        switch(event.type)
+        switch(event.type) 
         {
-            case RoomEngineEvent.REE_INITIALIZED:
-            {
-                if(desktop)
+            case RoomEngineEvent.REE_INITIALIZED: {
+                if(desktop) 
                 {
                     const canvasId = this.getActiveCanvasId(roomId);
 
@@ -550,17 +626,15 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case RoomEngineEvent.REE_DISPOSED:
-            {
+            case RoomEngineEvent.REE_DISPOSED: {
                 this.disposeDesktop(identifier);
                 this._isInRoom = false;
 
                 break;
             }
 
-            case 'RERCE_ROOM_COLOR':
-            {
-                if(desktop)
+            case 'RERCE_ROOM_COLOR': {
+                if(desktop) 
                 {
                     const colorEvent = event as RoomEngineRoomColorEvent;
 
@@ -570,13 +644,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case 'ROHSLCEE_ROOM_BACKGROUND_COLOR':
-            {
-                if(desktop)
+            case 'ROHSLCEE_ROOM_BACKGROUND_COLOR': {
+                if(desktop) 
                 {
                     const hslEvent = event as RoomEngineHSLColorEnableEvent;
 
-                    if(hslEvent.enable)
+                    if(hslEvent.enable) 
                     {
                         desktop.setRoomBackgroundColor(hslEvent.hue, hslEvent.saturation, hslEvent.lightness);
                     }
@@ -585,8 +658,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case 'REE_ROOM_ZOOM':
-            {
+            case 'REE_ROOM_ZOOM': {
                 // Zoom event — handled by desktop
                 break;
             }
@@ -594,26 +666,24 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     /**
-	 * Handles room engine mode events (objects initialized, game mode toggle).
-	 */
-    private roomEngineEventHandler(event: RoomEngineEvent): void
+     * Handles room engine mode events (objects initialized, game mode toggle).
+     */
+    private roomEngineEventHandler(event: RoomEngineEvent): void 
     {
-        switch(event.type)
+        switch(event.type) 
         {
-            case RoomEngineEvent.REE_OBJECTS_INITIALIZED:
-            {
+            case RoomEngineEvent.REE_OBJECTS_INITIALIZED: {
                 log.debug(`Objects initialized for room ${event.roomId}`);
 
                 break;
             }
 
             case RoomEngineEvent.REE_NORMAL_MODE:
-            case RoomEngineEvent.REE_GAME_MODE:
-            {
+            case RoomEngineEvent.REE_GAME_MODE: {
                 const identifier = this.getRoomIdentifier(event.roomId);
                 const desktop = this._desktops.get(identifier);
 
-                if(desktop)
+                if(desktop) 
                 {
                     desktop.roomEngineEventHandler(event);
                 }
@@ -624,97 +694,25 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     /**
-	 * Routes room object events to the appropriate desktop.
-	 */
-    private roomObjectEventHandler(event: RoomEngineObjectEvent): void
+     * Routes room object events to the appropriate desktop.
+     */
+    private roomObjectEventHandler(event: RoomEngineObjectEvent): void 
     {
         const identifier = this.getRoomIdentifier(event.roomId);
         const desktop = this._desktops.get(identifier);
 
-        if(desktop)
+        if(desktop) 
         {
             desktop.roomObjectEventHandler(event);
         }
     }
 
     /**
-	 * Called each frame. Updates all active desktops.
-	 */
-    public update(_time: number): void
-    {
-        for(const desktop of this._desktops.values())
-        {
-            desktop.update();
-        }
-    }
-
-    /**
-	 * Converts a room ID to a room identifier string.
-	 * Matches AS3 pattern using "hard_coded_room_id".
-	 */
-    private getRoomIdentifier(roomId: number): string
+     * Converts a room ID to a room identifier string.
+     * Matches AS3 pattern using "hard_coded_room_id".
+     */
+    private getRoomIdentifier(roomId: number): string 
     {
         return `hard_coded_room_id_${roomId}`;
-    }
-
-    /**
-	 * Gets whether we are currently in a room.
-	 */
-    public get isInRoom(): boolean
-    {
-        return this._isInRoom;
-    }
-
-    /**
-	 * Gets a desktop for a specific room ID.
-	 */
-    public getDesktopForRoom(roomId: number): RoomDesktop | null
-    {
-        const identifier = this.getRoomIdentifier(roomId);
-
-        return this._desktops.get(identifier) ?? null;
-    }
-
-    public override dispose(): void
-    {
-        if(this._disposed) return;
-
-        this._disposed = true;
-
-        // Remove update receiver
-        this.removeUpdateReceiver(this);
-
-        // Remove event listeners
-        if(this._roomEngine)
-        {
-            this._roomEngine.events.off(RoomEngineEvent.REE_INITIALIZED, this.roomEventHandler, this);
-            this._roomEngine.events.off(RoomEngineEvent.REE_DISPOSED, this.roomEventHandler, this);
-            this._roomEngine.events.off(RoomEngineEvent.REE_OBJECTS_INITIALIZED, this.roomEngineEventHandler, this);
-            this._roomEngine.events.off(RoomEngineEvent.REE_NORMAL_MODE, this.roomEngineEventHandler, this);
-            this._roomEngine.events.off(RoomEngineEvent.REE_GAME_MODE, this.roomEngineEventHandler, this);
-            this._roomEngine.events.off('RERCE_ROOM_COLOR', this.roomEventHandler, this);
-            this._roomEngine.events.off('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
-            this._roomEngine.events.off('REE_ROOM_ZOOM', this.roomEventHandler, this);
-        }
-
-        if(this._roomSessionManager)
-        {
-            this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
-            this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
-            this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
-        }
-
-        // Dispose all desktops
-        for(const [identifier, desktop] of this._desktops)
-        {
-            desktop.dispose();
-        }
-
-        this._desktops.clear();
-
-        // Dispose widget factory
-        this._widgetFactory.dispose();
-
-        super.dispose();
     }
 }

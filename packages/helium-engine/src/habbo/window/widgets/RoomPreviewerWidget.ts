@@ -23,7 +23,7 @@ import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
  *
  * @see sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as
  */
-export class RoomPreviewerWidget implements IRoomPreviewerWidget
+export class RoomPreviewerWidget implements IRoomPreviewerWidget 
 {
     public static readonly TYPE: string = 'room_previewer';
 
@@ -38,15 +38,13 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
-    private _roomPreviewer: RoomPreviewer | null = null;
     private _canvasWrapper: IWindow | null = null;
     private _canvasDisplayObject: Container | null = null;
-
     private _onClickRoomViewBound: Function;
     private _onResizeCanvasBound: Function;
-    private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
+    private _roomEngine: IRoomEngine | null = null;
 
-    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
     {
         this._widgetWindow = window;
         this._windowManager = windowManager;
@@ -54,9 +52,9 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         this._onClickRoomViewBound = this.onClickRoomView.bind(this);
         this._onResizeCanvasBound = this.onResizeCanvas.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('room_previewer') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('room_previewer_xml') as IWindowContainer | null;
 
-        if(root)
+        if(root) 
         {
             this._root = root;
 
@@ -71,132 +69,28 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         }
     }
 
-    private _roomEngine: IRoomEngine | null = null;
+    private _roomPreviewer: RoomPreviewer | null = null;
 
-    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as constructor
-    private createRoomPreviewer(root: IWindowContainer): void
+    public get roomPreviewer(): RoomPreviewer | null 
     {
-        const roomEngine = this._windowManager?.roomEngine;
-
-        if(!roomEngine) return;
-
-        RoomPreviewerWidget._roomIdCounter++;
-
-        const previewRoomId = RoomPreviewerWidget._roomIdCounter;
-
-        this._roomPreviewer = new RoomPreviewer(roomEngine, previewRoomId);
-        this._roomPreviewer.createRoomForPreviews();
-
-        const canvasWrapper = root.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
-
-        if(!canvasWrapper) return;
-
-        const canvas = this._roomPreviewer.getRoomCanvas(root.width, root.height);
-
-        if(canvas)
-        {
-            canvasWrapper.setDisplayObject(canvas);
-            this._canvasDisplayObject = canvas;
-            this._canvasWrapper = canvasWrapper as unknown as IWindow;
-            this._roomEngine = roomEngine;
-
-            // TS deviation: RoomEngine.createRoomCanvas() parents the canvas
-            // directly onto the root PixiJS stage (see RoomEngine.ts), not into
-            // this widget's own window tree — so its screen position/visibility
-            // has to be synced continuously to the wrapper window's global state
-            // (window events alone can't catch every case, e.g. an ancestor
-            // window being hidden), exactly like RoomDesktop does for the main
-            // room view via a per-frame position sync.
-            roomEngine.registerCanvasSyncCallback(this._syncCanvasPositionBound);
-            this.syncCanvasPosition();
-        }
-    }
-
-    private syncCanvasPosition(): void
-    {
-        if(!this._canvasDisplayObject || !this._canvasWrapper) return;
-
-        const globalPosition = {x: 0, y: 0};
-
-        this._canvasWrapper.getGlobalPosition(globalPosition);
-
-        // AS3 sets the canvas's own x/y to offsetX/offsetY (RoomPreviewerWidget.as::refresh()),
-        // which works there because the canvas is a child of this widget's window. Here it's
-        // parented directly onto the root stage (see deviation note below), so the offset has
-        // to be folded into the same global-position assignment instead of applied separately.
-        this._canvasDisplayObject.x = globalPosition.x + this._offsetX;
-        this._canvasDisplayObject.y = globalPosition.y + this._offsetY;
-
-        // TS deviation: this canvas and the main room view's canvas both get
-        // parented directly onto the same shared PixiJS stage (see file header
-        // comment / RoomEngine.createRoomCanvas()), so their relative stacking
-        // depends purely on PixiJS child order, not window z-order. If the main
-        // room view's canvas is (re)created after this one — e.g. entering a
-        // room while the inventory/preview is already open — it ends up on top
-        // and visually covers the preview wherever their screen rects overlap.
-        // Since this widget is always logically a floating UI element above the
-        // room view, re-assert front-of-stage every frame here.
-        const stage = this._canvasDisplayObject.parent;
-
-        if(stage && stage.children[stage.children.length - 1] !== this._canvasDisplayObject)
-        {
-            stage.setChildIndex(this._canvasDisplayObject, stage.children.length - 1);
-        }
-
-        // Flash semantics: a DisplayObject parented into the window is only
-        // shown when the window AND all its ancestors are visible. The canvas
-        // lives on the root PixiJS stage here, so replicate that by walking
-        // the wrapper's parent chain.
-        //
-        // Bug fix: switching inventory tabs detaches the inactive tab's whole
-        // container via removeChild() (InventoryMainView.setViewToCategory())
-        // rather than setting .visible = false on it. Walking upward from a
-        // detached subtree hits a null parent without ever finding a
-        // window.visible === false, so this used to always conclude "visible"
-        // — leaving the 3D preview floating on screen for a tab that's no
-        // longer attached anywhere. Require the walk to actually reach the
-        // real desktop root; stopping short of it means the window is
-        // detached, which is exactly the invisible case Flash semantics need.
-        const desktop = this._windowManager?.getDesktop(1) ?? null;
-        let window: IWindow | null = this._canvasWrapper;
-        let visible = true;
-        let reachedDesktop = false;
-
-        while(window)
-        {
-            if(!window.visible)
-            {
-                visible = false;
-                break;
-            }
-
-            if(window === desktop)
-            {
-                reachedDesktop = true;
-                break;
-            }
-
-            window = window.parent;
-        }
-
-        this._canvasDisplayObject.visible = visible && reachedDesktop;
+        return this._roomPreviewer;
     }
 
     private _disposed: boolean = false;
 
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
     private _scale: number = 64;
 
-    public get scale(): number
+    public get scale(): number 
     {
         return this._scale;
     }
 
-    public set scale(value: number)
+    public set scale(value: number) 
     {
         this._scale = value;
         this.refresh();
@@ -204,12 +98,12 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private _offsetX: number = 0;
 
-    public get offsetX(): number
+    public get offsetX(): number 
     {
         return this._offsetX;
     }
 
-    public set offsetX(value: number)
+    public set offsetX(value: number) 
     {
         this._offsetX = value;
         this.refresh();
@@ -217,12 +111,12 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private _offsetY: number = 0;
 
-    public get offsetY(): number
+    public get offsetY(): number 
     {
         return this._offsetY;
     }
 
-    public set offsetY(value: number)
+    public set offsetY(value: number) 
     {
         this._offsetY = value;
         this.refresh();
@@ -230,23 +124,18 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
     private _zoom: number = 1;
 
-    public get zoom(): number
+    public get zoom(): number 
     {
         return this._zoom;
     }
 
-    public set zoom(value: number)
+    public set zoom(value: number) 
     {
         this._zoom = value;
         this.refresh();
     }
 
-    public get roomPreviewer(): RoomPreviewer | null
-    {
-        return this._roomPreviewer;
-    }
-
-    public get properties(): PropertyStruct[]
+    public get properties(): PropertyStruct[] 
     {
         if(this._disposed) return [];
 
@@ -258,11 +147,11 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         ];
     }
 
-    public set properties(values: PropertyStruct[])
+    public set properties(values: PropertyStruct[]) 
     {
-        for(const prop of values)
+        for(const prop of values) 
         {
-            switch(prop.key)
+            switch(prop.key) 
             {
                 case RoomPreviewerWidget.SCALE_KEY:
                     this.scale = Number(prop.value);
@@ -281,7 +170,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     }
 
     // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::showPreview()
-    public showPreview(image: HTMLCanvasElement): void
+    public showPreview(image: HTMLCanvasElement): void 
     {
         const wrapper = this._root?.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
 
@@ -295,7 +184,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         // straight into the window's own composited buffer at the right
         // position automatically, so once we're showing one, the live canvas
         // and its sync callback can go entirely.
-        if(this._canvasDisplayObject)
+        if(this._canvasDisplayObject) 
         {
             this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
             this._canvasDisplayObject.parent?.removeChild(this._canvasDisplayObject);
@@ -322,7 +211,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         wrapper.setDisplayObject(scaled);
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
@@ -333,7 +222,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         this._canvasWrapper = null;
         this._canvasDisplayObject = null;
 
-        if(this._root)
+        if(this._root) 
         {
             this._root.removeEventListener(WindowMouseEvent.CLICK, this._onClickRoomViewBound);
             this._root.removeEventListener(WindowEvent.WE_RESIZE, this._onResizeCanvasBound);
@@ -341,7 +230,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
             this._root = null;
         }
 
-        if(this._widgetWindow)
+        if(this._widgetWindow) 
         {
             this._widgetWindow.rootWindow = null;
         }
@@ -352,23 +241,134 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         this._roomPreviewer = null;
     }
 
+    private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
+
+    // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as constructor
+    private createRoomPreviewer(root: IWindowContainer): void 
+    {
+        const roomEngine = this._windowManager?.roomEngine;
+
+        if(!roomEngine) return;
+
+        RoomPreviewerWidget._roomIdCounter++;
+
+        const previewRoomId = RoomPreviewerWidget._roomIdCounter;
+
+        this._roomPreviewer = new RoomPreviewer(roomEngine, previewRoomId);
+        this._roomPreviewer.createRoomForPreviews();
+
+        const canvasWrapper = root.findChildByName('room_canvas') as unknown as IDisplayObjectWrapper | null;
+
+        if(!canvasWrapper) return;
+
+        const canvas = this._roomPreviewer.getRoomCanvas(root.width, root.height);
+
+        if(canvas) 
+        {
+            canvasWrapper.setDisplayObject(canvas);
+            this._canvasDisplayObject = canvas;
+            this._canvasWrapper = canvasWrapper as unknown as IWindow;
+            this._roomEngine = roomEngine;
+
+            // TS deviation: RoomEngine.createRoomCanvas() parents the canvas
+            // directly onto the root PixiJS stage (see RoomEngine.ts), not into
+            // this widget's own window tree — so its screen position/visibility
+            // has to be synced continuously to the wrapper window's global state
+            // (window events alone can't catch every case, e.g. an ancestor
+            // window being hidden), exactly like RoomDesktop does for the main
+            // room view via a per-frame position sync.
+            roomEngine.registerCanvasSyncCallback(this._syncCanvasPositionBound);
+            this.syncCanvasPosition();
+        }
+    }
+
+    private syncCanvasPosition(): void 
+    {
+        if(!this._canvasDisplayObject || !this._canvasWrapper) return;
+
+        const globalPosition = {x: 0, y: 0};
+
+        this._canvasWrapper.getGlobalPosition(globalPosition);
+
+        // AS3 sets the canvas's own x/y to offsetX/offsetY (RoomPreviewerWidget.as::refresh()),
+        // which works there because the canvas is a child of this widget's window. Here it's
+        // parented directly onto the root stage (see deviation note below), so the offset has
+        // to be folded into the same global-position assignment instead of applied separately.
+        this._canvasDisplayObject.x = globalPosition.x + this._offsetX;
+        this._canvasDisplayObject.y = globalPosition.y + this._offsetY;
+
+        // TS deviation: this canvas and the main room view's canvas both get
+        // parented directly onto the same shared PixiJS stage (see file header
+        // comment / RoomEngine.createRoomCanvas()), so their relative stacking
+        // depends purely on PixiJS child order, not window z-order. If the main
+        // room view's canvas is (re)created after this one — e.g. entering a
+        // room while the inventory/preview is already open — it ends up on top
+        // and visually covers the preview wherever their screen rects overlap.
+        // Since this widget is always logically a floating UI element above the
+        // room view, re-assert front-of-stage every frame here.
+        const stage = this._canvasDisplayObject.parent;
+
+        if(stage && stage.children[stage.children.length - 1] !== this._canvasDisplayObject) 
+        {
+            stage.setChildIndex(this._canvasDisplayObject, stage.children.length - 1);
+        }
+
+        // Flash semantics: a DisplayObject parented into the window is only
+        // shown when the window AND all its ancestors are visible. The canvas
+        // lives on the root PixiJS stage here, so replicate that by walking
+        // the wrapper's parent chain.
+        //
+        // Bug fix: switching inventory tabs detaches the inactive tab's whole
+        // container via removeChild() (InventoryMainView.setViewToCategory())
+        // rather than setting .visible = false on it. Walking upward from a
+        // detached subtree hits a null parent without ever finding a
+        // window.visible === false, so this used to always conclude "visible"
+        // — leaving the 3D preview floating on screen for a tab that's no
+        // longer attached anywhere. Require the walk to actually reach the
+        // real desktop root; stopping short of it means the window is
+        // detached, which is exactly the invisible case Flash semantics need.
+        const desktop = this._windowManager?.getDesktop(1) ?? null;
+        let window: IWindow | null = this._canvasWrapper;
+        let visible = true;
+        let reachedDesktop = false;
+
+        while(window) 
+        {
+            if(!window.visible) 
+            {
+                visible = false;
+                break;
+            }
+
+            if(window === desktop) 
+            {
+                reachedDesktop = true;
+                break;
+            }
+
+            window = window.parent;
+        }
+
+        this._canvasDisplayObject.visible = visible && reachedDesktop;
+    }
+
     // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::refresh()
-    private refresh(): void
+    private refresh(): void 
     {
         if(!this._roomPreviewer || !this._roomPreviewer.isRoomEngineReady) return;
 
-        if(this._scale === 64)
+        if(this._scale === 64) 
         {
             this._roomPreviewer.zoomIn();
         }
-        else
+        else 
         {
             this._roomPreviewer.zoomOut();
         }
 
         this._roomPreviewer.addViewOffset = {x: this._offsetX, y: this._offsetY};
 
-        if(this._canvasDisplayObject)
+        if(this._canvasDisplayObject) 
         {
             this._canvasDisplayObject.scale.x = this._zoom;
             this._canvasDisplayObject.scale.y = this._zoom;
@@ -378,19 +378,19 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
     }
 
     // AS3: sources/win63_version/habbo/window/widgets/RoomPreviewerWidget.as::onClickRoomView()
-    private onClickRoomView(): void
+    private onClickRoomView(): void 
     {
         this._roomPreviewer?.changeRoomObjectState();
     }
 
     /**
-	 * Handle resize of the room preview canvas.
-	 *
-	 * In AS3, updates the RoomPreviewer canvas dimensions.
-	 */
-    private onResizeCanvas(): void
+     * Handle resize of the room preview canvas.
+     *
+     * In AS3, updates the RoomPreviewer canvas dimensions.
+     */
+    private onResizeCanvas(): void 
     {
-        if(this._root && this._roomPreviewer)
+        if(this._root && this._roomPreviewer) 
         {
             this._roomPreviewer.modifyRoomCanvas(this._root.width, this._root.height);
             this.syncCanvasPosition();

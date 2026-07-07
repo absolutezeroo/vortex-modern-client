@@ -26,25 +26,31 @@ const MARGIN = 12;
 const TAG_COLOR = 1800619;
 const TAG_COLOR_HOVER = 4696294;
 
-export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
+export class RoomToolsInfoCtrl extends RoomToolsCtrlBase 
 {
     private _tags: string[] = [];
     private _motion: Motion | null = null;
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::RoomToolsInfoCtrl()
-    constructor(widget: RoomToolsWidget, windowManager: IHabboWindowManager, assets: IAssetLibrary | null)
+    constructor(widget: RoomToolsWidget, windowManager: IHabboWindowManager, assets: IAssetLibrary | null) 
     {
         super(widget, windowManager, assets);
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::showRoomInfo()
-    public showRoomInfo(_isOwner: boolean, roomName: string, ownerLine: string, tags: string[] | null): void
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::get right()
+    public get right(): number 
     {
-        if(!this._window)
-        {
-            this._window = this._windowManager.buildWidgetLayout('room_tools_info') as IWindowContainer | null;
+        return this._window ? this._window.width + this._window.x : 0;
+    }
 
-            if(this._window)
+    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::showRoomInfo()
+    public showRoomInfo(_isOwner: boolean, roomName: string, ownerLine: string, tags: string[] | null): void 
+    {
+        if(!this._window) 
+        {
+            this._window = this._windowManager.buildWidgetLayout('room_tools_info_xml') as IWindowContainer | null;
+
+            if(this._window) 
             {
                 this._window.procedure = this.onWindowEvent;
                 this._window.addEventListener(WindowMouseEvent.OVER, this.onWindowEvent);
@@ -72,14 +78,14 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         if(tag1Border) tag1Border.visible = tags.length >= 1;
         if(tag2Border) tag2Border.visible = tags.length >= 2;
 
-        if(tags.length >= 1)
+        if(tags.length >= 1) 
         {
             const tag1 = this._window.findChildByName('tag1');
 
             if(tag1) tag1.caption = `#${this.trimTag(tags[0])}`;
         }
 
-        if(tags.length >= 2)
+        if(tags.length >= 2) 
         {
             const tag2 = this._window.findChildByName('tag2');
 
@@ -90,7 +96,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::updatePosition()
-    public updatePosition(): void
+    public updatePosition(): void 
     {
         if(!this._window) return;
 
@@ -99,7 +105,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
 
         const chatInputY = this._widget?.getChatInputY() ?? 0;
 
-        if(chatInputY < y + this._window.height)
+        if(chatInputY < y + this._window.height) 
         {
             y = chatInputY - this._window.height - MARGIN;
         }
@@ -108,26 +114,26 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::hide()
-    public hide(): void
+    public hide(): void 
     {
         this.cancelCurrentMotion();
         this._collapsed = true;
         this.updatePosition();
 
-        if(this._window && this._window.visible)
+        if(this._window && this._window.visible) 
         {
             this._window.visible = false;
         }
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::setCollapsed()
-    public override setCollapsed(value: boolean): void
+    public override setCollapsed(value: boolean): void 
     {
         if(this._collapsed === value) return;
 
         this._collapsed = value;
 
-        if(!this._collapsed)
+        if(!this._collapsed) 
         {
             this.collapseAfterDelay();
         }
@@ -144,7 +150,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::setToolbarCollapsed()
-    public setToolbarCollapsed(value: boolean): void
+    public setToolbarCollapsed(value: boolean): void 
     {
         if(!this._window) return;
 
@@ -156,9 +162,9 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::cancelCurrentMotion()
-    private cancelCurrentMotion(): void
+    private cancelCurrentMotion(): void 
     {
-        if(this._motion !== null)
+        if(this._motion !== null) 
         {
             Motions.removeMotion(this._motion);
             this._motion = null;
@@ -166,20 +172,20 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::motionComplete()
-    private motionComplete = (): void =>
+    private motionComplete = (): void => 
     {
         this._motion = null;
 
-        if(this._collapsed && this._window)
+        if(this._collapsed && this._window) 
         {
             this._window.visible = false;
         }
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::trimTag()
-    private trimTag(tag: string): string
+    private trimTag(tag: string): string 
     {
-        if(tag.length > 16)
+        if(tag.length > 16) 
         {
             return `${tag.substring(0, 16)}...`;
         }
@@ -188,16 +194,16 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::onWindowEvent()
-    private onWindowEvent = (event: WindowEvent, target: IWindow): void =>
+    private onWindowEvent = (event: WindowEvent, target: IWindow): void => 
     {
-        if(event.type === 'WE_PARENT_RESIZED')
+        if(event.type === 'WE_PARENT_RESIZED') 
         {
             this.updatePosition();
 
             return;
         }
 
-        switch(event.type)
+        switch(event.type) 
         {
             case WindowMouseEvent.CLICK:
                 this.setCollapsed(true);
@@ -215,13 +221,13 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
         let tagLabel: ITextWindow | null = null;
         let tagValue = '';
 
-        if(target.name === 'tag1_region')
+        if(target.name === 'tag1_region') 
         {
             tagLabel = this._window?.findChildByName('tag1') as ITextWindow | null;
             tagValue = this._tags[0] ?? '';
         }
 
-        if(target.name === 'tag2_region')
+        if(target.name === 'tag2_region') 
         {
             tagLabel = this._window?.findChildByName('tag2') as ITextWindow | null;
             tagValue = this._tags[1] ?? '';
@@ -229,7 +235,7 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
 
         if(!tagLabel) return;
 
-        switch(event.type)
+        switch(event.type) 
         {
             case WindowMouseEvent.OVER:
                 tagLabel.textColor = TAG_COLOR_HOVER;
@@ -242,10 +248,4 @@ export class RoomToolsInfoCtrl extends RoomToolsCtrlBase
                 break;
         }
     };
-
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsInfoCtrl.as::get right()
-    public get right(): number
-    {
-        return this._window ? this._window.width + this._window.x : 0;
-    }
 }

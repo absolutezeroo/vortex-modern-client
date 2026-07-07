@@ -12,7 +12,7 @@ import {PropertyStruct} from '@core/window/utils/PropertyStruct';
  *
  * @see sources/win63_version/habbo/window/widgets/RarityItemPreviewOverlayWidget.as
  */
-export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlayWidget
+export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlayWidget 
 {
     public static readonly TYPE: string = 'rarity_item_overlay_preview';
 
@@ -23,14 +23,14 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
 
     private _root: IWindowContainer | null = null;
 
-    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
     {
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('rarity_item_overlay_preview') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('rarity_item_overlay_preview_xml') as IWindowContainer | null;
 
-        if(root)
+        if(root) 
         {
             this._root = root;
 
@@ -40,24 +40,24 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
 
     private _disposed: boolean = false;
 
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
     private _rarityLevel: number = 0;
 
-    public get rarityLevel(): number
+    public get rarityLevel(): number 
     {
         return this._rarityLevel;
     }
 
-    public set rarityLevel(value: number)
+    public set rarityLevel(value: number) 
     {
         this._rarityLevel = value;
     }
 
-    public get properties(): PropertyStruct[]
+    public get properties(): PropertyStruct[] 
     {
         if(this._disposed) return [];
 
@@ -66,30 +66,30 @@ export class RarityItemPreviewOverlayWidget implements IRarityItemPreviewOverlay
         ];
     }
 
-    public set properties(values: PropertyStruct[])
+    public set properties(values: PropertyStruct[]) 
     {
-        for(const prop of values)
+        for(const prop of values) 
         {
-            if(prop.key === RarityItemPreviewOverlayWidget.RARITY_LEVEL_KEY)
+            if(prop.key === RarityItemPreviewOverlayWidget.RARITY_LEVEL_KEY) 
             {
                 this.rarityLevel = Number(prop.value);
             }
         }
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
         this._disposed = true;
 
-        if(this._root)
+        if(this._root) 
         {
             this._root.dispose();
             this._root = null;
         }
 
-        if(this._widgetWindow)
+        if(this._widgetWindow) 
         {
             this._widgetWindow.rootWindow = null;
         }
