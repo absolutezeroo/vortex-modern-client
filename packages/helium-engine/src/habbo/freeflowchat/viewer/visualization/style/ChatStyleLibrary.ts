@@ -2,7 +2,7 @@ import {Point, Rectangle} from 'pixi.js';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IDisposable} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
-import type {ChatTextFormat, IChatStyle} from '@habbo/freeflowchat/style/IChatStyle';
+import type {ChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
 import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
 import type {ChatLinkStyleSheet} from './IChatStyleInternal';
 import {ChatStyle, type ChatStyleDescriptor} from './ChatStyle';
@@ -269,7 +269,10 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyle()
-    getStyle(styleId: number): IChatStyle | null
+    // Narrower return type than IChatStyleLibrary's (ChatStyle also implements
+    // IChatStyleInternal) — ChatBubbleFactory holds this concrete class and needs
+    // the fuller shape (pointer margins, emblem, styleSheet...) to build a bubble.
+    getStyle(styleId: number): ChatStyle | null
     {
         return this._styles.get(styleId) ?? this._styles.get(ChatStyleLibrary._DEFAULT_STYLE_ID) ?? null;
     }

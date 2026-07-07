@@ -103,6 +103,13 @@ export class ChatItem
         return this._style;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::applySpecialChatContent()
+    // overrides style for special system messages (handitem, mutetime, pet events, ...).
+    set style(value: number)
+    {
+        this._style = value;
+    }
+
     private _links: string[];
 
     get links(): string[]

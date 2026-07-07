@@ -3,10 +3,15 @@ import {NineSliceSprite, type Container, type Rectangle, Texture} from 'pixi.js'
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
+import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import type {IAssetLibrary} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
 import type {IFreeFlowChatRoomSessionManager, IHabboFreeFlowChat} from './IHabboFreeFlowChat';
 import {ChatEventHandler} from './data/ChatEventHandler';
 import {RoomSessionEventHandler} from './data/RoomSessionEventHandler';
@@ -14,6 +19,7 @@ import {ChatHistoryBuffer} from './history/ChatHistoryBuffer';
 import type {ChatItem} from './data/ChatItem';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
+import {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -77,6 +83,35 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     get chatHistory(): ChatHistoryBuffer | null
     {
         return this._chatHistory;
+    }
+
+    private _roomEngine: IRoomEngine | null = null;
+
+    get roomEngine(): IRoomEngine | null
+    {
+        return this._roomEngine;
+    }
+
+    private _localizations: IHabboLocalizationManager | null = null;
+
+    get localizations(): IHabboLocalizationManager | null
+    {
+        return this._localizations;
+    }
+
+    private _chatBubbleFactory: ChatBubbleFactory | null = null;
+
+    get chatStyleLibrary(): IChatStyleLibrary | null
+    {
+        return this._chatBubbleFactory?.chatStyleLibrary ?? null;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
+    // TODO(AS3): AS3 derives this from `roomChatSettings.mode === 1` (an unported
+    // user-preference struct) — always false until that lands.
+    get roomChatBorderLimited(): boolean
+    {
+        return false;
     }
 
     private _preferedChatStyle: number = 1;
@@ -161,6 +196,22 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                     // Cast to IFreeFlowChatRoomSessionManager to access sessionEvents
                     // (the correct EventEmitter for session lifecycle events, not Component.events)
                     this._roomSessionManager = manager as IFreeFlowChatRoomSessionManager | null;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomEngine,
+                (manager: IRoomEngine | null) =>
+                {
+                    this._roomEngine = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboLocalizationManager,
+                (manager: IHabboLocalizationManager | null) =>
+                {
+                    this._localizations = manager;
                 },
                 false
             ),
@@ -313,11 +364,19 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
             this._chatHistory = null;
         }
 
+        if(this._chatBubbleFactory)
+        {
+            this._chatBubbleFactory.dispose();
+            this._chatBubbleFactory = null;
+        }
+
         this._chatEvents.removeAllListeners();
 
         this._communication = null;
         this._sessionDataManager = null;
         this._roomSessionManager = null;
+        this._roomEngine = null;
+        this._localizations = null;
         this._isInitialized = false;
 
         super.dispose();
@@ -336,6 +395,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         this._chatHistory = new ChatHistoryBuffer();
         this._chatEventHandler = new ChatEventHandler(this);
         this._roomSessionEventHandler = new RoomSessionEventHandler(this);
+        this._chatBubbleFactory = new ChatBubbleFactory(this);
         this._isInitialized = true;
 
         log.info('HabboFreeFlowChat initialized');
