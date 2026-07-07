@@ -29,6 +29,7 @@ export class ThemeManager implements IThemeManager
         Theme.NONE,
         Theme.VOLTER,
         Theme.UBUNTU,
+        Theme.MISC,
         Theme.ILLUMINA_LIGHT,
         Theme.ILLUMINA_DARK,
         Theme.ICON,
@@ -62,6 +63,8 @@ export class ThemeManager implements IThemeManager
         // AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("auto_size","none",["none","left","center","right"])
         properties.addEnumeration('auto_size', 'none', ['none', 'left', 'center', 'right']);
         properties.addString('bitmap_asset_name', '');
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("fill_mode","stretch",["stretch","tile","center","cover","contain"])
+        properties.addEnumeration('fill_mode', 'stretch', ['stretch', 'tile', 'center', 'cover', 'contain']);
         properties.addBoolean('border', false);
         properties.addHex('border_color', 0);
         properties.addBoolean('condense_white', false);
@@ -73,7 +76,13 @@ export class ThemeManager implements IThemeManager
         properties.addBoolean('editable', true);
         properties.addHex('etching_color', 0);
         properties.addBoolean('fit_size_to_contents', false);
+        properties.addBoolean('flip_x', false);
+        properties.addBoolean('flip_y', false);
         properties.addBoolean('focus_capturer', false);
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addHex("color1",4294967295)/addHex("color2",4278190080)/addEnumeration("mode","linear",["linear","radial"])
+        properties.addHex('color1', 0xFFFFFFFF);
+        properties.addHex('color2', 0xFF000000);
+        properties.addEnumeration('mode', 'linear', ['linear', 'radial']);
         properties.addBoolean('greyscale', false);
         // AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("grid_fit_type","pixel",["pixel","none","subpixel"])
         properties.addEnumeration('grid_fit_type', 'pixel', ['pixel', 'none', 'subpixel']);
@@ -99,6 +108,7 @@ export class ThemeManager implements IThemeManager
             'bottom left', 'bottom center', 'bottom right',
         ]);
         properties.addInt('pointer_offset', 0);
+        properties.addNumber('radius', 0);
         properties.addBoolean('resize_on_item_update', false);
         properties.addBoolean('inverse_resize_on_item_update', false);
         properties.addString('restrict', '');
@@ -107,12 +117,19 @@ export class ThemeManager implements IThemeManager
         properties.addNumber('scroll_step_h', -1);
         properties.addNumber('scroll_step_v', -1);
         properties.addBoolean('selectable', true);
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("shape","rectangle",["rectangle","round_rectangle","ellipse","rhombus"])
+        properties.addEnumeration('shape', 'rectangle', ['rectangle', 'round_rectangle', 'ellipse', 'rhombus']);
+        properties.addString('sides', 'all');
+        properties.addHex('stroke_color', 0xFF000000);
+        properties.addNumber('stroke_hsv_shade', 0);
+        properties.addNumber('stroke_thickness', 0);
         properties.addBoolean('stretched_x', true);
         properties.addBoolean('stretched_y', true);
         properties.addHex('text_color', 0);
         // AS3: sources/win63_version/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("text_style","regular",class_3398.getStyleNameArrayRef())
         // class_3398 = sources/win63_version/core/window/utils/class_3398.as — base styles; skin CSS adds more at runtime
         properties.addEnumeration('text_style', 'regular', ['regular', 'italic', 'bold']);
+        properties.addBoolean('tint', false);
         properties.addString('tool_tip_caption', '');
         properties.addUint('tool_tip_delay', 500);
         properties.addBoolean('tool_tip_is_dynamic', false);
@@ -179,6 +196,10 @@ export class ThemeManager implements IThemeManager
         ubuntuProps.addEnumeration('text_style', 'u_regular', ['regular', 'italic', 'bold']);
 
         this._themes.set(Theme.UBUNTU, new Theme(Theme.UBUNTU, true, 3, 5, ubuntuProps));
+
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager()
+        // Misc theme: real theme, styles 10000-10007, clones Ubuntu's properties (antialias/text_style overrides included)
+        this._themes.set(Theme.MISC, new Theme(Theme.MISC, true, 10000, 8, ubuntuProps.clone()));
 
         // Illumina Light theme: real theme, styles 100-199
         const illuminaLightProps = properties.clone();
