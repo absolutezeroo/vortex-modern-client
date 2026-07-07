@@ -607,9 +607,20 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      *
      * Equivalent to AS3's `assets.hasAsset(name)` pre-check ahead of a buildFromXML() call.
      */
-    public hasWidgetLayout(name: string): boolean 
+    public hasWidgetLayout(name: string): boolean
     {
         return this._widgetLayouts.has(name);
+    }
+
+    /**
+     * Lists every registered widget layout name.
+     *
+     * TS-only: used by dev tooling (the visual window debugger) to browse
+     * every buildable layout — not part of the AS3 API.
+     */
+    public getRegisteredWidgetLayoutNames(): string[]
+    {
+        return Array.from(this._widgetLayouts.keys());
     }
 
     /**

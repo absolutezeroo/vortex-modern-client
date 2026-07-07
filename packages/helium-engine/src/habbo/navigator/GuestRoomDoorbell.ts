@@ -134,7 +134,7 @@ export class GuestRoomDoorbell
         if(this._window) return;
         if(!this._navigator) return;
 
-        this._window = this._navigator.getXmlWindow('doorbell', 2);
+        this._window = this._navigator.getXmlWindow('doorbell_xml', 2);
 
         if(!this._window) return;
 

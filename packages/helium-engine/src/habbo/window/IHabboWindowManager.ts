@@ -148,6 +148,8 @@ export interface IHabboWindowManager extends IDisposable
     buildWidgetLayout(name: string, layer?: number): IWindow | null;
     // TS-only
     hasWidgetLayout(name: string): boolean;
+    // TS-only
+    getRegisteredWidgetLayoutNames(): string[];
 
     // AS3: sources/win63_version/habbo/window/class_38.as::createWindow()
     createWindow(

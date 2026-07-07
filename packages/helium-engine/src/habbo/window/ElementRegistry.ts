@@ -111,6 +111,27 @@ export class ElementRegistry
     }
 
     /**
+	 * Returns every registered descriptor, across all types and styles.
+	 *
+	 * TS-only: used by dev tooling (the visual window debugger) to list
+	 * every known type/style/skin combination — not part of the AS3 API.
+	 */
+    getAllDescriptors(): IElementDescriptor[]
+    {
+        const results: IElementDescriptor[] = [];
+
+        for(const styleMap of this._descriptors.values())
+        {
+            for(const descriptor of styleMap.values())
+            {
+                results.push(descriptor);
+            }
+        }
+
+        return results;
+    }
+
+    /**
 	 * Dispose and clear all descriptors.
 	 */
     dispose(): void

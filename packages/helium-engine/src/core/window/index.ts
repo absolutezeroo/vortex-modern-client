@@ -1,5 +1,6 @@
 // Re-exports
 export * from './components';
+export * from './debugger';
 export * from './dynamicstyle';
 export * from './enum';
 export * from './events';

@@ -14,6 +14,7 @@ import type {HeliumLoadingScreen} from './HeliumLoadingScreen';
 import {AssetBundle} from './AssetBundle';
 import {LoginFlow} from './login/LoginFlow';
 import {ChangelogWindow} from './changelog/ChangelogWindow';
+import {installWindowDebugger} from './debugger/WindowDebuggerOverlay';
 import {
     type IWindowLayoutXmlData,
     parseElementDescriptionXml,
@@ -474,6 +475,7 @@ export class HeliumApp
     private _imageBundle: AssetBundle | null = null;
     private _xmlBundle: AssetBundle | null = null;
     private _changelogWindow: ChangelogWindow | null = null;
+    private _uninstallWindowDebugger: (() => void) | null = null;
 
     /** Last hovered window for OVER/OUT tracking. */
     private _lastHoveredWindow: IWindow | null = null;
@@ -688,6 +690,13 @@ export class HeliumApp
         // 6. Create the canvas and set desktop sizes BEFORE creating windows
         this.createCanvas();
 
+        // Dev-only visual window debugger (Ctrl+Shift+D). Never bundled in
+        // production — import.meta.env.DEV is statically stripped by Vite.
+        if(import.meta.env.DEV && this._canvas)
+        {
+            this._uninstallWindowDebugger = installWindowDebugger(this._canvas);
+        }
+
         // 7. Register all image blob URLs with the resource manager
         this.registerImageAssets();
 
@@ -717,7 +726,10 @@ export class HeliumApp
 
         this._disposed = true;
 
-        if(this._changelogWindow) 
+        this._uninstallWindowDebugger?.();
+        this._uninstallWindowDebugger = null;
+
+        if(this._changelogWindow)
         {
             this._changelogWindow.dispose();
             this._changelogWindow = null;
