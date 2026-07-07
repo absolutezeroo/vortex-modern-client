@@ -8,8 +8,7 @@ import type {IIterable} from './utils/IIterable';
  *
  * @see sources/win63_2021_version/com/sulake/core/window/IWindowContainer.as
  */
-export interface IWindowContainer extends IWindow, IIterable
-{
+export interface IWindowContainer extends IWindow, IIterable {
     readonly numChildren: number;
 
     addChild(child: IWindow): IWindow;
@@ -31,7 +30,7 @@ export interface IWindowContainer extends IWindow, IIterable
     findChildByName(name: string): IWindow | null;
 
     enableLookupCache(): void;
-
+    
     removeChild(child: IWindow): IWindow | null;
 
     removeChildAt(index: number): IWindow | null;

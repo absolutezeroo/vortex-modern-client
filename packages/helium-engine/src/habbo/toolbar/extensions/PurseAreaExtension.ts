@@ -24,7 +24,7 @@ const log = Logger.getLogger('PurseAreaExtension');
  *
  * @see sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as
  */
-export class PurseAreaExtension
+export class PurseAreaExtension 
 {
     private static readonly MENU_HELP: string = 'HELP';
 
@@ -33,22 +33,19 @@ export class PurseAreaExtension
     private _catalog: IHabboCatalog | null;
     private _window: IWindowContainer | null = null;
     private _clubArea: PurseClubArea | null = null;
-    private _credits: number = 0;
-    private _duckets: number = 0;
-    private _diamonds: number = 0;
 
     constructor(
         toolbar: HabboToolbar,
         windowManager: IHabboWindowManager,
         catalog: IHabboCatalog
-    )
+    ) 
     {
         this._toolbar = toolbar;
         this._windowManager = windowManager;
         this._catalog = catalog;
-        this._window = windowManager.buildWidgetLayout('grid_purse') as IWindowContainer | null;
+        this._window = windowManager.buildWidgetLayout('purse_xml') as IWindowContainer | null;
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.procedure = this.windowProcedure;
             this._clubArea = new PurseClubArea(toolbar, this._window);
@@ -56,7 +53,7 @@ export class PurseAreaExtension
 
             const creditCount = this._window.findChildByName('credit_count');
 
-            if(creditCount)
+            if(creditCount) 
             {
                 windowManager.registerHintWindow('credit_count', creditCount);
             }
@@ -65,38 +62,66 @@ export class PurseAreaExtension
         this._catalog.events.on(PurseEvent.CREDIT_BALANCE, this.onCreditsBalance);
         this._catalog.events.on(PurseEvent.ACTIVITY_POINT_BALANCE, this.onPointBalance);
         this.updateCreditAndPointValues();
-        this.refreshIndicators();
 
-        log.debug('PurseAreaExtension constructed');
+        const creditCount: IWindow | null = this._window!.findChildByName("credit_count");
+        this._toolbar!.windowManager!.registerHintWindow("credit_count", creditCount!);
+
+        this.refreshIndicators();
     }
 
-    get credits(): number { return this._credits; }
-    get duckets(): number { return this._duckets; }
-    get diamonds(): number { return this._diamonds; }
-    get disposed(): boolean { return this._toolbar === null; }
+    private _credits: number = 0;
 
-    public getClubArea(): PurseClubArea | null
+    get credits(): number 
+    {
+        return this._credits;
+    }
+
+    private _duckets: number = 0;
+
+    get duckets(): number 
+    {
+        return this._duckets;
+    }
+
+    private _diamonds: number = 0;
+
+    get diamonds(): number 
+    {
+        return this._diamonds;
+    }
+
+    get disposed(): boolean 
+    {
+        return this._toolbar === null;
+    }
+
+    private get earningsUnseenIndicator(): IStaticBitmapWrapperWindow | null 
+    {
+        return this._window?.findChildByName('earnings_unseen_indicator') as IStaticBitmapWrapperWindow | null;
+    }
+
+    public getClubArea(): PurseClubArea | null 
     {
         return this._clubArea;
     }
 
-    public onCreditsBalance = (event: PurseEvent): void =>
+    public onCreditsBalance = (event: PurseEvent): void => 
     {
         this._credits = event.balance;
 
         const creditCount = this._window?.findChildByName('credit_count');
 
-        if(creditCount)
+        if(creditCount) 
         {
             creditCount.caption = formatPurseAmount(event.balance, this._toolbar?.localization ?? null);
         }
     };
 
-    public onPointBalance = (event: PurseEvent): void =>
+    public onPointBalance = (event: PurseEvent): void => 
     {
         let targetName: string | null = null;
 
-        switch(event.activityPointType)
+        switch(event.activityPointType) 
         {
             case 0:
                 this._duckets = event.balance;
@@ -112,13 +137,13 @@ export class PurseAreaExtension
 
         const target = this._window?.findChildByName(targetName);
 
-        if(target)
+        if(target) 
         {
             target.caption = formatPurseAmount(event.balance, this._toolbar?.localization ?? null);
         }
     };
 
-    public getIconLocation(name: string): { x: number; y: number; width: number; height: number } | null
+    public getIconLocation(name: string): { x: number; y: number; width: number; height: number } | null 
     {
         const child = this._window?.findChildByName(name);
 
@@ -130,22 +155,48 @@ export class PurseAreaExtension
         return rect;
     }
 
-    public getIcon(name: string): IWindow | null
+    public getIcon(name: string): IWindow | null 
     {
         return this._window?.findChildByName(name) ?? null;
     }
 
-    public refreshIndicators(): void
+    public refreshIndicators(): void 
     {
         const indicator = this.earningsUnseenIndicator;
 
-        if(indicator)
+        if(indicator) 
         {
             indicator.visible = false;
         }
     }
 
-    private updateCreditAndPointValues(): void
+    public dispose(): void 
+    {
+        if(this.disposed) return;
+
+        if(this._clubArea) 
+        {
+            this._clubArea.dispose();
+            this._clubArea = null;
+        }
+        else 
+        {
+            this._window?.dispose();
+        }
+
+        this._window = null;
+        if(this._catalog) 
+        {
+            this._catalog.events.off(PurseEvent.CREDIT_BALANCE, this.onCreditsBalance);
+            this._catalog.events.off(PurseEvent.ACTIVITY_POINT_BALANCE, this.onPointBalance);
+        }
+
+        this._catalog = null;
+        this._windowManager = null;
+        this._toolbar = null;
+    }
+
+    private updateCreditAndPointValues(): void 
     {
         if(!this._catalog) return;
 
@@ -154,29 +205,29 @@ export class PurseAreaExtension
         this.onCreditsBalance(new PurseEvent(PurseEvent.CREDIT_BALANCE, purse.credits, 0));
         this.onPointBalance(new PurseEvent(PurseEvent.ACTIVITY_POINT_BALANCE, purse.getActivityPointsForType(0), 0));
 
-        if(this._toolbar?.getBoolean('diamonds.enabled'))
+        if(this._toolbar?.getBoolean('diamonds.enabled')) 
         {
             this.onPointBalance(new PurseEvent(PurseEvent.ACTIVITY_POINT_BALANCE, purse.getActivityPointsForType(5), 5));
         }
-        else
+        else 
         {
             const diamondButton = this._window?.findChildByName('diamond_count_button');
             const itemList = this._window?.findChildByName('purse_itemlist') as IItemListWindow | null;
 
-            if(diamondButton && itemList)
+            if(diamondButton && itemList) 
             {
                 itemList.removeListItem(diamondButton);
             }
         }
     }
 
-    private windowProcedure = (event: WindowEvent, window: IWindow): void =>
+    private windowProcedure = (event: WindowEvent, window: IWindow): void => 
     {
         if(event.type !== WindowMouseEvent.CLICK || !this._toolbar) return;
 
         this._windowManager?.hideMatchingHint(window.name);
 
-        switch(this.getActionName(window))
+        switch(this.getActionName(window)) 
         {
             case 'help_button':
                 this._toolbar.toggleWindowVisibility(PurseAreaExtension.MENU_HELP);
@@ -205,13 +256,13 @@ export class PurseAreaExtension
         }
     };
 
-    private getActionName(window: IWindow | null): string
+    private getActionName(window: IWindow | null): string 
     {
         let current = window;
 
-        while(current)
+        while(current) 
         {
-            switch(current.name)
+            switch(current.name) 
             {
                 case 'earnings_button':
                 case 'vault_button':
@@ -229,36 +280,5 @@ export class PurseAreaExtension
         }
 
         return '';
-    }
-
-    private get earningsUnseenIndicator(): IStaticBitmapWrapperWindow | null
-    {
-        return this._window?.findChildByName('earnings_unseen_indicator') as IStaticBitmapWrapperWindow | null;
-    }
-
-    public dispose(): void
-    {
-        if(this.disposed) return;
-
-        if(this._clubArea)
-        {
-            this._clubArea.dispose();
-            this._clubArea = null;
-        }
-        else
-        {
-            this._window?.dispose();
-        }
-
-        this._window = null;
-        if(this._catalog)
-        {
-            this._catalog.events.off(PurseEvent.CREDIT_BALANCE, this.onCreditsBalance);
-            this._catalog.events.off(PurseEvent.ACTIVITY_POINT_BALANCE, this.onPointBalance);
-        }
-
-        this._catalog = null;
-        this._windowManager = null;
-        this._toolbar = null;
     }
 }

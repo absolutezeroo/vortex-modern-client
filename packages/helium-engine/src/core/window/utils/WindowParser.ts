@@ -3,13 +3,12 @@ import type {IWindow} from '../IWindow';
 import type {IStaticBitmapWrapperWindow} from '../components/IStaticBitmapWrapperWindow';
 import type {BoxSizerController} from '../components/BoxSizerController';
 import {PropertyStruct} from './PropertyStruct';
-import {WindowType, TYPE_CODE_TO_NAME, TYPE_NAME_TO_CODE} from '../enum/WindowType';
+import {TYPE_CODE_TO_NAME, TYPE_NAME_TO_CODE, WindowType} from '../enum/WindowType';
 import {PARAM_NAME_TO_FLAG, WindowParam} from '../enum/WindowParam';
 
 type XmlLayoutInput = string | Document | Element;
 
-interface IParsedVar
-{
+interface IParsedVar {
     key: string;
     value: unknown;
 }
@@ -22,43 +21,43 @@ interface IParsedVar
  *
  * @see sources/win63_version/core/window/utils/WindowParser.as
  */
-export class WindowParser implements IWindowParser
+export class WindowParser implements IWindowParser 
 {
     /**
-	 * Localization resolver callback.
-	 *
-	 * When set, `${key}` tokens in captions and string properties
-	 * are resolved through this function.
-	 */
+     * Localization resolver callback.
+     *
+     * When set, `${key}` tokens in captions and string properties
+     * are resolved through this function.
+     */
     public static localizationResolver: ((key: string) => string | null) | null = null;
 
     private _disposed: boolean = false;
 
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    public parseAndConstruct(layout: XmlLayoutInput, parent: IWindow, namedWindows: Map<string, IWindow> | null): IWindow | null
+    public parseAndConstruct(layout: XmlLayoutInput, parent: IWindow, namedWindows: Map<string, IWindow> | null): IWindow | null 
     {
         const root = this.resolveLayoutRoot(layout);
 
-        if(!root)
+        if(!root) 
         {
             return null;
         }
 
         const sharedVars = new Map<string, unknown>();
 
-        if(root.nodeName === 'layout')
+        if(root.nodeName === 'layout') 
         {
             const variablesNode = getDirectChildByName(root, 'variables');
 
-            if(variablesNode)
+            if(variablesNode) 
             {
                 const vars = this.parseSharedVariables(variablesNode);
 
-                for(const [key, value] of vars)
+                for(const [key, value] of vars) 
                 {
                     sharedVars.set(key, value);
                 }
@@ -66,11 +65,11 @@ export class WindowParser implements IWindowParser
 
             const filtersNode = getDirectChildByName(root, 'filters');
 
-            if(filtersNode)
+            if(filtersNode) 
             {
                 const filters = this.parseFilters(filtersNode, sharedVars);
 
-                if(filters.length > 0)
+                if(filters.length > 0) 
                 {
                     parent.filters = filters;
                 }
@@ -79,19 +78,19 @@ export class WindowParser implements IWindowParser
             const windowNodes = getDirectChildrenByName(root, 'window');
             const rootChildren = windowNodes.length > 0
                 ? windowNodes
-                : getDirectChildElements(root).filter((node) =>
+                : getDirectChildElements(root).filter((node) => 
                 {
                     const nodeName = node.nodeName;
 
                     return nodeName !== 'variables' && nodeName !== 'filters';
                 });
 
-            if(rootChildren.length === 0)
+            if(rootChildren.length === 0) 
             {
                 return null;
             }
 
-            if(rootChildren.length === 1)
+            if(rootChildren.length === 1) 
             {
                 return rootChildren[0].nodeName === 'window'
                     ? this.parseAndConstruct(rootChildren[0], parent, namedWindows)
@@ -101,16 +100,16 @@ export class WindowParser implements IWindowParser
             return this.parseWindowNodes(rootChildren, parent, sharedVars, namedWindows);
         }
 
-        if(root.nodeName === 'window')
+        if(root.nodeName === 'window') 
         {
-            const children = getDirectChildElements(root).filter((node) =>
+            const children = getDirectChildElements(root).filter((node) => 
             {
                 const nodeName = node.nodeName;
 
                 return nodeName !== 'variables' && nodeName !== 'filters';
             });
 
-            if(children.length === 0)
+            if(children.length === 0) 
             {
                 return null;
             }
@@ -121,56 +120,7 @@ export class WindowParser implements IWindowParser
         return this.parseSingleWindowEntity(root, parent, sharedVars, namedWindows);
     }
 
-    private parseWindowNodes(
-        nodes: Element[],
-        parent: IWindow,
-        sharedVars: Map<string, unknown>,
-        namedWindows: Map<string, IWindow> | null
-    ): IWindow | null
-    {
-        let last: IWindow | null = null;
-
-        for(const node of nodes)
-        {
-            if(node.nodeName === 'children')
-            {
-                for(const child of getDirectChildElements(node))
-                {
-                    const created = this.parseSingleWindowEntity(child, parent, sharedVars, namedWindows);
-
-                    if(created)
-                    {
-                        last = created;
-                    }
-                }
-
-                continue;
-            }
-
-            if(node.nodeName === 'window')
-            {
-                const created = this.parseAndConstruct(node, parent, namedWindows);
-
-                if(created)
-                {
-                    last = created;
-                }
-
-                continue;
-            }
-
-            const created = this.parseSingleWindowEntity(node, parent, sharedVars, namedWindows);
-
-            if(created)
-            {
-                last = created;
-            }
-        }
-
-        return last;
-    }
-
-    public windowToXMLString(window: IWindow): string
+    public windowToXMLString(window: IWindow): string 
     {
         const typeName = TYPE_CODE_TO_NAME[window.type] ?? 'null';
         let xml = '';
@@ -183,92 +133,92 @@ export class WindowParser implements IWindowParser
         xml += ` params="${window.param}"`;
         xml += ` style="${window.style}"`;
 
-        if(window.dynamicStyle)
+        if(window.dynamicStyle) 
         {
             xml += ` dynamic_style="${escapeXml(window.dynamicStyle)}"`;
         }
 
-        if(window.name)
+        if(window.name) 
         {
             xml += ` name="${escapeXml(window.name)}"`;
         }
 
-        if(window.caption)
+        if(window.caption) 
         {
             xml += ` caption="${escapeXml(window.caption)}"`;
         }
 
-        if(window.id !== 0)
+        if(window.id !== 0) 
         {
             xml += ` id="${window.id}"`;
         }
 
-        if(window.color !== 0x00FFFFFF)
+        if(window.color !== 0x00FFFFFF) 
         {
             xml += ` color="0x${window.alpha.toString(16)}${window.color.toString(16)}"`;
         }
 
-        if(window.blend !== 1)
+        if(window.blend !== 1) 
         {
             xml += ` blend="${window.blend}"`;
         }
 
-        if(!window.visible)
+        if(!window.visible) 
         {
             xml += ` visible="${window.visible}"`;
         }
 
-        if(!window.clipping)
+        if(!window.clipping) 
         {
             xml += ` clipping="${window.clipping}"`;
         }
 
-        if(window.background)
+        if(window.background) 
         {
             xml += ` background="${window.background}"`;
         }
 
-        if(window.mouseThreshold !== 10)
+        if(window.mouseThreshold !== 10) 
         {
             xml += ` treshold="${window.mouseThreshold}"`;
         }
 
-        if(window.tags.length > 0)
+        if(window.tags.length > 0) 
         {
             xml += ` tags="${escapeXml(window.tags.join(','))}"`;
         }
 
-        if(window.limits.minWidth > -2147483648)
+        if(window.limits.minWidth > -2147483648) 
         {
             xml += ` width_min="${window.limits.minWidth}"`;
         }
 
-        if(window.limits.maxWidth < 2147483647)
+        if(window.limits.maxWidth < 2147483647) 
         {
             xml += ` width_max="${window.limits.maxWidth}"`;
         }
 
-        if(window.limits.minHeight > -2147483648)
+        if(window.limits.minHeight > -2147483648) 
         {
             xml += ` height_min="${window.limits.minHeight}"`;
         }
 
-        if(window.limits.maxHeight < 2147483647)
+        if(window.limits.maxHeight < 2147483647) 
         {
             xml += ` height_max="${window.limits.maxHeight}"`;
         }
 
         xml += '>\r';
 
-        if(window.filters && window.filters.length > 0)
+        if(window.filters && window.filters.length > 0) 
         {
             xml += '\t<filters>\r';
 
-            for(const filter of window.filters)
+            for(const filter of window.filters) 
             {
                 const serialized = this.filterToXMLString(filter);
 
-                if(serialized)
+                if(serialized) 
                 {
                     xml += `\t\t${serialized}\r`;
                 }
@@ -279,7 +229,7 @@ export class WindowParser implements IWindowParser
 
         const childrenXml = this.serializeChildren(window);
 
-        if(childrenXml.length > 0)
+        if(childrenXml.length > 0) 
         {
             xml += `\t<children>\r${childrenXml}\t</children>\r`;
         }
@@ -287,12 +237,61 @@ export class WindowParser implements IWindowParser
         return `${xml}</${typeName}>\r`;
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
-        if(!this._disposed)
+        if(!this._disposed) 
         {
             this._disposed = true;
         }
+    }
+
+    private parseWindowNodes(
+        nodes: Element[],
+        parent: IWindow,
+        sharedVars: Map<string, unknown>,
+        namedWindows: Map<string, IWindow> | null
+    ): IWindow | null 
+    {
+        let last: IWindow | null = null;
+
+        for(const node of nodes) 
+        {
+            if(node.nodeName === 'children') 
+            {
+                for(const child of getDirectChildElements(node)) 
+                {
+                    const created = this.parseSingleWindowEntity(child, parent, sharedVars, namedWindows);
+
+                    if(created) 
+                    {
+                        last = created;
+                    }
+                }
+
+                continue;
+            }
+
+            if(node.nodeName === 'window') 
+            {
+                const created = this.parseAndConstruct(node, parent, namedWindows);
+
+                if(created) 
+                {
+                    last = created;
+                }
+
+                continue;
+            }
+
+            const created = this.parseSingleWindowEntity(node, parent, sharedVars, namedWindows);
+
+            if(created) 
+            {
+                last = created;
+            }
+        }
+
+        return last;
     }
 
     private parseSingleWindowEntity(
@@ -300,7 +299,7 @@ export class WindowParser implements IWindowParser
         parent: IWindow,
         sharedVars: Map<string, unknown>,
         namedWindows: Map<string, IWindow> | null
-    ): IWindow | null
+    ): IWindow | null 
     {
         const resolvedType = TYPE_NAME_TO_CODE[node.nodeName];
         const typeId = resolvedType !== undefined ? resolvedType : WindowType.NULL;
@@ -320,14 +319,14 @@ export class WindowParser implements IWindowParser
 
         const paramsNode = getDirectChildByName(node, 'params');
 
-        if(paramsNode)
+        if(paramsNode) 
         {
-            for(const paramNode of getDirectChildElements(paramsNode))
+            for(const paramNode of getDirectChildElements(paramsNode)) 
             {
                 const paramName = String(this.parseAttribute(paramNode, 'name', sharedVars, '')).toLowerCase();
                 const mappedParam = PARAM_NAME_TO_FLAG[paramName];
 
-                if(mappedParam === undefined)
+                if(mappedParam === undefined) 
                 {
                     throw new Error(`Unknown window parameter "${paramName}"!`);
                 }
@@ -338,7 +337,7 @@ export class WindowParser implements IWindowParser
 
         let caption = '';
 
-        if((param & WindowParam.INHERIT_CAPTION) !== 0)
+        if((param & WindowParam.INHERIT_CAPTION) !== 0) 
         {
             caption = parent ? parent.caption : '';
         }
@@ -348,7 +347,7 @@ export class WindowParser implements IWindowParser
 
         let tags: string[] | null = null;
 
-        if(tagsText !== '')
+        if(tagsText !== '') 
         {
             tags = tagsText.split(',').map((tag) => tag.trim()).filter((tag) => tag.length > 0);
         }
@@ -389,34 +388,34 @@ export class WindowParser implements IWindowParser
             properties
         );
 
-        if(!window)
+        if(!window) 
         {
             return null;
         }
 
-        if(this.hasAttribute(node, 'width_min'))
+        if(this.hasAttribute(node, 'width_min')) 
         {
             window.limits.minWidth = parseInteger(this.parseAttribute(node, 'width_min', sharedVars, String(window.limits.minWidth)));
         }
 
-        if(this.hasAttribute(node, 'width_max'))
+        if(this.hasAttribute(node, 'width_max')) 
         {
             window.limits.maxWidth = parseInteger(this.parseAttribute(node, 'width_max', sharedVars, String(window.limits.maxWidth)));
         }
 
-        if(this.hasAttribute(node, 'height_min'))
+        if(this.hasAttribute(node, 'height_min')) 
         {
             window.limits.minHeight = parseInteger(this.parseAttribute(node, 'height_min', sharedVars, String(window.limits.minHeight)));
         }
 
-        if(this.hasAttribute(node, 'height_max'))
+        if(this.hasAttribute(node, 'height_max')) 
         {
             window.limits.maxHeight = parseInteger(this.parseAttribute(node, 'height_max', sharedVars, String(window.limits.maxHeight)));
         }
 
         const limitFn = (window.limits as unknown as { limit?: () => void }).limit;
 
-        if(typeof limitFn === 'function')
+        if(typeof limitFn === 'function') 
         {
             limitFn.call(window.limits);
         }
@@ -427,100 +426,95 @@ export class WindowParser implements IWindowParser
         const colorRaw = String(this.parseAttribute(node, 'color', sharedVars, String(window.color)));
         const threshold = parseInteger(this.parseAttribute(node, 'treshold', sharedVars, String(window.mouseThreshold)));
 
-        if(window.caption !== caption)
+        if(window.caption !== caption) 
         {
             window.caption = caption;
         }
 
-        if(window.blend !== blend)
+        if(window.blend !== blend) 
         {
             window.blend = blend;
         }
 
-        if(window.visible !== visible)
+        if(window.visible !== visible) 
         {
             window.visible = visible;
         }
 
-        if(window.clipping !== clipping)
+        if(window.clipping !== clipping) 
         {
             window.clipping = clipping;
         }
 
-        if(window.background !== background)
+        if(window.background !== background) 
         {
             window.background = background;
         }
 
-        if(window.mouseThreshold !== threshold)
+        if(window.mouseThreshold !== threshold) 
         {
             window.mouseThreshold = threshold;
         }
 
         const color = parseColor(colorRaw);
 
-        if(window.color !== color)
+        if(window.color !== color) 
         {
             window.color = color;
         }
 
         const filtersNode = getDirectChildByName(node, 'filters');
 
-        if(filtersNode)
+        if(filtersNode) 
         {
             const filters = this.parseFilters(filtersNode, sharedVars);
 
-            if(filters.length > 0)
+            if(filters.length > 0) 
             {
                 window.filters = filters;
             }
         }
 
-        if(window.type === WindowType.STATIC_BITMAP_WRAPPER)
+        if(window.type === WindowType.STATIC_BITMAP_WRAPPER) 
         {
             let assetUri: string | null = null;
 
-            for(const property of properties)
+            for(const property of properties) 
             {
-                if(property.key === 'asset_uri' && typeof property.value === 'string')
+                if(property.key === 'asset_uri' && typeof property.value === 'string') 
                 {
                     assetUri = property.value;
                     break;
                 }
             }
 
-            if(!assetUri && name)
-            {
-                assetUri = `${name}_normal`;
-            }
-
-            if(assetUri)
+            if(assetUri) 
             {
                 (window as unknown as IStaticBitmapWrapperWindow).assetUri = assetUri;
             }
         }
 
-        if(parentIsItemList || parentIsItemGrid)
+        if(parentIsItemList || parentIsItemGrid) 
         {
             // AS3: sources/win63_version/core/window/utils/WindowParser.as::parseAndConstruct()
             // Flash creates list/grid children without a parent and appends them through the
             // IIterable iterator. Internal layout children (_ITEMLIST/_SCROLLBAR) are
             // excluded above so ScrollableItemListWindow can build its own structure first.
             // This center-repositioning block applies to any IIterable (list OR grid).
-            if(window.x !== x || window.y !== y || window.width !== width || window.height !== height)
+            if(window.x !== x || window.y !== y || window.width !== width || window.height !== height) 
             {
-                if((param & WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK) === WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER)
+                if((param & WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK) === WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER) 
                 {
                     window.x = x;
                 }
 
-                if((param & WindowParam.RELATIVE_VERTICAL_SCALE_MASK) === WindowParam.RELATIVE_VERTICAL_SCALE_CENTER)
+                if((param & WindowParam.RELATIVE_VERTICAL_SCALE_MASK) === WindowParam.RELATIVE_VERTICAL_SCALE_CENTER) 
                 {
                     window.y = y;
                 }
             }
 
-            if(parentIsItemGrid)
+            if(parentIsItemGrid) 
             {
                 // AS3: sources/win63_2026_crypted_version core/window/iterators/ItemGridIterator.as::setProperty()
                 // The grid's iterator appends via `iterator[iterator.length] = child`, i.e.
@@ -528,7 +522,7 @@ export class WindowParser implements IWindowParser
                 // (grid layout) rather than adding it as a raw list column.
                 listParent.addGridItemAt!(window, listParent.numGridItems ?? 0);
             }
-            else
+            else 
             {
                 // AS3: sources/win63_2026_crypted_version core/window/iterators/ItemListIterator.as::setProperty()
                 // Flash appends via `iterator[iterator.length] = child`, which the Proxy's
@@ -541,31 +535,31 @@ export class WindowParser implements IWindowParser
             }
         }
 
-        if(namedWindows && name)
+        if(namedWindows && name) 
         {
             namedWindows.set(name, window);
         }
 
         const childrenNode = getDirectChildByName(node, 'children');
 
-        if(childrenNode)
+        if(childrenNode) 
         {
             const childNodes = getDirectChildElements(childrenNode);
             const target = window.getLayoutChildTarget();
             const boxSizer = window as unknown as BoxSizerController;
             const isBoxSizer = typeof boxSizer.setAutoRearrange === 'function';
 
-            if(isBoxSizer)
+            if(isBoxSizer) 
             {
                 boxSizer.setAutoRearrange(false);
             }
 
-            for(const childNode of childNodes)
+            for(const childNode of childNodes) 
             {
                 this.parseSingleWindowEntity(childNode, target, sharedVars, namedWindows);
             }
 
-            if(isBoxSizer)
+            if(isBoxSizer) 
             {
                 boxSizer.setAutoRearrange(true);
             }
@@ -574,45 +568,45 @@ export class WindowParser implements IWindowParser
         return window;
     }
 
-    private resolveLayoutRoot(layout: XmlLayoutInput): Element | null
+    private resolveLayoutRoot(layout: XmlLayoutInput): Element | null 
     {
-        if(layout instanceof Element)
+        if(layout instanceof Element) 
         {
             return layout;
         }
 
-        if(layout instanceof Document)
+        if(layout instanceof Document) 
         {
             return layout.documentElement;
         }
 
-        try
+        try 
         {
             const doc = new DOMParser().parseFromString(layout, 'text/xml');
             const parserError = doc.getElementsByTagName('parsererror');
 
-            if(parserError.length > 0)
+            if(parserError.length > 0) 
             {
                 throw new Error(parserError[0].textContent ?? 'Failed to parse XML');
             }
 
             return doc.documentElement;
         }
-        catch (error)
+        catch (error) 
         {
-            throw new Error(`WindowParser failed to parse XML layout: ${String(error)}`);
+            throw new Error(`WindowParser failed to parse XML layout: ${String(error)}`, {cause: error});
         }
     }
 
-    private parseSharedVariables(variablesNode: Element): Map<string, unknown>
+    private parseSharedVariables(variablesNode: Element): Map<string, unknown> 
     {
         const map = new Map<string, unknown>();
 
-        for(const varNode of getDirectChildrenByName(variablesNode, 'var'))
+        for(const varNode of getDirectChildrenByName(variablesNode, 'var')) 
         {
             const parsed = this.parseVarNode(varNode, map);
 
-            if(parsed.key.length > 0)
+            if(parsed.key.length > 0) 
             {
                 map.set(parsed.key, parsed.value);
             }
@@ -621,20 +615,20 @@ export class WindowParser implements IWindowParser
         return map;
     }
 
-    private parseProperties(variablesNode: Element | null, sharedVars: Map<string, unknown>): PropertyStruct[]
+    private parseProperties(variablesNode: Element | null, sharedVars: Map<string, unknown>): PropertyStruct[] 
     {
-        if(!variablesNode)
+        if(!variablesNode) 
         {
             return [];
         }
 
         const properties: PropertyStruct[] = [];
 
-        for(const varNode of getDirectChildrenByName(variablesNode, 'var'))
+        for(const varNode of getDirectChildrenByName(variablesNode, 'var')) 
         {
             const parsed = this.parseVarNode(varNode, sharedVars);
 
-            if(parsed.key.length > 0)
+            if(parsed.key.length > 0) 
             {
                 properties.push(new PropertyStruct(parsed.key, parsed.value));
             }
@@ -643,26 +637,26 @@ export class WindowParser implements IWindowParser
         return properties;
     }
 
-    private parseVarNode(node: Element, sharedVars: Map<string, unknown>): IParsedVar
+    private parseVarNode(node: Element, sharedVars: Map<string, unknown>): IParsedVar 
     {
         const key = node.getAttribute('key') ?? node.getAttribute('name') ?? '';
         const type = node.getAttribute('type') ?? '';
         let value: unknown = node.getAttribute('value');
         const children = getDirectChildElements(node);
 
-        if((value === null || value === undefined || value === '') && children.length > 0)
+        if((value === null || value === undefined || value === '') && children.length > 0) 
         {
             let valueNode: Element | null = children[0];
 
-            if(valueNode && valueNode.nodeName === 'value')
+            if(valueNode && valueNode.nodeName === 'value') 
             {
                 const wrapped = getDirectChildElements(valueNode);
                 valueNode = wrapped.length > 0 ? wrapped[0] : null;
             }
 
-            if(valueNode)
+            if(valueNode) 
             {
-                switch(valueNode.nodeName)
+                switch(valueNode.nodeName) 
                 {
                     case 'Point':
                         value = this.parsePoint(valueNode);
@@ -673,11 +667,10 @@ export class WindowParser implements IWindowParser
                     case 'Array':
                         value = getDirectChildrenByName(valueNode, 'var').map((child) => this.parseVarNode(child, sharedVars).value);
                         break;
-                    case 'Map':
-                    {
+                    case 'Map': {
                         const mapped: Record<string, unknown> = {};
 
-                        for(const child of getDirectChildrenByName(valueNode, 'var'))
+                        for(const child of getDirectChildrenByName(valueNode, 'var')) 
                         {
                             const parsed = this.parseVarNode(child, sharedVars);
                             mapped[parsed.key] = parsed.value;
@@ -690,11 +683,11 @@ export class WindowParser implements IWindowParser
             }
         }
 
-        if(typeof value === 'string' && value.startsWith('$'))
+        if(typeof value === 'string' && value.startsWith('$')) 
         {
             const resolved = sharedVars.get(value.slice(1));
 
-            if(resolved !== undefined)
+            if(resolved !== undefined) 
             {
                 value = resolved;
             }
@@ -706,7 +699,7 @@ export class WindowParser implements IWindowParser
         };
     }
 
-    private parsePoint(node: Element): { x: number; y: number }
+    private parsePoint(node: Element): { x: number; y: number } 
     {
         return {
             x: parseNumber(node.getAttribute('x')),
@@ -714,7 +707,7 @@ export class WindowParser implements IWindowParser
         };
     }
 
-    private parseRectangle(node: Element): { x: number; y: number; width: number; height: number }
+    private parseRectangle(node: Element): { x: number; y: number; width: number; height: number } 
     {
         return {
             x: parseNumber(node.getAttribute('x')),
@@ -724,15 +717,15 @@ export class WindowParser implements IWindowParser
         };
     }
 
-    private parseFilters(filtersNode: Element, sharedVars: Map<string, unknown>): Record<string, unknown>[]
+    private parseFilters(filtersNode: Element, sharedVars: Map<string, unknown>): Record<string, unknown>[] 
     {
         const filters: Record<string, unknown>[] = [];
 
-        for(const filterNode of getDirectChildElements(filtersNode))
+        for(const filterNode of getDirectChildElements(filtersNode)) 
         {
             const built = this.buildBitmapFilter(filterNode, sharedVars);
 
-            if(built)
+            if(built) 
             {
                 filters.push(built);
             }
@@ -741,9 +734,9 @@ export class WindowParser implements IWindowParser
         return filters;
     }
 
-    private buildBitmapFilter(filterNode: Element, sharedVars: Map<string, unknown>): Record<string, unknown> | null
+    private buildBitmapFilter(filterNode: Element, sharedVars: Map<string, unknown>): Record<string, unknown> | null 
     {
-        if(filterNode.nodeName !== 'DropShadowFilter')
+        if(filterNode.nodeName !== 'DropShadowFilter') 
         {
             return null;
         }
@@ -764,16 +757,16 @@ export class WindowParser implements IWindowParser
         };
     }
 
-    private filterToXMLString(filter: unknown): string
+    private filterToXMLString(filter: unknown): string 
     {
-        if(!filter || typeof filter !== 'object')
+        if(!filter || typeof filter !== 'object') 
         {
             return '';
         }
 
         const data = filter as Record<string, unknown>;
 
-        if(data.type !== 'DropShadowFilter')
+        if(data.type !== 'DropShadowFilter') 
         {
             return '';
         }
@@ -795,27 +788,27 @@ export class WindowParser implements IWindowParser
         return xml;
     }
 
-    private serializeChildren(window: IWindow): string
+    private serializeChildren(window: IWindow): string 
     {
         const container = window as unknown as { numChildren?: number; getChildAt?: (index: number) => IWindow | null };
 
-        if(typeof container.numChildren !== 'number' || typeof container.getChildAt !== 'function' || container.numChildren <= 0)
+        if(typeof container.numChildren !== 'number' || typeof container.getChildAt !== 'function' || container.numChildren <= 0) 
         {
             return '';
         }
 
         let xml = '';
 
-        for(let i = 0; i < container.numChildren; i++)
+        for(let i = 0; i < container.numChildren; i++) 
         {
             const child = container.getChildAt(i);
 
-            if(!child)
+            if(!child) 
             {
                 continue;
             }
 
-            if(child.tags.indexOf('_EXCLUDE') !== -1)
+            if(child.tags.indexOf('_EXCLUDE') !== -1) 
             {
                 continue;
             }
@@ -831,26 +824,26 @@ export class WindowParser implements IWindowParser
         name: string,
         sharedVars: Map<string, unknown>,
         defaultValue: unknown
-    ): unknown
+    ): unknown 
     {
-        if(!node.hasAttribute(name))
+        if(!node.hasAttribute(name)) 
         {
             return defaultValue;
         }
 
         const raw = node.getAttribute(name);
 
-        if(raw === null)
+        if(raw === null) 
         {
             return defaultValue;
         }
 
-        if(raw.startsWith('$'))
+        if(raw.startsWith('$')) 
         {
             const key = raw.slice(1);
             const resolved = sharedVars.get(key);
 
-            if(resolved !== undefined && resolved !== null)
+            if(resolved !== undefined && resolved !== null) 
             {
                 return resolved;
             }
@@ -862,21 +855,21 @@ export class WindowParser implements IWindowParser
         return raw;
     }
 
-    private hasAttribute(node: Element, name: string): boolean
+    private hasAttribute(node: Element, name: string): boolean 
     {
         return node.hasAttribute(name);
     }
 }
 
-function getDirectChildElements(node: Element): Element[]
+function getDirectChildElements(node: Element): Element[] 
 {
     const elements: Element[] = [];
 
-    for(let i = 0; i < node.children.length; i++)
+    for(let i = 0; i < node.children.length; i++) 
     {
         const child = node.children.item(i);
 
-        if(child)
+        if(child) 
         {
             elements.push(child);
         }
@@ -885,28 +878,28 @@ function getDirectChildElements(node: Element): Element[]
     return elements;
 }
 
-function getDirectChildrenByName(node: Element, name: string): Element[]
+function getDirectChildrenByName(node: Element, name: string): Element[] 
 {
     return getDirectChildElements(node).filter((child) => child.nodeName === name);
 }
 
-function getDirectChildByName(node: Element, name: string): Element | null
+function getDirectChildByName(node: Element, name: string): Element | null 
 {
     const children = getDirectChildrenByName(node, name);
 
     return children.length > 0 ? children[0] : null;
 }
 
-function parseInteger(value: unknown): number
+function parseInteger(value: unknown): number 
 {
     const parsed = Number.parseInt(String(value ?? '0'), 10);
 
     return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function parseNumber(value: unknown): number
+function parseNumber(value: unknown): number 
 {
-    if(value === null || value === undefined)
+    if(value === null || value === undefined) 
     {
         return 0;
     }
@@ -916,14 +909,14 @@ function parseNumber(value: unknown): number
     return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function parseColor(value: string): number
+function parseColor(value: string): number 
 {
-    if(!value)
+    if(!value) 
     {
         return 0;
     }
 
-    if(value.length > 1 && value.charAt(1) === 'x')
+    if(value.length > 1 && value.charAt(1) === 'x') 
     {
         const parsedHex = Number.parseInt(value, 16);
 
@@ -935,9 +928,9 @@ function parseColor(value: string): number
     return Number.isFinite(parsed) ? (parsed >>> 0) : 0;
 }
 
-function castValue(value: unknown, type: string): unknown
+function castValue(value: unknown, type: string): unknown 
 {
-    switch(type.toLowerCase())
+    switch(type.toLowerCase()) 
     {
         case 'boolean':
             return String(value).toLowerCase() === 'true';
@@ -946,17 +939,15 @@ function castValue(value: unknown, type: string): unknown
             return parseNumber(value);
         case 'uint':
             return parseInteger(value) >>> 0;
-        case 'hex':
-        {
+        case 'hex': {
             const raw = String(value ?? '0');
 
             return Number.parseInt(raw.replace(/^0x/i, ''), 16) >>> 0;
         }
         case 'array':
             return String(value ?? '').split(',').map((entry) => entry.trim()).filter((entry) => entry.length > 0);
-        default:
-        {
-            if(typeof value === 'string')
+        default: {
+            if(typeof value === 'string') 
             {
                 return decodeEscaped(value);
             }
@@ -966,9 +957,9 @@ function castValue(value: unknown, type: string): unknown
     }
 }
 
-function decodeEscaped(value: string): string
+function decodeEscaped(value: string): string 
 {
-    if(!value)
+    if(!value) 
     {
         return '';
     }
@@ -976,15 +967,15 @@ function decodeEscaped(value: string): string
     let decoded = value;
     let previous = '';
 
-    while(decoded !== previous)
+    while(decoded !== previous) 
     {
         previous = decoded;
 
-        try
+        try 
         {
             decoded = decodeURIComponent(decoded);
         }
-        catch (_)
+        catch (_) 
         {
             break;
         }
@@ -993,7 +984,7 @@ function decodeEscaped(value: string): string
     return decoded;
 }
 
-function escapeXml(value: string): string
+function escapeXml(value: string): string 
 {
     return value
         .replace(/&/g, '&amp;')
@@ -1008,14 +999,14 @@ function escapeXml(value: string): string
  * @param value - The string potentially containing `${key}` tokens
  * @returns The resolved string, or the original if no resolver or no match
  */
-export function resolveLocalizationTokens(value: string): string
+export function resolveLocalizationTokens(value: string): string 
 {
-    if(!value || !WindowParser.localizationResolver)
+    if(!value || !WindowParser.localizationResolver) 
     {
         return value;
     }
 
-    return value.replace(/\$\{([^}]+)\}/g, (_match, key) =>
+    return value.replace(/\$\{([^}]+)\}/g, (_match, key) => 
     {
         const resolved = WindowParser.localizationResolver!(key);
 

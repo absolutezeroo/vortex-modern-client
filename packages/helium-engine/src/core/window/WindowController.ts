@@ -31,7 +31,7 @@ type WindowRectangle = { x: number; y: number; width: number; height: number };
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as
  */
-export class WindowController extends WindowModel implements IWindow, IGraphicContextHost
+export class WindowController extends WindowModel implements IWindow, IGraphicContextHost 
 {
     public static readonly TAG_EXCLUDE: string = '_EXCLUDE';
     public static readonly TAG_INTERNAL: string = '_INTERNAL';
@@ -71,7 +71,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         properties: unknown[] | null = null,
         id: number = 0,
         dynamicStyle: string = ''
-    )
+    ) 
     {
         const effectiveRect = rect ?? WindowController.resolveDefaultRectangle(context, type, style);
 
@@ -79,196 +79,6 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
         this._uniqueId = WindowController._nextUniqueId++;
         this._parentRect = {x: 0, y: 0, width: 0, height: 0};
-    }
-
-    /**
-     * Orchestrates the post-construction phases below, in AS3 constructor
-     * order. Called by the factory once `new` has returned (the full
-     * prototype chain's constructors, and thus every subclass field
-     * initializer, have already run) so each phase observes a fully
-     * allocated object — matching the AS3 runtime, where these same steps
-     * execute inside this base constructor while subclass fields still sit
-     * at their type-default (subclass field initializers only run after
-     * this constructor returns).
-     *
-     * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController()
-     */
-    public completeConstruction(
-        properties: unknown[] | null,
-        procedure: ((event: WindowEvent, window: IWindow) => void) | null,
-        parent: IWindow | null
-    ): void
-    {
-        this.resolveTheme();
-        this.buildLayoutChildren();
-        this.applyDefaultAttributes();
-        this.applyProperties(properties);
-        this.setProcedure(procedure);
-        this.attachToParent(parent);
-        this.finalize();
-    }
-
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (theme lookup, line 92)
-    protected resolveTheme(): void
-    {
-        try
-        {
-            this._propertyMap = this._context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(this._style) ?? null;
-        }
-        catch (_)
-        {
-            // Theme not available during bootstrap
-        }
-    }
-
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 99-116)
-    protected buildLayoutChildren(): void
-    {
-        const effectiveRect: WindowRectangle = {x: this._x, y: this._y, width: this._width, height: this._height};
-
-        try
-        {
-            const factory = this._context.getWindowFactory();
-
-            if(factory)
-            {
-                const layout = factory.getLayoutByTypeAndStyle(this._type, this._style);
-
-                if(layout)
-                {
-                    const parser = this._context.getWindowParser();
-
-                    if(parser)
-                    {
-                        // Set to layout's natural size before creating children
-                        // (AS3 lines 95-100)
-                        const dimensions = WindowController.resolveLayoutDimensions(layout);
-                        const layoutWidth = dimensions.width;
-                        const layoutHeight = dimensions.height;
-
-                        this._initialRect.x = 0;
-                        this._initialRect.y = 0;
-                        this._initialRect.width = layoutWidth;
-                        this._initialRect.height = layoutHeight;
-                        this._previousRect.x = 0;
-                        this._previousRect.y = 0;
-                        this._previousRect.width = layoutWidth;
-                        this._previousRect.height = layoutHeight;
-                        this._x = 0;
-                        this._y = 0;
-                        this._width = layoutWidth;
-                        this._height = layoutHeight;
-
-                        parser.parseAndConstruct(layout as string | Document | Element, this, null);
-
-                        // Resize to requested size (AS3 lines 102-105)
-                        const savedParam = this._param;
-                        this._param &= ~0xC00000;
-                        this.setRectangle(effectiveRect.x, effectiveRect.y, effectiveRect.width, effectiveRect.height);
-                        this._param = savedParam;
-
-                        // Restore _previousRect (AS3 lines 106-109)
-                        this._previousRect.x = effectiveRect.x;
-                        this._previousRect.y = effectiveRect.y;
-                        this._previousRect.width = effectiveRect.width;
-                        this._previousRect.height = effectiveRect.height;
-                    }
-                }
-            }
-        }
-        catch (err)
-        {
-            log.warn(`Layout construction failed for type="${this._type}" style="${this._style}":`, err);
-        }
-    }
-
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 117-134)
-    protected applyDefaultAttributes(): void
-    {
-        try
-        {
-            const factory = this._context.getWindowFactory();
-
-            if(factory)
-            {
-                const defaults = factory.getDefaultsByTypeAndStyle(this._type, this._style);
-
-                if(defaults)
-                {
-                    this._blend = defaults.blend;
-                    this._mouseThreshold = defaults.threshold;
-
-                    if(this._background !== defaults.background)
-                    {
-                        this.background = defaults.background;
-                    }
-
-                    if(this._fillColor !== defaults.color)
-                    {
-                        this.color = defaults.color;
-                    }
-
-                    if(defaults.hasRectLimits())
-                    {
-                        (this.limits as WindowRectLimits).assign(
-                            defaults.width_min,
-                            defaults.width_max,
-                            defaults.height_min,
-                            defaults.height_max
-                        );
-                    }
-                }
-            }
-        }
-        catch (_)
-        {
-            // Factory not available during bootstrap
-        }
-    }
-
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 135-138)
-    protected applyProperties(properties: unknown[] | null): void
-    {
-        if(properties)
-        {
-            this.properties = properties;
-        }
-    }
-
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (line 139)
-    protected setProcedure(procedure: ((event: WindowEvent, window: IWindow) => void) | null): void
-    {
-        this._procedure = procedure;
-    }
-
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 140-149, plus graphic context ensure at lines 94-97)
-    protected attachToParent(parent: IWindow | null): void
-    {
-        if(!this._graphicContext)
-        {
-            this._graphicContext = this.getGraphicContext(!this.testParamFlag(16));
-        }
-
-        if(parent !== null)
-        {
-            this._parent = parent as WindowController;
-            (parent as WindowController).addChild(this);
-
-            if(this._graphicContext)
-            {
-                this._context.invalidate(this, null, 1);
-            }
-        }
-    }
-
-    /**
-     * Post-construction hook for subclass-specific setup that must run after
-     * `applyProperties()` (matching AS3's own-class field initializers,
-     * which run after the base constructor returns). No-op by default.
-     */
-    protected finalize(): void
-    {
-        // No-op by default
     }
 
     private _ignoreMouseEvents: boolean = false;
@@ -1194,6 +1004,33 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         // Intentionally empty
     }
 
+    /**
+     * Orchestrates the post-construction phases below, in AS3 constructor
+     * order. Called by the factory once `new` has returned (the full
+     * prototype chain's constructors, and thus every subclass field
+     * initializer, have already run) so each phase observes a fully
+     * allocated object — matching the AS3 runtime, where these same steps
+     * execute inside this base constructor while subclass fields still sit
+     * at their type-default (subclass field initializers only run after
+     * this constructor returns).
+     *
+     * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController()
+     */
+    public completeConstruction(
+        properties: unknown[] | null,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null,
+        parent: IWindow | null
+    ): void 
+    {
+        this.resolveTheme();
+        this.buildLayoutChildren();
+        this.applyDefaultAttributes();
+        this.applyProperties(properties);
+        this.setProcedure(procedure);
+        this.attachToParent(parent);
+        this.finalize();
+    }
+
     /** Returns whether a graphic context exists or can be created. */
     public hasGraphicsContext(): boolean 
     {
@@ -1284,10 +1121,10 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param newWidth - New width
      * @param newHeight - New height
      */
-    public setRectangle(newX: number, newY: number, newWidth: number, newHeight: number): void
+    public setRectangle(newX: number, newY: number, newWidth: number, newHeight: number): void 
     {
         // Apply rect limits
-        if(this._rectLimits)
+        if(this._rectLimits) 
         {
             newHeight = Math.max(this._rectLimits.minHeight, newHeight);
             newHeight = Math.min(this._rectLimits.maxHeight, newHeight);
@@ -1397,7 +1234,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
                 this._y = newY;
             }
 
-            if(resized)
+            if(resized) 
             {
                 this._previousRect.width = this._width;
                 this._previousRect.height = this._height;
@@ -1763,7 +1600,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
                                 this._parent.width = this._parent.width + (this._width - this._previousRect.width);
                             }
 
-                            if(this.testParamFlag(0x800000))
+                            if(this.testParamFlag(0x800000)) 
                             {
                                 this._parent.height = this._parent.height + (this._height - this._previousRect.height);
                             }
@@ -3733,7 +3570,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      *
      * @returns A new WindowController with the same properties
      */
-    public clone(): IWindow
+    public clone(): IWindow 
     {
         const cloned = new (this.constructor as typeof WindowController)(
             this._name,
@@ -3867,6 +3704,169 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
             super.dispose();
         }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (theme lookup, line 92)
+    protected resolveTheme(): void 
+    {
+        try 
+        {
+            this._propertyMap = this._context.getWindowFactory()?.getThemeManager()?.getPropertyDefaults(this._style) ?? null;
+        }
+        catch (_) 
+        {
+            // Theme not available during bootstrap
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 99-116)
+    protected buildLayoutChildren(): void 
+    {
+        const effectiveRect: WindowRectangle = {x: this._x, y: this._y, width: this._width, height: this._height};
+
+        try 
+        {
+            const factory = this._context.getWindowFactory();
+
+            if(factory) 
+            {
+                const layout = factory.getLayoutByTypeAndStyle(this._type, this._style);
+
+                if(layout) 
+                {
+                    const parser = this._context.getWindowParser();
+
+                    if(parser) 
+                    {
+                        // Set to layout's natural size before creating children
+                        // (AS3 lines 95-100)
+                        const dimensions = WindowController.resolveLayoutDimensions(layout);
+                        const layoutWidth = dimensions.width;
+                        const layoutHeight = dimensions.height;
+
+                        this._initialRect.x = 0;
+                        this._initialRect.y = 0;
+                        this._initialRect.width = layoutWidth;
+                        this._initialRect.height = layoutHeight;
+                        this._previousRect.x = 0;
+                        this._previousRect.y = 0;
+                        this._previousRect.width = layoutWidth;
+                        this._previousRect.height = layoutHeight;
+                        this._x = 0;
+                        this._y = 0;
+                        this._width = layoutWidth;
+                        this._height = layoutHeight;
+
+                        parser.parseAndConstruct(layout as string | Document | Element, this, null);
+
+                        // Resize to requested size (AS3 lines 102-105)
+                        const savedParam = this._param;
+                        this._param &= ~0xC00000;
+                        this.setRectangle(effectiveRect.x, effectiveRect.y, effectiveRect.width, effectiveRect.height);
+                        this._param = savedParam;
+
+                        // Restore _previousRect (AS3 lines 106-109)
+                        this._previousRect.x = effectiveRect.x;
+                        this._previousRect.y = effectiveRect.y;
+                        this._previousRect.width = effectiveRect.width;
+                        this._previousRect.height = effectiveRect.height;
+                    }
+                }
+            }
+        }
+        catch (err) 
+        {
+            log.warn(`Layout construction failed for type="${this._type}" style="${this._style}":`, err);
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 117-134)
+    protected applyDefaultAttributes(): void 
+    {
+        try 
+        {
+            const factory = this._context.getWindowFactory();
+
+            if(factory) 
+            {
+                const defaults = factory.getDefaultsByTypeAndStyle(this._type, this._style);
+
+                if(defaults) 
+                {
+                    this._blend = defaults.blend;
+                    this._mouseThreshold = defaults.threshold;
+
+                    if(this._background !== defaults.background) 
+                    {
+                        this.background = defaults.background;
+                    }
+
+                    if(this._fillColor !== defaults.color) 
+                    {
+                        this.color = defaults.color;
+                    }
+
+                    if(defaults.hasRectLimits()) 
+                    {
+                        (this.limits as WindowRectLimits).assign(
+                            defaults.width_min,
+                            defaults.width_max,
+                            defaults.height_min,
+                            defaults.height_max
+                        );
+                    }
+                }
+            }
+        }
+        catch (_) 
+        {
+            // Factory not available during bootstrap
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 135-138)
+    protected applyProperties(properties: unknown[] | null): void 
+    {
+        if(properties) 
+        {
+            this.properties = properties;
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (line 139)
+    protected setProcedure(procedure: ((event: WindowEvent, window: IWindow) => void) | null): void 
+    {
+        this._procedure = procedure;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/WindowController.as::WindowController() (lines 140-149, plus graphic context ensure at lines 94-97)
+    protected attachToParent(parent: IWindow | null): void 
+    {
+        if(!this._graphicContext) 
+        {
+            this._graphicContext = this.getGraphicContext(!this.testParamFlag(16));
+        }
+
+        if(parent !== null) 
+        {
+            this._parent = parent as WindowController;
+            (parent as WindowController).addChild(this);
+
+            if(this._graphicContext) 
+            {
+                this._context.invalidate(this, null, 1);
+            }
+        }
+    }
+
+    /**
+     * Post-construction hook for subclass-specific setup that must run after
+     * `applyProperties()` (matching AS3's own-class field initializers,
+     * which run after the base constructor returns). No-op by default.
+     */
+    protected finalize(): void 
+    {
+        // No-op by default
     }
 
     protected testLocalPointHitAgainstAlpha(point: {

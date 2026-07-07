@@ -8,8 +8,6 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {ScrKickbackData} from '@habbo/communication/messages/incoming/users/ScrKickbackData';
 import type {IHabboClubCenter} from './IHabboClubCenter';
 
-const LAYOUT_NAME = 'club_special_info_popup_bubble';
-
 /**
  * Payday breakdown bubble: shows the club payday reward math anchored next
  * to the "special_content_postit" link in ClubCenterView. Dismisses itself
@@ -17,7 +15,7 @@ const LAYOUT_NAME = 'club_special_info_popup_bubble';
  *
  * @see sources/win63_version/habbo/catalog/clubcenter/ClubSpecialInfoBubbleView.as
  */
-export class ClubSpecialInfoBubbleView
+export class ClubSpecialInfoBubbleView 
 {
     // AS3: MARGIN
     private static readonly MARGIN: number = 8;
@@ -26,13 +24,12 @@ export class ClubSpecialInfoBubbleView
     private _window: IWindowContainer | null = null;
     private _desktop: IWindow | null = null;
     private _activateTimer: ReturnType<typeof setTimeout> | null = null;
-    private readonly _onDesktopDown = (event: WindowEvent): void => this.onDesktopDown(event);
 
-    constructor(manager: IHabboClubCenter, windowManager: IHabboWindowManager, kickbackData: ScrKickbackData, anchor: IWindow)
+    constructor(manager: IHabboClubCenter, windowManager: IHabboWindowManager, kickbackData: ScrKickbackData, anchor: IWindow) 
     {
         this._manager = manager;
 
-        const built = windowManager.buildWidgetLayout(LAYOUT_NAME) as IWindowContainer | null;
+        const built = windowManager.buildWidgetLayout('club_center_special_info_xml') as IWindowContainer | null;
 
         if(!built) return;
 
@@ -49,11 +46,11 @@ export class ClubSpecialInfoBubbleView
 
         let factorText = this._manager.localization?.getLocalization('hccenter.breakdown.paydayfactor.percent', '') ?? '';
 
-        if(factorText && factorText.length > 0)
+        if(factorText && factorText.length > 0) 
         {
             factorText = factorText.replace('%percent%', String(percent)).replace('%multiplier%', multiplier);
         }
-        else
+        else 
         {
             factorText = this.getLocalization('hccenter.breakdown.paydayfactor').replace('%percent%', multiplier);
         }
@@ -74,18 +71,18 @@ export class ClubSpecialInfoBubbleView
         this._desktop?.addEventListener(WindowMouseEvent.DOWN, this._onDesktopDown);
     }
 
-    dispose(): void
+    dispose(): void 
     {
         this._desktop?.removeEventListener(WindowMouseEvent.DOWN, this._onDesktopDown);
         this._desktop = null;
 
-        if(this._activateTimer !== null)
+        if(this._activateTimer !== null) 
         {
             clearTimeout(this._activateTimer);
             this._activateTimer = null;
         }
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.dispose();
             this._window = null;
@@ -94,13 +91,15 @@ export class ClubSpecialInfoBubbleView
         this._manager = null;
     }
 
-    private onTimerEvent(): void
+    private readonly _onDesktopDown = (event: WindowEvent): void => this.onDesktopDown(event);
+
+    private onTimerEvent(): void 
     {
         this._activateTimer = null;
         this._window?.activate();
     }
 
-    private positionWindow(anchor: IWindow): void
+    private positionWindow(anchor: IWindow): void 
     {
         if(!this._window || !this._manager || !this._desktop) return;
 
@@ -113,12 +112,12 @@ export class ClubSpecialInfoBubbleView
         const desktopWidth = desktop.width;
 
         if(desktopWidth < anchorPos.x + anchor.width + this._window.width + ClubSpecialInfoBubbleView.MARGIN
-			&& anchorPos.x > this._window.width + ClubSpecialInfoBubbleView.MARGIN)
+            && anchorPos.x > this._window.width + ClubSpecialInfoBubbleView.MARGIN) 
         {
             (this._window as unknown as IBubbleWindow).direction = 'right';
             anchorPos.x -= this._window.width + ClubSpecialInfoBubbleView.MARGIN;
         }
-        else
+        else 
         {
             anchorPos.x += anchor.width + ClubSpecialInfoBubbleView.MARGIN;
         }
@@ -127,13 +126,13 @@ export class ClubSpecialInfoBubbleView
         this._window.position = anchorPos;
     }
 
-    private onInput = (event: WindowEvent, window: IWindow): void =>
+    private onInput = (event: WindowEvent, window: IWindow): void => 
     {
         if(event.type !== WindowMouseEvent.DOWN || !this._manager) return;
 
         event.stopImmediatePropagation();
 
-        if(window.name === 'special_infolink')
+        if(window.name === 'special_infolink') 
         {
             this._manager.openPaydayHelpPage();
         }
@@ -147,19 +146,19 @@ export class ClubSpecialInfoBubbleView
     // gets a listener here; the bubble's own onInput() already
     // stopImmediatePropagation()s clicks on its own content before they'd
     // reach this handler.
-    private onDesktopDown(event: WindowEvent): void
+    private onDesktopDown(event: WindowEvent): void 
     {
         this._manager?.removeBreakdown();
     }
 
-    private setElementText(name: string, text: string): void
+    private setElementText(name: string, text: string): void 
     {
         const el = this._window?.findChildByName(name) as ITextWindow | null;
 
         if(el) el.text = text;
     }
 
-    private getLocalization(key: string): string
+    private getLocalization(key: string): string 
     {
         if(!this._manager?.localization) return '';
 
