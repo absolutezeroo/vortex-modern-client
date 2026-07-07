@@ -219,43 +219,12 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
             canIgnore = false;
         }
 
-        let face: ImageBitmap | null = style instanceof ChatStyle ? style.iconImage : null;
-
-        if(item.forcedFigure || item.forcedUserName)
-        {
-            if(!face)
-            {
-                face = this.getUserImage(item.forcedFigure ?? '');
-            }
-        }
-        else if(userData)
-        {
-            const figure = userData.figure;
-
-            if(!face)
-            {
-                switch(userData.type - 1)
-                {
-                    case 0:
-                    case 2:
-                    case 3:
-                        face = this.getUserImage(figure);
-                        break;
-                    case 1:
-                    {
-                        const roomObject = this._chatFlow.roomEngine?.getRoomObject(item.roomId, userData.roomObjectId, 100) ?? null;
-                        const posture = roomObject?.getModel().getString('figure_posture') ?? null;
-
-                        face = this.getPetImage(figure, 2, false, 32, posture);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // TODO(AS3): AS3 renders `new ChatBubble(item, style, face, name, color, chatFlow, 1)`
-        // then rasterizes it via `drawToBitmap()` into the bitmap passed below —
-        // ChatBubble.as (511 lines) isn't ported yet, see class header.
+        // TODO(AS3): AS3 also resolves a `face` image here (identical to
+        // getNewChatBubble()'s forcedFigure/avatar/pet switch above) and renders
+        // `new ChatBubble(item, style, face, name, color, chatFlow, 1)`, then
+        // rasterizes it via `drawToBitmap()` into the bitmap passed below.
+        // ChatBubble.as (511 lines) isn't ported yet, so that resolution would be
+        // dead work right now — restore it here once ChatBubble exists.
         return new ChatHistoryEntryBitmapBubble(item, canIgnore, webId, name, null, style.overlap);
     }
 
