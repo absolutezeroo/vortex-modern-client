@@ -4,10 +4,13 @@ import {WindowStyle} from './enum/WindowStyle';
 /**
  * Registry of element descriptors indexed by [typeId][style].
  *
- * Simplified port of AS3 SkinContainer. Stores element descriptors
- * and provides lookup with fallback to default style.
+ * TS-only: not a direct AS3 class. Indexes the compiled `element-description.json`
+ * data (typeId/style -> descriptor) that HabboWindowManager.loadElementDescription()
+ * feeds into SkinContainer/HabboWidgetFactory/etc. The style-fallback-to-DEFAULT
+ * lookup semantics mirror the real AS3 SkinContainer (see SkinContainer.ts),
+ * which this registry doesn't replace.
  *
- * @see sources/flash_version/com/sulake/core/window/graphics/SkinContainer.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/SkinContainer.as
  */
 export class ElementRegistry
 {
