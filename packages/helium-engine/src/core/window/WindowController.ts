@@ -1121,10 +1121,10 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
      * @param newWidth - New width
      * @param newHeight - New height
      */
-    public setRectangle(newX: number, newY: number, newWidth: number, newHeight: number): void 
+    public setRectangle(newX: number, newY: number, newWidth: number, newHeight: number): void
     {
         // Apply rect limits
-        if(this._rectLimits) 
+        if(this._rectLimits)
         {
             newHeight = Math.max(this._rectLimits.minHeight, newHeight);
             newHeight = Math.min(this._rectLimits.maxHeight, newHeight);
@@ -1590,12 +1590,12 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
                         }
 
                         // Propagate to parent
-                        if(this._parent !== null) 
+                        if(this._parent !== null)
                         {
                             const savedParam = this._param;
                             this._param = this._param & 0xFFFFF33F;
 
-                            if(this.testParamFlag(0x400000)) 
+                            if(this.testParamFlag(0x400000))
                             {
                                 this._parent.width = this._parent.width + (this._width - this._previousRect.width);
                             }
@@ -3589,19 +3589,21 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
         // Route through the same factory phases as regular construction
         // (theme/layout/defaults) instead of relying on the constructor,
-        // which now only stores base fields. `properties`/`parent` are
-        // applied manually below from the live source window instead, so
-        // pass null/null here — matching what the constructor used to see
-        // in this call (properties was already null; parent is always null
-        // for a clone, attached later by the caller).
-        cloned.completeConstruction(null, this._procedure, null);
-
+        // which now only stores base fields. Properties must be threaded
+        // into completeConstruction() itself (applyProperties() runs
+        // before finalize()) rather than assigned afterward — AS3's
+        // clone() passes `properties` straight into `new _loc2_(...)`,
+        // so subclasses like ItemListController see the real
+        // resize_on_item_update/spacing/etc. values before finalize()
+        // creates `_container` and arms its reflect-to-parent param
+        // flags. Applying properties post-hoc (after `_container`
+        // already exists) let an early spacing-triggered resize run
+        // with the reflect flag still unarmed, silently desyncing the
+        // parent's width from `_container`'s — parent is always null
+        // for a clone, attached later by the caller.
         const properties = this.properties;
 
-        if(properties.length > 0) 
-        {
-            cloned.properties = properties;
-        }
+        cloned.completeConstruction(properties.length > 0 ? properties : null, this._procedure, null);
 
         cloned.dynamicStyle = this._dynamicStyleName;
         cloned._mouseThreshold = this._mouseThreshold;
