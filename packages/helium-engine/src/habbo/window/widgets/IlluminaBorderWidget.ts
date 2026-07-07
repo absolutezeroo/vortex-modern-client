@@ -62,7 +62,7 @@ export class IlluminaBorderWidget implements IIlluminaBorderWidget
 
         this._onChangeBound = this.onChange.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('illumina_border') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('illumina_border_xml') as IWindowContainer | null;
 
         if(root)
         {

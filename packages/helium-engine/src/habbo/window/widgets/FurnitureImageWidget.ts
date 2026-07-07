@@ -46,7 +46,7 @@ export class FurnitureImageWidget implements IWidget
         this._windowManager = windowManager;
         this._onClickBound = this.onClick.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('furniture_image') as IWindowContainer;
+        const root = this._windowManager.buildWidgetLayout('furniture_image_xml') as IWindowContainer;
 
         if(root)
         {

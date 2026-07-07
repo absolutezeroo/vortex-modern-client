@@ -57,7 +57,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 
         this._rootProcedureBound = this.rootProcedure.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('illumina_chat_bubble') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('illumina_chat_bubble_xml') as IWindowContainer | null;
 
         if(root)
         {

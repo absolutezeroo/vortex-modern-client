@@ -51,7 +51,7 @@ export class IlluminaInputWidget implements IIlluminaInputWidget
 
         this._widgetProcedureBound = this.widgetProcedure.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('illumina_input') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('illumina_input_xml') as IWindowContainer | null;
 
         if(root)
         {

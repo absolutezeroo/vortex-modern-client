@@ -24,7 +24,7 @@ import './_index.scss';
 
 /** Atlas spritesheet names that need to be decoded as ImageBitmaps. */
 const ATLAS_NAMES = [
-    'habbo_skin_blue',
+    'habbo_blue_skin',
     'habbo_skin_ubuntu',
     'habbo_skin_illumina_dark',
     'habbo_skin_illumina_light',

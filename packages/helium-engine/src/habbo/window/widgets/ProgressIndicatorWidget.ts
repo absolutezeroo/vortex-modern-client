@@ -39,7 +39,7 @@ export class ProgressIndicatorWidget implements IProgressIndicatorWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('progress_indicator') as IItemListWindow | null;
+        const root = this._windowManager.buildWidgetLayout('progress_indicator_xml') as IItemListWindow | null;
 
         if(root)
         {

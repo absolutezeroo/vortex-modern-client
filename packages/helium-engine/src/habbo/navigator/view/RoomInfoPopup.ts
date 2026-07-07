@@ -577,7 +577,7 @@ export class RoomInfoPopup
 
         if(!windowManager) return;
 
-        const propertyWindow = windowManager.buildWidgetLayout('property') as IWindowContainer | null;
+        const propertyWindow = windowManager.buildWidgetLayout('property_xml') as IWindowContainer | null;
 
         if(!propertyWindow) return;
 
@@ -609,8 +609,10 @@ export class RoomInfoPopup
 	 */
     private getNewTagItem(tag: string, index: number): IWindow
     {
+        // AS3: sources/win63_version/habbo/navigator/view/RoomInfoPopup.as::getNewTagItem()
+        // uses assets.getAssetByName("tag_xml") - not "navigator_tag".
         const windowManager = this._navigator.windowManager;
-        const tagWindow = windowManager?.buildWidgetLayout('navigator_tag') as IWindowContainer | null;
+        const tagWindow = windowManager?.buildWidgetLayout('tag_xml') as IWindowContainer | null;
 
         if(tagWindow)
         {
@@ -641,7 +643,7 @@ export class RoomInfoPopup
 
         if(!windowManager) return;
 
-        const built = windowManager.buildWidgetLayout('room_info_popup_bubble');
+        const built = windowManager.buildWidgetLayout('room_info_popup_bubble_xml');
 
         if(built)
         {

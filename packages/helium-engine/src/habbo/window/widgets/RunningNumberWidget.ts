@@ -47,7 +47,7 @@ export class RunningNumberWidget implements IRunningNumberWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('running_number') as IWindowContainer;
+        const root = this._windowManager.buildWidgetLayout('running_number_xml') as IWindowContainer;
 
         if(root)
         {

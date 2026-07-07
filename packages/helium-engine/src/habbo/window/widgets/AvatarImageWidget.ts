@@ -83,7 +83,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         this._onClickBound = this.onClick.bind(this);
         this._onAvatarRendererReadyBound = this.onAvatarRendererReady.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('avatar_image') as IWindowContainer;
+        const root = this._windowManager.buildWidgetLayout('avatar_image_xml') as IWindowContainer;
 
         if(root)
         {

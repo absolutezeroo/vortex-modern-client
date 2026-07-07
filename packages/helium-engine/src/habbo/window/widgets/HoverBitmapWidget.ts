@@ -39,7 +39,7 @@ export class HoverBitmapWidget implements IWidget
         this._onMouseOverBound = this.onMouseOver.bind(this);
         this._onMouseOutBound = this.onMouseOut.bind(this);
 
-        const bitmap = this._windowManager.buildWidgetLayout('hover_bitmap') as IStaticBitmapWrapperWindow | null;
+        const bitmap = this._windowManager.buildWidgetLayout('hover_bitmap_xml') as IStaticBitmapWrapperWindow | null;
 
         if(bitmap)
         {

@@ -48,7 +48,7 @@ export class PetImageWidget implements IWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('pet_image') as IWindowContainer;
+        const root = this._windowManager.buildWidgetLayout('pet_image_xml') as IWindowContainer;
 
         if(root)
         {

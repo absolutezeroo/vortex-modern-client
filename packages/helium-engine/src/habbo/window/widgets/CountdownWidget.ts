@@ -43,7 +43,7 @@ export class CountdownWidget implements IWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('clock_base');
+        const root = this._windowManager.buildWidgetLayout('clock_base_xml');
 
         if(root)
         {

@@ -62,10 +62,6 @@ export class PurseAreaExtension
         this._catalog.events.on(PurseEvent.CREDIT_BALANCE, this.onCreditsBalance);
         this._catalog.events.on(PurseEvent.ACTIVITY_POINT_BALANCE, this.onPointBalance);
         this.updateCreditAndPointValues();
-
-        const creditCount: IWindow | null = this._window!.findChildByName("credit_count");
-        this._toolbar!.windowManager!.registerHintWindow("credit_count", creditCount!);
-
         this.refreshIndicators();
     }
 
@@ -247,7 +243,7 @@ export class PurseAreaExtension
             case 'hc_join_button':
                 this._catalog?.openClubCenter();
                 break;
-            case 'vault_button':
+            case 'earnings_button':
                 this._catalog?.openVault();
                 break;
             case 'logout_button':
@@ -265,7 +261,6 @@ export class PurseAreaExtension
             switch(current.name) 
             {
                 case 'earnings_button':
-                case 'vault_button':
                 case 'hc_join_button':
                 case 'help_button':
                 case 'settings_button':

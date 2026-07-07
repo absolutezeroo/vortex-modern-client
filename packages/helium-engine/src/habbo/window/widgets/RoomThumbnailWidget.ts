@@ -26,7 +26,10 @@ export class RoomThumbnailWidget implements IRoomThumbnailWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('room_thumbnail') as IWindowContainer | null;
+        // AS3: sources/win63_version/habbo/window/widgets/RoomThumbnailWidget.as::RoomThumbnailWidget()
+        // uses assets.getAssetByName("room_thumbnail_xml") - the "_xml" suffix is part of
+        // the real asset name here, not a generic convention to strip.
+        const root = this._windowManager.buildWidgetLayout('room_thumbnail_xml') as IWindowContainer | null;
 
         if(root)
         {

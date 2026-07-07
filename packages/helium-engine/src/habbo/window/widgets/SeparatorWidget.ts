@@ -18,7 +18,7 @@ import {WindowEvent} from '@core/window/events/WindowEvent';
  *
  * @see sources/win63_version/habbo/window/widgets/SeparatorWidget.as
  */
-export class SeparatorWidget implements ISeparatorWidget
+export class SeparatorWidget implements ISeparatorWidget 
 {
     public static readonly TYPE: string = 'separator';
 
@@ -34,23 +34,23 @@ export class SeparatorWidget implements ISeparatorWidget
 
     private _onChangeBound: Function;
 
-    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
     {
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
         this._onChangeBound = this.onChange.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('separator') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('separator_xml') as IWindowContainer | null;
 
-        if(root)
+        if(root) 
         {
             this._root = root;
 
             const canvas = root.getChildByName('canvas');
             const children = root.getChildByName('children') as IWindowContainer | null;
 
-            if(canvas)
+            if(canvas) 
             {
                 this._canvas = canvas;
 
@@ -58,7 +58,7 @@ export class SeparatorWidget implements ISeparatorWidget
                 this._canvas.addEventListener(WindowEvent.WE_RESIZED, this._onChangeBound);
             }
 
-            if(children)
+            if(children) 
             {
                 this._children = children;
 
@@ -76,34 +76,34 @@ export class SeparatorWidget implements ISeparatorWidget
 
     private _disposed: boolean = false;
 
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
     private _vertical: boolean = false;
 
-    public get vertical(): boolean
+    public get vertical(): boolean 
     {
         return this._vertical;
     }
 
-    public set vertical(value: boolean)
+    public set vertical(value: boolean) 
     {
         this._vertical = value;
     }
 
     /**
-	 * Get the border image asset name for the current orientation.
-	 */
-    public get borderImageName(): string
+     * Get the border image asset name for the current orientation.
+     */
+    public get borderImageName(): string 
     {
         return this._vertical
             ? SeparatorWidget.BORDER_IMAGE_VERTICAL
             : SeparatorWidget.BORDER_IMAGE_HORIZONTAL;
     }
 
-    public get properties(): PropertyStruct[]
+    public get properties(): PropertyStruct[] 
     {
         if(this._disposed) return [];
 
@@ -112,31 +112,31 @@ export class SeparatorWidget implements ISeparatorWidget
         ];
     }
 
-    public set properties(values: PropertyStruct[])
+    public set properties(values: PropertyStruct[]) 
     {
-        for(const prop of values)
+        for(const prop of values) 
         {
-            if(prop.key === SeparatorWidget.VERTICAL_KEY)
+            if(prop.key === SeparatorWidget.VERTICAL_KEY) 
             {
                 this.vertical = Boolean(prop.value);
             }
         }
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
         this._disposed = true;
 
-        if(this._canvas)
+        if(this._canvas) 
         {
             this._canvas.removeEventListener(WindowEvent.WE_RESIZE, this._onChangeBound);
             this._canvas.removeEventListener(WindowEvent.WE_RESIZED, this._onChangeBound);
             this._canvas = null;
         }
 
-        if(this._children)
+        if(this._children) 
         {
             this._children.removeEventListener(WindowEvent.WE_CHILD_ADDED, this._onChangeBound);
             this._children.removeEventListener(WindowEvent.WE_CHILD_REMOVED, this._onChangeBound);
@@ -145,13 +145,13 @@ export class SeparatorWidget implements ISeparatorWidget
             this._children = null;
         }
 
-        if(this._root)
+        if(this._root) 
         {
             this._root.dispose();
             this._root = null;
         }
 
-        if(this._widgetWindow)
+        if(this._widgetWindow) 
         {
             this._widgetWindow.rootWindow = null;
         }
@@ -161,18 +161,18 @@ export class SeparatorWidget implements ISeparatorWidget
     }
 
     /**
-	 * Called when the canvas resizes or children change.
-	 * Triggers a refresh of the separator rendering.
-	 */
-    private onChange(): void
+     * Called when the canvas resizes or children change.
+     * Triggers a refresh of the separator rendering.
+     */
+    private onChange(): void 
     {
         this.refresh();
     }
 
     /**
-	 * Refresh the separator rendering based on current layout.
-	 */
-    private refresh(): void
+     * Refresh the separator rendering based on current layout.
+     */
+    private refresh(): void 
     {
         // AS3: Redraws the separator BitmapData with tiled border images
         // and punch-through holes for children. In TS, the UI layer

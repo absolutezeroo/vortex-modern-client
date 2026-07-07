@@ -34,7 +34,7 @@ export class PixelLimitWidget implements IWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('badge_image') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('badge_image_xml') as IWindowContainer | null;
 
         if(root)
         {

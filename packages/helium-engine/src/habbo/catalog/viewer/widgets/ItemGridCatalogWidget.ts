@@ -21,55 +21,44 @@ import {CatalogWidget} from './CatalogWidget';
  *
  * @see sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as
  */
-export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, IDragAndDropDoneReceiver
+export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, IDragAndDropDoneReceiver 
 {
-    protected _itemGrid: IItemGridWindow | null = null;
+    itemColors: Map<string, number[]> = new Map();
 
     // AS3 loads these via assets.getAssetByName(name).content (raw XML, rebuilt per item via
     // buildFromXML()); this port's compiled window-layout registry only exposes ready-built
     // window instances (buildWidgetLayout()), so these hold one template instance each, cloned
     // per grid item instead - the same clone-a-template pattern CatalogNodeRenderable already
+    chosenItemColorIndex: number = 0;
+    protected _itemGrid: IItemGridWindow | null = null;
     // uses for its own item/list templates.
     protected _gridItemLayout: IWindow | null = null;
-
     protected _gridItemWithPriceMulti: IWindow | null = null;
-
     protected _gridItemWithPriceSingle: IWindow | null = null;
-
     protected _selectedGridItem: IGridItem | null = null;
-
-    private _bundleCounter: number = 0;
-
     protected _graphicsTimer: ReturnType<typeof setInterval> | null = null;
-
     protected _useTimer: boolean = true;
-
-    private _offerInitIndex: number = 0;
-
     protected _sessionDataManager: ISessionDataManager;
-
+    private _bundleCounter: number = 0;
+    private _offerInitIndex: number = 0;
     private _catalogType: string;
 
-    itemColors: Map<string, number[]> = new Map();
-
-    chosenItemColorIndex: number = 0;
-
-    constructor(window: IWindowContainer, sessionDataManager: ISessionDataManager, catalogType: string)
+    constructor(window: IWindowContainer, sessionDataManager: ISessionDataManager, catalogType: string) 
     {
         super(window);
         this._sessionDataManager = sessionDataManager;
         this._catalogType = catalogType;
     }
 
-    override dispose(): void
+    override dispose(): void 
     {
-        if(this._graphicsTimer != null)
+        if(this._graphicsTimer != null) 
         {
             clearInterval(this._graphicsTimer);
             this._graphicsTimer = null;
         }
 
-        if(this._itemGrid != null)
+        if(this._itemGrid != null) 
         {
             this._itemGrid.destroyGridItems();
             this._itemGrid = null;
@@ -83,7 +72,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         super.dispose();
     }
 
-    override init(): boolean
+    override init(): boolean 
     {
         if(!super.init()) return false;
 
@@ -93,7 +82,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
         this._itemGrid = this._window.findChildByName('itemGrid') as unknown as IItemGridWindow;
 
-        if(!isFixed)
+        if(!isFixed) 
         {
             this._window.getChildAt(0)!.width = this._window.width;
             this._window.getChildAt(0)!.height = this._window.height;
@@ -102,16 +91,16 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         this._itemGrid.verticalSpacing = 0;
 
         this._gridItemLayout = this.page.viewer.catalog.windowManager!.buildWidgetLayout('gridItem');
-        this._gridItemWithPriceSingle = this.page.viewer.catalog.windowManager!.buildWidgetLayout('gridItem_with_price');
-        this._gridItemWithPriceMulti = this.page.viewer.catalog.windowManager!.buildWidgetLayout('gridItem_with_price_multi');
+        this._gridItemWithPriceSingle = this.page.viewer.catalog.windowManager!.buildWidgetLayout('grid_item_with_price_single');
+        this._gridItemWithPriceMulti = this.page.viewer.catalog.windowManager!.buildWidgetLayout('grid_item_with_price_multi');
 
         const loadGraphics = this.populateItemGrid();
 
-        if(this._useTimer)
+        if(this._useTimer) 
         {
             this._graphicsTimer = setInterval(() => this.loadItemGridGraphics(loadGraphics), 25);
         }
-        else
+        else 
         {
             this.loadItemGridGraphics(loadGraphics);
         }
@@ -121,9 +110,9 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return true;
     }
 
-    select(item: IGridItem, dispatchColours: boolean): void
+    select(item: IGridItem, dispatchColours: boolean): void 
     {
-        if(this._selectedGridItem != null)
+        if(this._selectedGridItem != null) 
         {
             this._selectedGridItem.deactivate();
         }
@@ -131,7 +120,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         this._selectedGridItem = item;
         item.activate();
 
-        if(item.view)
+        if(item.view) 
         {
             item.view.findChildByName('border_outline')!.color = this._catalogType === 'NORMAL' ? 6538729 : 16758076;
         }
@@ -144,11 +133,11 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
         const offer = container.offer;
 
-        if(offer != null)
+        if(offer != null) 
         {
             this.events.emit(SelectProductEvent.SELECT_PRODUCT, new SelectProductEvent(offer));
 
-            if(offer.product && offer.product.productType === 'i')
+            if(offer.product && offer.product.productType === 'i') 
             {
                 this.events.emit(
                     SetExtraPurchaseParameterEvent.CWE_SET_EXTRA_PARM,
@@ -157,7 +146,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
             }
         }
 
-        if(dispatchColours)
+        if(dispatchColours) 
         {
             this.events.emit(CatalogWidgetColoursEvent.COLOUR_ARRAY, new CatalogWidgetColoursEvent(
                 this.getCurrentItemColors(),
@@ -173,16 +162,16 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
     // Real logic calls (catalog as HabboCatalog).requestSelectedItemToMover(this, offer) to hand
     // the offer to CatalogObjectMover for drag-into-room placement - neither is ported yet
     // (see Offer.ts's port notes on the deferred in-room "buy this placed item" flow).
-    startDragAndDrop(_item: IGridItem): boolean
+    startDragAndDrop(_item: IGridItem): boolean 
     {
         return false;
     }
 
-    onDragAndDropDone(success: boolean, extraParam: string): void
+    onDragAndDropDone(success: boolean, extraParam: string): void 
     {
         if(this.disposed) return;
 
-        if(success)
+        if(success) 
         {
             // TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::onDragAndDropDone()
             // AS3 dispatches a CatalogWidgetInitPurchaseEvent(false, extraParam) here - not
@@ -191,21 +180,40 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
-    stopDragAndDrop(): void
+    stopDragAndDrop(): void 
     {
     }
 
-    protected populateItemGrid(): IPurchasableOffer[]
+    getCurrentItemColors(): number[] 
+    {
+        let matched: IPurchasableOffer | null = null;
+
+        for(const offer of this.page.offers) 
+        {
+            if(offer.gridItem === this._selectedGridItem) 
+            {
+                matched = offer;
+            }
+        }
+
+        if(!matched || !matched.product!.isColorable) return [];
+
+        const baseName = matched.product!.furnitureData!.fullName.split('*')[0];
+
+        return this.itemColors.get(baseName) ?? [];
+    }
+
+    protected populateItemGrid(): IPurchasableOffer[] 
     {
         const groupByColor = this.page.layoutCode === 'default_3x3_color_grouping';
         const groupedOffers: IPurchasableOffer[] = [];
         const groupIndexByBaseName = new Map<string, number>();
 
-        if(groupByColor)
+        if(groupByColor) 
         {
-            for(const offer of this.page.offers)
+            for(const offer of this.page.offers) 
             {
-                if(!offer.product!.furnitureData || !offer.product!.isColorable)
+                if(!offer.product!.furnitureData || !offer.product!.isColorable) 
                 {
                     groupedOffers.push(offer);
 
@@ -216,18 +224,18 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
                 const baseName = furnitureData.fullName.split('*')[0];
                 const colourIndex = parseInt(furnitureData.fullName.split('*')[1], 10);
 
-                if(!this.itemColors.has(baseName))
+                if(!this.itemColors.has(baseName)) 
                 {
                     this.itemColors.set(baseName, []);
                 }
 
                 let lastColour = 16777215;
 
-                if(furnitureData.colours)
+                if(furnitureData.colours) 
                 {
-                    for(const colour of furnitureData.colours)
+                    for(const colour of furnitureData.colours) 
                     {
-                        if(colour !== 16777215)
+                        if(colour !== 16777215) 
                         {
                             lastColour = colour;
                         }
@@ -235,18 +243,18 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
                     const colours = this.itemColors.get(baseName)!;
 
-                    if(colours.indexOf(lastColour) === -1)
+                    if(colours.indexOf(lastColour) === -1) 
                     {
                         colours[colourIndex] = lastColour;
                     }
                 }
 
-                if(!groupIndexByBaseName.has(baseName))
+                if(!groupIndexByBaseName.has(baseName)) 
                 {
                     groupIndexByBaseName.set(baseName, groupedOffers.length);
                     groupedOffers.push(offer);
                 }
-                else if(baseName.indexOf('bc_') === 0 && (lastColour === 16777215 || lastColour === 16777214))
+                else if(baseName.indexOf('bc_') === 0 && (lastColour === 16777215 || lastColour === 16777214)) 
                 {
                     groupedOffers[groupIndexByBaseName.get(baseName)!] = offer;
                 }
@@ -255,18 +263,18 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
         const offersToLoad: IPurchasableOffer[] = [];
 
-        for(const offer of this.page.offers)
+        for(const offer of this.page.offers) 
         {
-            if(groupByColor && offer.product!.furnitureData && offer.product!.isColorable)
+            if(groupByColor && offer.product!.furnitureData && offer.product!.isColorable) 
             {
-                if(groupedOffers.indexOf(offer) !== -1)
+                if(groupedOffers.indexOf(offer) !== -1) 
                 {
                     const view = this.createGridItem(offer.gridItem);
 
                     offer.gridItem.view = view;
                 }
             }
-            else
+            else 
             {
                 const view = this.createGridItem(offer.gridItem);
 
@@ -275,16 +283,16 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
             offer.gridItem.grid = this;
 
-            if(groupedOffers.indexOf(offer) !== -1 || !groupByColor)
+            if(groupedOffers.indexOf(offer) !== -1 || !groupByColor) 
             {
                 offersToLoad.push(offer);
             }
 
-            if(offer.pricingModel === 'pricing_model_bundle')
+            if(offer.pricingModel === 'pricing_model_bundle') 
             {
                 this._bundleCounter = this._bundleCounter + 1;
 
-                if(offer.productContainer instanceof BundleProductContainer)
+                if(offer.productContainer instanceof BundleProductContainer) 
                 {
                     offer.productContainer.setBundleCounter(this._bundleCounter);
                 }
@@ -294,34 +302,34 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return offersToLoad;
     }
 
-    protected resetTimer(): void
+    protected resetTimer(): void 
     {
         this._offerInitIndex = 0;
     }
 
-    protected loadItemGridGraphics(offers: IPurchasableOffer[] | null = null): void
+    protected loadItemGridGraphics(offers: IPurchasableOffer[] | null = null): void 
     {
         if(this.disposed) return;
 
         const list = offers ?? this.page.offers;
         const count = list.length;
 
-        if(count > 0)
+        if(count > 0) 
         {
-            for(let i = 0; i < 3; i++)
+            for(let i = 0; i < 3; i++) 
             {
-                if(this._offerInitIndex >= 0 && this._offerInitIndex < count)
+                if(this._offerInitIndex >= 0 && this._offerInitIndex < count) 
                 {
                     this.loadGraphics(list[this._offerInitIndex]);
                 }
 
                 this._offerInitIndex = this._offerInitIndex + 1;
 
-                if(this._offerInitIndex >= count)
+                if(this._offerInitIndex >= count) 
                 {
                     this.resetTimer();
 
-                    if(this._graphicsTimer != null)
+                    if(this._graphicsTimer != null) 
                     {
                         clearInterval(this._graphicsTimer);
                         this._graphicsTimer = null;
@@ -333,7 +341,11 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
-    protected createGridItem(gridItem: IGridItem): IWindowContainer
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::loadGraphics()
+    // The guild-recolor preview branch (var_3738/StringArrayStuffData.setArray()) is not ported -
+    // StringArrayStuffData only supports construction from a room-object model/message wrapper in
+
+    protected createGridItem(gridItem: IGridItem): IWindowContainer 
     {
         const container = gridItem as unknown as IProductContainer;
         const hasPrice = container != null && container.offer != null
@@ -341,13 +353,13 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
         let template: IWindow;
 
-        if(hasPrice && this._catalogType !== 'BUILDERS_CLUB')
+        if(hasPrice && this._catalogType !== 'BUILDERS_CLUB') 
         {
             template = (container.offer.priceInCredits > 0 && container.offer.priceInActivityPoints > 0)
                 ? this._gridItemWithPriceMulti!
                 : this._gridItemWithPriceSingle!;
         }
-        else
+        else 
         {
             template = this._gridItemLayout!;
         }
@@ -357,7 +369,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         this._itemGrid!.addGridItem(view);
         gridItem.view = view;
 
-        if(this._catalogType !== 'BUILDERS_CLUB' && container instanceof ProductContainer)
+        if(this._catalogType !== 'BUILDERS_CLUB' && container instanceof ProductContainer) 
         {
             container.createCurrencyIndicators(this.page.viewer.catalog as HabboCatalog);
         }
@@ -365,13 +377,10 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return view;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ItemGridCatalogWidget.as::loadGraphics()
-    // The guild-recolor preview branch (var_3738/StringArrayStuffData.setArray()) is not ported -
-    // StringArrayStuffData only supports construction from a room-object model/message wrapper in
     // this port, not the ad-hoc string array AS3 builds here for a not-yet-owned guild furni item.
-    protected loadGraphics(offer: IPurchasableOffer): void
+    protected loadGraphics(offer: IPurchasableOffer): void 
     {
-        if(offer != null && !offer.disposed)
+        if(offer != null && !offer.disposed) 
         {
             offer.productContainer.initProductIcon(this.page.viewer.roomEngine, null);
         }
@@ -379,13 +388,13 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         offer.productContainer.grid = this;
     }
 
-    private onColourIndex(event: CatalogWidgetColourIndexEvent): void
+    private onColourIndex(event: CatalogWidgetColourIndexEvent): void 
     {
         let matched: IPurchasableOffer | null = null;
 
-        for(const offer of this.page.offers)
+        for(const offer of this.page.offers) 
         {
-            if(offer.gridItem === this._selectedGridItem && offer.gridItem.view != null)
+            if(offer.gridItem === this._selectedGridItem && offer.gridItem.view != null) 
             {
                 matched = offer;
             }
@@ -399,9 +408,9 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
         const targetName = matched.product!.furnitureData!.fullName.split('*')[0] + '*' + (event.index + 1);
 
-        for(const offer of this.page.offers)
+        for(const offer of this.page.offers) 
         {
-            if(offer.product!.furnitureData!.fullName === targetName)
+            if(offer.product!.furnitureData!.fullName === targetName) 
             {
                 offer.gridItem.view = view;
                 this.select(offer.gridItem, false);
@@ -410,32 +419,13 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         }
     }
 
-    getCurrentItemColors(): number[]
+    private getCurrentItemColourIndex(): number 
     {
         let matched: IPurchasableOffer | null = null;
 
-        for(const offer of this.page.offers)
+        for(const offer of this.page.offers) 
         {
-            if(offer.gridItem === this._selectedGridItem)
-            {
-                matched = offer;
-            }
-        }
-
-        if(!matched || !matched.product!.isColorable) return [];
-
-        const baseName = matched.product!.furnitureData!.fullName.split('*')[0];
-
-        return this.itemColors.get(baseName) ?? [];
-    }
-
-    private getCurrentItemColourIndex(): number
-    {
-        let matched: IPurchasableOffer | null = null;
-
-        for(const offer of this.page.offers)
-        {
-            if(offer.gridItem === this._selectedGridItem)
+            if(offer.gridItem === this._selectedGridItem) 
             {
                 matched = offer;
             }

@@ -364,7 +364,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
 
         if(!shareWindow) 
         {
-            shareWindow = this._windowManager.buildWidgetLayout('share_room') as IWindowContainer | null;
+            shareWindow = this._windowManager.buildWidgetLayout('share_room_xml') as IWindowContainer | null;
         }
 
         if(shareWindow) 

@@ -26,7 +26,7 @@ export class RoomUserCountWidget implements IRoomUserCountWidget
         this._widgetWindow = window;
         this._windowManager = windowManager;
 
-        const root = this._windowManager.buildWidgetLayout('room_user_count') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('room_user_count_xml') as IWindowContainer | null;
 
         if(root)
         {

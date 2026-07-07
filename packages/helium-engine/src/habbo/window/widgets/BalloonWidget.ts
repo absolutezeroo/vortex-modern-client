@@ -50,7 +50,7 @@ export class BalloonWidget implements IWidget
 
         this._onChangeBound = this.onChange.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('balloon') as IWindowContainer | null;
+        const root = this._windowManager.buildWidgetLayout('balloon_xml') as IWindowContainer | null;
 
         if(root)
         {

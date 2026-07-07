@@ -42,7 +42,7 @@ export class RoomToolsHistory
         this._handler = handler;
         this._assets = assets;
         this._windowManager = windowManager;
-        this._window = windowManager.buildWidgetLayout('room_tools_history') as IWindowContainer | null;
+        this._window = windowManager.buildWidgetLayout('room_tools_history_xml') as IWindowContainer | null;
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsHistory.as::populate()
@@ -50,11 +50,11 @@ export class RoomToolsHistory
     {
         if(!this._window || !this._windowManager) return;
 
-        const probe = this._windowManager.buildWidgetLayout('room_tools_history_item');
+        const probe = this._windowManager.buildWidgetLayout('room_tools_history_item_xml');
 
         if(!probe)
         {
-            log.warn('room_tools_history_item layout not bundled — history list will not render (see TODO(AS3) header)');
+            log.warn('room_tools_history_item_xml layout not bundled — history list will not render (see TODO(AS3) header)');
 
             return;
         }
@@ -65,7 +65,7 @@ export class RoomToolsHistory
 
         for(const room of rooms)
         {
-            const item = this._windowManager.buildWidgetLayout('room_tools_history_item') as IWindowContainer | null;
+            const item = this._windowManager.buildWidgetLayout('room_tools_history_item_xml') as IWindowContainer | null;
 
             if(!item) continue;
 

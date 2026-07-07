@@ -1,4 +1,5 @@
 import {EventEmitter} from 'eventemitter3';
+import {NineSliceSprite, type Container, type Rectangle, Texture} from 'pixi.js';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
@@ -12,6 +13,7 @@ import {RoomSessionEventHandler} from './data/RoomSessionEventHandler';
 import {ChatHistoryBuffer} from './history/ChatHistoryBuffer';
 import type {ChatItem} from './data/ChatItem';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
+import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -182,6 +184,43 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         const sStr = seconds < 10 ? '0' + seconds : seconds.toString();
 
         return hStr + ':' + mStr + ':' + sStr;
+    }
+
+    /**
+	 * Builds a resizable nine-slice display object from a background bitmap and
+	 * its scale9 grid — the "live" variant (AS3 built this via a real Flash
+	 * `Sprite.scale9Grid`, which PixiJS's own `NineSliceSprite` reproduces
+	 * natively on the GPU without needing a per-resize CPU bake).
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::create9SliceSprite()
+	 */
+    static createNineSliceSprite(scale9Grid: Rectangle, background: ImageBitmap): Container
+    {
+        return new NineSliceSprite({
+            texture: Texture.from(background),
+            leftWidth: scale9Grid.x,
+            topHeight: scale9Grid.y,
+            rightWidth: background.width - scale9Grid.right,
+            bottomHeight: background.height - scale9Grid.bottom,
+            width: background.width,
+            height: background.height,
+        });
+    }
+
+    /**
+	 * AS3's "pixel perfect" variant delegated to `ManualNineSliceSprite`, which
+	 * manually re-composited BitmapData patches into a single bitmap on every
+	 * resize instead of relying on Flash's live `scale9Grid` — a CPU-side
+	 * optimization for a renderer that had to recompute it on the fly.
+	 * PixiJS's `NineSliceSprite` above already renders both variants
+	 * identically on the GPU, but `ManualNineSliceSprite` is ported as-is for
+	 * fidelity in case a caller depends on its baked-bitmap semantics.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::createPixelPerfect9SliceSprite()
+	 */
+    static createPixelPerfectNineSliceSprite(scale9Grid: Rectangle, background: ImageBitmap): Container
+    {
+        return new ManualNineSliceSprite(scale9Grid, background);
     }
 
     /**
