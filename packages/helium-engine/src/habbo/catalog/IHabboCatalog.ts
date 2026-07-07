@@ -39,6 +39,8 @@ export interface IHabboCatalog
 
     redeemVoucher(voucher: string): void;
     loadCatalogPage(pageId: number, offerId: number, catalogType: string): void;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
+    sendGetProductOffer(offerId: number): void;
     getRecyclerStatus(): void;
     getRecyclerPrizes(): void;
     sendRecycleItems(items: unknown[]): void;

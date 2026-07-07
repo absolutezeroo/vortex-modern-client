@@ -16,6 +16,7 @@ import {PurchaseCatalogWidget} from './widgets/PurchaseCatalogWidget';
 import {LocalizationCatalogWidget} from './widgets/LocalizationCatalogWidget';
 import {SpinnerCatalogWidget} from './widgets/SpinnerCatalogWidget';
 import {TotalPriceCatalogWidget} from './widgets/TotalPriceCatalogWidget';
+import {UniqueLimitedItemWidget} from './widgets/UniqueLimitedItemWidget';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
 
 const log = Logger.getLogger('CatalogPage');
@@ -295,8 +296,8 @@ export class CatalogPage implements ICatalogPage
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // Only 6 of the ~45 AS3 cases are ported (itemGridWidget/simplePriceWidget/productViewWidget/
-    // purchaseWidget/spinnerWidget/totalPriceWidget) - the rest (colourGridWidget,
+    // Only 7 of the ~45 AS3 cases are ported (itemGridWidget/simplePriceWidget/productViewWidget/
+    // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget) - the rest (colourGridWidget,
     // spacesNewWidget, trophyWidget, ...) fall through and are silently skipped, matching AS3's
     // own switch (no default case = unmatched names do nothing).
     private createWidget(window: IWindowContainer): void
@@ -329,6 +330,9 @@ export class CatalogPage implements ICatalogPage
                 break;
             case 'totalPriceWidget':
                 this._widgets.push(new TotalPriceCatalogWidget(window, this._catalog!));
+                break;
+            case 'limitedItemWidget':
+                this._widgets.push(new UniqueLimitedItemWidget(window, this._catalog!));
                 break;
         }
     }

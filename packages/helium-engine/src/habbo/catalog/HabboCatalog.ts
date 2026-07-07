@@ -38,6 +38,7 @@ import type {
 } from '@habbo/communication/messages/parser/notifications/ActivityPointsMessageParser';
 import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
 import {GetCatalogPageComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogPageComposer';
+import {GetProductOfferComposer} from '@habbo/communication/messages/outgoing/catalog/GetProductOfferComposer';
 import {CatalogIndexMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogIndexMessageEvent';
 import type {
     CatalogIndexMessageEventParser
@@ -464,10 +465,20 @@ export class HabboCatalog extends Component implements IHabboCatalog
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::loadCatalogPage()
-    public loadCatalogPage(pageId: number, offerId: number, catalogType: string): void 
+    public loadCatalogPage(pageId: number, offerId: number, catalogType: string): void
     {
         this._pendingPageId = pageId;
         this.connection?.send(new GetCatalogPageComposer(pageId, offerId, catalogType));
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
+    // TODO(AS3): the response (ProductOfferEvent/onProductOffer) isn't ported yet - it needs a
+    // full offer/product reconstruction (same shape as the catalog-page response) plus
+    // CatalogPage.updateLimitedItemsLeft()/ProductOfferUpdatedEvent wiring. The request goes out
+    // correctly, but nothing currently updates the UI when the reply arrives.
+    public sendGetProductOffer(offerId: number): void
+    {
+        this.connection?.send(new GetProductOfferComposer(offerId));
     }
 
     public getRecyclerStatus(): void 

@@ -482,6 +482,7 @@ import {
     GetCatalogIndexComposer,
     GetCatalogPageComposer,
     GetClubGiftMessageComposer,
+    GetProductOfferComposer,
     PurchaseFromCatalogComposer,
     BuildersClubQueryFurniCountMessageComposer,
 } from './messages/outgoing/catalog';
@@ -1121,6 +1122,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1604, GetClubGiftMessageComposer);
         this._composers.set(1606, GetCatalogIndexComposer);
         this._composers.set(2400, GetCatalogPageComposer);
+        this._composers.set(1692, GetProductOfferComposer);
         this._composers.set(2697, PurchaseFromCatalogComposer);
         this._composers.set(2340, BuildersClubQueryFurniCountMessageComposer);
 

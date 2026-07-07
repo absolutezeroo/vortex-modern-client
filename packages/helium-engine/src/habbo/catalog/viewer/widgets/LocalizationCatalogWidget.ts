@@ -5,6 +5,7 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {type AssetLoaderEvent, AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
 import type {HabboCatalog} from '../../HabboCatalog';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {CatalogWidget} from './CatalogWidget';
@@ -15,14 +16,14 @@ const log = Logger.getLogger('LocalizationCatalogWidget');
  * Applies a page's PageLocalization text/image fields (and the catalog main window's
  * category header title/description/icon) to the actual window elements.
  *
- * TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::
+ * TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::
  * initLinks()'s per-layoutCode click-handler switch (frontpage3/info_pixels/club_buy/monkey/...)
  * isn't ported - link elements get click-armed (setParamFlag/mouseThreshold) but clicking them
  * does nothing yet, since none of those legacy special pages are exercised by the ported catalog
- * pages. retrieveCatalogImage()'s network image fallback (for assets not already in the local
- * library) also isn't ported - setElementImage() just logs and skips instead.
+ * pages. setLinkStyle() also isn't ported (needs flash.text.StyleSheet-equivalent CSS-in-caption
+ * support on ITextWindow/IHTMLTextWindow).
  *
- * @see sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as
  */
 export class LocalizationCatalogWidget extends CatalogWidget
 {
@@ -248,11 +249,49 @@ export class LocalizationCatalogWidget extends CatalogWidget
         log.debug(`[Localization Catalog Widget] Could not find element: ${elementName}`);
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::retrieveCatalogImage()
-    // Needs assets.loadAssetFromFile() + AssetLoaderEvent wiring for a network image fallback -
-    // not ported; missing local assets are just logged and skipped.
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::retrieveCatalogImage()
     private retrieveCatalogImage(assetName: string): void
     {
-        log.debug(`[Localization Catalog Widget] Missing local asset, network fallback not ported: ${assetName}`);
+        const catalog = this._catalog!;
+        const catalogueImageUrl = catalog.getProperty('image.library.catalogue.url');
+        const topStoryImageUrl = `${catalog.getProperty('image.library.url')}Top_Story_Images/`;
+        const elementName = this._imageElementMap.get(assetName) ?? '';
+
+        const target = elementName === 'catalog.header.image'
+            ? catalog.mainContainer?.findChildByName(elementName) ?? null
+            : this.window.findChildByName(elementName);
+
+        const baseUrl = target != null && target.tags.indexOf('TOP_STORY') > -1
+            ? topStoryImageUrl
+            : catalogueImageUrl;
+
+        const url = `${baseUrl}${assetName}.gif`;
+        const loader = catalog.assets?.loadAssetFromFile(assetName, url, 'image/gif') ?? null;
+
+        if(loader == null)
+        {
+            log.debug(`[Localization Catalog Widget] Failed to start loading catalog image: ${assetName}`);
+
+            return;
+        }
+
+        loader.events.on('event', (event: AssetLoaderEvent) =>
+        {
+            if(event.type === AssetLoaderEventType.COMPLETE)
+            {
+                this.onCatalogImageReady(assetName);
+            }
+        });
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::onCatalogImageReady()
+    private onCatalogImageReady(assetName: string): void
+    {
+        const elementName = this._imageElementMap.get(assetName);
+
+        if(elementName != null)
+        {
+            this.setElementImage(elementName, assetName);
+        }
     }
 }
