@@ -33,6 +33,8 @@ interface BitmapWrapperCacheEntry
     bmp: ImageBitmap | null;
     zoomX: number;
     zoomY: number;
+    isFlippedX: boolean;
+    isFlippedY: boolean;
     stretchedX: boolean;
     stretchedY: boolean;
     wrapX: boolean;
@@ -362,6 +364,8 @@ export class WindowComposite
             bitmapData?: ImageBitmap | null;
             zoomX?: number;
             zoomY?: number;
+            flipX?: boolean;
+            flipY?: boolean;
             stretchedX?: boolean;
             stretchedY?: boolean;
             wrapX?: boolean;
@@ -378,6 +382,11 @@ export class WindowComposite
 
         const zoomX = bdc.zoomX ?? 1;
         const zoomY = bdc.zoomY ?? 1;
+        // AS3 flips around an independent flipX/flipY flag XOR'd against the zoom
+        // sign (BitmapDataRenderer.draw() l.68-69), not the zoom sign alone - a
+        // negative zoom and flipX=true cancel out back to unflipped.
+        const isFlippedX = (zoomX < 0) !== (bdc.flipX ?? false);
+        const isFlippedY = (zoomY < 0) !== (bdc.flipY ?? false);
         const stretchedX = bdc.stretchedX ?? false;
         const stretchedY = bdc.stretchedY ?? false;
         const wrapX = bdc.wrapX ?? false;
@@ -398,6 +407,8 @@ export class WindowComposite
 			&& cached.bmp === bmp
 			&& cached.zoomX === zoomX
 			&& cached.zoomY === zoomY
+			&& cached.isFlippedX === isFlippedX
+			&& cached.isFlippedY === isFlippedY
 			&& cached.stretchedX === stretchedX
 			&& cached.stretchedY === stretchedY
 			&& cached.wrapX === wrapX
@@ -437,13 +448,15 @@ export class WindowComposite
             const srcW = bmp.width;
             const srcH = bmp.height;
 
-            // Signed tile size — a negative zoom flips the bitmap (AS3 l.67-68).
-            const drawW = (stretchedX ? w : srcW) * zoomX;
-            const drawH = (stretchedY ? h : srcH) * zoomY;
+            // Unsigned tile size (AS3 l.67-68 take Math.abs of the zoom-scaled size);
+            // direction is applied separately via isFlippedX/isFlippedY below, since
+            // flip is (zoom sign XOR flipX), not the zoom sign alone.
+            const drawW = (stretchedX ? w : srcW) * Math.abs(zoomX);
+            const drawH = (stretchedY ? h : srcH) * Math.abs(zoomY);
 
             if(drawW !== 0 && drawH !== 0)
             {
-                // Tile counts (AS3 l.69-70). Mirrors the signed division.
+                // Tile counts (AS3 l.69-70).
                 const tilesX = !wrapX ? 1 : Math.floor(w / drawW) + 2;
                 const tilesY = !wrapY ? 1 : Math.floor(h / drawH) + 2;
 
@@ -460,10 +473,10 @@ export class WindowComposite
                     case PivotPoint.TOP_RIGHT:
                     case PivotPoint.CENTER_RIGHT:
                     case PivotPoint.BOTTOM_RIGHT:
-                        baseTx = zoomX < 0 ? w : w - drawW;
+                        baseTx = isFlippedX ? w : w - drawW;
                         break;
                     default:
-                        baseTx = zoomX < 0 ? -drawW : 0;
+                        baseTx = isFlippedX ? -drawW : 0;
                         break;
                 }
 
@@ -479,10 +492,10 @@ export class WindowComposite
                     case PivotPoint.BOTTOM_LEFT:
                     case PivotPoint.BOTTOM_CENTER:
                     case PivotPoint.BOTTOM_RIGHT:
-                        baseTy = zoomY < 0 ? h : h - drawH;
+                        baseTy = isFlippedY ? h : h - drawH;
                         break;
                     default:
-                        baseTy = zoomY < 0 ? -drawH : 0;
+                        baseTy = isFlippedY ? -drawH : 0;
                         break;
                 }
 
@@ -501,6 +514,11 @@ export class WindowComposite
                     : null;
                 const mainBitmap = tinted ?? source;
 
+                // Scale sign carries the flip (AS3 l.75-76: MATRIX.a/d negated when
+                // isFlipped), applied on top of the always-positive drawW/drawH.
+                const scaleX = (isFlippedX ? -1 : 1) * drawW / srcW;
+                const scaleY = (isFlippedY ? -1 : 1) * drawH / srcH;
+
                 // Tile loop (AS3 l.127-176): etch silhouette first, then the main bitmap.
                 for(let ty = 0; ty < tilesY; ty++)
                 {
@@ -513,13 +531,13 @@ export class WindowComposite
                         {
                             bctx.save();
                             bctx.globalAlpha = etchAlpha / 255;
-                            bctx.setTransform(drawW / srcW, 0, 0, drawH / srcH, px + etchPt.x, py + etchPt.y);
+                            bctx.setTransform(scaleX, 0, 0, scaleY, px + etchPt.x, py + etchPt.y);
                             bctx.drawImage(silhouette, 0, 0);
                             bctx.restore();
                         }
 
                         bctx.save();
-                        bctx.setTransform(drawW / srcW, 0, 0, drawH / srcH, px, py);
+                        bctx.setTransform(scaleX, 0, 0, scaleY, px, py);
                         bctx.drawImage(mainBitmap, 0, 0);
                         bctx.restore();
                     }
@@ -540,6 +558,8 @@ export class WindowComposite
             entry.bmp = bmp;
             entry.zoomX = zoomX;
             entry.zoomY = zoomY;
+            entry.isFlippedX = isFlippedX;
+            entry.isFlippedY = isFlippedY;
             entry.stretchedX = stretchedX;
             entry.stretchedY = stretchedY;
             entry.wrapX = wrapX;
@@ -609,6 +629,8 @@ export class WindowComposite
             bmp: null,
             zoomX: NaN,
             zoomY: NaN,
+            isFlippedX: false,
+            isFlippedY: false,
             stretchedX: false,
             stretchedY: false,
             wrapX: false,
