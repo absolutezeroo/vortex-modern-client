@@ -11,9 +11,6 @@ import {PurseEvent} from '@habbo/catalog/purse/PurseEvent';
 import {ToolbarDisplayExtensionIds} from '../ToolbarDisplayExtensionIds';
 import {PurseClubArea} from './purse/PurseClubArea';
 import {formatPurseAmount} from './purse/PurseAmountFormatter';
-import {Logger} from '@core/utils/Logger';
-
-const log = Logger.getLogger('PurseAreaExtension');
 
 /**
  * Manages the currency display area in the toolbar extension view
@@ -217,19 +214,27 @@ export class PurseAreaExtension
         }
     }
 
-    private windowProcedure = (event: WindowEvent, window: IWindow): void => 
+    // AS3: sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as::windowProcedure()
+    // switches on the clicked window's own name directly (param2.name) - no ancestor walk.
+    private windowProcedure = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type !== WindowMouseEvent.CLICK || !this._toolbar) return;
 
         this._windowManager?.hideMatchingHint(window.name);
 
-        switch(this.getActionName(window)) 
+        switch(window.name)
         {
+            case 'earnings_button':
+                this._catalog?.openVault();
+                break;
+            case 'hc_join_button':
+                this._catalog?.openClubCenter();
+                break;
             case 'help_button':
                 this._toolbar.toggleWindowVisibility(PurseAreaExtension.MENU_HELP);
                 break;
             case 'settings_button':
-                this._toolbar.toggleWindowVisibility('SETTINGS');
+                this._toolbar.toggleSettingVisibility();
                 break;
             case 'credit_count_button':
                 this._catalog?.openCreditsHabblet();
@@ -240,40 +245,9 @@ export class PurseAreaExtension
             case 'diamond_count_button':
                 this._catalog?.openCatalogPage('loyalty_info');
                 break;
-            case 'hc_join_button':
-                this._catalog?.openClubCenter();
-                break;
-            case 'earnings_button':
-                this._catalog?.openVault();
-                break;
             case 'logout_button':
-                log.debug('Purse logout clicked');
+                this._toolbar.reboot();
                 break;
         }
     };
-
-    private getActionName(window: IWindow | null): string 
-    {
-        let current = window;
-
-        while(current) 
-        {
-            switch(current.name) 
-            {
-                case 'earnings_button':
-                case 'hc_join_button':
-                case 'help_button':
-                case 'settings_button':
-                case 'credit_count_button':
-                case 'ducket_count_button':
-                case 'diamond_count_button':
-                case 'logout_button':
-                    return current.name;
-            }
-
-            current = current.parent;
-        }
-
-        return '';
-    }
 }

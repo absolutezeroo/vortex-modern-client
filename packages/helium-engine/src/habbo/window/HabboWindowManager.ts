@@ -524,7 +524,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         callback: AlertDialogCallback | null
     ): IAlertDialog 
     {
-        const layout = this.requireWidgetLayout('habbo_window_alert', 'alert dialog');
+        const layout = this.requireWidgetLayout('habbo_window_alert_xml', 'alert dialog');
 
         return new AlertDialog(this, layout, title, message, flags, callback, false);
     }
@@ -539,7 +539,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         callback: AlertDialogCallback | null
     ): IAlertDialog 
     {
-        const layout = this.requireWidgetLayout('habbo_window_alert', 'alert dialog');
+        const layout = this.requireWidgetLayout('habbo_window_alert_xml', 'alert dialog');
 
         return new AlertDialog(this, layout, title, message, flags, callback, true);
     }
@@ -556,7 +556,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         callback: AlertDialogCallback | null
     ): IAlertDialogWithLink 
     {
-        const layout = this.requireWidgetLayout('habbo_window_alert_link', 'alert link dialog');
+        const layout = this.requireWidgetLayout('habbo_window_alert_link_xml', 'alert link dialog');
 
         return new AlertDialogWithLink(this, layout, title, message, linkTitle, linkUrl, flags, callback);
     }
@@ -571,7 +571,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         callback: AlertDialogCallback | null
     ): IConfirmDialog 
     {
-        const layout = this.requireWidgetLayout('habbo_window_confirm', 'confirm dialog');
+        const layout = this.requireWidgetLayout('habbo_window_confirm_xml', 'confirm dialog');
 
         return new ConfirmDialog(this, layout, title, message, flags, callback, false);
     }
@@ -586,7 +586,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         callback: AlertDialogCallback | null
     ): IConfirmDialog 
     {
-        const layout = this.requireWidgetLayout('habbo_window_confirm', 'confirm dialog');
+        const layout = this.requireWidgetLayout('habbo_window_confirm_xml', 'confirm dialog');
 
         return new ConfirmDialog(this, layout, title, message, flags, callback, true);
     }

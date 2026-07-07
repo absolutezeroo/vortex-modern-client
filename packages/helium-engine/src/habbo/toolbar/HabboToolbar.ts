@@ -475,6 +475,42 @@ export class HabboToolbar extends Component implements IHabboToolbar
     }
 
     /**
+	 * Toggles the settings panel's visibility and refreshes the extension view.
+	 *
+	 * AS3 toggles `var_1178.window.visible` directly - SettingsExtension.ts doesn't build
+	 * a real window yet (TODO in that file), so this toggles its `visible` flag instead as
+	 * the closest faithful equivalent until that window is ported.
+	 *
+	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as toggleSettingVisibility()
+	 */
+    toggleSettingVisibility(): void
+    {
+        if(this._settingsExtension)
+        {
+            this._settingsExtension.visible = !this._settingsExtension.visible;
+        }
+
+        this.extensionView?.refreshItemWindow();
+    }
+
+    /**
+	 * Reboots the client.
+	 *
+	 * TODO(AS3): source_as_win63/core/runtime/class_20.as::reboot() sets a
+	 * `_rebootOnNextFrame` flag that, on the next enterFrame tick, dispatches a
+	 * "COMPONENT_EVENT_REBOOT" event - presumably handled by the top-level bootstrap to
+	 * tear down and reinitialize the whole client/connection. Not ported yet: this
+	 * client's bootstrap (HeliumApp/App.ts) has no COMPONENT_EVENT_REBOOT listener, so
+	 * there's nothing to dispatch to.
+	 *
+	 * @see source_as_win63/habbo/toolbar/HabboToolbar.as reboot()
+	 */
+    reboot(): void
+    {
+        log.warn('HabboToolbar.reboot() is not implemented yet - client reboot is not wired up');
+    }
+
+    /**
 	 * Get the screen location of a toolbar icon
 	 *
 	 * Delegates to BottomBarLeft.getIconLocation() which finds the child
