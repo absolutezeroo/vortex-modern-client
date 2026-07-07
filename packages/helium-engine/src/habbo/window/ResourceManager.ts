@@ -97,6 +97,7 @@ export class ResourceManager implements IResourceManager
         }
 
         let receivers = this._pendingReceivers.get(resolvedName);
+        const isFirstRequest = !receivers;
 
         if(!receivers)
         {
@@ -120,10 +121,26 @@ export class ResourceManager implements IResourceManager
         // known bundle asset and the resolved name is itself a fetchable URL
         // (http/https), load it directly from that URL. Without this, URL-based
         // assetUri (e.g. room thumbnails) stay queued forever and never render.
-        if(!url && !this._loading.has(resolvedName) && this.isFetchableUrl(resolvedName))
+        if(!url && this.isFetchableUrl(resolvedName))
         {
-            this._loading.add(resolvedName);
-            this.loadFromUrl(resolvedName, resolvedName);
+            if(!this._loading.has(resolvedName))
+            {
+                this._loading.add(resolvedName);
+                this.loadFromUrl(resolvedName, resolvedName);
+            }
+
+            return;
+        }
+
+        // TS-only diagnostic: nothing above can ever resolve this name (no cached
+        // bitmap, no registered asset URL, not itself a fetchable URL) - the receiver
+        // stays queued forever and the image silently never renders, unlike
+        // HabboWindowManager's "Widget layout not found" warning for a missing layout.
+        // Warn once per name (guarded by isFirstRequest) so a missing image is just as
+        // visible in the console as a missing layout already is.
+        if(!url && isFirstRequest)
+        {
+            log.warn(`Asset not found: ${resolvedName}`);
         }
     }
 
