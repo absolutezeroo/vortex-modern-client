@@ -332,7 +332,7 @@ export class FrameController extends ContainerController implements IFrameWindow
             }
         }
 
-        return new ContainerIterator(this._children ?? []);
+        return new ContainerIterator(this);
     }
 
     /**

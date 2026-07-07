@@ -41,9 +41,10 @@ export class ContainerController extends WindowController implements IWindowCont
         this._hasVisualContent = this._background || this.testParamFlag(1) || !this.testParamFlag(16);
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ContainerController.as::iterator()
     public iterator(): IIterator | null
     {
-        return new ContainerIterator(this._children ?? []);
+        return new ContainerIterator(this);
     }
 
     public getChildUnderPoint(point: { x: number; y: number }): IWindow | null

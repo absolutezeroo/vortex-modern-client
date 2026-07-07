@@ -2,30 +2,44 @@ import type {IWindow} from '../IWindow';
 import type {IIterator} from '../utils/IIterator';
 
 /**
+ * Iterator interface for ItemListController.
+ * Uses duck-typing to avoid circular imports (mirrors ItemGridIterator's IItemGridHost).
+ */
+interface IItemListHost
+{
+    numListItems: number;
+
+    getListItemAt(index: number): IWindow | null;
+
+    getListItemIndex(item: IWindow): number;
+}
+
+/**
  * Iterator for traversing items in an ItemList window.
  *
- * In AS3 this extended Proxy and delegated to ItemListController methods
- * (numListItems, getListItemAt, getListItemIndex). In TypeScript we
- * implement the simplified IIterator interface over a plain array of
- * child windows.
+ * In AS3 this extends Proxy and delegates live to ItemListController methods
+ * (numListItems, getListItemAt, getListItemIndex) - so it always reflects the
+ * controller's current item list, even if items are added/removed after the
+ * iterator was created. Delegating to the live controller (not a snapshot
+ * array) here matches that.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/iterators/ItemListIterator.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/iterators/ItemListIterator.as
  */
 export class ItemListIterator implements IIterator
 {
-    private _children: IWindow[];
+    private _list: IItemListHost;
     private _index: number = 0;
 
-    constructor(children: IWindow[])
+    constructor(list: IItemListHost)
     {
-        this._children = children;
+        this._list = list;
     }
 
     public next(): IWindow | null
     {
-        if(this._index < this._children.length)
+        if(this._index < this._list.numListItems)
         {
-            return this._children[this._index++];
+            return this._list.getListItemAt(this._index++);
         }
 
         return null;
@@ -38,6 +52,6 @@ export class ItemListIterator implements IIterator
 
     public count(): number
     {
-        return this._children.length;
+        return this._list.numListItems;
     }
 }

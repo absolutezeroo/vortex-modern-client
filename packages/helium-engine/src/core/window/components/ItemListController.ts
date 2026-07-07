@@ -536,9 +536,10 @@ export class ItemListController extends WindowController implements IItemListWin
         return this._verticalSmoothScroller;
     }
 
-    public iterator(): IIterator 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ItemListController.as::iterator()
+    public iterator(): IIterator
     {
-        return new ItemListIterator(this._container ? this._getContainerChildren() : []);
+        return new ItemListIterator(this);
     }
 
     /**
@@ -1293,22 +1294,4 @@ export class ItemListController extends WindowController implements IItemListWin
         }
     }
 
-    /**
-     * Returns the children of the internal container as an array.
-     */
-    private _getContainerChildren(): IWindow[] 
-    {
-        if(!this._container) return [];
-
-        const children: IWindow[] = [];
-
-        for(let i = 0; i < this._container.numChildren; i++) 
-        {
-            const child = this._container.getChildAt(i);
-
-            if(child) children.push(child);
-        }
-
-        return children;
-    }
 }

@@ -49,9 +49,10 @@ export class SelectorController extends InteractiveController implements ISelect
     /**
 	 * Returns an iterator over the selectable children.
 	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/SelectorController.as::iterator()
     public iterator(): IIterator
     {
-        return new SelectorIterator(this._children ?? []);
+        return new SelectorIterator(this);
     }
 
     public override update(source: WindowController, event: WindowEvent): boolean

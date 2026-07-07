@@ -43,8 +43,9 @@ export class BackgroundController extends WindowController
         this.color = 0xFFFFFFFF;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/BackgroundController.as::iterator()
     public iterator(): IIterator
     {
-        return new ContainerIterator(this._children ?? []);
+        return new ContainerIterator(this);
     }
 }

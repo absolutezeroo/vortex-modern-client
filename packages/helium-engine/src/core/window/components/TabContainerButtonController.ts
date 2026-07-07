@@ -37,9 +37,10 @@ export class TabContainerButtonController extends SelectableController implement
     /**
 	 * Returns an iterator over children.
 	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TabContainerButtonController.as::iterator()
     public iterator(): IIterator
     {
-        return new ContainerIterator(this._children ?? []);
+        return new ContainerIterator(this);
     }
 
     public getChildUnderPoint(point: { x: number; y: number }): IWindow | null

@@ -36,9 +36,10 @@ export class DropListController extends DropBaseController implements IDropListW
     /**
 	 * Returns an iterator over the menu items.
 	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DropListController.as::iterator()
     public iterator(): IIterator
     {
-        return new DropListIterator(this._itemArray);
+        return new DropListIterator(this);
     }
 
     /**

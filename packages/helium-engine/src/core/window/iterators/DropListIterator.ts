@@ -2,30 +2,44 @@ import type {IWindow} from '../IWindow';
 import type {IIterator} from '../utils/IIterator';
 
 /**
+ * Iterator interface for DropListController.
+ * Uses duck-typing to avoid circular imports (mirrors ItemGridIterator's IItemGridHost).
+ */
+interface IDropListHost
+{
+    numMenuItems: number;
+
+    getMenuItemAt(index: number): IWindow | null;
+
+    getMenuItemIndex(item: IWindow): number;
+}
+
+/**
  * Iterator for traversing items in a DropList (dropdown menu) window.
  *
- * In AS3 this extended Proxy and delegated to DropListController methods
- * (numMenuItems, getMenuItemAt, getMenuItemIndex). In TypeScript we
- * implement the simplified IIterator interface over a plain array of
- * child windows.
+ * In AS3 this extends Proxy and delegates live to DropListController methods
+ * (numMenuItems, getMenuItemAt, getMenuItemIndex) - so it always reflects the
+ * controller's current menu items, even if items are added/removed after the
+ * iterator was created. Delegating to the live controller (not a snapshot
+ * array) here matches that.
  *
- * @see sources/win63_2021_version/com/sulake/core/window/iterators/DropListIterator.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/iterators/DropListIterator.as
  */
 export class DropListIterator implements IIterator
 {
-    private _children: IWindow[];
+    private _dropList: IDropListHost;
     private _index: number = 0;
 
-    constructor(children: IWindow[])
+    constructor(dropList: IDropListHost)
     {
-        this._children = children;
+        this._dropList = dropList;
     }
 
     public next(): IWindow | null
     {
-        if(this._index < this._children.length)
+        if(this._index < this._dropList.numMenuItems)
         {
-            return this._children[this._index++];
+            return this._dropList.getMenuItemAt(this._index++);
         }
 
         return null;
@@ -38,6 +52,6 @@ export class DropListIterator implements IIterator
 
     public count(): number
     {
-        return this._children.length;
+        return this._dropList.numMenuItems;
     }
 }
