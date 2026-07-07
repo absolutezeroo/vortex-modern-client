@@ -1,7 +1,9 @@
 import {Helium} from 'helium-engine';
 import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindowDebugNode} from '@core/window/debugger';
 import {SkinPreviewRenderer, WindowTreeInspector} from '@core/window/debugger';
+import {TYPE_CODE_TO_NAME} from '@core/window/enum/WindowType';
 import type {IElementDescriptor} from '@habbo/window/IElementDescriptor';
 
 /**
@@ -20,6 +22,7 @@ import type {IElementDescriptor} from '@habbo/window/IElementDescriptor';
 
 const HOTKEY_CODE = 'KeyD';
 const CASCADE_OFFSET = 24;
+const CONTEXT_LAYER_COUNT = 4;
 
 interface IOpenWindowEntry
 {
@@ -133,7 +136,7 @@ class WindowDebuggerPanel
 
         header.className = 'hwd-header';
         header.innerHTML = '<span>Window Debugger</span>';
-        header.addEventListener('mousedown', (event) => this.startDrag(event));
+        header.addEventListener('mousedown', (event) => this.startDrag(event, this._root));
 
         const closeBtn = document.createElement('button');
 
@@ -214,25 +217,27 @@ class WindowDebuggerPanel
         this.loop();
     }
 
-    private startDrag(event: MouseEvent): void
+    private startDrag(event: MouseEvent, target: HTMLElement): void
     {
         if((event.target as HTMLElement).closest('.hwd-close')) return;
 
-        const rect = this._root.getBoundingClientRect();
+        event.preventDefault();
+
+        const rect = target.getBoundingClientRect();
         const offsetX = event.clientX - rect.left;
         const offsetY = event.clientY - rect.top;
 
-        this._root.style.left = `${rect.left}px`;
-        this._root.style.top = `${rect.top}px`;
-        this._root.style.right = 'auto';
+        target.style.left = `${rect.left}px`;
+        target.style.top = `${rect.top}px`;
+        target.style.right = 'auto';
 
         const onMove = (moveEvent: MouseEvent): void =>
         {
-            const maxLeft = window.innerWidth - this._root.offsetWidth;
-            const maxTop = window.innerHeight - this._root.offsetHeight;
+            const maxLeft = window.innerWidth - target.offsetWidth;
+            const maxTop = window.innerHeight - target.offsetHeight;
 
-            this._root.style.left = `${Math.min(Math.max(0, moveEvent.clientX - offsetX), Math.max(0, maxLeft))}px`;
-            this._root.style.top = `${Math.min(Math.max(0, moveEvent.clientY - offsetY), Math.max(0, maxTop))}px`;
+            target.style.left = `${Math.min(Math.max(0, moveEvent.clientX - offsetX), Math.max(0, maxLeft))}px`;
+            target.style.top = `${Math.min(Math.max(0, moveEvent.clientY - offsetY), Math.max(0, maxTop))}px`;
         };
 
         const onUp = (): void =>
@@ -257,6 +262,7 @@ class WindowDebuggerPanel
         this._root.remove();
         this._selectedHighlight.remove();
         this._hoverHighlight.remove();
+        document.getElementById('hwd-pick-menu')?.remove();
         this._onClosed();
     }
 
@@ -535,16 +541,67 @@ class WindowDebuggerPanel
         this.updatePickButton();
     }
 
-    private windowAtEvent(event: MouseEvent): IWindow | null
+    private topWindowAtEvent(event: MouseEvent): IWindow | null
     {
         const rect = this._canvas.getBoundingClientRect();
 
         return Helium.instance.windowManager.findWindowAtPoint(event.clientX - rect.left, event.clientY - rect.top);
     }
 
+    // findWindowAtPoint() applies production hit-testing rules (only
+    // INPUT_EVENT_PROCESSOR windows are returned, first match per layer
+    // wins) — great for real gameplay, but it means a full-screen window
+    // like the room's canvas wrapper always "wins" and you can never pick
+    // whatever's layered behind/around it. This collects every window
+    // whose bounds actually contain the point, deepest/topmost first, so
+    // the picker can offer all of them.
+    private windowsAtEvent(event: MouseEvent): IWindow[]
+    {
+        const rect = this._canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const windowManager = Helium.instance.windowManager;
+        const matches: IWindow[] = [];
+
+        for(let layer = CONTEXT_LAYER_COUNT - 1; layer >= 0; layer--)
+        {
+            const desktop = windowManager.getDesktop(layer);
+
+            if(desktop) this.collectWindowsAtPoint(desktop, x, y, matches);
+        }
+
+        return matches;
+    }
+
+    private collectWindowsAtPoint(window: IWindow, x: number, y: number, out: IWindow[]): void
+    {
+        if(!window.visible) return;
+
+        const container = window as unknown as IWindowContainer;
+
+        if(typeof container.numChildren === 'number')
+        {
+            for(let i = container.numChildren - 1; i >= 0; i--)
+            {
+                const child = container.getChildAt(i);
+
+                if(child) this.collectWindowsAtPoint(child, x, y, out);
+            }
+        }
+
+        const rect = {x: 0, y: 0, width: 0, height: 0};
+
+        window.getGlobalRectangle(rect);
+
+        if(x >= rect.x && x < rect.x + rect.width && y >= rect.y && y < rect.y + rect.height)
+        {
+            out.push(window);
+        }
+    }
+
     private onCanvasHoverPick(event: MouseEvent): void
     {
-        const hit = this.windowAtEvent(event);
+        const hit = this.topWindowAtEvent(event);
 
         if(!hit)
         {
@@ -564,12 +621,24 @@ class WindowDebuggerPanel
         event.preventDefault();
         event.stopImmediatePropagation();
 
-        const hit = this.windowAtEvent(event);
+        const matches = this.windowsAtEvent(event);
 
         this.stopPickMode();
 
-        if(!hit) return;
+        if(matches.length === 0) return;
 
+        if(matches.length === 1)
+        {
+            this.pickWindow(matches[0]);
+
+            return;
+        }
+
+        this.showPickMenu(matches, event.clientX, event.clientY);
+    }
+
+    private pickWindow(hit: IWindow): void
+    {
         if(!this._openWindows.some(entry => entry.window === hit))
         {
             this._openWindows.push({id: nextOpenId++, label: hit.name || hit.caption || '(unnamed)', window: hit});
@@ -577,6 +646,72 @@ class WindowDebuggerPanel
 
         this.setTab('layouts');
         this.selectWindow(hit);
+    }
+
+    private showPickMenu(matches: IWindow[], clientX: number, clientY: number): void
+    {
+        document.getElementById('hwd-pick-menu')?.remove();
+
+        const menu = document.createElement('div');
+
+        menu.id = 'hwd-pick-menu';
+        menu.className = 'hwd-pick-menu';
+        menu.style.left = `${clientX}px`;
+        menu.style.top = `${clientY}px`;
+
+        const heading = document.createElement('div');
+
+        heading.className = 'hwd-pick-menu-heading';
+        heading.textContent = `${matches.length} windows here — pick one:`;
+        heading.addEventListener('mousedown', (event) => this.startDrag(event, menu));
+        menu.appendChild(heading);
+
+        for(const match of matches)
+        {
+            const row = document.createElement('div');
+
+            row.className = 'hwd-pick-menu-row';
+            row.textContent = `${TYPE_CODE_TO_NAME[match.type] ?? match.type} "${match.name || match.caption || '(unnamed)'}"`;
+
+            row.addEventListener('mouseenter', () =>
+            {
+                const rect = {x: 0, y: 0, width: 0, height: 0};
+
+                match.getGlobalRectangle(rect);
+                this.positionHighlight(this._hoverHighlight, rect);
+            });
+
+            row.addEventListener('click', (event) =>
+            {
+                event.stopPropagation();
+                menu.remove();
+                this.hideHighlight(this._hoverHighlight);
+                this.pickWindow(match);
+            });
+
+            menu.appendChild(row);
+        }
+
+        document.body.appendChild(menu);
+
+        const margin = 8;
+        const maxLeft = Math.max(margin, window.innerWidth - menu.offsetWidth - margin);
+        const maxTop = Math.max(margin, window.innerHeight - menu.offsetHeight - margin);
+
+        menu.style.left = `${Math.min(clientX, maxLeft)}px`;
+        menu.style.top = `${Math.min(clientY, maxTop)}px`;
+
+        const closeOnClickAway = (event: MouseEvent): void =>
+        {
+            if(!menu.contains(event.target as Node))
+            {
+                menu.remove();
+                document.removeEventListener('mousedown', closeOnClickAway, true);
+            }
+        };
+
+        // Deferred so the click that opened the menu doesn't immediately close it.
+        setTimeout(() => document.addEventListener('mousedown', closeOnClickAway, true), 0);
     }
 
     // ── Skins tab ────────────────────────────────────────────────────
@@ -837,6 +972,10 @@ function injectStyles(): void
 .hwd-highlight { position: fixed; pointer-events: none; z-index: 999998; display: none; box-sizing: border-box; }
 .hwd-highlight-selected { border: 2px solid #ff5050; background: rgba(255,80,80,0.08); }
 .hwd-highlight-hover { border: 2px dashed #4a9eff; background: rgba(74,158,255,0.08); }
+.hwd-pick-menu { position: fixed; z-index: 1000000; background: #1e1e1e; border: 1px solid #4a9eff; border-radius: 4px; box-shadow: 0 4px 24px rgba(0,0,0,0.5); font: 12px/1.4 monospace; color: #ddd; max-width: 320px; max-height: 260px; overflow-y: auto; }
+.hwd-pick-menu-heading { padding: 6px 8px; font-weight: bold; color: #4a9eff; border-bottom: 1px solid #444; white-space: nowrap; cursor: move; user-select: none; }
+.hwd-pick-menu-row { padding: 4px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hwd-pick-menu-row:hover { background: #2f3d52; }
 `;
     document.head.appendChild(style);
 }
