@@ -100,15 +100,9 @@ export class SimpleAlertDialog implements IDisposable
             linkUrl = (windowManager as unknown as { interpolate?: (v: string) => string }).interpolate?.(linkUrl) ?? linkUrl;
         }
 
-        // In AS3: loads "simple_alert_xml" asset and builds a modal dialog from it.
-        const layout = windowManager.getLayout('simple_alert') as unknown;
-        const layoutXml = typeof layout === 'string' ? layout : '';
-
-        if(!layoutXml)
-        {
-            log.warn('Missing simple_alert XML layout');
-            return;
-        }
+        // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as
+        // loads "simple_alert_xml" via assets.getAssetByName() and builds a modal dialog from it.
+        const layoutXml = windowManager.requireWidgetLayout('simple_alert_xml', 'simple alert dialog');
 
         this._modalDialog = windowManager.buildModalDialogFromXML(layoutXml);
         this._window = this._modalDialog?.rootWindow as IWindowContainer ?? null;

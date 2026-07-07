@@ -1,7 +1,4 @@
-import type {EventEmitter} from 'eventemitter3';
 import type {IDisposable} from '@core/runtime/IDisposable';
-import type {IWindowInstance} from './IWindowInstance';
-import type {IWindowLayout} from './IWindowLayout';
 import type {IElementDescriptionData} from './IElementDescriptor';
 import type {ElementRegistry} from './ElementRegistry';
 import type {IWindow} from '@core/window/IWindow';
@@ -31,17 +28,6 @@ import type {IAlertDialogWithLink} from './utils/AlertDialogWithLink';
 import type {IConfirmDialog} from './utils/ConfirmDialog';
 
 /**
- * Events emitted by the window manager.
- */
-export const WindowManagerEvents =
-    {
-        WINDOW_OPEN: 'window:open',
-        WINDOW_CLOSE: 'window:close',
-        WINDOW_UPDATE: 'window:update',
-        WINDOW_ELEMENT_CLICK: 'window:element:click',
-    } as const;
-
-/**
  * Interface for the Habbo Window Manager.
  *
  * Manages the lifecycle of declarative windows: opening from XML layouts,
@@ -55,9 +41,6 @@ export const WindowManagerEvents =
  * @see sources/win63_2021_version/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
 export interface IHabboWindowManager extends IDisposable {
-    // TS-only: declarative window event emitter
-    readonly windowEvents: EventEmitter;
-
     // TS-only: element registry
     readonly elementRegistry: ElementRegistry;
     // AS3: sources/win63_version/habbo/window/class_38.as::avatarRenderer
@@ -83,24 +66,6 @@ export interface IHabboWindowManager extends IDisposable {
 
     // TS-only
     loadElementDescription(data: IElementDescriptionData): void;
-
-    // TS-only
-    openWindow(layout: IWindowLayout, vars?: Record<string, unknown>, layer?: number): IWindowInstance;
-
-    // TS-only
-    closeWindow(id: number): void;
-
-    // TS-only
-    getWindow(id: number): IWindowInstance | null;
-
-    // TS-only
-    getWindows(layer?: number): IWindowInstance[];
-
-    // TS-only
-    registerLayout(name: string, layout: IWindowLayout): void;
-
-    // TS-only
-    getLayout(name: string): IWindowLayout | null;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::create()
     create(
@@ -162,6 +127,16 @@ export interface IHabboWindowManager extends IDisposable {
 
     // TS-only
     getRegisteredWidgetLayoutNames(): string[];
+
+    /**
+     * Look up a registered widget layout's raw XML by name, throwing if missing.
+     *
+     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
+     * fetches these directly via `assets.getAssetByName(name).content as XML` inline at each call
+     * site (alert/confirm/simpleAlert/etc) and has no equivalent named method; this centralizes
+     * that lookup + the "missing asset" throw shared by all of them.
+     */
+    requireWidgetLayout(name: string, purpose: string): string;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::createWindow()
     createWindow(
@@ -270,7 +245,7 @@ export interface IHabboWindowManager extends IDisposable {
     // TS-only
     getServiceManager(): IInternalWindowServices | null;
 
-    // TS-only
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
     createWidget(type: string, window: IWidgetWindow): IWidget | null;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::simpleAlert()
