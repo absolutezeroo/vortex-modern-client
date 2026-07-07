@@ -3,8 +3,11 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindowDebugNode} from '@core/window/debugger';
 import {SkinPreviewRenderer, WindowTreeInspector} from '@core/window/debugger';
-import {TYPE_CODE_TO_NAME} from '@core/window/enum/WindowType';
+import {TYPE_CODE_TO_NAME, WindowType} from '@core/window/enum/WindowType';
+import {Logger} from '@core/utils/Logger';
 import type {IElementDescriptor} from '@habbo/window/IElementDescriptor';
+
+const log = Logger.getLogger('WindowDebugger');
 
 /**
  * Dev-only visual debugger overlay (helium-client/src/debugger).
@@ -428,10 +431,80 @@ class WindowDebuggerPanel
         }
 
         const snapshot = WindowTreeInspector.snapshot(this._selectedWindow);
+        let overlaps: IOverlapWarning[] | null = null;
+
+        try
+        {
+            overlaps = findOverlaps(snapshot);
+        }
+        catch (error)
+        {
+            log.warn('Overlap detection failed', error);
+        }
+
+        const overlappingWindows = new Set<IWindow>();
+
+        for(const overlap of overlaps ?? [])
+        {
+            overlappingWindows.add(overlap.a.window);
+            overlappingWindows.add(overlap.b.window);
+        }
+
+        const toolbar = document.createElement('div');
+
+        toolbar.className = 'hwd-tree-toolbar';
+
+        const copyBtn = document.createElement('button');
+
+        copyBtn.className = 'hwd-copy-btn';
+        copyBtn.textContent = 'Copy tree as text';
+        copyBtn.addEventListener('click', () =>
+        {
+            let report: string;
+
+            try
+            {
+                report = buildTreeReport(snapshot);
+            }
+            catch (error)
+            {
+                log.warn('Failed to build tree report', error);
+                copyBtn.textContent = 'Copy failed';
+
+                return;
+            }
+
+            navigator.clipboard.writeText(report).then(() =>
+            {
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => { copyBtn.textContent = 'Copy tree as text'; }, 1200);
+            }).catch(() => { copyBtn.textContent = 'Copy failed'; });
+        });
+        toolbar.appendChild(copyBtn);
+
+        if(overlaps === null)
+        {
+            const notice = document.createElement('span');
+
+            notice.className = 'hwd-overlap-count';
+            notice.textContent = 'Overlap check skipped (tree too large)';
+            toolbar.appendChild(notice);
+        }
+        else if(overlaps.length > 0)
+        {
+            const warning = document.createElement('span');
+
+            warning.className = 'hwd-overlap-count';
+            warning.textContent = `⚠ ${overlaps.length} overlap${overlaps.length > 1 ? 's' : ''}`;
+            toolbar.appendChild(warning);
+        }
+
+        this._treeEl.appendChild(toolbar);
+
         const list = document.createElement('div');
 
         list.className = 'hwd-tree-list';
-        this.appendTreeNode(list, snapshot, 0);
+        this.appendTreeNode(list, snapshot, 0, overlappingWindows);
         this._treeEl.appendChild(list);
 
         if(this._selectedNodeWindow)
@@ -451,17 +524,23 @@ class WindowDebuggerPanel
         }
     }
 
-    private appendTreeNode(parentEl: HTMLElement, node: IWindowDebugNode, depth: number): void
+    private appendTreeNode(parentEl: HTMLElement, node: IWindowDebugNode, depth: number, overlappingWindows: Set<IWindow>): void
     {
         const row = document.createElement('div');
+        const isOverlapping = overlappingWindows.has(node.window);
 
         row.className = 'hwd-tree-row';
         row.style.paddingLeft = `${depth * 14}px`;
-        row.textContent = `${node.typeName} "${node.name}" (${node.rect.width}x${node.rect.height})`;
+        row.textContent = `${isOverlapping ? '⚠ ' : ''}${node.typeName} "${node.name}" (${node.rect.width}x${node.rect.height})`;
 
         if(!node.visible)
         {
             row.classList.add('hwd-tree-row-hidden');
+        }
+
+        if(isOverlapping)
+        {
+            row.classList.add('hwd-tree-row-overlap');
         }
 
         row.addEventListener('click', (event) =>
@@ -479,7 +558,7 @@ class WindowDebuggerPanel
 
         for(const child of node.children)
         {
-            this.appendTreeNode(parentEl, child, depth + 1);
+            this.appendTreeNode(parentEl, child, depth + 1, overlappingWindows);
         }
     }
 
@@ -898,6 +977,167 @@ function findNodeByWindow(node: IWindowDebugNode, window: IWindow): IWindowDebug
     return null;
 }
 
+const TEXT_LIKE_TYPES = new Set<number>([
+    WindowType.TEXT,
+    WindowType.LABEL,
+    WindowType.LINK,
+    WindowType.FORMATTED_TEXT,
+    WindowType.TEXTFIELD,
+    WindowType.PASSWORD,
+    WindowType.HTML,
+]);
+
+// Best-effort check for "does this window actually draw pixels", reusing
+// the same signals WindowComposite itself draws from (background fill,
+// bitmap wrapper types, text content, or a bound skin renderer for its
+// type+style) — not a guess, but it can still miss dynamic/animated
+// content that isn't reflected in a single snapshot.
+// Content-shape check only — does NOT account for a hidden ancestor
+// suppressing this node; findOverlaps() tracks effective (ancestor-aware)
+// visibility separately, since a node's own `visible` flag says nothing
+// about whether an invisible parent is hiding it from the composite.
+function hasVisualContent(node: IWindowDebugNode): boolean
+{
+    if(node.rect.width <= 0 || node.rect.height <= 0) return false;
+
+    const window = node.window;
+
+    if(window.background) return true;
+
+    if(window.type === WindowType.BITMAP_WRAPPER || window.type === WindowType.STATIC_BITMAP_WRAPPER) return true;
+
+    // Some controllers' caption getter can return non-string (undefined
+    // has been observed in the wild) despite the IWindow type contract.
+    if(TEXT_LIKE_TYPES.has(window.type) && typeof node.caption === 'string' && node.caption.trim() !== '') return true;
+
+    return Helium.instance.windowManager.getRendererByTypeAndStyle(window.type, window.style) !== null;
+}
+
+interface IOverlapWarning
+{
+    a: IWindowDebugNode;
+    b: IWindowDebugNode;
+}
+
+// Flags sibling-ish nodes (neither is an ancestor of the other) that both
+// draw content and whose *global* rects intersect by more than a couple
+// pixels. A child overlapping inside its own parent's bounds is normal
+// containment, not a bug, so ancestor/descendant pairs are excluded.
+const MIN_OVERLAP_PX = 3;
+// The comparison below is O(n^2) over every node in the selected subtree —
+// fine for a dialog, not for something like the whole desktop or a room
+// list with thousands of entries. Skip rather than freeze the tab.
+const MAX_OVERLAP_NODES = 400;
+
+// Returns null when the subtree is too large to check safely.
+function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
+{
+    const flat: Array<{ node: IWindowDebugNode; ancestors: Set<IWindow>; effectivelyVisible: boolean }> = [];
+
+    const walk = (node: IWindowDebugNode, ancestors: Set<IWindow>, parentVisible: boolean): void =>
+    {
+        const effectivelyVisible = parentVisible && node.visible;
+
+        flat.push({node, ancestors, effectivelyVisible});
+
+        const childAncestors = new Set(ancestors);
+
+        childAncestors.add(node.window);
+
+        for(const child of node.children)
+        {
+            walk(child, childAncestors, effectivelyVisible);
+        }
+    };
+
+    walk(root, new Set(), true);
+
+    if(flat.length > MAX_OVERLAP_NODES)
+    {
+        return null;
+    }
+
+    const warnings: IOverlapWarning[] = [];
+
+    for(let i = 0; i < flat.length; i++)
+    {
+        const a = flat[i];
+
+        if(!a.effectivelyVisible || !hasVisualContent(a.node)) continue;
+
+        for(let j = i + 1; j < flat.length; j++)
+        {
+            const b = flat[j];
+
+            if(a.ancestors.has(b.node.window) || b.ancestors.has(a.node.window)) continue;
+            if(!b.effectivelyVisible || !hasVisualContent(b.node)) continue;
+
+            const overlapW = Math.min(a.node.globalRect.x + a.node.globalRect.width, b.node.globalRect.x + b.node.globalRect.width)
+                - Math.max(a.node.globalRect.x, b.node.globalRect.x);
+            const overlapH = Math.min(a.node.globalRect.y + a.node.globalRect.height, b.node.globalRect.y + b.node.globalRect.height)
+                - Math.max(a.node.globalRect.y, b.node.globalRect.y);
+
+            if(overlapW >= MIN_OVERLAP_PX && overlapH >= MIN_OVERLAP_PX)
+            {
+                warnings.push({a: a.node, b: b.node});
+            }
+        }
+    }
+
+    return warnings;
+}
+
+function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverlapWarning[] | null): string
+{
+    const indent = '  '.repeat(depth);
+    const isInvolved = overlaps?.some(o => o.a.window === node.window || o.b.window === node.window) ?? false;
+    const marker = isInvolved ? '  [OVERLAP]' : '';
+    const r = node.rect;
+    const g = node.globalRect;
+    let text = `${indent}${node.typeName} "${node.name}" rect=(${r.x},${r.y},${r.width}x${r.height}) `
+        + `global=(${g.x},${g.y},${g.width}x${g.height}) style=${node.style} state=${node.state} `
+        + `param=${node.param} visible=${node.visible}${marker}\n`;
+
+    for(const child of node.children)
+    {
+        text += formatNodeText(child, depth + 1, overlaps);
+    }
+
+    return text;
+}
+
+function buildTreeReport(root: IWindowDebugNode): string
+{
+    let overlaps: IOverlapWarning[] | null = null;
+
+    try
+    {
+        overlaps = findOverlaps(root);
+    }
+    catch (error)
+    {
+        log.warn('Overlap detection failed', error);
+    }
+
+    let text = formatNodeText(root, 0, overlaps);
+
+    if(overlaps === null)
+    {
+        text += '\nOverlap check skipped (tree too large).\n';
+    }
+    else if(overlaps.length > 0)
+    {
+        text += `\nOverlap warnings (${overlaps.length}):\n`;
+
+        for(const overlap of overlaps)
+        {
+            text += `  - "${overlap.a.name}" (${overlap.a.typeName}) overlaps "${overlap.b.name}" (${overlap.b.typeName})\n`;
+        }
+    }
+
+    return text;
+}
+
 function injectStyles(): void
 {
     if(stylesInjected) return;
@@ -965,6 +1205,11 @@ function injectStyles(): void
 .hwd-tree-row { cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hwd-tree-row:hover { background: #2f3d52; }
 .hwd-tree-row-hidden { color: #777; font-style: italic; }
+.hwd-tree-row-overlap { color: #ff9d4d; }
+.hwd-tree-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.hwd-copy-btn { padding: 4px 8px; background: #2a2a2a; color: #ddd; border: 1px solid #555; border-radius: 4px; cursor: pointer; }
+.hwd-copy-btn:hover { border-color: #4a9eff; }
+.hwd-overlap-count { color: #ff9d4d; font-weight: bold; }
 .hwd-node-detail { background: #111; border: 1px solid #333; border-radius: 4px; padding: 6px; margin: 4px 0; white-space: pre-wrap; }
 .hwd-skin-grid { display: flex; flex-wrap: wrap; gap: 10px; }
 .hwd-skin-cell { text-align: center; }
