@@ -1,15 +1,12 @@
-import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import type {IGameDataResources} from './IGameDataResources';
 
-interface HashEntry
-{
+interface HashEntry {
     name: string;
     url: string;
     hash: string;
 }
 
-interface HashesData
-{
+interface HashesData {
     hashes: HashEntry[];
 }
 
@@ -19,12 +16,12 @@ interface HashesData
  * Based on AS3 sources/win63_version/core/localization/class_2118.as
  */
 // AS3: sources/win63_version/core/localization/class_2118.as::class_2118()
-export class GameDataResources implements IGameDataResources
+export class GameDataResources implements IGameDataResources 
 {
     private _externalVariablesUrl: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getExternalVariablesUrl()
-    get externalVariablesUrl(): string
+    get externalVariablesUrl(): string 
     {
         return this._externalVariablesUrl;
     }
@@ -32,7 +29,7 @@ export class GameDataResources implements IGameDataResources
     private _externalVariablesHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getExternalVariablesHash()
-    get externalVariablesHash(): string
+    get externalVariablesHash(): string 
     {
         return this._externalVariablesHash;
     }
@@ -40,7 +37,7 @@ export class GameDataResources implements IGameDataResources
     private _externalTextsUrl: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getExternalTextsUrl()
-    get externalTextsUrl(): string
+    get externalTextsUrl(): string 
     {
         return this._externalTextsUrl;
     }
@@ -48,7 +45,7 @@ export class GameDataResources implements IGameDataResources
     private _externalTextsHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getExternalTextsHash()
-    get externalTextsHash(): string
+    get externalTextsHash(): string 
     {
         return this._externalTextsHash;
     }
@@ -56,7 +53,7 @@ export class GameDataResources implements IGameDataResources
     private _furnitureDataUrl: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getFurniDataUrl()
-    get furnitureDataUrl(): string
+    get furnitureDataUrl(): string 
     {
         return this._furnitureDataUrl;
     }
@@ -64,7 +61,7 @@ export class GameDataResources implements IGameDataResources
     private _furnitureDataHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getFurniDataHash()
-    get furnitureDataHash(): string
+    get furnitureDataHash(): string 
     {
         return this._furnitureDataHash;
     }
@@ -72,7 +69,7 @@ export class GameDataResources implements IGameDataResources
     private _productDataUrl: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getProductDataUrl()
-    get productDataUrl(): string
+    get productDataUrl(): string 
     {
         return this._productDataUrl;
     }
@@ -80,19 +77,19 @@ export class GameDataResources implements IGameDataResources
     private _productDataHash: string = '';
 
     // AS3: sources/win63_version/core/localization/class_2118.as::getProductDataHash()
-    get productDataHash(): string
+    get productDataHash(): string 
     {
         return this._productDataHash;
     }
 
     /**
-	 * Parse game data resources from JSON string
-	 */
+     * Parse game data resources from JSON string
+     */
     // AS3: sources/win63_version/core/localization/class_2118.as::parse()
-    static parse(data: string): GameDataResources
+    static parse(data: string): GameDataResources 
     {
         let parsed: HashesData;
-        try
+        try 
         {
             parsed = JSON.parse(data) as HashesData;
         }
@@ -102,11 +99,11 @@ export class GameDataResources implements IGameDataResources
         }
         const resources = new GameDataResources();
 
-        for(const entry of parsed.hashes)
+        for(const entry of parsed.hashes) 
         {
-            const url = normalizeLocalAssetUrl(entry.url);
+            const url = entry.url;
 
-            switch(entry.name)
+            switch(entry.name) 
             {
                 case 'external_texts':
                     resources._externalTextsUrl = url;
@@ -131,17 +128,17 @@ export class GameDataResources implements IGameDataResources
     }
 
     // AS3: sources/win63_version/core/localization/class_2118.as::isValid()
-    isValid(): boolean
+    isValid(): boolean 
     {
         return !!(
             this._externalTextsUrl &&
-			this._externalTextsHash &&
-			this._externalVariablesUrl &&
-			this._externalVariablesHash &&
-			this._furnitureDataUrl &&
-			this._furnitureDataHash &&
-			this._productDataUrl &&
-			this._productDataHash
+            this._externalTextsHash &&
+            this._externalVariablesUrl &&
+            this._externalVariablesHash &&
+            this._furnitureDataUrl &&
+            this._furnitureDataHash &&
+            this._productDataUrl &&
+            this._productDataHash
         );
     }
 }

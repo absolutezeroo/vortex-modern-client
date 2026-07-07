@@ -1,6 +1,5 @@
 import {Component, type IContext} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
-import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import type {ICoreLocalizationManager} from './ICoreLocalizationManager';
 import type {ILocalizable} from './ILocalizable';
 import type {ILocalization} from './ILocalization';
@@ -22,7 +21,7 @@ const log = Logger.getLogger('Localization');
  * - Loading from external files
  *
  */
-export class CoreLocalizationManager extends Component implements ICoreLocalizationManager
+export class CoreLocalizationManager extends Component implements ICoreLocalizationManager 
 {
     private static readonly INTERPOLATION_DEPTH_LIMIT = 3;
 
@@ -34,25 +33,25 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
     protected _activeEnvironmentId: string = '';
     protected _gameDataResources: GameDataResources | null = null;
 
-    constructor(context: IContext, flags: number = 0)
+    constructor(context: IContext, flags: number = 0) 
     {
         super(context, flags);
     }
 
-    public registerLocalizationDefinition(id: string, name: string, url: string, code: string): void
+    public registerLocalizationDefinition(id: string, name: string, url: string, code: string): void 
     {
-        if(!this._definitions.has(id))
+        if(!this._definitions.has(id)) 
         {
             const definition = new LocalizationDefinition(code, name, url);
             this._definitions.set(id, definition);
         }
     }
 
-    public activateLocalizationDefinition(id: string): boolean
+    public activateLocalizationDefinition(id: string): boolean 
     {
         const definition = this._definitions.get(id);
 
-        if(definition)
+        if(definition) 
         {
             this._activeDefinitionId = id;
             this._activeEnvironmentId = definition.languageCode;
@@ -65,34 +64,34 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return false;
     }
 
-    public getLocalizationDefinitions(): Map<string, ILocalizationDefinition>
+    public getLocalizationDefinitions(): Map<string, ILocalizationDefinition> 
     {
         return this._definitions;
     }
 
-    public getLocalizationDefinition(id: string): ILocalizationDefinition | null
+    public getLocalizationDefinition(id: string): ILocalizationDefinition | null 
     {
         return this._definitions.get(id) ?? null;
     }
 
-    public getActiveLocalizationDefinition(): ILocalizationDefinition | null
+    public getActiveLocalizationDefinition(): ILocalizationDefinition | null 
     {
         return this.getLocalizationDefinition(this._activeDefinitionId);
     }
 
-    public getActiveEnvironmentId(): string
+    public getActiveEnvironmentId(): string 
     {
         return this._activeEnvironmentId;
     }
 
     /**
-	 * Load localization from hashes URL (AS3 flow)
-	 * First loads hashes.json, then loads external_texts from constructed URL
-	 */
+     * Load localization from hashes URL (AS3 flow)
+     * First loads hashes.json, then loads external_texts from constructed URL
+     */
     // AS3: sources/win63_version/core/localization/CoreLocalizationManager.as::loadLocalizationFromURL()
-    public loadLocalizationFromURL(hashesUrl: string, environmentId: string, acceptEmpty: boolean = false): void
+    public loadLocalizationFromURL(hashesUrl: string, environmentId: string, acceptEmpty: boolean = false): void 
     {
-        if(!hashesUrl || hashesUrl === '')
+        if(!hashesUrl || hashesUrl === '') 
         {
             log.warn('Localization hashes URL was null or empty!');
 
@@ -103,27 +102,23 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
         this._activeEnvironmentId = environmentId;
 
-        const requestUrl = normalizeLocalAssetUrl(hashesUrl);
-
-        log.info(`Loading gamedata hashes from: ${requestUrl}`);
-
-        fetch(requestUrl)
-            .then((response) =>
+        fetch(hashesUrl)
+            .then((response) => 
             {
-                if(!response.ok)
+                if(!response.ok) 
                 {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
                 return response.text();
             })
-            .then((text) =>
+            .then((text) => 
             {
-                try
+                try 
                 {
                     const resources = GameDataResources.parse(text);
 
-                    if(!resources.isValid())
+                    if(!resources.isValid()) 
                     {
                         log.error('Hashes file incomplete');
 
@@ -138,7 +133,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                     const externalTextsUrl = resources.externalTextsUrl;
                     const externalTextsHash = resources.externalTextsHash;
 
-                    if(!externalTextsUrl || !externalTextsHash)
+                    if(!externalTextsUrl || !externalTextsHash) 
                     {
                         log.error('No external_texts entry in hashes file');
 
@@ -149,14 +144,14 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
                     this.loadExternalTextUrls([`${externalTextsUrl}/${externalTextsHash}`], acceptEmpty);
                 }
-                catch (error)
+                catch (error) 
                 {
                     log.error(`Failed parsing hashes: ${error}`);
 
                     this.events.emit('failed');
                 }
             })
-            .catch((error) =>
+            .catch((error) => 
             {
                 log.error(`Failed to load hashes: ${error.message}`);
 
@@ -165,42 +160,242 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
     }
 
     /**
-	 * Load external texts directly from URL (for definitions)
-	 */
-    public loadExternalTexts(url: string, acceptEmpty: boolean = false): void
+     * Load external texts directly from URL (for definitions)
+     */
+    public loadExternalTexts(url: string, acceptEmpty: boolean = false): void 
     {
         this.loadExternalTextUrls([url], acceptEmpty);
     }
 
-    private loadExternalTextUrls(urls: string[], acceptEmpty: boolean = false): void
+    public hasLocalization(key: string): boolean 
     {
-        if(urls.length === 0)
+        return this._localizations.has(key);
+    }
+
+    public getLocalization(key: string, defaultValue: string = ''): string 
+    {
+        const localization = this._localizations.get(key);
+
+        if(!localization) 
+        {
+            this._nonExistingKeys.push(key);
+            return defaultValue;
+        }
+
+        return localization.value;
+    }
+
+    public getProperty(key: string, params?: Record<string, string>): string 
+    {
+        let value = this.getLocalization(key);
+
+        if(params) 
+        {
+            for(const [paramKey, paramValue] of Object.entries(params)) 
+            {
+                value = value.replace(new RegExp(`%${paramKey}%`, 'g'), paramValue);
+            }
+        }
+
+        return value;
+    }
+
+    public updateLocalization(key: string, value: string): void 
+    {
+        let localization = this._localizations.get(key);
+
+        if(!localization) 
+        {
+            localization = new Localization(this, key, value);
+
+            this._localizations.set(key, localization);
+        }
+        else 
+        {
+            localization.setValue(value);
+        }
+    }
+
+    public registerLocalizationListener(key: string, listener: ILocalizable): boolean 
+    {
+        let localization = this._localizations.get(key);
+
+        if(!localization) 
+        {
+            this._nonExistingKeys.push(key);
+
+            localization = new Localization(this, key, key);
+
+            this._localizations.set(key, localization);
+        }
+
+        localization.registerListener(listener);
+        return true;
+    }
+
+    public removeLocalizationListener(key: string, listener: ILocalizable): boolean 
+    {
+        const localization = this._localizations.get(key);
+
+        if(localization) 
+        {
+            localization.removeListener(listener);
+        }
+
+        return true;
+    }
+
+    public registerParameter(key: string, paramName: string, paramValue: string, paramId: string = '%'): string 
+    {
+        let localization = this._localizations.get(key);
+
+        if(!localization) 
+        {
+            localization = new Localization(this, key, key);
+
+            this._localizations.set(key, localization);
+        }
+
+        localization.registerParameter(paramName, paramValue, paramId);
+
+        return localization.value;
+    }
+
+    public getLocalizationRaw(key: string): ILocalization | null 
+    {
+        return this._localizations.get(key) ?? null;
+    }
+
+    public getKeys(): string[] 
+    {
+        return Array.from(this._localizations.keys());
+    }
+
+    public printNonExistingKeys(): void 
+    {
+        if(this._nonExistingKeys.length > 0) 
+        {
+            log.warn('Non-existing localization keys:');
+
+            for(const key of this._nonExistingKeys) 
+            {
+                log.warn(`  - ${key}`);
+            }
+        }
+    }
+
+    public getGameDataResources(): IGameDataResources | null 
+    {
+        return this._gameDataResources;
+    }
+
+    public interpolate(value: string): string 
+    {
+        if(!value) 
+        {
+            return value;
+        }
+
+        const regex = /\$\{([^}]*)\}/g;
+        let result = value;
+
+        for(let depth = 0; depth < CoreLocalizationManager.INTERPOLATION_DEPTH_LIMIT; depth++) 
+        {
+            const match = regex.exec(result);
+
+            if(match === null) 
+            {
+                return result;
+            }
+
+            let replacements = 0;
+
+            for(let i = 1; i < match.length; i++) 
+            {
+                const localization = this._localizations.get(match[i]);
+
+                if(localization) 
+                {
+                    replacements++;
+                    result = result.replace('${' + match[i] + '}', localization.value);
+                }
+            }
+
+            if(replacements === 0) 
+            {
+                break;
+            }
+
+            // Reset regex lastIndex for next iteration
+            regex.lastIndex = 0;
+        }
+
+        return result;
+    }
+
+    protected override initComponent(): void 
+    {
+        log.debug('CoreLocalizationManager initialized');
+    }
+
+    // AS3: sources/win63_version/core/localization/CoreLocalizationManager.as::parseLocalizationData()
+    protected parseLocalizationData(data: string): Map<string, string> 
+    {
+        if(!data) 
+        {
+            return new Map();
+        }
+
+        const result = new Map<string, string>();
+        const trimmedData = data.trim();
+
+        // Detect JSON format (starts with { or [)
+        if(trimmedData.startsWith('{') || trimmedData.startsWith('[')) 
+        {
+            return this.parseJsonLocalizationData(trimmedData, result);
+        }
+
+        // Parse key=value format (old Habbo format)
+        return this.parseKeyValueLocalizationData(data, result);
+    }
+
+    protected updateAllListeners(): void 
+    {
+        for(const localization of this._localizations.values()) 
+        {
+            localization.updateListeners();
+        }
+    }
+
+    private loadExternalTextUrls(urls: string[], acceptEmpty: boolean = false): void 
+    {
+        if(urls.length === 0) 
         {
             this.events.emit('failed');
             return;
         }
 
-        for(const url of urls)
+        for(const url of urls) 
         {
             this._acceptEmptyMap.set(url, acceptEmpty);
         }
 
-        Promise.all(urls.map(async (url) =>
+        Promise.all(urls.map(async (url) => 
         {
-            const response = await fetch(normalizeLocalAssetUrl(url));
+            const response = await fetch(url);
 
-            if(!response.ok)
+            if(!response.ok) 
             {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
             return response.text();
         }))
-            .then((texts) =>
+            .then((texts) => 
             {
-                for(const text of texts)
+                for(const text of texts) 
                 {
-                    if(!this.validateLocalizationData(text, acceptEmpty))
+                    if(!this.validateLocalizationData(text, acceptEmpty)) 
                     {
                         log.error('Invalid localization data received');
 
@@ -214,7 +409,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
                 this.events.emit('loaded');
             })
-            .catch((error) =>
+            .catch((error) => 
             {
                 const err = error instanceof Error ? error : new Error(String(error));
 
@@ -224,218 +419,18 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
             });
     }
 
-    public hasLocalization(key: string): boolean
-    {
-        return this._localizations.has(key);
-    }
-
-    public getLocalization(key: string, defaultValue: string = ''): string
-    {
-        const localization = this._localizations.get(key);
-
-        if(!localization)
-        {
-            this._nonExistingKeys.push(key);
-            return defaultValue;
-        }
-
-        return localization.value;
-    }
-
-    public getProperty(key: string, params?: Record<string, string>): string
-    {
-        let value = this.getLocalization(key);
-
-        if(params)
-        {
-            for(const [paramKey, paramValue] of Object.entries(params))
-            {
-                value = value.replace(new RegExp(`%${paramKey}%`, 'g'), paramValue);
-            }
-        }
-
-        return value;
-    }
-
-    public updateLocalization(key: string, value: string): void
-    {
-        let localization = this._localizations.get(key);
-
-        if(!localization)
-        {
-            localization = new Localization(this, key, value);
-
-            this._localizations.set(key, localization);
-        }
-        else
-        {
-            localization.setValue(value);
-        }
-    }
-
-    public registerLocalizationListener(key: string, listener: ILocalizable): boolean
-    {
-        let localization = this._localizations.get(key);
-
-        if(!localization)
-        {
-            this._nonExistingKeys.push(key);
-
-            localization = new Localization(this, key, key);
-
-            this._localizations.set(key, localization);
-        }
-
-        localization.registerListener(listener);
-        return true;
-    }
-
-    public removeLocalizationListener(key: string, listener: ILocalizable): boolean
-    {
-        const localization = this._localizations.get(key);
-
-        if(localization)
-        {
-            localization.removeListener(listener);
-        }
-
-        return true;
-    }
-
-    public registerParameter(key: string, paramName: string, paramValue: string, paramId: string = '%'): string
-    {
-        let localization = this._localizations.get(key);
-
-        if(!localization)
-        {
-            localization = new Localization(this, key, key);
-
-            this._localizations.set(key, localization);
-        }
-
-        localization.registerParameter(paramName, paramValue, paramId);
-
-        return localization.value;
-    }
-
-    public getLocalizationRaw(key: string): ILocalization | null
-    {
-        return this._localizations.get(key) ?? null;
-    }
-
-    public getKeys(): string[]
-    {
-        return Array.from(this._localizations.keys());
-    }
-
-    public printNonExistingKeys(): void
-    {
-        if(this._nonExistingKeys.length > 0)
-        {
-            log.warn('Non-existing localization keys:');
-
-            for(const key of this._nonExistingKeys)
-            {
-                log.warn(`  - ${key}`);
-            }
-        }
-    }
-
-    public getGameDataResources(): IGameDataResources | null
-    {
-        return this._gameDataResources;
-    }
-
-    public interpolate(value: string): string
-    {
-        if(!value)
-        {
-            return value;
-        }
-
-        const regex = /\$\{([^}]*)\}/g;
-        let result = value;
-
-        for(let depth = 0; depth < CoreLocalizationManager.INTERPOLATION_DEPTH_LIMIT; depth++)
-        {
-            const match = regex.exec(result);
-
-            if(match === null)
-            {
-                return result;
-            }
-
-            let replacements = 0;
-
-            for(let i = 1; i < match.length; i++)
-            {
-                const localization = this._localizations.get(match[i]);
-
-                if(localization)
-                {
-                    replacements++;
-                    result = result.replace('${' + match[i] + '}', localization.value);
-                }
-            }
-
-            if(replacements === 0)
-            {
-                break;
-            }
-
-            // Reset regex lastIndex for next iteration
-            regex.lastIndex = 0;
-        }
-
-        return result;
-    }
-
-    protected override initComponent(): void
-    {
-        log.debug('CoreLocalizationManager initialized');
-    }
-
-    // AS3: sources/win63_version/core/localization/CoreLocalizationManager.as::parseLocalizationData()
-    protected parseLocalizationData(data: string): Map<string, string>
-    {
-        if(!data)
-        {
-            return new Map();
-        }
-
-        const result = new Map<string, string>();
-        const trimmedData = data.trim();
-
-        // Detect JSON format (starts with { or [)
-        if(trimmedData.startsWith('{') || trimmedData.startsWith('['))
-        {
-            return this.parseJsonLocalizationData(trimmedData, result);
-        }
-
-        // Parse key=value format (old Habbo format)
-        return this.parseKeyValueLocalizationData(data, result);
-    }
-
-    protected updateAllListeners(): void
-    {
-        for(const localization of this._localizations.values())
-        {
-            localization.updateListeners();
-        }
-    }
-
     /**
-	 * Parse JSON format localization data (Nitro format)
-	 */
-    private parseJsonLocalizationData(data: string, result: Map<string, string>): Map<string, string>
+     * Parse JSON format localization data (Nitro format)
+     */
+    private parseJsonLocalizationData(data: string, result: Map<string, string>): Map<string, string> 
     {
-        try
+        try 
         {
             const json = JSON.parse(data);
 
-            for(const [key, value] of Object.entries(json))
+            for(const [key, value] of Object.entries(json)) 
             {
-                if(typeof value === 'string')
+                if(typeof value === 'string') 
                 {
                     this.updateLocalization(key, value);
 
@@ -445,7 +440,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
             log.debug(`Parsed ${result.size} localization entries from JSON`);
         }
-        catch (error)
+        catch (error) 
         {
             log.error(`Failed to parse JSON localization data: ${error}`);
         }
@@ -456,31 +451,31 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
     }
 
     /**
-	 * Parse key=value format localization data (original Habbo format)
-	 */
-    private parseKeyValueLocalizationData(data: string, result: Map<string, string>): Map<string, string>
+     * Parse key=value format localization data (original Habbo format)
+     */
+    private parseKeyValueLocalizationData(data: string, result: Map<string, string>): Map<string, string> 
     {
         const lineRegex = /\n\r{1,}|\n{1,}|\r{1,}/gm;
         const trimRegex = /^\s+|\s+$/g;
         const newlineRegex = /\\n/gm;
         const lines = data.split(lineRegex);
 
-        for(const line of lines)
+        for(const line of lines) 
         {
             // Skip comments
-            if(line.charAt(0) === '#')
+            if(line.charAt(0) === '#') 
             {
                 continue;
             }
 
             const parts = line.split('=');
 
-            if(parts[0].length === 0)
+            if(parts[0].length === 0) 
             {
                 continue;
             }
 
-            if(parts.length > 1)
+            if(parts.length > 1) 
             {
                 let key = parts.shift()!;
                 let value = parts.join('=');
@@ -489,7 +484,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                 value = value.replace(trimRegex, '');
                 value = value.replace(newlineRegex, '\n');
 
-                if(value.length > 0)
+                if(value.length > 0) 
                 {
                     this.updateLocalization(key, value);
 
@@ -505,20 +500,20 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return result;
     }
 
-    private validateLocalizationData(data: string, acceptEmpty: boolean): boolean
+    private validateLocalizationData(data: string, acceptEmpty: boolean): boolean 
     {
-        if(data === null || data === undefined)
+        if(data === null || data === undefined) 
         {
             return false;
         }
 
-        if(data.length === 0 && !acceptEmpty)
+        if(data.length === 0 && !acceptEmpty) 
         {
             return false;
         }
 
         // Check if we received HTML instead of localization data
-        if(data.indexOf('<!DOCTYPE html') !== -1)
+        if(data.indexOf('<!DOCTYPE html') !== -1) 
         {
             return false;
         }

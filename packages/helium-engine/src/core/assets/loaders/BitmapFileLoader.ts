@@ -94,11 +94,17 @@ export class BitmapFileLoader extends BinaryFileLoader
     {
         if(!this._disposed)
         {
-            if(this._texture && this._url)
-            {
-                Assets.unload(this._url).catch(() => {});
-                this._texture = null;
-            }
+            // Do NOT Assets.unload() here: AssetLibrary.handleAssetLoadEvent() disposes this
+            // loader as routine cleanup immediately after a successful load, right after handing
+            // this._texture off to a BitmapDataAsset that's meant to own it going forward (cached
+            // under an asset name, retrieved again later via getAssetByName()). Unloading here
+            // would have PixiJS's Assets cache tear down the underlying GPU resource the very
+            // first time this loader's job is "done" - meaning the texture renders fine once, then
+            // fails (extract.canvas()/drawImage() on a destroyed source) on every later reuse of
+            // that cached asset. The BitmapDataAsset we handed the texture to owns its lifecycle
+            // from here (its own dispose() calls texture.destroy(true)) - this loader just drops
+            // its local reference.
+            this._texture = null;
 
             super.dispose();
         }

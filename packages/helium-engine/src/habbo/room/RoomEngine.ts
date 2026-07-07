@@ -12,6 +12,7 @@
 import type {Container, Ticker} from 'pixi.js';
 import {Sprite, Texture} from 'pixi.js';
 import {Component, ComponentDependency, type IContext, type IUpdateReceiver} from '@core/runtime';
+import {Helium} from '../../Helium';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from './IRoomEngine';
@@ -437,7 +438,12 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const listeners = this._pendingThumbnailListeners.get(type);
 
-        if(!listeners) return;
+        if(!listeners)
+        {
+            log.warn(`iconLoaded(${typeId}, ${type}, ${success}): no pending listeners for key "${type}" (pending keys: ${[...this._pendingThumbnailListeners.keys()].join(', ')})`);
+
+            return;
+        }
 
         this._pendingThumbnailListeners.delete(type);
 
@@ -454,6 +460,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         if(texture === null)
         {
+            log.warn(`deliverIconTexture(${id}): no texture (asset missing or load failed)`);
+
             for(const listener of listeners) listener.imageFailed(id);
 
             return;
@@ -463,6 +471,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(canvas === null)
         {
+            log.warn(`deliverIconTexture(${id}): pixiTextureToCanvas() returned null`);
+
             for(const listener of listeners) listener.imageFailed(id);
 
             return;
@@ -482,8 +492,10 @@ export class RoomEngine extends Component implements IRoomEngine,
                     else listeners[i].imageFailed(id);
                 }
             })
-            .catch(() =>
+            .catch((error) =>
             {
+                log.warn(`deliverIconTexture(${id}): createImageBitmap() failed`, error);
+
                 for(const listener of listeners) listener.imageFailed(id);
             });
     }
@@ -643,7 +655,12 @@ export class RoomEngine extends Component implements IRoomEngine,
         const result = new ImageResult();
         result.id = -1;
 
-        if(!this.assets || type === null) return result;
+        if(!this.assets || type === null)
+        {
+            log.warn(`getGenericRoomObjectThumbnail: bailing out early (assets=${!!this.assets}, type=${type})`);
+
+            return result;
+        }
 
         const assetName = [type, param].join('_');
 
@@ -2909,7 +2926,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     /**
 	 * Convert a PixiJS Texture to an HTMLCanvasElement.
-	 * Extracts the frame region from the spritesheet source image.
+	 *
+	 * TS note: this used to read texture.source.resource directly and draw it via
+	 * ctx.drawImage(). That's fragile - PixiJS doesn't guarantee a CPU-side resource
+	 * stays attached to a TextureSource once it's been uploaded to the GPU (source.resource
+	 * can legitimately be undefined for a fully valid, on-screen texture). renderer.extract.canvas()
+	 * is PixiJS's own supported way to read a Texture back to a canvas regardless of backing
+	 * resource, so it's used here instead.
 	 */
     private pixiTextureToCanvas(texture: Texture): HTMLCanvasElement | null
     {
@@ -2919,44 +2942,14 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(frame.width < 1 || frame.height < 1) return null;
 
-            const canvas = document.createElement('canvas');
+            const canvas = Helium.instance.application.renderer.extract.canvas(texture);
 
-            canvas.width = frame.width;
-            canvas.height = frame.height;
-
-            const ctx = canvas.getContext('2d');
-
-            if(!ctx) return null;
-
-            const source = texture.source?.resource;
-
-            if(source instanceof HTMLImageElement || source instanceof HTMLCanvasElement)
-            {
-                ctx.drawImage(
-                    source,
-                    frame.x, frame.y, frame.width, frame.height,
-                    0, 0, frame.width, frame.height
-                );
-
-                return canvas;
-            }
-
-            // ImageBitmap support
-            if(typeof ImageBitmap !== 'undefined' && source instanceof ImageBitmap)
-            {
-                ctx.drawImage(
-                    source,
-                    frame.x, frame.y, frame.width, frame.height,
-                    0, 0, frame.width, frame.height
-                );
-
-                return canvas;
-            }
-
-            return null;
+            return canvas as HTMLCanvasElement;
         }
-        catch
+        catch (error)
         {
+            log.warn('pixiTextureToCanvas: failed to convert texture to canvas', error);
+
             return null;
         }
     }

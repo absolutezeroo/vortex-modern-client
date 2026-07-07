@@ -756,6 +756,8 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     {
         if(this._iconAssets === null || this._iconListener === null)
         {
+            log.warn(`loadThumbnailContent: bailing out (iconAssets=${!!this._iconAssets}, iconListener=${!!this._iconListener})`);
+
             return false;
         }
 
@@ -773,14 +775,22 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
         {
             for(const url of urls)
             {
-                const loader = this._iconAssets.loadAssetFromFile([type, param].join('_'), url, 'image/png', typeId);
-                loader.events.on('event', (event: AssetLoaderEvent) =>
+                try
                 {
-                    if(event.type === AssetLoaderEventType.COMPLETE)
+                    const loader = this._iconAssets.loadAssetFromFile([type, param].join('_'), url, 'image/png', typeId);
+
+                    loader.events.on('event', (event: AssetLoaderEvent) =>
                     {
-                        this._iconListener!.iconLoaded(loader.assetLoader?.id ?? typeId, loader.assetName, true);
-                    }
-                });
+                        if(event.type === AssetLoaderEventType.COMPLETE)
+                        {
+                            this._iconListener!.iconLoaded(loader.assetLoader?.id ?? typeId, loader.assetName, true);
+                        }
+                    });
+                }
+                catch (error)
+                {
+                    log.warn(`loadThumbnailContent: loadAssetFromFile(${[type, param].join('_')}, ${url}) threw`, error);
+                }
             }
 
             return true;

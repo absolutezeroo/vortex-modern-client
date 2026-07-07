@@ -1,6 +1,5 @@
 import {Component, ComponentDependency, type IContext, type ICore} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
-import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import type {IHabboConfigurationManager} from './IHabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
@@ -22,7 +21,7 @@ const log = Logger.getLogger('Configuration');
  * - External variables download
  * - Gamedata hashes loading
  */
-export class HabboConfigurationManager extends Component implements IHabboConfigurationManager
+export class HabboConfigurationManager extends Component implements IHabboConfigurationManager 
 {
     private static readonly INTERPOLATION_DEPTH_LIMIT: number = 3;
     private static readonly REPLACE_CHAR: string = '%';
@@ -38,7 +37,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     private _skipLocalizations: boolean = false;
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::HabboConfigurationManager()
-    constructor(context: IContext, flags: number = 0)
+    constructor(context: IContext, flags: number = 0) 
     {
         super(context, flags);
 
@@ -48,23 +47,32 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         this._skipLocalizations = (flags & HabboConfigurationFlags.SKIP_LOCALIZATIONS) > 0;
     }
 
-    setEmbeddedConfigurationAssets(assets: Record<string, string>): void
-    {
-        this._embeddedConfigurationAssets.clear();
+    private _environmentId: string = '';
 
-        for(const [name, content] of Object.entries(assets))
-        {
-            this._embeddedConfigurationAssets.set(name, content);
-        }
+    get environmentId(): string 
+    {
+        return this._environmentId;
+    }
+
+    private _useHttps: boolean = false;
+
+    get useHttps(): boolean 
+    {
+        return this._useHttps;
+    }
+
+    set useHttps(value: boolean) 
+    {
+        this._useHttps = value;
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::get dependencies()
-    protected override get dependencies(): Array<ComponentDependency<any>>
+    protected override get dependencies(): Array<ComponentDependency<any>> 
     {
         return [
             new ComponentDependency(
                 IID_HabboLocalizationManager,
-                (localization: IHabboLocalizationManager | null) =>
+                (localization: IHabboLocalizationManager | null) => 
                 {
                     this._localization = localization;
                 },
@@ -74,42 +82,33 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         ];
     }
 
-    private _environmentId: string = '';
-
-    get environmentId(): string
+    setEmbeddedConfigurationAssets(assets: Record<string, string>): void 
     {
-        return this._environmentId;
+        this._embeddedConfigurationAssets.clear();
+
+        for(const [name, content] of Object.entries(assets)) 
+        {
+            this._embeddedConfigurationAssets.set(name, content);
+        }
     }
 
-    private _useHttps: boolean = false;
-
-    get useHttps(): boolean
-    {
-        return this._useHttps;
-    }
-
-    set useHttps(value: boolean)
-    {
-        this._useHttps = value;
-    }
-
-    isInitialized(): boolean
+    isInitialized(): boolean 
     {
         return this._isConfigLoaded;
     }
 
-    propertyExists(key: string): boolean
+    propertyExists(key: string): boolean 
     {
         return this._configurationData.has(key);
     }
 
-    getProperty(key: string, params?: Record<string, string>): string
+    getProperty(key: string, params?: Record<string, string>): string 
     {
-        if(!params)
+        if(!params) 
         {
             const cached = this._interpolatedCache.get(key);
 
-            if(cached !== undefined)
+            if(cached !== undefined) 
             {
                 return cached;
             }
@@ -118,28 +117,26 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         let value = this._configurationData.get(key) ?? '';
 
         value = this.interpolate(value);
-        value = normalizeLocalAssetUrl(value);
 
-        if(value === '')
+        if(value === '') 
         {
             if(!params) this._interpolatedCache.set(key, '');
             return '';
         }
 
         // Handle protocol-relative URLs
-        if(value.substring(0, 2) === '//')
+        if(value.substring(0, 2) === '//') 
         {
             value = (this._useHttps ? 'https:' : 'http:') + value;
         }
 
         value = this.updateUrlProtocol(value);
-        value = normalizeLocalAssetUrl(value);
 
-        if(!params)
+        if(!params) 
         {
             this._interpolatedCache.set(key, value);
         }
-        else
+        else 
         {
             value = this.fillParams(value, params);
         }
@@ -148,42 +145,42 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::setProperty()
-    setProperty(key: string, value: string, persistent: boolean = false, logIt: boolean = false): void
+    setProperty(key: string, value: string, persistent: boolean = false, logIt: boolean = false): void 
     {
-        if(logIt && !this._configurationData.has(key))
+        if(logIt && !this._configurationData.has(key)) 
         {
             log.debug(`${key}=${value}`);
         }
 
-        if(key === HabboProperty.ENVIRONMENT_ID)
+        if(key === HabboProperty.ENVIRONMENT_ID) 
         {
             this._environmentId = value;
         }
 
         // Don't overwrite persistent keys unless this is also persistent
-        if(this._configurationKeys.indexOf(key) < 0 || persistent)
+        if(this._configurationKeys.indexOf(key) < 0 || persistent) 
         {
             this._configurationData.set(key, value);
             this._interpolatedCache.clear();
         }
 
-        if(persistent)
+        if(persistent) 
         {
             this._configurationKeys.push(key);
         }
     }
 
-    getBoolean(key: string): boolean
+    getBoolean(key: string): boolean 
     {
         const value = this._configurationData.get(key);
         return value !== undefined && (value === '1' || value.toLowerCase() === 'true');
     }
 
-    getInteger(key: string, defaultValue: number): number
+    getInteger(key: string, defaultValue: number): number 
     {
         const value = this._configurationData.get(key);
 
-        if(value === undefined)
+        if(value === undefined) 
         {
             return defaultValue;
         }
@@ -193,9 +190,9 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return isNaN(parsed) ? defaultValue : parsed;
     }
 
-    interpolate(value: string): string
+    interpolate(value: string): string 
     {
-        if(!value)
+        if(!value) 
         {
             return value;
         }
@@ -204,7 +201,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         let interpolated = value;
         let limit = HabboConfigurationManager.INTERPOLATION_DEPTH_LIMIT;
 
-        while(limit-- > 0)
+        while(limit-- > 0) 
         {
             let hasMatch = false;
             let result = '';
@@ -214,15 +211,15 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
             // Reset regex
             regex.lastIndex = 0;
 
-            while((match = regex.exec(interpolated)) !== null)
+            while((match = regex.exec(interpolated)) !== null) 
             {
                 const key = match[1];
 
-                if(!this.propertyExists(key))
+                if(!this.propertyExists(key)) 
                 {
                     return '';
                 }
-                else
+                else 
                 {
                     result += interpolated.substring(lastIndex, match.index);
                     result += this._configurationData.get(key) ?? '';
@@ -234,7 +231,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 
             result += interpolated.substring(lastIndex);
 
-            if(!hasMatch)
+            if(!hasMatch) 
             {
                 break;
             }
@@ -245,9 +242,9 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return interpolated;
     }
 
-    updateUrlProtocol(url: string): string
+    updateUrlProtocol(url: string): string 
     {
-        if(this._useHttps)
+        if(this._useHttps) 
         {
             return url.replace('http://', 'https://').replace(':8090/', ':8443/');
         }
@@ -255,9 +252,9 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         return url;
     }
 
-    updateEnvironmentId(envId: string): void
+    updateEnvironmentId(envId: string): void 
     {
-        if(this._environmentId !== envId)
+        if(this._environmentId !== envId) 
         {
             this._environmentId = envId;
 
@@ -270,7 +267,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::resetAll()
-    resetAll(): void
+    resetAll(): void 
     {
         this._isConfigLoaded = false;
         this._configurationData.clear();
@@ -286,20 +283,20 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         this.setDefaults();
         this.updateEnvironmentVariables();
 
-        if(!this.propertyExists(HabboProperty.ENVIRONMENT_ID))
+        if(!this.propertyExists(HabboProperty.ENVIRONMENT_ID)) 
         {
             this.initEmbeddedConfigurations();
         }
 
-        if(!this._isConfigLoaded && this._skipExternalVariables)
+        if(!this._isConfigLoaded && this._skipExternalVariables) 
         {
             this._isConfigLoaded = true;
             this.unlock();
             this.events.emit('complete');
         }
-        else if(!this._isConfigLoaded && this._skipLocalizations)
+        else if(!this._isConfigLoaded && this._skipLocalizations) 
         {
-            void this.initConfigurationDownload().catch((error) =>
+            void this.initConfigurationDownload().catch((error) => 
             {
                 const err = error instanceof Error ? error : new Error(String(error));
 
@@ -308,47 +305,14 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::onLocalizationComplete()
-    private onLocalizationComplete(): void
-    {
-        if(!this._localization)
-        {
-            return;
-        }
-
-        const resources = this._localization.getGameDataResources();
-
-        if(!resources)
-        {
-            return;
-        }
-
-        const url = resources.externalVariablesUrl;
-        const hash = resources.externalVariablesHash;
-
-        if(!url || !hash)
-        {
-            return;
-        }
-
-        this.setProperty(HabboProperty.EXTERNAL_VARIABLES, `${url}/${hash}`);
-
-        void this.initConfigurationDownload().catch((error) =>
-        {
-            const err = error instanceof Error ? error : new Error(String(error));
-
-            log.error(`Configuration reload after localization failed: ${err.message}`);
-        });
-    }
-
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::initConfigurationDownload()
-    async initConfigurationDownload(): Promise<void>
+    async initConfigurationDownload(): Promise<void> 
     {
         this._isConfigLoaded = false;
 
         const externalVariablesUrl = this.getProperty(HabboProperty.EXTERNAL_VARIABLES);
 
-        if(!externalVariablesUrl)
+        if(!externalVariablesUrl) 
         {
             const err = new Error(`Missing ${HabboProperty.EXTERNAL_VARIABLES}`);
 
@@ -358,31 +322,31 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
             throw err;
         }
 
-        try
+        try 
         {
             log.info(`Loading configuration from ${externalVariablesUrl}`);
 
             const response = await fetch(externalVariablesUrl);
 
-            if(!response.ok)
+            if(!response.ok) 
             {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
             const configData = await response.text();
 
-            if(configData && configData.length > 0)
+            if(configData && configData.length > 0) 
             {
                 this.parseConfiguration(configData);
             }
-            else
+            else 
             {
                 throw new Error(`Empty configuration data from ${externalVariablesUrl}`);
             }
 
             this.configurationsLoaded();
         }
-        catch (error)
+        catch (error) 
         {
             const err = error instanceof Error ? error : new Error(String(error));
 
@@ -393,15 +357,48 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    protected override initComponent(): void
+    protected override initComponent(): void 
     {
         this.resetAll();
     }
 
-    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::updateEnvironmentVariables()
-    private updateEnvironmentVariables(): void
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::onLocalizationComplete()
+    private onLocalizationComplete(): void 
     {
-        if(!this._environmentId)
+        if(!this._localization) 
+        {
+            return;
+        }
+
+        const resources = this._localization.getGameDataResources();
+
+        if(!resources) 
+        {
+            return;
+        }
+
+        const url = resources.externalVariablesUrl;
+        const hash = resources.externalVariablesHash;
+
+        if(!url || !hash) 
+        {
+            return;
+        }
+
+        this.setProperty(HabboProperty.EXTERNAL_VARIABLES, `${url}/${hash}`);
+
+        void this.initConfigurationDownload().catch((error) => 
+        {
+            const err = error instanceof Error ? error : new Error(String(error));
+
+            log.error(`Configuration reload after localization failed: ${err.message}`);
+        });
+    }
+
+    // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::updateEnvironmentVariables()
+    private updateEnvironmentVariables(): void 
+    {
+        if(!this._environmentId) 
         {
             return;
         }
@@ -421,18 +418,18 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
             'web.terms_of_service.link',
         ];
 
-        for(const key of keysToUpdate)
+        for(const key of keysToUpdate) 
         {
             const defaultValue = this.getProperty(key);
             const envKey = `${key}.${this._environmentId}`;
 
-            if(this.propertyExists(envKey))
+            if(this.propertyExists(envKey)) 
             {
                 const envValue = this._configurationData.get(envKey) ?? '';
 
                 this.setProperty(key, envValue);
             }
-            else
+            else 
             {
                 this.setProperty(key, defaultValue);
             }
@@ -440,7 +437,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::initEmbeddedConfigurations()
-    private initEmbeddedConfigurations(): void
+    private initEmbeddedConfigurations(): void 
     {
         let environment = this._environmentId || localStorage.getItem('helium_environment') || '';
 
@@ -451,32 +448,32 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         // url.prefix.en, etc.) never syncs into its base key on first load — leaving
         // e.g. web.api empty, which sends WebApiLoginProvider down its url.prefix
         // fallback path instead of the working local dev proxy.
-        if(!environment)
+        if(!environment) 
         {
             const liveList = this._configurationData.get('live.environment.list');
 
             environment = liveList ? liveList.split('/')[0] : '';
         }
 
-        if(!environment)
+        if(!environment) 
         {
             return;
         }
 
         log.debug(`Default Environment: ${environment}`);
 
-        if(!this._environmentId)
+        if(!this._environmentId) 
         {
             this._environmentId = environment;
             this.setProperty('environment.id', environment);
         }
 
         // Apply environment-specific overrides
-        for(const [key] of this._configurationData)
+        for(const [key] of this._configurationData) 
         {
             const index = key.lastIndexOf(`.${environment}`);
 
-            if(index !== -1 && index + 1 + environment.length === key.length)
+            if(index !== -1 && index + 1 + environment.length === key.length) 
             {
                 const baseKey = key.substring(0, index);
                 // Copy the raw, unprocessed value — not this.getProperty(key). Properties like
@@ -492,23 +489,23 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
     }
 
-    private fillParams(template: string, params: Record<string, string>): string
+    private fillParams(template: string, params: Record<string, string>): string 
     {
         let result = template;
         const char = HabboConfigurationManager.REPLACE_CHAR;
 
-        for(let i = 0; i < 10; i++)
+        for(let i = 0; i < 10; i++) 
         {
             const startIndex = result.indexOf(char);
 
-            if(startIndex < 0)
+            if(startIndex < 0) 
             {
                 break;
             }
 
             const endIndex = result.indexOf(char, startIndex + 1);
 
-            if(endIndex < 0)
+            if(endIndex < 0) 
             {
                 break;
             }
@@ -523,12 +520,12 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseConfiguration()
-    private parseConfiguration(config: string): void
+    private parseConfiguration(config: string): void 
     {
         const trimmed = config.trim();
 
         // Detect JSON format (starts with { or [)
-        if(trimmed.startsWith('{') || trimmed.startsWith('['))
+        if(trimmed.startsWith('{') || trimmed.startsWith('[')) 
         {
             this.parseJsonConfiguration(trimmed);
             return;
@@ -538,31 +535,31 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         this.parseKeyValueConfiguration(config);
     }
 
-    private parseJsonConfiguration(data: string): void
+    private parseJsonConfiguration(data: string): void 
     {
-        try
+        try 
         {
             const json = JSON.parse(data);
             let count = 0;
 
-            for(const [key, value] of Object.entries(json))
+            for(const [key, value] of Object.entries(json)) 
             {
-                if(value === null || value === undefined)
+                if(value === null || value === undefined) 
                 {
                     continue;
                 }
 
                 let stringValue: string;
 
-                if(typeof value === 'string')
+                if(typeof value === 'string') 
                 {
                     stringValue = value;
                 }
-                else if(typeof value === 'number' || typeof value === 'boolean')
+                else if(typeof value === 'number' || typeof value === 'boolean') 
                 {
                     stringValue = String(value);
                 }
-                else
+                else 
                 {
                     // Arrays and objects → store as JSON string
                     stringValue = JSON.stringify(value);
@@ -574,34 +571,34 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 
             log.info(`Parsed ${count} configuration entries from JSON`);
         }
-        catch (error)
+        catch (error) 
         {
             log.error(`Failed to parse JSON configuration: ${error}`);
         }
     }
 
-    private parseKeyValueConfiguration(config: string): void
+    private parseKeyValueConfiguration(config: string): void 
     {
         const lineRegex = /\n\r{1,}|\n{1,}|\r{1,}/gm;
         const trimRegex = /^\s+|\s+$/g;
         const lines = config.split(lineRegex);
         let isReadOnly = false;
 
-        for(const line of lines)
+        for(const line of lines) 
         {
-            if(line.substr(0, 1) === '#' || line === '')
+            if(line.substr(0, 1) === '#' || line === '') 
             {
                 continue;
             }
 
             const parts = line.split('=');
 
-            if(parts.length >= 2 && parts[0].length > 0 && parts[1].length > 0)
+            if(parts.length >= 2 && parts[0].length > 0 && parts[1].length > 0) 
             {
                 const key = parts.shift()!.replace(trimRegex, '');
                 const value = parts.join('=').replace(trimRegex, '');
 
-                if(key === 'configuration.readonly' && value === 'true')
+                if(key === 'configuration.readonly' && value === 'true') 
                 {
                     isReadOnly = true;
                 }
@@ -612,45 +609,45 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseDevelopmentVariables()
-    private parseDevelopmentVariables(): void
+    private parseDevelopmentVariables(): void 
     {
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseCommonVariables()
-    private parseCommonVariables(): void
+    private parseCommonVariables(): void 
     {
         this.parseConfigurationAsset('common_configuration');
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseConfigurationAsset()
-    private parseConfigurationAsset(assetName: string): void
+    private parseConfigurationAsset(assetName: string): void 
     {
         const content = this._embeddedConfigurationAssets.get(assetName);
 
-        if(content !== undefined)
+        if(content !== undefined) 
         {
             this.parseConfiguration(content);
         }
-        else
+        else 
         {
             log.debug(`Could not parse configuration ${assetName}`);
         }
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseLocalizationVariables()
-    private parseLocalizationVariables(): void
+    private parseLocalizationVariables(): void 
     {
         this.parseConfigurationAsset('localization_configuration');
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::parseArguments()
-    private parseArguments(): void
+    private parseArguments(): void 
     {
         const core = this.context as ICore;
 
         if(!core.arguments) return;
 
-        for(const [key, value] of core.arguments)
+        for(const [key, value] of core.arguments) 
         {
             this.setProperty(key.replace(/_/g, '.'), String(value));
         }
@@ -659,21 +656,21 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
     }
 
     // AS3: sources/win63_version/habbo/configuration/HabboConfigurationManager.as::setDefaults()
-    private setDefaults(): void
+    private setDefaults(): void 
     {
         this.setProperty('client.fatal.error.url', '${url.prefix}/flash_client_error');
         this.setProperty('game.center.error.url', '${url.prefix}/log/gameerror');
     }
 
-    private configurationsLoaded(): void
+    private configurationsLoaded(): void 
     {
         this.events.emit('configurationLoaded');
         this.configurationsComplete();
     }
 
-    private configurationsComplete(): void
+    private configurationsComplete(): void 
     {
-        if(this._isConfigLoaded)
+        if(this._isConfigLoaded) 
         {
             return;
         }

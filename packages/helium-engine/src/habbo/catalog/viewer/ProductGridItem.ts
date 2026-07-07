@@ -190,13 +190,21 @@ export class ProductGridItem implements IGridItem
         if(image == null) return;
 
         const target = this.targetIcon;
+        let assignedToTarget = false;
 
         if(target != null && !target.disposed)
         {
             target.bitmap = image;
+            assignedToTarget = true;
         }
 
-        if(disposeSource)
+        // AS3 copies param1's pixels into a BitmapData the target already owns
+        // (copyPixels), so disposing the source afterward never touches what's
+        // on screen. Here `target.bitmap = image` assigns the SAME ImageBitmap
+        // by reference - closing it below would also destroy the one the target
+        // is now displaying, so only close it when it was NOT handed to a live
+        // target (matching AS3's "source is a separate, disposable buffer" intent).
+        if(disposeSource && !assignedToTarget)
         {
             image.close();
         }

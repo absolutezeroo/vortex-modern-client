@@ -1,3 +1,4 @@
+import {Logger} from '@core/utils/Logger';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -9,6 +10,8 @@ import type {IPurchasableOffer} from '../IPurchasableOffer';
 import type {IProduct} from './IProduct';
 import type {ProductContainer} from './ProductContainer';
 import {ProductGridItem} from './ProductGridItem';
+
+const log = Logger.getLogger('Product');
 
 /**
  * A single product (furni/badge/effect/subscription/avatar-render/chat-style) inside an offer.
@@ -164,7 +167,12 @@ export class Product extends ProductGridItem implements IProduct
 
         const roomEngine = (grid as ProductContainer).offer.page.viewer.roomEngine;
 
-        if(!roomEngine || !this.catalog) return null;
+        if(!roomEngine || !this.catalog)
+        {
+            log.warn(`initIcon: bailing out early (roomEngine=${!!roomEngine}, catalog=${!!this.catalog})`);
+
+            return null;
+        }
 
         let image: ImageBitmap | null = null;
 

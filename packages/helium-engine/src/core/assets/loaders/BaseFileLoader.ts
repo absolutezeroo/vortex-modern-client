@@ -1,7 +1,10 @@
 import {EventEmitter} from 'eventemitter3';
+import {Logger} from '@core/utils/Logger';
 import type {IAssetLoader} from './IAssetLoader';
 import {AssetLoaderErrorCodes} from './IAssetLoader';
 import {AssetLoaderEvent, AssetLoaderEventType} from './AssetLoaderEvent';
+
+const log = Logger.getLogger('BaseFileLoader');
 
 /**
  * BaseFileLoader
@@ -143,7 +146,12 @@ export abstract class BaseFileLoader implements IAssetLoader
 	 */
     protected handleLoadEvent(type: string, httpStatus?: number): void
     {
-        if(this._disposed) return;
+        if(this._disposed)
+        {
+            if(type === 'complete') log.warn(`handleLoadEvent('complete') skipped: loader already disposed (url=${this._url})`);
+
+            return;
+        }
 
         if(httpStatus !== undefined)
         {

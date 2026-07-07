@@ -1,4 +1,3 @@
-import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import {BaseFileLoader} from './BaseFileLoader';
 
 /**
@@ -8,11 +7,11 @@ import {BaseFileLoader} from './BaseFileLoader';
  *
  * Loader for binary files. Loads content as ArrayBuffer.
  */
-export class BinaryFileLoader extends BaseFileLoader
+export class BinaryFileLoader extends BaseFileLoader 
 {
     protected _abortController: AbortController | null = null;
 
-    constructor(mimeType: string, url?: string, id: number = -1)
+    constructor(mimeType: string, url?: string, id: number = -1) 
     {
         super(mimeType, url, id);
     }
@@ -20,40 +19,40 @@ export class BinaryFileLoader extends BaseFileLoader
     protected _data: ArrayBuffer | null = null;
 
     /**
-	 * The loaded data as ArrayBuffer
-	 */
-    get data(): ArrayBuffer | null
+     * The loaded data as ArrayBuffer
+     */
+    get data(): ArrayBuffer | null 
     {
         return this._data;
     }
 
     /**
-	 * The loaded content
-	 */
-    get content(): unknown
+     * The loaded content
+     */
+    get content(): unknown 
     {
         return this._data;
     }
 
     /**
-	 * The raw bytes loaded
-	 */
-    get bytes(): ArrayBuffer | null
+     * The raw bytes loaded
+     */
+    get bytes(): ArrayBuffer | null 
     {
         return this._data;
     }
 
     /**
-	 * Load content from a URL
-	 */
-    load(url: string): void
+     * Load content from a URL
+     */
+    load(url: string): void 
     {
-        this._url = normalizeLocalAssetUrl(url);
+        this._url = url;
         this._data = null;
         this._errorCode = 0;
 
         // Abort any pending request
-        if(this._abortController)
+        if(this._abortController) 
         {
             this._abortController.abort();
         }
@@ -63,9 +62,9 @@ export class BinaryFileLoader extends BaseFileLoader
         this.handleLoadEvent('open');
 
         fetch(this._url, {signal: this._abortController.signal})
-            .then(async (response) =>
+            .then(async (response) => 
             {
-                if(!response.ok)
+                if(!response.ok) 
                 {
                     this._status = response.status;
                     this.handleLoadEvent('ioError', response.status);
@@ -85,19 +84,19 @@ export class BinaryFileLoader extends BaseFileLoader
 
                 this.handleLoadEvent('complete');
             })
-            .catch((error) =>
+            .catch((error) => 
             {
-                if(error.name === 'AbortError')
+                if(error.name === 'AbortError') 
                 {
                     // Request was aborted, don't report as error
                     return;
                 }
 
-                if(error.name === 'TypeError' && error.message.includes('network'))
+                if(error.name === 'TypeError' && error.message.includes('network')) 
                 {
                     this.handleLoadEvent('ioError');
                 }
-                else
+                else 
                 {
                     this.handleLoadEvent('securityError');
                 }
@@ -105,14 +104,14 @@ export class BinaryFileLoader extends BaseFileLoader
     }
 
     /**
-	 * Dispose of this loader
-	 */
-    dispose(): void
+     * Dispose of this loader
+     */
+    dispose(): void 
     {
-        if(!this._disposed)
+        if(!this._disposed) 
         {
             // Abort any pending request
-            if(this._abortController)
+            if(this._abortController) 
             {
                 this._abortController.abort();
                 this._abortController = null;

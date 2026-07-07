@@ -1,3 +1,4 @@
+import type {Texture} from 'pixi.js';
 import type {IAvatarImageWidget} from './IAvatarImageWidget';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
@@ -9,9 +10,13 @@ import type {IAssetReceiver} from '@core/window/IAssetReceiver';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {AvatarRenderEvent} from '@habbo/avatar/enum/AvatarRenderEvent';
+import {Logger} from '@core/utils/Logger';
+import {Helium} from '../../../Helium';
 import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
+
+const log = Logger.getLogger('AvatarImageWidget');
 
 /**
  * Avatar image rendering widget.
@@ -340,6 +345,13 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     }
 
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::refresh()
+    // TS deviation: AS3's BitmapData render is synchronous end-to-end. AvatarImage.getCroppedImage()/
+    // getImage() return a PixiJS Texture here, not a real ImageBitmap - a bare `as ImageBitmap` cast
+    // compiled fine but crashed at runtime the moment anything called a real ImageBitmap method on it
+    // (e.g. IBitmapWrapperWindow.bitmap's setter calling .close() on the previous value). Converting a
+    // Texture to an ImageBitmap requires the browser's async createImageBitmap(), so the actual bitmap
+    // assignment + placeholder/invalidate/resize tail now happens in a promise continuation instead of
+    // inline - same pattern already used by ProductGridItem.renderAvatarImage().
     private refresh(): void
     {
         if(!this._bitmap || !this._windowManager) return;
@@ -376,34 +388,44 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
                 {
                     avatarImage.setDirection(setType, this._direction);
 
-                    let bitmap: ImageBitmap | null = null;
+                    const texture = this._cropped
+                        ? avatarImage.getCroppedImage(setType, scaleFactor) as Texture | null
+                        : avatarImage.getImage(setType, true, scaleFactor) as Texture | null;
 
-                    if(this._cropped)
-                    {
-                        bitmap = avatarImage.getCroppedImage(setType, scaleFactor) as ImageBitmap | null;
-                    }
-                    else
-                    {
-                        bitmap = avatarImage.getImage(setType, true, scaleFactor) as ImageBitmap | null;
-                    }
-
-                    if(bitmap && this._figureEmpty)
-                    {
-                        const greyscaleBitmap = AvatarImageWidget.createGreyscaleBitmap(bitmap);
-
-                        if(greyscaleBitmap)
-                        {
-                            bitmap.close();
-                            bitmap = greyscaleBitmap;
-                        }
-                    }
-
-                    this._bitmap.disposesBitmap = true;
-                    this._bitmap.bitmap = bitmap;
                     avatarImage.dispose();
+
+                    AvatarImageWidget.textureToImageBitmap(texture).then((bitmap) =>
+                    {
+                        if(this._disposed || !this._bitmap) return;
+
+                        if(bitmap && this._figureEmpty)
+                        {
+                            const greyscaleBitmap = AvatarImageWidget.createGreyscaleBitmap(bitmap);
+
+                            if(greyscaleBitmap)
+                            {
+                                bitmap.close();
+                                bitmap = greyscaleBitmap;
+                            }
+                        }
+
+                        this._bitmap.disposesBitmap = true;
+                        this._bitmap.bitmap = bitmap;
+                        this.applyBitmapResultTail();
+                    });
+
+                    return;
                 }
             }
         }
+
+        this.applyBitmapResultTail();
+    }
+
+    // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::refresh() (tail)
+    private applyBitmapResultTail(): void
+    {
+        if(!this._bitmap) return;
 
         if(!this._bitmap.bitmap || this._bitmap.bitmap.width < 2)
         {
@@ -470,6 +492,36 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         };
 
         this._windowManager.resourceManager.retrieveAsset(assetUri, receiver);
+    }
+
+    // TS-only: converts a PixiJS Texture (AvatarImage.getCroppedImage()/getImage()'s real return
+    // type) into a real ImageBitmap the way IBitmapWrapperWindow.bitmap expects.
+    //
+    // Uses renderer.extract.canvas() rather than reading texture.source.resource directly -
+    // PixiJS doesn't guarantee a CPU-side resource stays attached to a TextureSource once
+    // it's been uploaded to the GPU, so that field can be undefined for a perfectly valid
+    // texture. extract.canvas() is PixiJS's own supported readback path (see
+    // RoomEngine.pixiTextureToCanvas() for the same fix on the room-icon side).
+    private static textureToImageBitmap(texture: Texture | null): Promise<ImageBitmap | null>
+    {
+        if(!texture) return Promise.resolve(null);
+
+        try
+        {
+            const frame = texture.frame;
+
+            if(frame.width < 1 || frame.height < 1) return Promise.resolve(null);
+
+            const canvas = Helium.instance.application.renderer.extract.canvas(texture);
+
+            return createImageBitmap(canvas as HTMLCanvasElement);
+        }
+        catch (error)
+        {
+            log.warn('textureToImageBitmap: failed to convert texture to canvas', error);
+
+            return Promise.resolve(null);
+        }
     }
 
     // TS-only: greyscale conversion via OffscreenCanvas (replaces AS3 ColorTransform)

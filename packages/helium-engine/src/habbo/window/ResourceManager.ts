@@ -1,13 +1,9 @@
 import {Logger} from '@core/utils/Logger';
-import {normalizeLocalAssetUrl} from '@core/utils/urlUtils';
 import type {IResourceManager} from '@core/window/IResourceManager';
 import type {IAssetReceiver} from '@core/window/IAssetReceiver';
 import type {IHabboWindowManager} from './IHabboWindowManager';
 
 const log = Logger.getLogger('ResourceManager');
-
-const LOCAL_ASSET_HTTP_ORIGIN = 'http://vortex-assets.local';
-const LOCAL_ASSET_HTTPS_ORIGIN = 'https://vortex-assets.local';
 
 /**
  * Manages asset retrieval for the window system.
@@ -23,7 +19,7 @@ const LOCAL_ASSET_HTTPS_ORIGIN = 'https://vortex-assets.local';
  *
  * @see sources/win63_version/habbo/window/ResourceManager.as
  */
-export class ResourceManager implements IResourceManager
+export class ResourceManager implements IResourceManager 
 {
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::_windowManager
     private _windowManager: IHabboWindowManager;
@@ -37,7 +33,7 @@ export class ResourceManager implements IResourceManager
     private _loading: Set<string> = new Set();
 
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::ResourceManager()
-    constructor(windowManager: IHabboWindowManager)
+    constructor(windowManager: IHabboWindowManager) 
     {
         this._windowManager = windowManager;
     }
@@ -46,13 +42,13 @@ export class ResourceManager implements IResourceManager
     private _disposed: boolean = false;
 
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::get disposed()
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
     // TS-only
-    public registerAsset(name: string, bitmap: ImageBitmap): void
+    public registerAsset(name: string, bitmap: ImageBitmap): void 
     {
         const resolvedName = this.resolveAssetName(name);
 
@@ -63,7 +59,7 @@ export class ResourceManager implements IResourceManager
     }
 
     // TS-only
-    public registerAssetUrl(name: string, url: string): void
+    public registerAssetUrl(name: string, url: string): void 
     {
         const resolvedName = this.resolveAssetName(name);
 
@@ -71,7 +67,7 @@ export class ResourceManager implements IResourceManager
 
         this._assetUrls.set(resolvedName, url);
 
-        if(this._pendingReceivers.has(resolvedName) && !this._loading.has(resolvedName))
+        if(this._pendingReceivers.has(resolvedName) && !this._loading.has(resolvedName)) 
         {
             this._loading.add(resolvedName);
             this.loadFromUrl(resolvedName, url);
@@ -79,7 +75,7 @@ export class ResourceManager implements IResourceManager
     }
 
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::retrieveAsset()
-    public retrieveAsset(uri: string, receiver: IAssetReceiver): void
+    public retrieveAsset(uri: string, receiver: IAssetReceiver): void 
     {
         if(!uri || !receiver) return;
 
@@ -89,7 +85,7 @@ export class ResourceManager implements IResourceManager
 
         const cached = this._assets.get(resolvedName);
 
-        if(cached)
+        if(cached) 
         {
             receiver.receiveAsset(cached, resolvedName);
 
@@ -99,7 +95,7 @@ export class ResourceManager implements IResourceManager
         let receivers = this._pendingReceivers.get(resolvedName);
         const isFirstRequest = !receivers;
 
-        if(!receivers)
+        if(!receivers) 
         {
             receivers = [];
             this._pendingReceivers.set(resolvedName, receivers);
@@ -109,7 +105,7 @@ export class ResourceManager implements IResourceManager
 
         const url = this._assetUrls.get(resolvedName);
 
-        if(url && !this._loading.has(resolvedName))
+        if(url && !this._loading.has(resolvedName)) 
         {
             this._loading.add(resolvedName);
             this.loadFromUrl(resolvedName, url);
@@ -121,9 +117,9 @@ export class ResourceManager implements IResourceManager
         // known bundle asset and the resolved name is itself a fetchable URL
         // (http/https), load it directly from that URL. Without this, URL-based
         // assetUri (e.g. room thumbnails) stay queued forever and never render.
-        if(!url && this.isFetchableUrl(resolvedName))
+        if(!url && this.isFetchableUrl(resolvedName)) 
         {
-            if(!this._loading.has(resolvedName))
+            if(!this._loading.has(resolvedName)) 
             {
                 this._loading.add(resolvedName);
                 this.loadFromUrl(resolvedName, resolvedName);
@@ -138,35 +134,29 @@ export class ResourceManager implements IResourceManager
         // HabboWindowManager's "Widget layout not found" warning for a missing layout.
         // Warn once per name (guarded by isFirstRequest) so a missing image is just as
         // visible in the console as a missing layout already is.
-        if(!url && isFirstRequest)
+        if(!url && isFirstRequest) 
         {
             log.warn(`Asset not found: ${resolvedName}`);
         }
     }
 
-    // TS-only: mirrors AS3 check `substr(0,7) == "http://" || substr(0,8) == "https://"`
-    private isFetchableUrl(name: string): boolean
-    {
-        return name.startsWith('http://') || name.startsWith('https://') || (name.length > 1 && name.startsWith('/'));
-    }
-
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::isSameAsset()
-    public isSameAsset(uri1: string, uri2: string): boolean
+    public isSameAsset(uri1: string, uri2: string): boolean 
     {
         return this.resolveAssetName(uri1) === this.resolveAssetName(uri2);
     }
 
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::createAsset()
-    public createAsset(name: string, _assetClass: new (...args: unknown[]) => unknown, content: unknown): void
+    public createAsset(name: string, _assetClass: new (...args: unknown[]) => unknown, content: unknown): void 
     {
-        if(content instanceof ImageBitmap)
+        if(content instanceof ImageBitmap) 
         {
             this.registerAsset(name, content);
         }
     }
 
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::removeAsset()
-    public removeAsset(name: string): void
+    public removeAsset(name: string): void 
     {
         const resolvedName = this.resolveAssetName(name);
 
@@ -177,7 +167,7 @@ export class ResourceManager implements IResourceManager
     }
 
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::dispose()
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
@@ -188,25 +178,29 @@ export class ResourceManager implements IResourceManager
         this._loading.clear();
     }
 
+    // TS-only: mirrors AS3 check `substr(0,7) == "http://" || substr(0,8) == "https://"`
+    private isFetchableUrl(name: string): boolean 
+    {
+        return name.startsWith('http://') || name.startsWith('https://') || (name.length > 1 && name.startsWith('/'));
+    }
+
     // AS3: sources/win63_version/habbo/window/ResourceManager.as::resolveAssetName()
-    private resolveAssetName(uri: string): string
+    private resolveAssetName(uri: string): string 
     {
         const interpolatingManager = this._windowManager as unknown as {
             interpolate?: (value: string) => string
         };
 
-        const resolved = interpolatingManager.interpolate?.(uri) ?? uri;
-
-        return normalizeLocalAssetUrl(resolved);
+        return interpolatingManager.interpolate?.(uri) ?? uri;
     }
 
     // TS-only: replaces AS3 passAssetToCallback() event callback
-    private loadFromUrl(name: string, url: string): void
+    private loadFromUrl(name: string, url: string): void 
     {
-        fetch(normalizeLocalAssetUrl(url))
+        fetch(url)
             .then(response => response.blob())
             .then(blob => createImageBitmap(blob))
-            .then(bitmap =>
+            .then(bitmap => 
             {
                 if(this._disposed) return;
 
@@ -216,7 +210,7 @@ export class ResourceManager implements IResourceManager
 
                 this.deliverToReceivers(name, bitmap);
             })
-            .catch(() =>
+            .catch(() => 
             {
                 this._loading.delete(name);
 
@@ -226,11 +220,11 @@ export class ResourceManager implements IResourceManager
                 // forever with nothing ever shown.
                 const missing = this._assets.get('missing_image_icon');
 
-                if(missing)
+                if(missing) 
                 {
                     this.deliverToReceivers(name, missing);
                 }
-                else
+                else 
                 {
                     log.warn(`Failed to load asset "${name}" and no "missing_image_icon" fallback is registered`);
                 }
@@ -238,7 +232,7 @@ export class ResourceManager implements IResourceManager
     }
 
     // TS-only: replaces AS3 passAssetToCallback() delivery loop
-    private deliverToReceivers(name: string, bitmap: ImageBitmap): void
+    private deliverToReceivers(name: string, bitmap: ImageBitmap): void 
     {
         const receivers = this._pendingReceivers.get(name);
 
@@ -246,15 +240,15 @@ export class ResourceManager implements IResourceManager
 
         this._pendingReceivers.delete(name);
 
-        for(const receiver of receivers)
+        for(const receiver of receivers) 
         {
-            if(!receiver.disposed)
+            if(!receiver.disposed) 
             {
-                try
+                try 
                 {
                     receiver.receiveAsset(bitmap, name);
                 }
-                catch (e: unknown)
+                catch (e: unknown) 
                 {
                     log.warn(`Error delivering asset "${name}" to receiver:`, e);
                 }
