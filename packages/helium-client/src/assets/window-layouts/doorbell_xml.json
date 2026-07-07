@@ -1,5 +1,5 @@
 {
-  "name": "doorbell",
+  "name": "doorbell_xml",
   "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\713_doorbell.xml",
   "window": {
     "tag": "window",

@@ -1,5 +1,5 @@
 {
-  "name": "roc_create_room",
+  "name": "roc_create_room_xml",
   "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\568_roc_create_room.xml",
   "window": {
     "tag": "window",

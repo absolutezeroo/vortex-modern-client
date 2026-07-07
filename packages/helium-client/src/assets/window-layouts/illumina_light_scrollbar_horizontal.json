@@ -1,14 +1,14 @@
 {
-  "name": "illumina_light_window_layout_scrollbar_vertical",
-  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\467_illumina_light_window_layout_scrollbar_vertical.xml",
+  "name": "illumina_light_scrollbar_horizontal",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\452_illumina_light_window_layout_scrollbar_horizontal.xml",
   "window": {
     "tag": "window",
     "typeId": -1,
     "attributes": {},
     "children": [
       {
-        "tag": "scrollbar_slider_track_vertical",
-        "typeId": 135,
+        "tag": "scrollbar_slider_track_horizontal",
+        "typeId": 134,
         "attributes": {
           "name": "slider_track",
           "x": "0",
@@ -16,12 +16,12 @@
           "width": "9",
           "height": "9",
           "tags": "_EXCLUDE, _INTERNAL, slider_track",
-          "params": "2065"
+          "params": "145"
         },
         "children": [
           {
-            "tag": "scrollbar_slider_bar_vertical",
-            "typeId": 133,
+            "tag": "scrollbar_slider_bar_horizontal",
+            "typeId": 132,
             "attributes": {
               "name": "slider_bar",
               "x": "0",

@@ -1,5 +1,5 @@
 {
-  "name": "grs_category_selector",
+  "name": "grs_category_selector_xml",
   "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\550_grs_category_selector.xml",
   "window": {
     "tag": "window",

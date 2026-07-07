@@ -1,5 +1,5 @@
 {
-  "name": "enforce_category",
+  "name": "enforce_category_xml",
   "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\580_enforce_category.xml",
   "window": {
     "tag": "window",

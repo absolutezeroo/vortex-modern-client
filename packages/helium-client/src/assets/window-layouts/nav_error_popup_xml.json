@@ -1,5 +1,5 @@
 {
-  "name": "nav_error_popup",
+  "name": "nav_error_popup_xml",
   "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\589_nav_error_popup.xml",
   "window": {
     "tag": "window",
