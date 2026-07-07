@@ -1,0 +1,1353 @@
+{
+  "name": "issue_browser_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1118_issue_browser_xml$d8116daf0c18656999d8194ce2aff9eb848486718.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "585",
+          "height": "273",
+          "params": "98305",
+          "style": "0",
+          "caption": "Issue browser",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "tab_context",
+            "typeId": 91,
+            "attributes": {
+              "x": "3",
+              "y": "5",
+              "width": "566",
+              "height": "204",
+              "params": "12585104",
+              "style": "0",
+              "name": "tab_context",
+              "caption": "Issue browser"
+            },
+            "children": [
+              {
+                "tag": "tab_button",
+                "typeId": 93,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "81",
+                  "height": "22",
+                  "params": "131089",
+                  "style": "0",
+                  "name": "open_issues",
+                  "caption": "Open Issues"
+                },
+                "children": []
+              },
+              {
+                "tag": "tab_button",
+                "typeId": 93,
+                "attributes": {
+                  "x": "81",
+                  "y": "0",
+                  "width": "68",
+                  "height": "22",
+                  "params": "131089",
+                  "style": "0",
+                  "name": "my_issues",
+                  "caption": "My issues"
+                },
+                "children": []
+              },
+              {
+                "tag": "tab_button",
+                "typeId": 93,
+                "attributes": {
+                  "x": "149",
+                  "y": "0",
+                  "width": "88",
+                  "height": "22",
+                  "params": "131089",
+                  "style": "0",
+                  "name": "picked_issues",
+                  "caption": "Picked Issues"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "30",
+              "width": "557",
+              "height": "177",
+              "params": "2192",
+              "style": "3",
+              "name": "tab_content"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "557",
+                  "height": "177",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "open_issues_prototype",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "10",
+                      "y": "10",
+                      "width": "547",
+                      "height": "167",
+                      "params": "2192",
+                      "style": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "517",
+                          "height": "15",
+                          "params": "144",
+                          "style": "0",
+                          "name": "list_header"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "40",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Score"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "40",
+                              "y": "0",
+                              "width": "140",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Category"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "180",
+                              "y": "0",
+                              "width": "90",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Type"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "270",
+                              "y": "0",
+                              "width": "120",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Player"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "390",
+                              "y": "0",
+                              "width": "50",
+                              "height": "15",
+                              "params": "80",
+                              "style": "0",
+                              "caption": "Open"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "517",
+                          "height": "125",
+                          "params": "2193",
+                          "style": "0",
+                          "name": "issue_list"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "517",
+                              "height": "24",
+                              "params": "145",
+                              "style": "0",
+                              "name": "item_prototype",
+                              "background": "true",
+                              "height_min": "24",
+                              "height_max": "24"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "4",
+                                  "width": "455",
+                                  "height": "16",
+                                  "params": "145",
+                                  "style": "0",
+                                  "name": "texts_container",
+                                  "color": "0x0eeeeee"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "score",
+                                      "caption": "xx"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "0",
+                                      "width": "140",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "category",
+                                      "caption": "Sharing personal info"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "180",
+                                      "y": "0",
+                                      "width": "90",
+                                      "height": "19",
+                                      "params": "144",
+                                      "style": "0",
+                                      "name": "source",
+                                      "caption": "source"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "270",
+                                      "y": "0",
+                                      "width": "120",
+                                      "height": "19",
+                                      "params": "144",
+                                      "style": "0",
+                                      "name": "target_name",
+                                      "caption": "target"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "bitmap",
+                                    "typeId": 21,
+                                    "attributes": {
+                                      "x": "390",
+                                      "y": "0",
+                                      "width": "20",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "target_icon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "410",
+                                      "y": "0",
+                                      "width": "45",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "time",
+                                      "caption": "mm:ss"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "455",
+                                  "y": "1",
+                                  "width": "60",
+                                  "height": "22",
+                                  "params": "131153",
+                                  "style": "0",
+                                  "name": "pick_button",
+                                  "caption": "pick",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "scrollbar_vertical",
+                        "typeId": 131,
+                        "attributes": {
+                          "x": "518",
+                          "y": "15",
+                          "width": "18",
+                          "height": "125",
+                          "params": "2129",
+                          "style": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "scrollable": "issue_list"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "557",
+                  "height": "177",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "my_issues_prototype",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "10",
+                      "y": "10",
+                      "width": "547",
+                      "height": "167",
+                      "params": "2192",
+                      "style": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "517",
+                          "height": "15",
+                          "params": "144",
+                          "style": "0",
+                          "name": "list_header"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "40",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Score"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "40",
+                              "y": "0",
+                              "width": "111",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Category"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "151",
+                              "y": "0",
+                              "width": "170",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Type"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "221",
+                              "y": "0",
+                              "width": "90",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Player"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "311",
+                              "y": "0",
+                              "width": "60",
+                              "height": "15",
+                              "params": "80",
+                              "style": "0",
+                              "caption": "Open"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "371",
+                              "y": "0",
+                              "width": "35",
+                              "height": "15",
+                              "params": "80",
+                              "style": "0",
+                              "caption": "Msgs"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "517",
+                          "height": "125",
+                          "params": "2193",
+                          "style": "0",
+                          "name": "issue_list"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "517",
+                              "height": "24",
+                              "params": "145",
+                              "style": "0",
+                              "name": "item_prototype",
+                              "background": "true",
+                              "height_min": "24",
+                              "height_max": "24"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "4",
+                                  "width": "455",
+                                  "height": "16",
+                                  "params": "145",
+                                  "style": "0",
+                                  "name": "texts_container",
+                                  "color": "0x0eeeeee"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "score",
+                                      "caption": "xx"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "0",
+                                      "width": "111",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "category",
+                                      "caption": "Sharing personal info"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "151",
+                                      "y": "0",
+                                      "width": "70",
+                                      "height": "19",
+                                      "params": "144",
+                                      "style": "0",
+                                      "name": "source",
+                                      "caption": "source"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "221",
+                                      "y": "0",
+                                      "width": "90",
+                                      "height": "19",
+                                      "params": "144",
+                                      "style": "0",
+                                      "name": "target_name",
+                                      "caption": "target"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "bitmap",
+                                    "typeId": 21,
+                                    "attributes": {
+                                      "x": "311",
+                                      "y": "0",
+                                      "width": "20",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "target_icon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "331",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "time",
+                                      "caption": "mm:ss"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "371",
+                                      "y": "0",
+                                      "width": "25",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "msgs",
+                                      "caption": "yy"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "396",
+                                  "y": "1",
+                                  "width": "60",
+                                  "height": "22",
+                                  "params": "131153",
+                                  "style": "0",
+                                  "name": "handle_button",
+                                  "caption": "handle",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "457",
+                                  "y": "1",
+                                  "width": "60",
+                                  "height": "22",
+                                  "params": "131153",
+                                  "style": "0",
+                                  "name": "release_button",
+                                  "caption": "release",
+                                  "width_min": "60",
+                                  "width_max": "60"
+                                },
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "scrollbar_vertical",
+                        "typeId": 131,
+                        "attributes": {
+                          "x": "518",
+                          "y": "15",
+                          "width": "18",
+                          "height": "125",
+                          "params": "2129",
+                          "style": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "scrollable": "issue_list"
+                        }
+                      },
+                      {
+                        "tag": "button",
+                        "typeId": 60,
+                        "attributes": {
+                          "x": "447",
+                          "y": "141",
+                          "width": "70",
+                          "height": "22",
+                          "params": "394321",
+                          "style": "0",
+                          "name": "release_all",
+                          "caption": "release all"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "557",
+                  "height": "177",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "picked_issues_prototype",
+                  "visible": "true"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "10",
+                      "y": "10",
+                      "width": "547",
+                      "height": "167",
+                      "params": "2192",
+                      "style": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "517",
+                          "height": "15",
+                          "params": "144",
+                          "style": "0",
+                          "name": "list_header"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "40",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Score"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "40",
+                              "y": "0",
+                              "width": "120",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Category"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "160",
+                              "y": "0",
+                              "width": "70",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Type"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "230",
+                              "y": "0",
+                              "width": "120",
+                              "height": "15",
+                              "params": "16",
+                              "style": "0",
+                              "caption": "Player"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "350",
+                              "y": "0",
+                              "width": "60",
+                              "height": "15",
+                              "params": "80",
+                              "style": "0",
+                              "caption": "Open"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "410",
+                              "y": "0",
+                              "width": "107",
+                              "height": "15",
+                              "params": "80",
+                              "style": "0",
+                              "caption": "Picker"
+                            },
+                            "children": [],
+                            "vars": {
+                              "font_face": "Volter Bold",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "kerning": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "517",
+                          "height": "125",
+                          "params": "2192",
+                          "style": "0",
+                          "name": "issue_list"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "517",
+                              "height": "24",
+                              "params": "145",
+                              "style": "0",
+                              "name": "item_prototype",
+                              "background": "true",
+                              "height_min": "24",
+                              "height_max": "24"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "4",
+                                  "width": "517",
+                                  "height": "16",
+                                  "params": "145",
+                                  "style": "0",
+                                  "name": "texts_container",
+                                  "color": "0x0eeeeee"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "score",
+                                      "caption": "xx"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "0",
+                                      "width": "120",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "0",
+                                      "name": "category",
+                                      "caption": "category"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "160",
+                                      "y": "0",
+                                      "width": "70",
+                                      "height": "19",
+                                      "params": "144",
+                                      "style": "0",
+                                      "name": "source",
+                                      "caption": "source"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "230",
+                                      "y": "0",
+                                      "width": "120",
+                                      "height": "19",
+                                      "params": "144",
+                                      "style": "0",
+                                      "name": "target_name",
+                                      "caption": "target"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "bitmap",
+                                    "typeId": 21,
+                                    "attributes": {
+                                      "x": "350",
+                                      "y": "1",
+                                      "width": "20",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "target_icon"
+                                    },
+                                    "children": []
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "370",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "time",
+                                      "caption": "mm:ss"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "410",
+                                      "y": "0",
+                                      "width": "107",
+                                      "height": "19",
+                                      "params": "80",
+                                      "style": "0",
+                                      "name": "picker",
+                                      "caption": "picker"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "sharpness": 0,
+                                      "thickness": 0,
+                                      "kerning": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "scrollbar_vertical",
+                        "typeId": 131,
+                        "attributes": {
+                          "x": "518",
+                          "y": "15",
+                          "width": "18",
+                          "height": "125",
+                          "params": "2129",
+                          "style": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "scrollable": "issue_list"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "4",
+              "y": "215",
+              "width": "175",
+              "height": "22",
+              "params": "394257",
+              "style": "0",
+              "name": "auto_pick",
+              "caption": "Give me the next priority issue"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 585,
+  "layoutHeight": 273
+}

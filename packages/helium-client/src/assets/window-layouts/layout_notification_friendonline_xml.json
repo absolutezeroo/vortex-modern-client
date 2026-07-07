@@ -1,0 +1,249 @@
+{
+  "name": "layout_notification_friendonline_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2951_notification_friendonline_xml$1fda287dd434293320483daba6698115972946813.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "86",
+          "height": "58",
+          "params": "131073",
+          "style": "1",
+          "tags": "border",
+          "height_min": "58",
+          "height_max": "58"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "12",
+              "width": "43",
+              "height": "34",
+              "params": "4194320",
+              "style": "3",
+              "name": "content"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "7",
+                  "height": "34",
+                  "params": "16",
+                  "style": "3"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "notification_friendonline_left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "7",
+                  "y": "0",
+                  "width": "40",
+                  "height": "34",
+                  "params": "144",
+                  "style": "3"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "notification_friendonline_middle",
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "8",
+                  "y": "7",
+                  "width": "19",
+                  "height": "17",
+                  "params": "4194320",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "10",
+                      "height": "17",
+                      "params": "17",
+                      "style": "3",
+                      "name": "slide_notification_away",
+                      "treshold": "0",
+                      "tags": "slide_notification_away"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "6",
+                          "width": "6",
+                          "height": "8",
+                          "params": "16",
+                          "style": "3",
+                          "tags": "slide_notification_away"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "notification_friendonline_slide",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "15",
+                      "y": "0",
+                      "width": "4",
+                      "height": "4",
+                      "params": "16",
+                      "style": "3",
+                      "tags": "notification_text"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 13619151,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 5,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "33",
+              "y": "3",
+              "width": "53",
+              "height": "53",
+              "params": "80",
+              "style": "3"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "notification_friendonline_circle_inner",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "35",
+              "y": "4",
+              "width": "50",
+              "height": "50",
+              "params": "80",
+              "style": "3",
+              "name": "bitmaps"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "50",
+                  "height": "50",
+                  "params": "3088",
+                  "style": "0",
+                  "tags": "notification_icon_static"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "50",
+                  "height": "50",
+                  "params": "3088",
+                  "style": "0",
+                  "tags": "notification_icon"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "33",
+              "y": "3",
+              "width": "53",
+              "height": "53",
+              "params": "80",
+              "style": "3"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "notification_friendonline_circle",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 86,
+  "layoutHeight": 58
+}

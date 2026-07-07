@@ -1,0 +1,133 @@
+{
+  "name": "price_display",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\265_price_display.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_horizontal",
+        "typeId": 51,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "60",
+          "height": "21",
+          "params": "147472",
+          "style": "0",
+          "name": "price_box"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "1",
+              "height": "1",
+              "params": "16",
+              "style": "3",
+              "name": "spacing"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "2",
+              "y": "1",
+              "width": "4",
+              "height": "4",
+              "params": "16",
+              "style": "0",
+              "name": "amount_0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 20,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "7",
+              "y": "0",
+              "width": "22",
+              "height": "22",
+              "params": "3296272",
+              "style": "0",
+              "name": "unit_0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "30",
+              "y": "1",
+              "width": "4",
+              "height": "4",
+              "params": "16",
+              "style": "0",
+              "name": "amount_1"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 20,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "35",
+              "y": "0",
+              "width": "22",
+              "height": "22",
+              "params": "3295248",
+              "style": "0",
+              "name": "unit_1"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "58",
+              "y": "0",
+              "width": "2",
+              "height": "1",
+              "params": "16",
+              "style": "3",
+              "name": "spacing"
+            },
+            "children": []
+          }
+        ],
+        "vars": {
+          "spacing": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 60,
+  "layoutHeight": 21
+}

@@ -1,0 +1,46 @@
+{
+  "name": "old_layout_marketplace_own_items",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\346_ctlg_marketplace.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "16",
+          "style": "0",
+          "name": "ctlg_marketplace_own_items",
+          "color": "0x2121ffffff",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "10",
+              "y": "70",
+              "width": "340",
+              "height": "390",
+              "params": "16",
+              "style": "0",
+              "name": "marketPlaceOwnItemsWidget"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

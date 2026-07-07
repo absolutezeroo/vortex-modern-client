@@ -1,0 +1,67 @@
+{
+  "name": "spaces",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\326_spaces.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "339",
+          "height": "416",
+          "params": "16",
+          "style": "0",
+          "name": "default_3x3"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "339",
+              "height": "68",
+              "params": "16",
+              "style": "0",
+              "name": "headline"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "12",
+              "y": "73",
+              "width": "315",
+              "height": "52",
+              "params": "16",
+              "style": "0",
+              "name": "pageText",
+              "caption": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vitae est id tellus laoreet molestie. Integer quis dui eget erat dapibus dignissim. Curabitur lorem. Vestibulum id elit. Nulla eget sem malesuada magna iaculis ultrices. Duis aute irure dolor in reprehenderit in voluptate"
+            },
+            "children": [],
+            "vars": {
+              "font_face": "Volter",
+              "font_size": 9,
+              "text_color": 0,
+              "embed_fonts": true,
+              "multiline": true,
+              "word_wrap": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

@@ -1,0 +1,65 @@
+{
+  "name": "furniture_image_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2575__SafeCls_637.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "108",
+          "height": "130",
+          "params": "2196",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "108",
+              "height": "130",
+              "params": "2192",
+              "style": "0",
+              "name": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "placeholder_furni_png",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "108",
+              "height": "130",
+              "params": "2193",
+              "style": "0",
+              "name": "region",
+              "visible": "false",
+              "treshold": "0"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 108,
+  "layoutHeight": 130
+}

@@ -1,0 +1,684 @@
+{
+  "name": "task_progress_dialog_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\34_task_progress_dialog_xml$8e0b00e5199714edd7a98f17a7bbdcb1515438053.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "1",
+          "y": "-10",
+          "width": "378",
+          "height": "370",
+          "params": "131073",
+          "style": "100",
+          "caption": "${talent.track.task.progress.dialog.title}"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "380",
+              "height": "321",
+              "params": "8536080",
+              "style": "100",
+              "name": "list"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "15",
+                  "y": "0",
+                  "width": "345",
+                  "height": "204",
+                  "params": "147472",
+                  "style": "104",
+                  "color": "0x0e2e2e2"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "345",
+                      "height": "204",
+                      "params": "147472",
+                      "style": "100",
+                      "name": "top_list",
+                      "height_min": "70"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "345",
+                          "height": "10",
+                          "params": "16",
+                          "style": "100"
+                        },
+                        "children": [
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "0",
+                              "y": "1",
+                              "width": "60",
+                              "height": "70",
+                              "params": "0",
+                              "style": "100",
+                              "name": "badge"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:badge_id": "ACH_EmailVerification1",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "60",
+                          "y": "10",
+                          "width": "285",
+                          "height": "17",
+                          "params": "16",
+                          "style": "100",
+                          "name": "instruction",
+                          "caption": "Give 10 scratches to a pet."
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_heading_2",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "60",
+                          "y": "27",
+                          "width": "285",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100",
+                          "name": "title",
+                          "caption": "Level title",
+                          "height_min": "30"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "10",
+                          "y": "57",
+                          "width": "325",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100",
+                          "name": "action_separator"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "separator"
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "10",
+                          "y": "87",
+                          "width": "325",
+                          "height": "17",
+                          "params": "16",
+                          "style": "100",
+                          "name": "action_title",
+                          "caption": "${talent.track.task.action.title}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_heading_2",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "10",
+                          "y": "104",
+                          "width": "325",
+                          "height": "30",
+                          "params": "16",
+                          "style": "100",
+                          "name": "action_description",
+                          "caption": "You can find the Habbo Way by clicking.",
+                          "height_min": "30"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "9",
+                          "y": "134",
+                          "width": "320",
+                          "height": "60",
+                          "params": "16",
+                          "style": "100",
+                          "name": "email_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "320",
+                              "height": "60",
+                              "params": "16",
+                              "style": "100",
+                              "name": "unverified_container",
+                              "visible": "false"
+                            },
+                            "children": [
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "271",
+                                  "height": "29",
+                                  "params": "16",
+                                  "style": "105",
+                                  "name": "error_border",
+                                  "color": "0x0cc0000"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "2",
+                                  "y": "2",
+                                  "width": "267",
+                                  "height": "24",
+                                  "params": "16",
+                                  "style": "105",
+                                  "name": "input_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "input",
+                                    "typeId": 77,
+                                    "attributes": {
+                                      "x": "4",
+                                      "y": "4",
+                                      "width": "258",
+                                      "height": "15",
+                                      "params": "1",
+                                      "style": "0",
+                                      "name": "email_txt",
+                                      "caption": "hgfjhgf"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "il_regular",
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "28",
+                                  "width": "319",
+                                  "height": "21",
+                                  "params": "17",
+                                  "style": "0",
+                                  "name": "change_email_region",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "156",
+                                      "height": "16",
+                                      "params": "16",
+                                      "style": "100",
+                                      "caption": "${talent.track.progress.setemail}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "mouse_wheel_enabled": false,
+                                      "underline": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "2",
+                                  "y": "28",
+                                  "width": "318",
+                                  "height": "33",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "error_txt",
+                                  "caption": "jkhgjk hgk jhg kjhg jkh lkjh lkjh lkjh lkjh lkj hlkjh lkj hlkjh lkj"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_color": 13369344,
+                                  "text_style": "u_bold",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "2",
+                                  "y": "29",
+                                  "width": "328",
+                                  "height": "36",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "changed_container"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "6",
+                                      "width": "11",
+                                      "height": "10",
+                                      "params": "16",
+                                      "style": "100"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "help_accept_icon",
+                                      "fit_size_to_contents": true
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "16",
+                                      "y": "2",
+                                      "width": "306",
+                                      "height": "30",
+                                      "params": "16",
+                                      "style": "100",
+                                      "caption": "${talent.track.progress.emailchanged}"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "il_heading_3",
+                                      "mouse_wheel_enabled": false,
+                                      "multiline": true,
+                                      "word_wrap": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "320",
+                              "height": "60",
+                              "params": "16",
+                              "style": "100",
+                              "name": "verified_txt",
+                              "caption": "${talent.track.progress.emailverified}",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "il_heading_3",
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "194",
+                          "width": "345",
+                          "height": "10",
+                          "params": "16",
+                          "style": "100"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "204",
+                  "width": "380",
+                  "height": "15",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "15",
+                  "y": "219",
+                  "width": "350",
+                  "height": "47",
+                  "params": "16",
+                  "style": "100",
+                  "name": "progress_main_container"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "350",
+                      "height": "16",
+                      "params": "16",
+                      "style": "100",
+                      "name": "progress_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "4",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "unachieved_left"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "talent_unachieved_left",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "4",
+                          "y": "0",
+                          "width": "342",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "unachieved_mid"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "talent_unachieved_mid",
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "346",
+                          "y": "0",
+                          "width": "4",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "unachieved_right"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "talent_unachieved_right",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "4",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "achieved_left"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "talent_achieved_left",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "4",
+                          "y": "0",
+                          "width": "342",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "achieved_mid"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "talent_achieved_mid",
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "346",
+                          "y": "0",
+                          "width": "4",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "achieved_right"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "talent_achieved_right",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "15",
+                      "width": "349",
+                      "height": "17",
+                      "params": "16",
+                      "style": "100",
+                      "name": "progress_text",
+                      "caption": "${talent.track.task.progress.dialog.progress}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "text_style": "il_heading_2",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "0",
+                      "y": "46",
+                      "width": "350",
+                      "height": "2",
+                      "params": "16",
+                      "style": "100",
+                      "name": "progress_separator"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "separator"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "67",
+                  "y": "266",
+                  "width": "246",
+                  "height": "55",
+                  "params": "131281",
+                  "style": "101",
+                  "name": "action_link",
+                  "caption": "${talent.track.task.progress.dialog.thanks}",
+                  "color": "0x0bbbbbb"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 40,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 378,
+  "layoutHeight": 370
+}

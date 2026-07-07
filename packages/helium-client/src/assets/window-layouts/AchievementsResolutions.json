@@ -1,0 +1,377 @@
+{
+  "name": "AchievementsResolutions",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\20_AchievementResolutions.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "1",
+          "y": "1",
+          "width": "312",
+          "height": "525",
+          "params": "32769",
+          "style": "100",
+          "caption": "${resolution.title}",
+          "width_min": "312",
+          "width_max": "312",
+          "height_max": "525"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "50",
+              "width": "310",
+              "height": "389",
+              "params": "16",
+              "style": "103",
+              "width_min": "310",
+              "width_max": "310"
+            },
+            "children": []
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "310",
+              "height": "390",
+              "params": "147472",
+              "style": "100",
+              "name": "element_list",
+              "width_max": "310"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "0",
+                  "width": "264",
+                  "height": "50",
+                  "params": "16",
+                  "style": "100",
+                  "name": "title",
+                  "caption": "${resolution.header}",
+                  "height_min": "50",
+                  "height_max": "50"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemgrid_vertical",
+                "typeId": 53,
+                "attributes": {
+                  "x": "10",
+                  "y": "60",
+                  "width": "290",
+                  "height": "230",
+                  "params": "16",
+                  "style": "100",
+                  "name": "achievements"
+                },
+                "children": [],
+                "vars": {
+                  "spacing": 6,
+                  "scale_to_fit_items": true
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "5",
+                  "y": "300",
+                  "width": "295",
+                  "height": "90",
+                  "params": "147472",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "75",
+                      "height": "90",
+                      "params": "147472",
+                      "style": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "75",
+                          "height": "90",
+                          "params": "786448",
+                          "style": "100",
+                          "height_min": "90",
+                          "height_max": "90"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "common_star",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "13",
+                          "y": "14",
+                          "width": "50",
+                          "height": "50",
+                          "params": "16",
+                          "style": "100",
+                          "name": "achievement_badge"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "badge_image",
+                          "badge_image:pivot_point": "center",
+                          "badge_image:stretched_x": false,
+                          "badge_image:stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "itemlist",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "75",
+                      "y": "4",
+                      "width": "220",
+                      "height": "63",
+                      "params": "147472",
+                      "style": "100",
+                      "width_max": "220"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "220",
+                          "height": "17",
+                          "params": "16",
+                          "style": "100",
+                          "name": "achievement.name",
+                          "caption": "Achievement name ",
+                          "width_max": "220"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_heading_2",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "22",
+                          "width": "220",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "achievement.description",
+                          "caption": "Achievement description",
+                          "width_min": "0",
+                          "width_max": "220"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "43",
+                          "width": "220",
+                          "height": "20",
+                          "params": "16",
+                          "style": "100"
+                        },
+                        "children": [
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "153",
+                              "height": "16",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${resolution.achievement.level}"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "155",
+                              "y": "1",
+                              "width": "173",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "name": "achievement.level",
+                              "caption": "0",
+                              "width_min": "0"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "il_heading_3"
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 2
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 5,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 10,
+              "resize_on_item_update": true
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "63",
+              "y": "395",
+              "width": "180",
+              "height": "30",
+              "params": "917521",
+              "style": "102",
+              "name": "save_button",
+              "caption": "${resolution.button.ok}",
+              "width_min": "180",
+              "width_max": "180"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "403",
+              "width": "300",
+              "height": "15",
+              "params": "16",
+              "style": "100",
+              "name": "disabled.reason",
+              "caption": "Disabled for reason.",
+              "visible": "false",
+              "width_min": "0",
+              "width_max": "300"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "text_style": "il_border",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "103",
+              "y": "444",
+              "width": "99",
+              "height": "37",
+              "params": "147472",
+              "style": "100",
+              "name": "countdown_widget"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "countdown"
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 3,
+          "margin_top": 36,
+          "margin_right": 3,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 312,
+  "layoutHeight": 525
+}

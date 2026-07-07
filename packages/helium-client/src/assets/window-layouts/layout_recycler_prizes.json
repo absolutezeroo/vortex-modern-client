@@ -1,0 +1,215 @@
+{
+  "name": "layout_recycler_prizes",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1537_layout_recycler_prizes_xml$538aef46b242e7974c30736ca2a1f89d2119091268.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "659",
+          "params": "2064",
+          "style": "0",
+          "name": "ctlg_default_3x3"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "2",
+              "y": "133",
+              "width": "128",
+              "height": "13",
+              "params": "16",
+              "style": "3",
+              "name": "ctlg_selectproduct",
+              "caption": "${catalog_selectproduct}",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "100",
+              "y": "46",
+              "width": "142",
+              "height": "73",
+              "params": "16",
+              "style": "0",
+              "name": "specialInfoWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "659",
+              "params": "2064",
+              "style": "0",
+              "name": "recyclerPrizesWidget",
+              "tags": "WIDE"
+            },
+            "children": [
+              {
+                "tag": "scrollable_itemlist_vertical",
+                "typeId": 56,
+                "attributes": {
+                  "x": "0",
+                  "y": "237",
+                  "width": "360",
+                  "height": "422",
+                  "params": "2064",
+                  "style": "100",
+                  "name": "itemList"
+                },
+                "children": [],
+                "vars": {
+                  "spacing": 11
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "360",
+                  "height": "240",
+                  "params": "16",
+                  "style": "0",
+                  "name": "productView"
+                },
+                "children": [
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "360",
+                      "height": "240",
+                      "params": "16",
+                      "style": "3",
+                      "name": "product_viewer"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "product_image"
+                    }
+                  },
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "360",
+                      "height": "240",
+                      "params": "16",
+                      "style": "0",
+                      "name": "ctlg_teaserimg_1",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "formatted_text",
+                    "typeId": 15,
+                    "attributes": {
+                      "x": "10",
+                      "y": "16",
+                      "width": "74",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "ctlg_product_name",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "formatted_text",
+                    "typeId": 15,
+                    "attributes": {
+                      "x": "10",
+                      "y": "33",
+                      "width": "162",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "name": "ctlg_description",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_small",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "scrollable_itemgrid_vertical",
+                    "typeId": 140,
+                    "attributes": {
+                      "x": "18",
+                      "y": "147",
+                      "width": "142",
+                      "height": "76",
+                      "params": "16",
+                      "style": "3",
+                      "name": "bundleGrid"
+                    },
+                    "children": [],
+                    "vars": {
+                      "spacing": 2,
+                      "scale_to_fit_items": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 659
+}

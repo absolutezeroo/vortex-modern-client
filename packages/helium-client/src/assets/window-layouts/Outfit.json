@@ -1,0 +1,77 @@
+{
+  "name": "Outfit",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\3118__SafeCls_120.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "35",
+          "height": "60",
+          "params": "17",
+          "style": "3"
+        },
+        "children": [
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "35",
+              "height": "60",
+              "params": "1073872913",
+              "style": "3",
+              "name": "button",
+              "tags": "BUTTON"
+            },
+            "children": []
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "33",
+              "height": "58",
+              "params": "133264",
+              "style": "3",
+              "name": "outfit_gradient",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "collectables_score_background_gradient"
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "35",
+              "height": "60",
+              "params": "16",
+              "style": "0",
+              "name": "bitmap",
+              "tags": "BITMAP"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 35,
+  "layoutHeight": 60
+}

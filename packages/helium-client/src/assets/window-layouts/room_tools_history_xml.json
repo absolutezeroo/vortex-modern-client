@@ -1,0 +1,31 @@
+{
+  "name": "room_tools_history_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\924_room_tools_history_xml$73e2d53993d7bbb197abc4ec93d2280b1969620405.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "152",
+          "height": "97",
+          "params": "0",
+          "style": "2",
+          "dynamic_style": "",
+          "color": "0x024231e",
+          "blend": "0.8"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 152,
+  "layoutHeight": 97
+}

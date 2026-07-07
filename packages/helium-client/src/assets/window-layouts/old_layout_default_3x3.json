@@ -1,0 +1,189 @@
+{
+  "name": "old_layout_default_3x3",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\369_ctlg_default_3x3.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "16",
+          "style": "0",
+          "color": "0x0ff00ff"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "120",
+              "width": "360",
+              "height": "180",
+              "params": "16",
+              "style": "102",
+              "name": "productViewWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "305",
+              "width": "360",
+              "height": "120",
+              "params": "16",
+              "style": "102",
+              "name": "itemGridWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "430",
+              "width": "360",
+              "height": "30",
+              "params": "16",
+              "style": "102",
+              "name": "purchaseWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "183",
+              "y": "123",
+              "width": "175",
+              "height": "25",
+              "params": "0",
+              "style": "0",
+              "name": "activityPointDisplayWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "114",
+              "y": "118",
+              "width": "142",
+              "height": "73",
+              "params": "16",
+              "style": "0",
+              "name": "specialInfoWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "120",
+              "width": "360",
+              "height": "155",
+              "params": "16",
+              "style": "0",
+              "name": "bundlePurchaseExtraInfoWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "275",
+              "width": "180",
+              "height": "25",
+              "params": "147456",
+              "style": "0",
+              "name": "spinnerWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "180",
+              "y": "275",
+              "width": "180",
+              "height": "25",
+              "params": "147456",
+              "style": "0",
+              "name": "totalPriceWidget"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "187",
+              "y": "122",
+              "width": "174",
+              "height": "40",
+              "params": "0",
+              "style": "0",
+              "name": "limitedItemWidget",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "200",
+                  "height": "40",
+                  "params": "147472",
+                  "style": "0",
+                  "name": "unique_item_overlay_container"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "limited_item_overlay_supply"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "425",
+              "width": "360",
+              "height": "30",
+              "params": "0",
+              "style": "3",
+              "name": "soldLtdItemsWidget"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

@@ -1,0 +1,368 @@
+{
+  "name": "QuestTracker",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\70_QuestTracker.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "132",
+          "params": "33105",
+          "style": "0",
+          "name": "quest_tracker",
+          "color": "0x00"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "192",
+              "height": "133",
+              "params": "0",
+              "style": "0",
+              "name": "quest_tracker_bg"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}quest_tracker_with_bar.png",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "192",
+              "height": "132",
+              "params": "2176",
+              "style": "0",
+              "name": "content_cont",
+              "color": "0x00",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "25",
+                  "y": "2",
+                  "width": "134",
+                  "height": "18",
+                  "params": "786448",
+                  "style": "0",
+                  "name": "quest_header_txt",
+                  "caption": "${quests.tracker.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 19,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": -0.4,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "71",
+                  "y": "27",
+                  "width": "115",
+                  "height": "61",
+                  "params": "144",
+                  "style": "0",
+                  "name": "desc_txt",
+                  "caption": "Search around hotel and locate this very valuable dino egg jhg jhg jhg jh gjhg jhg jhg jhg jh gjhg jhg jhg jhg jhg jhgjhgjh gjhg jh gjhg jh gjhg jhg jhg jhg jhg jhg"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "27",
+                  "y": "109",
+                  "width": "139",
+                  "height": "17",
+                  "params": "209",
+                  "style": "0",
+                  "name": "more_info_txt",
+                  "caption": "${quests.tracker.moreinfo}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 2344447,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "15",
+                  "y": "106",
+                  "width": "162",
+                  "height": "18",
+                  "params": "17",
+                  "style": "0",
+                  "name": "more_info_region",
+                  "treshold": "0",
+                  "tags": "FIT:questTrackerMoreInfo"
+                },
+                "children": []
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "9",
+                  "y": "32",
+                  "width": "54",
+                  "height": "46",
+                  "params": "16",
+                  "style": "0",
+                  "name": "quest_pic_bitmap"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "32",
+                  "width": "41",
+                  "height": "47",
+                  "params": "16",
+                  "style": "0",
+                  "name": "success_pic_1"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.questing.url}checkanim1.png"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "32",
+                  "width": "41",
+                  "height": "47",
+                  "params": "16",
+                  "style": "0",
+                  "name": "success_pic_2"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.questing.url}checkanim2.png"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "32",
+                  "width": "41",
+                  "height": "47",
+                  "params": "16",
+                  "style": "0",
+                  "name": "success_pic_3"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.questing.url}checkanim3.png"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "32",
+                  "width": "41",
+                  "height": "47",
+                  "params": "16",
+                  "style": "0",
+                  "name": "success_pic_4"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.questing.url}checkanim4.png"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "32",
+                  "width": "41",
+                  "height": "47",
+                  "params": "16",
+                  "style": "0",
+                  "name": "success_pic_5"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.questing.url}checkanim5.png"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "32",
+                  "width": "41",
+                  "height": "47",
+                  "params": "16",
+                  "style": "0",
+                  "name": "success_pic_6"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.questing.url}checkanim6.png"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "9",
+                  "y": "32",
+                  "width": "54",
+                  "height": "46",
+                  "params": "16",
+                  "style": "0",
+                  "name": "prompt_pic_a"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "9",
+                  "y": "32",
+                  "width": "54",
+                  "height": "46",
+                  "params": "16",
+                  "style": "0",
+                  "name": "prompt_pic_b"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "9",
+                  "y": "32",
+                  "width": "54",
+                  "height": "46",
+                  "params": "16",
+                  "style": "0",
+                  "name": "prompt_pic_c"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "9",
+                  "y": "32",
+                  "width": "54",
+                  "height": "46",
+                  "params": "16",
+                  "style": "0",
+                  "name": "prompt_pic_d"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 132
+}

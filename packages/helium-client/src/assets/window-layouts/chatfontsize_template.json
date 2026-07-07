@@ -1,0 +1,75 @@
+{
+  "name": "chatfontsize_template",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\709_chatfontsize_template.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "18",
+          "height": "18",
+          "params": "17",
+          "style": "0",
+          "name": "chatfontsize_region",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "18",
+              "height": "18",
+              "params": "144",
+              "style": "2",
+              "name": "background_color"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "4",
+              "y": "1",
+              "width": "9",
+              "height": "15",
+              "params": "4194320",
+              "style": "0",
+              "name": "label",
+              "caption": "S",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 16,
+              "text_color": 3355443,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "bold": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 18,
+  "layoutHeight": 18
+}

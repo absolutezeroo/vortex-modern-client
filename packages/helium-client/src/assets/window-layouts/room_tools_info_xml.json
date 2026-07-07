@@ -1,0 +1,250 @@
+{
+  "name": "room_tools_info_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\874_room_tools_info_xml$3ed7e90a9bd71d5e909302a1549c24b61108827261.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "-1",
+          "y": "0",
+          "width": "255",
+          "height": "77",
+          "params": "147456",
+          "style": "7",
+          "width_max": "320"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "255",
+              "height": "77",
+              "params": "4341777",
+              "style": "2",
+              "name": "window_bg",
+              "color": "0x024231e",
+              "blend": "0.8",
+              "width_max": "320"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "6",
+                  "width": "245",
+                  "height": "24",
+                  "params": "4341888",
+                  "style": "3",
+                  "name": "room_name",
+                  "caption": "...",
+                  "width_min": "60",
+                  "width_max": "300"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "ubuntu_condensed_title",
+                  "margin_right": 10,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "10",
+                  "y": "33",
+                  "width": "126",
+                  "height": "44",
+                  "params": "4341776",
+                  "style": "3",
+                  "name": "owner_name_and_tags",
+                  "width_max": "300"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "126",
+                      "height": "21",
+                      "params": "4341776",
+                      "style": "3",
+                      "name": "room_owner",
+                      "caption": "...",
+                      "width_max": "300"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 10066329,
+                      "text_style": "u_headline_medium",
+                      "margin_right": 10,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "overflow_replace": "...",
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "25",
+                      "width": "69",
+                      "height": "19",
+                      "params": "147472",
+                      "style": "3",
+                      "name": "tags",
+                      "width_max": "230"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "-1",
+                          "width": "30",
+                          "height": "13",
+                          "params": "16",
+                          "style": "3",
+                          "name": "tag1_border",
+                          "color": "0x01c2935"
+                        },
+                        "children": [
+                          {
+                            "tag": "region",
+                            "typeId": 5,
+                            "attributes": {
+                              "x": "1",
+                              "y": "-1",
+                              "width": "29",
+                              "height": "15",
+                              "params": "12582929",
+                              "style": "3",
+                              "name": "tag1_region",
+                              "treshold": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "29",
+                                  "height": "15",
+                                  "params": "12582928",
+                                  "style": "3",
+                                  "name": "tag1",
+                                  "caption": "#jobs"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "font_size": 16,
+                                  "grid_fit_type": "subpixel",
+                                  "text_color": 1800619,
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "34",
+                          "y": "-1",
+                          "width": "35",
+                          "height": "13",
+                          "params": "16",
+                          "style": "3",
+                          "name": "tag2_border",
+                          "color": "0x01c2935"
+                        },
+                        "children": [
+                          {
+                            "tag": "region",
+                            "typeId": 5,
+                            "attributes": {
+                              "x": "1",
+                              "y": "-1",
+                              "width": "34",
+                              "height": "15",
+                              "params": "12582929",
+                              "style": "3",
+                              "name": "tag2_region",
+                              "treshold": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "34",
+                                  "height": "15",
+                                  "params": "12582928",
+                                  "style": "3",
+                                  "name": "tag2",
+                                  "caption": "#party"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "font_size": 16,
+                                  "grid_fit_type": "subpixel",
+                                  "text_color": 1800619,
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 4,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 255,
+  "layoutHeight": 77
+}

@@ -1,0 +1,201 @@
+{
+  "name": "extended_profile_badge_details",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\133_extended_profile_badge_details.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "87",
+          "y": "53",
+          "width": "263",
+          "height": "25",
+          "params": "0",
+          "style": "0",
+          "name": "test"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "6",
+              "width": "263",
+              "height": "11",
+              "params": "8388624",
+              "style": "3",
+              "name": "details_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "8",
+                  "y": "0",
+                  "width": "250",
+                  "height": "4",
+                  "params": "16",
+                  "style": "0",
+                  "name": "name"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "8",
+                  "y": "7",
+                  "width": "250",
+                  "height": "4",
+                  "params": "16",
+                  "style": "0",
+                  "name": "description",
+                  "clipping": "false"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "8",
+                  "y": "14",
+                  "width": "92",
+                  "height": "17",
+                  "params": "16",
+                  "style": "2",
+                  "name": "rarity_tag",
+                  "color": "0x0cccccc",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "2",
+                      "width": "81",
+                      "height": "13",
+                      "params": "4194320",
+                      "style": "0",
+                      "name": "rarity_border",
+                      "caption": "Unique badge",
+                      "tags": "BLEND_SUBTRACT"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "font_face": "Volter Bold",
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "2",
+                      "width": "81",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "rarity",
+                      "caption": "Unique badge",
+                      "tags": "BLEND_INVERT"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "font_face": "Volter Bold",
+                      "text_style": "bold",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "8",
+                  "y": "42",
+                  "width": "250",
+                  "height": "4",
+                  "params": "16",
+                  "style": "0",
+                  "name": "owner_count",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "text_color": 5592405,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 3,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 263,
+  "layoutHeight": 25
+}

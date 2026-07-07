@@ -1,0 +1,41 @@
+{
+  "name": "mannequin_widget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\757_mannequin_widget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "33",
+          "y": "26",
+          "width": "388",
+          "height": "220",
+          "params": "32769",
+          "style": "3",
+          "caption": "${mannequin.widget.title}",
+          "color": "0xff418db0"
+        },
+        "children": [],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 388,
+  "layoutHeight": 220
+}

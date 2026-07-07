@@ -1,0 +1,165 @@
+{
+  "name": "camera_filterbutton",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\672_camera_filterbutton.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "62",
+          "height": "62",
+          "params": "17",
+          "style": "3",
+          "name": "region",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "62",
+              "params": "16",
+              "style": "3",
+              "name": "outline"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "camera_fx_button_outline",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "56",
+              "height": "56",
+              "params": "16",
+              "style": "3",
+              "name": "content"
+            },
+            "children": []
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "2",
+              "y": "0",
+              "width": "59",
+              "height": "60",
+              "params": "16",
+              "style": "3",
+              "name": "lock_indicator",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "camera_locked",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "62",
+              "params": "16",
+              "style": "3",
+              "name": "active_indicator",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "camera_fx_button_active",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "62",
+              "params": "16",
+              "style": "3",
+              "name": "selected_indicator",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "camera_fx_button_selected",
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "43",
+              "y": "0",
+              "width": "19",
+              "height": "19",
+              "params": "1",
+              "style": "3",
+              "dynamic_style": "brightness_and_shadow_under",
+              "name": "remove_effect_button",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "19",
+                  "height": "19",
+                  "params": "16",
+                  "style": "3",
+                  "tags": "#bg"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "camera_cam_close_x",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "etching_color": 1207959552
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 62,
+  "layoutHeight": 62
+}

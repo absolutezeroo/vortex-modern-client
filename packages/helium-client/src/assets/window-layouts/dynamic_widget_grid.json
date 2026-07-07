@@ -1,0 +1,250 @@
+{
+  "name": "dynamic_widget_grid",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\634_dynamic_widget_grid.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "170",
+          "y": "0",
+          "width": "1011",
+          "height": "771",
+          "params": "147472",
+          "style": "0",
+          "name": "dynamic_widget_grid_container"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "86",
+              "y": "4",
+              "width": "925",
+              "height": "767",
+              "params": "16",
+              "style": "0",
+              "name": "widgetlist_fromtop"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "-1",
+                  "y": "0",
+                  "width": "800",
+                  "height": "75",
+                  "params": "147472",
+                  "style": "0",
+                  "name": "widget_slot_1"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "85",
+                  "width": "800",
+                  "height": "682",
+                  "params": "147472",
+                  "style": "0",
+                  "name": "center_slots_container"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "1",
+                      "width": "800",
+                      "height": "681",
+                      "params": "16400",
+                      "style": "0",
+                      "name": "widget_slots_center_scrollable"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "500",
+                          "height": "52",
+                          "params": "147472",
+                          "style": "0",
+                          "name": "widget_slots_center_left",
+                          "width_max": "500"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "500",
+                              "height": "1",
+                              "params": "147472",
+                              "style": "0",
+                              "name": "widget_slot_2"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "51",
+                              "width": "500",
+                              "height": "1",
+                              "params": "16",
+                              "style": "100",
+                              "name": "widget_slot_4_root"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "500",
+                                  "height": "1",
+                                  "params": "147472",
+                                  "style": "0",
+                                  "name": "widget_slot_4"
+                                },
+                                "children": []
+                              }
+                            ],
+                            "vars": {
+                              "scale_to_fit_items": true,
+                              "resize_on_item_update": true
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 50,
+                          "scale_to_fit_items": true,
+                          "resize_on_item_update": true
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "550",
+                          "y": "0",
+                          "width": "250",
+                          "height": "52",
+                          "params": "147472",
+                          "style": "0",
+                          "name": "widget_slots_right",
+                          "width_max": "250"
+                        },
+                        "children": [
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "250",
+                              "height": "52",
+                              "params": "4341776",
+                              "style": "0",
+                              "name": "widget_slots_center_right"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "250",
+                                  "height": "1",
+                                  "params": "147472",
+                                  "style": "0",
+                                  "name": "widget_slot_3"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "itemlist_vertical",
+                                "typeId": 50,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "51",
+                                  "width": "250",
+                                  "height": "1",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "widget_slot_5_root"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "container",
+                                    "typeId": 4,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "250",
+                                      "height": "1",
+                                      "params": "147472",
+                                      "style": "0",
+                                      "name": "widget_slot_5"
+                                    },
+                                    "children": []
+                                  }
+                                ],
+                                "vars": {
+                                  "scale_to_fit_items": true,
+                                  "resize_on_item_update": true
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 50,
+                              "scale_to_fit_items": true,
+                              "resize_on_item_update": true
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 50,
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 10,
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1011,
+  "layoutHeight": 771
+}

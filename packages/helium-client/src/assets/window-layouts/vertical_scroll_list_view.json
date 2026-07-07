@@ -1,0 +1,32 @@
+{
+  "name": "vertical_scroll_list_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\99_vertical_scroll_list_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "scrollable_itemlist_vertical",
+        "typeId": 56,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "100",
+          "height": "100",
+          "params": "16",
+          "style": "100",
+          "name": "scroll_view"
+        },
+        "children": [],
+        "vars": {
+          "scale_to_fit_items": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 100,
+  "layoutHeight": 100
+}

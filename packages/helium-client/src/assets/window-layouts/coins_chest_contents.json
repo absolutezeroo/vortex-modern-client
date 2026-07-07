@@ -1,0 +1,216 @@
+{
+  "name": "coins_chest_contents",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\97_coins_chest_contents.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "413",
+          "height": "263",
+          "params": "16",
+          "style": "3",
+          "name": "coins_chest"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "44",
+              "y": "24",
+              "width": "324",
+              "height": "228",
+              "params": "3280",
+              "style": "3",
+              "name": "moving_container"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "324",
+                  "height": "228",
+                  "params": "12582928",
+                  "style": "3",
+                  "name": "bg_img"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "wired_chests_images_light_coins_chest_balance_zero",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "9",
+                  "y": "68",
+                  "width": "54",
+                  "height": "47",
+                  "params": "16",
+                  "style": "3",
+                  "name": "balance_cont"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "2",
+                      "y": "7",
+                      "width": "45",
+                      "height": "16",
+                      "params": "786448",
+                      "style": "3",
+                      "name": "balance_txt",
+                      "caption": "${wiredchests.coin_chest.balance}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 17,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "15",
+                      "y": "22",
+                      "width": "24",
+                      "height": "15",
+                      "params": "786448",
+                      "style": "3",
+                      "name": "balance_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "10",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "coins_amount_txt",
+                          "caption": "0"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "11",
+                          "y": "2",
+                          "width": "13",
+                          "height": "15",
+                          "params": "17",
+                          "style": "35",
+                          "name": "coin_icon"
+                        },
+                        "children": []
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 1,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "160",
+                  "y": "18",
+                  "width": "105",
+                  "height": "28",
+                  "params": "934992",
+                  "style": "3",
+                  "name": "withdraw_cont"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "0",
+                      "y": "1",
+                      "width": "27",
+                      "height": "19",
+                      "params": "262145",
+                      "style": "3",
+                      "name": "withdraw_input",
+                      "caption": "1",
+                      "background": "true",
+                      "width_min": "27",
+                      "width_max": "27"
+                    },
+                    "children": [],
+                    "vars": {
+                      "always_show_selection": true,
+                      "border": true,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "32",
+                      "y": "0",
+                      "width": "73",
+                      "height": "22",
+                      "params": "393233",
+                      "style": "3",
+                      "name": "withdraw_btn",
+                      "caption": "${wiredchests.withdraw}",
+                      "width_min": "60"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "spacing": 5
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 413,
+  "layoutHeight": 263
+}

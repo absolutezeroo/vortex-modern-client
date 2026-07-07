@@ -1,0 +1,196 @@
+{
+  "name": "lovelock_engraving_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\939_lovelock_engraving_xml$23708f66bc2e6bf874eda4f246f3016b135318776.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "375",
+          "height": "210",
+          "params": "1",
+          "style": "100",
+          "caption": "${lovelock.engraving.caption}"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "375",
+              "height": "210",
+              "params": "16",
+              "style": "100",
+              "name": "background"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}furniextras/loveLock_engraving.png",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "82",
+              "y": "126",
+              "width": "217",
+              "height": "17",
+              "params": "16",
+              "style": "100",
+              "name": "header",
+              "caption": "${lovelock.engraving.caption}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "etching_color": 4294967295,
+              "etching_position": "bottom",
+              "text_color": 5841482,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "115",
+              "y": "7",
+              "width": "70",
+              "height": "115",
+              "params": "16",
+              "style": "100",
+              "name": "avatar_left"
+            },
+            "children": [],
+            "vars": {
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "186",
+              "y": "7",
+              "width": "70",
+              "height": "115",
+              "params": "16",
+              "style": "100",
+              "name": "avatar_right"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "19",
+              "y": "175",
+              "width": "150",
+              "height": "17",
+              "params": "16",
+              "style": "100",
+              "name": "name_left",
+              "caption": "${lovelock.engraving.left}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "right",
+              "etching_color": 4294967295,
+              "etching_position": "bottom",
+              "text_color": 5841482,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "199",
+              "y": "175",
+              "width": "87",
+              "height": "17",
+              "params": "16",
+              "style": "100",
+              "name": "name_right",
+              "caption": "${lovelock.engraving.right}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "etching_color": 4294967295,
+              "etching_position": "bottom",
+              "text_color": 5841482,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "143",
+              "y": "151",
+              "width": "97",
+              "height": "4",
+              "params": "16",
+              "style": "100",
+              "name": "date"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "etching_color": 4294967295,
+              "etching_position": "bottom",
+              "text_color": 5841482,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "330",
+              "y": "33",
+              "width": "21",
+              "height": "17",
+              "params": "17",
+              "style": "100",
+              "name": "header_button_close",
+              "treshold": "0"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 375,
+  "layoutHeight": 210
+}

@@ -1,0 +1,68 @@
+{
+  "name": "custom_word_filter_item_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1228_custom_word_filter_item_xml$163ec19e8026aca28bcfb8567620e9d41812397602.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "222",
+          "height": "18",
+          "params": "144",
+          "style": "3",
+          "name": "word_filter_list_item",
+          "color": "0x0ff00ff",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "222",
+              "height": "18",
+              "params": "145",
+              "style": "3",
+              "name": "bg_region",
+              "background": "true",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "222",
+              "height": "18",
+              "params": "144",
+              "style": "3",
+              "name": "text",
+              "caption": "BadWord"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 222,
+  "layoutHeight": 18
+}

@@ -1,0 +1,1306 @@
+{
+  "name": "chest_generic",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\96_chest_generic.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "60",
+          "y": "50",
+          "width": "460",
+          "height": "463",
+          "params": "98337",
+          "style": "3",
+          "caption": "${wiredchests.furni_chest}",
+          "color": "0xff418db0",
+          "width_min": "415",
+          "width_max": "595",
+          "height_min": "390",
+          "height_max": "730"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "460",
+              "height": "428",
+              "params": "144",
+              "style": "3",
+              "name": "main_list"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "460",
+                  "height": "51",
+                  "params": "144",
+                  "style": "3",
+                  "name": "header"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "458",
+                      "height": "51",
+                      "params": "2192",
+                      "style": "3",
+                      "name": "layout_1",
+                      "color": "0xffffdadada",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "50",
+                      "width": "458",
+                      "height": "1",
+                      "params": "1168",
+                      "style": "3",
+                      "name": "splitter",
+                      "color": "0xffffc0c0c0",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "10",
+                      "y": "10",
+                      "width": "380",
+                      "height": "30",
+                      "params": "8388752",
+                      "style": "3",
+                      "name": "desc",
+                      "caption": " A cozy chest waiting to be filled with all sorts of treasures!",
+                      "blend": "0.6",
+                      "height_min": "30"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "max_chars": 300,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "html",
+                    "typeId": 11,
+                    "attributes": {
+                      "x": "10",
+                      "y": "10",
+                      "width": "406",
+                      "height": "47",
+                      "params": "2185",
+                      "style": "3",
+                      "name": "warning_text",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 1,
+                      "editable": false,
+                      "selectable": false
+                    }
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "397",
+                      "y": "7",
+                      "width": "24",
+                      "height": "24",
+                      "params": "65",
+                      "style": "7",
+                      "dynamic_style": "button",
+                      "name": "notification_settings_button"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "6",
+                          "y": "4",
+                          "width": "12",
+                          "height": "15",
+                          "params": "16",
+                          "style": "3",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "wired_chests_bell_icon",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${tooltip.notification_settings}"
+                    }
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "426",
+                      "y": "7",
+                      "width": "24",
+                      "height": "24",
+                      "params": "65",
+                      "style": "7",
+                      "dynamic_style": "button",
+                      "name": "settings_button"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "5",
+                          "y": "5",
+                          "width": "14",
+                          "height": "14",
+                          "params": "16",
+                          "style": "3",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "wired_chests_gear_icon",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${tooltip.settings}"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "1",
+                  "y": "51",
+                  "width": "458",
+                  "height": "254",
+                  "params": "144",
+                  "style": "3",
+                  "name": "chest_contents"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "305",
+                  "width": "460",
+                  "height": "123",
+                  "params": "144",
+                  "style": "3",
+                  "name": "footer"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "458",
+                      "height": "110",
+                      "params": "2192",
+                      "style": "3",
+                      "name": "layout_1",
+                      "color": "0xffffdadada",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "1",
+                      "y": "87",
+                      "width": "458",
+                      "height": "36",
+                      "params": "1168",
+                      "style": "2",
+                      "name": "layout_2",
+                      "color": "0x0dadada"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "458",
+                      "height": "1",
+                      "params": "144",
+                      "style": "3",
+                      "name": "splitter",
+                      "color": "0xffffc0c0c0",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "423",
+                      "y": "6",
+                      "width": "18",
+                      "height": "18",
+                      "params": "81",
+                      "style": "3",
+                      "name": "lock_info_button",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "18",
+                          "height": "18",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "icons_info_grey",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "bubble",
+                    "typeId": 45,
+                    "attributes": {
+                      "x": "440",
+                      "y": "-245",
+                      "width": "385",
+                      "height": "536",
+                      "params": "1",
+                      "style": "7",
+                      "name": "lock_info_bubble",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "8",
+                          "y": "8",
+                          "width": "353",
+                          "height": "504",
+                          "params": "8388752",
+                          "style": "3",
+                          "name": "lock_info_bubble_texts"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "105",
+                              "height": "19",
+                              "params": "16",
+                              "style": "3",
+                              "name": "title",
+                              "caption": "${wiredchests.lock_info.title}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "font_size": 20,
+                              "text_style": "u_bold",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "20",
+                              "width": "30",
+                              "height": "7",
+                              "params": "16",
+                              "style": "3",
+                              "name": "spacerr"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "28",
+                              "width": "353",
+                              "height": "17",
+                              "params": "16",
+                              "style": "3",
+                              "caption": "${wiredchests.lock_info.desc}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "46",
+                              "width": "353",
+                              "height": "30",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule1",
+                              "caption": "${wiredchests.lock_info.rule_1}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "77",
+                              "width": "353",
+                              "height": "44",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule2",
+                              "caption": "${wiredchests.lock_info.rule_2}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "122",
+                              "width": "353",
+                              "height": "44",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule3",
+                              "caption": "${wiredchests.lock_info.rule_3}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "167",
+                              "width": "353",
+                              "height": "30",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule4",
+                              "caption": "${wiredchests.lock_info.rule_4}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "198",
+                              "width": "353",
+                              "height": "44",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule5",
+                              "caption": "${wiredchests.lock_info.rule_5}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "243",
+                              "width": "353",
+                              "height": "30",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule6",
+                              "caption": "${wiredchests.lock_info.rule_6}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "274",
+                              "width": "353",
+                              "height": "17",
+                              "params": "129",
+                              "style": "3",
+                              "name": "rule7",
+                              "caption": "${wiredchests.lock_info.rule_7}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "292",
+                              "width": "30",
+                              "height": "14",
+                              "params": "16",
+                              "style": "3",
+                              "name": "spacerr"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "307",
+                              "width": "100",
+                              "height": "19",
+                              "params": "16",
+                              "style": "3",
+                              "name": "ctitle",
+                              "caption": "${wiredchests.capacity_info.title}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "font_size": 20,
+                              "text_style": "u_bold",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "327",
+                              "width": "30",
+                              "height": "7",
+                              "params": "16",
+                              "style": "3",
+                              "name": "spacerr"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "335",
+                              "width": "353",
+                              "height": "17",
+                              "params": "16",
+                              "style": "3",
+                              "caption": "${wiredchests.capacity_info.desc}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "353",
+                              "width": "353",
+                              "height": "44",
+                              "params": "129",
+                              "style": "3",
+                              "name": "crule1",
+                              "caption": "${wiredchests.capacity_info.rule_1}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "398",
+                              "width": "353",
+                              "height": "44",
+                              "params": "129",
+                              "style": "3",
+                              "name": "crule2",
+                              "caption": "${wiredchests.capacity_info.rule_2}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "443",
+                              "width": "353",
+                              "height": "30",
+                              "params": "129",
+                              "style": "3",
+                              "name": "crule3",
+                              "caption": "${wiredchests.capacity_info.rule_3}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          },
+                          {
+                            "tag": "html",
+                            "typeId": 11,
+                            "attributes": {
+                              "x": "0",
+                              "y": "474",
+                              "width": "353",
+                              "height": "30",
+                              "params": "129",
+                              "style": "3",
+                              "name": "crule4",
+                              "caption": "${wiredchests.capacity_info.rule_4}",
+                              "width_min": "353",
+                              "width_max": "353"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0,
+                              "editable": false,
+                              "selectable": false
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 1,
+                          "resize_on_item_update": true
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "margin_left": 8,
+                      "margin_top": 8,
+                      "margin_right": 8,
+                      "margin_bottom": 8,
+                      "direction": "left"
+                    }
+                  },
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "17",
+                      "y": "7",
+                      "width": "443",
+                      "height": "75",
+                      "params": "8388752",
+                      "style": "3",
+                      "name": "footer_options"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_vertical",
+                        "typeId": 50,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "443",
+                          "height": "41",
+                          "params": "144",
+                          "style": "3",
+                          "name": "locking_options"
+                        },
+                        "children": [
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "106",
+                              "height": "16",
+                              "params": "16",
+                              "style": "3"
+                            },
+                            "children": [
+                              {
+                                "tag": "checkbox",
+                                "typeId": 70,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "1",
+                                  "width": "15",
+                                  "height": "15",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "lock_chest_cbx"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "0",
+                                  "width": "86",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "3",
+                                  "caption": "${wiredchests.lock_chest}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 5,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "0",
+                              "y": "20",
+                              "width": "286",
+                              "height": "16",
+                              "params": "16",
+                              "style": "3"
+                            },
+                            "children": [
+                              {
+                                "tag": "checkbox",
+                                "typeId": 70,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "1",
+                                  "width": "15",
+                                  "height": "15",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "auto_lock_chest_cbx"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "0",
+                                  "width": "266",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "3",
+                                  "caption": "${wiredchests.auto_lock_chest}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 5,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "40",
+                              "width": "429",
+                              "height": "1",
+                              "params": "144",
+                              "style": "3",
+                              "name": "splitter",
+                              "color": "0xffffb0b0b0",
+                              "background": "true"
+                            },
+                            "children": []
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 4,
+                          "resize_on_item_update": true
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "45",
+                          "width": "443",
+                          "height": "30",
+                          "params": "144",
+                          "style": "3",
+                          "name": "capacity_options"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "4",
+                              "width": "184",
+                              "height": "17",
+                              "params": "16",
+                              "style": "3",
+                              "name": "item_count_text",
+                              "caption": "${wiredchests.space_used}",
+                              "blend": "0.6",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "0",
+                              "y": "2",
+                              "width": "156",
+                              "height": "22",
+                              "params": "16",
+                              "style": "0",
+                              "name": "capacity_override_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "2",
+                                  "width": "85",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "3",
+                                  "caption": "${wiredchests.capacity}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "border",
+                                "typeId": 30,
+                                "attributes": {
+                                  "x": "91",
+                                  "y": "0",
+                                  "width": "65",
+                                  "height": "22",
+                                  "params": "16",
+                                  "style": "4",
+                                  "name": "capacity_input_border"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "input",
+                                    "typeId": 77,
+                                    "attributes": {
+                                      "x": "5",
+                                      "y": "3",
+                                      "width": "55",
+                                      "height": "17",
+                                      "params": "1",
+                                      "style": "3",
+                                      "name": "capacity_input",
+                                      "caption": "100000"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "restrict": "0-9",
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 6,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "227",
+                              "y": "0",
+                              "width": "200",
+                              "height": "25",
+                              "params": "262224",
+                              "style": "3",
+                              "name": "upgrade_capacity_container"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "4",
+                                  "width": "172",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "max_capacity_txt",
+                                  "caption": "${wiredchests.max_capacity}",
+                                  "blend": "0.6"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "178",
+                                  "y": "2",
+                                  "width": "22",
+                                  "height": "22",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "upgrade_capacity_region",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "iconbutton",
+                                    "typeId": -1,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "22",
+                                      "height": "22",
+                                      "params": "17",
+                                      "style": "3",
+                                      "name": "upgrade_capacity_btn",
+                                      "background": "true",
+                                      "treshold": "0"
+                                    },
+                                    "children": []
+                                  }
+                                ],
+                                "vars": {
+                                  "tool_tip_delay": 0,
+                                  "interactive_cursor_disabled": true
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 6,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "29",
+                              "width": "429",
+                              "height": "1",
+                              "params": "144",
+                              "style": "3",
+                              "name": "splitter",
+                              "color": "0xffffb0b0b0",
+                              "background": "true"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 4,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "87",
+                      "width": "460",
+                      "height": "30",
+                      "params": "1168",
+                      "style": "3",
+                      "name": "button_row"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "17",
+                          "y": "0",
+                          "width": "194",
+                          "height": "30",
+                          "params": "16",
+                          "style": "3",
+                          "name": "footer_buttons_left"
+                        },
+                        "children": [
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "89",
+                              "height": "30",
+                              "params": "131089",
+                              "style": "3",
+                              "name": "withdraw_all_btn",
+                              "caption": "${wiredchests.withdraw_all}"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "102",
+                              "y": "0",
+                              "width": "92",
+                              "height": "30",
+                              "params": "131089",
+                              "style": "3",
+                              "name": "start_deposit_btn",
+                              "caption": "${wiredchests.start_deposit}"
+                            },
+                            "children": []
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 13,
+                          "resize_on_item_update": true
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "370",
+                          "y": "0",
+                          "width": "73",
+                          "height": "30",
+                          "params": "262224",
+                          "style": "3",
+                          "name": "footer_buttons_left"
+                        },
+                        "children": [
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "73",
+                              "height": "30",
+                              "params": "131089",
+                              "style": "3",
+                              "name": "view_logs_btn",
+                              "caption": "${wiredchests.view_logs}"
+                            },
+                            "children": []
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 10,
+                          "resize_on_item_update": true
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "261",
+                          "y": "7",
+                          "width": "184",
+                          "height": "17",
+                          "params": "262224",
+                          "style": "3",
+                          "name": "item_count_text_bottom",
+                          "caption": "${wiredchests.space_used}",
+                          "blend": "0.6",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 460,
+  "layoutHeight": 463
+}

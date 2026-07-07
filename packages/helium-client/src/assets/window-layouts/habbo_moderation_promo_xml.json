@@ -1,0 +1,297 @@
+{
+  "name": "habbo_moderation_promo_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\54_habbo_moderation_promo_xml$2132a887353092256aeb97a10d431c431367064056.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "250",
+          "height": "192",
+          "params": "147472",
+          "style": "0",
+          "color": "0x00",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "10",
+              "width": "12",
+              "height": "4",
+              "params": "16",
+              "style": "100",
+              "name": "border_bar"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "illumina_light_border_top_center",
+              "pivot_point": "center left",
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "18",
+              "y": "4",
+              "width": "162",
+              "height": "14",
+              "params": "16",
+              "style": "100",
+              "name": "title_txt",
+              "caption": "${landing.view.moderationpromo.title}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 9,
+              "text_style": "il_heading_3",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "150",
+              "y": "10",
+              "width": "100",
+              "height": "4",
+              "params": "16",
+              "style": "100",
+              "name": "hdr_line"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "illumina_light_border_top_center",
+              "pivot_point": "center left",
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "29",
+              "width": "250",
+              "height": "163",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "316",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "name": "caption_txt",
+                  "caption": "${landing.view.moderationpromo.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 24,
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "spacing": -0.6,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "24",
+                  "width": "250",
+                  "height": "6",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "30",
+                  "width": "250",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "info_txt",
+                  "caption": "${landing.view.moderationpromo.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "46",
+                  "width": "250",
+                  "height": "8",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "54",
+                  "width": "237",
+                  "height": "15",
+                  "params": "16",
+                  "style": "100",
+                  "name": "cursing_caption_txt",
+                  "caption": "${landing.view.moderationpromo.cursing.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_heading_3",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "69",
+                  "width": "250",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "cursing_info_txt",
+                  "caption": "${landing.view.moderationpromo.cursing.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "85",
+                  "width": "250",
+                  "height": "8",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "93",
+                  "width": "150",
+                  "height": "26",
+                  "params": "16",
+                  "style": "100",
+                  "name": "wrongdoers_caption_txt",
+                  "caption": "${landing.view.moderationpromo.wrongdoers.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_heading_3",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "119",
+                  "width": "250",
+                  "height": "28",
+                  "params": "16",
+                  "style": "100",
+                  "name": "wrongdoers_info_txt",
+                  "caption": "${landing.view.moderationpromo.wrongdoers.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 250,
+  "layoutHeight": 192
+}

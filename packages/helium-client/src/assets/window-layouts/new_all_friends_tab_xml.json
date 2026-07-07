@@ -1,0 +1,50 @@
+{
+  "name": "new_all_friends_tab_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\45_new_all_friends_tab_xml$02756d7e1041bfbe1af4b1327b8281412008161735.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "30",
+          "height": "30",
+          "params": "17",
+          "style": "3",
+          "name": "container",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "30",
+              "height": "30",
+              "params": "16",
+              "style": "3",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "friend_bar_all_friends",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 30,
+  "layoutHeight": 30
+}

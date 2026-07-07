@@ -1,0 +1,381 @@
+{
+  "name": "element_dailyquest",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\728_element_dailyquest.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "250",
+          "height": "70",
+          "params": "16",
+          "style": "0",
+          "color": "0x00",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "250",
+              "height": "70",
+              "params": "16",
+              "style": "0",
+              "name": "questdata_container",
+              "color": "0x00",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "2",
+                  "width": "250",
+                  "height": "39",
+                  "params": "16401",
+                  "style": "102",
+                  "name": "accept_button",
+                  "visible": "false",
+                  "width_min": "250",
+                  "width_max": "250"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "5",
+                      "y": "3",
+                      "width": "240",
+                      "height": "36",
+                      "params": "147472",
+                      "style": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "58",
+                          "height": "18",
+                          "params": "4194320",
+                          "style": "100",
+                          "name": "caption_txt",
+                          "caption": "DQ Title"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "font_size": 19,
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "18",
+                          "width": "142",
+                          "height": "18",
+                          "params": "4194320",
+                          "style": "100",
+                          "name": "accept_text",
+                          "caption": "${landing.view.quest.accept}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "margin_right": 5,
+                          "margin_bottom": 2,
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "scale_to_fit_items": true,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "45",
+                  "width": "250",
+                  "height": "12",
+                  "params": "17",
+                  "style": "100",
+                  "name": "next_quest_region",
+                  "visible": "false",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "137",
+                      "height": "14",
+                      "params": "16",
+                      "style": "100",
+                      "name": "next_quest_txt",
+                      "caption": "PH: Show me another easy quest",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 9,
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "55",
+                  "width": "250",
+                  "height": "14",
+                  "params": "17",
+                  "style": "100",
+                  "name": "cancel_quest_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "105",
+                      "height": "14",
+                      "params": "16",
+                      "style": "100",
+                      "name": "cancel_quest_txt",
+                      "caption": "${landing.view.quest.cancel}",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 9,
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "250",
+                  "height": "55",
+                  "params": "16",
+                  "style": "100",
+                  "name": "current_quest_border"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "164",
+                      "y": "3",
+                      "width": "88",
+                      "height": "50",
+                      "params": "131153",
+                      "style": "100",
+                      "name": "go_button",
+                      "caption": "${landing.view.quest.go}",
+                      "width_min": "88",
+                      "width_max": "88"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "formatted_text",
+                    "typeId": 15,
+                    "attributes": {
+                      "x": "13",
+                      "y": "10",
+                      "width": "157",
+                      "height": "43",
+                      "params": "16",
+                      "style": "100",
+                      "name": "current_quest_txt",
+                      "caption": "${landing.view.quest.currenttask}",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "39",
+              "y": "45",
+              "width": "211",
+              "height": "17",
+              "params": "16",
+              "style": "0",
+              "name": "difficulty_container",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "100",
+                  "height": "18",
+                  "params": "17",
+                  "style": "0",
+                  "name": "easy_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "98",
+                      "height": "14",
+                      "params": "16",
+                      "style": "100",
+                      "name": "label_txt",
+                      "caption": "${landing.view.quest.easy}",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 9,
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "103",
+                  "y": "0",
+                  "width": "2",
+                  "height": "20",
+                  "params": "2128",
+                  "style": "0",
+                  "name": "divider",
+                  "blend": "0.8"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "landing_view_reception_horizontal",
+                  "stretched_x": false
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "112",
+                  "y": "0",
+                  "width": "99",
+                  "height": "18",
+                  "params": "17",
+                  "style": "0",
+                  "name": "hard_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "99",
+                      "height": "14",
+                      "params": "16",
+                      "style": "100",
+                      "name": "label_txt",
+                      "caption": "${landing.view.quest.hard}",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 9,
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 250,
+  "layoutHeight": 70
+}

@@ -1,0 +1,175 @@
+{
+  "name": "feed_entity",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\544_feed_entity.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "229",
+          "height": "172",
+          "params": "16528",
+          "style": "3",
+          "name": "item",
+          "color": "0x0f9f9f9"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "4",
+              "y": "5",
+              "width": "50",
+              "height": "60",
+              "params": "16",
+              "style": "0",
+              "name": "icon"
+            },
+            "children": [],
+            "vars": {
+              "handle_bitmap_disposing": false
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "50",
+              "y": "4",
+              "width": "178",
+              "height": "162",
+              "params": "8538256",
+              "style": "0",
+              "name": "content_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "170",
+                  "height": "28",
+                  "params": "8405136",
+                  "style": "3",
+                  "name": "title",
+                  "caption": "001_lorem_idflgkjdl%20fkgjdf%20gdf%20gdfd%F6%20lgk%F6lkfggd%20",
+                  "treshold": "0",
+                  "width_max": "170"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 17,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 80,
+                  "thickness": -15,
+                  "word_wrap": true
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "56",
+                  "width": "100",
+                  "height": "20",
+                  "params": "1168",
+                  "style": "0",
+                  "name": "time",
+                  "caption": "_time"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 9,
+                  "text_color": 10066329,
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 80,
+                  "thickness": -15
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "54",
+                  "width": "168",
+                  "height": "40",
+                  "params": "8388752",
+                  "style": "0",
+                  "name": "message",
+                  "caption": "_multiline message, whoop whoop whoop whoop whoop whoop dfgdfg dfgdfg dfgdf",
+                  "color": "0x00",
+                  "width_max": "170"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 17,
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 80,
+                  "thickness": -15,
+                  "word_wrap": true
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "97",
+                  "width": "178",
+                  "height": "40",
+                  "params": "8388624",
+                  "style": "0",
+                  "name": "decoration"
+                },
+                "children": [],
+                "vars": {
+                  "handle_bitmap_disposing": false
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "3",
+                  "y": "140",
+                  "width": "65",
+                  "height": "22",
+                  "params": "8536081",
+                  "style": "3",
+                  "name": "action_button",
+                  "caption": "_button"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 229,
+  "layoutHeight": 172
+}

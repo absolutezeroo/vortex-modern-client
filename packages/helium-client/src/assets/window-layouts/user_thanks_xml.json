@@ -1,0 +1,164 @@
+{
+  "name": "user_thanks_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2891__SafeCls_1665.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "282",
+          "height": "192",
+          "params": "32769",
+          "style": "100",
+          "name": "user_thanks",
+          "caption": "${guide.help.request.user.thanks.title}",
+          "width_min": "282",
+          "width_max": "282",
+          "height_min": "0"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "10",
+              "y": "0",
+              "width": "260",
+              "height": "107",
+              "params": "8536080",
+              "style": "0",
+              "width_min": "260",
+              "width_max": "260"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "234",
+                  "height": "17",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.help.request.user.thanks.info.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_heading_2",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "22",
+                  "width": "260",
+                  "height": "26",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.help.request.user.thanks.info.desc}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "margin_bottom": 10,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "53",
+                  "width": "260",
+                  "height": "1",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "-4",
+                      "width": "60",
+                      "height": "94",
+                      "params": "0",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "help_user_feedback",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "70",
+                  "y": "59",
+                  "width": "266",
+                  "height": "48",
+                  "params": "131089",
+                  "style": "101",
+                  "name": "close_button",
+                  "caption": "${guide.help.request.user.thanks.close.button}",
+                  "color": "0x0bbbbbb",
+                  "height_min": "48",
+                  "height_max": "48"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 5
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 40,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 282,
+  "layoutHeight": 192
+}

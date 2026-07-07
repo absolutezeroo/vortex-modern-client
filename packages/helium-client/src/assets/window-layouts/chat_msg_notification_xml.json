@@ -1,0 +1,72 @@
+{
+  "name": "chat_msg_notification_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2889_chat_msg_notification_xml$e703aadfb1ddf6f2da8ca1d6ea06313e2045524.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "260",
+          "height": "50",
+          "params": "147472",
+          "style": "102",
+          "name": "chat_msg_notification"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "50",
+              "height": "50",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "help_notification",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "50",
+              "y": "10",
+              "width": "210",
+              "height": "14",
+              "params": "16",
+              "style": "100",
+              "name": "content"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "margin_bottom": 10,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 260,
+  "layoutHeight": 50
+}

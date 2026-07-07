@@ -1,0 +1,53 @@
+{
+  "name": "element_link_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\94_element_link_xml$84c85cbc51e5bc33a4a5842290afe5d91864395482.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "252",
+          "height": "17",
+          "params": "17",
+          "style": "0",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "formatted_text",
+            "typeId": 15,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "64",
+              "height": "16",
+              "params": "16",
+              "style": "100",
+              "name": "link_txt",
+              "caption": "Link text ph",
+              "tags": "COLORABLE"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "underline": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 252,
+  "layoutHeight": 17
+}

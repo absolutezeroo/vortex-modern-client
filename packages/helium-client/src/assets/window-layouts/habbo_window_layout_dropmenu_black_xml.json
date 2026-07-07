@@ -1,0 +1,62 @@
+{
+  "name": "habbo_window_layout_dropmenu_black_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1893_dropmenu_black_xml$8c17c58ed9bda9f8b07bfd339ad227bb311358342.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_DROPLIST_TITLETEXT",
+          "x": "10",
+          "y": "4",
+          "width": "10",
+          "height": "14",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147483504"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "regular",
+          "text_color": 4294967295
+        }
+      },
+      {
+        "tag": "scrollable_itemlist_vertical",
+        "typeId": 56,
+        "attributes": {
+          "name": "_DROPLIST_ITEMLIST",
+          "x": "6",
+          "y": "2",
+          "width": "28",
+          "height": "18",
+          "tags": "_EXCLUDE, _INTERNAL, list",
+          "params": "131216"
+        },
+        "children": []
+      },
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "6",
+          "y": "2",
+          "width": "28",
+          "height": "18",
+          "name": "_DROPLIST_REGION",
+          "treshold": "0",
+          "tags": "_EXCLUDE, _INTERNAL",
+          "params": "-2147483503"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 40,
+  "layoutHeight": 22
+}

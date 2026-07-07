@@ -1,0 +1,45 @@
+{
+  "name": "progress_indicator_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2478_progress_indicator_xml$625349d565fb0b0ecc7ab19e4dec1a501865067101.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_horizontal",
+        "typeId": 51,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "8",
+          "height": "8",
+          "params": "147472",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "8",
+              "height": "8",
+              "params": "16",
+              "style": "0"
+            },
+            "children": []
+          }
+        ],
+        "vars": {
+          "spacing": 3
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 8,
+  "layoutHeight": 8
+}

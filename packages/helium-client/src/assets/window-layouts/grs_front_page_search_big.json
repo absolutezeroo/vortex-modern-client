@@ -1,0 +1,81 @@
+{
+  "name": "grs_front_page_search_big",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\573_grs_front_page_search_big.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "271",
+          "height": "42",
+          "params": "145",
+          "style": "0",
+          "name": "cont"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "262",
+              "height": "36",
+              "params": "144",
+              "style": "0",
+              "name": "button_area"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "44",
+                  "y": "10",
+                  "width": "179",
+                  "height": "12",
+                  "params": "3145744",
+                  "style": "0",
+                  "name": "caption",
+                  "caption": "Search Caption Placeholder"
+                },
+                "children": [],
+                "vars": {
+                  "font_face": "Volter",
+                  "font_size": 9,
+                  "text_color": 0,
+                  "embed_fonts": true,
+                  "mouse_wheel_enabled": true
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "6",
+                  "y": "2",
+                  "width": "32",
+                  "height": "32",
+                  "params": "16",
+                  "style": "0",
+                  "name": "icon"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

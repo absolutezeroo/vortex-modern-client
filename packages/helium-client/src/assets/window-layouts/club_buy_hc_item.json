@@ -1,0 +1,131 @@
+{
+  "name": "club_buy_hc_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\333_club_buy_info_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "151",
+          "height": "67",
+          "params": "16",
+          "style": "2",
+          "color": "0x09b9448"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "149",
+              "height": "65",
+              "params": "16",
+              "style": "2",
+              "color": "0x0ebeada"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "5",
+              "y": "5",
+              "width": "141",
+              "height": "25",
+              "params": "16",
+              "style": "2",
+              "color": "0x09b9448"
+            },
+            "children": [
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "20",
+                  "height": "20",
+                  "params": "16",
+                  "style": "11"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "-4",
+                  "y": "5",
+                  "width": "141",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "item_header",
+                  "caption": "catalog.club.item.header"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "9",
+              "y": "44",
+              "width": "101",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "item_price",
+              "caption": "catalog.club.price"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "-8",
+              "y": "38",
+              "width": "151",
+              "height": "22",
+              "params": "393233",
+              "style": "3",
+              "name": "item_buy",
+              "caption": "${catalog.club.button.buy}",
+              "width_min": "40"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 151,
+  "layoutHeight": 67
+}

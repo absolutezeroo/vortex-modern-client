@@ -1,0 +1,33 @@
+{
+  "name": "moving_object_floating",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\553_moving_object_floating.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "static_bitmap",
+        "typeId": 23,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "13",
+          "height": "25",
+          "params": "0",
+          "style": "0"
+        },
+        "children": [],
+        "vars": {
+          "stretched_x": false,
+          "stretched_y": false,
+          "fit_size_to_contents": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 13,
+  "layoutHeight": 25
+}

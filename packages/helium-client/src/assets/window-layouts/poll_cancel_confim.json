@@ -1,0 +1,141 @@
+{
+  "name": "poll_cancel_confim",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\695_poll_cancel_confim.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "221",
+          "height": "153",
+          "params": "32769",
+          "style": "3",
+          "name": "poll_confirm_cancel_frame",
+          "caption": "${poll_cancel_confirm_title}",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "13",
+              "width": "198",
+              "height": "13",
+              "params": "144",
+              "style": "0",
+              "caption": "${poll_cancel_confirm_short}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "font_face": "Volter Bold",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "32",
+              "width": "199",
+              "height": "13",
+              "params": "2192",
+              "style": "0",
+              "caption": "${poll_cancel_confirm_long}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "4",
+              "y": "94",
+              "width": "201",
+              "height": "22",
+              "params": "1232",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "48",
+                  "y": "0",
+                  "width": "51",
+                  "height": "22",
+                  "params": "393233",
+                  "style": "0",
+                  "name": "poll_cancel_confirm_button_cancel",
+                  "caption": "${cancel}"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "121",
+                  "y": "0",
+                  "width": "33",
+                  "height": "22",
+                  "params": "131089",
+                  "style": "0",
+                  "name": "poll_cancel_confirm_button_ok",
+                  "caption": "${ok}"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 221,
+  "layoutHeight": 153
+}

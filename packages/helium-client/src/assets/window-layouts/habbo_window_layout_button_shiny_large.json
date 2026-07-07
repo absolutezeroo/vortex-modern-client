@@ -1,0 +1,39 @@
+{
+  "name": "habbo_window_layout_button_shiny_large",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\480_habbo_window_layout_button_shiny_large.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_BTN_TEXT",
+          "style": "2",
+          "x": "0",
+          "y": "0",
+          "width": "20",
+          "height": "28",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147480368"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "button_shiny_bold",
+          "margins": {
+            "left": 10,
+            "top": 5,
+            "right": 10,
+            "bottom": 6
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 28
+}

@@ -1,0 +1,362 @@
+{
+  "name": "inventory_trading_name_scam_warning_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1310_inventory_trading_name_scam_warning_xml$cee117885879b079f1568ba0233a7bee835820477.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "14",
+          "y": "12",
+          "width": "356",
+          "height": "333",
+          "params": "32769",
+          "style": "3",
+          "name": "inventory_trading_name_scam_warning_frame",
+          "caption": "${inventory.trading.namescam.title}",
+          "color": "0xffd43d59",
+          "width_min": "356",
+          "width_max": "356"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "10",
+              "y": "8",
+              "width": "330",
+              "height": "280",
+              "params": "8388752",
+              "style": "3",
+              "name": "content_list"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "330",
+                  "height": "44",
+                  "params": "144",
+                  "style": "3",
+                  "name": "warning_text",
+                  "caption": "${inventory.trading.namescam.warning}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "52",
+                  "width": "330",
+                  "height": "58",
+                  "params": "144",
+                  "style": "4",
+                  "name": "trader_section",
+                  "color": "0x0f1f1f1"
+                },
+                "children": [
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "-10",
+                      "y": "-24",
+                      "width": "90",
+                      "height": "130",
+                      "params": "16",
+                      "style": "0",
+                      "name": "trader_avatar"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "avatar_image",
+                      "avatar_image:only_head": true
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "63",
+                      "y": "11",
+                      "width": "72",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "trader_label",
+                      "caption": "${inventory.trading.namescam.trader}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 5592405,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "63",
+                      "y": "29",
+                      "width": "44",
+                      "height": "18",
+                      "params": "16",
+                      "style": "3",
+                      "name": "trader_name_text",
+                      "caption": "Habbo"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 19,
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "224",
+                      "y": "16",
+                      "width": "90",
+                      "height": "26",
+                      "params": "393297",
+                      "style": "3",
+                      "name": "open_profile_button",
+                      "caption": "${inventory.trading.namescam.open_profile}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "118",
+                  "width": "330",
+                  "height": "58",
+                  "params": "144",
+                  "style": "3",
+                  "name": "room_matches_section"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "138",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "room_matches_header",
+                      "caption": "${inventory.trading.namescam.similar_in_room}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "20",
+                      "width": "330",
+                      "height": "38",
+                      "params": "144",
+                      "style": "3",
+                      "name": "room_matches_text",
+                      "caption": "User 1"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "184",
+                  "width": "330",
+                  "height": "58",
+                  "params": "144",
+                  "style": "3",
+                  "name": "friend_matches_section"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "172",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "friend_matches_header",
+                      "caption": "${inventory.trading.namescam.similar_in_friends}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "20",
+                      "width": "330",
+                      "height": "38",
+                      "params": "144",
+                      "style": "3",
+                      "name": "friend_matches_text",
+                      "caption": "Friend 1"
+                    },
+                    "children": [],
+                    "vars": {
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "129",
+                  "y": "250",
+                  "width": "73",
+                  "height": "30",
+                  "params": "786640",
+                  "style": "3",
+                  "name": "button_container"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "50",
+                      "height": "26",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "close_button",
+                      "caption": "${inventory.trading.namescam.close}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "57",
+                      "y": "4",
+                      "width": "16",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "close_countdown_text",
+                      "caption": "3s"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 5592405,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 7,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 8,
+              "resize_on_item_update": true
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 356,
+  "layoutHeight": 333
+}

@@ -1,0 +1,421 @@
+{
+  "name": "old_layout_pets",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\351_ctlg_pets.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "16",
+          "style": "0",
+          "name": "ctlg_pets"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "75",
+              "width": "359",
+              "height": "377",
+              "params": "16",
+              "style": "0",
+              "name": "petsWidget",
+              "color": "0x0eeeeee"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "30",
+                  "width": "360",
+                  "height": "127",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ctlg_teaserimg_1"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "270",
+                  "width": "62",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_1",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "135",
+                  "width": "62",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_2",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "226",
+                  "width": "62",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_3",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "dropmenu",
+                "typeId": 102,
+                "attributes": {
+                  "x": "10",
+                  "y": "244",
+                  "width": "340",
+                  "height": "25",
+                  "params": "17",
+                  "style": "3",
+                  "name": "type_drop_menu"
+                },
+                "children": []
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "288",
+                  "width": "340",
+                  "height": "25",
+                  "params": "16",
+                  "style": "4",
+                  "color": "0x0cccccc",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "4",
+                      "y": "4",
+                      "width": "325",
+                      "height": "17",
+                      "params": "1",
+                      "style": "3",
+                      "name": "name_input_text",
+                      "caption": "input"
+                    },
+                    "children": [],
+                    "vars": {
+                      "always_show_selection": true,
+                      "mouse_wheel_enabled": false,
+                      "max_chars": 15,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "7",
+                  "y": "152",
+                  "width": "347",
+                  "height": "73",
+                  "params": "16",
+                  "style": "0",
+                  "name": "colourGridWidget"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "345",
+                  "width": "360",
+                  "height": "30",
+                  "params": "16",
+                  "style": "0",
+                  "name": "purchaseWidget"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "30",
+                  "y": "85",
+                  "width": "40",
+                  "height": "40",
+                  "params": "16",
+                  "style": "0",
+                  "name": "addOnBadgeViewWidget"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "75",
+              "width": "359",
+              "height": "375",
+              "params": "16",
+              "style": "0",
+              "name": "newPetsWidget",
+              "color": "0x0eeeeee"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "30",
+                  "width": "360",
+                  "height": "127",
+                  "params": "16",
+                  "style": "0",
+                  "name": "ctlg_teaserimg_1"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "136",
+                  "width": "340",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "pet_breed_text",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "12",
+                  "y": "156",
+                  "width": "340",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_3",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "173",
+                  "width": "350",
+                  "height": "70",
+                  "params": "16",
+                  "style": "0",
+                  "name": "colourGridWidget"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "12",
+                  "y": "253",
+                  "width": "339",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_text_2",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "275",
+                  "width": "340",
+                  "height": "25",
+                  "params": "16",
+                  "style": "4",
+                  "color": "0x0cccccc",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "input",
+                    "typeId": 77,
+                    "attributes": {
+                      "x": "4",
+                      "y": "4",
+                      "width": "325",
+                      "height": "17",
+                      "params": "1",
+                      "style": "3",
+                      "name": "name_input_text",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "always_show_selection": true,
+                      "mouse_wheel_enabled": false,
+                      "max_chars": 16,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "345",
+                  "width": "360",
+                  "height": "30",
+                  "params": "16",
+                  "style": "0",
+                  "name": "purchaseWidget"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "30",
+                  "y": "85",
+                  "width": "40",
+                  "height": "40",
+                  "params": "16",
+                  "style": "0",
+                  "name": "addOnBadgeViewWidget"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "267",
+              "y": "426",
+              "width": "78",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "ctlg_price_1",
+              "caption": "0",
+              "visible": "false"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "right",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

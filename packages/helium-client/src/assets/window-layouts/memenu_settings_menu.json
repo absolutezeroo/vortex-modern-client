@@ -1,0 +1,148 @@
+{
+  "name": "memenu_settings_menu",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1079_memenu_settings_menu_xml$4b32f53affd5db46f9450b315a7cafe91551003071.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "170",
+          "height": "135",
+          "params": "16",
+          "style": "0",
+          "name": "dance_container"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "13",
+              "y": "5",
+              "width": "144",
+              "height": "13",
+              "params": "786640",
+              "style": "0",
+              "name": "settings_title",
+              "caption": "${widget.memenu.settings}",
+              "width_max": "150"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_face": "Volter Bold",
+              "text_color": 16777215,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "5",
+              "y": "22",
+              "width": "160",
+              "height": "1",
+              "params": "16",
+              "style": "0",
+              "name": "line",
+              "color": "0xffff2f2f2f",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "5",
+              "y": "55",
+              "width": "160",
+              "height": "22",
+              "params": "131089",
+              "style": "1",
+              "name": "character_settings",
+              "caption": "${widget.memenu.settings.character}",
+              "width_min": "160",
+              "width_max": "160"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "5",
+              "y": "30",
+              "width": "160",
+              "height": "22",
+              "params": "131089",
+              "style": "1",
+              "name": "sound_settings",
+              "caption": "${widget.memenu.settings.audio}",
+              "width_min": "160",
+              "width_max": "160"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "6",
+              "y": "81",
+              "width": "159",
+              "height": "20",
+              "params": "16",
+              "style": "0",
+              "name": "identity_text",
+              "caption": "${widget.memenu.settings.no_identity}"
+            },
+            "children": [],
+            "vars": {
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "5",
+              "y": "106",
+              "width": "60",
+              "height": "22",
+              "params": "131089",
+              "style": "1",
+              "name": "back",
+              "caption": "${generic.back}",
+              "width_min": "60",
+              "width_max": "60"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 170,
+  "layoutHeight": 135
+}

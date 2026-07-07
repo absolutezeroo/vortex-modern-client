@@ -1,0 +1,50 @@
+{
+  "name": "room_tools_history_item_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\932__SafeCls_1393.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "169",
+          "height": "24",
+          "params": "1",
+          "style": "3",
+          "dynamic_style": "brightness_and_shadow_under",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "145",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "room_name",
+              "caption": "the greatest room on earth",
+              "tags": "#icon"
+            },
+            "children": [],
+            "vars": {
+              "text_color": 16777215
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 169,
+  "layoutHeight": 24
+}

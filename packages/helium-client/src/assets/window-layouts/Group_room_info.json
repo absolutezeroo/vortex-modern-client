@@ -1,0 +1,268 @@
+{
+  "name": "Group_room_info",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\117_Group_room_info.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "195",
+          "height": "119",
+          "params": "80",
+          "style": "0",
+          "color": "0x00"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "119",
+              "params": "0",
+              "style": "0",
+              "name": "bg_expanded"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}guilds/group_bg.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "25",
+              "params": "0",
+              "style": "0",
+              "name": "bg_contracted"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}Events/event_bg_contracted.png"
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "25",
+              "params": "145",
+              "style": "0",
+              "name": "title_region",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "28",
+              "width": "195",
+              "height": "47",
+              "params": "145",
+              "style": "0",
+              "name": "info_region",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "119",
+              "params": "0",
+              "style": "0",
+              "name": "content_cont",
+              "color": "0x00",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "15",
+                  "y": "2",
+                  "width": "156",
+                  "height": "18",
+                  "params": "786448",
+                  "style": "0",
+                  "name": "header_txt",
+                  "caption": "${group.homeroominfo.title}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 19,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": -0.4,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "59",
+                  "y": "27",
+                  "width": "125",
+                  "height": "50",
+                  "params": "16",
+                  "style": "0",
+                  "name": "group_name_txt",
+                  "caption": "Search around hotel and locate this very valuable dino egg jhg jhg jhg jh gjhg jhg jhg jhg jh gjhg jhg jhg jhg jhg jhgjhgjh gjhg jh gjhg jh gjhg jhg jhg jhg jhg jhg"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 19,
+                  "text_color": 16777215,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "5",
+                  "y": "3",
+                  "width": "21",
+                  "height": "16",
+                  "params": "16",
+                  "style": "0",
+                  "name": "group_base_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}guilds/group_base_icon.png"
+                }
+              },
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "12",
+                  "y": "32",
+                  "width": "39",
+                  "height": "39",
+                  "params": "16",
+                  "style": "0",
+                  "name": "group_logo"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "badge_image",
+                  "badge_image:type": "group",
+                  "badge_image:pivot_point": "center",
+                  "badge_image:stretched_x": false,
+                  "badge_image:stretched_y": false
+                }
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "10",
+                  "y": "79",
+                  "width": "175",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "join_button",
+                  "caption": "${group.join}",
+                  "width_min": "175",
+                  "width_max": "175"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "10",
+                  "y": "79",
+                  "width": "175",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "request_membership_button",
+                  "caption": "${group.requestmembership}",
+                  "width_min": "175",
+                  "width_max": "175"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "10",
+                  "y": "79",
+                  "width": "175",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "manage_button",
+                  "caption": "${group.manage}",
+                  "width_min": "175",
+                  "width_max": "175"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "5",
+                  "y": "2",
+                  "width": "16",
+                  "height": "19",
+                  "params": "16",
+                  "style": "0",
+                  "name": "group_icon"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 195,
+  "layoutHeight": 119
+}

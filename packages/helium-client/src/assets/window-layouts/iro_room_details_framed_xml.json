@@ -1,0 +1,974 @@
+{
+  "name": "iro_room_details_framed_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2999__SafeCls_1062.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "236",
+          "height": "411",
+          "params": "32769",
+          "style": "3",
+          "name": "event_window",
+          "caption": "${navigator.roomsettings.roominfo}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "230",
+              "height": "79",
+              "params": "16",
+              "style": "0",
+              "name": "embed_info",
+              "visible": "false",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "11",
+                  "y": "5",
+                  "width": "17",
+                  "height": "15",
+                  "params": "16",
+                  "style": "0",
+                  "name": "icon_weblink"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "29",
+                  "y": "3",
+                  "width": "143",
+                  "height": "17",
+                  "params": "16",
+                  "style": "1",
+                  "caption": "${navigator.embed.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "9",
+                  "y": "20",
+                  "width": "216",
+                  "height": "38",
+                  "params": "16",
+                  "style": "0",
+                  "name": "embed_info_txt",
+                  "caption": "${navigator.embed.info}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "input",
+                "typeId": 77,
+                "attributes": {
+                  "x": "11",
+                  "y": "57",
+                  "width": "208",
+                  "height": "15",
+                  "params": "1",
+                  "style": "0",
+                  "name": "embed_src_txt",
+                  "background": "true"
+                },
+                "children": [],
+                "vars": {
+                  "always_show_selection": true,
+                  "border": true,
+                  "text_style": "u_regular",
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "230",
+                  "height": "79",
+                  "params": "17",
+                  "style": "0",
+                  "name": "embed_info_region",
+                  "treshold": "0"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "230",
+              "height": "100",
+              "params": "17",
+              "style": "0",
+              "name": "public_space_details",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "3",
+                  "width": "220",
+                  "height": "37",
+                  "params": "17",
+                  "style": "1",
+                  "name": "public_space_name",
+                  "caption": "Public space name placeholder Diipa Daapa Zaapa"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "31",
+                  "width": "220",
+                  "height": "53",
+                  "params": "16",
+                  "style": "0",
+                  "name": "public_space_desc",
+                  "caption": "PH Room Desc: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "230",
+              "height": "256",
+              "params": "16",
+              "style": "0",
+              "name": "room_details"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "163",
+                  "y": "1",
+                  "width": "18",
+                  "height": "22",
+                  "params": "81",
+                  "style": "0",
+                  "name": "remove_rights_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "18",
+                      "height": "22",
+                      "params": "16",
+                      "style": "0",
+                      "name": "remove_rights"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${navigator.roominfo.removerights.tooltip}"
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "185",
+                  "y": "1",
+                  "width": "18",
+                  "height": "16",
+                  "params": "81",
+                  "style": "0",
+                  "name": "make_home_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "18",
+                      "height": "16",
+                      "params": "16",
+                      "style": "0",
+                      "name": "make_home"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${navigator.roominfo.makehome.tooltip}"
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "185",
+                  "y": "1",
+                  "width": "18",
+                  "height": "18",
+                  "params": "16",
+                  "style": "0",
+                  "name": "home",
+                  "visible": "false"
+                },
+                "children": []
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "206",
+                  "y": "1",
+                  "width": "18",
+                  "height": "16",
+                  "params": "81",
+                  "style": "0",
+                  "name": "favourite_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "18",
+                      "height": "16",
+                      "params": "16",
+                      "style": "0",
+                      "name": "favourite"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${navigator.favourite.tooltip}"
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "206",
+                  "y": "1",
+                  "width": "18",
+                  "height": "16",
+                  "params": "81",
+                  "style": "0",
+                  "name": "make_favourite_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "18",
+                      "height": "16",
+                      "params": "16",
+                      "style": "0",
+                      "name": "make_favourite"
+                    },
+                    "children": []
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${navigator.makefavourite.tooltip}"
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "3",
+                  "width": "153",
+                  "height": "31",
+                  "params": "17",
+                  "style": "1",
+                  "name": "room_name",
+                  "caption": "Room name placeholder. Diipa daapi dipaa."
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "34",
+                  "width": "230",
+                  "height": "16",
+                  "params": "17",
+                  "style": "1",
+                  "name": "owner_name_cont",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "0",
+                      "width": "168",
+                      "height": "17",
+                      "params": "16",
+                      "style": "1",
+                      "name": "owner_caption",
+                      "caption": "${navigator.roomownercaption}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 7829367,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "50",
+                      "y": "0",
+                      "width": "15",
+                      "height": "15",
+                      "params": "16",
+                      "style": "0",
+                      "name": "user_info_region",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "0",
+                          "y": "4",
+                          "width": "15",
+                          "height": "11",
+                          "params": "16",
+                          "style": "21",
+                          "name": "icon_eye_off"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "icon",
+                        "typeId": 1,
+                        "attributes": {
+                          "x": "0",
+                          "y": "4",
+                          "width": "15",
+                          "height": "11",
+                          "params": "16",
+                          "style": "22",
+                          "name": "icon_eye_over"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "67",
+                      "y": "0",
+                      "width": "97",
+                      "height": "17",
+                      "params": "16",
+                      "style": "0",
+                      "name": "owner_name",
+                      "caption": "PH Owner Name"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_regular",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "tool_tip_caption": "${infostand.profile.link.tooltip}",
+                  "tool_tip_delay": 256
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "37",
+                  "width": "220",
+                  "height": "100",
+                  "params": "17",
+                  "style": "1",
+                  "name": "tags"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "5",
+                  "y": "52",
+                  "width": "220",
+                  "height": "82",
+                  "params": "16",
+                  "style": "0",
+                  "name": "room_desc",
+                  "caption": "PH Room Desc: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_regular",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "110",
+                  "width": "220",
+                  "height": "16",
+                  "params": "17",
+                  "style": "1",
+                  "name": "rating_cont"
+                },
+                "children": [
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "18",
+                      "height": "16",
+                      "params": "81",
+                      "style": "0",
+                      "name": "rating_region",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "18",
+                          "height": "16",
+                          "params": "16",
+                          "style": "0",
+                          "name": "thumb_up"
+                        },
+                        "children": []
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${navigator.rateroom}"
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "124",
+                      "height": "17",
+                      "params": "16",
+                      "style": "0",
+                      "name": "rating_caption",
+                      "caption": "${navigator.roomrating}",
+                      "color": "0x00"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 7829367,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "70",
+                      "y": "0",
+                      "width": "43",
+                      "height": "17",
+                      "params": "16",
+                      "style": "0",
+                      "name": "rating_txt",
+                      "caption": "PH 123"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_regular",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "125",
+                  "width": "220",
+                  "height": "16",
+                  "params": "17",
+                  "style": "1",
+                  "name": "ranking_cont"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "134",
+                      "height": "17",
+                      "params": "16",
+                      "style": "0",
+                      "name": "ranking_caption",
+                      "caption": "${navigator.roomranking}",
+                      "color": "0x00"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 7829367,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "70",
+                      "y": "0",
+                      "width": "43",
+                      "height": "17",
+                      "params": "16",
+                      "style": "0",
+                      "name": "ranking_txt",
+                      "caption": "PH 123"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_regular",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "185",
+                  "width": "220",
+                  "height": "10",
+                  "params": "16",
+                  "style": "1",
+                  "name": "padding_cont"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "1",
+                  "y": "140",
+                  "width": "227",
+                  "height": "114",
+                  "params": "16",
+                  "style": "3",
+                  "name": "thumbnail_container"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "57",
+                      "y": "1",
+                      "width": "112",
+                      "height": "112",
+                      "params": "16",
+                      "style": "3",
+                      "name": "thumbnail_edges",
+                      "color": "0xffff000000",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "1",
+                          "y": "1",
+                          "width": "110",
+                          "height": "110",
+                          "params": "16",
+                          "style": "3",
+                          "name": "thumbnail_image"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "newnavigator_default_room",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "144",
+                      "y": "89",
+                      "width": "24",
+                      "height": "26",
+                      "params": "17",
+                      "style": "3",
+                      "name": "add_thumbnail_region",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "26",
+                          "height": "26",
+                          "params": "16",
+                          "style": "3"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "roomtools_camera",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "tool_tip_caption": "${tooltip.navigator.room.info.add.thumbnail}"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "5",
+              "y": "261",
+              "width": "220",
+              "height": "29",
+              "params": "16",
+              "style": "0",
+              "name": "buttons_cont"
+            },
+            "children": [
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "220",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "room_settings_button",
+                  "caption": "${navigator.roomsettings}",
+                  "width_min": "220",
+                  "width_max": "220"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "220",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "room_filter_button",
+                  "caption": "${navigator.roomsettings.roomfilter}",
+                  "width_min": "220",
+                  "width_max": "220"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "220",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "staff_pick_button",
+                  "caption": "filledByTheServer",
+                  "width_min": "220",
+                  "width_max": "220"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "220",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "floor_plan_editor_button",
+                  "caption": "${open.floor.plan.editor}",
+                  "width_min": "220",
+                  "width_max": "220"
+                },
+                "children": []
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "218",
+                  "height": "55",
+                  "params": "1",
+                  "style": "100",
+                  "name": "room_report_button"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "11",
+                      "y": "16",
+                      "width": "39",
+                      "height": "25",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "icons_panic",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "47",
+                      "y": "17",
+                      "width": "7",
+                      "height": "20",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "illumina_light_border_center_left",
+                      "pivot_point": "center",
+                      "stretched_x": false
+                    }
+                  },
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "56",
+                      "y": "18",
+                      "width": "151",
+                      "height": "24",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${create.room.report}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "il_heading_1",
+                      "margin_right": 20,
+                      "margin_bottom": 5
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "48",
+                  "width": "220",
+                  "height": "29",
+                  "params": "131089",
+                  "style": "3",
+                  "name": "room_muteall_button",
+                  "caption": "${navigator.muteall}",
+                  "width_min": "220",
+                  "width_max": "220"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 236,
+  "layoutHeight": 411
+}

@@ -1,0 +1,200 @@
+{
+  "name": "wordquiz_question_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1046__SafeCls_1350.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "130",
+          "params": "147456",
+          "style": "7"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "130",
+              "params": "131088",
+              "style": "2",
+              "name": "window_bg",
+              "color": "0x00",
+              "blend": "0.8"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "79",
+                  "y": "3",
+                  "width": "203",
+                  "height": "70",
+                  "params": "4341968",
+                  "style": "0",
+                  "name": "ui_container2"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "2",
+                      "width": "203",
+                      "height": "68",
+                      "params": "8260816",
+                      "style": "3",
+                      "name": "quiz_topic",
+                      "caption": "1jjjjjjlllll",
+                      "width_max": "660",
+                      "height_max": "68"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 40,
+                      "text_style": "ubuntu_condensed_regular",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "max_lines": 2,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "94",
+                  "y": "74",
+                  "width": "172",
+                  "height": "50",
+                  "params": "192",
+                  "style": "0",
+                  "name": "ui_container"
+                },
+                "children": [
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "50",
+                      "height": "50",
+                      "params": "17",
+                      "style": "3",
+                      "name": "button_dislike",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "50",
+                          "height": "50",
+                          "params": "16",
+                          "style": "3",
+                          "name": "border",
+                          "color": "0x0b32e22"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "9",
+                              "y": "11",
+                              "width": "31",
+                              "height": "34",
+                              "params": "18",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "word_quiz_thum_down_big"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "121",
+                      "y": "0",
+                      "width": "50",
+                      "height": "50",
+                      "params": "17",
+                      "style": "3",
+                      "name": "button_like",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "50",
+                          "height": "50",
+                          "params": "16",
+                          "style": "3",
+                          "name": "border",
+                          "color": "0x07841"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "9",
+                              "y": "7",
+                              "width": "31",
+                              "height": "34",
+                              "params": "18",
+                              "style": "3"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "word_quiz_thum_up_big"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 130
+}

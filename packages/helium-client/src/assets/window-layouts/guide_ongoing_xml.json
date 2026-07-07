@@ -1,0 +1,262 @@
+{
+  "name": "guide_ongoing_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2914__SafeCls_772.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "282",
+          "height": "340",
+          "params": "98305",
+          "style": "100",
+          "name": "guide_ongoing",
+          "caption": "Helping out",
+          "width_min": "282",
+          "width_max": "282",
+          "height_min": "320"
+        },
+        "children": [
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "10",
+              "y": "0",
+              "width": "258",
+              "height": "30",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "120",
+                  "height": "30",
+                  "params": "131089",
+                  "style": "102",
+                  "name": "visit_button",
+                  "caption": "${guide.help.request.guide.ongoing.visit.button}",
+                  "width_max": "120",
+                  "height_min": "30",
+                  "height_max": "30"
+                },
+                "children": [],
+                "vars": {
+                  "tool_tip_caption": "${guide.help.request.guide.ongoing.visit.button.tooltip}",
+                  "tool_tip_delay": 256
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "125",
+                  "y": "0",
+                  "width": "120",
+                  "height": "30",
+                  "params": "131089",
+                  "style": "102",
+                  "name": "invite_button",
+                  "caption": "${guide.help.request.guide.ongoing.invite.button}",
+                  "width_max": "120",
+                  "height_min": "30",
+                  "height_max": "30"
+                },
+                "children": [],
+                "vars": {
+                  "tool_tip_caption": "${guide.help.request.guide.ongoing.invite.button.tooltip}",
+                  "tool_tip_delay": 256
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 5
+            }
+          },
+          {
+            "tag": "link",
+            "typeId": 14,
+            "attributes": {
+              "x": "170",
+              "y": "15",
+              "width": "90",
+              "height": "16",
+              "params": "1",
+              "style": "100",
+              "name": "report_link",
+              "caption": "${guide.help.common.report.link}",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "right",
+              "mouse_wheel_enabled": false,
+              "underline": true,
+              "spacing": 0,
+              "leading": 0,
+              "tool_tip_caption": "${guide.help.common.report.link.tooltip}",
+              "tool_tip_delay": 256
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "37",
+              "width": "280",
+              "height": "2",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "illumina_horizontal_separator",
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "scrollable_itemlist_vertical",
+            "typeId": 56,
+            "attributes": {
+              "x": "5",
+              "y": "38",
+              "width": "270",
+              "height": "184",
+              "params": "2064",
+              "style": "100",
+              "name": "chat_list"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "140",
+                  "height": "21",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.help.common.typing}"
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 5592405,
+                  "margin_top": 3,
+                  "margin_bottom": 2
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "221",
+              "width": "280",
+              "height": "75",
+              "params": "1040",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "280",
+                  "height": "2",
+                  "params": "147472",
+                  "style": "100",
+                  "width_min": "280",
+                  "width_max": "280"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "illumina_horizontal_separator",
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "widget",
+                "typeId": 16,
+                "attributes": {
+                  "x": "10",
+                  "y": "15",
+                  "width": "260",
+                  "height": "30",
+                  "params": "16",
+                  "style": "100",
+                  "name": "input_widget"
+                },
+                "children": [],
+                "vars": {
+                  "widget_type": "illumina_input",
+                  "illumina_input:empty_message": "Click here to chat"
+                }
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "10",
+                  "y": "53",
+                  "width": "260",
+                  "height": "16",
+                  "params": "1",
+                  "style": "100",
+                  "name": "close_link",
+                  "caption": "${guide.help.request.guide.ongoing.close.link}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 35,
+          "margin_right": 1,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 282,
+  "layoutHeight": 340
+}

@@ -1,0 +1,62 @@
+{
+  "name": "illumina_border",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\475_illumina_border.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "30",
+          "height": "30",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "30",
+              "height": "30",
+              "params": "16",
+              "style": "0",
+              "name": "canvas"
+            },
+            "children": [],
+            "vars": {
+              "handle_bitmap_disposing": false,
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "30",
+              "height": "30",
+              "params": "16",
+              "style": "0",
+              "name": "children"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 30,
+  "layoutHeight": 30
+}

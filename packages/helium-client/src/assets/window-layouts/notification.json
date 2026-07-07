@@ -1,0 +1,90 @@
+{
+  "name": "notification",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\547_notification.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "190",
+          "height": "66",
+          "params": "131073",
+          "style": "1",
+          "tags": "border"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "8",
+              "y": "8",
+              "width": "50",
+              "height": "50",
+              "params": "3088",
+              "style": "0",
+              "tags": "notification_icon"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "66",
+              "y": "8",
+              "width": "116",
+              "height": "50",
+              "params": "16",
+              "style": "0",
+              "tags": "notification_text",
+              "height_min": "22"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Volter Bold",
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "8",
+              "y": "8",
+              "width": "50",
+              "height": "50",
+              "params": "3088",
+              "style": "0",
+              "tags": "notification_icon_static"
+            },
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 190,
+  "layoutHeight": 66
+}

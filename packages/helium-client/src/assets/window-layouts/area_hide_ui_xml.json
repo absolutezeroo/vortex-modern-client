@@ -1,0 +1,531 @@
+{
+  "name": "area_hide_ui_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\988_area_hide_ui_xml$008a7df91838c7129294a31a61f29cc41971383989.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "292",
+          "height": "334",
+          "params": "163841",
+          "style": "3",
+          "name": "areahide_ui",
+          "caption": "${widget.areahide.title}",
+          "color": "0xff67a3bf",
+          "height_min": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "3",
+              "y": "16",
+              "width": "275",
+              "height": "250",
+              "params": "16",
+              "style": "100",
+              "color": "0xffffffffff",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "2",
+                  "y": "2",
+                  "width": "270",
+                  "height": "250",
+                  "params": "16",
+                  "style": "0",
+                  "name": "tab_content"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "270",
+                      "height": "0",
+                      "params": "16",
+                      "style": "100",
+                      "name": "header_container",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "4",
+                          "y": "4",
+                          "width": "262",
+                          "height": "31",
+                          "params": "16",
+                          "style": "0",
+                          "name": "hidearea_info",
+                          "caption": "${widget.areahide.info}",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "30",
+                      "height": "5",
+                      "params": "16",
+                      "style": "100",
+                      "name": "spacer"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "4",
+                      "y": "5",
+                      "width": "260",
+                      "height": "98",
+                      "params": "16",
+                      "style": "0",
+                      "name": "area_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "158",
+                          "height": "15",
+                          "params": "16",
+                          "style": "100",
+                          "name": "areaselection_title",
+                          "caption": "${widget.areahide.area_selection}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "20",
+                          "width": "262",
+                          "height": "40",
+                          "params": "16",
+                          "style": "0",
+                          "name": "areaselection_info",
+                          "caption": "${widget.areahide.area_selection.info}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "66",
+                          "width": "260",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "name": "button_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "211",
+                              "height": "24",
+                              "params": "131089",
+                              "style": "0",
+                              "name": "select_button",
+                              "caption": "${widget.areahide.area_selection.select}"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "223",
+                              "y": "0",
+                              "width": "205",
+                              "height": "24",
+                              "params": "131089",
+                              "style": "0",
+                              "name": "clear_button",
+                              "caption": "${widget.areahide.area_selection.clear}"
+                            },
+                            "children": []
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 12
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "4",
+                      "y": "103",
+                      "width": "262",
+                      "height": "143",
+                      "params": "16",
+                      "style": "0",
+                      "name": "saturation_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "123",
+                          "height": "15",
+                          "params": "16",
+                          "style": "100",
+                          "name": "options_title",
+                          "caption": "${widget.areahide.options}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "u_small",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "20",
+                          "width": "262",
+                          "height": "123",
+                          "params": "16",
+                          "style": "3",
+                          "name": "options_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "262",
+                              "height": "55",
+                              "params": "16",
+                              "style": "3",
+                              "name": "wallitem_option"
+                            },
+                            "children": [
+                              {
+                                "tag": "checkbox",
+                                "typeId": 70,
+                                "attributes": {
+                                  "x": "1",
+                                  "y": "0",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "17",
+                                  "style": "0",
+                                  "name": "wallitems_checkbox"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "0",
+                                  "width": "240",
+                                  "height": "15",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "wallitems_txt",
+                                  "caption": "${widget.areahide.options.wallitems}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "u_small",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "20",
+                              "width": "262",
+                              "height": "43",
+                              "params": "16",
+                              "style": "3",
+                              "name": "invert_option"
+                            },
+                            "children": [
+                              {
+                                "tag": "checkbox",
+                                "typeId": 70,
+                                "attributes": {
+                                  "x": "1",
+                                  "y": "0",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "17",
+                                  "style": "0",
+                                  "name": "invert_checkbox"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "0",
+                                  "width": "240",
+                                  "height": "15",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "invert_txt",
+                                  "caption": "${widget.areahide.options.invert}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "u_small",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "16",
+                                  "width": "242",
+                                  "height": "30",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "invert_info",
+                                  "caption": "${widget.areahide.options.invert.info}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_color": 10066329,
+                                  "text_style": "u_small",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "68",
+                              "width": "262",
+                              "height": "55",
+                              "params": "16",
+                              "style": "3",
+                              "name": "invisibility_option"
+                            },
+                            "children": [
+                              {
+                                "tag": "checkbox",
+                                "typeId": 70,
+                                "attributes": {
+                                  "x": "1",
+                                  "y": "0",
+                                  "width": "18",
+                                  "height": "18",
+                                  "params": "17",
+                                  "style": "0",
+                                  "name": "invisiblity_checkbox"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "0",
+                                  "width": "240",
+                                  "height": "15",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "invisibility_txt",
+                                  "caption": "${widget.areahide.options.invisibility}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "u_small",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "16",
+                                  "width": "242",
+                                  "height": "40",
+                                  "params": "16",
+                                  "style": "0",
+                                  "name": "invisibility_info",
+                                  "caption": "${widget.areahide.options.invisibility.info}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_color": 10066329,
+                                  "text_style": "u_small",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "4",
+              "y": "272",
+              "width": "165",
+              "height": "24",
+              "params": "131089",
+              "style": "0",
+              "name": "apply_button",
+              "caption": "${widget.areahide.button.apply}"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "126",
+              "y": "272",
+              "width": "151",
+              "height": "24",
+              "params": "393233",
+              "style": "0",
+              "name": "on_off_button",
+              "caption": "${widget.areahide.button.on}"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 292,
+  "layoutHeight": 334
+}

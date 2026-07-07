@@ -1,0 +1,132 @@
+{
+  "name": "layout_club_gifts",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\307_ctlg_presents.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "460",
+          "params": "2064",
+          "style": "0",
+          "name": "ctlg_presents"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "360",
+              "height": "460",
+              "params": "2064",
+              "style": "0",
+              "name": "clubGiftWidget",
+              "tags": "EMBEDDED"
+            },
+            "children": [
+              {
+                "tag": "scrollable_itemlist_vertical",
+                "typeId": 56,
+                "attributes": {
+                  "x": "0",
+                  "y": "35",
+                  "width": "360",
+                  "height": "409",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "gift_list"
+                },
+                "children": [],
+                "vars": {
+                  "spacing": 1
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "360",
+                  "height": "35",
+                  "params": "16",
+                  "style": "3",
+                  "name": "info_text",
+                  "caption": "lorem ipsum"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "u_italic",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "445",
+                  "width": "360",
+                  "height": "15",
+                  "params": "1040",
+                  "style": "3",
+                  "name": "past_club_days",
+                  "caption": "lorem ipsum"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "30",
+                  "y": "445",
+                  "width": "310",
+                  "height": "15",
+                  "params": "1040",
+                  "style": "3",
+                  "name": "past_vip_days",
+                  "caption": "lorem ipsum",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "right",
+                  "text_style": "u_small",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 460
+}

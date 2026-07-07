@@ -1,0 +1,38 @@
+{
+  "name": "habbo_window_layout_dropmenu_item_3_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2699_dropmenu_item_3_xml$7846f0d92917d5860fb4a647cb95cbca784076905.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_BTN_TEXT",
+          "x": "0",
+          "y": "0",
+          "width": "8",
+          "height": "12",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147480560"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "u_regular",
+          "margins": {
+            "left": 4,
+            "top": 2,
+            "right": 4,
+            "bottom": 4
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 8,
+  "layoutHeight": 12
+}

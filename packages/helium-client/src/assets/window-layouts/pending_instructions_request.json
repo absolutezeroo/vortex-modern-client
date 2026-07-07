@@ -1,0 +1,253 @@
+{
+  "name": "pending_instructions_request",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\507_pending_instructions_request.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "369",
+          "height": "201",
+          "params": "163841",
+          "style": "100",
+          "name": "pending_request",
+          "caption": "${guide.pending.instructions.title}"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "8",
+              "y": "2",
+              "width": "351",
+              "height": "165",
+              "params": "8536080",
+              "style": "100",
+              "clipping": "false"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "236",
+                  "height": "19",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.pending.instructions.subtitle}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "il_heading_1",
+                  "text_color": 12779520
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "22",
+                  "width": "295",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${guide.pending.instructions.description}",
+                  "width_min": "295",
+                  "width_max": "295"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "margin_bottom": 8,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "49",
+                  "width": "295",
+                  "height": "61",
+                  "params": "147472",
+                  "style": "102",
+                  "width_min": "295",
+                  "width_max": "295"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "13",
+                      "y": "12",
+                      "width": "169",
+                      "height": "15",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${guide.pending.instructions.report}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "il_border",
+                      "text_color": 4473924
+                    }
+                  },
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "13",
+                      "y": "30",
+                      "width": "269",
+                      "height": "31",
+                      "params": "147472",
+                      "style": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "269",
+                          "height": "14",
+                          "params": "16",
+                          "style": "100",
+                          "name": "description"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "margin_bottom": 10,
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "0",
+                          "y": "17",
+                          "width": "4",
+                          "height": "4",
+                          "params": "147472",
+                          "style": "100",
+                          "name": "timestamp"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "updating_timestamp"
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "24",
+                          "width": "30",
+                          "height": "7",
+                          "params": "16",
+                          "style": "100"
+                        },
+                        "children": []
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 3
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "-10",
+                  "y": "113",
+                  "width": "370",
+                  "height": "52",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "115",
+                      "y": "0",
+                      "width": "140",
+                      "height": "48",
+                      "params": "131281",
+                      "style": "101",
+                      "name": "close_button",
+                      "caption": "${alert.close.button}",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 3
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "285",
+              "y": "40",
+              "width": "90",
+              "height": "128",
+              "params": "1024",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "help_illustrations_question"
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 369,
+  "layoutHeight": 201
+}

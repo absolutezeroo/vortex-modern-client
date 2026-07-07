@@ -1,0 +1,56 @@
+{
+  "name": "habbo_orderinfo_receiver_suggestion",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\254_habbo_orderinfo_receiver_suggestion.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_vertical",
+        "typeId": 50,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "150",
+          "height": "17",
+          "params": "1",
+          "style": "3"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "35",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "name",
+              "caption": "name",
+              "color": "0xffffeeeeee",
+              "background": "true"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ],
+        "vars": {
+          "scale_to_fit_items": true,
+          "resize_on_item_update": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 150,
+  "layoutHeight": 17
+}

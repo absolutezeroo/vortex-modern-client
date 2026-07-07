@@ -1,0 +1,33 @@
+{
+  "name": "horizontal_list_view_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1141_horizontal_list_view_xml$e3ceb74d23914f65ec0f16c3525c45ff954775873.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_horizontal",
+        "typeId": 51,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "0",
+          "height": "0",
+          "params": "147472",
+          "style": "3",
+          "name": "horizontal_list_view",
+          "height_min": "0"
+        },
+        "children": [],
+        "vars": {
+          "resize_on_item_update": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 0,
+  "layoutHeight": 0
+}

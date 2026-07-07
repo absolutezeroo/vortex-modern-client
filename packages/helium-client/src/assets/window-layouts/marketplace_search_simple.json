@@ -1,0 +1,100 @@
+{
+  "name": "marketplace_search_simple",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\242_marketplace_search_simple.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "120",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "23",
+              "width": "360",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "caption": "${catalog.marketplace.sort_order}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "text_color": 6710886,
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "dropmenu",
+            "typeId": 102,
+            "attributes": {
+              "x": "70",
+              "y": "50",
+              "width": "220",
+              "height": "24",
+              "params": "17",
+              "style": "3",
+              "name": "sort_dropmenu"
+            },
+            "children": []
+          },
+          {
+            "tag": "checkbox",
+            "typeId": 70,
+            "attributes": {
+              "x": "10",
+              "y": "92",
+              "width": "16",
+              "height": "15",
+              "params": "17",
+              "style": "3",
+              "name": "combine_uniques_checkbox",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "29",
+              "y": "91",
+              "width": "218",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "caption": "${catalog.marketplace.combine_uniques}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 6710886,
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 120
+}

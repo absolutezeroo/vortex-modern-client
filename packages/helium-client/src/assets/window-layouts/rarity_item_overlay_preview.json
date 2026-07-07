@@ -1,0 +1,70 @@
+{
+  "name": "rarity_item_overlay_preview",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\386_rarity_item_overlay_preview.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "36",
+          "height": "28",
+          "params": "16",
+          "style": "0",
+          "name": "rarityItemWidget"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "36",
+              "height": "28",
+              "params": "16",
+              "style": "0",
+              "name": "plaque"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "rarity_item_rarity_preview_bg"
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "5",
+              "width": "36",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "level",
+              "caption": "0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "text_color": 3355392,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 36,
+  "layoutHeight": 28
+}

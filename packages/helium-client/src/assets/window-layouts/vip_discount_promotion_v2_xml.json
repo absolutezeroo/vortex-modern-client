@@ -1,0 +1,223 @@
+{
+  "name": "vip_discount_promotion_v2_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1246_vip_discount_promotion_v2_xml$b73d6daf4da3f2da8cff9c9edb87fdd6477509027.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "193",
+          "height": "216",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "167",
+              "y": "7",
+              "width": "20",
+              "height": "20",
+              "params": "17",
+              "style": "100",
+              "name": "minimize_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "20",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "messenger_minimize_button",
+                  "fit_size_to_contents": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "167",
+              "y": "7",
+              "width": "20",
+              "height": "20",
+              "params": "17",
+              "style": "100",
+              "name": "maximize_region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "20",
+                  "height": "20",
+                  "params": "16",
+                  "style": "100"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "common_maximize",
+                  "fit_size_to_contents": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "13",
+              "y": "10",
+              "width": "150",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "title_txt",
+              "caption": "${citizen.vip.extend.promo.title}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 16,
+              "text_color": 4473924,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "94",
+              "y": "113",
+              "width": "92",
+              "height": "102",
+              "params": "1311824",
+              "style": "100",
+              "name": "promo_img"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}talent/citizenship_vip_extend_promo.png",
+              "pivot_point": "bottom right",
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "30",
+              "width": "188",
+              "height": "105",
+              "params": "147472",
+              "style": "100",
+              "name": "content_itemlist"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "13",
+                  "y": "0",
+                  "width": "170",
+                  "height": "30",
+                  "params": "16",
+                  "style": "3",
+                  "name": "caption_txt",
+                  "caption": "${citizen.vip.extend.promo.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "13",
+                  "y": "35",
+                  "width": "170",
+                  "height": "15",
+                  "params": "16",
+                  "style": "3",
+                  "name": "info_txt",
+                  "caption": "${citizen.vip.extend.promo.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 16,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "4",
+                  "y": "55",
+                  "width": "187",
+                  "height": "50",
+                  "params": "131089",
+                  "style": "100",
+                  "name": "extend_button",
+                  "caption": "${citizen.vip.extend.promo.button}",
+                  "width_min": "187",
+                  "width_max": "187"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 193,
+  "layoutHeight": 216
+}

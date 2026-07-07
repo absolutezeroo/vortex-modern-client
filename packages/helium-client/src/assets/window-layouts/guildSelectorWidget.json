@@ -1,0 +1,96 @@
+{
+  "name": "guildSelectorWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\274_guildSelectorWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "170",
+          "height": "85",
+          "params": "16",
+          "style": "0",
+          "name": "guildSelectorWidget"
+        },
+        "children": [
+          {
+            "tag": "droplist",
+            "typeId": 105,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "170",
+              "height": "26",
+              "params": "17",
+              "style": "3",
+              "name": "guild_selector"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "170",
+              "height": "85",
+              "params": "16",
+              "style": "2",
+              "name": "members_only",
+              "color": "0x05ea1ab"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "7",
+                  "y": "7",
+                  "width": "147",
+                  "height": "46",
+                  "params": "16",
+                  "style": "3",
+                  "caption": "${catalog.guild_selector.members_only}"
+                },
+                "children": [],
+                "vars": {
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "-23",
+                  "y": "55",
+                  "width": "210",
+                  "height": "25",
+                  "params": "917521",
+                  "style": "3",
+                  "name": "find_groups_button",
+                  "caption": "${catalog.guild_selector.find_groups}"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 170,
+  "layoutHeight": 85
+}

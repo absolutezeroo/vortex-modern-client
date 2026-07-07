@@ -1,0 +1,28 @@
+{
+  "name": "border_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\94_border_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "30",
+          "height": "30",
+          "params": "16",
+          "style": "2"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 30,
+  "layoutHeight": 30
+}

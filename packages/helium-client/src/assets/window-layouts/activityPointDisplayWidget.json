@@ -1,0 +1,69 @@
+{
+  "name": "activityPointDisplayWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\253_activityPointDisplayWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "175",
+          "height": "25",
+          "params": "16",
+          "style": "3",
+          "name": "activityPointDisplayWidget",
+          "color": "0x0e0e0e0",
+          "blend": "0.8"
+        },
+        "children": [
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "6",
+              "y": "3",
+              "width": "23",
+              "height": "23",
+              "params": "1040",
+              "style": "27",
+              "name": "activity_point_icon"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "26",
+              "y": "4",
+              "width": "60",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "activity_points_txt",
+              "caption": "lorem ipsum"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "italic": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 175,
+  "layoutHeight": 25
+}

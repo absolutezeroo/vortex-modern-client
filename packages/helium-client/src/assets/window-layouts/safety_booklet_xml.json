@@ -1,0 +1,1044 @@
+{
+  "name": "safety_booklet_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2912_safety_booklet_xml$6be4f57e02521523d7c504d33f889000628792605.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "500",
+          "height": "540",
+          "params": "0",
+          "style": "101",
+          "caption": "The Habbo Way",
+          "height_min": "50"
+        },
+        "children": [
+          {
+            "tag": "frame",
+            "typeId": 35,
+            "attributes": {
+              "x": "0",
+              "y": "10",
+              "width": "500",
+              "height": "530",
+              "params": "1",
+              "style": "101"
+            },
+            "children": [
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "189",
+                  "y": "5",
+                  "width": "120",
+                  "height": "30",
+                  "params": "147664",
+                  "style": "100"
+                },
+                "children": [
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "0",
+                      "y": "9",
+                      "width": "88",
+                      "height": "11",
+                      "params": "933904",
+                      "style": "100",
+                      "name": "page_widget"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "progress_indicator",
+                      "progress_indicator:style": "etched",
+                      "progress_indicator:size": 7
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "90",
+                      "y": "0",
+                      "width": "30",
+                      "height": "30",
+                      "params": "16",
+                      "style": "100",
+                      "name": "safety_image"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "${image.library.url}safetyquiz/safety_off.png",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 2
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "60",
+                  "width": "500",
+                  "height": "420",
+                  "params": "16",
+                  "style": "100",
+                  "name": "page_container",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "240",
+                      "y": "50",
+                      "width": "20",
+                      "height": "280",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "separator",
+                      "separator:vertical": true
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "50",
+                      "width": "250",
+                      "height": "280",
+                      "params": "16",
+                      "style": "100",
+                      "name": "illustration"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "270",
+                      "y": "80",
+                      "width": "210",
+                      "height": "250",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "210",
+                          "height": "19",
+                          "params": "16",
+                          "style": "100",
+                          "name": "title",
+                          "caption": "Title"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_heading_1",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "39",
+                          "width": "210",
+                          "height": "53",
+                          "params": "16",
+                          "style": "100",
+                          "name": "description",
+                          "caption": "Keep your full name, address, phone numbers, photos and school name secret so nobody can scam, bully you or place you in danger."
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 20
+                    }
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "21",
+                      "y": "350",
+                      "width": "197",
+                      "height": "60",
+                      "params": "147473",
+                      "style": "101",
+                      "name": "previous_button",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "197",
+                          "height": "45",
+                          "params": "147472",
+                          "style": "100"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "15",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "15",
+                              "y": "1",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "help_habboway_prev",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "35",
+                              "y": "4",
+                              "width": "2",
+                              "height": "22",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "separator",
+                              "separator:vertical": true
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "37",
+                              "y": "8",
+                              "width": "140",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${habbo.way.previous.button}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "il_button",
+                              "margin_left": 5,
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "177",
+                              "y": "0",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "303",
+                      "y": "350",
+                      "width": "178",
+                      "height": "60",
+                      "params": "409617",
+                      "style": "101",
+                      "name": "next_button",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "178",
+                          "height": "45",
+                          "params": "147472",
+                          "style": "100"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "20",
+                              "y": "8",
+                              "width": "121",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${habbo.way.next.button}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "il_button",
+                              "margin_right": 5,
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "141",
+                              "y": "4",
+                              "width": "2",
+                              "height": "22",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "separator",
+                              "separator:vertical": true
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "143",
+                              "y": "1",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "help_habboway_next",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "163",
+                              "y": "0",
+                              "width": "15",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "60",
+                  "width": "500",
+                  "height": "420",
+                  "params": "16",
+                  "style": "100",
+                  "name": "final_page",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "10",
+                      "y": "48",
+                      "width": "480",
+                      "height": "19",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${safety.booklet.end.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "text_style": "il_heading_1",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "100",
+                      "y": "275",
+                      "width": "300",
+                      "height": "16",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${safety.booklet.end.content}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "10",
+                      "y": "320",
+                      "width": "480",
+                      "height": "30",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "separator"
+                    }
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "21",
+                      "y": "350",
+                      "width": "177",
+                      "height": "60",
+                      "params": "147473",
+                      "style": "101",
+                      "name": "back_button",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "177",
+                          "height": "45",
+                          "params": "147472",
+                          "style": "100"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "15",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "15",
+                              "y": "1",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100",
+                              "name": "illustration"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "help_habboway_prev",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "35",
+                              "y": "4",
+                              "width": "2",
+                              "height": "22",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "separator",
+                              "separator:vertical": true
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "37",
+                              "y": "8",
+                              "width": "120",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${habbo.way.back.button}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "il_button",
+                              "margin_left": 5,
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "157",
+                              "y": "0",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "319",
+                      "y": "350",
+                      "width": "162",
+                      "height": "60",
+                      "params": "393233",
+                      "style": "101",
+                      "name": "quiz_button",
+                      "caption": "${habbo.way.quiz.button}",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "150",
+                      "y": "62",
+                      "width": "200",
+                      "height": "210",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "${image.library.url}safetyquiz/start_quiz.png",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "60",
+                  "width": "500",
+                  "height": "420",
+                  "params": "16",
+                  "style": "100",
+                  "name": "final_page_no_questions",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "10",
+                      "y": "48",
+                      "width": "480",
+                      "height": "19",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${safety.booklet.ok.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "text_style": "il_heading_1",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "100",
+                      "y": "275",
+                      "width": "300",
+                      "height": "16",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${safety.booklet.ok.content}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "10",
+                      "y": "320",
+                      "width": "480",
+                      "height": "30",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "separator"
+                    }
+                  },
+                  {
+                    "tag": "container_button",
+                    "typeId": 41,
+                    "attributes": {
+                      "x": "21",
+                      "y": "350",
+                      "width": "177",
+                      "height": "60",
+                      "params": "147473",
+                      "style": "101",
+                      "name": "back_button",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "15",
+                          "width": "177",
+                          "height": "45",
+                          "params": "147472",
+                          "style": "100"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "15",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "15",
+                              "y": "1",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100",
+                              "name": "illustration"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "help_habboway_prev",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "35",
+                              "y": "4",
+                              "width": "2",
+                              "height": "22",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "separator",
+                              "separator:vertical": true
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "37",
+                              "y": "8",
+                              "width": "120",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${habbo.way.back.button}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "il_button",
+                              "margin_left": 5,
+                              "mouse_wheel_enabled": false,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "157",
+                              "y": "0",
+                              "width": "20",
+                              "height": "30",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "319",
+                      "y": "350",
+                      "width": "162",
+                      "height": "60",
+                      "params": "393233",
+                      "style": "101",
+                      "name": "ok_button",
+                      "caption": "${habbo.way.ok.button}",
+                      "color": "0x0bbbbbb"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "150",
+                      "y": "62",
+                      "width": "200",
+                      "height": "210",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "${image.library.url}safetyquiz/start_quiz.png",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "40",
+                  "width": "480",
+                  "height": "45",
+                  "params": "16",
+                  "style": "102",
+                  "name": "safety.quiz.explanation"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "32",
+                      "y": "12",
+                      "width": "23",
+                      "height": "24",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "common_info_icon_grey"
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "62",
+                      "y": "9",
+                      "width": "153",
+                      "height": "16",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${safety.booklet.explanation.1}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 2236962,
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "62",
+                      "y": "22",
+                      "width": "150",
+                      "height": "16",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${safety.booklet.explanation.2}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_color": 2236962,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ],
+            "filters": [
+              {
+                "type": "DropShadowFilter",
+                "attributes": {
+                  "angle": "0",
+                  "alpha": "0.7490196078431373",
+                  "blurX": "80",
+                  "blurY": "80"
+                }
+              }
+            ],
+            "vars": {
+              "margin_left": 1,
+              "margin_top": 50,
+              "margin_right": 1,
+              "margin_bottom": 1
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "500",
+              "height": "80",
+              "params": "0",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "166",
+                  "height": "17",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${safety.booklet.frame.subtitle}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 18,
+                  "text_style": "il_frame_modal_title",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "16",
+                  "width": "304",
+                  "height": "30",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${safety.booklet.frame.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_frame_modal_title",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 500,
+  "layoutHeight": 540
+}

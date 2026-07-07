@@ -1,0 +1,303 @@
+{
+  "name": "landing_view_default_dynamic_layout",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\785_landing_view_default_dynamic_layout.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "background",
+        "typeId": 2,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "1172",
+          "height": "822",
+          "params": "0",
+          "style": "0",
+          "color": "0xffff000000",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "1172",
+              "height": "822",
+              "params": "2192",
+              "style": "0",
+              "name": "content_background",
+              "color": "0xffffaae0f0",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "-175",
+                  "width": "1172",
+                  "height": "1",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "background_gradient_top"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left"
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "-366",
+                  "width": "1172",
+                  "height": "1150",
+                  "params": "1168",
+                  "style": "0",
+                  "name": "background_gradient"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "645",
+                  "y": "377",
+                  "width": "526",
+                  "height": "407",
+                  "params": "1311824",
+                  "style": "0",
+                  "name": "background_right"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom right",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "890",
+                  "y": "1",
+                  "width": "2",
+                  "height": "670",
+                  "params": "16",
+                  "style": "0",
+                  "name": "left-right_divider",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "landing_view_reception_horizontal",
+                  "stretched_x": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "443",
+                  "width": "693",
+                  "height": "341",
+                  "params": "1049616",
+                  "style": "0",
+                  "name": "background_horizon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "1172",
+                  "height": "822",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "moving_objects_container",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "180",
+                  "y": "0",
+                  "width": "8",
+                  "height": "11",
+                  "params": "147472",
+                  "style": "0",
+                  "name": "placeholder_dynamic_widget_slots"
+                },
+                "children": []
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "123",
+                  "height": "1",
+                  "params": "2064",
+                  "style": "0",
+                  "name": "background_hotel_top"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/reception_backdrop_hotel_top_stretch.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "-214",
+                  "width": "1006",
+                  "height": "998",
+                  "params": "1049616",
+                  "style": "0",
+                  "name": "background_left"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "109",
+                  "y": "620",
+                  "width": "10",
+                  "height": "10",
+                  "params": "1040",
+                  "style": "4",
+                  "name": "widget_placeholder_avatarimage"
+                },
+                "children": []
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "120",
+                  "y": "570",
+                  "width": "10",
+                  "height": "10",
+                  "params": "1040",
+                  "style": "4",
+                  "name": "widget_placeholder_bottom_slot"
+                },
+                "children": []
+              },
+              {
+                "tag": "background",
+                "typeId": 2,
+                "attributes": {
+                  "x": "0",
+                  "y": "772",
+                  "width": "1172",
+                  "height": "50",
+                  "params": "1168",
+                  "style": "0",
+                  "color": "0xffff333333",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "100",
+                  "y": "0",
+                  "width": "145",
+                  "height": "200",
+                  "params": "16",
+                  "style": "0",
+                  "name": "logo"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/reception_logo_drape.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "263",
+                  "y": "170",
+                  "width": "387",
+                  "height": "101",
+                  "params": "16",
+                  "style": "3",
+                  "name": "warning",
+                  "caption": "Warning! Always edit .original. file, then save it as working and delete background bitmaps!",
+                  "treshold": "20"
+                },
+                "children": [],
+                "vars": {
+                  "font_size": 32,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1172,
+  "layoutHeight": 822
+}

@@ -1,0 +1,162 @@
+{
+  "name": "vip_buy_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\319_vip_buy_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "320",
+          "height": "75",
+          "params": "16",
+          "style": "2",
+          "color": "0x0969696",
+          "width_min": "320",
+          "width_max": "320",
+          "height_min": "75"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "320",
+              "height": "73",
+              "params": "16",
+              "style": "2",
+              "color": "0x0dfdfdf",
+              "width_min": "320",
+              "width_max": "320"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "5",
+              "y": "5",
+              "width": "310",
+              "height": "25",
+              "params": "16",
+              "style": "2",
+              "color": "0x0969696",
+              "width_min": "310",
+              "width_max": "310"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "60",
+                  "y": "2",
+                  "width": "187",
+                  "height": "19",
+                  "params": "16",
+                  "style": "0",
+                  "name": "item_header",
+                  "caption": "catalog.club.item.header"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 20,
+                  "text_color": 16777215,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "6",
+                  "y": "4",
+                  "width": "33",
+                  "height": "17",
+                  "params": "16",
+                  "style": "0",
+                  "name": "vip_icon",
+                  "tags": "bitmap"
+                },
+                "children": [],
+                "vars": {
+                  "bitmap_asset_name": "vip_icon_medium"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "5",
+              "y": "41",
+              "width": "112",
+              "height": "26",
+              "params": "16",
+              "style": "0",
+              "name": "item_price"
+            },
+            "children": []
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "225",
+              "y": "37",
+              "width": "90",
+              "height": "30",
+              "params": "393233",
+              "style": "5",
+              "name": "item_buy",
+              "caption": "${catalog.club.button.buy}",
+              "color": "0x0aa00",
+              "width_min": "90",
+              "width_max": "90",
+              "height_min": "30",
+              "height_max": "30"
+            },
+            "children": []
+          },
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "130",
+              "y": "37",
+              "width": "90",
+              "height": "30",
+              "params": "393233",
+              "style": "5",
+              "name": "item_gift",
+              "caption": "${catalog.purchase_confirmation.gift}",
+              "color": "0x0aa00",
+              "width_min": "90",
+              "width_max": "90",
+              "height_min": "30",
+              "height_max": "30"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 320,
+  "layoutHeight": 75
+}

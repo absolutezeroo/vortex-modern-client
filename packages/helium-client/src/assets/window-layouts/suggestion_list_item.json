@@ -1,0 +1,53 @@
+{
+  "name": "suggestion_list_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\367_suggestion_list_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "200",
+          "height": "20",
+          "params": "17",
+          "style": "0",
+          "color": "0xffcceeff",
+          "background": "true",
+          "name": "suggestion_list_item"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "6",
+              "y": "2",
+              "width": "183",
+              "height": "15",
+              "params": "16",
+              "style": "0",
+              "name": "name_text",
+              "caption": "${001_lorem_ipsum_title}"
+            },
+            "children": [],
+            "vars": {
+              "font_face": "Volter",
+              "font_size": 9,
+              "text_color": 0,
+              "embed_fonts": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

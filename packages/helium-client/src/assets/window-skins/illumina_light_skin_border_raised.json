@@ -1,0 +1,474 @@
+{
+  "id": "illumina_light_skin_border_raised",
+  "name": "illumina_light_skin_border_raised",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\0_illumina_light_skin_border_raised.xml",
+  "variables": {
+    "asset": "illumina_light_border_raised"
+  },
+  "templates": [
+    {
+      "name": "illumina_light_border_raised_template",
+      "asset": "illumina_light_border_raised",
+      "entities": [
+        {
+          "id": 0,
+          "name": "border_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 4,
+            "y": 0,
+            "width": 3,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_center_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 4,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_center_right",
+          "type": "bitmap",
+          "region": {
+            "x": 10,
+            "y": 4,
+            "width": 1,
+            "height": 3
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_bottom_left",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 7,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 4,
+            "y": 7,
+            "width": 3,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_bottom_right",
+          "type": "bitmap",
+          "region": {
+            "x": 7,
+            "y": 7,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_top_left",
+          "type": "bitmap",
+          "region": {
+            "x": 12,
+            "y": 0,
+            "width": 7,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_top_center",
+          "type": "bitmap",
+          "region": {
+            "x": 19,
+            "y": 0,
+            "width": 1,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_top_right",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 0,
+            "width": 7,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_center_left",
+          "type": "bitmap",
+          "region": {
+            "x": 12,
+            "y": 7,
+            "width": 7,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_center_center",
+          "type": "bitmap",
+          "region": {
+            "x": 19,
+            "y": 7,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_center_right",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 7,
+            "width": 7,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_bottom_left",
+          "type": "bitmap",
+          "region": {
+            "x": 12,
+            "y": 8,
+            "width": 7,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_bottom_center",
+          "type": "bitmap",
+          "region": {
+            "x": 19,
+            "y": 8,
+            "width": 1,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_bottom_right",
+          "type": "bitmap",
+          "region": {
+            "x": 20,
+            "y": 8,
+            "width": 7,
+            "height": 7
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "illumina_light_border_raised",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "border_top_left",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_top_center",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 4,
+            "y": 0,
+            "width": 9,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_top_right",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 13,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_center_left",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 4,
+            "width": 1,
+            "height": 9
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_center_right",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 16,
+            "y": 4,
+            "width": 1,
+            "height": 9
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_bottom_left",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 13,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_bottom_center",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 4,
+            "y": 13,
+            "width": 9,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "border_bottom_right",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 13,
+            "y": 13,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_top_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 1,
+            "y": 1,
+            "width": 7,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_top_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 8,
+            "y": 1,
+            "width": 1,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_top_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 9,
+            "y": 1,
+            "width": 7,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_center_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 1,
+            "y": 8,
+            "width": 7,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_center_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 2,
+          "region": {
+            "x": 8,
+            "y": 8,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_center_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 2,
+          "region": {
+            "x": 9,
+            "y": 8,
+            "width": 7,
+            "height": 1
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_bottom_left",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 1,
+            "y": 9,
+            "width": 7,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_bottom_center",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 1,
+          "region": {
+            "x": 8,
+            "y": 9,
+            "width": 1,
+            "height": 7
+          }
+        },
+        {
+          "id": 0,
+          "name": "background_bottom_right",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 1,
+          "region": {
+            "x": 9,
+            "y": 9,
+            "width": 7,
+            "height": 7
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "illumina_light_border_raised",
+      "template": "illumina_light_border_raised_template"
+    }
+  ]
+}

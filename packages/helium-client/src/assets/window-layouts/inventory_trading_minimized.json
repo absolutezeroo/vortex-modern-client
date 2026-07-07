@@ -1,0 +1,117 @@
+{
+  "name": "inventory_trading_minimized",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\188_inventory_trading_minimized.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "478",
+          "height": "68",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "478",
+              "height": "68",
+              "params": "17",
+              "style": "102",
+              "color": "0x027556a"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "7",
+              "y": "36",
+              "width": "70",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "button_continue",
+              "caption": "${inventory.trading.minimized.continue_trade}"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "412",
+              "y": "36",
+              "width": "56",
+              "height": "28",
+              "params": "393233",
+              "style": "3",
+              "name": "button_cancel",
+              "caption": "${generic.cancel}"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "42",
+              "y": "8",
+              "width": "421",
+              "height": "24",
+              "params": "16",
+              "style": "100",
+              "name": "help_text",
+              "caption": "${inventory.trading.minimized.trade_in_progress}",
+              "tags": "HELP_TEXT"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_headline_big",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "11",
+              "y": "6",
+              "width": "30",
+              "height": "30",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "icons_panic",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 478,
+  "layoutHeight": 68
+}

@@ -1,0 +1,64 @@
+{
+  "name": "EntryArrows",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\123_EntryArrows.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "15",
+          "height": "25",
+          "params": "16",
+          "style": "0",
+          "name": "entry_arrows_cont"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "25",
+              "params": "2192",
+              "style": "0",
+              "name": "arrow_0"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}quest_arrow1.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "25",
+              "params": "3280",
+              "style": "0",
+              "name": "arrow_1"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.questing.url}quest_arrow2.png"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 15,
+  "layoutHeight": 25
+}

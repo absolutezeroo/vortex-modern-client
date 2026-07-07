@@ -1,0 +1,90 @@
+{
+  "name": "nav_simple_alert_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\3047_nav_simple_alert_xml$0e26c30e71fee462cc59853edb70cd111299127542.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "193",
+          "height": "157",
+          "params": "32769",
+          "style": "3",
+          "name": "alert_ 3",
+          "caption": "PH Caption",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "12",
+              "y": "14",
+              "width": "160",
+              "height": "78",
+              "params": "1",
+              "style": "0",
+              "name": "body_text",
+              "caption": "PH loren ipsum dolor pubba hubba duppa papatiti"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "62",
+              "y": "97",
+              "width": "60",
+              "height": "22",
+              "params": "131089",
+              "style": "3",
+              "name": "ok",
+              "caption": "${generic.ok}",
+              "width_min": "60",
+              "width_max": "60"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 25,
+          "margin_right": 6,
+          "margin_bottom": 7
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 193,
+  "layoutHeight": 157
+}

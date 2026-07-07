@@ -1,0 +1,60 @@
+{
+  "name": "guild_selector_widget_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\352_guild_selector_widget_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "133",
+          "height": "22",
+          "params": "16",
+          "style": "0",
+          "name": "guild_item",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "0",
+              "y": "4",
+              "width": "72",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "guild_name",
+              "caption": "lorem ipsum"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "112",
+              "y": "4",
+              "width": "21",
+              "height": "14",
+              "params": "16",
+              "style": "0",
+              "name": "guild_colors"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 133,
+  "layoutHeight": 22
+}

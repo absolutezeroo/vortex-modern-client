@@ -1,0 +1,232 @@
+{
+  "name": "inventory_effects_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1439__SafeCls_1054.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "468",
+          "height": "247",
+          "params": "2064",
+          "style": "3",
+          "name": "effects_content"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "316",
+              "y": "7",
+              "width": "42",
+              "height": "17",
+              "params": "786512",
+              "style": "3",
+              "name": "ActiveTitle",
+              "caption": "Active:"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "il_heading_2",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "10",
+              "y": "25",
+              "width": "262",
+              "height": "157",
+              "params": "2192",
+              "style": "3",
+              "name": "inactive_items"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "172",
+                  "height": "157",
+                  "params": "17",
+                  "style": "3",
+                  "name": "inactive_items_image"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "scrollbar_vertical",
+            "typeId": 131,
+            "attributes": {
+              "x": "280",
+              "y": "25",
+              "width": "18",
+              "height": "157",
+              "params": "2129",
+              "style": "3",
+              "name": "inactive_scroll"
+            },
+            "children": [],
+            "vars": {
+              "scrollable": "inactive_items"
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "310",
+              "y": "25",
+              "width": "128",
+              "height": "157",
+              "params": "2128",
+              "style": "3",
+              "name": "active_items"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "128",
+                  "height": "157",
+                  "params": "17",
+                  "style": "3",
+                  "name": "active_items_image"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "scrollbar_vertical",
+            "typeId": 131,
+            "attributes": {
+              "x": "445",
+              "y": "25",
+              "width": "18",
+              "height": "157",
+              "params": "2129",
+              "style": "3",
+              "name": "active_scroll"
+            },
+            "children": [],
+            "vars": {
+              "scrollable": "inactive_items"
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "6",
+              "y": "7",
+              "width": "66",
+              "height": "17",
+              "params": "786576",
+              "style": "3",
+              "name": "myEffectsTitle",
+              "caption": "My Effects:"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "il_heading_2",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "192",
+              "width": "520",
+              "height": "55",
+              "params": "1168",
+              "style": "3",
+              "name": "descriptionArea"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "15",
+                  "y": "0",
+                  "width": "50",
+                  "height": "50",
+                  "params": "16",
+                  "style": "3",
+                  "name": "effectDescriptionImage"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "345",
+                  "y": "0",
+                  "width": "66",
+                  "height": "28",
+                  "params": "131153",
+                  "style": "3",
+                  "name": "activateEffect_button",
+                  "caption": "Activate"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "75",
+                  "y": "0",
+                  "width": "256",
+                  "height": "55",
+                  "params": "144",
+                  "style": "3",
+                  "name": "effectDescriptionText",
+                  "caption": "${inventory.effects.defaultdescription}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "il_regular",
+                  "mouse_wheel_enabled": false,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 468,
+  "layoutHeight": 247
+}

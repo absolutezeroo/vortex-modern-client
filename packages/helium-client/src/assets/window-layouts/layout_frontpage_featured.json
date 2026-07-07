@@ -1,0 +1,356 @@
+{
+  "name": "layout_frontpage_featured",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\321_layout_frontpage_featured.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "552",
+          "height": "460",
+          "params": "16",
+          "style": "0",
+          "name": "ctlg_frontpage5"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "552",
+              "height": "460",
+              "params": "16400",
+              "style": "3",
+              "name": "featuredItemsWidget",
+              "tags": "EMBEDDED"
+            },
+            "children": [
+              {
+                "tag": "scrollable_itemlist_vertical",
+                "typeId": 56,
+                "attributes": {
+                  "x": "192",
+                  "y": "0",
+                  "width": "360",
+                  "height": "392",
+                  "params": "16",
+                  "style": "3",
+                  "name": "itemlist_featured"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "360",
+                      "height": "126",
+                      "params": "16",
+                      "style": "3",
+                      "name": "featured_item_template"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "356",
+                          "height": "126",
+                          "params": "18",
+                          "style": "3",
+                          "name": "item_image"
+                        },
+                        "children": [],
+                        "vars": {
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "5",
+                          "y": "93",
+                          "width": "346",
+                          "height": "30",
+                          "params": "1198099",
+                          "style": "3",
+                          "name": "text_container",
+                          "color": "0x0333333",
+                          "blend": "0.5"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "5",
+                              "y": "5",
+                              "width": "340",
+                              "width_max": "340",
+                              "height": "24",
+                              "params": "8388627",
+                              "style": "3",
+                              "name": "item_title",
+                              "caption": ""
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "ubuntu_condensed_title",
+                              "margin_right": 5,
+                              "margin_bottom": 5,
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "360",
+                          "height": "126",
+                          "params": "17",
+                          "style": "3",
+                          "name": "event_catcher_region",
+                          "treshold": "0"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 7
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "184",
+                  "height": "460",
+                  "params": "17",
+                  "style": "3",
+                  "name": "firstitem"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "184",
+                      "height": "460",
+                      "params": "1073741843",
+                      "style": "3",
+                      "name": "item_image"
+                    },
+                    "children": [],
+                    "vars": {
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "5",
+                      "y": "428",
+                      "width": "174",
+                      "height": "29",
+                      "params": "1198099",
+                      "style": "3",
+                      "name": "text_container",
+                      "color": "0x0333333",
+                      "blend": "0.5",
+                      "width_max": "174"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "174",
+                          "height": "29",
+                          "params": "8388627",
+                          "style": "3",
+                          "name": "item_title",
+                          "caption": "",
+                          "width_max": "174"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "ubuntu_condensed_title",
+                          "margin_right": 5,
+                          "margin_bottom": 5,
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "184",
+                      "height": "422",
+                      "params": "17",
+                      "style": "3",
+                      "name": "event_catcher_region",
+                      "treshold": "0"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "200",
+              "y": "399",
+              "width": "345",
+              "height": "61",
+              "params": "1040",
+              "style": "2",
+              "name": "bgBorder",
+              "color": "0x051bbee"
+            },
+            "children": [
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "10",
+                  "y": "6",
+                  "width": "272",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "ctlg_txt2",
+                  "caption": "${lorem.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "20",
+                  "width": "345",
+                  "height": "34",
+                  "params": "16",
+                  "style": "0",
+                  "name": "redeemItemCodeWidget"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "10",
+                      "y": "5",
+                      "width": "216",
+                      "height": "25",
+                      "params": "16",
+                      "style": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "input",
+                        "typeId": 77,
+                        "attributes": {
+                          "x": "4",
+                          "y": "4",
+                          "width": "206",
+                          "height": "15",
+                          "params": "1",
+                          "style": "3",
+                          "name": "voucher_code"
+                        },
+                        "children": [],
+                        "vars": {
+                          "always_show_selection": true,
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "274",
+                      "y": "5",
+                      "width": "62",
+                      "height": "22",
+                      "params": "393361",
+                      "style": "3",
+                      "name": "redeem",
+                      "caption": "${redeem}",
+                      "width_max": "100"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 552,
+  "layoutHeight": 460
+}

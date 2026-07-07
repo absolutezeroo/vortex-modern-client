@@ -1,0 +1,595 @@
+{
+  "name": "transaction_overview",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\89_transaction_overview.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "138",
+          "y": "86",
+          "width": "880",
+          "height": "391",
+          "params": "98305",
+          "style": "3",
+          "caption": "${wiredchests.logs.title}",
+          "color": "0xff418db0",
+          "width_min": "880",
+          "width_max": "880",
+          "height_min": "391",
+          "height_max": "700"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "880",
+              "height": "62",
+              "params": "144",
+              "style": "3",
+              "name": "header"
+            },
+            "children": [
+              {
+                "tag": "html",
+                "typeId": 11,
+                "attributes": {
+                  "x": "10",
+                  "y": "10",
+                  "width": "861",
+                  "height": "58",
+                  "params": "2185",
+                  "style": "3",
+                  "name": "warning_text",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 1,
+                  "editable": false,
+                  "selectable": false
+                }
+              },
+              {
+                "tag": "itemlist",
+                "typeId": 50,
+                "attributes": {
+                  "x": "15",
+                  "y": "13",
+                  "width": "400",
+                  "height": "42",
+                  "params": "16",
+                  "style": "3",
+                  "name": "key_value_pairs"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "94",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3",
+                      "name": "pair"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "57",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "list_type_key",
+                          "caption": "${wiredchests.logs.list_type}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "59",
+                          "y": "0",
+                          "width": "35",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "list_type_value",
+                          "caption": "${wiredchests.logs.type.0}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 2,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "22",
+                      "width": "93",
+                      "height": "20",
+                      "params": "16",
+                      "style": "3",
+                      "name": "pair"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "53",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "id_key",
+                          "caption": "${wiredchests.logs.chest_id}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "55",
+                          "y": "0",
+                          "width": "38",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "id_value",
+                          "caption": "12345"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 2,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 2,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "801",
+                  "y": "13",
+                  "width": "62",
+                  "height": "30",
+                  "params": "393297",
+                  "style": "3",
+                  "name": "refresh_btn",
+                  "caption": "${wiredchests.logs.refresh}"
+                },
+                "children": []
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "777",
+                  "y": "20",
+                  "width": "15",
+                  "height": "15",
+                  "params": "16",
+                  "style": "23",
+                  "name": "searching_icon",
+                  "visible": "false"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "1",
+              "y": "62",
+              "width": "878",
+              "height": "234",
+              "params": "2192",
+              "style": "3",
+              "name": "middle"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "13",
+                  "y": "0",
+                  "width": "852",
+                  "height": "234",
+                  "params": "2192",
+                  "style": "3",
+                  "name": "table_view"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "296",
+              "width": "880",
+              "height": "60",
+              "params": "1049744",
+              "style": "3",
+              "name": "footer"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "16",
+                  "width": "880",
+                  "height": "30",
+                  "params": "1168",
+                  "style": "3",
+                  "name": "pagination"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "17",
+                      "y": "0",
+                      "width": "113",
+                      "height": "30",
+                      "params": "16",
+                      "style": "3",
+                      "name": "footer_buttons_left"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "50",
+                          "height": "30",
+                          "params": "17",
+                          "style": "3",
+                          "name": "first_page_btn",
+                          "width_min": "50",
+                          "width_max": "50"
+                        },
+                        "children": [
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "18",
+                              "y": "10",
+                              "width": "10",
+                              "height": "10",
+                              "params": "16",
+                              "style": "4",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "27",
+                              "y": "10",
+                              "width": "10",
+                              "height": "10",
+                              "params": "16",
+                              "style": "4",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "63",
+                          "y": "0",
+                          "width": "50",
+                          "height": "30",
+                          "params": "17",
+                          "style": "3",
+                          "name": "prev_page_btn",
+                          "width_min": "50",
+                          "width_max": "50"
+                        },
+                        "children": [
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "22",
+                              "y": "10",
+                              "width": "10",
+                              "height": "10",
+                              "params": "16",
+                              "style": "4",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 13,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "753",
+                      "y": "0",
+                      "width": "110",
+                      "height": "30",
+                      "params": "262224",
+                      "style": "3",
+                      "name": "footer_buttons_right"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "50",
+                          "height": "30",
+                          "params": "17",
+                          "style": "3",
+                          "name": "next_page_btn",
+                          "width_min": "50",
+                          "width_max": "50"
+                        },
+                        "children": [
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "23",
+                              "y": "10",
+                              "width": "10",
+                              "height": "10",
+                              "params": "16",
+                              "style": "5",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "60",
+                          "y": "0",
+                          "width": "50",
+                          "height": "30",
+                          "params": "17",
+                          "style": "3",
+                          "name": "last_page_btn",
+                          "width_min": "50",
+                          "width_max": "50"
+                        },
+                        "children": [
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "18",
+                              "y": "10",
+                              "width": "10",
+                              "height": "10",
+                              "params": "16",
+                              "style": "5",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "icon",
+                            "typeId": 1,
+                            "attributes": {
+                              "x": "27",
+                              "y": "10",
+                              "width": "10",
+                              "height": "10",
+                              "params": "16",
+                              "style": "5",
+                              "color": "0x00"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 10,
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "312",
+                      "y": "4",
+                      "width": "256",
+                      "height": "25",
+                      "params": "786640",
+                      "style": "3"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "205",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "pagina_text_start",
+                          "caption": "X transactions found. Showing page ",
+                          "blend": "0.7"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "input",
+                        "typeId": 77,
+                        "attributes": {
+                          "x": "207",
+                          "y": "0",
+                          "width": "21",
+                          "height": "17",
+                          "params": "1",
+                          "style": "3",
+                          "name": "pagina_number_input",
+                          "caption": "1",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "border": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "230",
+                          "y": "0",
+                          "width": "26",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "pagina_text_end",
+                          "caption": "of Y",
+                          "blend": "0.7"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 2,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 880,
+  "layoutHeight": 391
+}

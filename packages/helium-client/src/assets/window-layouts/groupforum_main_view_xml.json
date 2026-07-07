@@ -1,0 +1,906 @@
+{
+  "name": "groupforum_main_view_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1185__SafeCls_1124.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "18",
+          "y": "12",
+          "width": "412",
+          "height": "650",
+          "params": "32769",
+          "style": "10000",
+          "width_min": "412",
+          "width_max": "412",
+          "height_min": "650",
+          "height_max": "650"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "88",
+              "y": "3",
+              "width": "211",
+              "height": "32",
+              "params": "144",
+              "style": "3",
+              "name": "frame_header_override"
+            },
+            "children": [
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "48",
+                  "y": "0",
+                  "width": "115",
+                  "height": "32",
+                  "params": "208",
+                  "style": "3"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "96",
+                      "height": "27",
+                      "params": "147472",
+                      "style": "3",
+                      "name": "hacky_title"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "5",
+                          "width": "94",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "title_txt_shadow_0",
+                          "caption": "Top Badges"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "etching_position": "top",
+                          "font_size": 22,
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "1",
+                          "y": "4",
+                          "width": "94",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "title_txt_shadow_1",
+                          "caption": "Top Badges"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "etching_position": "top",
+                          "font_size": 22,
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "2",
+                          "y": "5",
+                          "width": "94",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "title_txt_shadow_2",
+                          "caption": "Top Badges"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "etching_position": "top",
+                          "font_size": 22,
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "1",
+                          "y": "6",
+                          "width": "94",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "title_txt_shadow_3",
+                          "caption": "Top Badges"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "etching_position": "top",
+                          "font_size": 22,
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "1",
+                          "y": "5",
+                          "width": "94",
+                          "height": "21",
+                          "params": "16",
+                          "style": "3",
+                          "name": "title_txt",
+                          "caption": "Top Badges"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "etching_position": "top",
+                          "font_size": 22,
+                          "text_color": 16777215,
+                          "mouse_wheel_enabled": false,
+                          "thickness": 50,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "102",
+                      "y": "14",
+                      "width": "13",
+                      "height": "9",
+                      "params": "1",
+                      "style": "3",
+                      "dynamic_style": "button",
+                      "name": "dropdown_region",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "13",
+                          "height": "8",
+                          "params": "16",
+                          "style": "3",
+                          "name": "dropdown_opener",
+                          "tags": "#icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "badge_leaderboard_dropdown_opener",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "etching_color": 1207959552,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "dropmenu",
+                        "typeId": 102,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "39",
+                          "height": "0",
+                          "params": "17",
+                          "style": "100",
+                          "name": "hidden_dropdown"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 6,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "6",
+              "y": "59",
+              "width": "376",
+              "height": "574",
+              "params": "2192",
+              "style": "3",
+              "name": "body"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "376",
+                  "height": "54",
+                  "params": "144",
+                  "style": "3",
+                  "name": "info_container"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "376",
+                      "height": "54",
+                      "params": "16",
+                      "style": "3",
+                      "name": "info_bg"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "badge_leaderboard_header",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "4",
+                      "y": "1",
+                      "width": "65",
+                      "height": "47",
+                      "params": "16",
+                      "style": "3",
+                      "name": "rank_type_extended_img"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "badge_rarity_badges_emblem_unique_extended",
+                      "pivot_point": "bottom center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "74",
+                      "y": "6",
+                      "width": "295",
+                      "height": "40",
+                      "params": "3145744",
+                      "style": "3",
+                      "name": "rank_type_info",
+                      "caption": "Players with the most unique badges.\rUnique badges can be obtained from exceptional events where only a single user is awarded the badge."
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 17,
+                      "text_color": 2236962,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "7",
+                  "y": "60",
+                  "width": "362",
+                  "height": "428",
+                  "params": "2192",
+                  "style": "3",
+                  "name": "ranking_list"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "362",
+                      "height": "41",
+                      "params": "144",
+                      "style": "3",
+                      "name": "entry_template"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "362",
+                          "height": "41",
+                          "params": "16",
+                          "style": "3",
+                          "name": "entry_bg_even"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "badge_leaderboard_entry_even",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "362",
+                          "height": "41",
+                          "params": "16",
+                          "style": "3",
+                          "name": "entry_bg_uneven",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "badge_leaderboard_entry_uneven",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "5",
+                          "y": "1",
+                          "width": "45",
+                          "height": "39",
+                          "params": "3088",
+                          "style": "3",
+                          "name": "rank_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "10",
+                              "y": "7",
+                              "width": "25",
+                              "height": "25",
+                              "params": "786640",
+                              "style": "14",
+                              "name": "rank_border",
+                              "color": "0x06382aa"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "6",
+                                  "y": "2",
+                                  "width": "12",
+                                  "height": "20",
+                                  "params": "4194320",
+                                  "style": "3",
+                                  "name": "rank_number",
+                                  "caption": "1"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "etching_color": 4278190080,
+                                  "etching_position": "bottom-right",
+                                  "font_size": 21,
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "bold": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "region",
+                        "typeId": 5,
+                        "attributes": {
+                          "x": "51",
+                          "y": "3",
+                          "width": "44",
+                          "height": "35",
+                          "params": "145",
+                          "style": "0",
+                          "name": "region_profile",
+                          "color": "0x00",
+                          "treshold": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "container",
+                            "typeId": 4,
+                            "attributes": {
+                              "x": "-3",
+                              "y": "-18",
+                              "width": "50",
+                              "height": "70",
+                              "params": "1073741840",
+                              "style": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "bitmap",
+                                "typeId": 21,
+                                "attributes": {
+                                  "x": "20",
+                                  "y": "30",
+                                  "width": "10",
+                                  "height": "10",
+                                  "params": "1077673984",
+                                  "style": "0",
+                                  "name": "canvas"
+                                },
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "98",
+                          "y": "12",
+                          "width": "114",
+                          "height": "17",
+                          "params": "3088",
+                          "style": "3",
+                          "name": "username_txt",
+                          "caption": "Username very long"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "287",
+                          "y": "7",
+                          "width": "64",
+                          "height": "26",
+                          "params": "262224",
+                          "style": "3",
+                          "name": "right_aligned"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "5",
+                              "width": "31",
+                              "height": "17",
+                              "params": "16",
+                              "style": "3",
+                              "name": "score_txt",
+                              "caption": "7864"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "bold": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "39",
+                              "y": "0",
+                              "width": "25",
+                              "height": "25",
+                              "params": "16",
+                              "style": "3",
+                              "name": "rank_type_img"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "badge_rarity_badges_emblem_unique",
+                              "pivot_point": "center",
+                              "stretched_x": false,
+                              "stretched_y": false,
+                              "fit_size_to_contents": true
+                            }
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 8,
+                          "resize_on_item_update": true
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 2
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "3",
+                  "y": "492",
+                  "width": "370",
+                  "height": "43",
+                  "params": "1168",
+                  "style": "3",
+                  "name": "own_container"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "370",
+                      "height": "43",
+                      "params": "16",
+                      "style": "3",
+                      "name": "own_bg"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "badge_leaderboard_entry_self",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "5",
+                      "y": "2",
+                      "width": "45",
+                      "height": "39",
+                      "params": "3088",
+                      "style": "3",
+                      "name": "rank_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "9",
+                          "y": "7",
+                          "width": "27",
+                          "height": "25",
+                          "params": "786640",
+                          "style": "14",
+                          "name": "rank_border",
+                          "color": "0x06382aa"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "6",
+                              "y": "2",
+                              "width": "14",
+                              "height": "20",
+                              "params": "4194320",
+                              "style": "3",
+                              "name": "rank_own",
+                              "caption": "--"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "etching_color": 4278190080,
+                              "etching_position": "bottom-right",
+                              "font_size": 21,
+                              "text_color": 16777215,
+                              "mouse_wheel_enabled": false,
+                              "bold": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "region",
+                    "typeId": 5,
+                    "attributes": {
+                      "x": "51",
+                      "y": "4",
+                      "width": "44",
+                      "height": "35",
+                      "params": "145",
+                      "style": "0",
+                      "name": "region_profile",
+                      "color": "0x00",
+                      "treshold": "0"
+                    },
+                    "children": [
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "-3",
+                          "y": "-18",
+                          "width": "50",
+                          "height": "70",
+                          "params": "1073741840",
+                          "style": "0"
+                        },
+                        "children": [
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "20",
+                              "y": "30",
+                              "width": "10",
+                              "height": "10",
+                              "params": "1077673984",
+                              "style": "0",
+                              "name": "canvas"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "97",
+                      "y": "13",
+                      "width": "99",
+                      "height": "17",
+                      "params": "3088",
+                      "style": "3",
+                      "name": "username_txt",
+                      "caption": "sirjonasxx-XIVXXI"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "295",
+                      "y": "7",
+                      "width": "64",
+                      "height": "26",
+                      "params": "262224",
+                      "style": "3",
+                      "name": "right_aligned"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "5",
+                          "width": "31",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "score_txt",
+                          "caption": "7864"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "39",
+                          "y": "0",
+                          "width": "25",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "name": "rank_type_img"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "badge_rarity_badges_emblem_unique",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false,
+                          "fit_size_to_contents": true
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 8,
+                      "resize_on_item_update": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "49",
+                  "y": "545",
+                  "width": "279",
+                  "height": "26",
+                  "params": "787664",
+                  "style": "3",
+                  "name": "buttons"
+                },
+                "children": [
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "100",
+                      "height": "26",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "previous_btn",
+                      "caption": "${badge_leaderboard.previous}",
+                      "width_min": "100",
+                      "width_max": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "179",
+                      "y": "0",
+                      "width": "100",
+                      "height": "26",
+                      "params": "131089",
+                      "style": "3",
+                      "name": "next_btn",
+                      "caption": "${badge_leaderboard.next}",
+                      "width_min": "100",
+                      "width_max": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 79,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 12,
+          "margin_top": 0,
+          "margin_right": 12,
+          "margin_bottom": 11
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 412,
+  "layoutHeight": 650
+}

@@ -1,0 +1,215 @@
+{
+  "name": "landing_view_furnimatic_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\95_landing_view_furnimatic_xml$33c728c5b803dd50f6500b031367806f1260252135.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "background",
+        "typeId": 2,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "1182",
+          "height": "822",
+          "params": "0",
+          "style": "0",
+          "color": "0xffff000000",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "1182",
+              "height": "822",
+              "params": "2192",
+              "style": "0",
+              "name": "content_background",
+              "color": "0xffff000000",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "1019",
+                  "height": "852",
+                  "params": "3932176",
+                  "style": "0",
+                  "name": "background_horizon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/furnimatic_backdrop_bg.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "1182",
+                  "height": "822",
+                  "params": "2192",
+                  "style": "0",
+                  "name": "moving_objects_container",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "180",
+                  "y": "0",
+                  "width": "8",
+                  "height": "11",
+                  "params": "147472",
+                  "style": "0",
+                  "name": "placeholder_dynamic_widget_slots"
+                },
+                "children": []
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "751",
+                  "y": "417",
+                  "width": "431",
+                  "height": "367",
+                  "params": "1311824",
+                  "style": "0",
+                  "name": "background_right"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/furnimatic_backdrop_right.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "565",
+                  "width": "798",
+                  "height": "219",
+                  "params": "3146768",
+                  "style": "0",
+                  "name": "background_left"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/furnimatic_backdrop_left.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "69",
+                  "y": "523",
+                  "width": "10",
+                  "height": "10",
+                  "params": "1040",
+                  "style": "4",
+                  "name": "widget_placeholder_avatarimage"
+                },
+                "children": []
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "0",
+                  "y": "340",
+                  "width": "10",
+                  "height": "10",
+                  "params": "1040",
+                  "style": "4",
+                  "name": "widget_placeholder_personalmessages"
+                },
+                "children": []
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "120",
+                  "y": "570",
+                  "width": "10",
+                  "height": "10",
+                  "params": "1040",
+                  "style": "4",
+                  "name": "widget_placeholder_bottom_slot"
+                },
+                "children": []
+              },
+              {
+                "tag": "background",
+                "typeId": 2,
+                "attributes": {
+                  "x": "0",
+                  "y": "784",
+                  "width": "1182",
+                  "height": "38",
+                  "params": "1168",
+                  "style": "0",
+                  "color": "0xffff333333",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "85",
+                  "y": "0",
+                  "width": "145",
+                  "height": "200",
+                  "params": "16",
+                  "style": "0",
+                  "name": "logo"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/reception_logo_drape.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1182,
+  "layoutHeight": 822
+}

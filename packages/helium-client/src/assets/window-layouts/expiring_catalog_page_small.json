@@ -1,0 +1,191 @@
+{
+  "name": "expiring_catalog_page_small",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\653_expiring_catalog_page_small.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "250",
+          "height": "208",
+          "params": "147472",
+          "style": "0",
+          "color": "0x00",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "250",
+              "height": "208",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "94",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "name": "page_header_txt",
+                  "caption": "Caption PH",
+                  "tags": "COLORABLE"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 24,
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "spacing": -0.6,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "24",
+                  "width": "250",
+                  "height": "120",
+                  "params": "16400",
+                  "style": "0",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "120",
+                      "height": "120",
+                      "params": "16",
+                      "style": "100",
+                      "name": "promo_bitmap"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "${image.library.url}reception/catalog_teaser_set_mnstr_gothic.png",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "99",
+                      "y": "23",
+                      "width": "146",
+                      "height": "14",
+                      "params": "16",
+                      "style": "100",
+                      "name": "timer_caption_txt",
+                      "caption": "${landing.view.pageexpiry.timeremaining}",
+                      "tags": "COLORABLE"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "font_size": 9,
+                      "text_style": "il_heading_3",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "124",
+                      "y": "41",
+                      "width": "99",
+                      "height": "37",
+                      "params": "147472",
+                      "style": "0",
+                      "name": "countdown_widget"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "countdown",
+                      "countdown:running": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "144",
+                  "width": "250",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "page_desc_txt",
+                  "caption": "Desc PH",
+                  "tags": "COLORABLE"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "-11",
+                  "y": "160",
+                  "width": "233",
+                  "height": "48",
+                  "params": "131089",
+                  "style": "100",
+                  "name": "open_catalog_button",
+                  "caption": "${landing.view.pageexpiry.opencatalog}",
+                  "height_min": "48",
+                  "height_max": "48"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 250,
+  "layoutHeight": 208
+}

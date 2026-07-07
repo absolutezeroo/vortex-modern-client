@@ -1,0 +1,367 @@
+{
+  "name": "dimmer_ui",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\688_dimmer_ui.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "277",
+          "height": "225",
+          "params": "163841",
+          "style": "0",
+          "name": "dimmer_ui",
+          "caption": "${widget.dimmer.title}",
+          "height_min": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "6",
+              "y": "27",
+              "width": "254",
+              "height": "133",
+              "params": "16",
+              "style": "0",
+              "name": "off_border",
+              "caption": "${widget.dimmer.title}"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "19",
+                  "y": "93",
+                  "width": "219",
+                  "height": "34",
+                  "params": "16",
+                  "style": "0",
+                  "name": "off_text",
+                  "caption": "${widget.dimmer.info.off}"
+                },
+                "children": [],
+                "vars": {
+                  "font_face": "Volter",
+                  "font_size": 9,
+                  "text_color": 0,
+                  "embed_fonts": true,
+                  "word_wrap": true
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "96",
+                  "y": "11",
+                  "width": "56",
+                  "height": "79",
+                  "params": "16",
+                  "style": "0",
+                  "name": "off_image"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "2",
+              "y": "-1",
+              "width": "266",
+              "height": "166",
+              "params": "17",
+              "style": "0",
+              "name": "tabbedview",
+              "caption": "${widget.dimmer.title}"
+            },
+            "children": [
+              {
+                "tag": "tab_context",
+                "typeId": 91,
+                "attributes": {
+                  "x": "2",
+                  "y": "1",
+                  "width": "258",
+                  "height": "163",
+                  "params": "17",
+                  "style": "0",
+                  "name": "tab_context",
+                  "caption": "${widget.dimmer.title}"
+                },
+                "children": [
+                  {
+                    "tag": "tab_button",
+                    "typeId": 93,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "60",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "tab_1",
+                      "caption": "${widget.dimmer.tab.1}",
+                      "width_max": "100"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "tab_button",
+                    "typeId": 93,
+                    "attributes": {
+                      "x": "60",
+                      "y": "0",
+                      "width": "63",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "tab_2",
+                      "caption": "${widget.dimmer.tab.2}",
+                      "id": "1",
+                      "width_max": "100"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "tab_button",
+                    "typeId": 93,
+                    "attributes": {
+                      "x": "123",
+                      "y": "0",
+                      "width": "63",
+                      "height": "21",
+                      "params": "131089",
+                      "style": "0",
+                      "name": "tab_3",
+                      "caption": "${widget.dimmer.tab.3}",
+                      "id": "2",
+                      "width_max": "100"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "17",
+                  "y": "34",
+                  "width": "228",
+                  "height": "118",
+                  "params": "16",
+                  "style": "0",
+                  "name": "tab_content",
+                  "caption": "${widget.dimmer.title}"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "2",
+                      "y": "1",
+                      "width": "210",
+                      "height": "30",
+                      "params": "17",
+                      "style": "0",
+                      "name": "color_grid_container",
+                      "caption": "${widget.dimmer.title}"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemgrid_vertical",
+                        "typeId": 53,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "210",
+                          "height": "30",
+                          "params": "17",
+                          "style": "0",
+                          "name": "color_grid",
+                          "caption": "${widget.dimmer.title}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 2,
+                          "scale_to_fit_items": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "4",
+                      "y": "35",
+                      "width": "206",
+                      "height": "18",
+                      "params": "16",
+                      "style": "0",
+                      "name": "brightness_container",
+                      "caption": "${widget.dimmer.title}"
+                    },
+                    "children": [
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "2",
+                          "y": "0",
+                          "width": "201",
+                          "height": "12",
+                          "params": "3932176",
+                          "style": "0",
+                          "name": "slider_base",
+                          "caption": "${widget.dimmer.title}"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "1",
+                          "width": "206",
+                          "height": "17",
+                          "params": "16",
+                          "style": "0",
+                          "name": "slider_movement_area",
+                          "caption": "${widget.dimmer.title}"
+                        },
+                        "children": [
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "0",
+                              "y": "7",
+                              "width": "12",
+                              "height": "17",
+                              "params": "33073",
+                              "style": "0",
+                              "name": "slider_button",
+                              "caption": "${widget.dimmer.title}"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "3",
+                      "y": "60",
+                      "width": "18",
+                      "height": "18",
+                      "params": "17",
+                      "style": "0",
+                      "name": "type_checkbox",
+                      "caption": "${widget.dimmer.title}"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "22",
+                      "y": "61",
+                      "width": "200",
+                      "height": "14",
+                      "params": "16",
+                      "style": "0",
+                      "name": "type_text",
+                      "caption": "${widget.dimmer.type.checkbox}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter",
+                      "font_size": 9,
+                      "text_color": 0,
+                      "embed_fonts": true
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "4",
+                      "y": "80",
+                      "width": "222",
+                      "height": "46",
+                      "params": "16",
+                      "style": "0",
+                      "name": "dimmer_info",
+                      "caption": "${widget.dimmer.info}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "font_face": "Volter",
+                      "font_size": 9,
+                      "text_color": 10066329,
+                      "embed_fonts": true,
+                      "word_wrap": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "4",
+              "y": "166",
+              "width": "89",
+              "height": "24",
+              "params": "131089",
+              "style": "0",
+              "name": "apply_button",
+              "caption": "${widget.dimmer.button.apply}"
+            },
+            "children": []
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "203",
+              "y": "167",
+              "width": "58",
+              "height": "22",
+              "params": "393233",
+              "style": "0",
+              "name": "on_off_button",
+              "caption": "${widget.dimmer.button.on}"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

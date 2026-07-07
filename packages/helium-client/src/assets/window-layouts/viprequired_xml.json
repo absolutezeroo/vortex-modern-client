@@ -1,0 +1,236 @@
+{
+  "name": "viprequired_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\991__SafeCls_1687.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "310",
+          "height": "149",
+          "params": "163841",
+          "style": "100",
+          "name": "frame",
+          "caption": "${viprequired.header}"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "10",
+              "y": "0",
+              "width": "1",
+              "height": "1",
+              "params": "16",
+              "style": "100",
+              "name": "illustration"
+            },
+            "children": [],
+            "vars": {
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "10",
+              "y": "0",
+              "width": "290",
+              "height": "109",
+              "params": "8536080",
+              "style": "100",
+              "name": "list",
+              "clipping": "false"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "290",
+                  "height": "43",
+                  "params": "147472",
+                  "style": "100",
+                  "name": "list_top"
+                },
+                "children": [
+                  {
+                    "tag": "label",
+                    "typeId": 12,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "114",
+                      "height": "19",
+                      "params": "16",
+                      "style": "100",
+                      "name": "title",
+                      "caption": "${viprequired.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "il_heading_1",
+                      "text_color": 12779520
+                    }
+                  },
+                  {
+                    "tag": "formatted_text",
+                    "typeId": 15,
+                    "attributes": {
+                      "x": "0",
+                      "y": "19",
+                      "width": "291",
+                      "height": "24",
+                      "params": "16",
+                      "style": "100",
+                      "name": "bodytext",
+                      "caption": "${viprequired.bodytext}",
+                      "width_min": "291",
+                      "width_max": "291"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "margin_bottom": 8,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "0",
+                  "y": "46",
+                  "width": "290",
+                  "height": "63",
+                  "params": "147472",
+                  "style": "100",
+                  "name": "list_bottom"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "291",
+                      "height": "3",
+                      "params": "16",
+                      "style": "100"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "illumina_horizontal_separator",
+                      "pivot_point": "bottom center",
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "4",
+                      "width": "291",
+                      "height": "4",
+                      "params": "16",
+                      "style": "100",
+                      "name": "spacer"
+                    },
+                    "children": [],
+                    "vars": {
+                      "pivot_point": "bottom center",
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "button_thick",
+                    "typeId": 61,
+                    "attributes": {
+                      "x": "79",
+                      "y": "9",
+                      "width": "133",
+                      "height": "32",
+                      "params": "131281",
+                      "style": "5",
+                      "name": "buy_vip",
+                      "caption": "${viprequired.buy.vip}",
+                      "color": "0x0aa00"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "link",
+                    "typeId": 14,
+                    "attributes": {
+                      "x": "14",
+                      "y": "42",
+                      "width": "262",
+                      "height": "21",
+                      "params": "193",
+                      "style": "100",
+                      "name": "vip_benefits",
+                      "caption": "${viprequired.vip.benefits}",
+                      "treshold": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "margin_bottom": 5,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 1
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 3
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 310,
+  "layoutHeight": 149
+}

@@ -1,0 +1,140 @@
+{
+  "name": "grs_category_selector",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\550_grs_category_selector.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "345",
+          "height": "55",
+          "params": "16",
+          "style": "3",
+          "name": "row",
+          "color": "0x0a5babf"
+        },
+        "children": [
+          {
+            "tag": "container_button",
+            "typeId": 41,
+            "attributes": {
+              "x": "1",
+              "y": "0",
+              "width": "344",
+              "height": "53",
+              "params": "145",
+              "style": "3",
+              "name": "enter_category_button"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "8",
+                  "width": "250",
+                  "height": "13",
+                  "params": "16",
+                  "style": "0",
+                  "name": "category_name_txt",
+                  "caption": "Dippa daa"
+                },
+                "children": [],
+                "vars": {
+                  "font_face": "Volter Bold",
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "287",
+                  "y": "3",
+                  "width": "44",
+                  "height": "30",
+                  "params": "80",
+                  "style": "0",
+                  "name": "navi_room_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "10",
+                  "y": "30",
+                  "width": "328",
+                  "height": "17",
+                  "params": "17",
+                  "style": "0",
+                  "name": "toggle_open_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "-1",
+                      "y": "2",
+                      "width": "157",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "open_txt",
+                      "caption": "${navigator.categories.viewmore}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "underline": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "icon",
+                    "typeId": 1,
+                    "attributes": {
+                      "x": "260",
+                      "y": "5",
+                      "width": "12",
+                      "height": "18",
+                      "params": "16",
+                      "style": "5",
+                      "name": "arrow_right_icon",
+                      "color": "0x00"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 345,
+  "layoutHeight": 55
+}

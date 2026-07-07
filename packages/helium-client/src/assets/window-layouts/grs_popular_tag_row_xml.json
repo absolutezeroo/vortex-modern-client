@@ -1,0 +1,31 @@
+{
+  "name": "grs_popular_tag_row_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\3027_grs_popular_tag_row_xml$b72f81415cc6c95dd21d5b606d936e432067567699.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "270",
+          "height": "20",
+          "params": "16",
+          "style": "0",
+          "name": "row",
+          "color": "0xFFffffff",
+          "background": "true"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

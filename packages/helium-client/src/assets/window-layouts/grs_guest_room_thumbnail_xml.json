@@ -1,0 +1,58 @@
+{
+  "name": "grs_guest_room_thumbnail_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\3073__SafeCls_763.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "70",
+          "height": "70",
+          "params": "16",
+          "style": "0",
+          "name": "thumbnail"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "3",
+              "width": "64",
+              "height": "64",
+              "params": "16",
+              "style": "0",
+              "name": "picframe"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "3",
+              "width": "64",
+              "height": "64",
+              "params": "16",
+              "style": "0",
+              "name": "enter_room"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

@@ -1,0 +1,287 @@
+{
+  "name": "roomtools_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1214_roomtools_xml$c2cd8274715e5d9cc2098ca0733f025d1531351245.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "32",
+          "params": "0",
+          "style": "2",
+          "color": "0x00"
+        },
+        "children": [
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "2",
+              "width": "29",
+              "height": "29",
+              "params": "17",
+              "style": "0",
+              "name": "zoom_region",
+              "treshold": "0",
+              "tags": "REGION"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "29",
+                  "height": "29",
+                  "params": "16",
+                  "style": "6",
+                  "color": "0x055534e",
+                  "tags": "BGCOLOR"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "23",
+                      "height": "22",
+                      "params": "16",
+                      "style": "3",
+                      "color": "0x0201e19",
+                      "blend": "0.8"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "23",
+                      "height": "27",
+                      "params": "16",
+                      "style": "0",
+                      "name": "icon_zoom_off"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "${image.library.url}album3726/icon_zoom_off.png",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "23",
+                      "height": "27",
+                      "params": "16",
+                      "style": "0",
+                      "name": "icon_zoom_over",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "${image.library.url}album3726/icon_zoom_over.png",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "tool_tip_caption": "${toolbar.icon.tooltip.zoom}"
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "31",
+              "y": "2",
+              "width": "161",
+              "height": "29",
+              "params": "17",
+              "style": "0",
+              "name": "roominfo_region",
+              "treshold": "0",
+              "tags": "REGION"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "161",
+                  "height": "29",
+                  "params": "16",
+                  "style": "6",
+                  "color": "0x055534e",
+                  "tags": "BGCOLOR"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "155",
+                      "height": "22",
+                      "params": "16",
+                      "style": "3",
+                      "color": "0x0201e19",
+                      "blend": "0.8"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "9",
+                      "y": "5",
+                      "width": "114",
+                      "height": "17",
+                      "params": "16",
+                      "style": "100",
+                      "name": "list"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "175",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "roominfo_text",
+                          "caption": "${navigator.roomsettings.roomname}",
+                          "tags": "TEXT"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_color": 10000536,
+                          "text_style": "il_regular_white",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "177",
+                          "y": "0",
+                          "width": "12",
+                          "height": "16",
+                          "params": "16",
+                          "style": "100",
+                          "name": "roominfo_name",
+                          "caption": "...",
+                          "tags": "TEXT"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_regular_white",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 2
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "132",
+                  "y": "0",
+                  "width": "29",
+                  "height": "29",
+                  "params": "16",
+                  "style": "6",
+                  "color": "0x055534e"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "23",
+                      "height": "22",
+                      "params": "16",
+                      "style": "3",
+                      "color": "0x0201e19",
+                      "blend": "0.8"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "29",
+                      "height": "29",
+                      "params": "16",
+                      "style": "0",
+                      "name": "icon_zoom_off"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "toolbar_room_icon_0",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 32
+}

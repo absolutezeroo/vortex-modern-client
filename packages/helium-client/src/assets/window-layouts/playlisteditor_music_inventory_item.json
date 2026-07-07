@@ -1,0 +1,205 @@
+{
+  "name": "playlisteditor_music_inventory_item",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\961_playlisteditor_music_inventory_item_xml$0a9b2011757358b91c06b897e2e7424b445083522.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "91",
+          "height": "104",
+          "params": "17",
+          "style": "0",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "91",
+              "height": "104",
+              "params": "18",
+              "style": "0",
+              "name": "selected",
+              "tags": "SELECTED"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "85",
+              "height": "98",
+              "params": "18",
+              "style": "2",
+              "name": "background",
+              "color": "0x0f1f1f1",
+              "tags": "BG_COLOR"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "7",
+              "y": "7",
+              "width": "76",
+              "height": "76",
+              "params": "18",
+              "style": "0",
+              "name": "disk_image"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "85",
+              "width": "80",
+              "height": "18",
+              "params": "786640",
+              "style": "0",
+              "name": "song_title_text",
+              "tags": "SONG_TITLE",
+              "width_max": "80"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "mouse_wheel_enabled": false
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "81",
+              "y": "86",
+              "width": "6",
+              "height": "12",
+              "params": "16",
+              "style": "0",
+              "name": "title_fader_bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "jb_fader"
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "3",
+              "y": "57",
+              "width": "84",
+              "height": "44",
+              "params": "18",
+              "style": "0",
+              "name": "action_buttons",
+              "tags": "BUTTONS"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "84",
+                  "height": "44",
+                  "params": "16",
+                  "style": "2",
+                  "color": "0x086a762"
+                },
+                "children": []
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "36",
+                  "height": "36",
+                  "params": "17",
+                  "style": "0",
+                  "name": "button_play_pause",
+                  "tags": "PLAY_PAUSE"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "30",
+                      "height": "30",
+                      "params": "3934352",
+                      "style": "0",
+                      "name": "image_button_play_pause"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "44",
+                  "y": "4",
+                  "width": "36",
+                  "height": "36",
+                  "params": "17",
+                  "style": "0",
+                  "name": "button_to_playlist",
+                  "tags": "TOPLAYLIST"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "30",
+                      "height": "30",
+                      "params": "3934352",
+                      "style": "0",
+                      "name": "image_button_to_playlist"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 91,
+  "layoutHeight": 104
+}

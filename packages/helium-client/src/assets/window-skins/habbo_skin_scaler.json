@@ -1,0 +1,84 @@
+{
+  "id": "habbo_skin_scaler",
+  "name": "default_scaler_skin",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\76_default_scaler_skin.xml",
+  "variables": {
+    "asset": "habbo_blue_skin"
+  },
+  "templates": [
+    {
+      "name": "default_scaler",
+      "asset": "habbo_blue_skin",
+      "entities": [
+        {
+          "id": 0,
+          "name": "scaler",
+          "type": "bitmap",
+          "region": {
+            "x": 41,
+            "y": 32,
+            "width": 15,
+            "height": 15
+          }
+        },
+        {
+          "id": 0,
+          "name": "shine",
+          "type": "bitmap",
+          "region": {
+            "x": 59,
+            "y": 32,
+            "width": 14,
+            "height": 14
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "scaler",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "scaler",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 15,
+            "height": 15
+          }
+        },
+        {
+          "id": 0,
+          "name": "shine",
+          "colorize": false,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 14,
+            "height": 14
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "scaler",
+      "template": "default_scaler"
+    }
+  ]
+}

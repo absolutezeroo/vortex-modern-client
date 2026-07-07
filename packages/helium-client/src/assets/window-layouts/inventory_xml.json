@@ -1,0 +1,2767 @@
+{
+  "name": "inventory_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1278__SafeCls_1059.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "490",
+          "height": "342",
+          "params": "98305",
+          "style": "3",
+          "name": "inventoryBase",
+          "caption": "${inventory.title}",
+          "color": "0xff418db0",
+          "width_min": "490",
+          "width_max": "490",
+          "height_min": "300"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "478",
+              "height": "301",
+              "params": "2064",
+              "style": "3",
+              "name": "top_content",
+              "tags": "TOP_CONTENT"
+            },
+            "children": [
+              {
+                "tag": "tab_context",
+                "typeId": 91,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "478",
+                  "height": "301",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "tabs",
+                  "caption": "Inventory"
+                },
+                "children": [
+                  {
+                    "tag": "tab_container_button",
+                    "typeId": 94,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "107",
+                      "height": "34",
+                      "params": "147473",
+                      "style": "3",
+                      "name": "furni",
+                      "caption": "${inventory.furni}"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "107",
+                          "height": "34",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${inventory.furni}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "margin_left": 10,
+                          "margin_top": 7,
+                          "margin_right": 10,
+                          "margin_bottom": 10
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "tab_container_button",
+                    "typeId": 94,
+                    "attributes": {
+                      "x": "107",
+                      "y": "0",
+                      "width": "87",
+                      "height": "34",
+                      "params": "147473",
+                      "style": "3",
+                      "name": "collectibles",
+                      "caption": "${inventory.collectibles}"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "87",
+                          "height": "34",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${inventory.collectibles}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "margin_left": 10,
+                          "margin_top": 7,
+                          "margin_right": 10,
+                          "margin_bottom": 10
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "tab_container_button",
+                    "typeId": 94,
+                    "attributes": {
+                      "x": "194",
+                      "y": "0",
+                      "width": "131",
+                      "height": "34",
+                      "params": "147473",
+                      "style": "3",
+                      "name": "rentables",
+                      "caption": "${inventory.rentables}"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "131",
+                          "height": "34",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${inventory.rentables}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "margin_left": 10,
+                          "margin_top": 7,
+                          "margin_right": 10,
+                          "margin_bottom": 10
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "tab_container_button",
+                    "typeId": 94,
+                    "attributes": {
+                      "x": "325",
+                      "y": "0",
+                      "width": "155",
+                      "height": "34",
+                      "params": "147473",
+                      "style": "3",
+                      "name": "pets",
+                      "caption": "${inventory.furni.tab.pets}"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "155",
+                          "height": "34",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${inventory.furni.tab.pets}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "margin_left": 10,
+                          "margin_top": 7,
+                          "margin_right": 10,
+                          "margin_bottom": 10
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "tab_container_button",
+                    "typeId": 94,
+                    "attributes": {
+                      "x": "480",
+                      "y": "0",
+                      "width": "64",
+                      "height": "34",
+                      "params": "147473",
+                      "style": "3",
+                      "name": "badges",
+                      "caption": "${inventory.badges}"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "64",
+                          "height": "34",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${inventory.badges}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "margin_left": 10,
+                          "margin_top": 7,
+                          "margin_right": 10,
+                          "margin_bottom": 10
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "tab_container_button",
+                    "typeId": 94,
+                    "attributes": {
+                      "x": "544",
+                      "y": "0",
+                      "width": "105",
+                      "height": "34",
+                      "params": "147473",
+                      "style": "3",
+                      "name": "bots",
+                      "caption": "${inventory.bots}"
+                    },
+                    "children": [
+                      {
+                        "tag": "label",
+                        "typeId": 12,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "105",
+                          "height": "34",
+                          "params": "16",
+                          "style": "3",
+                          "caption": "${inventory.bots}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "margin_left": 10,
+                          "margin_top": 7,
+                          "margin_right": 10,
+                          "margin_bottom": 10
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "20",
+                  "width": "478",
+                  "height": "278",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "empty_container",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "46",
+                      "y": "42",
+                      "width": "180",
+                      "height": "180",
+                      "params": "16",
+                      "style": "3",
+                      "name": "image"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "inventory_inventory_empty",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  },
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "287",
+                      "y": "64",
+                      "width": "176",
+                      "height": "154",
+                      "params": "16",
+                      "style": "3"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "176",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "inventory_empty_title",
+                          "caption": "${inventory.empty.title}",
+                          "tags": "furni_description"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_color": 14483456,
+                          "text_style": "il_heading_2",
+                          "mouse_wheel_enabled": false,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "22",
+                          "width": "176",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "inventory_empty_description",
+                          "caption": "${inventory.empty.desc}",
+                          "tags": "furni_description"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 5
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "241",
+                      "y": "225",
+                      "width": "149",
+                      "height": "51",
+                      "params": "918545",
+                      "style": "3",
+                      "name": "open_catalog_btn",
+                      "caption": "${inventory.open.catalog}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "text_style": "button_shiny_regular"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "6",
+                  "y": "27",
+                  "width": "264",
+                  "height": "268",
+                  "params": "2064",
+                  "style": "3",
+                  "name": "loading_container",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "264",
+                      "height": "268",
+                      "params": "16",
+                      "style": "3",
+                      "name": "download_image"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "inventory_download_icon",
+                      "pivot_point": "center",
+                      "stretched_x": false,
+                      "stretched_y": false
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "5",
+                  "y": "35",
+                  "width": "468",
+                  "height": "261",
+                  "params": "2064",
+                  "style": "4",
+                  "name": "contentArea"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "furni",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "468",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "name": "options_container",
+                          "color": "0x0cacaca"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "4",
+                              "y": "3",
+                              "width": "139",
+                              "height": "20",
+                              "params": "16",
+                              "style": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "input",
+                                "typeId": 77,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "2",
+                                  "width": "122",
+                                  "height": "15",
+                                  "params": "1",
+                                  "style": "3",
+                                  "name": "filter",
+                                  "width_min": "60"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "120",
+                                  "y": "0",
+                                  "width": "20",
+                                  "height": "20",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "clear_filter_button",
+                                  "visible": "false",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "20",
+                                      "height": "20",
+                                      "params": "16",
+                                      "style": "3"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "icons_close",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "dropmenu",
+                            "typeId": 102,
+                            "attributes": {
+                              "x": "150",
+                              "y": "2",
+                              "width": "119",
+                              "height": "21",
+                              "params": "17",
+                              "style": "0",
+                              "name": "filter.options"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "dropmenu",
+                            "typeId": 102,
+                            "attributes": {
+                              "x": "274",
+                              "y": "2",
+                              "width": "119",
+                              "height": "21",
+                              "params": "17",
+                              "style": "0",
+                              "name": "placement.options"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "27",
+                          "width": "284",
+                          "height": "231",
+                          "params": "2064",
+                          "style": "3",
+                          "name": "grid_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "scrollable_itemgrid_vertical",
+                            "typeId": 140,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "284",
+                              "height": "221",
+                              "params": "2065",
+                              "style": "3",
+                              "name": "item_grid",
+                              "tags": "FURNI_ITEM_GRID"
+                            },
+                            "children": [],
+                            "vars": {
+                              "spacing": 2,
+                              "scale_to_fit_items": true
+                            }
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "0",
+                              "y": "220",
+                              "width": "280",
+                              "height": "10",
+                              "params": "1040",
+                              "style": "3",
+                              "name": "item_grid_pages"
+                            },
+                            "children": [
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "8",
+                                  "height": "14",
+                                  "params": "147473",
+                                  "style": "3",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "8",
+                                      "height": "14",
+                                      "params": "16",
+                                      "style": "3",
+                                      "caption": "0",
+                                      "tags": "PAGE"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "text_style": "il_small",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 2
+                            }
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "185",
+                              "y": "217",
+                              "width": "98",
+                              "height": "17",
+                              "params": "263184",
+                              "style": "3",
+                              "name": "items.shown",
+                              "caption": "Items shown: x/y"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_color": 7829367
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "290",
+                          "y": "27",
+                          "width": "180",
+                          "height": "237",
+                          "params": "2064",
+                          "style": "3",
+                          "name": "preview_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "region",
+                            "typeId": 5,
+                            "attributes": {
+                              "x": "5",
+                              "y": "0",
+                              "width": "170",
+                              "height": "130",
+                              "params": "18577",
+                              "style": "3",
+                              "name": "furni_preview_region",
+                              "treshold": "0",
+                              "height_min": "50"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "5",
+                              "y": "0",
+                              "width": "170",
+                              "height": "130",
+                              "params": "2192",
+                              "style": "3",
+                              "name": "furni_preview_widget",
+                              "height_min": "50"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "room_previewer"
+                            }
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "-31",
+                              "width": "180",
+                              "height": "266",
+                              "params": "1049728",
+                              "style": "3",
+                              "name": "preview_element_list"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "190",
+                                  "height": "17",
+                                  "params": "786576",
+                                  "style": "3",
+                                  "name": "furni_name",
+                                  "caption": "name",
+                                  "tags": "furni_name",
+                                  "width_min": "190",
+                                  "width_max": "190"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "word_wrap": true,
+                                  "bold": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "18",
+                                  "width": "190",
+                                  "height": "30",
+                                  "params": "144",
+                                  "style": "3",
+                                  "name": "furni_description",
+                                  "caption": "description lakjdsf lkjas dflkjalkjasdflkja sdlfkj asdf",
+                                  "tags": "furni_description",
+                                  "width_min": "190",
+                                  "width_max": "190",
+                                  "height_max": "45"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "49",
+                                  "width": "190",
+                                  "height": "17",
+                                  "params": "144",
+                                  "style": "3",
+                                  "name": "furni_extra",
+                                  "caption": "extra",
+                                  "tags": "furni_extra",
+                                  "width_min": "190",
+                                  "width_max": "190"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "67",
+                                  "width": "30",
+                                  "height": "12",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "spacer"
+                                },
+                                "children": []
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "80",
+                                  "width": "180",
+                                  "height": "22",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "placeinroom_btn",
+                                  "caption": "${inventory.furni.placetoroom}",
+                                  "tags": "FIT:inventory.furni.placetoroom"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "103",
+                                  "width": "165",
+                                  "height": "22",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "goto_room_btn",
+                                  "caption": "${inventory.furni.gotoroom}",
+                                  "tags": "FIT:inventory.furni.gotoroom"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              },
+                              {
+                                "tag": "input",
+                                "typeId": 77,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "126",
+                                  "width": "50",
+                                  "height": "19",
+                                  "params": "1",
+                                  "style": "3",
+                                  "name": "offertotrade_cnt",
+                                  "caption": "1",
+                                  "background": "true",
+                                  "width_min": "50",
+                                  "width_max": "50"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "always_show_selection": true,
+                                  "border": true,
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "146",
+                                  "width": "148",
+                                  "height": "22",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "offertotrade_btn",
+                                  "caption": "${inventory.trading.offer}",
+                                  "width_min": "60"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "169",
+                                  "width": "167",
+                                  "height": "22",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "sell_btn",
+                                  "caption": "${inventory.marketplace.sell}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "192",
+                                  "width": "125",
+                                  "height": "28",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "use_btn",
+                                  "caption": "${inventory.furni.use}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "221",
+                                  "width": "168",
+                                  "height": "22",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "extendrent_btn",
+                                  "caption": "${inventory.furni.extendrent}",
+                                  "tags": "FIT:inventory.furni.extendrent"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              },
+                              {
+                                "tag": "button",
+                                "typeId": 60,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "244",
+                                  "width": "189",
+                                  "height": "22",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "buyrenteditem_btn",
+                                  "caption": "${inventory.furni.buyrenteditem}",
+                                  "tags": "FIT:inventory.furni.buyrenteditem"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "button_shiny_regular"
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 1,
+                              "scale_to_fit_items": true,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "52",
+                              "height": "34",
+                              "params": "0",
+                              "style": "3",
+                              "name": "icons_element_list"
+                            },
+                            "children": [
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "52",
+                                  "height": "16",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "tradeable_info_region",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "33",
+                                      "y": "1",
+                                      "width": "4",
+                                      "height": "4",
+                                      "params": "0",
+                                      "style": "3",
+                                      "name": "tradeable_number",
+                                      "tags": "NUMBER,COUNT"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "16",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "tradeable_icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "inventory_furni_no_trade_icon",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "tool_tip_caption": "${inventory.furni.preview.tradeable_amount}"
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "16",
+                                  "width": "52",
+                                  "height": "16",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "recyclable_info_region",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "18",
+                                      "y": "1",
+                                      "width": "4",
+                                      "height": "4",
+                                      "params": "0",
+                                      "style": "3",
+                                      "name": "recyclable_number",
+                                      "tags": "NUMBER,COUNT"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "28",
+                                      "height": "16",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "recyclable_icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "inventory_furni_no_recycle_icon",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "tool_tip_caption": "${inventory.furni.preview.recyclable_amount}"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "121",
+                              "y": "5",
+                              "width": "36",
+                              "height": "30",
+                              "params": "64",
+                              "style": "3",
+                              "name": "rarity_item_overlay_widget"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "rarity_item_overlay_preview"
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "119",
+                              "y": "4",
+                              "width": "40",
+                              "height": "40",
+                              "params": "64",
+                              "style": "3",
+                              "name": "unique_limited_item_overlay_widget"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "limited_item_overlay_preview"
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "33",
+                              "y": "5",
+                              "width": "131",
+                              "height": "23",
+                              "params": "393217",
+                              "style": "3",
+                              "name": "nextItemButton",
+                              "caption": "${inventory.furni.next}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "33",
+                              "y": "31",
+                              "width": "131",
+                              "height": "23",
+                              "params": "393217",
+                              "style": "3",
+                              "name": "viewItemButton",
+                              "caption": "${inventory.furni.view}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "collectibles",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "468",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "name": "options_container",
+                          "color": "0x0cacaca"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "4",
+                              "y": "3",
+                              "width": "139",
+                              "height": "20",
+                              "params": "16",
+                              "style": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "input",
+                                "typeId": 77,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "2",
+                                  "width": "120",
+                                  "height": "15",
+                                  "params": "1",
+                                  "style": "3",
+                                  "name": "filter",
+                                  "width_min": "60"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "120",
+                                  "y": "0",
+                                  "width": "20",
+                                  "height": "20",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "clear_filter_button",
+                                  "visible": "false",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "20",
+                                      "height": "20",
+                                      "params": "16",
+                                      "style": "3"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "icons_close",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "dropmenu",
+                            "typeId": 102,
+                            "attributes": {
+                              "x": "150",
+                              "y": "2",
+                              "width": "119",
+                              "height": "21",
+                              "params": "17",
+                              "style": "0",
+                              "name": "filter.options"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "27",
+                          "width": "284",
+                          "height": "231",
+                          "params": "2064",
+                          "style": "3",
+                          "name": "grid_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "scrollable_itemgrid_vertical",
+                            "typeId": 140,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "284",
+                              "height": "221",
+                              "params": "2065",
+                              "style": "3",
+                              "name": "item_grid",
+                              "tags": "FURNI_ITEM_GRID"
+                            },
+                            "children": [],
+                            "vars": {
+                              "spacing": 2,
+                              "scale_to_fit_items": true
+                            }
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "0",
+                              "y": "220",
+                              "width": "280",
+                              "height": "10",
+                              "params": "1040",
+                              "style": "3",
+                              "name": "item_grid_pages"
+                            },
+                            "children": [
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "8",
+                                  "height": "14",
+                                  "params": "147473",
+                                  "style": "3",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "8",
+                                      "height": "14",
+                                      "params": "16",
+                                      "style": "3",
+                                      "caption": "0",
+                                      "tags": "PAGE"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "text_style": "il_small",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 2
+                            }
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "185",
+                              "y": "217",
+                              "width": "98",
+                              "height": "17",
+                              "params": "263184",
+                              "style": "3",
+                              "name": "items.shown",
+                              "caption": "Items shown: x/y",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_color": 7829367
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "290",
+                          "y": "27",
+                          "width": "180",
+                          "height": "237",
+                          "params": "2064",
+                          "style": "3",
+                          "name": "preview_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "5",
+                              "width": "175",
+                              "height": "188",
+                              "params": "16",
+                              "style": "2",
+                              "color": "0x0d8d8d8"
+                            },
+                            "children": [
+                              {
+                                "tag": "itemlist_vertical",
+                                "typeId": 50,
+                                "attributes": {
+                                  "x": "5",
+                                  "y": "5",
+                                  "width": "170",
+                                  "height": "35",
+                                  "params": "128",
+                                  "style": "3",
+                                  "name": "nft_info"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "190",
+                                      "height": "17",
+                                      "params": "786576",
+                                      "style": "3",
+                                      "name": "nft_name",
+                                      "caption": "name ",
+                                      "tags": "furni_name",
+                                      "width_min": "190",
+                                      "width_max": "190"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "word_wrap": true,
+                                      "bold": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "18",
+                                      "width": "190",
+                                      "height": "17",
+                                      "params": "144",
+                                      "style": "3",
+                                      "name": "nft_type",
+                                      "caption": "Type: furni fdgfgdf",
+                                      "tags": "furni_description",
+                                      "width_min": "190",
+                                      "width_max": "190",
+                                      "height_max": "45"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "mouse_wheel_enabled": false,
+                                      "word_wrap": true,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "spacing": 1,
+                                  "scale_to_fit_items": true,
+                                  "resize_on_item_update": true
+                                }
+                              },
+                              {
+                                "tag": "widget",
+                                "typeId": 16,
+                                "attributes": {
+                                  "x": "2",
+                                  "y": "45",
+                                  "width": "170",
+                                  "height": "110",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "nft_image"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "widget_type": "product_image"
+                                }
+                              },
+                              {
+                                "tag": "itemlist_horizontal",
+                                "typeId": 51,
+                                "attributes": {
+                                  "x": "-18",
+                                  "y": "160",
+                                  "width": "188",
+                                  "height": "28",
+                                  "params": "409744",
+                                  "style": "3",
+                                  "name": "offer_options"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "input",
+                                    "typeId": 77,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "1",
+                                      "width": "30",
+                                      "height": "19",
+                                      "params": "262145",
+                                      "style": "3",
+                                      "name": "offertotrade_cnt",
+                                      "caption": "1",
+                                      "background": "true",
+                                      "width_min": "30",
+                                      "width_max": "30"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "always_show_selection": true,
+                                      "border": true,
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "button",
+                                    "typeId": 60,
+                                    "attributes": {
+                                      "x": "40",
+                                      "y": "0",
+                                      "width": "148",
+                                      "height": "22",
+                                      "params": "393233",
+                                      "style": "3",
+                                      "name": "offertotrade_btn",
+                                      "caption": "${inventory.trading.offer}",
+                                      "width_min": "60"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "button_shiny_regular"
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "spacing": 10
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "52",
+                              "height": "34",
+                              "params": "0",
+                              "style": "3",
+                              "name": "icons_element_list"
+                            },
+                            "children": [
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "52",
+                                  "height": "16",
+                                  "params": "131089",
+                                  "style": "3",
+                                  "name": "tradeable_info_region",
+                                  "visible": "false",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "33",
+                                      "y": "1",
+                                      "width": "4",
+                                      "height": "4",
+                                      "params": "0",
+                                      "style": "3",
+                                      "name": "tradeable_number",
+                                      "tags": "NUMBER,COUNT"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  },
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "40",
+                                      "height": "16",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "tradeable_icon"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "inventory_furni_no_trade_icon",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "tool_tip_caption": "${inventory.furni.preview.tradeable_amount}"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "121",
+                              "y": "5",
+                              "width": "36",
+                              "height": "30",
+                              "params": "64",
+                              "style": "3",
+                              "name": "rarity_item_overlay_widget",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "rarity_item_overlay_preview"
+                            }
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "119",
+                              "y": "4",
+                              "width": "40",
+                              "height": "40",
+                              "params": "64",
+                              "style": "3",
+                              "name": "unique_limited_item_overlay_widget",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "limited_item_overlay_preview"
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "33",
+                              "y": "5",
+                              "width": "131",
+                              "height": "23",
+                              "params": "393217",
+                              "style": "3",
+                              "name": "nextItemButton",
+                              "caption": "${inventory.furni.next}",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "33",
+                              "y": "31",
+                              "width": "131",
+                              "height": "23",
+                              "params": "393217",
+                              "style": "3",
+                              "name": "viewItemButton",
+                              "caption": "${inventory.furni.view}",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "pets",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "468",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "name": "options_container",
+                          "color": "0x0cacaca"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "4",
+                              "y": "3",
+                              "width": "139",
+                              "height": "20",
+                              "params": "16",
+                              "style": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "input",
+                                "typeId": 77,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "2",
+                                  "width": "122",
+                                  "height": "15",
+                                  "params": "1",
+                                  "style": "3",
+                                  "name": "filter",
+                                  "width_min": "60"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "120",
+                                  "y": "0",
+                                  "width": "20",
+                                  "height": "20",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "clear_filter_button",
+                                  "visible": "false",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "20",
+                                      "height": "20",
+                                      "params": "16",
+                                      "style": "3"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "icons_close",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "dropmenu",
+                            "typeId": 102,
+                            "attributes": {
+                              "x": "150",
+                              "y": "2",
+                              "width": "119",
+                              "height": "21",
+                              "params": "17",
+                              "style": "0",
+                              "name": "filter.options"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "scrollable_itemgrid_vertical",
+                        "typeId": 140,
+                        "attributes": {
+                          "x": "0",
+                          "y": "27",
+                          "width": "274",
+                          "height": "231",
+                          "params": "2065",
+                          "style": "3",
+                          "name": "grid"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 2,
+                          "scale_to_fit_items": true
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "280",
+                          "y": "0",
+                          "width": "190",
+                          "height": "261",
+                          "params": "2128",
+                          "style": "3",
+                          "name": "preview_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "32",
+                              "width": "66",
+                              "height": "19",
+                              "params": "144",
+                              "style": "3",
+                              "name": "preview_text",
+                              "caption": "PetName"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "u_headline_small",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "5",
+                              "y": "53",
+                              "width": "150",
+                              "height": "152",
+                              "params": "17",
+                              "style": "3",
+                              "name": "preview_image"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "4",
+                              "y": "205",
+                              "width": "180",
+                              "height": "17",
+                              "params": "144",
+                              "style": "3",
+                              "name": "preview_description",
+                              "caption": "Lorem ipsumlkj lj",
+                              "width_max": "220"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "5",
+                              "y": "200",
+                              "width": "154",
+                              "height": "29",
+                              "params": "788496",
+                              "style": "3",
+                              "name": "preview_info",
+                              "caption": "...",
+                              "visible": "false"
+                            },
+                            "children": [],
+                            "vars": {
+                              "mouse_wheel_enabled": false,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "0",
+                              "y": "229",
+                              "width": "158",
+                              "height": "28",
+                              "params": "132113",
+                              "style": "3",
+                              "name": "place_button",
+                              "caption": "${inventory.pets.placetoroom}",
+                              "width_min": "158",
+                              "width_max": "158"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "dropmenu",
+                        "typeId": 102,
+                        "attributes": {
+                          "x": "274",
+                          "y": "2",
+                          "width": "119",
+                          "height": "21",
+                          "params": "17",
+                          "style": "0",
+                          "name": "filter.rarity"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "bots",
+                      "visible": "false"
+                    },
+                    "children": [
+                      {
+                        "tag": "scrollable_itemgrid_vertical",
+                        "typeId": 140,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "274",
+                          "height": "256",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "grid"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 2,
+                          "scale_to_fit_items": true
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "280",
+                          "y": "0",
+                          "width": "190",
+                          "height": "261",
+                          "params": "2128",
+                          "style": "3",
+                          "name": "preview_container"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "67",
+                              "height": "19",
+                              "params": "3145744",
+                              "style": "3",
+                              "name": "bot_name",
+                              "caption": "bot name"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "left",
+                              "text_style": "u_headline_small",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 0,
+                              "thickness": 0,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "bitmap",
+                            "typeId": 21,
+                            "attributes": {
+                              "x": "43",
+                              "y": "24",
+                              "width": "100",
+                              "height": "150",
+                              "params": "17",
+                              "style": "3",
+                              "name": "preview_image"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "0",
+                              "y": "174",
+                              "width": "190",
+                              "height": "45",
+                              "params": "16",
+                              "style": "3",
+                              "name": "bot_description"
+                            },
+                            "children": [],
+                            "vars": {
+                              "mouse_wheel_enabled": false,
+                              "multiline": true,
+                              "word_wrap": true,
+                              "spacing": 0,
+                              "leading": 0
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "10",
+                              "y": "225",
+                              "width": "158",
+                              "height": "28",
+                              "params": "132113",
+                              "style": "3",
+                              "name": "place_button",
+                              "caption": "${inventory.bot.placetoroom}",
+                              "width_min": "158",
+                              "width_max": "158"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "468",
+                      "height": "261",
+                      "params": "2064",
+                      "style": "3",
+                      "name": "badges"
+                    },
+                    "children": [
+                      {
+                        "tag": "border",
+                        "typeId": 30,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "468",
+                          "height": "25",
+                          "params": "16",
+                          "style": "3",
+                          "name": "options_container",
+                          "color": "0x0cacaca"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "4",
+                              "y": "3",
+                              "width": "139",
+                              "height": "20",
+                              "params": "16",
+                              "style": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "input",
+                                "typeId": 77,
+                                "attributes": {
+                                  "x": "3",
+                                  "y": "2",
+                                  "width": "122",
+                                  "height": "15",
+                                  "params": "1",
+                                  "style": "3",
+                                  "name": "filter",
+                                  "width_min": "60"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "region",
+                                "typeId": 5,
+                                "attributes": {
+                                  "x": "120",
+                                  "y": "0",
+                                  "width": "20",
+                                  "height": "20",
+                                  "params": "17",
+                                  "style": "3",
+                                  "name": "clear_filter_button",
+                                  "treshold": "0"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "20",
+                                      "height": "20",
+                                      "params": "16",
+                                      "style": "3"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "icons_close",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "tag": "dropmenu",
+                            "typeId": 102,
+                            "attributes": {
+                              "x": "150",
+                              "y": "2",
+                              "width": "119",
+                              "height": "21",
+                              "params": "17",
+                              "style": "0",
+                              "name": "filter.options"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "dropmenu",
+                        "typeId": 102,
+                        "attributes": {
+                          "x": "274",
+                          "y": "2",
+                          "width": "119",
+                          "height": "21",
+                          "params": "17",
+                          "style": "0",
+                          "name": "filter.rarity"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "scrollable_itemgrid_vertical",
+                        "typeId": 140,
+                        "attributes": {
+                          "x": "0",
+                          "y": "27",
+                          "width": "328",
+                          "height": "143",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "inactive_items",
+                          "tags": "BADGE_ITEM_GRID"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 2,
+                          "scale_to_fit_items": true
+                        }
+                      },
+                      {
+                        "tag": "itemlist_horizontal",
+                        "typeId": 51,
+                        "attributes": {
+                          "x": "0",
+                          "y": "170",
+                          "width": "328",
+                          "height": "10",
+                          "params": "1040",
+                          "style": "3",
+                          "name": "item_grid_pages"
+                        },
+                        "children": [
+                          {
+                            "tag": "region",
+                            "typeId": 5,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "8",
+                              "height": "14",
+                              "params": "147473",
+                              "style": "3",
+                              "treshold": "0"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "8",
+                                  "height": "14",
+                                  "params": "16",
+                                  "style": "3",
+                                  "caption": "0",
+                                  "tags": "PAGE"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "text_style": "il_small",
+                                  "mouse_wheel_enabled": false,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "vars": {
+                          "spacing": 2
+                        }
+                      },
+                      {
+                        "tag": "itemgrid_vertical",
+                        "typeId": 53,
+                        "attributes": {
+                          "x": "335",
+                          "y": "58",
+                          "width": "135",
+                          "height": "120",
+                          "params": "2129",
+                          "style": "3",
+                          "name": "active_items",
+                          "tags": "ACTIVE_BADGE_ITEM_GRID"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 2,
+                          "scale_to_fit_items": true
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "20",
+                          "y": "-3",
+                          "width": "285",
+                          "height": "19",
+                          "params": "16",
+                          "style": "3",
+                          "name": "myBadgesTitle",
+                          "caption": "${inventory.badges.inactivebadges}",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "text_style": "u_headline_small",
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "330",
+                          "y": "32",
+                          "width": "134",
+                          "height": "19",
+                          "params": "80",
+                          "style": "3",
+                          "name": "wearingTitle",
+                          "caption": "${inventory.badges.activebadges}"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "center",
+                          "text_style": "u_headline_small",
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "184",
+                          "width": "468",
+                          "height": "78",
+                          "params": "1168",
+                          "style": "3",
+                          "name": "descriptionArea"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "468",
+                              "height": "78",
+                              "params": "2192",
+                              "style": "3",
+                              "name": "badge_desc_bg_box"
+                            },
+                            "children": []
+                          },
+                          {
+                            "tag": "widget",
+                            "typeId": 16,
+                            "attributes": {
+                              "x": "9",
+                              "y": "14",
+                              "width": "50",
+                              "height": "50",
+                              "params": "16",
+                              "style": "3",
+                              "name": "badge_image"
+                            },
+                            "children": [],
+                            "vars": {
+                              "widget_type": "badge_image",
+                              "badge_image:pivot_point": "center",
+                              "badge_image:stretched_x": false,
+                              "badge_image:stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "itemlist_vertical",
+                            "typeId": 50,
+                            "attributes": {
+                              "x": "63",
+                              "y": "3",
+                              "width": "271",
+                              "height": "39",
+                              "params": "0",
+                              "style": "3",
+                              "name": "badgeDetailsList"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "211",
+                                  "height": "17",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "badgeName",
+                                  "caption": "${inventory.badges.defaultdescription}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "font_size": 18,
+                                  "text_style": "u_headline_small",
+                                  "mouse_wheel_enabled": false,
+                                  "sharpness": 0,
+                                  "thickness": 0,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "17",
+                                  "width": "271",
+                                  "height": "4",
+                                  "params": "16",
+                                  "style": "3",
+                                  "name": "badgeDescription",
+                                  "visible": "false",
+                                  "height_max": "28"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "left",
+                                  "font_size": 17,
+                                  "mouse_wheel_enabled": false,
+                                  "multiline": true,
+                                  "word_wrap": true,
+                                  "max_lines": 2,
+                                  "overflow_replace": "...",
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              },
+                              {
+                                "tag": "itemlist_horizontal",
+                                "typeId": 51,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "19",
+                                  "width": "-5",
+                                  "height": "20",
+                                  "params": "16",
+                                  "style": "3"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "border",
+                                    "typeId": 30,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "92",
+                                      "height": "17",
+                                      "params": "16",
+                                      "style": "2",
+                                      "name": "badgeRarityTag",
+                                      "color": "0x0cccccc",
+                                      "visible": "false"
+                                    },
+                                    "children": [
+                                      {
+                                        "tag": "text",
+                                        "typeId": 10,
+                                        "attributes": {
+                                          "x": "5",
+                                          "y": "2",
+                                          "width": "81",
+                                          "height": "13",
+                                          "params": "4194320",
+                                          "style": "3",
+                                          "name": "badgeRarityBorder",
+                                          "caption": "Unique badge",
+                                          "tags": "BLEND_SUBTRACT"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "auto_size": "left",
+                                          "font_face": "Volter Bold",
+                                          "font_size": 9,
+                                          "text_color": 16777215,
+                                          "mouse_wheel_enabled": false,
+                                          "bold": true,
+                                          "spacing": 0,
+                                          "leading": 0
+                                        }
+                                      },
+                                      {
+                                        "tag": "text",
+                                        "typeId": 10,
+                                        "attributes": {
+                                          "x": "5",
+                                          "y": "2",
+                                          "width": "81",
+                                          "height": "13",
+                                          "params": "16",
+                                          "style": "3",
+                                          "name": "badgeRarity",
+                                          "caption": "Unique badge",
+                                          "tags": "BLEND_INVERT"
+                                        },
+                                        "children": [],
+                                        "vars": {
+                                          "auto_size": "left",
+                                          "font_face": "Volter Bold",
+                                          "font_size": 9,
+                                          "text_color": 16777215,
+                                          "mouse_wheel_enabled": false,
+                                          "bold": true,
+                                          "spacing": 0,
+                                          "leading": 0
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "typeId": 10,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "1",
+                                      "width": "4",
+                                      "height": "4",
+                                      "params": "16",
+                                      "style": "3",
+                                      "name": "badgeOwnerCount",
+                                      "visible": "false"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "auto_size": "left",
+                                      "font_size": 17,
+                                      "text_color": 5592405,
+                                      "mouse_wheel_enabled": false,
+                                      "spacing": 0,
+                                      "leading": 0
+                                    }
+                                  }
+                                ],
+                                "vars": {
+                                  "spacing": 5,
+                                  "resize_on_item_update": true
+                                }
+                              }
+                            ],
+                            "vars": {
+                              "spacing": 2,
+                              "resize_on_item_update": true
+                            }
+                          },
+                          {
+                            "tag": "button",
+                            "typeId": 60,
+                            "attributes": {
+                              "x": "282",
+                              "y": "40",
+                              "width": "179",
+                              "height": "28",
+                              "params": "393297",
+                              "style": "3",
+                              "name": "wearBadge_button",
+                              "caption": "${inventory.badges.wearbadge}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "button_shiny_regular"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "239",
+                          "width": "468",
+                          "height": "24",
+                          "params": "1168",
+                          "style": "3",
+                          "name": "achievements_score_container",
+                          "visible": "false"
+                        },
+                        "children": [
+                          {
+                            "tag": "border",
+                            "typeId": 30,
+                            "attributes": {
+                              "x": "0",
+                              "y": "4",
+                              "width": "468",
+                              "height": "17",
+                              "params": "144",
+                              "style": "3",
+                              "name": "score_description_border",
+                              "color": "0x0428bb2",
+                              "width_min": "368"
+                            },
+                            "children": [
+                              {
+                                "tag": "text",
+                                "typeId": 10,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "468",
+                                  "height": "17",
+                                  "params": "3932240",
+                                  "style": "3",
+                                  "name": "score_description_text",
+                                  "caption": "${achievements_score_description}"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "auto_size": "center",
+                                  "text_color": 16777215,
+                                  "mouse_wheel_enabled": false,
+                                  "bold": true,
+                                  "spacing": 0,
+                                  "leading": 0
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "301",
+              "width": "478",
+              "height": "1",
+              "params": "16",
+              "style": "3",
+              "name": "subContentArea",
+              "caption": "${inventory.title}"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 6,
+          "margin_top": 35,
+          "margin_right": 6,
+          "margin_bottom": 6
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 490,
+  "layoutHeight": 342
+}

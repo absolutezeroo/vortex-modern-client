@@ -1,0 +1,41 @@
+{
+  "name": "user_info_frame",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\74_user_info_frame.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "200",
+          "y": "4",
+          "width": "292",
+          "height": "225",
+          "params": "32769",
+          "style": "0",
+          "caption": "User info",
+          "color": "0xff418db0"
+        },
+        "children": [],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 292,
+  "layoutHeight": 225
+}

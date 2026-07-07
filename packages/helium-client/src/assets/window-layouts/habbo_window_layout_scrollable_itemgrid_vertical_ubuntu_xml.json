@@ -1,0 +1,49 @@
+{
+  "name": "habbo_window_layout_scrollable_itemgrid_vertical_ubuntu_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1884__SafeCls_1417.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemgrid_vertical",
+        "typeId": 53,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "23",
+          "height": "40",
+          "params": "2193",
+          "style": "3",
+          "name": "_ITEMGRID",
+          "tags": "_ITEMGRID, _EXCLUDE, _INTERNAL"
+        },
+        "children": [],
+        "vars": {
+          "spacing": 0,
+          "scale_to_fit_items": false
+        }
+      },
+      {
+        "tag": "scrollbar_vertical",
+        "typeId": 131,
+        "attributes": {
+          "x": "23",
+          "y": "0",
+          "width": "17",
+          "height": "40",
+          "params": "2129",
+          "style": "3",
+          "name": "_SCROLLBAR",
+          "tags": "_SCROLLBAR, _EXCLUDE, _INTERNAL"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 40,
+  "layoutHeight": 40
+}

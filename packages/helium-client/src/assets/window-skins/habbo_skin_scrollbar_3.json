@@ -1,0 +1,1153 @@
+{
+  "id": "habbo_skin_scrollbar_3",
+  "name": "default_scrollbar_skin_3",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\skins\\36_default_scrollbar_skin_3.xml",
+  "variables": {
+    "color": "0xffffff",
+    "blend": "1",
+    "asset": "habbo_skin_ubuntu",
+    "button_up_width": "17",
+    "button_up_height": "16",
+    "button_down_width": "17",
+    "button_down_height": "16",
+    "button_left_width": "16",
+    "button_left_height": "17",
+    "button_right_width": "16",
+    "button_right_height": "17"
+  },
+  "templates": [
+    {
+      "name": "null",
+      "asset": "",
+      "entities": []
+    },
+    {
+      "name": "button_up_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 70,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_up_hover_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 70,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_up_passive_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 220,
+            "y": 70,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_up_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 180,
+            "y": 70,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_down_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 140,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_down_hover_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 140,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_down_passive_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 220,
+            "y": 140,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_down_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 180,
+            "y": 140,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_left_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 260,
+            "y": 70,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_left_hover_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 260,
+            "y": 110,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_left_passive_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 260,
+            "y": 130,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_left_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 260,
+            "y": 90,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_right_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 330,
+            "y": 70,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_right_hover_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 330,
+            "y": 110,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_right_passive_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 330,
+            "y": 130,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "button_right_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "type": "bitmap",
+          "region": {
+            "x": 330,
+            "y": 90,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_vertical_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 90,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 95,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 119,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 100,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_vertical_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top",
+          "type": "bitmap",
+          "region": {
+            "x": 180,
+            "y": 90,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid",
+          "type": "bitmap",
+          "region": {
+            "x": 180,
+            "y": 95,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm",
+          "type": "bitmap",
+          "region": {
+            "x": 180,
+            "y": 119,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "type": "bitmap",
+          "region": {
+            "x": 180,
+            "y": 100,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_vertical_hover_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 90,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "mid",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 95,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 119,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "type": "bitmap",
+          "region": {
+            "x": 200,
+            "y": 100,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_vertical_disabled_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": []
+    },
+    {
+      "name": "lift_horizontal_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "lft",
+          "type": "bitmap",
+          "region": {
+            "x": 280,
+            "y": 70,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "cnt",
+          "type": "bitmap",
+          "region": {
+            "x": 285,
+            "y": 70,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "rgt",
+          "type": "bitmap",
+          "region": {
+            "x": 309,
+            "y": 70,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "type": "bitmap",
+          "region": {
+            "x": 290,
+            "y": 70,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_horizontal_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "lft",
+          "type": "bitmap",
+          "region": {
+            "x": 280,
+            "y": 90,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "cnt",
+          "type": "bitmap",
+          "region": {
+            "x": 285,
+            "y": 90,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "rgt",
+          "type": "bitmap",
+          "region": {
+            "x": 309,
+            "y": 90,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "type": "bitmap",
+          "region": {
+            "x": 290,
+            "y": 90,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_horizontal_hover_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "lft",
+          "type": "bitmap",
+          "region": {
+            "x": 280,
+            "y": 110,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "cnt",
+          "type": "bitmap",
+          "region": {
+            "x": 285,
+            "y": 110,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "rgt",
+          "type": "bitmap",
+          "region": {
+            "x": 309,
+            "y": 110,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "type": "bitmap",
+          "region": {
+            "x": 290,
+            "y": 110,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "lift_horizontal_disabled_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": []
+    },
+    {
+      "name": "track_ver_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 130,
+            "width": 17,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "track_ver_passive_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "type": "bitmap",
+          "region": {
+            "x": 220,
+            "y": 130,
+            "width": 17,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "track_ver_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "type": "bitmap",
+          "region": {
+            "x": 160,
+            "y": 130,
+            "width": 17,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "track_hor_default_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "type": "bitmap",
+          "region": {
+            "x": 320,
+            "y": 70,
+            "width": 2,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "track_hor_passive_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "type": "bitmap",
+          "region": {
+            "x": 320,
+            "y": 130,
+            "width": 2,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "track_hor_pressed_3",
+      "asset": "habbo_skin_ubuntu",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "type": "bitmap",
+          "region": {
+            "x": 320,
+            "y": 70,
+            "width": 2,
+            "height": 17
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "scrollbar_horizontal_3",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 27,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_vertical_3",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 17,
+            "height": 27
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_track_horizontal_3",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 2,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_track_vertical_3",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "track",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 2,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 17,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_button_up_3",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_button_down_3",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 17,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_button_left_3",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 17,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_button_right_3",
+      "transparent": true,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "button",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_lift_horizontal_3",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "lft",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "rgt",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 1,
+          "scaleV": 0,
+          "region": {
+            "x": 25,
+            "y": 0,
+            "width": 5,
+            "height": 17
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 4,
+          "scaleV": 0,
+          "region": {
+            "x": 5,
+            "y": 0,
+            "width": 20,
+            "height": 17
+          }
+        }
+      ]
+    },
+    {
+      "name": "scrollbar_lift_vertical_3",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "top",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "btm",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 1,
+          "region": {
+            "x": 0,
+            "y": 25,
+            "width": 17,
+            "height": 5
+          }
+        },
+        {
+          "id": 0,
+          "name": "grd",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 4,
+          "region": {
+            "x": 0,
+            "y": 5,
+            "width": 17,
+            "height": 20
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "scrollbar_horizontal_3",
+      "template": "null"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_vertical_3",
+      "template": "null"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_button_up_3",
+      "template": "button_up_default_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "scrollbar_button_up_3",
+      "template": "button_up_hover_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_button_up_3",
+      "template": "button_up_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_button_up_3",
+      "template": "button_up_passive_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_button_down_3",
+      "template": "button_down_default_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "scrollbar_button_down_3",
+      "template": "button_down_hover_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_button_down_3",
+      "template": "button_down_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_button_down_3",
+      "template": "button_down_passive_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_button_left_3",
+      "template": "button_left_default_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "scrollbar_button_left_3",
+      "template": "button_left_hover_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_button_left_3",
+      "template": "button_left_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_button_left_3",
+      "template": "button_left_passive_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_button_right_3",
+      "template": "button_right_default_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "scrollbar_button_right_3",
+      "template": "button_right_hover_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_button_right_3",
+      "template": "button_right_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_button_right_3",
+      "template": "button_right_passive_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_lift_horizontal_3",
+      "template": "lift_horizontal_default_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "scrollbar_lift_horizontal_3",
+      "template": "lift_horizontal_hover_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_lift_horizontal_3",
+      "template": "lift_horizontal_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_lift_horizontal_3",
+      "template": "lift_horizontal_disabled_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_lift_vertical_3",
+      "template": "lift_vertical_default_3"
+    },
+    {
+      "name": "hovering",
+      "layout": "scrollbar_lift_vertical_3",
+      "template": "lift_vertical_hover_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_lift_vertical_3",
+      "template": "lift_vertical_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_lift_vertical_3",
+      "template": "lift_vertical_disabled_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_track_horizontal_3",
+      "template": "track_hor_default_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_track_horizontal_3",
+      "template": "track_hor_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_track_horizontal_3",
+      "template": "track_hor_passive_3"
+    },
+    {
+      "name": "default",
+      "layout": "scrollbar_track_vertical_3",
+      "template": "track_ver_default_3"
+    },
+    {
+      "name": "pressed",
+      "layout": "scrollbar_track_vertical_3",
+      "template": "track_ver_pressed_3"
+    },
+    {
+      "name": "disabled",
+      "layout": "scrollbar_track_vertical_3",
+      "template": "track_ver_passive_3"
+    }
+  ]
+}

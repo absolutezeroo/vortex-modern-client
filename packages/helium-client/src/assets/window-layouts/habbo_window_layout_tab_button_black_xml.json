@@ -1,0 +1,41 @@
+{
+  "name": "habbo_window_layout_tab_button_black_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2050_tab_button_black_xml$70c6a4d621b842498ad24a055b0e477a149859024.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "title",
+          "style": "0",
+          "x": "0",
+          "y": "0",
+          "width": "20",
+          "height": "22",
+          "background": "false",
+          "tags": "title, TAB_BUTTON_TITLE, _EXCLUDE, _INTERNAL",
+          "params": "-2147480368"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "button_tab",
+          "text_color": 4294967295,
+          "margins": {
+            "left": 8,
+            "top": 2,
+            "right": 8,
+            "bottom": 4
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 22
+}

@@ -1,0 +1,239 @@
+{
+  "name": "teaser_general",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\781_teaser_general.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "433",
+          "height": "260",
+          "params": "32769",
+          "style": "1",
+          "name": "widget_teaser_frame",
+          "caption": "${widget.furni.teaser.gift.title}",
+          "color": "0xff4c4c4c",
+          "tags": "room_widget_teaser"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "420",
+              "height": "227",
+              "params": "16",
+              "style": "1",
+              "name": "bg",
+              "caption": "${widget.furni.teaser.gift.title}",
+              "blend": "0"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "420",
+                  "height": "160",
+                  "params": "16",
+                  "style": "0",
+                  "name": "white_bg",
+                  "caption": "${widget.furni.teaser.gift.title}"
+                },
+                "children": [
+                  {
+                    "tag": "bitmap",
+                    "typeId": 21,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "419",
+                      "height": "159",
+                      "params": "1048592",
+                      "style": "0",
+                      "name": "dialog_bg",
+                      "caption": "${widget.furni.teaser.gift.title}"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "130",
+                  "y": "12",
+                  "width": "282",
+                  "height": "21",
+                  "params": "16",
+                  "style": "0",
+                  "name": "header",
+                  "caption": "${widget.furni.teaser.notify.unlocked.title}",
+                  "color": "0x0444444"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 4473924,
+                  "text_style": "bold",
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "130",
+                  "y": "31",
+                  "width": "282",
+                  "height": "120",
+                  "params": "16",
+                  "style": "0",
+                  "name": "text",
+                  "caption": "${widget.furni.teaser.notify.unlocked.desc}",
+                  "color": "0x0888888"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 8947848,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "51",
+                  "y": "172",
+                  "width": "306",
+                  "height": "46",
+                  "params": "17",
+                  "style": "0",
+                  "name": "received_ok_btn",
+                  "caption": "${widget.furni.teaser.gift.title}",
+                  "width_min": "306",
+                  "width_max": "306",
+                  "height_min": "46",
+                  "height_max": "46"
+                },
+                "children": [
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "3",
+                      "y": "3",
+                      "width": "300",
+                      "height": "40",
+                      "params": "16",
+                      "style": "3",
+                      "name": "btn_bg_1",
+                      "caption": "${widget.furni.teaser.gift.title}",
+                      "color": "0x06d00",
+                      "width_min": "300",
+                      "width_max": "300",
+                      "height_min": "40",
+                      "height_max": "40"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "6",
+                      "y": "6",
+                      "width": "294",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "btn_bg_2",
+                      "caption": "${widget.furni.teaser.gift.title}",
+                      "color": "0x0309d00",
+                      "width_min": "294",
+                      "width_max": "294",
+                      "height_min": "17",
+                      "height_max": "17"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "6",
+                      "y": "11",
+                      "width": "294",
+                      "height": "33",
+                      "params": "3932176",
+                      "style": "0",
+                      "name": "open_txt",
+                      "caption": "${generic.ok}",
+                      "width_min": "294",
+                      "width_max": "294",
+                      "height_min": "33",
+                      "height_max": "33"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "center",
+                      "font_face": "Ubuntu",
+                      "font_size": 24,
+                      "text_color": 16777215,
+                      "text_style": "bold",
+                      "mouse_wheel_enabled": false,
+                      "bold": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "23",
+                  "y": "16",
+                  "width": "90",
+                  "height": "90",
+                  "params": "16",
+                  "style": "0",
+                  "name": "deco_img",
+                  "caption": "${widget.furni.teaser.gift.title}",
+                  "width_min": "90",
+                  "width_max": "90",
+                  "height_min": "90",
+                  "height_max": "90"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 433,
+  "layoutHeight": 260
+}

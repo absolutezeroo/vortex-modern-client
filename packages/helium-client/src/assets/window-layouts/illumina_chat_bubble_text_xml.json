@@ -1,0 +1,40 @@
+{
+  "name": "illumina_chat_bubble_text_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1852_illumina_chat_bubble_text_xml$852feef8ba9beae12df4b48ddcdcd8cf849324627.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "text",
+        "typeId": 10,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "207",
+          "height": "4",
+          "params": "17",
+          "style": "100",
+          "name": "message",
+          "height_min": "0"
+        },
+        "children": [],
+        "vars": {
+          "auto_size": "left",
+          "margin_left": 10,
+          "margin_right": 10,
+          "mouse_wheel_enabled": false,
+          "multiline": true,
+          "word_wrap": true,
+          "spacing": 0,
+          "leading": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 207,
+  "layoutHeight": 4
+}

@@ -1,0 +1,32 @@
+{
+  "id": "habbo_skin_text",
+  "name": "plain_text_skin",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2135_habbo_skin_text_xml$2d915fba81ba820ad3ed61d3e30203ea1141696237.xml",
+  "variables": {
+    "color": "0xff000000",
+    "blend": "0x000000ff",
+    "font": "Volter"
+  },
+  "templates": [
+    {
+      "name": "text",
+      "asset": "",
+      "entities": []
+    }
+  ],
+  "layouts": [
+    {
+      "name": "text",
+      "transparent": true,
+      "blendMode": "",
+      "entities": []
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "text",
+      "template": "text"
+    }
+  ]
+}

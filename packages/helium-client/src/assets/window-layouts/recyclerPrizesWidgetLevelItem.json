@@ -1,0 +1,220 @@
+{
+  "name": "recyclerPrizesWidgetLevelItem",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\250_recyclerPrizesWidgetLevelItem.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "348",
+          "height": "78",
+          "params": "16",
+          "style": "3",
+          "name": "bg"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "348",
+              "height": "78",
+              "params": "8390800",
+              "style": "0",
+              "name": "border"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "338",
+                  "height": "68",
+                  "params": "8388752",
+                  "style": "3",
+                  "name": "content"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_horizontal",
+                    "typeId": 51,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "106",
+                      "height": "23",
+                      "params": "16",
+                      "style": "3",
+                      "name": "header_bar",
+                      "height_min": "23",
+                      "height_max": "23"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "0",
+                          "y": "3",
+                          "width": "18",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "star_icon"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "star_small_gold",
+                          "pivot_point": "center",
+                          "stretched_x": false,
+                          "stretched_y": false
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "18",
+                          "y": "3",
+                          "width": "28",
+                          "height": "17",
+                          "params": "48",
+                          "style": "3",
+                          "name": "level_title",
+                          "caption": "Title"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "bold": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "46",
+                          "y": "3",
+                          "width": "10",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "level_splitter",
+                          "caption": " -"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "56",
+                          "y": "3",
+                          "width": "50",
+                          "height": "17",
+                          "params": "16",
+                          "style": "3",
+                          "name": "level_chances",
+                          "caption": "Chances"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "mouse_wheel_enabled": false,
+                          "italic": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ],
+                    "vars": {
+                      "resize_on_item_update": true
+                    }
+                  },
+                  {
+                    "tag": "background",
+                    "typeId": 2,
+                    "attributes": {
+                      "x": "0",
+                      "y": "23",
+                      "width": "338",
+                      "height": "1",
+                      "params": "144",
+                      "style": "3",
+                      "color": "0x5050000000",
+                      "background": "true"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "24",
+                      "width": "338",
+                      "height": "44",
+                      "params": "8388752",
+                      "style": "3",
+                      "color": "0xffffeaeaea",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "itemgrid_vertical",
+                        "typeId": 53,
+                        "attributes": {
+                          "x": "5",
+                          "y": "5",
+                          "width": "328",
+                          "height": "36",
+                          "params": "8388752",
+                          "style": "3",
+                          "name": "itemGrid",
+                          "color": "0xffffeaeaea",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "spacing": 2,
+                          "scale_to_fit_items": true,
+                          "resize_on_item_update": true
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 348,
+  "layoutHeight": 78
+}

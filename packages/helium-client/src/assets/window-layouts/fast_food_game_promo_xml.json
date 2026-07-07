@@ -1,0 +1,187 @@
+{
+  "name": "fast_food_game_promo_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\50_fastfood_game_promo_xml$5581afac673154c8b1c954be7a86c1142094232750.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "500",
+          "height": "245",
+          "params": "147472",
+          "style": "0",
+          "color": "0x00",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "200",
+              "height": "245",
+              "params": "16",
+              "style": "0",
+              "name": "col1",
+              "color": "0x00",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "10",
+                  "y": "0",
+                  "width": "200",
+                  "height": "250",
+                  "params": "16",
+                  "style": "0",
+                  "name": "teaser_image"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/fastfood_promo.png",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "230",
+              "y": "30",
+              "width": "270",
+              "height": "111",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "296",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "name": "caption_txt",
+                  "caption": "${landing.view.fastfoodpromo.caption}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 24,
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "spacing": -0.6,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "24",
+                  "width": "250",
+                  "height": "6",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing",
+                  "color": "0x00",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "30",
+                  "width": "270",
+                  "height": "15",
+                  "params": "16",
+                  "style": "100",
+                  "name": "title_txt",
+                  "caption": "${landing.view.fastfoodpromo.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_heading_3",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "45",
+                  "width": "270",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "info_txt",
+                  "caption": "${landing.view.fastfoodpromo.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "-11",
+                  "y": "61",
+                  "width": "228",
+                  "height": "50",
+                  "params": "131089",
+                  "style": "100",
+                  "name": "go_button",
+                  "caption": "${landing.view.fastfoodpromo.button}"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 500,
+  "layoutHeight": 245
+}

@@ -1,0 +1,52 @@
+{
+  "name": "room_thumbnail",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\481_room_thumbnail.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "112",
+          "height": "112",
+          "params": "16",
+          "style": "3",
+          "name": "room_thumbnail_container",
+          "color": "0xffff000000",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "1",
+              "y": "1",
+              "width": "110",
+              "height": "110",
+              "params": "16",
+              "style": "3",
+              "name": "room_thumbnail"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "newnavigator_default_room",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 112,
+  "layoutHeight": 112
+}

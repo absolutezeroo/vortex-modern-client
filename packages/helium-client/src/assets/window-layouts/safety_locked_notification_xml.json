@@ -1,0 +1,95 @@
+{
+  "name": "safety_locked_notification_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2964_safety_locked_notification_xml$1021cb5be63e671a3332612c324a230f670359871.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "79",
+          "params": "273",
+          "style": "6",
+          "caption": "${generic.notification_title}",
+          "color": "0x06f6f6f"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "8",
+              "y": "6",
+              "width": "174",
+              "height": "36",
+              "params": "16",
+              "style": "0",
+              "name": "info_text",
+              "caption": "${notifications.text.safety_locked}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "word_wrap": true
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "8",
+              "y": "51",
+              "width": "35",
+              "height": "18",
+              "params": "131089",
+              "style": "6",
+              "name": "unlock_link_region",
+              "clipping": "false",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "2",
+                  "width": "147",
+                  "height": "17",
+                  "params": "0",
+                  "style": "1",
+                  "name": "unlock_link",
+                  "caption": "${notifications.button.safety_locked_unlock}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "underline": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 80
+}

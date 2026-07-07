@@ -1,0 +1,98 @@
+{
+  "name": "mannequin_peer_wrong_gender",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\724_mannequin_peer_wrong_gender.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "386",
+          "height": "180",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "289",
+              "y": "141",
+              "width": "75",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "ok_button",
+              "caption": "${generic.ok}",
+              "width_min": "75",
+              "width_max": "140"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "20",
+              "y": "10",
+              "width": "83",
+              "height": "130",
+              "params": "16",
+              "style": "3",
+              "name": "preview_image"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "126",
+              "y": "52",
+              "width": "245",
+              "height": "86",
+              "params": "16",
+              "style": "3",
+              "name": "description",
+              "caption": "${mannequin.widget.wronggender}"
+            },
+            "children": [],
+            "vars": {
+              "font_size": 19,
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "sharpness": 80,
+              "thickness": -15,
+              "word_wrap": true
+            }
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "80",
+              "y": "110",
+              "width": "43",
+              "height": "29",
+              "params": "16",
+              "style": "0",
+              "name": "club_icon"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 386,
+  "layoutHeight": 180
+}

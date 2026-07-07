@@ -1,0 +1,237 @@
+{
+  "name": "welcome_tour_popup_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2906_welcome_tour_popup_xml$77db3775613e125a58b5d5f97685f1a1998999723.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "435",
+          "height": "222",
+          "params": "32769",
+          "style": "3",
+          "caption": "${help.tour.popup.action.accept}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "-4",
+              "y": "5",
+              "width": "433",
+              "height": "221",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "help_frank_greeting",
+              "pivot_point": "bottom left",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "89",
+              "y": "15",
+              "width": "365",
+              "height": "69",
+              "params": "147472",
+              "style": "3"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "326",
+                  "height": "21",
+                  "params": "16",
+                  "style": "3",
+                  "caption": "${help.tour.popup.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "u_headline_medium",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "25",
+                  "width": "313",
+                  "height": "44",
+                  "params": "16",
+                  "style": "3",
+                  "caption": "${help.tour.popup.description}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ],
+            "vars": {
+              "spacing": 4
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "83",
+              "y": "80",
+              "width": "306",
+              "height": "134",
+              "params": "16",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "40",
+                  "y": "44",
+                  "width": "226",
+                  "height": "28",
+                  "params": "131281",
+                  "style": "3",
+                  "name": "take_tour",
+                  "caption": "${help.tour.popup.action.accept}"
+                },
+                "children": []
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "69",
+                  "y": "57",
+                  "width": "168",
+                  "height": "16",
+                  "params": "147665",
+                  "style": "3",
+                  "name": "refuse_tour",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "168",
+                      "height": "16",
+                      "params": "16",
+                      "style": "100",
+                      "caption": "${help.tour.popup.action.refuse}",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "mouse_wheel_enabled": false,
+                      "underline": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "1",
+                  "y": "88",
+                  "width": "304",
+                  "height": "45",
+                  "params": "16",
+                  "style": "3",
+                  "blend": "0.7",
+                  "visible": "false"
+                },
+                "children": [
+                  {
+                    "tag": "formatted_text",
+                    "typeId": 15,
+                    "attributes": {
+                      "x": "11",
+                      "y": "9",
+                      "width": "283",
+                      "height": "28",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${help.tour.popup.hint}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 17,
+                      "mouse_wheel_enabled": false,
+                      "multiline": true,
+                      "word_wrap": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 30,
+          "margin_right": 1,
+          "margin_bottom": 1
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 435,
+  "layoutHeight": 222
+}

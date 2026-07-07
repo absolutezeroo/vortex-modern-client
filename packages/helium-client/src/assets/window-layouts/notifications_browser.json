@@ -1,0 +1,85 @@
+{
+  "name": "notifications_browser",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\543_notifications_browser.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "250",
+          "height": "331",
+          "params": "0",
+          "style": "1",
+          "color": "0xffffff"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "65",
+              "y": "7",
+              "width": "120",
+              "height": "13",
+              "params": "3145936",
+              "style": "0",
+              "name": "title",
+              "caption": "Notification history",
+              "color": "0xffffff"
+            },
+            "children": [],
+            "vars": {
+              "font_face": "Volter Bold",
+              "font_size": "9",
+              "text_color": "16777215",
+              "auto_size": "left",
+              "embed_fonts": "true",
+              "mouse_wheel_enabled": "true"
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "5",
+              "y": "26",
+              "width": "240",
+              "height": "1",
+              "params": "16",
+              "style": "0",
+              "name": "separator",
+              "color": "0xff2f2f2f",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "11",
+              "y": "32",
+              "width": "230",
+              "height": "290",
+              "params": "17",
+              "style": "0",
+              "name": "notifications",
+              "color": "0xffffff"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

@@ -1,0 +1,84 @@
+{
+  "name": "room_interstitial",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\773_room_interstitial.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "240",
+          "height": "146",
+          "params": "0",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "display_object_wrapper",
+            "typeId": 20,
+            "attributes": {
+              "x": "10",
+              "y": "10",
+              "width": "220",
+              "height": "91",
+              "params": "2209",
+              "style": "0",
+              "name": "image"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "10",
+              "y": "10",
+              "width": "220",
+              "height": "91",
+              "params": "2193",
+              "style": "0",
+              "name": "region",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "tool_tip_caption": "${ads.interstitial.tooltip}",
+              "tool_tip_delay": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "10",
+              "y": "111",
+              "width": "220",
+              "height": "15",
+              "params": "1232",
+              "style": "0",
+              "name": "loading_text",
+              "caption": "${room.loading}"
+            },
+            "children": [],
+            "vars": {
+              "font_face": "Volter",
+              "font_size": 9,
+              "text_color": 0,
+              "embed_fonts": true,
+              "auto_size": "center"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

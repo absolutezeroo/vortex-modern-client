@@ -1,0 +1,366 @@
+{
+  "name": "Event_info",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\579_Event_info.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "195",
+          "height": "135",
+          "params": "80",
+          "style": "0",
+          "name": "event_info_window",
+          "color": "0x00"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "135",
+              "params": "0",
+              "style": "0",
+              "name": "event_bg_visitor"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}Events/event_bg_visitor.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "135",
+              "params": "0",
+              "style": "0",
+              "name": "event_bg_owner"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}Events/event_bg_owner.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "25",
+              "params": "0",
+              "style": "0",
+              "name": "event_bg_contracted"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}Events/event_bg_contracted.png"
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "135",
+              "params": "2193",
+              "style": "0",
+              "name": "bg_region",
+              "treshold": "0"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "195",
+              "height": "135",
+              "params": "0",
+              "style": "0",
+              "name": "content_cont",
+              "color": "0x00",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "61",
+                  "y": "2",
+                  "width": "67",
+                  "height": "18",
+                  "params": "786448",
+                  "style": "0",
+                  "name": "header_txt",
+                  "caption": "Caption PH"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 19,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": -0.4,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "31",
+                  "y": "3",
+                  "width": "126",
+                  "height": "17",
+                  "params": "4194320",
+                  "style": "0",
+                  "name": "get_event",
+                  "caption": "${roomad.get.event}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "10",
+                  "y": "27",
+                  "width": "175",
+                  "height": "90",
+                  "params": "16",
+                  "style": "0",
+                  "name": "desc_txt",
+                  "caption": "Search around hotel and locate this very valuable dino egg jhg jhg jhg jh gjhg jhg jhg jhg jh gjhg jhg jhg jhg jhg jhgjhgjh gjhg jh gjhg jh gjhg jhg jhg jhg jhg jhg"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "17",
+                  "y": "107",
+                  "width": "156",
+                  "height": "17",
+                  "params": "786448",
+                  "style": "0",
+                  "name": "in_progress_txt",
+                  "caption": "${navigator.eventinprogress}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "bold": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "31",
+                  "y": "3",
+                  "width": "126",
+                  "height": "17",
+                  "params": "4194320",
+                  "style": "0",
+                  "name": "create_link",
+                  "caption": "${navigator.createevent}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "110",
+                  "width": "88",
+                  "height": "18",
+                  "params": "17",
+                  "style": "0",
+                  "name": "modify_link_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "5",
+                      "y": "0",
+                      "width": "88",
+                      "height": "17",
+                      "params": "786448",
+                      "style": "0",
+                      "name": "modify_link",
+                      "caption": "${navigator.roominfo.editevent}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "left",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "underline": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "88",
+                  "y": "110",
+                  "width": "88",
+                  "height": "18",
+                  "params": "17",
+                  "style": "0",
+                  "name": "extend_event_region",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "88",
+                      "height": "17",
+                      "params": "786448",
+                      "style": "0",
+                      "name": "modify_link",
+                      "caption": "${roomad.extend.event}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "antialias_type": "advanced",
+                      "auto_size": "right",
+                      "font_face": "Ubuntu",
+                      "font_size": 18,
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 0,
+                      "thickness": 0,
+                      "underline": true,
+                      "kerning": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "5",
+                  "y": "2",
+                  "width": "16",
+                  "height": "19",
+                  "params": "16",
+                  "style": "0",
+                  "name": "event_icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}Events/event_icon.png"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 195,
+  "layoutHeight": 135
+}

@@ -1,0 +1,456 @@
+{
+  "name": "level_up_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\27_level_up_xml$89dc85a9590702335dc047acca9c351d931276495.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "395",
+          "y": "28",
+          "width": "430",
+          "height": "362",
+          "params": "1",
+          "style": "100",
+          "caption": "${talent.track.common.levelup.caption}"
+        },
+        "children": [
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "10",
+              "y": "10",
+              "width": "408",
+              "height": "306",
+              "params": "8536080",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "label",
+                "typeId": 12,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "291",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "caption": "${talent.track.common.levelup.title}"
+                },
+                "children": [],
+                "vars": {
+                  "text_style": "il_heading_title"
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "24",
+                  "width": "410",
+                  "height": "37",
+                  "params": "16",
+                  "style": "100",
+                  "name": "level_up_message",
+                  "caption": "${talent.track.helper.levelup.message}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_color": 4473924,
+                  "text_style": "il_heading_2",
+                  "margin_top": 5,
+                  "margin_bottom": 15,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "1",
+                  "y": "61",
+                  "width": "406",
+                  "height": "176",
+                  "params": "147472",
+                  "style": "102",
+                  "width_min": "406",
+                  "height_min": "70"
+                },
+                "children": [
+                  {
+                    "tag": "itemlist_vertical",
+                    "typeId": 50,
+                    "attributes": {
+                      "x": "14",
+                      "y": "12",
+                      "width": "378",
+                      "height": "164",
+                      "params": "147472",
+                      "style": "100",
+                      "name": "level_up_layout"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "4",
+                          "y": "0",
+                          "width": "340",
+                          "height": "17",
+                          "params": "16",
+                          "style": "100",
+                          "name": "level_title",
+                          "caption": "Frank's Little Helper"
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "text_style": "il_heading_2",
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "4",
+                          "y": "18",
+                          "width": "309",
+                          "height": "65",
+                          "params": "16",
+                          "style": "100",
+                          "name": "level_description",
+                          "caption": "Now that you know your  Now that you know way around  Now that you knowthe hotel, it's... Now that you know your way around the hotel, it's... Now that you know your way around the hotel, it's..."
+                        },
+                        "children": [],
+                        "vars": {
+                          "auto_size": "left",
+                          "margin_bottom": 12,
+                          "mouse_wheel_enabled": false,
+                          "multiline": true,
+                          "word_wrap": true,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "container",
+                        "typeId": 4,
+                        "attributes": {
+                          "x": "0",
+                          "y": "84",
+                          "width": "378",
+                          "height": "80",
+                          "params": "16",
+                          "style": "100",
+                          "name": "level_rewards"
+                        },
+                        "children": [
+                          {
+                            "tag": "static_bitmap",
+                            "typeId": 23,
+                            "attributes": {
+                              "x": "0",
+                              "y": "0",
+                              "width": "378",
+                              "height": "2",
+                              "params": "16",
+                              "style": "100"
+                            },
+                            "children": [],
+                            "vars": {
+                              "asset_uri": "illumina_horizontal_separator",
+                              "pivot_point": "center",
+                              "stretched_y": false
+                            }
+                          },
+                          {
+                            "tag": "label",
+                            "typeId": 12,
+                            "attributes": {
+                              "x": "4",
+                              "y": "12",
+                              "width": "185",
+                              "height": "15",
+                              "params": "16",
+                              "style": "100",
+                              "caption": "${talent.track.common.levelup.rewards}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "text_style": "il_border",
+                              "text_color": 3355443
+                            }
+                          },
+                          {
+                            "tag": "itemlist_horizontal",
+                            "typeId": 51,
+                            "attributes": {
+                              "x": "4",
+                              "y": "34",
+                              "width": "370",
+                              "height": "35",
+                              "params": "16",
+                              "style": "100",
+                              "name": "reward_list"
+                            },
+                            "children": [
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "0",
+                                  "y": "0",
+                                  "width": "93",
+                                  "height": "33",
+                                  "params": "147472",
+                                  "style": "100",
+                                  "name": "reward_vip_template"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "static_bitmap",
+                                    "typeId": 23,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "33",
+                                      "height": "33",
+                                      "params": "16",
+                                      "style": "100"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "asset_uri": "talent_vip_reward",
+                                      "pivot_point": "center",
+                                      "stretched_x": false,
+                                      "stretched_y": false,
+                                      "fit_size_to_contents": true
+                                    }
+                                  },
+                                  {
+                                    "tag": "label",
+                                    "typeId": 12,
+                                    "attributes": {
+                                      "x": "37",
+                                      "y": "8",
+                                      "width": "56",
+                                      "height": "17",
+                                      "params": "3088",
+                                      "style": "100",
+                                      "name": "vip_length",
+                                      "caption": "x 10 days"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "il_heading_2",
+                                      "text_color": 2236962
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "static_bitmap",
+                                "typeId": 23,
+                                "attributes": {
+                                  "x": "93",
+                                  "y": "0",
+                                  "width": "35",
+                                  "height": "35",
+                                  "params": "16",
+                                  "style": "100",
+                                  "name": "reward_product_template"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "asset_uri": "",
+                                  "pivot_point": "center",
+                                  "stretched_x": false,
+                                  "stretched_y": false
+                                }
+                              },
+                              {
+                                "tag": "container",
+                                "typeId": 4,
+                                "attributes": {
+                                  "x": "128",
+                                  "y": "0",
+                                  "width": "99",
+                                  "height": "35",
+                                  "params": "147472",
+                                  "style": "100",
+                                  "name": "reward_perk_template"
+                                },
+                                "children": [
+                                  {
+                                    "tag": "widget",
+                                    "typeId": 16,
+                                    "attributes": {
+                                      "x": "0",
+                                      "y": "0",
+                                      "width": "35",
+                                      "height": "35",
+                                      "params": "16",
+                                      "style": "100",
+                                      "name": "perk_image"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "widget_type": "badge_image",
+                                      "badge_image:type": "perk",
+                                      "badge_image:pivot_point": "center",
+                                      "badge_image:stretched_x": false,
+                                      "badge_image:stretched_y": false
+                                    }
+                                  },
+                                  {
+                                    "tag": "label",
+                                    "typeId": 12,
+                                    "attributes": {
+                                      "x": "37",
+                                      "y": "9",
+                                      "width": "62",
+                                      "height": "17",
+                                      "params": "3088",
+                                      "style": "100",
+                                      "name": "perk_name",
+                                      "caption": "perk name"
+                                    },
+                                    "children": [],
+                                    "vars": {
+                                      "text_style": "il_heading_2",
+                                      "text_color": 2236962
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "tag": "label",
+                                "typeId": 12,
+                                "attributes": {
+                                  "x": "227",
+                                  "y": "8",
+                                  "width": "22",
+                                  "height": "19",
+                                  "params": "3088",
+                                  "style": "100",
+                                  "name": "plus_template",
+                                  "caption": "+"
+                                },
+                                "children": [],
+                                "vars": {
+                                  "text_style": "il_heading_1",
+                                  "text_color": 2236962,
+                                  "margin_left": 5,
+                                  "margin_right": 5
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "vars": {
+                      "spacing": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "94",
+                  "y": "237",
+                  "width": "221",
+                  "height": "53",
+                  "params": "131281",
+                  "style": "101",
+                  "name": "talent_button",
+                  "caption": "${talent.track.common.levelup.check}",
+                  "color": "0x0bbbbbb"
+                },
+                "children": []
+              },
+              {
+                "tag": "link",
+                "typeId": 14,
+                "attributes": {
+                  "x": "157",
+                  "y": "290",
+                  "width": "94",
+                  "height": "16",
+                  "params": "193",
+                  "style": "100",
+                  "name": "close_button",
+                  "caption": "${alert.close.button}",
+                  "treshold": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "underline": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "280",
+              "y": "89",
+              "width": "260",
+              "height": "260",
+              "params": "1024",
+              "style": "100",
+              "name": "level_decoration"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "",
+              "pivot_point": "bottom center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "angle": "0",
+              "alpha": "0.34901960784313724",
+              "blurX": "20",
+              "blurY": "20"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 430,
+  "layoutHeight": 362
+}

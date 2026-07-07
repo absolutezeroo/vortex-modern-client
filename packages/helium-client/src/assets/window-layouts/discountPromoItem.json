@@ -1,0 +1,125 @@
+{
+  "name": "discountPromoItem",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\246_discountPromoItem.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "180",
+          "height": "20",
+          "params": "16",
+          "style": "0",
+          "name": "promo_container",
+          "color": "0x00",
+          "height_min": "20",
+          "height_max": "20"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "180",
+              "height": "20",
+              "params": "128",
+              "style": "0",
+              "name": "background",
+              "color": "0xffff009100",
+              "blend": "0.7",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "4",
+              "y": "2",
+              "width": "15",
+              "height": "15",
+              "params": "0",
+              "style": "0",
+              "name": "icon_bitmap"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "33",
+              "y": "2",
+              "width": "151",
+              "height": "17",
+              "params": "0",
+              "style": "3",
+              "name": "promo_text_effect",
+              "caption": "test 1 get 2 tests for free!",
+              "blend": "0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "32",
+              "y": "1",
+              "width": "151",
+              "height": "17",
+              "params": "0",
+              "style": "3",
+              "name": "promo_text",
+              "caption": "test 1 get 2 tests for free!"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "25",
+              "y": "0",
+              "width": "152",
+              "height": "20",
+              "params": "17",
+              "style": "0",
+              "name": "click_region",
+              "treshold": "0"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 180,
+  "layoutHeight": 20
+}

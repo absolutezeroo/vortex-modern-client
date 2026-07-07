@@ -1,0 +1,164 @@
+{
+  "name": "memenu_effect_inactive",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\971_memenu_effect_inactive_xml$b8e1912eed53a0926ba46dc791b4c1d41410269465.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "154",
+          "height": "52",
+          "params": "17",
+          "style": "0",
+          "name": "selected_border",
+          "color": "0xff3d3d3d",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "175",
+              "height": "48",
+              "params": "16",
+              "style": "2",
+              "blend": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "40",
+                  "height": "40",
+                  "params": "16",
+                  "style": "0",
+                  "name": "effect_icon_bg"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "40",
+                  "height": "40",
+                  "params": "16",
+                  "style": "0",
+                  "name": "effect_icon"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "50",
+                  "y": "6",
+                  "width": "163",
+                  "height": "13",
+                  "params": "16",
+                  "style": "0",
+                  "name": "effect_name",
+                  "caption": "${widget.memenu.effectname}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_face": "Volter Bold",
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "50",
+                  "y": "20",
+                  "width": "98",
+                  "height": "22",
+                  "params": "131089",
+                  "style": "1",
+                  "name": "activate_effect",
+                  "caption": "${widgets.memenu.effects.activate}"
+                },
+                "children": []
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "24",
+                  "y": "4",
+                  "width": "20",
+                  "height": "15",
+                  "params": "16",
+                  "style": "0",
+                  "name": "effect_amount_bg1",
+                  "color": "0xffffdddddd",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "1",
+                      "width": "18",
+                      "height": "13",
+                      "params": "16",
+                      "style": "0",
+                      "name": "effect_amount_bg2",
+                      "color": "0xffff666666",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "18",
+                          "height": "13",
+                          "params": "16",
+                          "style": "0",
+                          "name": "effect_amount",
+                          "caption": "99"
+                        },
+                        "children": [],
+                        "vars": {
+                          "text_color": 15658734,
+                          "mouse_wheel_enabled": false
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 154,
+  "layoutHeight": 52
+}

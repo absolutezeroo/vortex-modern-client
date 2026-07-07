@@ -1,0 +1,65 @@
+{
+  "name": "chatstyle_template",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\17_chatstyle_template.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "55",
+          "height": "34",
+          "params": "17",
+          "style": "0",
+          "name": "chatstyle_region",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "55",
+              "height": "34",
+              "params": "16",
+              "style": "2",
+              "name": "background_color"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "5",
+              "width": "55",
+              "height": "24",
+              "params": "3148816",
+              "style": "0",
+              "name": "bubble_preview"
+            },
+            "children": [],
+            "vars": {
+              "handle_bitmap_disposing": false,
+              "stretched_x": false,
+              "stretched_y": false,
+              "fit_size_to_contents": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 55,
+  "layoutHeight": 34
+}

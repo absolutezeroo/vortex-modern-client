@@ -1,0 +1,158 @@
+{
+  "name": "vip_benefits",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\334_vip_benefits.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "457",
+          "height": "450",
+          "params": "33025",
+          "style": "3",
+          "caption": "${vip.benefits.caption}",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "1",
+              "y": "0",
+              "width": "455",
+              "height": "42",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}directVipBuy/hc_benefits_header.png"
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "24",
+              "y": "91",
+              "width": "237",
+              "height": "253",
+              "params": "16",
+              "style": "0"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}directVipBuy/hc_benefits_teaser.png"
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "55",
+              "width": "457",
+              "height": "30",
+              "params": "16",
+              "style": "0",
+              "caption": "${vip.benefits.title}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "center",
+              "font_size": 36,
+              "text_style": "u_bold",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "275",
+              "y": "98",
+              "width": "163",
+              "height": "269",
+              "params": "1",
+              "style": "0",
+              "caption": "${vip.benefits.description}",
+              "width_min": "163",
+              "width_max": "163",
+              "height_min": "269",
+              "height_max": "269"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_regular",
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 3,
+              "editable": false,
+              "selectable": false,
+              "white_list_words": false
+            }
+          },
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "27",
+              "y": "351",
+              "width": "403",
+              "height": "50",
+              "params": "1",
+              "style": "0",
+              "caption": "${vip.benefits.details}",
+              "width_min": "403",
+              "width_max": "403"
+            },
+            "children": [],
+            "vars": {
+              "font_size": 16,
+              "text_style": "u_regular",
+              "multiline": true,
+              "word_wrap": true,
+              "spacing": 0,
+              "leading": 3,
+              "editable": false,
+              "selectable": false,
+              "white_list_words": false
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "help_page": "habboclub",
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 457,
+  "layoutHeight": 450
+}

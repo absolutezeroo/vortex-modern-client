@@ -1,0 +1,370 @@
+{
+  "name": "marketPlaceWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\276_marketPlaceWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "360",
+          "height": "390",
+          "params": "16",
+          "style": "3"
+        },
+        "children": [
+          {
+            "tag": "selector",
+            "typeId": 42,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "340",
+              "height": "25",
+              "params": "17",
+              "style": "100",
+              "name": "search_selector"
+            },
+            "children": [
+              {
+                "tag": "button_group_left",
+                "typeId": 67,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "107",
+                  "height": "25",
+                  "params": "131217",
+                  "style": "100",
+                  "name": "search_by_activity",
+                  "caption": "${catalog.marketplace.search_by_activity}",
+                  "width_min": "107",
+                  "width_max": "107"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_group_center",
+                "typeId": 68,
+                "attributes": {
+                  "x": "107",
+                  "y": "0",
+                  "width": "106",
+                  "height": "25",
+                  "params": "131217",
+                  "style": "100",
+                  "name": "search_by_value",
+                  "caption": "${catalog.marketplace.search_by_value}",
+                  "width_min": "106",
+                  "width_max": "106"
+                },
+                "children": []
+              },
+              {
+                "tag": "button_group_right",
+                "typeId": 69,
+                "attributes": {
+                  "x": "213",
+                  "y": "0",
+                  "width": "107",
+                  "height": "25",
+                  "params": "131217",
+                  "style": "100",
+                  "name": "search_advanced",
+                  "caption": "${catalog.marketplace.search_advanced}",
+                  "width_min": "107",
+                  "width_max": "107"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "30",
+              "width": "360",
+              "height": "120",
+              "params": "16",
+              "style": "100",
+              "name": "search_container"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "2",
+              "y": "155",
+              "width": "62",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "status_text",
+              "caption": "${lorem.title}"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "scrollable_itemlist_vertical",
+            "typeId": 56,
+            "attributes": {
+              "x": "0",
+              "y": "170",
+              "width": "360",
+              "height": "220",
+              "params": "16",
+              "style": "3",
+              "name": "offer_list"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "340",
+                  "height": "58",
+                  "params": "17",
+                  "style": "100",
+                  "name": "offer_item",
+                  "color": "0x0e3e3e3"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "9",
+                      "y": "9",
+                      "width": "40",
+                      "height": "40",
+                      "params": "16",
+                      "style": "0",
+                      "name": "image_container"
+                    },
+                    "children": [
+                      {
+                        "tag": "static_bitmap",
+                        "typeId": 23,
+                        "attributes": {
+                          "x": "2",
+                          "y": "2",
+                          "width": "36",
+                          "height": "36",
+                          "params": "16",
+                          "style": "0",
+                          "name": "unique_item_background_bitmap",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "asset_uri": "unique_item_label_1"
+                        }
+                      },
+                      {
+                        "tag": "bitmap",
+                        "typeId": 21,
+                        "attributes": {
+                          "x": "0",
+                          "y": "0",
+                          "width": "40",
+                          "height": "40",
+                          "params": "16",
+                          "style": "0",
+                          "name": "item_image",
+                          "tags": "BITMAP",
+                          "width_min": "40",
+                          "width_max": "40"
+                        },
+                        "children": []
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "2",
+                          "y": "2",
+                          "width": "36",
+                          "height": "36",
+                          "params": "16",
+                          "style": "3",
+                          "name": "unique_item_overlay_widget",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "limited_item_overlay_grid"
+                        }
+                      },
+                      {
+                        "tag": "widget",
+                        "typeId": 16,
+                        "attributes": {
+                          "x": "2",
+                          "y": "2",
+                          "width": "36",
+                          "height": "36",
+                          "params": "16",
+                          "style": "3",
+                          "name": "rarity_item_overlay_widget",
+                          "visible": "false"
+                        },
+                        "children": [],
+                        "vars": {
+                          "widget_type": "rarity_item_overlay_grid"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "57",
+                      "y": "6",
+                      "width": "74",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "name": "item_name",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "57",
+                      "y": "18",
+                      "width": "61",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "name": "item_desc",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_small",
+                      "mouse_wheel_enabled": false,
+                      "italic": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "57",
+                      "y": "30",
+                      "width": "62",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "name": "item_price",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_small",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "57",
+                      "y": "42",
+                      "width": "62",
+                      "height": "15",
+                      "params": "16",
+                      "style": "3",
+                      "name": "offer_count",
+                      "caption": "${lorem.title}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "text_style": "u_small",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "295",
+                      "y": "6",
+                      "width": "39",
+                      "height": "22",
+                      "params": "393233",
+                      "style": "3",
+                      "name": "buy_button",
+                      "caption": "${buy}"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "button",
+                    "typeId": 60,
+                    "attributes": {
+                      "x": "137",
+                      "y": "31",
+                      "width": "197",
+                      "height": "22",
+                      "params": "393233",
+                      "style": "3",
+                      "name": "more_button",
+                      "caption": "${catalog.marketplace.view_more}"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "spacing": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 360,
+  "layoutHeight": 390
+}

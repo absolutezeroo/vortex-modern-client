@@ -1,0 +1,159 @@
+{
+  "name": "campaign_promo_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1__SafeCls_301.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "500",
+          "height": "130",
+          "params": "147472",
+          "style": "0",
+          "background": "true",
+          "width_max": "500"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "500",
+              "height": "130",
+              "params": "16",
+              "style": "100",
+              "name": "promo_background"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "itemlist_vertical",
+            "typeId": 50,
+            "attributes": {
+              "x": "161",
+              "y": "16",
+              "width": "275",
+              "height": "96",
+              "params": "16",
+              "style": "0",
+              "name": "content"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "251",
+                  "height": "21",
+                  "params": "16",
+                  "style": "100",
+                  "name": "promo_title",
+                  "caption": "${landing.view.campaign.promo.title}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 22,
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "spacing": -0.6,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "21",
+                  "width": "30",
+                  "height": "6",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing"
+                },
+                "children": []
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "27",
+                  "width": "251",
+                  "height": "15",
+                  "params": "16",
+                  "style": "100",
+                  "name": "promo_text",
+                  "caption": "${landing.view.campaign.promo.text}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 16,
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "42",
+                  "width": "30",
+                  "height": "6",
+                  "params": "16",
+                  "style": "0",
+                  "name": "spacing"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "-5",
+                  "y": "48",
+                  "width": "233",
+                  "height": "48",
+                  "params": "131089",
+                  "style": "100",
+                  "name": "button",
+                  "caption": "${landing.view.campaign.promo.button}"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "scale_to_fit_items": true,
+              "resize_on_item_update": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 500,
+  "layoutHeight": 130
+}

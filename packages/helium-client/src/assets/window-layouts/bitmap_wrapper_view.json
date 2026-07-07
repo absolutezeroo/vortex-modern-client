@@ -1,0 +1,35 @@
+{
+  "name": "bitmap_wrapper_view",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\100_bitmap_wrapper_view.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bitmap",
+        "typeId": 21,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "212",
+          "height": "105",
+          "params": "17",
+          "style": "3",
+          "name": "bitmap_view"
+        },
+        "children": [],
+        "vars": {
+          "pivot_point": "center",
+          "stretched_x": false,
+          "stretched_y": false,
+          "fit_size_to_contents": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 212,
+  "layoutHeight": 105
+}

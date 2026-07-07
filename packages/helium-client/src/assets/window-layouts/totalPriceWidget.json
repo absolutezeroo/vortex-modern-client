@@ -1,0 +1,166 @@
+{
+  "name": "totalPriceWidget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\269_totalPriceWidget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "180",
+          "height": "25",
+          "params": "16400",
+          "style": "103",
+          "name": "totalprice_widget_border"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "10",
+              "y": "3",
+              "width": "14",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "header_text",
+              "caption": "=",
+              "color": "0x00"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "margin_right": 4,
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "itemlist_horizontal",
+            "typeId": 51,
+            "attributes": {
+              "x": "49",
+              "y": "1",
+              "width": "128",
+              "height": "24",
+              "params": "409616",
+              "style": "3",
+              "name": "totalprice_container"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "3",
+                  "width": "38",
+                  "height": "17",
+                  "params": "262160",
+                  "style": "3",
+                  "name": "amount_text_left",
+                  "caption": "00000"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "grid_fit_type": "subpixel",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "38",
+                  "y": "1",
+                  "width": "22",
+                  "height": "22",
+                  "params": "16",
+                  "style": "34",
+                  "name": "currency_indicator_bitmap_left"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "60",
+                  "y": "3",
+                  "width": "8",
+                  "height": "17",
+                  "params": "16",
+                  "style": "3",
+                  "name": "plus",
+                  "caption": "+"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "margin_left": -2,
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "68",
+                  "y": "3",
+                  "width": "38",
+                  "height": "17",
+                  "params": "262160",
+                  "style": "3",
+                  "name": "amount_text_right",
+                  "caption": "00000"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "grid_fit_type": "subpixel",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "106",
+                  "y": "1",
+                  "width": "22",
+                  "height": "22",
+                  "params": "16",
+                  "style": "34",
+                  "name": "currency_indicator_bitmap_right"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 180,
+  "layoutHeight": 25
+}

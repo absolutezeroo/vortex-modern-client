@@ -1,0 +1,236 @@
+{
+  "name": "stickie",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\710_stickie.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "185",
+          "height": "178",
+          "params": "32784",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "185",
+              "height": "178",
+              "params": "273",
+              "style": "0",
+              "name": "bg",
+              "tags": "bg"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "9",
+              "y": "4",
+              "width": "10",
+              "height": "10",
+              "params": "17",
+              "style": "0",
+              "name": "delete",
+              "tags": "delete_button"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "26",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "1",
+              "name": "blue",
+              "caption": "blue_button",
+              "color": "0xffff9cceff",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "38",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "2",
+              "name": "purple",
+              "caption": "purple_button",
+              "color": "0xffffff9cff",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "50",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "3",
+              "name": "green",
+              "caption": "green_button",
+              "color": "0xffff9cff9c",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "62",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "0",
+              "name": "yellow",
+              "caption": "yellow_button",
+              "color": "0xffffffff33",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "74",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "0",
+              "name": "white",
+              "caption": "white_button",
+              "color": "0xffffffff",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "86",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "0",
+              "name": "red",
+              "caption": "red_button",
+              "color": "0xffffff9c9c",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "98",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "0",
+              "name": "orange",
+              "caption": "orange_button",
+              "color": "0xffffffcc66",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "110",
+              "y": "5",
+              "width": "9",
+              "height": "9",
+              "params": "17",
+              "style": "0",
+              "name": "cyan",
+              "caption": "cyan_button",
+              "color": "0xffff9cffff",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "168",
+              "y": "5",
+              "width": "10",
+              "height": "10",
+              "params": "17",
+              "style": "0",
+              "name": "close",
+              "tags": "close_button"
+            },
+            "children": []
+          },
+          {
+            "tag": "input",
+            "typeId": 77,
+            "attributes": {
+              "x": "5",
+              "y": "24",
+              "width": "175",
+              "height": "135",
+              "params": "1",
+              "style": "0",
+              "name": "text"
+            },
+            "children": [],
+            "vars": {
+              "always_show_selection": true,
+              "mouse_wheel_enabled": false,
+              "max_chars": 500,
+              "multiline": true,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 185,
+  "layoutHeight": 178
+}

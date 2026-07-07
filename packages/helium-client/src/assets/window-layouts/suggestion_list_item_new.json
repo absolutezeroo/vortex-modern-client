@@ -1,0 +1,61 @@
+{
+  "name": "suggestion_list_item_new",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\243_suggestion_list_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "262",
+          "height": "20",
+          "params": "12730385",
+          "style": "0",
+          "name": "suggestion_list_item",
+          "color": "0xffffcceeff",
+          "background": "true",
+          "width_min": "150",
+          "width_max": "262",
+          "height_min": "20",
+          "height_max": "20"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "261",
+              "height": "20",
+              "params": "12730384",
+              "style": "0",
+              "name": "name_text",
+              "caption": "${001_lorem_ipsum_title}",
+              "width_min": "150",
+              "width_max": "261",
+              "height_min": "20",
+              "height_max": "20"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "sharpness": 80,
+              "thickness": -15
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 262,
+  "layoutHeight": 20
+}

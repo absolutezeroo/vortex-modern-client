@@ -1,0 +1,208 @@
+{
+  "name": "club_gift_list_item",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\245_marketplace_offers_item.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "border",
+        "typeId": 30,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "320",
+          "height": "58",
+          "params": "16",
+          "style": "0",
+          "color": "0x0e3e3e3"
+        },
+        "children": [
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "58",
+              "y": "8",
+              "width": "71",
+              "height": "17",
+              "params": "16",
+              "style": "3",
+              "name": "gift_name",
+              "caption": "lorem ipsum"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_bold"
+            }
+          },
+          {
+            "tag": "label",
+            "typeId": 12,
+            "attributes": {
+              "x": "58",
+              "y": "22",
+              "width": "60",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "gift_desc",
+              "caption": "lorem ipsum"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_small"
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "58",
+              "y": "36",
+              "width": "236",
+              "height": "15",
+              "params": "16",
+              "style": "3",
+              "name": "months_required"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_small",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "167",
+              "y": "32",
+              "width": "148",
+              "height": "22",
+              "params": "393233",
+              "style": "3",
+              "name": "select_button",
+              "caption": "${catalog.club_gift.select}"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "7",
+              "y": "6",
+              "width": "52",
+              "height": "46",
+              "params": "16",
+              "style": "0",
+              "name": "image_container",
+              "background": "true",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "52",
+                  "height": "46",
+                  "params": "16",
+                  "style": "0",
+                  "name": "image"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "18",
+                  "y": "18",
+                  "width": "10",
+                  "height": "15",
+                  "params": "176",
+                  "style": "3",
+                  "name": "bundleCounter",
+                  "caption": "0"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 16,
+                  "text_color": 13421670,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "10",
+                  "y": "2",
+                  "width": "17",
+                  "height": "17",
+                  "params": "131088",
+                  "style": "2",
+                  "name": "multiContainer",
+                  "color": "0x0ff3300"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "3",
+                      "y": "0",
+                      "width": "10",
+                      "height": "16",
+                      "params": "16",
+                      "style": "3",
+                      "name": "multiCounter",
+                      "caption": "0"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 17,
+                      "text_color": 13421670,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "5",
+              "y": "5",
+              "width": "20",
+              "height": "20",
+              "params": "16",
+              "style": "12",
+              "name": "vip_icon"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 320,
+  "layoutHeight": 58
+}

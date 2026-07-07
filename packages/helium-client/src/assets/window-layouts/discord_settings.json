@@ -1,0 +1,653 @@
+{
+  "name": "discord_settings",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\370_discord_settings.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "36",
+          "y": "28",
+          "width": "377",
+          "height": "551",
+          "params": "32801",
+          "style": "103",
+          "name": "discord_settings",
+          "caption": "${discord_activity.title}",
+          "color": "0x0418db0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "1",
+              "y": "0",
+              "width": "375",
+              "height": "116",
+              "params": "16",
+              "style": "3",
+              "name": "header"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "110",
+                  "y": "14",
+                  "width": "171",
+                  "height": "18",
+                  "params": "16",
+                  "style": "100",
+                  "name": "title",
+                  "caption": "${discord_activity.header.title}",
+                  "blend": "0.9"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 19,
+                  "text_style": "il_regular_white",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "110",
+                  "y": "35",
+                  "width": "245",
+                  "height": "71",
+                  "params": "16",
+                  "style": "100",
+                  "name": "desc_txt",
+                  "caption": "${discord_activity.header.desc}",
+                  "blend": "0.8"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 18,
+                  "text_style": "il_regular_white",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "16",
+                  "y": "11",
+                  "width": "77",
+                  "height": "96",
+                  "params": "0",
+                  "style": "3",
+                  "name": "discord_box",
+                  "blend": "0.95"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "discord_discord_box",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "fit_size_to_contents": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "1",
+              "y": "114",
+              "width": "375",
+              "height": "158",
+              "params": "16",
+              "style": "3",
+              "name": "settings"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "15",
+                  "y": "14",
+                  "width": "61",
+                  "height": "18",
+                  "params": "16",
+                  "style": "100",
+                  "name": "title",
+                  "caption": "${discord_activity.settings.title}",
+                  "blend": "0.9"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 19,
+                  "text_style": "il_regular_white",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "19",
+                  "y": "39",
+                  "width": "214",
+                  "height": "21",
+                  "params": "16",
+                  "style": "3",
+                  "name": "setting_container"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "21",
+                      "height": "21",
+                      "params": "17",
+                      "style": "101",
+                      "name": "show_habbo_cbx",
+                      "treshold": "0",
+                      "height_min": "21",
+                      "height_max": "21"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "2",
+                      "width": "190",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${discord_activity.settings.discord_status}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 18,
+                      "text_color": 14013659,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 3,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "19",
+                  "y": "65",
+                  "width": "168",
+                  "height": "21",
+                  "params": "16",
+                  "style": "3",
+                  "name": "setting_container"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "21",
+                      "height": "21",
+                      "params": "17",
+                      "style": "101",
+                      "name": "share_activity_cbx",
+                      "treshold": "0",
+                      "height_min": "21",
+                      "height_max": "21"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "2",
+                      "width": "144",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${discord_activity.settings.share_activity}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 18,
+                      "text_color": 14013659,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 3,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "45",
+                  "y": "91",
+                  "width": "189",
+                  "height": "21",
+                  "params": "16",
+                  "style": "3",
+                  "name": "setting_container"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "21",
+                      "height": "21",
+                      "params": "17",
+                      "style": "101",
+                      "name": "hide_in_hidden_cbx",
+                      "treshold": "0",
+                      "height_min": "21",
+                      "height_max": "21"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "2",
+                      "width": "165",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${discord_activity.settings.hide_hidden_rooms}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 18,
+                      "text_color": 14013659,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 3,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "itemlist_horizontal",
+                "typeId": 51,
+                "attributes": {
+                  "x": "45",
+                  "y": "117",
+                  "width": "152",
+                  "height": "21",
+                  "params": "16",
+                  "style": "3",
+                  "name": "setting_container"
+                },
+                "children": [
+                  {
+                    "tag": "checkbox",
+                    "typeId": 70,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "21",
+                      "height": "21",
+                      "params": "17",
+                      "style": "101",
+                      "name": "allow_joining_cbx",
+                      "treshold": "0",
+                      "height_min": "21",
+                      "height_max": "21"
+                    },
+                    "children": []
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "24",
+                      "y": "2",
+                      "width": "128",
+                      "height": "17",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "${discord_activity.settings.allow_joining}"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 18,
+                      "text_color": 14013659,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ],
+                "vars": {
+                  "spacing": 3,
+                  "resize_on_item_update": true
+                }
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "1",
+              "y": "254",
+              "width": "375",
+              "height": "222",
+              "params": "16",
+              "style": "3",
+              "name": "our_servers"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "15",
+                  "y": "14",
+                  "width": "81",
+                  "height": "18",
+                  "params": "16",
+                  "style": "100",
+                  "name": "title",
+                  "caption": "Our servers:",
+                  "blend": "0.9"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 19,
+                  "text_style": "il_regular_white",
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "5",
+                  "y": "30",
+                  "width": "186",
+                  "height": "98",
+                  "params": "1",
+                  "style": "107",
+                  "dynamic_style": "button",
+                  "name": "collectibles_server"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "77",
+                      "y": "40",
+                      "width": "79",
+                      "height": "18",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "Collectibles",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 19,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "22",
+                      "y": "26",
+                      "width": "48",
+                      "height": "48",
+                      "params": "0",
+                      "style": "3",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "collectables_icon_curator_stamp_large",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "etching_color": 1207959552,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "185",
+                  "y": "30",
+                  "width": "186",
+                  "height": "98",
+                  "params": "1",
+                  "style": "107",
+                  "dynamic_style": "button",
+                  "name": "wired_server"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "19",
+                      "y": "18",
+                      "width": "155",
+                      "height": "67",
+                      "params": "0",
+                      "style": "3",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "discord_wired_logo",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "etching_color": 1207959552,
+                      "fit_size_to_contents": true
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "77",
+                      "y": "32",
+                      "width": "66",
+                      "height": "33",
+                      "params": "0",
+                      "style": "3",
+                      "caption": "The Wired\rFaculty",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 19,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container_button",
+                "typeId": 41,
+                "attributes": {
+                  "x": "5",
+                  "y": "116",
+                  "width": "186",
+                  "height": "98",
+                  "params": "1",
+                  "style": "107",
+                  "dynamic_style": "button",
+                  "name": "origins_server"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "77",
+                      "y": "31",
+                      "width": "86",
+                      "height": "33",
+                      "params": "16",
+                      "style": "3",
+                      "caption": "Habbo Hotel:\rOrigins",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 19,
+                      "text_style": "il_regular_white",
+                      "mouse_wheel_enabled": false,
+                      "bold": true,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "27",
+                      "y": "26",
+                      "width": "38",
+                      "height": "47",
+                      "params": "0",
+                      "style": "3",
+                      "tags": "#icon"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "discord_origins_logo",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "etching_color": 1207959552,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "button",
+            "typeId": 60,
+            "attributes": {
+              "x": "14",
+              "y": "479",
+              "width": "348",
+              "height": "28",
+              "params": "132113",
+              "style": "105",
+              "name": "funny_button",
+              "caption": "${discord_activity.funny_button}",
+              "color": "0x0bbbbbb",
+              "width_min": "348",
+              "width_max": "348"
+            },
+            "children": []
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 377,
+  "layoutHeight": 551
+}

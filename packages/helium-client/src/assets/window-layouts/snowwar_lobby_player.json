@@ -1,0 +1,67 @@
+{
+  "name": "snowwar_lobby_player",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\607_snowwar_lobby_player.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "62",
+          "height": "63",
+          "params": "17",
+          "style": "0",
+          "name": "region",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "63",
+              "params": "16",
+              "style": "0",
+              "name": "bg_image",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "blue_square"
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "62",
+              "height": "63",
+              "params": "16",
+              "style": "0",
+              "name": "image",
+              "tags": "bitmap"
+            },
+            "children": []
+          }
+        ],
+        "vars": {
+          "tool_tip_delay": 16
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 62,
+  "layoutHeight": 63
+}

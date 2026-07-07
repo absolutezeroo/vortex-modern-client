@@ -1,0 +1,187 @@
+{
+  "name": "userclassification_frame",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\82_userclassification_frame.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "60",
+          "y": "4",
+          "width": "292",
+          "height": "224",
+          "params": "98305",
+          "style": "0",
+          "caption": "User Classifications",
+          "color": "0xff418db0",
+          "width_min": "150",
+          "height_min": "100"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "280",
+              "height": "192",
+              "params": "2192",
+              "style": "0",
+              "name": "classifications_cont",
+              "caption": "User Classifications",
+              "color": "0xffffffffff",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "itemlist",
+                "typeId": 50,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "263",
+                  "height": "192",
+                  "params": "2193",
+                  "style": "0",
+                  "name": "userclassification_list",
+                  "caption": "User Classifications",
+                  "background": "true"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "263",
+                      "height": "14",
+                      "params": "144",
+                      "style": "0",
+                      "name": "classificationrow",
+                      "background": "true"
+                    },
+                    "children": [
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "110",
+                          "y": "0",
+                          "width": "105",
+                          "height": "14",
+                          "params": "80",
+                          "style": "0",
+                          "name": "user_classification_txt"
+                        },
+                        "children": [],
+                        "vars": {
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "5",
+                          "y": "0",
+                          "width": "100",
+                          "height": "14",
+                          "params": "145",
+                          "style": "0",
+                          "name": "user_name_txt",
+                          "caption": "whatwasit",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_face": "Volter Bold",
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "underline": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      },
+                      {
+                        "tag": "text",
+                        "typeId": 10,
+                        "attributes": {
+                          "x": "223",
+                          "y": "0",
+                          "width": "39",
+                          "height": "14",
+                          "params": "81",
+                          "style": "0",
+                          "name": "visit_room_txt",
+                          "caption": "Visit",
+                          "background": "true"
+                        },
+                        "children": [],
+                        "vars": {
+                          "font_face": "Volter Bold",
+                          "mouse_wheel_enabled": false,
+                          "sharpness": 0,
+                          "thickness": 0,
+                          "underline": true,
+                          "kerning": false,
+                          "spacing": 0,
+                          "leading": 0
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "263",
+                  "y": "0",
+                  "width": "17",
+                  "height": "192",
+                  "params": "2129",
+                  "style": "0",
+                  "name": "scroller",
+                  "caption": "User Classifications"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "userclassification_list"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 292,
+  "layoutHeight": 224
+}

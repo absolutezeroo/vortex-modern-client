@@ -1,0 +1,61 @@
+{
+  "name": "illumina_light_dropmenu_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1732_illumina_light_dropmenu_xml$8c9eb40d4cad1eca2ce05bed9b4e713c1332952946.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_DROPLIST_TITLETEXT",
+          "x": "10",
+          "y": "3",
+          "width": "10",
+          "height": "14",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147483504"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "il_regular"
+        }
+      },
+      {
+        "tag": "scrollable_itemlist_vertical",
+        "typeId": 56,
+        "attributes": {
+          "name": "_DROPLIST_ITEMLIST",
+          "x": "6",
+          "y": "2",
+          "width": "28",
+          "height": "18",
+          "tags": "_EXCLUDE, list",
+          "params": "131216"
+        },
+        "children": []
+      },
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "6",
+          "y": "2",
+          "width": "28",
+          "height": "18",
+          "name": "_DROPLIST_REGION",
+          "treshold": "0",
+          "tags": "_EXCLUDE, _INTERNAL",
+          "params": "-2147483503"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 40,
+  "layoutHeight": 22
+}

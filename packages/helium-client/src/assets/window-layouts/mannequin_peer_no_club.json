@@ -1,0 +1,96 @@
+{
+  "name": "mannequin_peer_no_club",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\704_mannequin_peer_no_club.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "386",
+          "height": "180",
+          "params": "16",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "button_thick",
+            "typeId": 61,
+            "attributes": {
+              "x": "206",
+              "y": "141",
+              "width": "174",
+              "height": "28",
+              "params": "131089",
+              "style": "3",
+              "name": "get_club_button",
+              "caption": "${mannequin.widget.getclub}",
+              "width_min": "164"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "20",
+              "y": "10",
+              "width": "83",
+              "height": "130",
+              "params": "16",
+              "style": "3",
+              "name": "preview_image"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "126",
+              "y": "52",
+              "width": "241",
+              "height": "61",
+              "params": "16",
+              "style": "3",
+              "name": "description",
+              "caption": "${mannequin.widget.clubnotification}"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "sharpness": 80,
+              "thickness": -15,
+              "word_wrap": true
+            }
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "80",
+              "y": "110",
+              "width": "43",
+              "height": "29",
+              "params": "16",
+              "style": "0",
+              "name": "club_icon"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 386,
+  "layoutHeight": 180
+}

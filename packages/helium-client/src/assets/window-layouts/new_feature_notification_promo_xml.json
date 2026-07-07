@@ -1,0 +1,166 @@
+{
+  "name": "new_feature_notification_promo_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2969__SafeCls_1253.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "34",
+          "params": "1",
+          "style": "3",
+          "dynamic_style": "brightness_and_shadow_under_gentle",
+          "name": "main_region",
+          "color": "0x0fffabc",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "192",
+              "height": "34",
+              "params": "8388624",
+              "style": "9",
+              "name": "border",
+              "color": "0x0686661",
+              "treshold": "0",
+              "tags": "#bg"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "8",
+                  "y": "7",
+                  "width": "20",
+                  "height": "20",
+                  "params": "16",
+                  "style": "3",
+                  "name": "static_bitmap",
+                  "tags": "#icon"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false,
+                  "etching_color": 1207959552
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "30",
+                  "y": "7",
+                  "width": "148",
+                  "height": "17",
+                  "params": "8388624",
+                  "style": "0",
+                  "name": "desc",
+                  "caption": "some text here",
+                  "tags": "#icon",
+                  "width_max": "148"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 18,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "underline": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "174",
+                  "y": "12",
+                  "width": "10",
+                  "height": "10",
+                  "params": "17",
+                  "style": "3",
+                  "name": "cancel_link_region",
+                  "visible": "false",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "9",
+                      "height": "9",
+                      "params": "16",
+                      "style": "3",
+                      "name": "cancel_img",
+                      "blend": "0.55"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "common_close_x",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  },
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "9",
+                      "height": "9",
+                      "params": "16",
+                      "style": "3",
+                      "name": "cancel_img",
+                      "color": "0x00",
+                      "blend": "0.5",
+                      "visible": "false"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "common_close_x",
+                      "stretched_x": false,
+                      "stretched_y": false,
+                      "fit_size_to_contents": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 34
+}

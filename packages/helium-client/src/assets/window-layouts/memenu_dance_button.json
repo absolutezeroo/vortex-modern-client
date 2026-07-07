@@ -1,0 +1,32 @@
+{
+  "name": "memenu_dance_button",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\56_memenu_dance_button.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "button",
+        "typeId": 60,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width_min": "145",
+          "width": "145",
+          "height": "22",
+          "params": "131089",
+          "style": "1",
+          "name": "dance_button",
+          "caption": ""
+        },
+        "children": [],
+        "vars": {}
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 20
+}

@@ -1,0 +1,121 @@
+{
+  "name": "snowwar_loading_background_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\424__SafeCls_1505.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "1153",
+          "height": "553",
+          "params": "2176",
+          "style": "0",
+          "color": "0xffffeefafc",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "1153",
+              "height": "158",
+              "params": "144",
+              "style": "0",
+              "name": "sky",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "bg_sky"
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "292",
+              "y": "0",
+              "width": "569",
+              "height": "144",
+              "params": "208",
+              "style": "0",
+              "name": "sunshine",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "bg_sunshine"
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "90",
+              "width": "1153",
+              "height": "133",
+              "params": "144",
+              "style": "0",
+              "name": "vista_1",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "bg_vista_1"
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "125",
+              "width": "1153",
+              "height": "187",
+              "params": "144",
+              "style": "0",
+              "name": "vista_2",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "bg_vista_2"
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "163",
+              "width": "1153",
+              "height": "274",
+              "params": "144",
+              "style": "0",
+              "name": "vista_3",
+              "tags": "bitmap"
+            },
+            "children": [],
+            "vars": {
+              "bitmap_asset_name": "bg_vista_3"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1153,
+  "layoutHeight": 553
+}

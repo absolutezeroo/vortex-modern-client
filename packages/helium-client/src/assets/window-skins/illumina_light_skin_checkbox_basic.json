@@ -1,0 +1,90 @@
+{
+  "id": "illumina_light_skin_checkbox_basic",
+  "name": "illumina_light_checkbox_basic_skin",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2207_illumina_light_skin_checkbox_basic_xml$0d6e667d911c8181f438682e2570c88d2041043666.xml",
+  "variables": {
+    "asset": "illumina_light_checkbox_basic"
+  },
+  "templates": [
+    {
+      "name": "default_btn_mode",
+      "asset": "illumina_light_checkbox_basic",
+      "entities": [
+        {
+          "id": 0,
+          "name": "checkbox",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 23,
+            "width": 19,
+            "height": 20
+          }
+        }
+      ]
+    },
+    {
+      "name": "pressed_btn_mode",
+      "asset": "illumina_light_checkbox_basic",
+      "entities": [
+        {
+          "id": 0,
+          "name": "checkbox",
+          "type": "bitmap",
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 19,
+            "height": 20
+          }
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "button_checkbox",
+      "transparent": false,
+      "blendMode": "",
+      "entities": [
+        {
+          "id": 0,
+          "name": "checkbox",
+          "colorize": true,
+          "color": 0,
+          "blend": 4294967295,
+          "scaleH": 0,
+          "scaleV": 0,
+          "region": {
+            "x": 0,
+            "y": 0,
+            "width": 19,
+            "height": 20
+          }
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "default",
+      "layout": "button_checkbox",
+      "template": "default_btn_mode"
+    },
+    {
+      "name": "active",
+      "layout": "button_checkbox",
+      "template": "default_btn_mode"
+    },
+    {
+      "name": "pressed",
+      "layout": "button_checkbox",
+      "template": "default_btn_mode"
+    },
+    {
+      "name": "selected",
+      "layout": "button_checkbox",
+      "template": "pressed_btn_mode"
+    }
+  ]
+}

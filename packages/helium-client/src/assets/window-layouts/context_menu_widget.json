@@ -1,0 +1,215 @@
+{
+  "name": "context_menu_widget",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\782_context_menu_widget.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "bubble",
+        "typeId": 45,
+        "attributes": {
+          "x": "0",
+          "y": "27",
+          "width": "115",
+          "height": "86",
+          "params": "1048865",
+          "style": "0",
+          "color": "0x06e6b67",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "107",
+              "height": "76",
+              "params": "12582928",
+              "style": "0",
+              "name": "border",
+              "color": "0x06e6b67"
+            },
+            "children": [
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "0",
+                  "y": "7",
+                  "width": "107",
+                  "height": "16",
+                  "params": "17",
+                  "style": "0",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "23",
+                      "y": "0",
+                      "width": "61",
+                      "height": "16",
+                      "params": "208",
+                      "style": "0",
+                      "name": "furni_name",
+                      "caption": "furni_name"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "left",
+                      "font_size": 17,
+                      "text_color": 16777215,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "sharpness": 80,
+                      "thickness": -15
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "background",
+                "typeId": 2,
+                "attributes": {
+                  "x": "2",
+                  "y": "27",
+                  "width": "103",
+                  "height": "1",
+                  "params": "144",
+                  "style": "0",
+                  "color": "0xffff000000",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "itemlist",
+                "typeId": 50,
+                "attributes": {
+                  "x": "2",
+                  "y": "28",
+                  "width": "103",
+                  "height": "26",
+                  "params": "8519888",
+                  "style": "0",
+                  "name": "buttons"
+                },
+                "children": [
+                  {
+                    "tag": "container",
+                    "typeId": 4,
+                    "attributes": {
+                      "x": "1",
+                      "y": "0",
+                      "width": "101",
+                      "height": "26",
+                      "params": "144",
+                      "style": "3",
+                      "name": "use",
+                      "color": "0x00",
+                      "tags": "action"
+                    },
+                    "children": [
+                      {
+                        "tag": "container_button",
+                        "typeId": 41,
+                        "attributes": {
+                          "x": "-3",
+                          "y": "-4",
+                          "width": "107",
+                          "height": "35",
+                          "params": "2193",
+                          "style": "3",
+                          "name": "button",
+                          "color": "0x02d2a27",
+                          "tags": "action"
+                        },
+                        "children": [
+                          {
+                            "tag": "text",
+                            "typeId": 10,
+                            "attributes": {
+                              "x": "3",
+                              "y": "9",
+                              "width": "101",
+                              "height": "16",
+                              "params": "144",
+                              "style": "0",
+                              "name": "label",
+                              "caption": "${widget.random_teleport.button.use}"
+                            },
+                            "children": [],
+                            "vars": {
+                              "auto_size": "center",
+                              "font_size": 17,
+                              "text_color": 16777215,
+                              "text_style": "u_regular",
+                              "mouse_wheel_enabled": false,
+                              "sharpness": 80,
+                              "thickness": -15
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "vars": {
+                  "spacing": 1,
+                  "scale_to_fit_items": true,
+                  "resize_on_item_update": true
+                }
+              },
+              {
+                "tag": "region",
+                "typeId": 5,
+                "attributes": {
+                  "x": "4",
+                  "y": "55",
+                  "width": "100",
+                  "height": "18",
+                  "params": "1041",
+                  "style": "0",
+                  "name": "minimize",
+                  "treshold": "0"
+                },
+                "children": [
+                  {
+                    "tag": "icon",
+                    "typeId": 1,
+                    "attributes": {
+                      "x": "45",
+                      "y": "7",
+                      "width": "13",
+                      "height": "10",
+                      "params": "16",
+                      "style": "7",
+                      "name": "icon"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vars": {
+          "margin_left": 4,
+          "margin_top": 4,
+          "margin_right": 4,
+          "margin_bottom": 4
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 115,
+  "layoutHeight": 86
+}

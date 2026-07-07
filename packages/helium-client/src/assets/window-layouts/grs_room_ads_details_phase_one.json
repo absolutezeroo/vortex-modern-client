@@ -1,0 +1,97 @@
+{
+  "name": "grs_room_ads_details_phase_one",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\567_grs_room_ads_details_phase_one.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "346",
+          "height": "17",
+          "params": "145",
+          "style": "0",
+          "name": "details",
+          "color": "0xffffffffff",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "6",
+              "y": "2",
+              "width": "273",
+              "height": "13",
+              "params": "16",
+              "style": "0",
+              "name": "adname",
+              "caption": "PH Room Name: Neque porro quisquam est que"
+            },
+            "children": [],
+            "vars": {
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "285",
+              "y": "1",
+              "width": "13",
+              "height": "16",
+              "params": "80",
+              "style": "0",
+              "name": "doormode_password_small"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "285",
+              "y": "1",
+              "width": "13",
+              "height": "16",
+              "params": "80",
+              "style": "0",
+              "name": "doormode_doorbell_small"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "285",
+              "y": "1",
+              "width": "13",
+              "height": "16",
+              "params": "80",
+              "style": "0",
+              "name": "doormode_invisible_small"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 346,
+  "layoutHeight": 17
+}

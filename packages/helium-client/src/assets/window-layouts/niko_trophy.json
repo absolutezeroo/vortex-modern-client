@@ -1,0 +1,214 @@
+{
+  "name": "niko_trophy",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\66_niko_trophy.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "428",
+          "height": "325",
+          "params": "33025",
+          "style": "3",
+          "name": "niko.trophy",
+          "caption": "${niko.trophy.title}",
+          "color": "0xff67a3bf"
+        },
+        "children": [
+          {
+            "tag": "background",
+            "typeId": 2,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "428",
+              "height": "169",
+              "params": "16",
+              "style": "0",
+              "name": "nikotrophy.background",
+              "caption": "nikotrophy.background",
+              "color": "0xffff36494e",
+              "background": "true"
+            },
+            "children": []
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "26",
+              "y": "30",
+              "width": "93",
+              "height": "112",
+              "params": "16",
+              "style": "3",
+              "name": "preview_image"
+            },
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "153",
+              "y": "28",
+              "width": "249",
+              "height": "64",
+              "params": "1",
+              "style": "0",
+              "name": "html_textbox",
+              "caption": "${niko.trophy.description.gold}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "sharpness": 0,
+              "thickness": 0,
+              "word_wrap": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0,
+              "editable": false,
+              "selectable": false
+            }
+          },
+          {
+            "tag": "link",
+            "typeId": 14,
+            "attributes": {
+              "x": "153",
+              "y": "97",
+              "width": "249",
+              "height": "23",
+              "params": "1",
+              "style": "0",
+              "name": "store_link",
+              "caption": "${niko.trophy.link.text}",
+              "treshold": "0"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "underline": true,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "html",
+            "typeId": 11,
+            "attributes": {
+              "x": "153",
+              "y": "130",
+              "width": "249",
+              "height": "23",
+              "params": "1",
+              "style": "0",
+              "name": "date",
+              "caption": "${trophy.niko.date}"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "font_face": "Ubuntu",
+              "font_size": 18,
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0,
+              "editable": false,
+              "selectable": false
+            }
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "38",
+              "y": "173",
+              "width": "346",
+              "height": "110",
+              "params": "17",
+              "style": "0",
+              "name": "appstore_region",
+              "caption": "nikotrophy.region",
+              "treshold": "0"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "15",
+                  "y": "10",
+                  "width": "320",
+                  "height": "92",
+                  "params": "16",
+                  "style": "0",
+                  "name": "store_image",
+                  "caption": "nikotrophy.appstorebutton"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ],
+            "vars": {
+              "tool_tip_caption": "${trophy.niko.link.tooltip}"
+            }
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": 0,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 428,
+  "layoutHeight": 325
+}

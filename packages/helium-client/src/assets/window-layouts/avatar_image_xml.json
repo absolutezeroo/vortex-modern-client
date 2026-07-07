@@ -1,0 +1,59 @@
+{
+  "name": "avatar_image_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2793__SafeCls_223.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "30",
+          "height": "30",
+          "params": "2196",
+          "style": "0"
+        },
+        "children": [
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "30",
+              "height": "30",
+              "params": "2192",
+              "style": "0",
+              "name": "bitmap"
+            },
+            "children": []
+          },
+          {
+            "tag": "region",
+            "typeId": 5,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "30",
+              "height": "30",
+              "params": "2193",
+              "style": "0",
+              "name": "region",
+              "visible": "false",
+              "treshold": "0"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 30,
+  "layoutHeight": 30
+}

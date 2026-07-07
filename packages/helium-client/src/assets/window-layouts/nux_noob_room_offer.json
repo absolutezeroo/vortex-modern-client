@@ -1,0 +1,127 @@
+{
+  "name": "nux_noob_room_offer",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\153_nux_noob_room_offer.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "382",
+          "height": "222",
+          "params": "32801",
+          "style": "3",
+          "caption": "${notification.notification.nux.popup.title}",
+          "color": "0xff418db0"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "23",
+              "width": "380",
+              "height": "95",
+              "params": "16",
+              "style": "100",
+              "tags": "ICON"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "${image.library.url}nux/NUXroom_prompt.png",
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "15",
+              "y": "129",
+              "width": "364",
+              "height": "81",
+              "params": "0",
+              "style": "100"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "366",
+                  "height": "13",
+                  "params": "16",
+                  "style": "0",
+                  "name": "txtBody",
+                  "caption": "${nux.offer.noob.lobby.summary}",
+                  "color": "0x00",
+                  "height_max": "84"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "sharpness": 0,
+                  "thickness": 0,
+                  "word_wrap": true,
+                  "kerning": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button_thick",
+                "typeId": 61,
+                "attributes": {
+                  "x": "178",
+                  "y": "45",
+                  "width": "184",
+                  "height": "30",
+                  "params": "131073",
+                  "style": "6",
+                  "name": "btnGo",
+                  "caption": "${nux.offer.noob.lobby.button}",
+                  "color": "0x01da100",
+                  "width_min": "180"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 1,
+          "margin_top": 10,
+          "margin_right": 1,
+          "margin_bottom": 10
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 382,
+  "layoutHeight": 222
+}

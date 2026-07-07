@@ -1,0 +1,99 @@
+{
+  "name": "snowwar_timer",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\638_snowwar_timer.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "100",
+          "height": "46",
+          "params": "64",
+          "style": "8",
+          "background": "true"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "15",
+              "height": "15",
+              "params": "16",
+              "style": "0",
+              "name": "checksumIndicator",
+              "visible": "false"
+            },
+            "children": []
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "16",
+              "y": "6",
+              "width": "80",
+              "height": "31",
+              "params": "16",
+              "style": "0",
+              "name": "time_left_stroke",
+              "caption": "01:23",
+              "tags": "stroke",
+              "width_min": "80"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "UbuntuThick",
+              "font_size": 37,
+              "grid_fit_type": "subpixel",
+              "text_color": 1079212,
+              "mouse_wheel_enabled": false,
+              "thickness": 200,
+              "bold": true
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "16",
+              "y": "6",
+              "width": "80",
+              "height": "31",
+              "params": "16",
+              "style": "0",
+              "name": "time_left",
+              "caption": "01:23",
+              "width_min": "80"
+            },
+            "children": [],
+            "vars": {
+              "antialias_type": "advanced",
+              "auto_size": "left",
+              "font_face": "Ubuntu",
+              "font_size": 37,
+              "grid_fit_type": "subpixel",
+              "text_color": 16777215,
+              "mouse_wheel_enabled": false,
+              "bold": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 100,
+  "layoutHeight": 46
+}

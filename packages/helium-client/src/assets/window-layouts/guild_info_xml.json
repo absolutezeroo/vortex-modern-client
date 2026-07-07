@@ -1,0 +1,77 @@
+{
+  "name": "guild_info_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\3005__SafeCls_777.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "230",
+          "height": "49",
+          "params": "17",
+          "style": "0",
+          "name": "guild_info",
+          "background": "true",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "widget",
+            "typeId": 16,
+            "attributes": {
+              "x": "0",
+              "y": "5",
+              "width": "39",
+              "height": "39",
+              "params": "16",
+              "style": "0",
+              "name": "guild_badge"
+            },
+            "children": [],
+            "vars": {
+              "widget_type": "badge_image",
+              "badge_image:type": "group",
+              "badge_image:pivot_point": "center",
+              "badge_image:stretched_x": false,
+              "badge_image:stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "45",
+              "y": "1",
+              "width": "170",
+              "height": "46",
+              "params": "16",
+              "style": "1",
+              "name": "guild_base_txt",
+              "caption": "${navigator.guildbase}"
+            },
+            "children": [],
+            "vars": {
+              "text_style": "u_regular",
+              "mouse_wheel_enabled": false,
+              "multiline": true,
+              "word_wrap": true,
+              "underline": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 230,
+  "layoutHeight": 49
+}

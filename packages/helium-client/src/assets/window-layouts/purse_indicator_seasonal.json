@@ -1,0 +1,201 @@
+{
+  "name": "purse_indicator_seasonal",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\158_purse_indicator_seasonal.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "29",
+          "params": "17",
+          "style": "0",
+          "clipping": "false",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "192",
+              "height": "29",
+              "params": "16",
+              "style": "9",
+              "color": "0x0686661",
+              "tags": "BGCOLOR"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "3",
+              "y": "3",
+              "width": "186",
+              "height": "22",
+              "params": "16",
+              "style": "3",
+              "color": "0x0201e19",
+              "blend": "0.8",
+              "visible": "false"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "163",
+              "y": "0",
+              "width": "29",
+              "height": "29",
+              "params": "16",
+              "style": "6",
+              "name": "seasonal_bg",
+              "color": "0x07adde9"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "29",
+                  "height": "29",
+                  "params": "16",
+                  "style": "100",
+                  "tags": "ICON"
+                },
+                "children": [],
+                "vars": {
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "icon",
+                "typeId": 1,
+                "attributes": {
+                  "x": "3",
+                  "y": "3",
+                  "width": "23",
+                  "height": "23",
+                  "params": "4081814",
+                  "style": "27",
+                  "name": "seasonal_icon"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "5",
+              "y": "6",
+              "width": "105",
+              "height": "16",
+              "params": "16",
+              "style": "100",
+              "name": "seasonal_name"
+            },
+            "children": [],
+            "vars": {
+              "text_color": 12287427,
+              "text_style": "il_regular_white",
+              "mouse_wheel_enabled": false,
+              "thickness": 200,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "90",
+              "y": "6",
+              "width": "60",
+              "height": "16",
+              "params": "262160",
+              "style": "0",
+              "name": "amount",
+              "caption": "0"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "right",
+              "text_style": "il_regular_white",
+              "mouse_wheel_enabled": false,
+              "bold": true,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "44",
+              "y": "0",
+              "width": "33",
+              "height": "29",
+              "params": "147456",
+              "style": "6",
+              "name": "change_overlay",
+              "color": "0x0bb7dc3",
+              "visible": "false"
+            },
+            "children": [
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "33",
+                  "height": "29",
+                  "params": "16",
+                  "style": "0",
+                  "name": "change",
+                  "caption": "+50"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "text_style": "il_regular_white",
+                  "margin_left": 4,
+                  "margin_top": 6,
+                  "margin_right": 6,
+                  "margin_bottom": 7,
+                  "mouse_wheel_enabled": false,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 29
+}

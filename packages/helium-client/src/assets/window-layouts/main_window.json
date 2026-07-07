@@ -1,0 +1,274 @@
+{
+  "name": "main_window",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\712_main_window.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "582",
+          "height": "437",
+          "params": "33025",
+          "style": "0",
+          "name": "playlist.editor",
+          "caption": "${playlist.editor.title}",
+          "color": "0xff418caf",
+          "tags": "PLAYLIST_EDITOR"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "303",
+              "height": "407",
+              "params": "16",
+              "style": "0",
+              "name": "my_music_border",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "itemgrid_vertical",
+                "typeId": 53,
+                "attributes": {
+                  "x": "2",
+                  "y": "89",
+                  "width": "277",
+                  "height": "315",
+                  "params": "17",
+                  "style": "0",
+                  "name": "music_inventory_itemgrid",
+                  "tags": "MUSICINVENTORY"
+                },
+                "children": [],
+                "vars": {}
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "280",
+                  "y": "93",
+                  "width": "17",
+                  "height": "306",
+                  "params": "17",
+                  "style": "0",
+                  "name": "music_inventory_scrollbar"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "music_inventory_itemgrid"
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "4",
+                  "y": "4",
+                  "width": "295",
+                  "height": "79",
+                  "params": "16",
+                  "style": "2",
+                  "color": "0x060863b"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "1",
+                  "y": "1",
+                  "width": "9",
+                  "height": "100",
+                  "params": "128",
+                  "style": "0",
+                  "name": "music_inventory_splash_image"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "96",
+                  "y": "29",
+                  "width": "234",
+                  "height": "26",
+                  "params": "16",
+                  "style": "0",
+                  "caption": "${playlist.editor.my.music}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 32,
+                  "text_color": 16777215,
+                  "text_style": "bold",
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "1",
+                  "y": "295",
+                  "width": "278",
+                  "height": "110",
+                  "params": "0",
+                  "style": "0",
+                  "name": "preview_play_container"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "307",
+              "y": "0",
+              "width": "263",
+              "height": "407",
+              "params": "16",
+              "style": "0",
+              "name": "playlist_border",
+              "background": "true"
+            },
+            "children": [
+              {
+                "tag": "itemlist_vertical",
+                "typeId": 50,
+                "attributes": {
+                  "x": "2",
+                  "y": "89",
+                  "width": "236",
+                  "height": "262",
+                  "params": "17",
+                  "style": "0",
+                  "name": "playlist_editor_itemlist"
+                },
+                "children": [],
+                "vars": {}
+              },
+              {
+                "tag": "scrollbar_vertical",
+                "typeId": 131,
+                "attributes": {
+                  "x": "239",
+                  "y": "94",
+                  "width": "17",
+                  "height": "254",
+                  "params": "17",
+                  "style": "0",
+                  "name": "playlist_scrollbar"
+                },
+                "children": [],
+                "vars": {
+                  "scrollable": "playlist_editor_itemlist"
+                }
+              },
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "5",
+                  "y": "5",
+                  "width": "255",
+                  "height": "79",
+                  "params": "16",
+                  "style": "2",
+                  "color": "0x034637a"
+                },
+                "children": []
+              },
+              {
+                "tag": "bitmap",
+                "typeId": 21,
+                "attributes": {
+                  "x": "1",
+                  "y": "1",
+                  "width": "100",
+                  "height": "100",
+                  "params": "16",
+                  "style": "0",
+                  "name": "playlist_editor_splash_image"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "96",
+                  "y": "29",
+                  "width": "217",
+                  "height": "26",
+                  "params": "16",
+                  "style": "0",
+                  "caption": "${playlist.editor.playlist}"
+                },
+                "children": [],
+                "vars": {
+                  "antialias_type": "advanced",
+                  "auto_size": "left",
+                  "font_face": "Ubuntu",
+                  "font_size": 32,
+                  "text_color": 16777215,
+                  "text_style": "bold",
+                  "mouse_wheel_enabled": false,
+                  "bold": true
+                }
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "1",
+                  "y": "350",
+                  "width": "261",
+                  "height": "56",
+                  "params": "16",
+                  "style": "0",
+                  "name": "now_playing_container",
+                  "background": "true"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 582,
+  "layoutHeight": 437
+}

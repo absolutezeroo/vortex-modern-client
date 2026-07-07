@@ -1,0 +1,162 @@
+{
+  "name": "roc_room_thumbnail",
+  "source": "sources\\win63_2023_version\\binaryDataXml_organized\\layouts\\576_roc_room_thumbnail.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "region",
+        "typeId": 5,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "137",
+          "height": "99",
+          "params": "17",
+          "style": "3",
+          "name": "thumbnail",
+          "treshold": "0"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "135",
+              "height": "96",
+              "params": "16",
+              "style": "0",
+              "name": "bg_sel",
+              "color": "0x06f8285"
+            },
+            "children": []
+          },
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "135",
+              "height": "96",
+              "params": "16",
+              "style": "0",
+              "name": "bg_unsel",
+              "color": "0x0cccccc"
+            },
+            "children": []
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "135",
+              "height": "96",
+              "params": "16",
+              "style": "0",
+              "name": "bg_pic"
+            },
+            "children": [],
+            "vars": {
+              "pivot_point": "center",
+              "stretched_x": false,
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "25",
+              "y": "78",
+              "width": "18",
+              "height": "13",
+              "params": "16",
+              "style": "0",
+              "name": "tile_size_txt",
+              "caption": "104",
+              "color": "0xffff000000",
+              "background": "true"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "mouse_wheel_enabled": false,
+              "sharpness": 0,
+              "thickness": 0,
+              "kerning": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "5",
+              "y": "80",
+              "width": "18",
+              "height": "10",
+              "params": "16",
+              "style": "0",
+              "name": "tile_icon_black"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "5",
+              "y": "80",
+              "width": "18",
+              "height": "10",
+              "params": "16",
+              "style": "0",
+              "name": "tile_icon_white"
+            },
+            "children": []
+          },
+          {
+            "tag": "bitmap",
+            "typeId": 21,
+            "attributes": {
+              "x": "60",
+              "y": "0",
+              "width": "18",
+              "height": "20",
+              "params": "16",
+              "style": "0",
+              "name": "select_arrow"
+            },
+            "children": []
+          },
+          {
+            "tag": "icon",
+            "typeId": 1,
+            "attributes": {
+              "x": "109",
+              "y": "5",
+              "width": "20",
+              "height": "10",
+              "params": "16",
+              "style": "12",
+              "name": "club_icon"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 137,
+  "layoutHeight": 99
+}

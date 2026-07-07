@@ -1,0 +1,462 @@
+{
+  "name": "community_goal_voting_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\88_community_goal_voting_xml$58d636f38d09422c6937520dbe65f728944144304.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "516",
+          "height": "200",
+          "params": "147472",
+          "style": "0",
+          "name": "community_goal"
+        },
+        "children": [
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "7",
+              "y": "10",
+              "width": "12",
+              "height": "4",
+              "params": "16",
+              "style": "100",
+              "name": "border_bar"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "illumina_light_border_top_center",
+              "pivot_point": "center left",
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "text",
+            "typeId": 10,
+            "attributes": {
+              "x": "24",
+              "y": "4",
+              "width": "154",
+              "height": "14",
+              "params": "16",
+              "style": "100",
+              "name": "community_title",
+              "caption": "${landing.view.community.headline}",
+              "tags": "COLORABLE"
+            },
+            "children": [],
+            "vars": {
+              "auto_size": "left",
+              "font_size": 9,
+              "text_style": "il_heading_3",
+              "mouse_wheel_enabled": false,
+              "spacing": 0,
+              "leading": 0
+            }
+          },
+          {
+            "tag": "static_bitmap",
+            "typeId": 23,
+            "attributes": {
+              "x": "193",
+              "y": "10",
+              "width": "310",
+              "height": "4",
+              "params": "16",
+              "style": "100",
+              "name": "hdr_line"
+            },
+            "children": [],
+            "vars": {
+              "asset_uri": "illumina_light_border_top_center",
+              "pivot_point": "center left",
+              "stretched_y": false
+            }
+          },
+          {
+            "tag": "itemlist",
+            "typeId": 50,
+            "attributes": {
+              "x": "0",
+              "y": "20",
+              "width": "300",
+              "height": "150",
+              "params": "147472",
+              "style": "0",
+              "name": "info_container"
+            },
+            "children": [
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "300",
+                  "height": "24",
+                  "params": "16",
+                  "style": "100",
+                  "name": "goal_caption",
+                  "caption": "${landing.view.community.caption}",
+                  "tags": "COLORABLE",
+                  "width_min": "300",
+                  "width_max": "300"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "left",
+                  "font_size": 24,
+                  "text_style": "il_heading_1",
+                  "mouse_wheel_enabled": false,
+                  "spacing": -0.6,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "0",
+                  "y": "29",
+                  "width": "300",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "goal_info",
+                  "caption": "${landing.view.community.info}",
+                  "tags": "COLORABLE",
+                  "width_min": "300",
+                  "width_max": "300"
+                },
+                "children": [],
+                "vars": {
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "50",
+                  "width": "250",
+                  "height": "45",
+                  "params": "131089",
+                  "style": "100",
+                  "name": "community_vote_one_button",
+                  "caption": "${landing.view.community_catalog_button.text}",
+                  "width_min": "250",
+                  "width_max": "250"
+                },
+                "children": []
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "0",
+                  "y": "70",
+                  "width": "250",
+                  "height": "45",
+                  "params": "131089",
+                  "style": "100",
+                  "name": "community_vote_two_button",
+                  "caption": "${landing.view.community_catalog_button.text}",
+                  "width_min": "250",
+                  "width_max": "250"
+                },
+                "children": []
+              }
+            ],
+            "vars": {
+              "spacing": 0
+            }
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "290",
+              "y": "0",
+              "width": "226",
+              "height": "200",
+              "params": "16400",
+              "style": "0",
+              "name": "meter_container"
+            },
+            "children": [
+              {
+                "tag": "formatted_text",
+                "typeId": 15,
+                "attributes": {
+                  "x": "10",
+                  "y": "145",
+                  "width": "200",
+                  "height": "16",
+                  "params": "16",
+                  "style": "100",
+                  "name": "community_total_status",
+                  "caption": "${landing.view.community.meter}",
+                  "tags": "COLORABLE",
+                  "width_min": "200",
+                  "width_max": "200"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "mouse_wheel_enabled": false,
+                  "multiline": true,
+                  "word_wrap": true,
+                  "bold": true,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "20",
+                  "y": "0",
+                  "width": "183",
+                  "height": "144",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_0"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/meter_level_0.png",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "30",
+                  "y": "39",
+                  "width": "88",
+                  "height": "93",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_1"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/meter_level_1.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "30",
+                  "y": "39",
+                  "width": "88",
+                  "height": "93",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_1_icon",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "30",
+                  "y": "39",
+                  "width": "88",
+                  "height": "93",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_1_icon_locked",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "50",
+                  "y": "10",
+                  "width": "133",
+                  "height": "78",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_2"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/meter_level_2.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "50",
+                  "y": "10",
+                  "width": "133",
+                  "height": "78",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_2_icon",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "50",
+                  "y": "10",
+                  "width": "133",
+                  "height": "78",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_2_icon_locked",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "125",
+                  "y": "39",
+                  "width": "69",
+                  "height": "93",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_3"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "${image.library.url}reception/meter_level_3.png",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "125",
+                  "y": "39",
+                  "width": "69",
+                  "height": "93",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_3_icon",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "125",
+                  "y": "39",
+                  "width": "69",
+                  "height": "93",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_level_3_icon_locked",
+                  "visible": "false"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "60",
+                  "y": "48",
+                  "width": "96",
+                  "height": "85",
+                  "params": "16",
+                  "style": "0",
+                  "name": "meter_needle"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "landing_view_needle_meter_needle0",
+                  "pivot_point": "bottom left",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 516,
+  "layoutHeight": 200
+}

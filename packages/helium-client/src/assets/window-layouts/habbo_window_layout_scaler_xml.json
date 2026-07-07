@@ -1,0 +1,14 @@
+{
+  "name": "habbo_window_layout_scaler_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2488__SafeCls_1411.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": []
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 15,
+  "layoutHeight": 15
+}

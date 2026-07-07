@@ -1,0 +1,29 @@
+{
+  "name": "growing_container_view_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1159__SafeCls_759.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "container",
+        "typeId": 4,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "1000",
+          "height": "0",
+          "params": "147473",
+          "style": "3",
+          "name": "container"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 1000,
+  "layoutHeight": 0
+}

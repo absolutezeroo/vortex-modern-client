@@ -1,0 +1,399 @@
+{
+  "name": "collectible_reward_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1604__SafeCls_436.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "frame",
+        "typeId": 35,
+        "attributes": {
+          "x": "59",
+          "y": "79",
+          "width": "424",
+          "height": "570",
+          "params": "1073774593",
+          "style": "3",
+          "name": "CollectibleReward",
+          "caption": "${collectibles.reward_box.notif.title}",
+          "color": "0x05e696d"
+        },
+        "children": [
+          {
+            "tag": "border",
+            "typeId": 30,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "424",
+              "height": "537",
+              "params": "2192",
+              "style": "3",
+              "name": "background",
+              "color": "0x05e696d"
+            },
+            "children": []
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "0",
+              "width": "424",
+              "height": "350",
+              "params": "144",
+              "style": "3",
+              "name": "top_container",
+              "blend": "0"
+            },
+            "children": [
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "-2",
+                  "y": "0",
+                  "width": "428",
+                  "height": "565",
+                  "params": "144",
+                  "style": "3",
+                  "name": "collector_hub_background",
+                  "color": "0x05e696d"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "428",
+                      "height": "348",
+                      "params": "144",
+                      "style": "3",
+                      "name": "gradient",
+                      "caption": "gradient",
+                      "color": "0x00",
+                      "blend": "0.5"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "collectables_score_background_gradient"
+                    }
+                  },
+                  {
+                    "tag": "border",
+                    "typeId": 30,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "428",
+                      "height": "348",
+                      "params": "144",
+                      "style": "3",
+                      "name": "dimmer",
+                      "color": "0x00",
+                      "blend": "0.5"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "424",
+                  "height": "58",
+                  "params": "16528",
+                  "style": "3",
+                  "name": "text_container"
+                },
+                "children": [
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "4",
+                      "width": "424",
+                      "height": "24",
+                      "params": "144",
+                      "style": "3",
+                      "name": "title_text",
+                      "caption": "${collectibles.reward_box.contains}",
+                      "color": "0x00"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "font_size": 24,
+                      "text_color": 16777215,
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  },
+                  {
+                    "tag": "text",
+                    "typeId": 10,
+                    "attributes": {
+                      "x": "0",
+                      "y": "32",
+                      "width": "424",
+                      "height": "26",
+                      "params": "144",
+                      "style": "3",
+                      "name": "product_name",
+                      "caption": "Product Name",
+                      "color": "0x00"
+                    },
+                    "children": [],
+                    "vars": {
+                      "auto_size": "center",
+                      "font_size": 32,
+                      "text_color": 15977731,
+                      "text_style": "u_bold",
+                      "mouse_wheel_enabled": false,
+                      "spacing": 0,
+                      "leading": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "container",
+                "typeId": 4,
+                "attributes": {
+                  "x": "62",
+                  "y": "25",
+                  "width": "300",
+                  "height": "300",
+                  "params": "208",
+                  "style": "3",
+                  "name": "product_container"
+                },
+                "children": [
+                  {
+                    "tag": "static_bitmap",
+                    "typeId": 23,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "300",
+                      "height": "300",
+                      "params": "16",
+                      "style": "3",
+                      "name": "rotating_star",
+                      "color": "0x0ffecac",
+                      "blend": "0.75"
+                    },
+                    "children": [],
+                    "vars": {
+                      "asset_uri": "bg_star_300x300"
+                    }
+                  },
+                  {
+                    "tag": "widget",
+                    "typeId": 16,
+                    "attributes": {
+                      "x": "0",
+                      "y": "0",
+                      "width": "300",
+                      "height": "300",
+                      "params": "16",
+                      "style": "3",
+                      "name": "product_image"
+                    },
+                    "children": [],
+                    "vars": {
+                      "widget_type": "product_image"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "348",
+              "width": "424",
+              "height": "187",
+              "params": "2192",
+              "style": "3",
+              "name": "bottom_container"
+            },
+            "children": [
+              {
+                "tag": "border",
+                "typeId": 30,
+                "attributes": {
+                  "x": "0",
+                  "y": "-2",
+                  "width": "424",
+                  "height": "50",
+                  "params": "144",
+                  "style": "3",
+                  "name": "highlight",
+                  "color": "0x0fff",
+                  "blend": "0.1",
+                  "background": "true"
+                },
+                "children": []
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "80",
+                  "width": "424",
+                  "height": "19",
+                  "params": "144",
+                  "style": "3",
+                  "caption": "${collectibles.reward_box.info}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "font_size": 20,
+                  "text_color": 16777215,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "button",
+                "typeId": 60,
+                "attributes": {
+                  "x": "152",
+                  "y": "124",
+                  "width": "120",
+                  "height": "30",
+                  "params": "918737",
+                  "style": "3",
+                  "name": "ok_button",
+                  "caption": "${generic.ok}",
+                  "width_min": "120"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "tag": "container",
+            "typeId": 4,
+            "attributes": {
+              "x": "0",
+              "y": "300",
+              "width": "424",
+              "height": "96",
+              "params": "144",
+              "style": "3",
+              "name": "rarity_container"
+            },
+            "children": [
+              {
+                "tag": "static_bitmap",
+                "typeId": 23,
+                "attributes": {
+                  "x": "0",
+                  "y": "0",
+                  "width": "424",
+                  "height": "86",
+                  "params": "144",
+                  "style": "3",
+                  "name": "flag_image"
+                },
+                "children": [],
+                "vars": {
+                  "asset_uri": "collectables_reward_rarity_flag",
+                  "pivot_point": "center",
+                  "stretched_x": false,
+                  "stretched_y": false
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "30",
+                  "width": "424",
+                  "height": "19",
+                  "params": "144",
+                  "style": "3",
+                  "name": "rarity_title",
+                  "caption": "${collectibles.item.rarity}"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "font_size": 20,
+                  "text_color": 4457216,
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              },
+              {
+                "tag": "text",
+                "typeId": 10,
+                "attributes": {
+                  "x": "0",
+                  "y": "50",
+                  "width": "424",
+                  "height": "24",
+                  "params": "144",
+                  "style": "3",
+                  "name": "rarity_text",
+                  "caption": "RARITY"
+                },
+                "children": [],
+                "vars": {
+                  "auto_size": "center",
+                  "font_size": 24,
+                  "text_color": 4457216,
+                  "text_style": "u_bold",
+                  "mouse_wheel_enabled": false,
+                  "spacing": 0,
+                  "leading": 0
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "type": "DropShadowFilter",
+            "attributes": {
+              "distance": "4",
+              "alpha": "0.34901960784313724",
+              "blurX": "4",
+              "blurY": "4"
+            }
+          }
+        ],
+        "vars": {
+          "margin_left": 0,
+          "margin_top": 33,
+          "margin_right": -430,
+          "margin_bottom": 0
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 424,
+  "layoutHeight": 570
+}

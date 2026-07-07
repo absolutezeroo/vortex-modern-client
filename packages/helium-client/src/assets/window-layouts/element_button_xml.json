@@ -1,0 +1,34 @@
+{
+  "name": "element_button_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\12__SafeCls_541.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "button",
+        "typeId": 60,
+        "attributes": {
+          "x": "-11",
+          "y": "0",
+          "width": "200",
+          "height": "48",
+          "params": "131089",
+          "style": "100",
+          "name": "action_button",
+          "caption": "Button Text PH",
+          "width_min": "200",
+          "width_max": "200",
+          "height_min": "48",
+          "height_max": "48"
+        },
+        "children": []
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 200,
+  "layoutHeight": 48
+}

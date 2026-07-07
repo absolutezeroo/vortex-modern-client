@@ -1,0 +1,40 @@
+{
+  "name": "habbo_window_layout_button_black_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\2799_button_black_xml$a00a6f91cc473fef9fda674a44a4f9591913046394.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "label",
+        "typeId": 12,
+        "attributes": {
+          "name": "_BTN_TEXT",
+          "style": "0",
+          "x": "0",
+          "y": "0",
+          "width": "20",
+          "height": "22",
+          "tags": "_EXCLUDE, _INTERNAL, title",
+          "params": "-2147480368"
+        },
+        "children": [],
+        "vars": {
+          "text_style": "button_regular",
+          "text_color": 4294967295,
+          "margins": {
+            "left": 8,
+            "top": 4,
+            "right": 8,
+            "bottom": 4
+          }
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 20,
+  "layoutHeight": 22
+}

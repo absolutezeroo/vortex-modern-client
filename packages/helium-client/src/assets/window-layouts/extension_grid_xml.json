@@ -1,0 +1,34 @@
+{
+  "name": "extension_grid_xml",
+  "source": "sources\\win63_2026_crypted_version\\src\\layouts\\1222_extension_grid_xml$de7de44becd2dc62b2d9965ba4336849842833961.xml",
+  "window": {
+    "tag": "window",
+    "typeId": -1,
+    "attributes": {},
+    "children": [
+      {
+        "tag": "itemlist_vertical",
+        "typeId": 50,
+        "attributes": {
+          "x": "0",
+          "y": "0",
+          "width": "192",
+          "height": "260",
+          "params": "262208",
+          "style": "0",
+          "width_min": "192",
+          "width_max": "192"
+        },
+        "children": [],
+        "vars": {
+          "spacing": 2,
+          "resize_on_item_update": true
+        }
+      }
+    ]
+  },
+  "vars": {},
+  "filters": [],
+  "layoutWidth": 192,
+  "layoutHeight": 260
+}
