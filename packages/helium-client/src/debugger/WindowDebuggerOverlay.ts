@@ -113,6 +113,11 @@ class WindowDebuggerPanel
     private _lastTreeRefresh: number = 0;
 
     private readonly pickListener = (event: MouseEvent): void => this.onCanvasPick(event);
+    private readonly hoverPickListener = (event: MouseEvent): void => this.onCanvasHoverPick(event);
+    private readonly pickEscListener = (event: KeyboardEvent): void =>
+    {
+        if(event.code === 'Escape') this.stopPickMode();
+    };
 
     public constructor(canvas: HTMLCanvasElement, onClosed: () => void)
     {
@@ -416,13 +421,6 @@ class WindowDebuggerPanel
             return;
         }
 
-        const pickBtn = document.createElement('button');
-
-        pickBtn.className = 'hwd-pick-btn';
-        pickBtn.textContent = this._pickModeActive ? 'Click a window on screen...' : 'Pick element on screen';
-        pickBtn.addEventListener('click', () => this.togglePickMode());
-        this._treeEl.appendChild(pickBtn);
-
         const snapshot = WindowTreeInspector.snapshot(this._selectedWindow);
         const list = document.createElement('div');
 
@@ -500,27 +498,65 @@ class WindowDebuggerPanel
         this._treeEl.insertBefore(detail, this._treeEl.firstChild);
     }
 
-    // ── Pick mode (click a live window on screen to select it) ───────
+    // ── Pick mode (click any live window on screen to select it) ─────
+    // Always available from the toolbar, independent of tab or whether
+    // anything is already selected/open — this is the primary way to
+    // inspect windows the app itself created (toolbar, room UI, ...).
+
+    private updatePickButton(): void
+    {
+        this._pickBtn.textContent = this._pickModeActive ? 'Click anywhere to pick... (Esc to cancel)' : 'Pick element on screen';
+        this._pickBtn.classList.toggle('hwd-pick-btn-active', this._pickModeActive);
+    }
 
     private togglePickMode(): void
     {
         if(this._pickModeActive)
         {
             this.stopPickMode();
-        }
-        else
-        {
-            this._pickModeActive = true;
-            this._canvas.addEventListener('mousedown', this.pickListener, {capture: true});
+
+            return;
         }
 
-        this.refreshTree();
+        this._pickModeActive = true;
+        this._canvas.addEventListener('mousedown', this.pickListener, {capture: true});
+        this._canvas.addEventListener('mousemove', this.hoverPickListener, {capture: true});
+        window.addEventListener('keydown', this.pickEscListener);
+        this.updatePickButton();
     }
 
     private stopPickMode(): void
     {
         this._pickModeActive = false;
         this._canvas.removeEventListener('mousedown', this.pickListener, {capture: true});
+        this._canvas.removeEventListener('mousemove', this.hoverPickListener, {capture: true});
+        window.removeEventListener('keydown', this.pickEscListener);
+        this.hideHighlight(this._hoverHighlight);
+        this.updatePickButton();
+    }
+
+    private windowAtEvent(event: MouseEvent): IWindow | null
+    {
+        const rect = this._canvas.getBoundingClientRect();
+
+        return Helium.instance.windowManager.findWindowAtPoint(event.clientX - rect.left, event.clientY - rect.top);
+    }
+
+    private onCanvasHoverPick(event: MouseEvent): void
+    {
+        const hit = this.windowAtEvent(event);
+
+        if(!hit)
+        {
+            this.hideHighlight(this._hoverHighlight);
+
+            return;
+        }
+
+        const globalRect = {x: 0, y: 0, width: 0, height: 0};
+
+        hit.getGlobalRectangle(globalRect);
+        this.positionHighlight(this._hoverHighlight, globalRect);
     }
 
     private onCanvasPick(event: MouseEvent): void
@@ -528,26 +564,19 @@ class WindowDebuggerPanel
         event.preventDefault();
         event.stopImmediatePropagation();
 
-        const rect = this._canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        const hit = Helium.instance.windowManager.findWindowAtPoint(x, y);
+        const hit = this.windowAtEvent(event);
 
         this.stopPickMode();
 
-        if(hit)
-        {
-            if(!this._openWindows.some(entry => entry.window === hit))
-            {
-                this._openWindows.push({id: nextOpenId++, label: hit.name || hit.caption || '(unnamed)', window: hit});
-            }
+        if(!hit) return;
 
-            this.selectWindow(hit);
-        }
-        else
+        if(!this._openWindows.some(entry => entry.window === hit))
         {
-            this.refreshTree();
+            this._openWindows.push({id: nextOpenId++, label: hit.name || hit.caption || '(unnamed)', window: hit});
         }
+
+        this.setTab('layouts');
+        this.selectWindow(hit);
     }
 
     // ── Skins tab ────────────────────────────────────────────────────
@@ -777,8 +806,9 @@ function injectStyles(): void
     flex-direction: column;
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
 }
-.hwd-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #2a2a2a; font-weight: bold; border-bottom: 1px solid #444; border-radius: 6px 6px 0 0; }
+.hwd-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #2a2a2a; font-weight: bold; border-bottom: 1px solid #444; border-radius: 6px 6px 0 0; cursor: move; user-select: none; }
 .hwd-close { background: none; border: none; color: #ddd; font-size: 16px; cursor: pointer; line-height: 1; }
+.hwd-toolbar { padding: 6px 8px; border-bottom: 1px solid #444; }
 .hwd-tabs { display: flex; border-bottom: 1px solid #444; }
 .hwd-tabs button { flex: 1; background: #262626; color: #aaa; border: none; padding: 6px; cursor: pointer; }
 .hwd-tabs button.hwd-tab-active { background: #1e1e1e; color: #fff; border-bottom: 2px solid #4a9eff; }
@@ -795,7 +825,8 @@ function injectStyles(): void
 .hwd-open-row button { background: none; border: none; color: #e88; cursor: pointer; }
 .hwd-row-selected { background: #35506e; }
 .hwd-tree { padding: 4px 8px 10px; }
-.hwd-pick-btn { width: 100%; margin: 4px 0; padding: 4px; background: #2f3d52; color: #fff; border: 1px solid #4a9eff; border-radius: 4px; cursor: pointer; }
+.hwd-pick-btn { width: 100%; margin: 0; padding: 6px; background: #2f3d52; color: #fff; border: 1px solid #4a9eff; border-radius: 4px; cursor: pointer; }
+.hwd-pick-btn.hwd-pick-btn-active { background: #ff5050; border-color: #ff5050; }
 .hwd-tree-row { cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hwd-tree-row:hover { background: #2f3d52; }
 .hwd-tree-row-hidden { color: #777; font-style: italic; }
