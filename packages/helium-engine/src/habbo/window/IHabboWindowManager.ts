@@ -23,6 +23,9 @@ import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommun
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
+import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {AlertDialogCallback, IAlertDialog} from './utils/AlertDialog';
 import type {IAlertDialogWithLink} from './utils/AlertDialogWithLink';
 import type {IConfirmDialog} from './utils/ConfirmDialog';
@@ -51,10 +54,7 @@ export const WindowManagerEvents =
  * @see sources/win63_2021_version/com/sulake/habbo/window/IHabboWindowManager.as
  * @see sources/win63_2021_version/com/sulake/habbo/window/HabboWindowManagerComponent.as
  */
-export interface IHabboWindowManager extends IDisposable
-{
-    // ── Declarative window API (existing) ──────────────────────────────
-
+export interface IHabboWindowManager extends IDisposable {
     // TS-only: declarative window event emitter
     readonly windowEvents: EventEmitter;
 
@@ -74,22 +74,31 @@ export interface IHabboWindowManager extends IDisposable
     readonly localization: IHabboLocalizationManager | null;
     // AS3: sources/win63_version/habbo/window/class_38.as::habboPagesStyleSheet
     readonly habboPagesStyleSheet: unknown | null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
+    readonly catalog: IHabboCatalog | null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get freeFlowChat()
+    readonly freeFlowChat: IHabboFreeFlowChat | null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as (context.configuration)
+    readonly configuration: IHabboConfigurationManager | null;
 
     // TS-only
     loadElementDescription(data: IElementDescriptionData): void;
+
     // TS-only
     openWindow(layout: IWindowLayout, vars?: Record<string, unknown>, layer?: number): IWindowInstance;
+
     // TS-only
     closeWindow(id: number): void;
+
     // TS-only
     getWindow(id: number): IWindowInstance | null;
+
     // TS-only
     getWindows(layer?: number): IWindowInstance[];
 
-    // ── AS3-compatible API (ICoreWindowManager + IHabboWindowManager) ──
-
     // TS-only
     registerLayout(name: string, layout: IWindowLayout): void;
+
     // TS-only
     getLayout(name: string): IWindowLayout | null;
 
@@ -144,10 +153,13 @@ export interface IHabboWindowManager extends IDisposable
 
     // TS-only
     registerWidgetLayout(name: string, xml: string): void;
+
     // TS-only
     buildWidgetLayout(name: string, layer?: number): IWindow | null;
+
     // TS-only
     hasWidgetLayout(name: string): boolean;
+
     // TS-only
     getRegisteredWidgetLayoutNames(): string[];
 
@@ -230,12 +242,16 @@ export interface IHabboWindowManager extends IDisposable
 
     // TS-only
     registerAsset(name: string, bitmap: ImageBitmap): void;
+
     // TS-only
     registerAssetUrl(name: string, url: string): void;
+
     // TS-only
     loadSkinAssets(skins: Map<string, ISkinData>, atlases: Map<string, ImageBitmap>): void;
+
     // TS-only
     getSkinContainer(): ISkinContainer;
+
     // TS-only
     getWindowRenderer(): IWindowRenderer | null;
 
@@ -244,6 +260,7 @@ export interface IHabboWindowManager extends IDisposable
 
     // TS-only
     compositeToBuffer(width: number, height: number): OffscreenCanvas | null;
+
     // TS-only
     findWindowAtPoint(x: number, y: number): IWindow | null;
 
@@ -252,6 +269,7 @@ export interface IHabboWindowManager extends IDisposable
 
     // TS-only
     getServiceManager(): IInternalWindowServices | null;
+
     // TS-only
     createWidget(type: string, window: IWidgetWindow): IWidget | null;
 

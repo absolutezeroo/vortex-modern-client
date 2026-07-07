@@ -1,0 +1,525 @@
+import type {IWidget} from './IWidget';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {IHabboWindowManager} from '../IHabboWindowManager';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import type {IProductDisplayInfo} from './IProductDisplayInfo';
+import {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import {ImageResult} from '@habbo/room/ImageResult';
+import {ProductCategoryMapping} from '../utils/ProductCategoryMapping';
+import {PIVOT_NAMES, pivotFromName} from '@core/window/enum/PivotPoint';
+import {Logger} from '@core/utils/Logger';
+import type {BadgeImageWidget} from './BadgeImageWidget';
+import type {PetImageWidget} from './PetImageWidget';
+import type {AvatarImageWidget} from './AvatarImageWidget';
+
+const log = Logger.getLogger('ProductImageWidget');
+
+/**
+ * Renders a large preview image for a catalog product: a wall/floor item
+ * render, a pixel effect avatar preview, a badge, a chat style preview, a
+ * pet figure, or an avatar wearing a figure-set - whichever
+ * `productInfo.productTypeId` selects. Larger, angled sibling of
+ * ProductIconWidget's flat icon previews.
+ *
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as
+ */
+export class ProductImageWidget implements IWidget, IGetImageListener
+{
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::TYPE
+    public static readonly TYPE: string = 'product_image';
+
+    private _widgetWindow: IWidgetWindow | null = null;
+    private _windowManager: IHabboWindowManager | null = null;
+    private _root: IWindowContainer | null = null;
+    private _disposed: boolean = false;
+    private _productInfo: IProductDisplayInfo | null = null;
+    private _pivot: number = 0;
+    // AS3: _SafeStr_6491 - id of the pending async image request we're waiting on
+    private _pendingImageId: number = -1;
+    private _blend: number = 1;
+    // AS3: _SafeStr_9633/_SafeStr_9632/_SafeStr_5413 - easter egg repeat-count tracking
+    private _lastEasterEggProductTypeId: number = -1;
+    private _lastEasterEggItemTypeId: string = '';
+    private _easterEggRepeatCount: number = 0;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::ProductImageWidget()
+    // TODO(AS3): AS3 also constructs `_SafeStr_5597 = new EffectPreviewer(effectImageWidget,
+    // windowManager.avatarRenderer)` here - EffectPreviewer (pixel-effect-on-avatar preview
+    // renderer) isn't ported yet, so setEffectResult() can't show anything until it exists.
+    constructor(window: IWidgetWindow, windowManager: IHabboWindowManager)
+    {
+        this._widgetWindow = window;
+        this._windowManager = windowManager;
+
+        const root = this._windowManager.buildWidgetLayout('product_image_xml') as IWindowContainer | null;
+
+        if(root)
+        {
+            this._root = root;
+            this._widgetWindow.rootWindow = root;
+            root.width = this._widgetWindow.width;
+            root.height = this._widgetWindow.height;
+        }
+
+        this.setPlaceholder();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get disposed()
+    public get disposed(): boolean
+    {
+        return this._disposed;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get productInfo()
+    public get productInfo(): IProductDisplayInfo | null
+    {
+        return this._productInfo;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set productInfo()
+    public set productInfo(value: IProductDisplayInfo | null)
+    {
+        this._productInfo = value;
+        this.previewImage(value);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get properties()
+    public get properties(): PropertyStruct[]
+    {
+        if(this._disposed) return [];
+
+        return [
+            new PropertyStruct('pivot_point', PIVOT_NAMES[this._pivot], PropertyStruct.STRING, this._pivot !== 0, PIVOT_NAMES as unknown as string[]),
+        ];
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set properties()
+    public set properties(values: PropertyStruct[])
+    {
+        for(const prop of values)
+        {
+            if(prop.key === 'pivot_point')
+            {
+                this.pivot = pivotFromName(String(prop.value));
+            }
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get pivot()
+    public get pivot(): number
+    {
+        return this._pivot;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set pivot()
+    public set pivot(value: number)
+    {
+        this._pivot = value;
+
+        const preview = this.productPreviewBitmap;
+        const badge = this.badgeImageWidget;
+        const placeholder = this.placeholderImage;
+
+        if(preview) preview.pivotPoint = value;
+        if(badge?.widget) (badge.widget as BadgeImageWidget).pivotPoint = value;
+        if(placeholder) placeholder.pivotPoint = value;
+
+        this.refresh();
+    }
+
+    private refresh(): void
+    {
+        if(this._productInfo)
+        {
+            this.previewImage(this._productInfo);
+        }
+    }
+
+    private get placeholderImage(): IStaticBitmapWrapperWindow | null
+    {
+        return (this._root?.findChildByName('placeholder_image') as unknown as IStaticBitmapWrapperWindow) ?? null;
+    }
+
+    private get productPreviewBitmap(): IBitmapWrapperWindow | null
+    {
+        return (this._root?.findChildByName('product_preview') as unknown as IBitmapWrapperWindow) ?? null;
+    }
+
+    private get avatarImageWidget(): IWidgetWindow | null
+    {
+        return (this._root?.findChildByName('avatar_image_widget') as unknown as IWidgetWindow) ?? null;
+    }
+
+    private get badgeImageWidget(): IWidgetWindow | null
+    {
+        return (this._root?.findChildByName('badge_image_widget') as unknown as IWidgetWindow) ?? null;
+    }
+
+    private get petImageWidget(): IWidgetWindow | null
+    {
+        return (this._root?.findChildByName('pet_image_widget') as unknown as IWidgetWindow) ?? null;
+    }
+
+    private get effectImageWidget(): IWidgetWindow | null
+    {
+        return (this._root?.findChildByName('effect_image_widget') as unknown as IWidgetWindow) ?? null;
+    }
+
+    private get unknownImageWindow(): IStaticBitmapWrapperWindow | null
+    {
+        return (this._root?.findChildByName('unknown_image') as unknown as IStaticBitmapWrapperWindow) ?? null;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::previewImage()
+    public previewImage(info: IProductDisplayInfo | null): void
+    {
+        if(!info)
+        {
+            this.setUnknownImage();
+
+            return;
+        }
+
+        if(this.handlePreviewImageEasterEgg(info))
+        {
+            return;
+        }
+
+        const windowManager = this._windowManager;
+
+        if(!windowManager)
+        {
+            return;
+        }
+
+        // AS3 switches on `productTypeId - -1` (i.e. productTypeId + 1); cases
+        // translated back to the real productTypeId values here.
+        switch(info.productTypeId)
+        {
+            case -1:
+                this.setUnknownImage();
+                break;
+            case 0: // wall item
+                // TODO(AS3): needs IRoomEngine.getWallItemImage() (angled 3D preview,
+                // distinct from getWallItemIcon()) - not ported yet.
+                log.debug('[ProductImageWidget] Wall item image preview not implemented yet');
+                this.clearPreviewer();
+                break;
+            case 1: // floor item
+                // TODO(AS3): needs IRoomEngine.getFurnitureImage() - not ported yet.
+                log.debug('[ProductImageWidget] Floor item image preview not implemented yet');
+                this.clearPreviewer();
+                break;
+            case 2: // pixel effect preview on an avatar
+                if(info.itemTypeId === '')
+                {
+                    this.clearPreviewer();
+                    break;
+                }
+
+                this.setEffectResult(windowManager.sessionDataManager?.figure ?? '', parseInt(info.itemTypeId, 10));
+                break;
+            case 4: // badge
+                this.setBadgeResult(info.itemTypeId);
+                break;
+            case 9: { // chat style preview
+                const preview = ProductCategoryMapping.createChatItemPreview(windowManager, parseInt(info.itemTypeId, 10));
+
+                if(!preview)
+                {
+                    this.clearPreviewer();
+                    break;
+                }
+
+                const result = new ImageResult();
+
+                result.data = preview;
+                this.setImageResult(result);
+                break;
+            }
+            case 10: // pet
+                this.setPetResult(info.petFigureString);
+                break;
+            case 11: { // avatar wearing a figure-set
+                const avatarRenderer = windowManager.avatarRenderer;
+                const sessionDataManager = windowManager.sessionDataManager;
+
+                if(!avatarRenderer || !sessionDataManager)
+                {
+                    this.clearPreviewer();
+                    break;
+                }
+
+                const figure = avatarRenderer.getFigureStringWithFigureIds(
+                    sessionDataManager.figure,
+                    sessionDataManager.gender,
+                    info.figureSetIds
+                );
+
+                this.setAvatarResult(figure);
+                break;
+            }
+            default:
+                log.debug(`[ProductImageWidget] Can not yet handle this type of product: ${info.productTypeId}`);
+                this.clearPreviewer();
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::handlePreviewImageEasterEgg()
+    // TODO(AS3): the special-name reveal at each repeat-count threshold depends on
+    // ProductCategoryMapping.createChatItemPreview(), which is stubbed to null until
+    // IHabboFreeFlowChat.createPreviewBitmap() is ported - so this always falls through
+    // to normal handling (returns false) for now, exactly like AS3 does when its own
+    // preview creation fails.
+    private handlePreviewImageEasterEgg(info: IProductDisplayInfo): boolean
+    {
+        if(info.productTypeId === this._lastEasterEggProductTypeId && info.itemTypeId === this._lastEasterEggItemTypeId)
+        {
+            this._easterEggRepeatCount += 1;
+        }
+        else
+        {
+            this._easterEggRepeatCount = 1;
+        }
+
+        this._lastEasterEggProductTypeId = info.productTypeId;
+        this._lastEasterEggItemTypeId = info.itemTypeId;
+
+        if(info.productTypeId === 9)
+        {
+            let username: string | null = null;
+
+            switch(this._easterEggRepeatCount)
+            {
+                case 7: username = 'Evil Frank'; break;
+                case 10: username = 'Bonne Blonde'; break;
+                case 15: username = 'Furni fairy'; break;
+                case 22: username = 'Wacky Wired'; break;
+                case 35: username = 'Quacky duck'; break;
+                case 70: username = 'Pixel poo'; break;
+                case 100: username = 'Bobba filtered'; break;
+            }
+
+            if(username !== null)
+            {
+                const preview = ProductCategoryMapping.createChatItemPreview(this._windowManager, parseInt(info.itemTypeId, 10), username);
+
+                if(!preview) return false;
+
+                const result = new ImageResult();
+
+                result.data = preview;
+                this.setImageResult(result);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::clearPreviewer()
+    public clearPreviewer(): void
+    {
+        this._pendingImageId = -1;
+
+        const avatar = this.avatarImageWidget;
+        const preview = this.productPreviewBitmap;
+        const badge = this.badgeImageWidget;
+        const placeholder = this.placeholderImage;
+        const pet = this.petImageWidget;
+        const effect = this.effectImageWidget;
+        const unknown = this.unknownImageWindow;
+
+        if(avatar) avatar.visible = false;
+        if(preview) preview.visible = false;
+        if(badge) badge.visible = false;
+        if(placeholder) placeholder.visible = false;
+        if(pet) pet.visible = false;
+        if(effect) effect.visible = false;
+        if(unknown) unknown.visible = false;
+    }
+
+    private setImageResult(result: ImageResult | null): void
+    {
+        this.clearPreviewer();
+
+        if(result)
+        {
+            this._pendingImageId = result.id;
+            this.setPreviewImage(result.data);
+        }
+    }
+
+    private centerWindow(window: IWidgetWindow): void
+    {
+        if(!this._root) return;
+
+        window.x = this._root.width / 2 - window.width / 2;
+        window.y = this._root.height / 2 - window.height / 2;
+    }
+
+    private setAvatarResult(figure: string): void
+    {
+        this.clearPreviewer();
+
+        const avatar = this.avatarImageWidget;
+
+        if(!avatar) return;
+
+        avatar.visible = true;
+        (avatar.widget as AvatarImageWidget).figure = figure;
+        this.centerWindow(avatar);
+    }
+
+    private setBadgeResult(badgeId: string): void
+    {
+        this.clearPreviewer();
+
+        const badge = this.badgeImageWidget;
+
+        if(!badge) return;
+
+        badge.visible = true;
+        (badge.widget as BadgeImageWidget).badgeId = badgeId;
+    }
+
+    private setPetResult(figure: string): void
+    {
+        this.clearPreviewer();
+
+        const pet = this.petImageWidget;
+
+        if(!pet) return;
+
+        pet.visible = true;
+        (pet.widget as PetImageWidget).figure = figure;
+    }
+
+    // TODO(AS3): needs EffectPreviewer (see constructor TODO) - stops at clearing +
+    // positioning since there's nothing to actually render into effectImageWidget yet.
+    private setEffectResult(_figure: string, _effectId: number): void
+    {
+        this.clearPreviewer();
+
+        const effect = this.effectImageWidget;
+
+        if(!effect) return;
+
+        this.centerWindow(effect);
+        effect.y += 50;
+
+        log.debug('[ProductImageWidget] Pixel effect preview not implemented yet (EffectPreviewer not ported)');
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setUnknownImage()
+    public setUnknownImage(): void
+    {
+        this.clearPreviewer();
+
+        const unknown = this.unknownImageWindow;
+
+        if(unknown) unknown.visible = true;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setPlaceholder()
+    public setPlaceholder(): void
+    {
+        this.clearPreviewer();
+
+        const placeholder = this.placeholderImage;
+
+        if(placeholder) placeholder.visible = true;
+    }
+
+    private setPreviewImage(data: ImageBitmap | null): void
+    {
+        const preview = this.productPreviewBitmap;
+
+        if(!preview) return;
+
+        if(!data)
+        {
+            preview.visible = false;
+
+            return;
+        }
+
+        preview.bitmap = data;
+        preview.visible = true;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set unknownImageUri()
+    public set unknownImageUri(value: string)
+    {
+        const window = this.unknownImageWindow;
+
+        if(window) window.assetUri = value;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::get blend()
+    public get blend(): number
+    {
+        return this._blend;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::set blend()
+    public set blend(value: number)
+    {
+        this._blend = value;
+
+        const preview = this.productPreviewBitmap;
+        const unknown = this.unknownImageWindow;
+        const badge = this.badgeImageWidget;
+        const pet = this.petImageWidget;
+
+        if(preview) preview.blend = value;
+        if(unknown) unknown.blend = value;
+        if(badge) badge.blend = value;
+        if(pet) pet.blend = value;
+
+        (pet?.widget as PetImageWidget | undefined)?.refresh();
+        (badge?.widget as BadgeImageWidget | undefined)?.refresh();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageReady()
+    public imageReady(id: number, data: ImageBitmap | null): void
+    {
+        if(this._pendingImageId === id && this.productPreviewBitmap)
+        {
+            this.setPreviewImage(data);
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageFailed()
+    public imageFailed(_id: number): void
+    {
+        // AS3: no-op
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::dispose()
+    public dispose(): void
+    {
+        if(this._disposed) return;
+
+        this._disposed = true;
+        this._pendingImageId = -1;
+
+        if(this._root)
+        {
+            this._root.dispose();
+            this._root = null;
+        }
+
+        if(this._widgetWindow)
+        {
+            this._widgetWindow.rootWindow = null;
+            this._widgetWindow = null;
+        }
+
+        this._windowManager = null;
+    }
+}

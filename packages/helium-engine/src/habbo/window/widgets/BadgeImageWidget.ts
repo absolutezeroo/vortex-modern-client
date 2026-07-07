@@ -181,6 +181,23 @@ export class BadgeImageWidget implements IBadgeImageWidget
         }
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get pivotPoint()
+    public get pivotPoint(): number
+    {
+        return (this._bitmap as unknown as IStaticBitmapWrapperWindow | null)?.pivotPoint ?? 0;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::set pivotPoint()
+    public set pivotPoint(value: number)
+    {
+        const bitmap = this._bitmap as unknown as IStaticBitmapWrapperWindow | null;
+
+        if(!bitmap) return;
+
+        bitmap.pivotPoint = value;
+        bitmap.invalidate();
+    }
+
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get properties()
     public get properties(): PropertyStruct[] 
     {
@@ -281,7 +298,9 @@ export class BadgeImageWidget implements IBadgeImageWidget
     }
 
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::refresh()
-    private refresh(): void 
+    // Public: ProductIconWidget calls (badgeImageWidget.widget as BadgeImageWidget).refresh()
+    // directly after changing blend, matching AS3's external call into this method.
+    public refresh(): void
     {
         if(this._batchUpdate) return;
 

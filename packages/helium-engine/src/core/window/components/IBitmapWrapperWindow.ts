@@ -33,4 +33,15 @@ export interface IBitmapWrapperWindow extends IWindow
 	 * The named catalog/asset-library image this bitmap was last set from.
 	 */
     bitmapAssetName: string;
+
+    /**
+	 * Anchor point used when positioning/scaling the bitmap within the window.
+	 *
+	 * TODO(AS3): the real AS3 interface (obfuscated as `_SafeCls_1989` in
+	 * win63_2026_crypted_version/src/com/sulake/core/window/utils/) also exposes
+	 * stretchedX/Y, zoomX/Y, greyscale, etchingColor, etchingPoint,
+	 * fitSizeToContents, wrapX/Y, flipX/Y and rotation - all implemented on the
+	 * concrete BitmapDataController already, just not exposed here yet.
+	 */
+    pivotPoint: number;
 }

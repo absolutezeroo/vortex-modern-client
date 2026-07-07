@@ -1,6 +1,9 @@
 import {ELEMENT_NAME_TO_TYPE} from './enum/WindowElementType';
 import {PARAM_NAME_TO_FLAG} from './enum/WindowParam';
 import type {IWindowLayout, IWindowLayoutNode} from './IWindowLayout';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('WindowLayoutParser');
 
 /**
  * Parses and resolves window layout JSON data.
@@ -61,6 +64,12 @@ export class WindowLayoutParser
 
     /**
 	 * Resolve a single value, substituting $var references.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/utils/WindowParser.as::parseAttribute()
+	 * throws "Shared variable not defined" when a $var reference can't be resolved.
+	 * We log instead of throwing - a single malformed layout shouldn't take down
+	 * window construction for the whole tree - but this should never actually fire
+	 * against correctly-compiled layout JSON, so treat any occurrence as a real bug.
 	 */
     private static resolveValue(value: string, vars: Record<string, unknown>): string
     {
@@ -71,7 +80,14 @@ export class WindowLayoutParser
             const key = value.slice(1);
             const resolved = vars[key];
 
-            return resolved !== undefined ? String(resolved) : '';
+            if(resolved === undefined)
+            {
+                log.warn(`Shared variable not defined: "${value}"`);
+
+                return '';
+            }
+
+            return String(resolved);
         }
 
         return value;

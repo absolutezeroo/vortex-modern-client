@@ -50,12 +50,16 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IContext} from '@core/runtime/IContext';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IModalDialog} from './utils/IModalDialog';
@@ -112,6 +116,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _widgetFactory: HabboWidgetFactory | null = null;
     private _hintManager: HintManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
+    private _catalog: IHabboCatalog | null = null;
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
     private _habbletLinkHandler: HabbletLinkHandler | null = null;
     private _elementPointerHandler: ElementPointerHandler | null = null;
     private _initialized: boolean = false;
@@ -178,9 +184,41 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      *
      * In AS3: HabboWindowManagerComponent.avatarRenderer
      */
-    public get avatarRenderer(): IAvatarRenderManager | null 
+    public get avatarRenderer(): IAvatarRenderManager | null
     {
         return this._avatarRenderer;
+    }
+
+    /**
+     * Configuration manager accessor (AS3 parity).
+     *
+     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as
+     * exposes this via `context.configuration`; our `_configuration` field is already
+     * wired up as a direct DI dependency below, so this just exposes it directly.
+     */
+    public get configuration(): IHabboConfigurationManager | null
+    {
+        return this._configuration;
+    }
+
+    /**
+     * Catalog accessor (AS3 parity).
+     *
+     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get catalog()
+     */
+    public get catalog(): IHabboCatalog | null
+    {
+        return this._catalog;
+    }
+
+    /**
+     * FreeFlowChat accessor (AS3 parity).
+     *
+     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::get freeFlowChat()
+     */
+    public get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
     }
 
     private _communication: IHabboCommunicationManager | null = null;
@@ -274,9 +312,25 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             ),
             new ComponentDependency(
                 IID_RoomEngine,
-                (engine: IRoomEngine | null) => 
+                (engine: IRoomEngine | null) =>
                 {
                     this._roomEngine = engine;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboCatalog,
+                (catalog: IHabboCatalog | null) =>
+                {
+                    this._catalog = catalog;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (freeFlowChat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = freeFlowChat;
                 },
                 false
             ),
@@ -1342,6 +1396,8 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this._localization = null;
         this._sessionDataManager = null;
         this._roomEngine = null;
+        this._catalog = null;
+        this._freeFlowChat = null;
         this._habboPagesStyleSheet = null;
         WindowParser.localizationResolver = null;
 

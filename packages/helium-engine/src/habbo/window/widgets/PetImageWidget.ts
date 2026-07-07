@@ -249,8 +249,11 @@ export class PetImageWidget implements IWidget
 	 * In AS3, this fetches the pet image from the room engine and draws
 	 * to the bitmap wrapper. Stubbed for now — the UI layer handles
 	 * pet rendering.
+	 *
+	 * Public: ProductIconWidget calls (petImageWidget.widget as PetImageWidget).refresh()
+	 * directly after changing blend, matching AS3's external call into this method.
 	 */
-    private refresh(): void
+    public refresh(): void
     {
         // TODO: pet bitmap rendering (Flash BitmapData logic)
     }

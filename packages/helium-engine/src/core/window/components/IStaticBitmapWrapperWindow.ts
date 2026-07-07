@@ -23,4 +23,14 @@ export interface IStaticBitmapWrapperWindow extends IWindow
 	 * Set automatically by `receiveAsset()` when the asset loads.
 	 */
     bitmapData: ImageBitmap | null;
+
+    /**
+	 * Anchor point used when positioning/scaling the bitmap within the window.
+	 *
+	 * AS3: IStaticBitmapWrapperWindow extends the same shared bitmap-properties
+	 * interface as IBitmapWrapperWindow (obfuscated `_SafeCls_1989`); on the
+	 * concrete side, StaticBitmapWrapperController extends BitmapDataController
+	 * and inherits this property from it, same as AS3.
+	 */
+    pivotPoint: number;
 }

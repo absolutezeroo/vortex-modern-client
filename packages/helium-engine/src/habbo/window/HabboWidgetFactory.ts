@@ -1,6 +1,7 @@
 import type {IWidgetFactory} from '@core/window/IWidgetFactory';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IHabboWindowManager} from './IHabboWindowManager';
+import {Logger} from '@core/utils/Logger';
 import {AvatarImageWidget} from './widgets/AvatarImageWidget';
 import {BadgeImageWidget} from './widgets/BadgeImageWidget';
 import {BalloonWidget} from './widgets/BalloonWidget';
@@ -16,6 +17,8 @@ import {LimitedItemPreviewOverlayWidget} from './widgets/LimitedItemPreviewOverl
 import {LimitedItemSupplyLeftOverlayWidget} from './widgets/LimitedItemSupplyLeftOverlayWidget';
 import {PetImageWidget} from './widgets/PetImageWidget';
 import {PixelLimitWidget} from './widgets/PixelLimitWidget';
+import {ProductIconWidget} from './widgets/ProductIconWidget';
+import {ProductImageWidget} from './widgets/ProductImageWidget';
 import {ProgressIndicatorWidget} from './widgets/ProgressIndicatorWidget';
 import {RarityItemGridOverlayWidget} from './widgets/RarityItemGridOverlayWidget';
 import {RarityItemPreviewOverlayWidget} from './widgets/RarityItemPreviewOverlayWidget';
@@ -25,6 +28,8 @@ import {RoomUserCountWidget} from './widgets/RoomUserCountWidget';
 import {RunningNumberWidget} from './widgets/RunningNumberWidget';
 import {SeparatorWidget} from './widgets/SeparatorWidget';
 import {UpdatingTimeStampWidget} from './widgets/UpdatingTimeStampWidget';
+
+const log = Logger.getLogger('HabboWidgetFactory');
 
 /**
  * Widget constructor signature.
@@ -40,10 +45,15 @@ type WidgetConstructor = new (window: IWidgetWindow, windowManager: IHabboWindow
  * When WidgetWindowController sets `widget_type`, it calls createWidget()
  * which instantiates the appropriate widget class.
  *
- * Port of AS3 class_3474 (widget registry) + HabboWindowManagerComponent.createWidget().
+ * Port of AS3 WidgetClasses (widget registry) + HabboWindowManagerComponent.createWidget().
  *
- * @see sources/win63_version/habbo/window/widgets/class_3474.as
- * @see sources/win63_version/habbo/window/HabboWindowManagerComponent.as (line 524)
+ * TODO(AS3): ProductImageWidget's wall/floor-item and pixel-effect preview cases are
+ * stubbed - they need IRoomEngine.getWallItemImage()/getFurnitureImage() (angled 3D
+ * preview renders, distinct from the icon versions ProductIconWidget uses) and an
+ * EffectPreviewer class, neither of which exist yet. See ProductImageWidget.ts itself.
+ *
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/WidgetClasses.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
  */
 export class HabboWidgetFactory implements IWidgetFactory
 {
@@ -60,7 +70,7 @@ export class HabboWidgetFactory implements IWidgetFactory
 	 * Build the widget type registry.
 	 *
 	 * Maps widget type strings to their constructor classes.
-	 * This is the TypeScript equivalent of AS3 class_3474.
+	 * This is the TypeScript equivalent of AS3 WidgetClasses._SafeStr_4661.
 	 */
     private static buildRegistry(): Map<string, WidgetConstructor>
     {
@@ -81,6 +91,8 @@ export class HabboWidgetFactory implements IWidgetFactory
         registry.set('limited_item_overlay_supply', LimitedItemSupplyLeftOverlayWidget);
         registry.set('pet_image', PetImageWidget);
         registry.set('pixel_limit', PixelLimitWidget);
+        registry.set('product_icon', ProductIconWidget);
+        registry.set('product_image', ProductImageWidget);
         registry.set('progress_indicator', ProgressIndicatorWidget);
         registry.set('rarity_item_overlay_grid', RarityItemGridOverlayWidget);
         registry.set('rarity_item_overlay_preview', RarityItemPreviewOverlayWidget);
@@ -100,6 +112,12 @@ export class HabboWidgetFactory implements IWidgetFactory
 	 * @param type - The widget type string (e.g. "avatar_image", "badge_image")
 	 * @param window - The host IWidgetWindow
 	 * @returns The created widget, or null if the type is unknown
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()
+	 * throws "Unknown widget type ..." when the type isn't registered. We log instead of
+	 * throwing - one unknown widget type shouldn't abort the whole window's property
+	 * application - but this should never fire against correctly-authored layouts, so
+	 * treat any occurrence as a real bug (missing registration or a typo'd widget_type).
 	 */
     public createWidget(type: string, window: IWidgetWindow): unknown
     {
@@ -107,6 +125,8 @@ export class HabboWidgetFactory implements IWidgetFactory
 
         if(!widgetClass)
         {
+            log.warn(`Unknown widget type "${type}"! You might need to update Glaze to be able to work on this layout.`);
+
             return null;
         }
 
