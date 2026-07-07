@@ -479,6 +479,8 @@ function parseSkinLayouts(skinNode, vars)
                 id: parseNumber(resolveVar(entityAttrs.id, vars), 0),
                 name: resolveVar(entityAttrs.name, vars),
                 colorize: colorizeValue === '' || colorizeValue === undefined ? true : colorizeValue === 'true',
+                colorizeMethod: resolveVar(entityAttrs.colorizeMethod, vars) || 'multiply',
+                shade: parseNumber(resolveVar(entityAttrs.shade, vars), 0),
                 color: parseNumber(resolveVar(colorValue, vars), 0),
                 blend: parseNumber(resolveVar(blendValue, vars), 0xffffffff),
                 scaleH: parseScaleValue(resolveVar(scaleAttrs.horizontal, vars)),

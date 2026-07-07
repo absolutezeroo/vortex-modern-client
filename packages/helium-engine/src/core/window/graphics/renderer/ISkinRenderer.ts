@@ -1,5 +1,7 @@
 import type {IWindow} from '../../IWindow';
 import type {IDisposable} from "../../../runtime/IDisposable";
+import type {SkinLayout} from './SkinLayout';
+import type {SkinTemplate} from './SkinTemplate';
 
 /**
  * Interface for skin renderers.
@@ -8,7 +10,7 @@ import type {IDisposable} from "../../../runtime/IDisposable";
  * (9-slice), solid fills, or other techniques. Each element type+style
  * combination has one ISkinRenderer registered in the SkinContainer.
  *
- * @see sources/flash_version/com/sulake/core/window/graphics/renderer/ISkinRenderer.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as
  */
 export interface ISkinRenderer extends IDisposable
 {
@@ -41,4 +43,46 @@ export interface ISkinRenderer extends IDisposable
 	 * @returns True if the state can be drawn
 	 */
     isStateDrawable(state: number): boolean;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::addLayout()
+    addLayout(layout: SkinLayout): SkinLayout;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::getLayoutByName()
+    getLayoutByName(name: string): SkinLayout | null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::removeLayout()
+    removeLayout(layout: SkinLayout): SkinLayout | null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::getLayoutByState()
+    getLayoutByState(state: number): SkinLayout | null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::registerLayoutForRenderState()
+    registerLayoutForRenderState(state: number, layoutName: string): void;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::removeLayoutFromRenderState()
+    removeLayoutFromRenderState(state: number): void;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::hasLayoutForState()
+    hasLayoutForState(state: number): boolean;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::addTemplate()
+    addTemplate(template: SkinTemplate): SkinTemplate;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::getTemplateByName()
+    getTemplateByName(name: string): SkinTemplate | null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::removeTemplate()
+    removeTemplate(template: SkinTemplate): SkinTemplate | null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::getTemplateByState()
+    getTemplateByState(state: number): SkinTemplate | null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::registerTemplateForRenderState()
+    registerTemplateForRenderState(state: number, templateName: string): void;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::removeTemplateFromRenderState()
+    removeTemplateFromRenderState(state: number): void;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/ISkinRenderer.as::hasTemplateForState()
+    hasTemplateForState(state: number): boolean;
 }

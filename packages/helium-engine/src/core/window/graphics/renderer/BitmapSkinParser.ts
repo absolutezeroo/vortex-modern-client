@@ -38,6 +38,8 @@ export interface ISkinLayoutEntityData
     id: number;
     name: string;
     colorize: boolean;
+    colorizeMethod?: string;
+    shade?: number;
     color: number;
     blend: number;
     scaleH: number;
@@ -298,17 +300,24 @@ export class BitmapSkinParser
         const id = BitmapSkinParser.resolveNumberVariable(data.id, variables);
         const name = BitmapSkinParser.resolveVariable(data.name, variables);
         const colorize = data.colorize ?? true;
+        const colorizeMethod = BitmapSkinParser.resolveVariable(data.colorizeMethod ?? 'multiply', variables);
+        const shade = BitmapSkinParser.resolveNumberVariable(data.shade ?? 0, variables);
         const color = BitmapSkinParser.resolveNumberVariable(data.color ?? 0, variables);
         const blend = BitmapSkinParser.resolveNumberVariable(data.blend ?? 0xFFFFFFFF, variables);
         const scaleH = BitmapSkinParser.resolveNumberVariable(data.scaleH ?? 0, variables);
         const scaleV = BitmapSkinParser.resolveNumberVariable(data.scaleV ?? 0, variables);
 
-        return new SkinLayoutEntity(id, name, colorize, color, blend, scaleH, scaleV, {
+        const entity = new SkinLayoutEntity(id, name, colorize, color, blend, scaleH, scaleV, {
             x: BitmapSkinParser.resolveNumberVariable(data.region.x, variables),
             y: BitmapSkinParser.resolveNumberVariable(data.region.y, variables),
             width: BitmapSkinParser.resolveNumberVariable(data.region.width, variables),
             height: BitmapSkinParser.resolveNumberVariable(data.region.height, variables)
         });
+
+        entity.colorizeMethod = colorizeMethod;
+        entity.shade = shade;
+
+        return entity;
     }
 
     /**
@@ -360,8 +369,8 @@ export class BitmapSkinParser
             return;
         }
 
-        renderer.setLayoutForState(stateFlag, layoutName);
-        renderer.setTemplateForState(stateFlag, templateName);
+        renderer.registerLayoutForRenderState(stateFlag, layoutName);
+        renderer.registerTemplateForRenderState(stateFlag, templateName);
     }
 
     /**

@@ -3,6 +3,7 @@ import {SkinRenderer} from './SkinRenderer';
 import {SkinLayoutEntity} from './SkinLayoutEntity';
 import type {SkinTemplate} from './SkinTemplate';
 import type {SkinTemplateEntity} from './SkinTemplateEntity';
+import {HsvLayerColor} from './HsvLayerColor';
 
 /**
  * 9-slice bitmap skin renderer.
@@ -17,7 +18,7 @@ import type {SkinTemplateEntity} from './SkinTemplateEntity';
  * - `fillRect()` → `ctx.fillRect()`
  * - `colorTransform()` → `ctx.globalCompositeOperation = 'multiply'`
  *
- * @see sources/flash_version/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as
  */
 export class BitmapSkinRenderer extends SkinRenderer
 {
@@ -44,7 +45,7 @@ export class BitmapSkinRenderer extends SkinRenderer
 	 * @param state - The resolved window state
 	 * @param _colorize - Colorization flag (unused, window.color is checked directly)
 	 */
-    // AS3: sources/win63_version/core/window/graphics/renderer/BitmapSkinRenderer.as::draw()
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::draw()
     public override draw(
         window: IWindow,
         ctx: OffscreenCanvasRenderingContext2D,
@@ -54,13 +55,13 @@ export class BitmapSkinRenderer extends SkinRenderer
     ): void
     {
         // Resolve layout and template for this state, fallback to DEFAULT (0)
-        let layout = this.getLayoutForState(state);
-        let template = this.getTemplateForState(state);
+        let layout = this.getLayoutByState(state);
+        let template = this.getTemplateByState(state);
 
         if(!layout || !template)
         {
-            layout = this.getLayoutForState(0);
-            template = this.getTemplateForState(0);
+            layout = this.getLayoutByState(0);
+            template = this.getTemplateByState(0);
         }
 
         if(!layout || !template)
@@ -153,10 +154,22 @@ export class BitmapSkinRenderer extends SkinRenderer
 
             if(destW < 1 || destH < 1) continue;
 
-            // Apply colorization if entity supports it
+            // Apply colorization if entity supports it. AS3 checks the "hsv_layer"
+            // method first (derives a shaded variant of window.color regardless of
+            // doColorize - used for 3-tone bevel borders like border_15/border_16),
+            // falling back to the regular "multiply" colorize otherwise.
             let drawSource: OffscreenCanvas | ImageBitmap = piece;
 
-            if(doColorize && layoutEntity.colorize)
+            if(!window.background && layoutEntity.colorize && layoutEntity.colorizeMethod === SkinLayoutEntity.COLORIZE_METHOD_HSV_LAYER)
+            {
+                const derived = HsvLayerColor.deriveColor(color, layoutEntity.shade);
+                const r = ((derived >> 16) & 0xFF) / 255;
+                const g = ((derived >> 8) & 0xFF) / 255;
+                const b = (derived & 0xFF) / 255;
+
+                drawSource = this.colorizeEntity(piece, srcW, srcH, r, g, b);
+            }
+            else if(doColorize && layoutEntity.colorize)
             {
                 drawSource = this.colorizeEntity(piece, srcW, srcH, colorR, colorG, colorB);
             }

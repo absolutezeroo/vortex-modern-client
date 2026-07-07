@@ -9,9 +9,9 @@ import type {SkinTemplate} from './SkinTemplate';
  * Manages named templates and layouts, and their mapping to window states.
  * Subclasses implement the actual draw() method.
  *
- * @see sources/flash_version/com/sulake/core/window/graphics/renderer/SkinRenderer.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as
  */
-export class SkinRenderer implements ISkinRenderer 
+export class SkinRenderer implements ISkinRenderer
 {
     /** Templates by name. */
     protected _templatesByName: Map<string, SkinTemplate> = new Map();
@@ -22,23 +22,36 @@ export class SkinRenderer implements ISkinRenderer
     /** Layouts by window state flag. */
     protected _layoutsByState: Map<number, SkinLayout> = new Map();
 
-    constructor(name: string) 
+    constructor(name: string)
     {
         this._name = name;
     }
 
     protected _name: string;
 
-    public get name(): string 
+    public get name(): string
     {
         return this._name;
     }
 
     protected _disposed: boolean = false;
 
-    public get disposed(): boolean 
+    public get disposed(): boolean
     {
         return this._disposed;
+    }
+
+    /**
+     * Parses a skin XML description into this renderer's templates/layouts.
+     *
+     * AS3 does this at runtime from an embedded XML asset; this port compiles
+     * skin XML to JSON ahead of time (see BitmapSkinParser.parse()), so this
+     * base implementation is a no-op, matching AS3's own empty base method.
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::parse()
+    public parse(): void
+    {
+        // Override in subclasses; base AS3 implementation is also empty.
     }
 
     /**
@@ -46,9 +59,12 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param template - The template to register
      */
-    public addTemplate(template: SkinTemplate): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::addTemplate()
+    public addTemplate(template: SkinTemplate): SkinTemplate
     {
         this._templatesByName.set(template.name, template);
+
+        return template;
     }
 
     /**
@@ -57,9 +73,37 @@ export class SkinRenderer implements ISkinRenderer
      * @param name - The template name
      * @returns The template, or null
      */
-    public getTemplate(name: string): SkinTemplate | null 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getTemplateByName()
+    public getTemplateByName(name: string): SkinTemplate | null
     {
         return this._templatesByName.get(name) ?? null;
+    }
+
+    /**
+     * Removes a template (looked up by its name) from this renderer, unmapping
+     * it from any render states it was registered for.
+     *
+     * @param template - The template to remove
+     * @returns The removed template, or null if it wasn't registered
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeTemplate()
+    public removeTemplate(template: SkinTemplate): SkinTemplate | null
+    {
+        const resolved = this._templatesByName.get(template.name);
+
+        if(!resolved) return null;
+
+        for(const [state, mapped] of this._templatesByState)
+        {
+            if(mapped === resolved)
+            {
+                this.removeTemplateFromRenderState(state);
+            }
+        }
+
+        this._templatesByName.delete(resolved.name);
+
+        return resolved;
     }
 
     /**
@@ -67,15 +111,30 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param state - The window state flag
      * @param templateName - The template name
+     * @throws If no template with that name is registered
      */
-    public setTemplateForState(state: number, templateName: string): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::registerTemplateForRenderState()
+    public registerTemplateForRenderState(state: number, templateName: string): void
     {
         const template = this._templatesByName.get(templateName);
 
-        if(template) 
+        if(!template)
         {
-            this._templatesByState.set(state, template);
+            throw new Error(`Template "${templateName}" not found in renderer!`);
         }
+
+        this._templatesByState.set(state, template);
+    }
+
+    /**
+     * Unmaps a window state from its template.
+     *
+     * @param state - The window state flag
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeTemplateFromRenderState()
+    public removeTemplateFromRenderState(state: number): void
+    {
+        this._templatesByState.delete(state);
     }
 
     /**
@@ -84,9 +143,21 @@ export class SkinRenderer implements ISkinRenderer
      * @param state - The window state flag
      * @returns The template, or null
      */
-    public getTemplateForState(state: number): SkinTemplate | null 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getTemplateByState()
+    public getTemplateByState(state: number): SkinTemplate | null
     {
         return this._templatesByState.get(state) ?? null;
+    }
+
+    /**
+     * Tests whether a state has a template mapped.
+     *
+     * @param state - The window state flag
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::hasTemplateForState()
+    public hasTemplateForState(state: number): boolean
+    {
+        return this._templatesByState.has(state);
     }
 
     /**
@@ -94,9 +165,12 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param layout - The layout to register
      */
-    public addLayout(layout: SkinLayout): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::addLayout()
+    public addLayout(layout: SkinLayout): SkinLayout
     {
         this._layoutsByName.set(layout.name, layout);
+
+        return layout;
     }
 
     /**
@@ -105,9 +179,37 @@ export class SkinRenderer implements ISkinRenderer
      * @param name - The layout name
      * @returns The layout, or null
      */
-    public getLayout(name: string): SkinLayout | null 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getLayoutByName()
+    public getLayoutByName(name: string): SkinLayout | null
     {
         return this._layoutsByName.get(name) ?? null;
+    }
+
+    /**
+     * Removes a layout (looked up by its name) from this renderer, unmapping
+     * it from any render states it was registered for.
+     *
+     * @param layout - The layout to remove
+     * @returns The removed layout, or null if it wasn't registered
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeLayout()
+    public removeLayout(layout: SkinLayout): SkinLayout | null
+    {
+        const resolved = this._layoutsByName.get(layout.name);
+
+        if(!resolved) return null;
+
+        for(const [state, mapped] of this._layoutsByState)
+        {
+            if(mapped === resolved)
+            {
+                this.removeLayoutFromRenderState(state);
+            }
+        }
+
+        this._layoutsByName.delete(resolved.name);
+
+        return resolved;
     }
 
     /**
@@ -115,15 +217,30 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param state - The window state flag
      * @param layoutName - The layout name
+     * @throws If no layout with that name is registered
      */
-    public setLayoutForState(state: number, layoutName: string): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::registerLayoutForRenderState()
+    public registerLayoutForRenderState(state: number, layoutName: string): void
     {
         const layout = this._layoutsByName.get(layoutName);
 
-        if(layout) 
+        if(!layout)
         {
-            this._layoutsByState.set(state, layout);
+            throw new Error(`Layout "${layoutName}" not found in renderer!`);
         }
+
+        this._layoutsByState.set(state, layout);
+    }
+
+    /**
+     * Unmaps a window state from its layout.
+     *
+     * @param state - The window state flag
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeLayoutFromRenderState()
+    public removeLayoutFromRenderState(state: number): void
+    {
+        this._layoutsByState.delete(state);
     }
 
     /**
@@ -132,9 +249,21 @@ export class SkinRenderer implements ISkinRenderer
      * @param state - The window state flag
      * @returns The layout, or null
      */
-    public getLayoutForState(state: number): SkinLayout | null 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getLayoutByState()
+    public getLayoutByState(state: number): SkinLayout | null
     {
         return this._layoutsByState.get(state) ?? null;
+    }
+
+    /**
+     * Tests whether a state has a layout mapped.
+     *
+     * @param state - The window state flag
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::hasLayoutForState()
+    public hasLayoutForState(state: number): boolean
+    {
+        return this._layoutsByState.has(state);
     }
 
     /**
@@ -143,7 +272,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param state - The window state flag
      * @returns True if the state is drawable
      */
-    public isStateDrawable(state: number): boolean 
+    public isStateDrawable(state: number): boolean
     {
         return this._templatesByState.has(state) && this._layoutsByState.has(state);
     }
@@ -157,12 +286,12 @@ export class SkinRenderer implements ISkinRenderer
         _rect: { x: number; y: number; width: number; height: number },
         _state: number,
         _colorize: boolean
-    ): void 
+    ): void
     {
         // Override in subclasses
     }
 
-    public dispose(): void 
+    public dispose(): void
     {
         if(this._disposed) return;
 
