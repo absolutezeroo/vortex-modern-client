@@ -10,8 +10,9 @@ Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. Monorepo: `heliu
 Before writing any implementation code, you MUST complete these steps IN ORDER:
 
 1. **Read the AS3 source file** — Find and read the corresponding AS3 file IN ITS ENTIRETY
-   - Primary: `sources/win63_version/habbo/<module>/<Class>.as`
-   - Secondary: `sources/flash_version/com/sulake/habbo/<module>/<Class>.as`
+   - Primary: `sources/win63_2026_crypted_version/src/com/sulake/<module>/<Class>.as` — if an identifier is obfuscated (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path one level up (`sources/win63_version/<module>/<Class>.as`) to recover the real name; never invent one
+   - Secondary: `sources/win63_version/<module>/<Class>.as`
+   - Tertiary: `sources/flash_version/com/sulake/habbo/<module>/<Class>.as`
 2. **Read the AS3 interface** — `I<Class>.as` + `handler/` directory if present
 3. **Check `docs/PATTERNS.md`** if implementing a Composer, Parser, Event, Manager, or UI Window
 4. **Check `docs/IMPLEMENTATION_STATUS.md`** for the current module status
@@ -58,7 +59,7 @@ Data flow: `Engine emits event → Client display class listens and updates`
 
 ## Critical rules
 
-1. **AS3 is the source of truth** — Never invent code. Read `sources/win63_version/` first
+1. **AS3 is the source of truth** — Never invent code. Read `sources/win63_2026_crypted_version/` first, cross-referencing `sources/win63_version/` when identifiers there are obfuscated
 2. **Never simplify AS3 architecture** — If AS3 has handlers/interfaces/delegation, implement them exactly
 3. **Engine must NEVER import from client** — `helium-engine` has zero UI knowledge
 4. **Never override `get events()`** in Component subclasses — breaks the DI event system; use a different property name (e.g. `sessionEvents`)
@@ -75,17 +76,19 @@ Every TypeScript class, method, accessor, property, interface member, handler, p
 Required format:
 
 ```ts
-// AS3: sources/win63_version/<path>/<Class>.as::<memberName>()
+// AS3: sources/win63_2026_crypted_version/src/com/sulake/<path>/<Class>.as::<memberName>()
 ```
 
 For AS3 accessors and properties:
 
 ```ts
-// AS3: sources/win63_version/<path>/<Class>.as::get propertyName()
-// AS3: sources/win63_version/<path>/<Class>.as::propertyName
+// AS3: sources/win63_2026_crypted_version/src/com/sulake/<path>/<Class>.as::get propertyName()
+// AS3: sources/win63_2026_crypted_version/src/com/sulake/<path>/<Class>.as::propertyName
 ```
 
-If the primary source does not contain the member and the secondary Flash source is used, the trace MUST point to `sources/flash_version/...`.
+Always trace to the primary (`win63_2026_crypted_version`) path even if the member's identifier had to be recovered by cross-referencing `sources/win63_version/<path>/<Class>.as` — the trace comment must still use a real, human-readable member name, never an obfuscated `_SafeStr_N`/`_SafeCls_N` placeholder.
+
+If the primary source does not contain the member, fall back to `sources/win63_version/...`, then `sources/flash_version/...`, and point the trace at whichever tree actually has it.
 
 Incomplete members still require a compatible TypeScript signature and a `TODO(AS3)` comment with source path, class/member name, and exact remaining behavior. Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface.
 

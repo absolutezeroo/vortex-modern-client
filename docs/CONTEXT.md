@@ -26,8 +26,10 @@ helium/
 │   ├── helium-engine/     Engine, protocol, room engine, Habbo logic, ported Flash window/UI framework
 │   └── helium-client/     Vite shell, login/bootstrap, asset bundling, converted layout/skin assets
 ├── sources/
-│   ├── win63_version/     Primary AS3 source, 4,783 .as files
-│   └── flash_version/     Secondary AS3 source, 7,159 .as files
+│   ├── win63_2026_crypted_version/  Primary AS3 source (obfuscated 2026 build), ~3,369 .as files under src/com/sulake/
+│   ├── win63_version/               Secondary AS3 source / name-recovery reference, 4,783 .as files
+│   ├── flash_version/               Tertiary AS3 source, 7,159 .as files
+│   └── win63_2023_version/          Not code — source of compiled window-layout/skin JSON assets
 ├── docs/
 │   ├── CONTEXT.md
 │   ├── IMPLEMENTATION_STATUS.md
@@ -127,16 +129,25 @@ Most ported Flash window/controller code currently lives in `packages/helium-eng
 
 ## AS3 Sources
 
-| Directory                | Count       | Package roots                             | Usage                                              |
-|--------------------------|-------------|-------------------------------------------|----------------------------------------------------|
-| `sources/win63_version/` | 4,783 `.as` | `core/`, `habbo/`, `room/`, `iid/`        | Primary source; read first.                        |
-| `sources/flash_version/` | 7,159 `.as` | `src/com/sulake/...` plus embedded assets | Secondary source when WIN63 is missing or unclear. |
+| Directory                                | Count        | Package roots                             | Usage                                                                   |
+|--------------------------------------------|--------------|--------------------------------------------|--------------------------------------------------------------------------|
+| `sources/win63_2026_crypted_version/`       | ~3,369 `.as` | `src/com/sulake/{core,habbo,room,iid}/`   | Primary source; read first.                                             |
+| `sources/win63_version/`                    | 4,783 `.as`  | `core/`, `habbo/`, `room/`, `iid/`        | Secondary; also the name-recovery reference for obfuscated identifiers. |
+| `sources/flash_version/`                    | 7,159 `.as`  | `src/com/sulake/...` plus embedded assets | Tertiary source when neither WIN63 tree has the file.                   |
+| `sources/win63_2023_version/`               | —            | `binaryDataXml_organized/{layouts,skins}` | Not code; source of compiled window-layout/skin JSON assets.            |
+
+`win63_2026_crypted_version` mirrors `win63_version` one directory level deeper and both line up 1:1 file-for-file. When a name there is obfuscated (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path in `win63_version` to recover it. Ignore the flat `_SafeCls_N.as` files under its `src/` root and `src/unknowns/` (`_SafePkg_N/`) — an unrelated, fully-obfuscated module bundled in the same dump.
+
+`win63_2026_crypted_version/src/layouts/` and `src/_assets/` hold the same raw window-layout XML / PNG resources as `win63_2023_version` (matching `$<hash>` filenames), just not split into `layouts/`/`skins/`/`non-layouts/` — the compile scripts keep defaulting to `win63_2023_version` because it already has that split.
 
 Path mapping examples:
 
 ```
+sources/win63_2026_crypted_version/src/com/sulake/habbo/<module>/<Class>.as
 sources/win63_version/habbo/<module>/<Class>.as
 sources/flash_version/src/com/sulake/habbo/<module>/<Class>.as
+
+sources/win63_2026_crypted_version/src/com/sulake/room/<Class>.as
 sources/win63_version/room/<Class>.as
 sources/flash_version/src/com/sulake/room/<Class>.as
 ```

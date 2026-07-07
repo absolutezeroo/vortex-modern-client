@@ -169,7 +169,7 @@ export default RoomSessionManager;
 /**
  * Class description.
  *
- * @see sources/win63_version/habbo/module/ClassName.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/module/ClassName.as
  */
 export class ClassName extends ParentClass implements IClassName
 {
@@ -235,7 +235,7 @@ export class ClassName extends ParentClass implements IClassName
 /**
  * Interface for ClassName.
  *
- * @see sources/win63_version/habbo/module/IClassName.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/module/IClassName.as
  */
 export interface IClassName
 {
@@ -351,7 +351,7 @@ set name(value: string)
 /**
  * Short description of the class/method.
  *
- * @see sources/win63_version/habbo/module/ClassName.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/module/ClassName.as
  */
 ```
 
@@ -374,7 +374,7 @@ The `@see` tag MUST point to the corresponding AS3 source file:
 
 ```typescript
 /**
- * @see sources/win63_version/habbo/session/RoomSessionManager.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/session/RoomSessionManager.as
  */
 ```
 

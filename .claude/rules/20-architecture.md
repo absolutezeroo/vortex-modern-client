@@ -12,7 +12,7 @@ Data flow: `Engine emits event → Client display class listens and updates`
 
 ## Critical rules
 
-1. **AS3 is the source of truth** — Never invent code. Read `sources/win63_version/` first
+1. **AS3 is the source of truth** — Never invent code. Read `sources/win63_2026_crypted_version/` first, cross-referencing `sources/win63_version/` when identifiers there are obfuscated
 2. **Never simplify AS3 architecture** — If AS3 has handlers/interfaces/delegation, implement them exactly
 3. **Engine must NEVER import from client** — `helium-engine` has zero UI knowledge
 4. **Never override `get events()`** in Component subclasses — breaks the DI event system; use a different property name (e.g. `sessionEvents`)
