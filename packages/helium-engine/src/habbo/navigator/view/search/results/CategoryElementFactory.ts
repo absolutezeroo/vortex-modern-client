@@ -121,16 +121,6 @@ export class CategoryElementFactory
             nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
         }
 
-        if(collapseEl)
-        {
-            const collapseIndex = container.getChildIndex(collapseEl);
-
-            if(collapseIndex > -1)
-            {
-                container.setChildIndex(collapseEl, container.numChildren - 1);
-            }
-        }
-
         // Wire show more button
         const showMoreEl = container.findChildByName('category_show_more');
 
