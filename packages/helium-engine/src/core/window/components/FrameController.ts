@@ -48,6 +48,15 @@ export class FrameController extends ContainerController implements IFrameWindow
         param = param & (~0x10);
 
         super(name, type, style, param, context, rect, parent, procedure, tags, properties, id);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/FrameController.as::FrameController()
+    // Moved out of the constructor: it reads `_HEADER`/`_SCALER`/named children built by
+    // buildLayoutChildren(), which only runs later via completeConstruction() (see
+    // WindowController.ts's phase-split) - at constructor time no children exist yet.
+    protected override finalize(): void
+    {
+        super.finalize();
 
         this._constructed = true;
         this.activate();
@@ -55,7 +64,7 @@ export class FrameController extends ContainerController implements IFrameWindow
 
         const helpButton = this.findChildByName('header_button_help');
 
-        if(helpButton !== null) 
+        if(helpButton !== null)
         {
             helpButton.procedure = this.helpButtonProcedure.bind(this);
         }

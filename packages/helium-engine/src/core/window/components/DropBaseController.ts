@@ -57,6 +57,15 @@ export class DropBaseController extends InteractiveController
 
         this._menuItemEventHandlerBound = this._menuItemEventHandler.bind(this);
         this._subMenuEventProcBound = this._subMenuEventProc.bind(this) as (event: unknown, window: IWindow) => void;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DropBaseController.as::DropBaseController()
+    // getRegion() reads a named child built by buildLayoutChildren(), which only runs
+    // later via completeConstruction() (see WindowController.ts's phase-split) - at
+    // constructor time no children exist yet, so this can't run there anymore.
+    protected override finalize(): void
+    {
+        super.finalize();
 
         const region = this.getRegion();
 

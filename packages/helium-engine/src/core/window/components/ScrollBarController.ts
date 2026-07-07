@@ -65,6 +65,16 @@ export class ScrollBarController extends InteractiveController implements IScrol
         {
             this.properties = properties;
         }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/ScrollBarController.as::ScrollBarController()
+    // groupChildrenWithTag()/updateLiftSizeAndPosition() read the increment/decrement/
+    // track/lift children built by buildLayoutChildren(), which only runs later via
+    // completeConstruction() (see WindowController.ts's phase-split) - at constructor
+    // time no children exist yet, so this can't run there anymore.
+    protected override finalize(): void
+    {
+        super.finalize();
 
         const internals: IWindow[] = [];
 
