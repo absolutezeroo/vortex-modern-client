@@ -64,7 +64,7 @@ import type {ImageLoaderEvent} from './ImageLoaderEvent';
 import './login-ui.scss';
 
 // Import logo
-import habboLogoUrl from '../assets/images/logo_new_png_6d13b64d33dd9875a45476d55c94853e-93072960.png';
+import habboLogoUrl from '../assets/images/logo_new.png';
 
 const log = Logger.getLogger('LoginFlow');
 

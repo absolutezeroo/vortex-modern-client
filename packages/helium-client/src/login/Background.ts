@@ -12,7 +12,6 @@
  * #0C5A7F before gradating to #0C3A65 at the bottom.
  * AS3 tile: beginBitmapFill(background_tiles_png) on _tileSprite
  */
-import backgroundTilesUrl from '../assets/images/background_tiles.png';
 
 export class Background 
 {
@@ -79,7 +78,7 @@ export class Background
                 pointerEvents: 'none',
             } as Partial<CSSStyleDeclaration>);
             this._root.appendChild(this._tileOverlay);
-            this.setTileImage(backgroundTilesUrl);
+            // this.setTileImage(backgroundTilesUrl);
         }
 
         this.resize();
