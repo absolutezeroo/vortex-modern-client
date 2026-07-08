@@ -33,6 +33,8 @@ import type {RoomSpriteMouseEvent} from '@room/events/RoomSpriteMouseEvent';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import {IID_RoomManager} from '@iid/IIDRoomManager';
 import {IID_RoomRendererFactory} from '@iid/IIDRoomRendererFactory';
+import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
+import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
 import {RoomObjectLogicEnum} from './object/RoomObjectLogicEnum';
 import {RoomObjectUserTypes} from './object/RoomObjectUserTypes';
@@ -201,19 +203,34 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._connection = value;
     }
 
-    private _isDecorateMode: boolean = false;
+    private _roomSessionManager: IRoomSessionManager | null = null;
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::get isDecorateMode()
     get isDecorateMode(): boolean
     {
-        return this._isDecorateMode;
+        if(!this._roomSessionManager)
+        {
+            return false;
+        }
+
+        const session = this._roomSessionManager.getSession(this._activeRoomId);
+
+        return !!session && session.isUserDecorating;
     }
 
     private _isGameMode: boolean = false;
     private _roomRendererFactory: IRoomRendererFactory | null = null;
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::get isGameMode()
     get isGameMode(): boolean
     {
         return this._isGameMode;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::set isGameMode()
+    set isGameMode(value: boolean)
+    {
+        this._isGameMode = value;
     }
 
     protected override get dependencies(): Array<ComponentDependency<any>>
@@ -298,6 +315,14 @@ export class RoomEngine extends Component implements IRoomEngine,
                     this._toolbar = toolbar;
                 },
                 false // Optional - needed for the pickup-to-inventory icon animation
+            ),
+            new ComponentDependency(
+                IID_RoomSessionManager,
+                (manager: IRoomSessionManager | null) =>
+                {
+                    this._roomSessionManager = manager;
+                },
+                false // Optional - needed to resolve isDecorateMode from the active room session
             ),
         ];
     }
@@ -2615,7 +2640,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(type === 'mouseDown')
         {
-            if(!altKey && !ctrlKey && !shiftKey && !this._isDecorateMode)
+            if(!altKey && !ctrlKey && !shiftKey && !this.isDecorateMode)
             {
                 this._roomDragging = true;
                 this._roomDragStarted = false;

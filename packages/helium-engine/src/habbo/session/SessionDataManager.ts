@@ -24,6 +24,7 @@ import type {IFurniDataListener} from './furniture/IFurniDataListener';
 import type {IProductData} from './product/IProductData';
 import type {IProductDataListener} from './product/IProductDataListener';
 import type {IRoomSessionManager} from './IRoomSessionManager';
+import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 
 // Events - Handshake
 import {UserObjectMessageEvent} from '../communication/messages/incoming/handshake/UserObjectMessageEvent';
@@ -656,11 +657,14 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._perkManager?.isReady ?? false;
     }
 
-    private _currentTalentTrack: string = '';
+    private _configurationManager: IHabboConfigurationManager | null = null;
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/session/SessionDataManager.as::get currentTalentTrack()
     get currentTalentTrack(): string
     {
-        return this._currentTalentTrack;
+        const citizenshipEnabled = this._configurationManager?.getBoolean('talent.track.citizenship.enabled') ?? false;
+
+        return citizenshipEnabled && !this.isPerkAllowed('CITIZEN') ? 'citizenship' : 'helper';
     }
 
     protected override get dependencies(): Array<ComponentDependency<any>>
@@ -676,7 +680,10 @@ export class SessionDataManager extends Component implements ISessionDataManager
             ),
             new ComponentDependency(
                 IID_HabboConfigurationManager,
-                null,
+                (manager: IHabboConfigurationManager | null) =>
+                {
+                    this._configurationManager = manager;
+                },
                 true,
                 [{type: 'complete', callback: this.onConfigurationComplete.bind(this)}]
             ),
