@@ -8,7 +8,7 @@ import type {WindowController} from '@core/window/WindowController';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperator';
 import {Logger} from '@core/utils/Logger';
-import type {IElementDescriptionData, IWindowLayout, IWindowLayoutFilter, IWindowLayoutNode} from '@habbo/window';
+import type {IElementDescriptionData} from '@habbo/window';
 import type {RoomUI} from '@habbo/ui/RoomUI';
 import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
 import type {HeliumLoadingScreen} from './HeliumLoadingScreen';
@@ -22,6 +22,8 @@ import {
     parseSkinXml,
     parseWindowLayoutXml
 } from './window/WindowXmlAssetParser';
+import {serializeWindowLayoutToXml} from './window/WindowLayoutXmlSerializer';
+import type {IWindowLayoutJson} from './window/WindowLayoutXmlSerializer';
 import './_index.scss';
 
 const log = Logger.getLogger('HeliumApp');
@@ -97,17 +99,6 @@ const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
     'HabboAvatarPartSets',
 ];
 
-interface IWindowLayoutJsonNode extends IWindowLayoutNode {
-    vars?: Record<string, unknown>;
-    children: IWindowLayoutJsonNode[];
-}
-
-interface IWindowLayoutJson extends IWindowLayout {
-    window: IWindowLayoutJsonNode;
-    layoutWidth?: number;
-    layoutHeight?: number;
-}
-
 function isXmlText(value: string): boolean 
 {
     const trimmed = value.trim();
@@ -145,203 +136,6 @@ function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkin
     }
 
     return parseJson<ISkinData>(raw);
-}
-
-function isPointValue(value: unknown): value is { x: number; y: number } 
-{
-    return (
-        typeof value === 'object'
-        && value !== null
-        && 'x' in value
-        && 'y' in value
-        && !('width' in value)
-        && !('height' in value)
-    );
-}
-
-function isRectangleValue(value: unknown): value is { x: number; y: number; width: number; height: number } 
-{
-    return (
-        typeof value === 'object'
-        && value !== null
-        && 'x' in value
-        && 'y' in value
-        && 'width' in value
-        && 'height' in value
-    );
-}
-
-function escapeXmlValue(value: string): string 
-{
-    return value
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\r/g, '&#13;')
-        .replace(/\n/g, '&#10;');
-}
-
-function serializeAttributes(attributes: Record<string, string | undefined>): string 
-{
-    const parts = [];
-
-    for(const [name, value] of Object.entries(attributes)) 
-    {
-        if(value === undefined) 
-        {
-            continue;
-        }
-
-        parts.push(`${name}="${escapeXmlValue(value)}"`);
-    }
-
-    return parts.length > 0 ? ` ${parts.join(' ')}` : '';
-}
-
-function serializeVariablesMap(vars: Record<string, unknown> | undefined): string 
-{
-    if(!vars) 
-    {
-        return '';
-    }
-
-    const entries = Object.entries(vars)
-        .map(([key, value]) => serializeVarNode(key, value))
-        .filter((entry) => entry.length > 0)
-        .join('');
-
-    return entries.length > 0 ? `<variables>${entries}</variables>` : '';
-}
-
-function serializeVarNode(key: string, value: unknown): string 
-{
-    const keyAttr = ` key="${escapeXmlValue(key)}"`;
-
-    if(value === null || value === undefined) 
-    {
-        return `<var${keyAttr} />`;
-    }
-
-    if(typeof value === 'string') 
-    {
-        return `<var${keyAttr} type="String" value="${escapeXmlValue(value)}" />`;
-    }
-
-    if(typeof value === 'number') 
-    {
-        const numericType = Number.isInteger(value) ? 'int' : 'number';
-
-        return `<var${keyAttr} type="${numericType}" value="${String(value)}" />`;
-    }
-
-    if(typeof value === 'boolean') 
-    {
-        return `<var${keyAttr} type="Boolean" value="${String(value)}" />`;
-    }
-
-    if(Array.isArray(value)) 
-    {
-        const serialized = value
-            .map((entry, i) => serializeVarNode(String(i), entry))
-            .join('');
-
-        return `<var${keyAttr}><value><Array>${serialized}</Array></value></var>`;
-    }
-
-    if(isPointValue(value)) 
-    {
-        const point = value as { x: number; y: number };
-
-        return `<var${keyAttr}><value><Point x="${point.x}" y="${point.y}" /></value></var>`;
-    }
-
-    if(isRectangleValue(value)) 
-    {
-        const rect = value as { x: number; y: number; width: number; height: number };
-
-        return `<var${keyAttr}><value><Rectangle x="${rect.x}" y="${rect.y}" width="${rect.width}" height="${rect.height}" /></value></var>`;
-    }
-
-    if(typeof value === 'object') 
-    {
-        const entries = Object.entries(value as Record<string, unknown>)
-            .map(([varKey, varValue]) => serializeVarNode(varKey, varValue))
-            .join('');
-
-        return `<var${keyAttr}><value><Map>${entries}</Map></value></var>`;
-    }
-
-    return '';
-}
-
-function serializeFilters(filters: IWindowLayoutFilter[] | undefined): string 
-{
-    if(!filters || filters.length === 0) 
-    {
-        return '';
-    }
-
-    const serialized = filters
-        .map((filter) => 
-        {
-            return `<${filter.type}${serializeAttributes(
-                Object.fromEntries(
-                    Object.entries(filter.attributes)
-                        .map(([name, value]) => [name, String(value)] as const)
-                )
-            )} />`;
-        })
-        .join('');
-
-    return `<filters>${serialized}</filters>`;
-}
-
-function serializeWindowLayoutNode(node: IWindowLayoutJsonNode): string 
-{
-    let xml = `<${node.tag}${serializeAttributes(node.attributes as Record<string, string>)}`;
-    const varsXml = serializeVariablesMap(node.vars as Record<string, unknown> | undefined);
-    const childrenXml = node.children.map((child) => serializeWindowLayoutNode(child)).join('');
-
-    if(varsXml.length === 0 && childrenXml.length === 0) 
-    {
-        return `${xml} />`;
-    }
-
-    xml += `>${varsXml}`;
-
-    if(childrenXml.length > 0) 
-    {
-        xml += `<children>${childrenXml}</children>`;
-    }
-
-    return `${xml}</${node.tag}>`;
-}
-
-function serializeWindowLayoutToXml(layout: IWindowLayoutJson): string 
-{
-    let xml = `<layout`;
-
-    const layoutAttrs: Record<string, string> = {};
-
-    if(layout.layoutWidth !== undefined) 
-    {
-        layoutAttrs.width = String(layout.layoutWidth);
-    }
-
-    if(layout.layoutHeight !== undefined) 
-    {
-        layoutAttrs.height = String(layout.layoutHeight);
-    }
-
-    xml += `${serializeAttributes(layoutAttrs)}>`;
-
-    const varsXml = serializeVariablesMap(layout.vars as Record<string, unknown> | undefined);
-    const filtersXml = serializeFilters(layout.filters);
-
-    xml += `${varsXml}${filtersXml}${serializeWindowLayoutNode(layout.window)}`;
-
-    return `${xml}</layout>`;
 }
 
 /**
@@ -700,9 +494,9 @@ export class HeliumApp
             }
 
             const layoutBaseName = key.split('/').pop()!.replace('.xml', '').replace('.json', '');
-            let layouts = [];
+            let layouts: IWindowLayoutXmlData[];
 
-            try 
+            try
             {
                 layouts = parseLayoutEntries(layoutXml, key, layoutBaseName);
             }
