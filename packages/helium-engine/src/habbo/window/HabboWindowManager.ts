@@ -1186,23 +1186,27 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
                 continue;
             }
 
-            // Cache renderers by layout filter to avoid re-parsing identical configs.
-            // AS3 creates a separate renderer per descriptor, filtered to its layout.
+            // Cache renderers by layout filter + states to avoid re-parsing identical configs.
+            // AS3 creates a separate renderer per descriptor, filtered to its layout; several
+            // descriptors can share the same `layout` name (e.g. icon16 is reused by arrow
+            // styles 0-9) while still pointing at different `states`/`template`, so the layout
+            // name alone is not a safe cache key — fold the descriptor's own states into it.
             const rendererCache = new Map<string, ReturnType<typeof BitmapSkinParser.parse>>();
 
-            for(const descriptor of descriptors) 
+            for(const descriptor of descriptors)
             {
                 const defaults = this._skinContainer.getDefaultAttributesByTypeAndStyle(descriptor.typeId, descriptor.style);
 
-                if(defaults) 
+                if(defaults)
                 {
                     const layoutFilter = (descriptor.layout && descriptor.layout !== 'null') ? descriptor.layout : '';
-                    let renderer = rendererCache.get(layoutFilter);
+                    const cacheKey = `${layoutFilter}::${JSON.stringify(descriptor.states ?? [])}`;
+                    let renderer = rendererCache.get(cacheKey);
 
-                    if(!renderer) 
+                    if(!renderer)
                     {
-                        renderer = BitmapSkinParser.parse(skinData, atlases, layoutFilter);
-                        rendererCache.set(layoutFilter, renderer);
+                        renderer = BitmapSkinParser.parse(skinData, atlases, layoutFilter, descriptor.states);
+                        rendererCache.set(cacheKey, renderer);
                     }
 
                     this._skinContainer.addSkinRenderer(

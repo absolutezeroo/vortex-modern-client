@@ -1398,18 +1398,36 @@ export class HeliumApp
             return;
         }
 
-        const globalPos = {x: 0, y: 0};
+        // WindowController.update() returns false for WHEEL by default - only
+        // ItemListController/ScrollBarController override it to actually scroll.
+        // findWindowAtPoint() returns the deepest (leaf) window under the cursor, which
+        // inside a scrollable box is usually a list item/icon/label rather than the
+        // scrollable container itself, so the event must bubble up the parent chain
+        // (mirroring MouseEventProcessor.passMouseEvent()'s bubbling for other mouse
+        // events) until an ancestor actually handles it.
+        let target: WindowController | null = hit as WindowController;
 
-        hit.getGlobalPosition(globalPos);
+        while(target && !target.disposed)
+        {
+            const globalPos = {x: 0, y: 0};
 
-        const event = WindowMouseEvent.allocateMouse(
-            WindowMouseEvent.WHEEL, hit, null,
-            x - globalPos.x, y - globalPos.y, e.clientX, e.clientY,
-            e.altKey, e.ctrlKey, e.shiftKey, false,
-            e.deltaY
-        );
-        (hit as WindowController).update(hit as WindowController, event);
-        event.recycle();
+            target.getGlobalPosition(globalPos);
+
+            const event = WindowMouseEvent.allocateMouse(
+                WindowMouseEvent.WHEEL, target, null,
+                x - globalPos.x, y - globalPos.y, e.clientX, e.clientY,
+                e.altKey, e.ctrlKey, e.shiftKey, false,
+                e.deltaY
+            );
+
+            const handled = target.update(target, event);
+
+            event.recycle();
+
+            if(handled) break;
+
+            target = target.parent as WindowController | null;
+        }
     };
 
     /** Prevent right-click context menu on the canvas. */

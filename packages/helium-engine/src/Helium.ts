@@ -460,6 +460,15 @@ export class Helium implements IHelium
                 antialias: config?.antialias ?? false,
                 resolution: config?.resolution ?? 1,
                 autoDensity: true,
+                // Several widgets read pixels back off-screen via renderer.extract.canvas()
+                // (AvatarImageWidget avatar/badge previews, RoomEngine.pixiTextureToCanvas()
+                // room icons, RoomRenderingCanvas.takeScreenShot()) - each of those is, from
+                // WebGL's point of view, "another canvas" sharing this one GL context. Without
+                // multiView, PixiJS's GlContextSystem.ensureCanvasSize() warns every time
+                // ("multiView is disabled, but targetCanvas is not the main canvas") because it
+                // only expects the single view canvas. multiView is PixiJS's documented flag for
+                // exactly this "one context, several canvases" case.
+                multiView: true,
             });
 
             // Append canvas to target

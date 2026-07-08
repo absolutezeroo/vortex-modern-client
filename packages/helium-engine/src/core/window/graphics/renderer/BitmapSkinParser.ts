@@ -115,9 +115,20 @@ export class BitmapSkinParser
 	 * @param skinData - The skin JSON data
 	 * @param atlases - Map of asset name → ImageBitmap
 	 * @param layoutFilter - Optional layout name to filter by (from element descriptor)
+	 * @param descriptorStates - Optional states override (from the element descriptor's own
+	 *   `<states>`, e.g. element-description.json). AS3 `parseSkinDescription()` prefers this
+	 *   caller-supplied states list, falling back to the skin XML's own `<states>` only when
+	 *   it is empty (`if(param2.length() == 0) param2 = param1.child("states");`). This matters
+	 *   for skins like `habbo_skin_icon_set` whose own `states` is empty — every icon style's
+	 *   state→layout/template mapping instead lives on its element descriptor.
 	 * @returns The configured BitmapSkinRenderer
 	 */
-    public static parse(skinData: ISkinData, atlases: Map<string, ImageBitmap>, layoutFilter?: string): BitmapSkinRenderer
+    public static parse(
+        skinData: ISkinData,
+        atlases: Map<string, ImageBitmap>,
+        layoutFilter?: string,
+        descriptorStates?: ISkinStateData[] | null
+    ): BitmapSkinRenderer
     {
         const renderer = new BitmapSkinRenderer(skinData.name);
         const variables = skinData.variables ?? {};
@@ -167,13 +178,16 @@ export class BitmapSkinParser
             }
         }
 
-        // Parse states (filtered when layoutFilter is provided)
-        if(skinData.states)
+        // AS3: states passed in by the caller (the element descriptor's own <states>)
+        // take priority; only fall back to the skin XML's own <states> when empty.
+        const states = descriptorStates && descriptorStates.length > 0 ? descriptorStates : skinData.states;
+
+        if(states)
         {
             if(filter)
             {
                 // AS3: only parse states whose layout attribute matches the filter
-                for(const stateData of skinData.states)
+                for(const stateData of states)
                 {
                     const stateLayout = BitmapSkinParser.resolveVariable(stateData.layout, variables);
 
@@ -185,7 +199,7 @@ export class BitmapSkinParser
             }
             else
             {
-                BitmapSkinParser.parseStateList(renderer, skinData.states, variables);
+                BitmapSkinParser.parseStateList(renderer, states, variables);
             }
         }
 

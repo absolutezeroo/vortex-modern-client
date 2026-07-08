@@ -152,8 +152,6 @@ export class BitmapSkinRenderer extends SkinRenderer
                     break;
             }
 
-            if(destW < 1 || destH < 1) continue;
-
             // Apply colorization if entity supports it. AS3 checks the "hsv_layer"
             // method first (derives a shaded variant of window.color regardless of
             // doColorize - used for 3-tone bevel borders like border_15/border_16),
@@ -174,20 +172,34 @@ export class BitmapSkinRenderer extends SkinRenderer
                 drawSource = this.colorizeEntity(piece, srcW, srcH, colorR, colorG, colorB);
             }
 
-            // Draw the piece
-            if(layoutEntity.scaleH === SkinLayoutEntity.SCALE_TILED || layoutEntity.scaleV === SkinLayoutEntity.SCALE_TILED)
+            // AS3 only resizes the drawn piece when a scale mode actually calls for
+            // it (STRETCH/TILED on either axis, which is what set _loc16_/_loc9_ in
+            // BitmapSkinRenderer.as::draw()). FIXED/MOVE/CENTER always blit the piece
+            // at its own native size via BitmapData.copyPixels() — never stretched to
+            // fill the layout region's authored box — even when that box is a
+            // different size than the source crop (e.g. a small icon glyph centered
+            // in a bigger padded box). Sizing the draw off `destW === srcW` instead
+            // of the scale mode stretched every FIXED-mode entity whose region size
+            // didn't happen to match its source crop.
+            const tiled = layoutEntity.scaleH === SkinLayoutEntity.SCALE_TILED || layoutEntity.scaleV === SkinLayoutEntity.SCALE_TILED;
+            const stretched = layoutEntity.scaleH === SkinLayoutEntity.SCALE_STRETCH || layoutEntity.scaleV === SkinLayoutEntity.SCALE_STRETCH;
+
+            if(tiled)
             {
+                if(destW < 1 || destH < 1) continue;
+
                 this.drawTiled(ctx, drawSource, srcW, srcH, destX, destY, destW, destH);
             }
-            else if(destW === srcW && destH === srcH)
+            else if(stretched)
             {
-                // No scaling needed — direct copy
-                ctx.drawImage(drawSource, 0, 0, srcW, srcH, destX, destY, srcW, srcH);
+                if(destW < 1 || destH < 1) continue;
+
+                ctx.drawImage(drawSource, 0, 0, srcW, srcH, destX, destY, destW, destH);
             }
             else
             {
-                // Scaled draw
-                ctx.drawImage(drawSource, 0, 0, srcW, srcH, destX, destY, destW, destH);
+                // No scale mode calls for resizing — direct unscaled copy at native size
+                ctx.drawImage(drawSource, 0, 0, srcW, srcH, destX, destY, srcW, srcH);
             }
         }
     }

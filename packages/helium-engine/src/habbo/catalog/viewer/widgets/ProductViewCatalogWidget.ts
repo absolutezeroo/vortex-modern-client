@@ -2,6 +2,7 @@ import type {Container} from 'pixi.js';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IDisplayObjectWrapper} from '@core/window/components/IDisplayObjectWrapper';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
@@ -16,6 +17,8 @@ import {AvatarAction} from '@habbo/avatar/enum/AvatarAction';
 import type {HabboCatalog} from '../../HabboCatalog';
 import type {IPurchasableOffer} from '../../IPurchasableOffer';
 import type {IProduct} from '../IProduct';
+import {ProductDisplayWrapper} from '../ProductDisplayWrapper';
+import type {ProductImageWidget} from '../../../window/widgets/ProductImageWidget';
 import {BundleProductContainer} from '../BundleProductContainer';
 import type {IDragAndDropDoneReceiver} from '../IDragAndDropDoneReceiver';
 import {SelectProductEvent} from './events/SelectProductEvent';
@@ -93,6 +96,17 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     private _roomCanvasContainer: IWindowContainer | null = null;
 
     private _roomCanvas: IDisplayObjectWrapper | null = null;
+
+    // AS3: var_1030/var_3250 - the fallback "product_image_widget" preview shown for product
+    // types renderProductPreview() doesn't otherwise handle (currently: chat_style, gated by
+    // ProductDisplayWrapper.isSupported() below). AS3 hides this container unconditionally before
+    // every preview render and only re-shows it in that default case - our port previously never
+    // looked this node up at all, so its placeholder graphic (visible by default, see
+    // ProductImageWidget's constructor) stayed on screen forever, overlapping the room-canvas
+    // furniture/wall-item preview.
+    private _productImageWidgetContainer: IWidgetWindow | null = null;
+
+    private _productImageWidget: ProductImageWidget | null = null;
 
     // TS deviation: RoomEngine.createRoomCanvas() parents the returned canvas directly onto the
     // shared root PixiJS stage, not into this widget's window tree (see
@@ -246,6 +260,15 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
                 this._roomCanvasContainer = null;
                 this._roomCanvas = null;
             }
+        }
+
+        // AS3: var_1030 = _window.findChildByName("product_image_widget") as class_2010;
+        this._productImageWidgetContainer = this.window.findChildByName('product_image_widget') as unknown as IWidgetWindow | null;
+
+        if(this._productImageWidgetContainer != null)
+        {
+            this._productImageWidget = this._productImageWidgetContainer.widget as ProductImageWidget | null;
+            this._productImageWidgetContainer.visible = false;
         }
 
         // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::init()
@@ -949,6 +972,13 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             catalog.utils.hideExtraFromProduct(this.window);
         }
 
+        // AS3: var_1030.visible = false; - unconditionally hidden before every preview render;
+        // only the (still-unported) default case in renderProductPreview() shows it again.
+        if(this._productImageWidgetContainer != null)
+        {
+            this._productImageWidgetContainer.visible = false;
+        }
+
         // TODO(AS3): class_3172/ProductImageConfiguration's pre-rendered special-product image
         // table isn't ported - always falls through to the pricing-model preview below.
         const {mode, canRotate} = this.renderPreviewForPricingModel(offer);
@@ -1038,7 +1068,17 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             case 'h':
                 break;
             default:
-                // TODO(AS3): ProductDisplayWrapper (generic default-case renderer) isn't ported.
+                // AS3: since "s"/"i"/"r"/"e"/"h" are all their own explicit cases above,
+                // ProductDisplayWrapper.isSupported() (chat_style or "r") is only ever reachable
+                // here for "chat_style" in practice - "r" always takes the case above instead.
+                if(ProductDisplayWrapper.isSupported(product.productType)
+                    && this._productImageWidgetContainer != null && this._productImageWidget != null)
+                {
+                    this._productImageWidgetContainer.visible = true;
+                    this._productImageWidget.productInfo = new ProductDisplayWrapper(product);
+                    break;
+                }
+
                 log.warn(`[Product View Catalog Widget] Unknown Product Type: ${product.productType}`);
         }
 
