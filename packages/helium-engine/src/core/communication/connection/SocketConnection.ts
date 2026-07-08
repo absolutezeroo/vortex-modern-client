@@ -287,6 +287,19 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
         catch (error)
         {
             log.error(`Process error: ${(error as Error).message}`);
+
+            // AS3 (class_1752.as::processReceivedData()) re-throws this error after notifying
+            // messageParseError() - an invalid message length means the byte stream is desynced
+            // beyond recovery (WireFormatter.splitMessages() already consumed part of the encryption
+            // keystream via decipher() before throwing, and never compacts/clears the buffer on this
+            // path). Swallowing it here without disconnecting means every subsequent frame re-parses
+            // the same corrupted buffer from position 0 with an already-advanced keystream, producing
+            // a new garbage length value forever - an infinite console-spamming loop, not a recoverable
+            // condition. Treat it as fatal: clear the buffer and close the connection.
+            this.receivedBuffer.clear();
+            this.callback?.connectionError?.(error as Error);
+            this.emit('error', error as Error);
+            this.close();
         }
     }
 

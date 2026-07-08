@@ -946,15 +946,23 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 
     /**
 	 * Get the className for a furniture typeId (combines getActiveObjectType + getWallItemType).
+	 *
+	 * Must go through those two methods (not read _activeObjectTypes/_wallItemTypes directly) -
+	 * they strip the "*colourIndex" suffix via getObjectType(), which indexed-color floor/wall
+	 * items (e.g. "carpet_polar*73") carry on the raw stored value. Every downstream content-loader
+	 * lookup (getObjectCategory, getObjectContentURLs, ...) expects the base classname only; passing
+	 * the raw suffixed string makes getObjectCategory() fail to match _floorItems/_wallItems (which
+	 * are keyed by base name), so getObjectContentURLs() silently returns no URLs and the furniture
+	 * asset is never downloaded.
 	 */
     getClassName(typeId: number, category: number): string | null
     {
         if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
         {
-            return this._wallItemTypes.get(typeId) ?? null;
+            return this.getWallItemType(typeId);
         }
 
-        return this._activeObjectTypes.get(typeId) ?? null;
+        return this.getActiveObjectType(typeId);
     }
 
     /**

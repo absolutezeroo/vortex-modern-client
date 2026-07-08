@@ -3777,6 +3777,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!room)
         {
+            log.warn(`[createVisualizationForFurniture] No room instance for roomId=${roomId} (className=${className})`);
+
             return;
         }
 
@@ -3784,6 +3786,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!object)
         {
+            log.warn(`[createVisualizationForFurniture] No room object for objectId=${objectId} category=${category} (className=${className})`);
+
             return;
         }
 
@@ -3792,6 +3796,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!vizType)
         {
+            log.warn(`[createVisualizationForFurniture] getVisualizationType() returned null for className=${className}`);
+
             return;
         }
 
@@ -3813,6 +3819,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             spriteVisualization.assetCollection = assetCollection;
         }
+        else
+        {
+            log.warn(`[createVisualizationForFurniture] getGraphicAssetCollection() returned null for className=${className} - object will render without graphics`);
+        }
 
         // Get or create visualization data via the visualization factory (cached)
         const rawVizData = this._contentLoader.getVisualizationXML(className);
@@ -3825,6 +3835,14 @@ export class RoomEngine extends Component implements IRoomEngine,
             {
                 spriteVisualization.initialize(vizData);
             }
+            else
+            {
+                log.warn(`[createVisualizationForFurniture] getRoomObjectVisualizationData() returned null for className=${className} vizType=${vizType} - visualization not initialized`);
+            }
+        }
+        else
+        {
+            log.warn(`[createVisualizationForFurniture] getVisualizationXML() returned null for className=${className} - visualization not initialized`);
         }
 
         // Assign the room object
