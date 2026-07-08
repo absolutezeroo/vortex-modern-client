@@ -3,6 +3,7 @@ import type {IWindowContext} from '../IWindowContext';
 import type {IDesktopWindow} from './IDesktopWindow';
 import {ActivatorController} from './ActivatorController';
 import type {WindowEvent} from '../events/WindowEvent';
+import {WindowContext} from '../WindowContext';
 
 /**
  * Desktop controller — the root container for all windows in a context.
@@ -32,18 +33,16 @@ export class DesktopController extends ActivatorController implements IDesktopWi
         super(name, type, style, param, context, rect, parent, procedure ?? DesktopController.defaultProcedure, tags, properties, id);
     }
 
-    private _mouseX: number = 0;
-
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DesktopController.as::get mouseX()
     public get mouseX(): number
     {
-        return this._mouseX;
+        return WindowContext.inputEventQueue?.mouseX ?? 0;
     }
 
-    private _mouseY: number = 0;
-
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/DesktopController.as::get mouseY()
     public get mouseY(): number
     {
-        return this._mouseY;
+        return WindowContext.inputEventQueue?.mouseY ?? 0;
     }
 
     public override get host(): IWindow
