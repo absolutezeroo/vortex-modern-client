@@ -49,6 +49,13 @@ interface BundleManifest
  */
 export class AssetBundle
 {
+    /**
+     * Shared UTF-8 decoder. `getText()`/`parse()` run hundreds of times during
+     * boot (once per layout + per skin), so reuse one instance instead of
+     * allocating a fresh TextDecoder per call.
+     */
+    private static readonly _decoder = new TextDecoder();
+
     private _manifest: BundleManifest;
     private _data: ArrayBuffer;
     private _dataOffset: number;
@@ -156,7 +163,7 @@ export class AssetBundle
     private static parse(buffer: ArrayBuffer): AssetBundle
     {
         const view = new DataView(buffer);
-        const decoder = new TextDecoder();
+        const decoder = AssetBundle._decoder;
         let cursor = 0;
 
         if(view.byteLength < 8)
@@ -304,7 +311,7 @@ export class AssetBundle
 
         if(!bytes) return null;
 
-        return new TextDecoder().decode(bytes);
+        return AssetBundle._decoder.decode(bytes);
     }
 
     /**

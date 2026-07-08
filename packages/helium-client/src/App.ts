@@ -7,6 +7,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperator';
+import {Logger} from '@core/utils/Logger';
 import type {IElementDescriptionData, IWindowLayout, IWindowLayoutFilter, IWindowLayoutNode} from '@habbo/window';
 import type {RoomUI} from '@habbo/ui/RoomUI';
 import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
@@ -22,6 +23,8 @@ import {
     parseWindowLayoutXml
 } from './window/WindowXmlAssetParser';
 import './_index.scss';
+
+const log = Logger.getLogger('HeliumApp');
 
 /**
  * Atlas spritesheet names that need to be decoded as ImageBitmaps.
@@ -370,7 +373,7 @@ async function loadWebFonts(bundle: AssetBundle): Promise<void>
 
         if(!bytes) 
         {
-            console.warn(`[HeliumApp] Webfont not found in bundle: ${file}`);
+            log.warn(`Webfont not found in bundle: ${file}`);
 
             return;
         }
@@ -385,7 +388,7 @@ async function loadWebFonts(bundle: AssetBundle): Promise<void>
         }
         catch (error) 
         {
-            console.warn(`[HeliumApp] Failed to load webfont ${file}:`, error);
+            log.warn(`Failed to load webfont ${file}:`, error);
         }
     }));
 }
@@ -683,7 +686,7 @@ export class HeliumApp
         }
         catch (error) 
         {
-            console.warn('[HeliumApp] Failed to load skin/element assets:', error);
+            log.warn('Failed to load skin/element assets:', error);
         }
 
         // 3. Register all window layouts from XML bundle
@@ -705,7 +708,7 @@ export class HeliumApp
             }
             catch (error) 
             {
-                console.warn(`[HeliumApp] Failed to parse layout XML: ${key}`, error);
+                log.warn(`Failed to parse layout XML: ${key}`, error);
                 continue;
             }
 
@@ -903,13 +906,13 @@ export class HeliumApp
     {
         const helium = Helium.instance;
 
-        helium.roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, (event: any) => 
+        helium.roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, (event: RoomEngineEvent) =>
         {
             this._isInRoom = true;
             this._activeRoomId = event.roomId;
         });
 
-        helium.roomEngine.events.on(RoomEngineEvent.REE_DISPOSED, (_event: any) => 
+        helium.roomEngine.events.on(RoomEngineEvent.REE_DISPOSED, (_event: RoomEngineEvent) =>
         {
             this._isInRoom = false;
             this._activeRoomId = -1;
