@@ -249,13 +249,12 @@ export class AssetBundle
 
         const type = mimeType || this.getMimeType(key);
 
-        // Use ArrayBuffer.slice to avoid Uint8Array<ArrayBufferLike> typing issues
-        const slice = this._data.slice(
-            this._dataOffset + entry.offset,
-            this._dataOffset + entry.offset + entry.size
-        );
+        // Pass a Uint8Array view (no copy) rather than ArrayBuffer.slice() (a copy):
+        // the Blob constructor copies the bytes into its own storage anyway, so the
+        // extra slice() was a redundant second copy of every bundled asset.
+        const bytes = new Uint8Array(this._data, this._dataOffset + entry.offset, entry.size);
 
-        return new Blob([slice], {type});
+        return new Blob([bytes], {type});
     }
 
     /**

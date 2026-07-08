@@ -347,7 +347,16 @@ export class HeliumApp
     /** Active room ID for mouse routing. */
     private _activeRoomId: number = -1;
 
-    constructor(loadingScreen?: HeliumLoadingScreen) 
+    /**
+     * Reusable scratch point for getGlobalPosition() in the mouse handlers.
+     * The mouse-move/wheel paths run per DOM event (and per parent-chain step),
+     * so a shared scratch avoids allocating a fresh {x, y} on every hit-test.
+     * getGlobalPosition() overwrites x/y and the caller consumes them
+     * synchronously before the next use, so a single instance is safe.
+     */
+    private readonly _globalPosScratch = {x: 0, y: 0};
+
+    constructor(loadingScreen?: HeliumLoadingScreen)
     {
         this._loadingScreen = loadingScreen ?? null;
     }
@@ -971,7 +980,7 @@ export class HeliumApp
         }
 
         // Compute local coordinates
-        const globalPos = {x: 0, y: 0};
+        const globalPos = this._globalPosScratch;
 
         hit.getGlobalPosition(globalPos);
 
@@ -1009,7 +1018,7 @@ export class HeliumApp
                 if(this._mouseDownWindow) 
                 {
                     const {x: ux, y: uy} = this.getCanvasCoords(ev);
-                    const gp = {x: 0, y: 0};
+                    const gp = this._globalPosScratch;
 
                     this._mouseDownWindow.getGlobalPosition(gp);
 
@@ -1027,7 +1036,7 @@ export class HeliumApp
 
                     if(clickHit) 
                     {
-                        const cp = {x: 0, y: 0};
+                        const cp = this._globalPosScratch;
 
                         clickHit.getGlobalPosition(cp);
 
@@ -1080,7 +1089,7 @@ export class HeliumApp
             // Send OVER to the new window
             if(hit) 
             {
-                const globalPos = {x: 0, y: 0};
+                const globalPos = this._globalPosScratch;
 
                 hit.getGlobalPosition(globalPos);
 
@@ -1098,7 +1107,7 @@ export class HeliumApp
         // Send MOVE event to the hovered window
         if(hit) 
         {
-            const globalPos = {x: 0, y: 0};
+            const globalPos = this._globalPosScratch;
 
             hit.getGlobalPosition(globalPos);
 
@@ -1144,7 +1153,7 @@ export class HeliumApp
             return;
         }
 
-        const globalPos = {x: 0, y: 0};
+        const globalPos = this._globalPosScratch;
 
         hit.getGlobalPosition(globalPos);
 
@@ -1206,7 +1215,7 @@ export class HeliumApp
 
         while(target && !target.disposed)
         {
-            const globalPos = {x: 0, y: 0};
+            const globalPos = this._globalPosScratch;
 
             target.getGlobalPosition(globalPos);
 
