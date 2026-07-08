@@ -243,6 +243,23 @@ export interface IHabboWindowManager extends IDisposable {
     // TS-only
     compositeToBuffer(width: number, height: number): OffscreenCanvas | null;
 
+    // TS-only: composites only the first `layerCount` window-context layers
+    // (e.g. the non-modal desktop layers below ModalDialog's layer). Used by
+    // ModalDialog to snapshot the desktop before darkening it behind a dialog —
+    // AS3 captured this via BitmapData.draw(stage), which has no equivalent
+    // here since rendering is Canvas2D-composited per context.
+    compositeLayers(layerCount: number, width: number, height: number): OffscreenCanvas | null;
+
+    // TS-only: renders a single window (and its children) into its own
+    // scratch canvas, optionally darkened. Used by ModalDialog to freeze a
+    // previous dialog's appearance into the accumulated background when a
+    // new dialog stacks on top of it.
+    renderWindowSnapshot(window: IWindow, width: number, height: number, darken?: boolean): OffscreenCanvas | null;
+
+    // TS-only: darkens an existing captured buffer.
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::COLOR_TRANSFORM
+    darkenSnapshot(source: OffscreenCanvas | ImageBitmap, width: number, height: number): OffscreenCanvas | null;
+
     // TS-only
     findWindowAtPoint(x: number, y: number): IWindow | null;
 

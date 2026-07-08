@@ -1,6 +1,7 @@
 import {Logger} from '@core/utils/Logger';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IModalDialog} from './IModalDialog';
 
@@ -10,16 +11,16 @@ const log = Logger.getLogger('ModalDialog');
  * Base modal dialog implementation.
  *
  * Creates a modal overlay that dims the background and presents a
- * centered root window built from an XML layout definition. In AS3,
- * this used BitmapData to capture and darken the desktop layers.
- * In the TS port, the background dimming is handled as metadata
- * emitted to the UI layer; Flash rendering calls become stubs.
+ * centered root window built from an XML layout definition. AS3 captured
+ * and darkened the desktop via BitmapData; the TS port captures a Canvas2D
+ * snapshot of the desktop layers via WindowComposite (see refresh()) and
+ * assigns it as the background window's bitmap.
  *
  * Static members manage a shared modal container across all active
  * modal dialogs, stacking them with alternating background/content
  * child pairs.
  *
- * @see sources/win63_version/habbo/window/utils/ModalDialog.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as
  */
 export class ModalDialog implements IModalDialog
 {
@@ -141,10 +142,18 @@ export class ModalDialog implements IModalDialog
         log.debug('Modal dialog static members initialized');
     }
 
-    // AS3: sources/win63_version/habbo/window/utils/ModalDialog.as::refresh()
-    // TODO(AS3): AS3 refresh() captures desktop layers using BitmapData and applies
-    // ColorTransform(0.25,0.25,0.25) darkening before drawing stacked bitmap pairs.
-    // sources/win63_version/habbo/window/utils/ModalDialog.as::refresh()
+    /**
+	 * Rebuilds the stacked background/content pairs in the shared modal
+	 * container: captures the real desktop (layers below the modal layer) as
+	 * a snapshot, darkens it, and layers in each stacked dialog's own frozen
+	 * appearance so only the topmost pair stays live/visible.
+	 *
+	 * AS3 captured this via `BitmapData.draw(stage)`, relying on Flash
+	 * ignoring a DisplayObject's own `visible` flag when drawing it — this
+	 * port's compositor has no such quirk (it skips invisible desktops), so
+	 * the snapshot is taken before the desktops are hidden instead.
+	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::refresh()
     private static refresh(): void
     {
         if(!ModalDialog._container) return;
@@ -153,34 +162,37 @@ export class ModalDialog implements IModalDialog
 
         if(isEmpty)
         {
-            // No dialogs open: show underlying desktop layers
+            // No dialogs open: show underlying desktop layers and force them
+            // to repaint (AS3: `for each(_loc9_ in _loc2_.iterator) _loc9_.invalidate();`)
             for(let i = 0; i < ModalDialog.MODAL_DIALOG_LAYER; i++)
             {
                 const desktop = ModalDialog._windowManager!.getDesktop(i);
 
-                if(desktop)
+                if(!desktop) continue;
+
+                desktop.visible = true;
+
+                const container = desktop as unknown as IWindowContainer;
+
+                for(let j = 0; j < container.numChildren; j++)
                 {
-                    desktop.visible = true;
+                    container.getChildAt(j)?.invalidate();
                 }
             }
 
             return;
         }
 
-        // Dialogs are open: hide underlying desktop layers
-        for(let i = 0; i < ModalDialog.MODAL_DIALOG_LAYER; i++)
-        {
-            const desktop = ModalDialog._windowManager!.getDesktop(i);
+        const desktop0 = ModalDialog._windowManager!.getDesktop(0);
+        const stageWidth = Math.max(1, desktop0?.width ?? 1);
+        const stageHeight = Math.max(1, desktop0?.height ?? 1);
 
-            if(desktop)
-            {
-                desktop.visible = false;
-            }
-        }
+        ModalDialog._container.width = stageWidth;
+        ModalDialog._container.height = stageHeight;
 
-        // Layout background/content pairs
         const numChildren = ModalDialog._container.numChildren;
 
+        // Reset pass: clear stale background bitmaps, re-center content windows.
         for(let i = 0; i < numChildren; i++)
         {
             const child = ModalDialog._container.getChildAt(i);
@@ -189,18 +201,86 @@ export class ModalDialog implements IModalDialog
 
             if(i % 2 === 0)
             {
-                // Background overlay: stretch to container size
-                child.width = ModalDialog._container.width;
-                child.height = ModalDialog._container.height;
+                child.width = stageWidth;
+                child.height = stageHeight;
+                (child as unknown as IBitmapWrapperWindow).bitmap = null;
             }
             else
             {
-                // Content window: center it
                 child.center();
             }
+        }
 
-            // Only the topmost pair (last two children) is visible
+        // Capture the real desktop layers while still visible, then hide them.
+        const rawSnapshot = ModalDialog._windowManager!.compositeLayers(
+            ModalDialog.MODAL_DIALOG_LAYER, stageWidth, stageHeight
+        );
+
+        for(let i = 0; i < ModalDialog.MODAL_DIALOG_LAYER; i++)
+        {
+            const desktop = ModalDialog._windowManager!.getDesktop(i);
+
+            if(desktop) desktop.visible = false;
+        }
+
+        if(!rawSnapshot) return;
+
+        const darkened = ModalDialog._windowManager!.darkenSnapshot(rawSnapshot, stageWidth, stageHeight);
+
+        if(!darkened) return;
+
+        // Owned canvas (not the renderer's shared buffer) — safe to detach.
+        let currentBitmap: ImageBitmap = darkened.transferToImageBitmap();
+
+        // Assign pass: bake the accumulated snapshot into each background slot,
+        // freezing each earlier stacked dialog's own rendered look into the
+        // next background as newer dialogs stack on top of it. This must run
+        // to completion (reading each prior dialog's still-`visible` render)
+        // BEFORE the visibility pass below hides it — renderWindowSnapshot()
+        // skips invisible windows, unlike AS3's getGraphicContext(), which
+        // stays valid regardless of the window's current `visible` flag.
+        for(let i = 0; i < numChildren; i += 2)
+        {
+            const child = ModalDialog._container.getChildAt(i);
+
+            if(!child) continue;
+
+            if(i >= 2)
+            {
+                const prevDialog = ModalDialog._container.getChildAt(i - 1);
+                const cloneCanvas = new OffscreenCanvas(stageWidth, stageHeight);
+                const cctx = cloneCanvas.getContext('2d');
+
+                if(cctx)
+                {
+                    cctx.imageSmoothingEnabled = false;
+                    cctx.drawImage(currentBitmap, 0, 0);
+
+                    if(prevDialog)
+                    {
+                        const prevSnapshot = ModalDialog._windowManager!.renderWindowSnapshot(
+                            prevDialog, stageWidth, stageHeight, true
+                        );
+
+                        if(prevSnapshot) cctx.drawImage(prevSnapshot, 0, 0);
+                    }
+                }
+
+                currentBitmap = cloneCanvas.transferToImageBitmap();
+            }
+
+            (child as unknown as IBitmapWrapperWindow).bitmap = currentBitmap;
+        }
+
+        // Visibility pass: only the topmost pair (last two children) stays visible.
+        for(let i = 0; i < numChildren; i++)
+        {
+            const child = ModalDialog._container.getChildAt(i);
+
+            if(!child) continue;
+
             child.visible = (i >= numChildren - 2);
+            child.invalidate();
         }
     }
 

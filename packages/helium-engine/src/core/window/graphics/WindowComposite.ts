@@ -68,6 +68,13 @@ export class WindowComposite
     // AS3: sources/win63_version/core/window/components/TextController.as::_field
     private static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::COLOR_TRANSFORM
+    // ColorTransform(0.25,0.25,0.25) multiplies R/G/B by 0.25 and leaves alpha
+    // untouched — exactly what the CSS brightness() filter does, so no
+    // approximation is needed here (unlike buildColorTransformFilter() below,
+    // which combines multipliers/offsets/alpha and can't map 1:1 to filters).
+    private static readonly MODAL_DARKEN_FILTER: string = 'brightness(25%)';
+
     // TS-only: distinguishes a plain pre-rendered bitmap (drawable straight
     // into the composite) from an externally-managed PixiJS DisplayObject
     // (needs the clearRect hole-punch instead — see compositeWindow()).
@@ -185,6 +192,59 @@ export class WindowComposite
         this._compositeCtx = null;
         // WeakMap has no clear(); dropping the reference releases every entry.
         this._bitmapWrapperCache = new WeakMap();
+    }
+
+    /**
+	 * Renders a single window (and its children) into its own scratch canvas,
+	 * optionally darkened. Unlike `composite()`, this does not touch the
+	 * shared `_compositeBuffer` — the returned canvas is freshly allocated and
+	 * safe for the caller to own/consume (e.g. via `transferToImageBitmap()`).
+	 *
+	 * Used by ModalDialog to freeze a previous dialog's rendered appearance
+	 * into the accumulated background snapshot when a new dialog stacks on
+	 * top of it (AS3: `WindowController(param).getGraphicContext(true)`
+	 * drawn with a ColorTransform onto the accumulated BitmapData).
+	 */
+    public renderWindowToCanvas(window: IWindow, width: number, height: number, darken: boolean = false): OffscreenCanvas
+    {
+        const canvas = new OffscreenCanvas(Math.max(1, width), Math.max(1, height));
+        const ctx = canvas.getContext('2d');
+
+        if(ctx)
+        {
+            ctx.imageSmoothingEnabled = false;
+
+            if(darken)
+            {
+                ctx.filter = WindowComposite.MODAL_DARKEN_FILTER;
+            }
+
+            this.compositeWindow(ctx, window, 0, 0);
+        }
+
+        return canvas;
+    }
+
+    /**
+	 * Draws `source` into a freshly allocated canvas with the modal-dialog
+	 * darkening filter applied.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/ModalDialog.as::refresh()
+	 * (`_loc1_.colorTransform(_loc1_.rect, COLOR_TRANSFORM)`)
+	 */
+    public darken(source: OffscreenCanvas | ImageBitmap, width: number, height: number): OffscreenCanvas
+    {
+        const canvas = new OffscreenCanvas(Math.max(1, width), Math.max(1, height));
+        const ctx = canvas.getContext('2d');
+
+        if(ctx)
+        {
+            ctx.imageSmoothingEnabled = false;
+            ctx.filter = WindowComposite.MODAL_DARKEN_FILTER;
+            ctx.drawImage(source, 0, 0);
+        }
+
+        return canvas;
     }
 
     private getDrawBufferForRenderable(window: IWindow): OffscreenCanvas | null

@@ -1003,7 +1003,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * @param height - The target buffer height
      * @returns The composited buffer, or null if renderer is unavailable
      */
-    public compositeToBuffer(width: number, height: number): OffscreenCanvas | null 
+    public compositeToBuffer(width: number, height: number): OffscreenCanvas | null
     {
         if(!this._windowRenderer || !this._windowComposite) return null;
 
@@ -1011,6 +1011,42 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this._windowRenderer.render();
 
         return this._windowComposite.composite(this._windowContextArray, width, height);
+    }
+
+    /**
+     * Composites only the first `layerCount` window-context layers (e.g. the
+     * non-modal desktop layers below ModalDialog's layer) into a scratch
+     * buffer. Used by ModalDialog to snapshot the desktop before darkening it
+     * behind a dialog.
+     */
+    public compositeLayers(layerCount: number, width: number, height: number): OffscreenCanvas | null
+    {
+        if(!this._windowRenderer || !this._windowComposite) return null;
+
+        this._windowRenderer.render();
+
+        return this._windowComposite.composite(this._windowContextArray.slice(0, layerCount), width, height);
+    }
+
+    /**
+     * Renders a single window (and its children) into its own scratch
+     * canvas, optionally darkened. See WindowComposite.renderWindowToCanvas().
+     */
+    public renderWindowSnapshot(window: IWindow, width: number, height: number, darken: boolean = false): OffscreenCanvas | null
+    {
+        if(!this._windowComposite) return null;
+
+        return this._windowComposite.renderWindowToCanvas(window, width, height, darken);
+    }
+
+    /**
+     * Darkens an existing captured buffer. See WindowComposite.darken().
+     */
+    public darkenSnapshot(source: OffscreenCanvas | ImageBitmap, width: number, height: number): OffscreenCanvas | null
+    {
+        if(!this._windowComposite) return null;
+
+        return this._windowComposite.darken(source, width, height);
     }
 
     /**
