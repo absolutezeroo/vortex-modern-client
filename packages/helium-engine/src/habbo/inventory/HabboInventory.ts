@@ -51,7 +51,7 @@ import type {FurniListAddOrUpdateMessageParser} from '../communication/messages/
 import type {FurniListRemoveMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMessageParser';
 import type {FurniListRemoveMultipleMessageParser} from '../communication/messages/parser/inventory/furni/FurniListRemoveMultipleMessageParser';
 import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
-import type {FurnitureItemData} from './items/FurnitureItemData';
+import type {IFurnitureItemData} from './items/FurnitureItemData';
 import {FurnitureItem} from './items/FurnitureItem';
 
 const log = Logger.getLogger('Inventory');
@@ -650,7 +650,7 @@ export class HabboInventory extends Component implements IHabboInventory
 
         if(parser.fragmentNo < parser.totalFragments - 1) return;
 
-        const items = new Map<number, FurnitureItemData>();
+        const items = new Map<number, IFurnitureItemData>();
 
         for(const [itemId, item] of this._furniListFragments)
         {

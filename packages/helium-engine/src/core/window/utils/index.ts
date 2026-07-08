@@ -9,7 +9,7 @@ export type {IWindowParser} from './IWindowParser';
 export {MouseCursorControl} from './MouseCursorControl';
 export {MouseEventProcessor} from './MouseEventProcessor';
 export {MouseEventQueue} from './MouseEventQueue';
-export type {MouseEventEntry} from './MouseEventQueue';
+export type {IMouseEventEntry} from './MouseEventQueue';
 export {PropertyStruct} from './PropertyStruct';
 export {SmoothScroller} from './SmoothScroller';
 export {TextMargins} from './TextMargins';

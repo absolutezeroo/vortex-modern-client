@@ -36,7 +36,7 @@ const FAST_FRAME_UPDATE_INTERVAL = 50;
 const MAXIMUM_VALID_FRAME_UPDATE_INTERVAL = 1000;
 const REALLY_SLOW_FRAME_UPDATE_INTERVAL = 60 * 3;
 
-interface ObjectSpriteCache
+interface IObjectSpriteCache
 {
     initialized: boolean;
     instanceId: number;
@@ -65,7 +65,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     private _sortableSpriteList: SortableSprite[] = [];
-    private _objectSpriteCaches: Map<string, ObjectSpriteCache> = new Map();
+    private _objectSpriteCaches: Map<string, IObjectSpriteCache> = new Map();
     private _spritePool: ExtendedSprite[] = [];
     private _spriteCount: number = 0;
     private _activeSpriteCount: number = 0;
@@ -914,7 +914,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this.disposeObjectSpriteCache(objectId);
     }
 
-    private getObjectSpriteCache(objectId: string): ObjectSpriteCache
+    private getObjectSpriteCache(objectId: string): IObjectSpriteCache
     {
         let cache = this._objectSpriteCaches.get(objectId);
 
@@ -942,7 +942,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return cache;
     }
 
-    private getCachedScreenLocation(object: IRoomObject, cache: ObjectSpriteCache): Vector3d | null
+    private getCachedScreenLocation(object: IRoomObject, cache: IObjectSpriteCache): Vector3d | null
     {
         const location = object.getLocation();
         const geometryUpdateId = this._geometry.updateId;

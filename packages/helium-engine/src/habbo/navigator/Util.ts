@@ -13,8 +13,8 @@ import {CutToHeight} from './CutToHeight';
  */
 export class Util
 {
-    private static CUT_TO_WIDTH: CutToWidth = new CutToWidth();
-    private static CUT_TO_HEIGHT: CutToHeight = new CutToHeight();
+    private static _cutToWidth: CutToWidth = new CutToWidth();
+    private static _cutToHeight: CutToHeight = new CutToHeight();
 
     /**
 	 * Removes an element from an array.
@@ -273,8 +273,8 @@ export class Util
             return;
         }
 
-        Util.CUT_TO_WIDTH.beforeSearch(text, textWindow, maxWidth);
-        Util.binarySearch(Util.CUT_TO_WIDTH, text.length - 1);
+        Util._cutToWidth.beforeSearch(text, textWindow, maxWidth);
+        Util.binarySearch(Util._cutToWidth, text.length - 1);
     }
 
     /**

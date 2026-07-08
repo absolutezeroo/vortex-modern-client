@@ -1,6 +1,6 @@
 import {Container, Rectangle} from 'pixi.js';
-import type {ChatLinkStyleSheet, IChatStyleInternal} from './IChatStyleInternal';
-import type {ChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
+import type {IChatLinkStyleSheet, IChatStyleInternal} from './IChatStyleInternal';
+import type {IChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
 
 /**
  * BlankStyle
@@ -20,12 +20,12 @@ export class BlankStyle implements IChatStyleInternal
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/simulation/BlankStyle.as::get textFormat()
-    get textFormat(): ChatTextFormat
+    get textFormat(): IChatTextFormat
     {
         return {fontFace: 'Volter', fontSize: 9, color: 0};
     }
 
-    get styleSheet(): ChatLinkStyleSheet | null
+    get styleSheet(): IChatLinkStyleSheet | null
     {
         return null;
     }

@@ -1,7 +1,7 @@
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 
-export interface BadgeData
+export interface IBadgeData
 {
     badgeId: string;
     slotId: number;
@@ -28,9 +28,9 @@ export class BadgesMessageParser implements IMessageParser
         return this._fragmentNo;
     }
 
-    private _badges: BadgeData[] = [];
+    private _badges: IBadgeData[] = [];
 
-    get badges(): BadgeData[]
+    get badges(): IBadgeData[]
     {
         return this._badges;
     }

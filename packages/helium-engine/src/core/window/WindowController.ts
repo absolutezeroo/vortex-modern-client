@@ -45,7 +45,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         height: 0
     };
 
-    private static readonly _POINT_ZERO: { x: number; y: number } = {x: 0, y: 0};
+    private static readonly POINT_ZERO: { x: number; y: number } = {x: 0, y: 0};
     protected _eventDispatcher: WindowEventDispatcher | null = null;
     protected _graphicContext: IGraphicContext | null = null;
     protected _hasVisualContent: boolean = true;
@@ -4262,7 +4262,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
 
         if(typeof bitmapLike.hitTest === 'function') 
         {
-            return bitmapLike.hitTest(WindowController._POINT_ZERO, threshold, point);
+            return bitmapLike.hitTest(WindowController.POINT_ZERO, threshold, point);
         }
 
         return null;

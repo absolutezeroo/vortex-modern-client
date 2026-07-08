@@ -5,7 +5,7 @@
  *
  * Handles isometric room projection and coordinate transformations.
  */
-import type {IRoomGeometry, Point} from './IRoomGeometry';
+import type {IRoomGeometry, IPoint} from './IRoomGeometry';
 import type {IVector3d} from './IVector3d';
 import {Vector3d} from './Vector3d';
 
@@ -314,7 +314,7 @@ export class RoomGeometry implements IRoomGeometry
     }
 
     // AS3: sources/win63_version/room/utils/RoomGeometry.as::getScreenPoint()
-    getScreenPoint(vector: IVector3d): Point | null
+    getScreenPoint(vector: IVector3d): IPoint | null
     {
         const screenPos = this.getScreenPosition(vector);
 
@@ -327,7 +327,7 @@ export class RoomGeometry implements IRoomGeometry
     }
 
     // AS3: sources/win63_version/room/utils/RoomGeometry.as::getPlanePosition()
-    getPlanePosition(point: Point, loc: IVector3d, leftSide: IVector3d, rightSide: IVector3d): Point | null
+    getPlanePosition(point: IPoint, loc: IVector3d, leftSide: IVector3d, rightSide: IVector3d): IPoint | null
     {
         const screenX = point.x / this._scale;
         const screenY = -point.y / this._scale;

@@ -2,10 +2,10 @@ import {Point, Rectangle} from 'pixi.js';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IDisposable} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
-import type {ChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
+import type {IChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
 import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
-import type {ChatLinkStyleSheet} from './IChatStyleInternal';
-import {ChatStyle, type ChatStyleDescriptor} from './ChatStyle';
+import type {IChatLinkStyleSheet} from './IChatStyleInternal';
+import {ChatStyle, type IChatStyleDescriptor} from './ChatStyle';
 
 const log = Logger.getLogger('ChatStyleLibrary');
 
@@ -31,7 +31,7 @@ const log = Logger.getLogger('ChatStyleLibrary');
  */
 export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 {
-    private static readonly _DEFAULT_STYLE_ID: number = 0;
+    private static readonly DEFAULT_STYLE_ID: number = 0;
 
     private _assets: IAssetLibrary | null;
     private readonly _styles: Map<number, ChatStyle> = new Map();
@@ -144,13 +144,13 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         const textColor = this.hasConfig(config, 'textColorRGB') ? Number(this.getConfigCSV(config, 'textColorRGB')![0]) : 0;
         const fontFace = this.hasConfig(config, 'fontFace') ? this.getConfigCSV(config, 'fontFace')![0] : 'Volter';
         const fontSize = this.hasConfig(config, 'fontSize') ? parseInt(this.getConfigCSV(config, 'fontSize')![0], 10) : 9;
-        const textFormat: ChatTextFormat = {fontFace, fontSize, color: textColor};
+        const textFormat: IChatTextFormat = {fontFace, fontSize, color: textColor};
 
         const linkColor = this.hasConfig(config, 'linkColorRGB') ? Number(this.getConfigCSV(config, 'linkColorRGB')![0]) : textColor;
         const linkHoverColor = this.hasConfig(config, 'linkHoverColorRGB') ? Number(this.getConfigCSV(config, 'linkHoverColorRGB')![0]) : textColor;
         const linkActiveColor = this.hasConfig(config, 'linkActiveColorRGB') ? Number(this.getConfigCSV(config, 'linkActiveColorRGB')![0]) : textColor;
 
-        const styleSheet: ChatLinkStyleSheet = {
+        const styleSheet: IChatLinkStyleSheet = {
             linkColor: this.toHexString(linkColor),
             linkHoverColor: this.toHexString(linkHoverColor),
             linkActiveColor: this.toHexString(linkActiveColor),
@@ -158,7 +158,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 
         const usePixelPerfectNineSlice = this.hasConfig(config, 'usePixelPerfectNineSlice') && this.getConfigBoolean(config, 'usePixelPerfectNineSlice');
 
-        const descriptor: ChatStyleDescriptor = {
+        const descriptor: IChatStyleDescriptor = {
             background,
             scale9Grid,
             pointer,
@@ -274,7 +274,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
     // the fuller shape (pointer margins, emblem, styleSheet...) to build a bubble.
     getStyle(styleId: number): ChatStyle | null
     {
-        return this._styles.get(styleId) ?? this._styles.get(ChatStyleLibrary._DEFAULT_STYLE_ID) ?? null;
+        return this._styles.get(styleId) ?? this._styles.get(ChatStyleLibrary.DEFAULT_STYLE_ID) ?? null;
     }
 
     private get assets(): IAssetLibrary

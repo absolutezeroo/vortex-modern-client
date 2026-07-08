@@ -10,23 +10,16 @@ import {WindowEvent} from './WindowEvent';
  *
  * @see sources/win63_2021_version/com/sulake/core/window/events/WindowKeyboardEvent.as
  */
-export class WindowKeyboardEvent extends WindowEvent
+export class WindowKeyboardEvent extends WindowEvent 
 {
-    // ── Event type constants ─────────────────────────────────────────
-
     public static readonly KEY_UP: string = 'WKE_KEY_UP';
     public static readonly KEY_DOWN: string = 'WKE_KEY_DOWN';
-
-    // ── Object pool ──────────────────────────────────────────────────
-
     private static readonly _keyboardPool: WindowKeyboardEvent[] = [];
-
-    // ── Instance fields ──────────────────────────────────────────────
 
     private _keyCode: number = 0;
 
     /** The key code of the pressed key. */
-    public get keyCode(): number
+    public get keyCode(): number 
     {
         return this._keyCode;
     }
@@ -34,7 +27,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _charCode: number = 0;
 
     /** The character code of the pressed key. */
-    public get charCode(): number
+    public get charCode(): number 
     {
         return this._charCode;
     }
@@ -42,19 +35,15 @@ export class WindowKeyboardEvent extends WindowEvent
     private _altKey: boolean = false;
 
     /** Whether the Alt key is pressed. */
-    public get altKey(): boolean
+    public get altKey(): boolean 
     {
         return this._altKey;
     }
 
-    // ── Static factory ───────────────────────────────────────────────
-
     private _ctrlKey: boolean = false;
 
-    // ── Accessors ────────────────────────────────────────────────────
-
     /** Whether the Ctrl key is pressed. */
-    public get ctrlKey(): boolean
+    public get ctrlKey(): boolean 
     {
         return this._ctrlKey;
     }
@@ -62,7 +51,7 @@ export class WindowKeyboardEvent extends WindowEvent
     private _shiftKey: boolean = false;
 
     /** Whether the Shift key is pressed. */
-    public get shiftKey(): boolean
+    public get shiftKey(): boolean 
     {
         return this._shiftKey;
     }
@@ -70,26 +59,26 @@ export class WindowKeyboardEvent extends WindowEvent
     private _keyLocation: number = 0;
 
     /** The key location (standard, left, right, numpad). */
-    public get keyLocation(): number
+    public get keyLocation(): number 
     {
         return this._keyLocation;
     }
 
     /**
-	 * Allocates a WindowKeyboardEvent from the pool or creates a new one.
-	 *
-	 * @param type - The event type string
-	 * @param keyCode - The key code
-	 * @param charCode - The character code
-	 * @param window - The target window
-	 * @param related - The related window
-	 * @param altKey - Whether the Alt key is pressed
-	 * @param ctrlKey - Whether the Ctrl key is pressed
-	 * @param shiftKey - Whether the Shift key is pressed
-	 * @param keyLocation - The key location (standard, left, right, numpad)
-	 * @param cancelable - Whether the event can be cancelled
-	 * @returns A pooled or new WindowKeyboardEvent instance
-	 */
+     * Allocates a WindowKeyboardEvent from the pool or creates a new one.
+     *
+     * @param type - The event type string
+     * @param keyCode - The key code
+     * @param charCode - The character code
+     * @param window - The target window
+     * @param related - The related window
+     * @param altKey - Whether the Alt key is pressed
+     * @param ctrlKey - Whether the Ctrl key is pressed
+     * @param shiftKey - Whether the Shift key is pressed
+     * @param keyLocation - The key location (standard, left, right, numpad)
+     * @param cancelable - Whether the event can be cancelled
+     * @returns A pooled or new WindowKeyboardEvent instance
+     */
     public static allocateKeyboard(
         type: string,
         keyCode: number,
@@ -101,7 +90,7 @@ export class WindowKeyboardEvent extends WindowEvent
         shiftKey: boolean = false,
         keyLocation: number = 0,
         cancelable: boolean = false
-    ): WindowKeyboardEvent
+    ): WindowKeyboardEvent 
     {
         const event: WindowKeyboardEvent = (WindowKeyboardEvent._keyboardPool.length > 0)
             ? WindowKeyboardEvent._keyboardPool.pop()!
@@ -123,12 +112,10 @@ export class WindowKeyboardEvent extends WindowEvent
         return event;
     }
 
-    // ── Methods ──────────────────────────────────────────────────────
-
     /**
-	 * Creates a clone of this keyboard event via the pool.
-	 */
-    public override clone(): WindowEvent
+     * Creates a clone of this keyboard event via the pool.
+     */
+    public override clone(): WindowEvent 
     {
         return WindowKeyboardEvent.allocateKeyboard(
             this._type, this._keyCode, this._charCode,
@@ -139,9 +126,9 @@ export class WindowKeyboardEvent extends WindowEvent
     }
 
     /**
-	 * Returns a string representation of this keyboard event.
-	 */
-    public override toString(): string
+     * Returns a string representation of this keyboard event.
+     */
+    public override toString(): string 
     {
         return `WindowKeyboardEvent { type: ${this._type} cancelable: ${this._cancelable} window: ${this._window} charCode: ${this._charCode} }`;
     }

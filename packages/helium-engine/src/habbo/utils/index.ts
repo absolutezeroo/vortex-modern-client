@@ -13,5 +13,5 @@ export {StringUtil} from './StringUtil';
 export * from './animation';
 
 // Types
-export type {HabboWebToolsEvents} from './HabboWebTools';
+export type {IHabboWebToolsEvents} from './HabboWebTools';
 export type {IEncryptedLocalStorage} from './IEncryptedLocalStorage';

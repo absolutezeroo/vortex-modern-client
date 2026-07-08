@@ -1,6 +1,6 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {TradingStateType} from './TradingState';
-import type {TradingUser} from './TradingUser';
+import type {ITradingUser} from './TradingUser';
 import type {GroupItem} from '../items/GroupItem';
 
 /**
@@ -12,8 +12,8 @@ export interface ITradingModel extends IDisposable
 {
     readonly isRunning: boolean;
     readonly state: TradingStateType;
-    readonly ownUser: TradingUser | null;
-    readonly otherUser: TradingUser | null;
+    readonly ownUser: ITradingUser | null;
+    readonly otherUser: ITradingUser | null;
 
     /**
 	 * Start a trading session

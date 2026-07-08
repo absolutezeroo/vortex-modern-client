@@ -47,7 +47,7 @@ const log = Logger.getLogger('HabboToolbar');
 /**
  * Events emitted by HabboToolbar via toolbarEvents
  */
-export interface HabboToolbarEvents
+export interface IHabboToolbarEvents
 {
     [HabboToolbarEvent.TOOLBAR_CLICK]: (event: HabboToolbarEvent) => void;
     [HabboToolbarEvent.RESIZED]: (event: HabboToolbarEvent) => void;

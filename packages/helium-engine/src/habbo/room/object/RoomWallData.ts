@@ -6,7 +6,7 @@
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IVector3d} from '@room/utils/IVector3d';
 
-export interface Point
+export interface IPoint
 {
     x: number;
     y: number;
@@ -28,8 +28,8 @@ export class RoomWallData
         new Vector3d(1, 0, 0),
     ];
 
-    private _corners: Point[] = [];
-    private _endPoints: Point[] = [];
+    private _corners: IPoint[] = [];
+    private _endPoints: IPoint[] = [];
     private _directions: number[] = [];
     private _lengths: number[] = [];
     private _leftTurns: boolean[] = [];
@@ -44,7 +44,7 @@ export class RoomWallData
         return this._count;
     }
 
-    addWall(corner: Point, direction: number, length: number, border: boolean, leftTurn: boolean): void
+    addWall(corner: IPoint, direction: number, length: number, border: boolean, leftTurn: boolean): void
     {
         if(this.checkIsNotDuplicate(corner, direction, length, border, leftTurn))
         {
@@ -60,12 +60,12 @@ export class RoomWallData
         }
     }
 
-    getCorner(index: number): Point
+    getCorner(index: number): IPoint
     {
         return this._corners[index];
     }
 
-    getEndPoint(index: number): Point
+    getEndPoint(index: number): IPoint
     {
         this.calculateWallEndPoints();
         return this._endPoints[index];
@@ -134,7 +134,7 @@ export class RoomWallData
         }
     }
 
-    private checkIsNotDuplicate(corner: Point, direction: number, length: number, border: boolean, leftTurn: boolean): boolean
+    private checkIsNotDuplicate(corner: IPoint, direction: number, length: number, border: boolean, leftTurn: boolean): boolean
     {
         for(let i = 0; i < this._count; i++)
         {

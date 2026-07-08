@@ -44,7 +44,7 @@ export class HabboToolbarIconEnum
 
     public static readonly NAVIGATOR_ME_TAB: string = 'HTIE_ICON_NAVIGATOR_ME_TAB';
 
-    private static readonly _TOOLBAR_NAMES: Map<string, string> = new Map<string, string>([
+    private static readonly TOOLBAR_NAMES: Map<string, string> = new Map<string, string>([
         ['HTIE_ICON_HELP', 'HELP'],
         ['HTIE_ICON_NAVIGATOR', 'NAVIGATOR'],
         ['HTIE_ICON_CATALOGUE', 'CATALOGUE'],
@@ -70,6 +70,6 @@ export class HabboToolbarIconEnum
 	 */
     public static getIconName(iconId: string): string | null
     {
-        return HabboToolbarIconEnum._TOOLBAR_NAMES.get(iconId) ?? null;
+        return HabboToolbarIconEnum.TOOLBAR_NAMES.get(iconId) ?? null;
     }
 }

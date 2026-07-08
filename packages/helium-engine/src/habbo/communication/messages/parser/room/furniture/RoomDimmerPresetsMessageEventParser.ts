@@ -8,7 +8,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class RoomDimmerPresetsMessageEventParser implements IMessageParser
 {
-    private _presets: DimmerPreset[] = [];
+    private _presets: IDimmerPreset[] = [];
 
     private _selectedPresetId: number = 0;
 
@@ -36,7 +36,7 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
         return this._isOn;
     }
 
-    getPreset(index: number): DimmerPreset | null
+    getPreset(index: number): IDimmerPreset | null
     {
         if(index < 0 || index >= this._presets.length)
         {
@@ -79,7 +79,7 @@ export class RoomDimmerPresetsMessageEventParser implements IMessageParser
     }
 }
 
-export interface DimmerPreset
+export interface IDimmerPreset
 {
     id: number;
     type: number;

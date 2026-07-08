@@ -5,4 +5,4 @@
 export {log, Logger, LogLevel,} from './Logger';
 
 // Types
-export type {LoggerConfig} from './Logger';
+export type {ILoggerConfig} from './Logger';

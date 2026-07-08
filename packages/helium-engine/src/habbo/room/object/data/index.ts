@@ -12,5 +12,5 @@ export {StuffDataFactory} from './StuffDataFactory';
 export {VoteResultStuffData} from './VoteResultStuffData';
 
 // Types
-export type {HighScoreEntry} from './HighScoreStuffData';
+export type {IHighScoreEntry} from './HighScoreStuffData';
 export type {IStuffData} from './IStuffData';

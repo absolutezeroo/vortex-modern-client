@@ -25,7 +25,7 @@ import {ErrorReportStorage} from '@core/utils/ErrorReportStorage';
 
 const log = Logger.getLogger('Communication');
 
-export interface HabboConnectionConfig
+export interface IHabboConnectionConfig
 {
     host: string;
     ports: number[];
@@ -42,12 +42,12 @@ export interface HabboConnectionConfig
  */
 export class HabboCommunicationManager extends Component implements IHabboCommunicationManager, IConnectionCallback
 {
-    private messageConfig: IMessageConfiguration;
-    private config: HabboConnectionConfig | null = null;
-    private portIndex: number = -1;
-    private connectionAttempt: number = 1;
-    private maxConnectionAttempts: number = 2;
-    private pendingMessageEvents: IMessageEvent[] = [];
+    private _messageConfig: IMessageConfiguration;
+    private _config: IHabboConnectionConfig | null = null;
+    private _portIndex: number = -1;
+    private _connectionAttempt: number = 1;
+    private _maxConnectionAttempts: number = 2;
+    private _pendingMessageEvents: IMessageEvent[] = [];
     private _mode: number = 0;
     private _tcpNoDelay: boolean = true;
     private _suggestedLoginActions: unknown[] = [];
@@ -56,7 +56,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
     constructor(context: IContext)
     {
         super(context);
-        this.messageConfig = new HabboMessages();
+        this._messageConfig = new HabboMessages();
     }
 
     private _sessionDataManager: SessionDataManager | null = null;
@@ -102,12 +102,12 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
     get port(): number
     {
-        if(!this.config || this.portIndex < 0 || this.portIndex >= this.config.ports.length)
+        if(!this._config || this._portIndex < 0 || this._portIndex >= this._config.ports.length)
         {
             return 0;
         }
 
-        return this.config.ports[this.portIndex];
+        return this._config.ports[this._portIndex];
     }
 
     get suggestedLoginActions(): unknown[]
@@ -127,7 +127,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
     get messages(): IMessageConfiguration
     {
-        return this.messageConfig;
+        return this._messageConfig;
     }
 
     protected override get dependencies(): Array<ComponentDependency<any>>
@@ -177,9 +177,9 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         this._connectionActions = actions;
     }
 
-    configure(config: HabboConnectionConfig): void
+    configure(config: IHabboConnectionConfig): void
     {
-        this.config = config;
+        this._config = config;
         this._ssoTicket = config.ssoTicket || null;
     }
 
@@ -192,7 +192,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
             return;
         }
 
-        if(!this.config)
+        if(!this._config)
         {
             throw new Error('Connection not configured. Call configure() first.');
         }
@@ -207,8 +207,8 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
         this._sessionDataManager = new SessionDataManager(this.context);
 
-        this.portIndex = -1;
-        this.connectionAttempt = 1;
+        this._portIndex = -1;
+        this._connectionAttempt = 1;
         this.tryNextPort();
     }
 
@@ -221,7 +221,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         else
         {
             // Buffer events until connection is established
-            this.pendingMessageEvents.push(event);
+            this._pendingMessageEvents.push(event);
         }
         return event;
     }
@@ -235,18 +235,18 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         else
         {
             // Remove from pending events if not yet registered
-            const index = this.pendingMessageEvents.indexOf(event);
+            const index = this._pendingMessageEvents.indexOf(event);
             if(index !== -1)
             {
-                this.pendingMessageEvents.splice(index, 1);
+                this._pendingMessageEvents.splice(index, 1);
             }
         }
     }
 
     renewSocket(): void
     {
-        this.connectionAttempt = 1;
-        this.portIndex = -1;
+        this._connectionAttempt = 1;
+        this._portIndex = -1;
         this._connection?.createSocket();
     }
 
@@ -420,8 +420,8 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
     {
         log.error(`Connection error: ${error.message}`);
         // Only set error state if we've exhausted all retry attempts
-        if(this.connectionAttempt >= this.maxConnectionAttempts &&
-			this.portIndex >= (this.config?.ports.length ?? 0) - 1)
+        if(this._connectionAttempt >= this._maxConnectionAttempts &&
+			this._portIndex >= (this._config?.ports.length ?? 0) - 1)
         {
             this._connectionActions?.setError(error.message);
             this.events.emit('connectionError', error);
@@ -480,48 +480,48 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         }
 
         this._connection = this.communicationManager.createConnection(this);
-        this._connection.registerMessageClasses(this.messageConfig);
+        this._connection.registerMessageClasses(this._messageConfig);
         this._connection.isConfigured();
 
-        if(this.pendingMessageEvents.length > 0)
+        if(this._pendingMessageEvents.length > 0)
         {
-            log.debug(`Flushing ${this.pendingMessageEvents.length} pending message events`);
+            log.debug(`Flushing ${this._pendingMessageEvents.length} pending message events`);
 
-            for(const event of this.pendingMessageEvents)
+            for(const event of this._pendingMessageEvents)
             {
                 this._connection.addMessageEvent(event);
             }
 
-            this.pendingMessageEvents = [];
+            this._pendingMessageEvents = [];
         }
     }
 
     private tryNextPort(): void
     {
-        if(!this._connection || !this.config) return;
+        if(!this._connection || !this._config) return;
 
         if(this._connection.connected) return;
 
-        this.portIndex++;
+        this._portIndex++;
 
-        if(this.portIndex >= this.config.ports.length)
+        if(this._portIndex >= this._config.ports.length)
         {
-            this.connectionAttempt++;
+            this._connectionAttempt++;
 
-            if(this.connectionAttempt > this.maxConnectionAttempts)
+            if(this._connectionAttempt > this._maxConnectionAttempts)
             {
                 log.failure('Failed to connect after all attempts');
 
                 return;
             }
 
-            this.portIndex = 0;
+            this._portIndex = 0;
         }
 
-        const port = this.config.ports[this.portIndex];
+        const port = this._config.ports[this._portIndex];
 
-        this._connection.timeout = this.connectionAttempt * 10000;
-        this._connection.init(this.config.host, port, this._tcpNoDelay);
+        this._connection.timeout = this._connectionAttempt * 10000;
+        this._connection.init(this._config.host, port, this._tcpNoDelay);
     }
 
     private appendMessageQueue(direction: string, messageId: string): void

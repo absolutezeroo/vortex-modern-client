@@ -4,7 +4,7 @@ import type {Texture} from 'pixi.js';
  * Color transform data for avatar part tinting.
  * Replaces Flash's ColorTransform class.
  */
-export interface ColorTransformData
+export interface IColorTransformData
 {
     redMultiplier: number;
     greenMultiplier: number;
@@ -25,7 +25,7 @@ export class ImageData
         rect: { x: number; y: number; width: number; height: number },
         regPoint: { x: number; y: number },
         flipH: boolean,
-        colorTransform: ColorTransformData | null
+        colorTransform: IColorTransformData | null
     )
     {
         this._texture = texture;
@@ -80,12 +80,12 @@ export class ImageData
         return this._flipH;
     }
 
-    private _colorTransform: ColorTransformData | null;
+    private _colorTransform: IColorTransformData | null;
 
     /**
 	 * The color transform applied to this image, or null if none.
 	 */
-    public get colorTransform(): ColorTransformData | null
+    public get colorTransform(): IColorTransformData | null
     {
         return this._colorTransform;
     }

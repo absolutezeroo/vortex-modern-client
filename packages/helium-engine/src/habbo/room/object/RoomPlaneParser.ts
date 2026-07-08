@@ -8,7 +8,7 @@
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IVector3d} from '@room/utils/IVector3d';
 import {RoomPlaneData} from './RoomPlaneData';
-import {type Point, RoomWallData} from './RoomWallData';
+import {type IPoint, RoomWallData} from './RoomWallData';
 import {RoomFloorHole} from './RoomFloorHole';
 
 export class RoomPlaneParser
@@ -157,7 +157,7 @@ export class RoomPlaneParser
         return maxHeight;
     }
 
-    private static findEntranceTile(tiles: number[][]): Point | null
+    private static findEntranceTile(tiles: number[][]): IPoint | null
     {
         if(tiles === null) return null;
 
@@ -617,7 +617,7 @@ export class RoomPlaneParser
     }
 
     // Private methods
-    private initialize(entranceTile: Point | null): boolean
+    private initialize(entranceTile: IPoint | null): boolean
     {
         let entranceHeight = 0;
 
@@ -699,7 +699,7 @@ export class RoomPlaneParser
 
         if(startY > this.maxY) return false;
 
-        const startPoint: Point = {x: startX, y: startY};
+        const startPoint: IPoint = {x: startX, y: startY};
         const wallData = this.generateWallData(startPoint, true);
         const wallDataOriginal = this.generateWallData(startPoint, false);
 
@@ -724,7 +724,7 @@ export class RoomPlaneParser
         return true;
     }
 
-    private generateWallData(startPoint: Point, includeHoles: boolean): RoomWallData | null
+    private generateWallData(startPoint: IPoint, includeHoles: boolean): RoomWallData | null
     {
         const wallData = new RoomWallData();
         const extractors = [
@@ -735,7 +735,7 @@ export class RoomPlaneParser
         ];
 
         let direction = 0;
-        let currentPoint: Point = {x: startPoint.x, y: startPoint.y};
+        let currentPoint: IPoint = {x: startPoint.x, y: startPoint.y};
         let iterations = 0;
 
         while(iterations++ < 1000)
@@ -787,7 +787,7 @@ export class RoomPlaneParser
         return wallData;
     }
 
-    private extractTopWall(point: Point, includeHoles: boolean): Point | null
+    private extractTopWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
 
@@ -810,7 +810,7 @@ export class RoomPlaneParser
         return null;
     }
 
-    private extractRightWall(point: Point, includeHoles: boolean): Point | null
+    private extractRightWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
 
@@ -833,7 +833,7 @@ export class RoomPlaneParser
         return null;
     }
 
-    private extractBottomWall(point: Point, includeHoles: boolean): Point | null
+    private extractBottomWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
 
@@ -856,7 +856,7 @@ export class RoomPlaneParser
         return null;
     }
 
-    private extractLeftWall(point: Point, includeHoles: boolean): Point | null
+    private extractLeftWall(point: IPoint, includeHoles: boolean): IPoint | null
     {
         if(point === null) return null;
 
@@ -994,7 +994,7 @@ export class RoomPlaneParser
             if(!wallData.getHideWall(i))
             {
                 const corner = wallData.getCorner(i);
-                const endPoint: Point = {x: corner.x, y: corner.y};
+                const endPoint: IPoint = {x: corner.x, y: corner.y};
                 const dirVector = RoomWallData.WALL_DIRECTION_VECTORS[wallData.getDirection(i)];
                 const length = wallData.getLength(i);
 
@@ -1011,7 +1011,7 @@ export class RoomPlaneParser
         }
     }
 
-    private resolveOriginalWallIndex(start: Point, end: Point, wallData: RoomWallData): number
+    private resolveOriginalWallIndex(start: IPoint, end: IPoint, wallData: RoomWallData): number
     {
         const minY = Math.min(start.y, end.y);
         const maxY = Math.max(start.y, end.y);

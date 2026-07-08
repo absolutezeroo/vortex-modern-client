@@ -3,7 +3,7 @@ import {EventEmitter} from 'eventemitter3';
 import {Logger} from '@core/utils/Logger';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
-import type {HabboFriendListEvents, IHabboFriendList} from './IHabboFriendList';
+import type {IHabboFriendListEvents, IHabboFriendList} from './IHabboFriendList';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 
 // Data classes
@@ -140,9 +140,9 @@ export class HabboFriendList extends Component implements IHabboFriendList
 	 * Separate event emitter for friend list events.
 	 * Uses a different property name to avoid overriding Component.events.
 	 */
-    private _friendListEvents: EventEmitter<HabboFriendListEvents> = new EventEmitter<HabboFriendListEvents>();
+    private _friendListEvents: EventEmitter<IHabboFriendListEvents> = new EventEmitter<IHabboFriendListEvents>();
 
-    get friendListEvents(): EventEmitter<HabboFriendListEvents>
+    get friendListEvents(): EventEmitter<IHabboFriendListEvents>
     {
         return this._friendListEvents;
     }

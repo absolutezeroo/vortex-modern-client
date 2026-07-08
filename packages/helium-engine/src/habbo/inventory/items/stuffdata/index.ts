@@ -13,5 +13,5 @@ export {StuffDataType, StuffDataFlags,} from './StuffDataType';
 export {VoteResultStuffData} from './VoteResultStuffData';
 
 // Types
-export type {HighScoreEntry} from './HighScoreStuffData';
+export type {IHighScoreEntry} from './HighScoreStuffData';
 export type {StuffDataTypeValue} from './StuffDataType';

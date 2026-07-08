@@ -3,7 +3,7 @@ import type {GroupItem} from '../items/GroupItem';
 /**
  * Trading user data
  */
-export interface TradingUser
+export interface ITradingUser
 {
     userId: number;
     userName: string;
@@ -21,7 +21,7 @@ export function createTradingUser(
     userId: number,
     userName: string,
     canTrade: boolean
-): TradingUser
+): ITradingUser
 {
     return {
         userId,

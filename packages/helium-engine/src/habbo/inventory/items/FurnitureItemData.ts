@@ -5,7 +5,7 @@ import type {IStuffData} from './IStuffData';
  *
  * Based on AS3 com.sulake.habbo.communication.messages.incoming.inventory.furni.class_1703
  */
-export interface FurnitureItemData
+export interface IFurnitureItemData
 {
     itemId: number;
     itemType: string;

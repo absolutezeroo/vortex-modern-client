@@ -20,7 +20,7 @@ import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('ChatBubbleStyle');
 
-export interface ChatBubbleStyleDescriptor
+export interface IChatBubbleStyleDescriptor
 {
     id: number;
     styleName: string;
@@ -54,7 +54,7 @@ export class ChatBubbleStyle
     private _selectorPreviewIconBitmapData: ImageBitmap | null = null;
 
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/style/ChatBubbleStyle.as::ChatBubbleStyle()
-    constructor(assets: IAssetLibrary, windowManager: IHabboWindowManager, descriptor: ChatBubbleStyleDescriptor)
+    constructor(assets: IAssetLibrary, windowManager: IHabboWindowManager, descriptor: IChatBubbleStyleDescriptor)
     {
         this._id = descriptor.id;
         this._styleName = descriptor.styleName;

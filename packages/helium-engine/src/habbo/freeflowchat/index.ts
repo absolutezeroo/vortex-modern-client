@@ -10,5 +10,5 @@ export * from './viewer';
 export {HabboFreeFlowChat} from './HabboFreeFlowChat';
 
 // Types
-export type {HabboFreeFlowChatEvents} from './HabboFreeFlowChat';
+export type {IHabboFreeFlowChatEvents} from './HabboFreeFlowChat';
 export type {IFreeFlowChatRoomSessionManager, IHabboFreeFlowChat,} from './IHabboFreeFlowChat';

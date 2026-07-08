@@ -10,7 +10,7 @@ const log = Logger.getLogger('ComponentContext');
 /**
  * Interface queue entry
  */
-interface InterfaceQueue<T = unknown>
+interface IInterfaceQueue<T = unknown>
 {
     iid: IID<T>;
     callbacks: InterfaceCallback<T>[];
@@ -19,7 +19,7 @@ interface InterfaceQueue<T = unknown>
 /**
  * Update receiver entry
  */
-interface UpdateReceiverEntry
+interface IUpdateReceiverEntry
 {
     receiver: IUpdateReceiver;
     priority: number;
@@ -51,8 +51,8 @@ interface UpdateReceiverEntry
 export class ComponentContext extends Component implements IContext
 {
     private readonly _attachedComponents: Component[] = [];
-    private readonly _interfaceQueues: Map<symbol, InterfaceQueue> = new Map();
-    private readonly _updateReceivers: UpdateReceiverEntry[] = [];
+    private readonly _interfaceQueues: Map<symbol, IInterfaceQueue> = new Map();
+    private readonly _updateReceivers: IUpdateReceiverEntry[] = [];
     private _updateReceiversDirty: boolean = false;
     private readonly _linkEventTrackers: ILinkEventTracker[] = [];
     private readonly _unlockHandlers: Map<Component, () => void> = new Map();
@@ -418,7 +418,7 @@ export class ComponentContext extends Component implements IContext
 	 */
     private addToQueue<T>(iid: IID<T>, callback: InterfaceCallback<T>): void
     {
-        let queue = (this._interfaceQueues.get(iid) ?? null) as InterfaceQueue<T> | null;
+        let queue = (this._interfaceQueues.get(iid) ?? null) as IInterfaceQueue<T> | null;
 
         if(!queue)
         {
@@ -426,7 +426,7 @@ export class ComponentContext extends Component implements IContext
                 iid,
                 callbacks: [],
             };
-            this._interfaceQueues.set(iid, queue as InterfaceQueue);
+            this._interfaceQueues.set(iid, queue as IInterfaceQueue);
         }
 
         queue.callbacks.push(callback);
@@ -457,7 +457,7 @@ export class ComponentContext extends Component implements IContext
 	 */
     private announceInterfaceAvailability<T>(iid: IID<T>, provider: Component | T): void
     {
-        const queue = (this._interfaceQueues.get(iid) ?? null) as InterfaceQueue<T> | null;
+        const queue = (this._interfaceQueues.get(iid) ?? null) as IInterfaceQueue<T> | null;
 
         if(!queue) return;
 

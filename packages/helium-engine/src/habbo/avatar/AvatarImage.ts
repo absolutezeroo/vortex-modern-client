@@ -61,7 +61,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     private _effectId: number = -1;
     private _animFrameCount: number = 0;
     private _actionsSorted: boolean = false;
-    private _effectManager: EffectAssetDownloadManager | null;
+    private _effectManager: IEffectAssetDownloadManager | null;
     private _effectListener: IAvatarEffectListener | null;
     private _cachedBodyPartsDirection: number = -1;
     private _cachedBodyPartsGeometry: string | null = null;
@@ -73,7 +73,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         aliasCollection: AssetAliasCollection,
         figure: AvatarFigureContainer,
         scale: string,
-        effectManager: EffectAssetDownloadManager | null = null,
+        effectManager: IEffectAssetDownloadManager | null = null,
         effectListener: IAvatarEffectListener | null = null
     )
     {
@@ -1297,9 +1297,9 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 }
 
 /**
- * Temporary type placeholder for EffectAssetDownloadManager until it is implemented.
+ * Temporary type placeholder for IEffectAssetDownloadManager until it is implemented.
  */
-interface EffectAssetDownloadManager
+interface IEffectAssetDownloadManager
 {
     isReady(effectId: number): boolean;
 

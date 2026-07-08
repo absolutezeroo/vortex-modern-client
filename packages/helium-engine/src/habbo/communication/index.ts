@@ -15,9 +15,9 @@ export { HabboWebApiError } from './HabboWebApiError';
 export { HabboWebApiMethod } from './HabboWebApiMethod';
 
 // Types
-export type { HabboConnectionConfig } from './HabboCommunicationManager';
+export type { IHabboConnectionConfig } from './HabboCommunicationManager';
 export type { IConnectionActions } from './IConnectionActions';
-export type { HabboCommunicationManagerEvents, IHabboCommunicationManager } from './IHabboCommunicationManager';
+export type { IHabboCommunicationManagerEvents, IHabboCommunicationManager } from './IHabboCommunicationManager';
 export type { IApiListener } from './IApiListener';
 export type { IHabboWebApiListener } from './IHabboWebApiListener';
-export type { IHabboWebApiSession, WebApiRouteDefinition } from './IHabboWebApiSession';
+export type { IHabboWebApiSession, IWebApiRouteDefinition } from './IHabboWebApiSession';

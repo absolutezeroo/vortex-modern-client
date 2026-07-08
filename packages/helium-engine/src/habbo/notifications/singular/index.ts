@@ -7,4 +7,4 @@ export {HabboNotificationItemStyle} from './HabboNotificationItemStyle';
 export {SingularNotificationController} from './SingularNotificationController';
 
 // Types
-export type {HabboAlertDialogManagerEvents} from './HabboAlertDialogManager';
+export type {IHabboAlertDialogManagerEvents} from './HabboAlertDialogManager';

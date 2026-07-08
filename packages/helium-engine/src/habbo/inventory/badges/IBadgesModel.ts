@@ -14,7 +14,7 @@ export type BadgeFilterType = typeof BadgeFilter[keyof typeof BadgeFilter];
 /**
  * Badge data from server
  */
-export interface BadgeData
+export interface IBadgeData
 {
     badgeId: string;
     slotId: number;
@@ -35,7 +35,7 @@ export interface IBadgesModel
     /**
 	 * Initialize badges from server message
 	 */
-    initBadges(badges: BadgeData[], getName: (id: string) => string, getDesc: (id: string) => string): void;
+    initBadges(badges: IBadgeData[], getName: (id: string) => string, getDesc: (id: string) => string): void;
 
     /**
 	 * Update or add a badge

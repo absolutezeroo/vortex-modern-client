@@ -26,7 +26,7 @@ type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
  * this — otherwise the CPU cost regresses silently (no functional bug, no
  * test failure, just a slower client).
  */
-interface BitmapWrapperCacheEntry
+interface IBitmapWrapperCacheEntry
 {
     canvas: OffscreenCanvas;
     ctx: OffscreenCanvasRenderingContext2D;
@@ -81,10 +81,10 @@ export class WindowComposite
 
     private _compositeBuffer: OffscreenCanvas | null = null;
     private _compositeCtx: OffscreenCanvasRenderingContext2D | null = null;
-    // See BitmapWrapperCacheEntry doc comment above — perf-critical, keyed by
+    // See IBitmapWrapperCacheEntry doc comment above — perf-critical, keyed by
     // window identity, WeakMap so entries drop automatically once a window is
     // disposed and no longer referenced elsewhere.
-    private _bitmapWrapperCache: WeakMap<IWindow, BitmapWrapperCacheEntry> = new WeakMap();
+    private _bitmapWrapperCache: WeakMap<IWindow, IBitmapWrapperCacheEntry> = new WeakMap();
     private _drawBufferResolver: DrawBufferResolver;
 
     constructor(drawBufferResolver: DrawBufferResolver)
@@ -398,7 +398,7 @@ export class WindowComposite
         const etchPt = window.etchingPoint;
         const ds = window.dynamicStyleColor;
 
-        // PERF: see BitmapWrapperCacheEntry doc comment. Only re-run the
+        // PERF: see IBitmapWrapperCacheEntry doc comment. Only re-run the
         // pixel-level compositing (rotate/tile/tint/greyscale) below when a
         // value it actually depends on has changed since the last frame;
         // otherwise reuse last frame's canvas as-is.
@@ -597,16 +597,16 @@ export class WindowComposite
 
     /**
 	 * Gets or creates the persistent per-window canvas backing
-	 * `BitmapWrapperCacheEntry`. Resizing counts as a cache miss (the caller's
+	 * `IBitmapWrapperCacheEntry`. Resizing counts as a cache miss (the caller's
 	 * `paramsUnchanged` check already covers `w`/`h`), so a fresh, blank entry
 	 * is handed back for the caller to populate.
 	 */
     private acquireBitmapWrapperCacheEntry(
         window: IWindow,
-        cached: BitmapWrapperCacheEntry | null,
+        cached: IBitmapWrapperCacheEntry | null,
         w: number,
         h: number
-    ): BitmapWrapperCacheEntry | null
+    ): IBitmapWrapperCacheEntry | null
     {
         const width = Math.max(1, w);
         const height = Math.max(1, h);
@@ -623,7 +623,7 @@ export class WindowComposite
 
         // Sentinel values guarantee the very first comparison in
         // `compositeBitmapWrapper()` treats this entry as "changed".
-        const entry: BitmapWrapperCacheEntry = {
+        const entry: IBitmapWrapperCacheEntry = {
             canvas,
             ctx,
             bmp: null,

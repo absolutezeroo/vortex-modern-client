@@ -17,9 +17,9 @@ import {Randomizer} from './utils/Randomizer';
 
 /**
  * Bitmap mask data for plane masking (doors, windows).
- * Based on AS3: RoomPlaneBitmapMask
+ * Based on AS3: IRoomPlaneBitmapMask
  */
-interface RoomPlaneBitmapMask
+interface IRoomPlaneBitmapMask
 {
     type: string;
     leftSideLoc: number;
@@ -28,9 +28,9 @@ interface RoomPlaneBitmapMask
 
 /**
  * Rectangle mask data for plane masking.
- * Based on AS3: RoomPlaneRectangleMask
+ * Based on AS3: IRoomPlaneRectangleMask
  */
-interface RoomPlaneRectangleMask
+interface IRoomPlaneRectangleMask
 {
     leftSideLoc: number;
     rightSideLoc: number;
@@ -67,8 +67,8 @@ export class RoomPlane
     private _cachedTextureBitmap: PlaneBitmapData | null = null;
     private _textureSprite: Sprite | null = null;
     private _outputCanvas: HTMLCanvasElement | null = null;
-    private _bitmapMasks: RoomPlaneBitmapMask[] = [];
-    private _rectangleMasks: RoomPlaneRectangleMask[] = [];
+    private _bitmapMasks: IRoomPlaneBitmapMask[] = [];
+    private _rectangleMasks: IRoomPlaneRectangleMask[] = [];
     private _maskChanged: boolean = false;
     private _graphics: Graphics;
     private _bitmapData: HTMLCanvasElement | null = null;
@@ -1056,7 +1056,7 @@ export class RoomPlane
 	 *   screen = A + lf*(D-A) + rf*(B-A)
 	 */
     private getRectMaskScreenPoints(
-        mask: RoomPlaneRectangleMask,
+        mask: IRoomPlaneRectangleMask,
         leftLen: number,
         rightLen: number
     ): number[] | null
@@ -1102,7 +1102,7 @@ export class RoomPlane
 	 * Without bitmaps, we approximate doors as 1-tile-wide cutouts extending
 	 * from rightSideLoc upward by DOOR_HEIGHT_TILES (standard Habbo door height).
 	 */
-    private getMaskHolePoints(mask: RoomPlaneBitmapMask, leftLen: number, rightLen: number): number[] | null
+    private getMaskHolePoints(mask: IRoomPlaneBitmapMask, leftLen: number, rightLen: number): number[] | null
     {
         if(leftLen < 0.001 || rightLen < 0.001) return null;
 
@@ -1136,7 +1136,7 @@ export class RoomPlane
     /**
 	 * Compute hole polygon points for a rectangle mask.
 	 */
-    private getRectMaskHolePoints(mask: RoomPlaneRectangleMask, leftLen: number, rightLen: number): number[] | null
+    private getRectMaskHolePoints(mask: IRoomPlaneRectangleMask, leftLen: number, rightLen: number): number[] | null
     {
         const u0 = mask.leftSideLoc / leftLen;
         const v0 = mask.rightSideLoc / rightLen;

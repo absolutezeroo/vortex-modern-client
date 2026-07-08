@@ -1,6 +1,6 @@
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
 import type {IStuffData} from '@habbo/inventory/items/IStuffData';
-import type {FurnitureItemData} from '@habbo/inventory/items/FurnitureItemData';
+import type {IFurnitureItemData} from '@habbo/inventory/items/FurnitureItemData';
 import {StuffDataFactory} from '@habbo/inventory/items/stuffdata';
 
 /**
@@ -150,9 +150,9 @@ export class FurniListItemParser
     }
 
     /**
-	 * Convert to FurnitureItemData for creating FurnitureItem
+	 * Convert to IFurnitureItemData for creating FurnitureItem
 	 */
-    toFurnitureItemData(): FurnitureItemData
+    toFurnitureItemData(): IFurnitureItemData
     {
         return {
             itemId: this._itemId,

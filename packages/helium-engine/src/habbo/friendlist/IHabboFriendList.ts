@@ -5,7 +5,7 @@ import type {HabboSearchResultData} from '@habbo/communication/messages/parser/f
 /**
  * Events emitted by the friend list manager
  */
-export interface HabboFriendListEvents
+export interface IHabboFriendListEvents
 {
     'friendListInitialized': () => void;
     'friendListFragment': (friends: FriendData[]) => void;

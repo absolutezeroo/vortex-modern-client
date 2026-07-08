@@ -6,7 +6,7 @@ import type {IHabboCommunicationManager} from '../communication/IHabboCommunicat
 import type {IHabboLocalizationManager} from '../localization/IHabboLocalizationManager';
 import type {IHabboNotifications} from '../notifications/IHabboNotifications';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
-import type {AvatarEffect} from '../communication/messages/parser/inventory/AvatarEffectsMessageParser';
+import type {IAvatarEffect} from '../communication/messages/parser/inventory/AvatarEffectsMessageParser';
 import type {IUserDataManager} from './IUserDataManager';
 import type {IPerkManager} from './IPerkManager';
 import type {IIgnoredUsersManager} from './IIgnoredUsersManager';
@@ -101,7 +101,7 @@ export interface ISessionDataManager extends IDisposable
     // Figure & effects
     readonly figureSetIds: number[];
     readonly boundFurnitureNames: string[];
-    readonly avatarEffects: AvatarEffect[];
+    readonly avatarEffects: IAvatarEffect[];
 
     // Mystery box
     readonly mysteryBoxColor: string;

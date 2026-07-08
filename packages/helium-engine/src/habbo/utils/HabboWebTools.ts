@@ -6,7 +6,7 @@ const log = Logger.getLogger('HabboWebTools');
 /**
  * Events emitted by HabboWebTools
  */
-export interface HabboWebToolsEvents
+export interface IHabboWebToolsEvents
 {
     'roomVisited': (roomId: number) => void;
     'logout': () => void;
@@ -34,7 +34,7 @@ export class HabboWebTools
     public static readonly HABBLET_MINI_MAIL: string = 'minimail';
     public static readonly HABBLET_ROOM_ENTER_AD: string = 'roomenterad';
     public static readonly HABBLET_NEWS: string = 'news';
-    private static readonly _toolEvents = new EventEmitter<HabboWebToolsEvents>();
+    private static readonly _toolEvents = new EventEmitter<IHabboWebToolsEvents>();
 
     private static _baseUrl: string = '';
 
@@ -52,7 +52,7 @@ export class HabboWebTools
 	 * Event emitter for web tool events.
 	 * Named `toolEvents` to avoid conflict with Component.events (see MEMORY.md).
 	 */
-    static get toolEvents(): EventEmitter<HabboWebToolsEvents>
+    static get toolEvents(): EventEmitter<IHabboWebToolsEvents>
     {
         return HabboWebTools._toolEvents;
     }

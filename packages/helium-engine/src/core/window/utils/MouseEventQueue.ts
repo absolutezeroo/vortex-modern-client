@@ -8,7 +8,7 @@
  *
  * @see sources/win63_2021_version/com/sulake/core/window/utils/MouseEventQueue.as
  */
-export interface MouseEventEntry
+export interface IMouseEventEntry
 {
     type: string;
     stageX: number;
@@ -22,7 +22,7 @@ export interface MouseEventEntry
 
 export class MouseEventQueue
 {
-    private _events: MouseEventEntry[] = [];
+    private _events: IMouseEventEntry[] = [];
     private _readIndex: number = 0;
 
     private _mouseX: number = 0;
@@ -62,7 +62,7 @@ export class MouseEventQueue
 	 *
 	 * @param event - The mouse event entry to enqueue
 	 */
-    public enqueue(event: MouseEventEntry): void
+    public enqueue(event: IMouseEventEntry): void
     {
         this._mouseX = event.stageX;
         this._mouseY = event.stageY;
@@ -82,7 +82,7 @@ export class MouseEventQueue
 	 *
 	 * @returns The next event entry, or null
 	 */
-    public next(): MouseEventEntry | null
+    public next(): IMouseEventEntry | null
     {
         if(this._readIndex < this._events.length)
         {
@@ -117,7 +117,7 @@ export class MouseEventQueue
 	 *
 	 * @returns The oldest event, or null if empty
 	 */
-    public dequeue(): MouseEventEntry | null
+    public dequeue(): IMouseEventEntry | null
     {
         if(this._events.length === 0)
         {

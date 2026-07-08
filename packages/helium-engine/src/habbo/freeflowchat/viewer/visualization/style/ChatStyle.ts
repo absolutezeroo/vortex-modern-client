@@ -1,18 +1,18 @@
 import type {Container, Point, Rectangle} from 'pixi.js';
-import type {ChatTextFormat, IChatStyle} from '@habbo/freeflowchat/style/IChatStyle';
+import type {IChatTextFormat, IChatStyle} from '@habbo/freeflowchat/style/IChatStyle';
 import {HabboFreeFlowChat} from '@habbo/freeflowchat/HabboFreeFlowChat';
-import type {ChatLinkStyleSheet, IChatStyleInternal} from './IChatStyleInternal';
+import type {IChatLinkStyleSheet, IChatStyleInternal} from './IChatStyleInternal';
 
 /**
- * ChatStyleDescriptor
+ * IChatStyleDescriptor
  *
  * All data ChatStyleLibrary reads out of a style's `regpoints` config text and
  * `style_<assetId>_*` assets, gathered up-front so ChatStyle's constructor can
  * take a single object instead of AS3's 27 positional constructor params
  * (same descriptor-object approach already used by
- * `@habbo/ui/widget/roomchat/style/ChatBubbleStyle`'s `ChatBubbleStyleDescriptor`).
+ * `@habbo/ui/widget/roomchat/style/ChatBubbleStyle`'s `IChatBubbleStyleDescriptor`).
  */
-export interface ChatStyleDescriptor
+export interface IChatStyleDescriptor
 {
     background: ImageBitmap;
     scale9Grid: Rectangle;
@@ -20,7 +20,7 @@ export interface ChatStyleDescriptor
     pointerY: number;
     pointerXMargins: number[] | null;
     textFieldMargins: Rectangle;
-    textFormat: ChatTextFormat;
+    textFormat: IChatTextFormat;
     isAnonymous: boolean;
     emblem: ImageBitmap | null;
     emblemOffset: Point | null;
@@ -39,7 +39,7 @@ export interface ChatStyleDescriptor
     colorOffset: Point | null;
     overlap: Rectangle | null;
     allowHTML: boolean;
-    styleSheet: ChatLinkStyleSheet | null;
+    styleSheet: IChatLinkStyleSheet | null;
     usePixelPerfectNineSlice: boolean;
 }
 
@@ -59,7 +59,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
     private readonly _pointerY: number;
     private readonly _pointerXMargins: number[] | null;
     private readonly _textFieldMargins: Rectangle;
-    private readonly _textFormat: ChatTextFormat;
+    private readonly _textFormat: IChatTextFormat;
     private readonly _isAnonymous: boolean;
     private readonly _emblem: ImageBitmap | null;
     private readonly _emblemOffset: Point | null;
@@ -80,11 +80,11 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
     private readonly _colorOffset: Point | null;
     private readonly _overlap: Rectangle | null;
     private readonly _allowHTML: boolean;
-    private readonly _styleSheet: ChatLinkStyleSheet | null;
+    private readonly _styleSheet: IChatLinkStyleSheet | null;
     private readonly _usePixelPerfectNineSlice: boolean;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::ChatStyle()
-    constructor(descriptor: ChatStyleDescriptor)
+    constructor(descriptor: IChatStyleDescriptor)
     {
         this._background = descriptor.background;
         this._scale9Grid = descriptor.scale9Grid;
@@ -163,13 +163,13 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get textFormat()
-    get textFormat(): ChatTextFormat
+    get textFormat(): IChatTextFormat
     {
         return this._textFormat;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyle.as::get styleSheet()
-    get styleSheet(): ChatLinkStyleSheet | null
+    get styleSheet(): IChatLinkStyleSheet | null
     {
         return this._styleSheet;
     }

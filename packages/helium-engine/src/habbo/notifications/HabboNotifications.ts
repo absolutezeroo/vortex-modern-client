@@ -35,7 +35,7 @@ const log = Logger.getLogger('HabboNotifications');
  * NOTE: This uses a separate EventEmitter (_notificationEvents) to avoid
  * overriding the Component.events getter (see MEMORY.md critical rule).
  */
-export interface HabboNotificationEvents
+export interface IHabboNotificationEvents
 {
     'showItem': (item: unknown) => void;
     'clubGiftNotification': (numGifts: number) => void;
@@ -80,13 +80,13 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 * CRITICAL: Do NOT override the `events` getter from Component.
 	 * @see MEMORY.md - Component EventEmitter Override Bug
 	 */
-    private _notificationEvents: EventEmitter<HabboNotificationEvents> = new EventEmitter();
+    private _notificationEvents: EventEmitter<IHabboNotificationEvents> = new EventEmitter();
 
     /**
 	 * Get the notification-specific event emitter.
 	 * Use this (NOT `events`) for notification events.
 	 */
-    get notificationEvents(): EventEmitter<HabboNotificationEvents>
+    get notificationEvents(): EventEmitter<IHabboNotificationEvents>
     {
         return this._notificationEvents;
     }

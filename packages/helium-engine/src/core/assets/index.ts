@@ -18,7 +18,7 @@ export {XmlAsset} from './XmlAsset';
 
 // Types
 export type {AssetClass, AssetLoaderClass,} from './AssetTypeDeclaration';
-export type {Point, Rectangle,} from './BitmapDataAsset';
+export type {IPoint, IRectangle,} from './BitmapDataAsset';
 export type {IAsset} from './IAsset';
 export type {IAssetLibrary} from './IAssetLibrary';
 export type {ILazyAsset} from './ILazyAsset';

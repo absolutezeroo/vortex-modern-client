@@ -6,7 +6,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  *
  * @see source_as_win63/habbo/communication/messages/incoming/callforhelp/class_1785.as
  */
-export interface CfhTopic
+export interface ICfhTopic
 {
     name: string;
     id: number;
@@ -18,10 +18,10 @@ export interface CfhTopic
  *
  * @see source_as_win63/habbo/communication/messages/incoming/callforhelp/class_1746.as
  */
-export interface CfhCategory
+export interface ICfhCategory
 {
     name: string;
-    topics: CfhTopic[];
+    topics: ICfhTopic[];
 }
 
 /**
@@ -32,9 +32,9 @@ export interface CfhCategory
  */
 export class CfhTopicsInitMessageParser implements IMessageParser
 {
-    private _callForHelpCategories: CfhCategory[] = [];
+    private _callForHelpCategories: ICfhCategory[] = [];
 
-    get callForHelpCategories(): CfhCategory[]
+    get callForHelpCategories(): ICfhCategory[]
     {
         return this._callForHelpCategories;
     }
@@ -57,7 +57,7 @@ export class CfhTopicsInitMessageParser implements IMessageParser
         {
             const name = wrapper.readString();
             const topicCount = wrapper.readInt();
-            const topics: CfhTopic[] = [];
+            const topics: ICfhTopic[] = [];
 
             for(let j = 0; j < topicCount; j++)
             {

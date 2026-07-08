@@ -1,7 +1,7 @@
 import type {ITradingModel} from './ITradingModel';
 import type {TradingStateType} from './TradingState';
 import {MAX_ITEMS_TO_TRADE, TradingState} from './TradingState';
-import type {TradingUser} from './TradingUser';
+import type {ITradingUser} from './TradingUser';
 import {createTradingUser} from './TradingUser';
 import type {GroupItem} from '../items/GroupItem';
 
@@ -26,16 +26,16 @@ export class TradingModel implements ITradingModel
         return this._state;
     }
 
-    private _ownUser: TradingUser | null = null;
+    private _ownUser: ITradingUser | null = null;
 
-    get ownUser(): TradingUser | null
+    get ownUser(): ITradingUser | null
     {
         return this._ownUser;
     }
 
-    private _otherUser: TradingUser | null = null;
+    private _otherUser: ITradingUser | null = null;
 
-    get otherUser(): TradingUser | null
+    get otherUser(): ITradingUser | null
     {
         return this._otherUser;
     }

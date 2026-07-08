@@ -2,7 +2,7 @@ import {Rectangle} from 'pixi.js';
 import type {IChatHistoryEntry} from './IChatHistoryEntry';
 
 /**
- * RoomChangeData
+ * IRoomChangeData
  *
  * The AS3 parameter type here (imported as `_SafePkg_2008._SafeCls_2172` in
  * the primary source, `package_11.class_1569` in win63_version) is an
@@ -13,7 +13,7 @@ import type {IChatHistoryEntry} from './IChatHistoryEntry';
  * cross-referenced either. Only its `roomName` field is actually read by
  * ChatHistoryRoomChangeEntry, so that's all this local shape carries.
  */
-export interface RoomChangeData
+export interface IRoomChangeData
 {
     roomName: string | null;
 }
@@ -33,7 +33,7 @@ export class ChatHistoryRoomChangeEntry implements IChatHistoryEntry
 {
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/history/visualization/entry/ChatHistoryRoomChangeEntry.as::ChatHistoryRoomChangeEntry()
     // TODO(AS3): see class header — bitmap compositing not ported, `roomData`/`chatFlow` unused for now.
-    constructor(_roomData: RoomChangeData | null, _chatFlow: unknown)
+    constructor(_roomData: IRoomChangeData | null, _chatFlow: unknown)
     {
     }
 

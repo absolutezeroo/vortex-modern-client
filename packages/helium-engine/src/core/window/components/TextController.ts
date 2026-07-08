@@ -12,7 +12,7 @@ import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontStr
 
 type MeasureContext = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
-interface TextLayout
+interface ITextLayout
 {
     lines: string[];
     width: number;
@@ -906,7 +906,7 @@ export class TextController extends WindowController implements ITextWindow
         return output;
     }
 
-    protected measureLayout(value: string, maxWidth: number): TextLayout
+    protected measureLayout(value: string, maxWidth: number): ITextLayout
     {
         let safeValue = value;
 

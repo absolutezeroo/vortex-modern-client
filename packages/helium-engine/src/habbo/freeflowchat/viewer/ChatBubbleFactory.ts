@@ -7,7 +7,7 @@ import type {IHabboFreeFlowChat} from '../IHabboFreeFlowChat';
 import {ChatItem} from '../data/ChatItem';
 import type {IChatHistoryEntry} from '../history/visualization/entry/IChatHistoryEntry';
 import {ChatHistoryEntryBitmapBubble} from '../history/visualization/entry/ChatHistoryEntryBitmapBubble';
-import {ChatHistoryRoomChangeEntry, type RoomChangeData} from '../history/visualization/entry/ChatHistoryRoomChangeEntry';
+import {ChatHistoryRoomChangeEntry, type IRoomChangeData} from '../history/visualization/entry/ChatHistoryRoomChangeEntry';
 import {ChatStyleLibrary} from './visualization/style/ChatStyleLibrary';
 import {ChatStyle} from './visualization/style/ChatStyle';
 import {BlankStyle} from './visualization/style/BlankStyle';
@@ -229,7 +229,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryRoomChangeEntry()
-    getHistoryRoomChangeEntry(roomData: RoomChangeData | null): IChatHistoryEntry
+    getHistoryRoomChangeEntry(roomData: IRoomChangeData | null): IChatHistoryEntry
     {
         return new ChatHistoryRoomChangeEntry(roomData, this._chatFlow);
     }

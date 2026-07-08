@@ -12,7 +12,7 @@ import type {IGameDataResources} from './IGameDataResources';
  * - LOCALIZATION_EVENT_LOCALIZATION_FAILED
  * - "complete" event
  */
-export interface LocalizationManagerEvents
+export interface ILocalizationManagerEvents
 {
     loaded: () => void;
     failed: () => void;

@@ -5,5 +5,5 @@ export {Vector3d} from './Vector3d';
 export {RoomId} from './RoomId';
 
 // Types
-export type {Point, IRoomGeometry,} from './IRoomGeometry';
+export type {IPoint, IRoomGeometry,} from './IRoomGeometry';
 export type {IVector3d} from './IVector3d';

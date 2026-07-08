@@ -4,4 +4,4 @@
 export {HabboFriendList} from './HabboFriendList';
 
 // Types
-export type {HabboFriendListEvents, IHabboFriendList,} from './IHabboFriendList';
+export type {IHabboFriendListEvents, IHabboFriendList,} from './IHabboFriendList';

@@ -1,6 +1,6 @@
 import type {IFurniModel} from './IFurniModel';
 import type {IStuffData} from '../items/IStuffData';
-import type {FurnitureItemData} from '../items/FurnitureItemData';
+import type {IFurnitureItemData} from '../items/FurnitureItemData';
 import type {HabboInventory} from '../HabboInventory';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
@@ -356,7 +356,7 @@ export class FurniModel implements IFurniModel
         this._disposed = true;
     }
 
-    insertFurniture(items: Map<number, FurnitureItemData>): {
+    insertFurniture(items: Map<number, IFurnitureItemData>): {
         addedCount: number;
         removedCount: number;
         isFirstLoad: boolean;

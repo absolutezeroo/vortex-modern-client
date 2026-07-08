@@ -27,8 +27,7 @@ const HOTKEY_CODE = 'KeyD';
 const CASCADE_OFFSET = 24;
 const CONTEXT_LAYER_COUNT = 4;
 
-interface IOpenWindowEntry
-{
+interface IOpenWindowEntry {
     id: number;
     label: string;
     window: IWindow;
@@ -37,20 +36,20 @@ interface IOpenWindowEntry
 let nextOpenId = 1;
 let stylesInjected = false;
 
-export function installWindowDebugger(canvas: HTMLCanvasElement): () => void
+export function installWindowDebugger(canvas: HTMLCanvasElement): () => void 
 {
     let panel: WindowDebuggerPanel | null = null;
 
-    const toggle = (): void =>
+    const toggle = (): void => 
     {
-        if(panel)
+        if(panel) 
         {
             panel.dispose();
             panel = null;
         }
-        else
+        else 
         {
-            panel = new WindowDebuggerPanel(canvas, () =>
+            panel = new WindowDebuggerPanel(canvas, () => 
             {
                 panel = null;
                 toggleButton.classList.remove('hwd-toggle-active');
@@ -60,7 +59,7 @@ export function installWindowDebugger(canvas: HTMLCanvasElement): () => void
         toggleButton.classList.toggle('hwd-toggle-active', panel !== null);
     };
 
-    const onKeyDown = (event: KeyboardEvent): void =>
+    const onKeyDown = (event: KeyboardEvent): void => 
     {
         if(!event.ctrlKey || !event.shiftKey || event.code !== HOTKEY_CODE) return;
 
@@ -72,7 +71,7 @@ export function installWindowDebugger(canvas: HTMLCanvasElement): () => void
 
     const toggleButton = createToggleButton(toggle);
 
-    return () =>
+    return () => 
     {
         window.removeEventListener('keydown', onKeyDown);
         toggleButton.remove();
@@ -81,7 +80,7 @@ export function installWindowDebugger(canvas: HTMLCanvasElement): () => void
     };
 }
 
-function createToggleButton(onToggle: () => void): HTMLButtonElement
+function createToggleButton(onToggle: () => void): HTMLButtonElement 
 {
     injectStyles();
 
@@ -96,7 +95,7 @@ function createToggleButton(onToggle: () => void): HTMLButtonElement
     return button;
 }
 
-class WindowDebuggerPanel
+class WindowDebuggerPanel 
 {
     private readonly _canvas: HTMLCanvasElement;
     private readonly _onClosed: () => void;
@@ -118,14 +117,7 @@ class WindowDebuggerPanel
     private _rafId: number = 0;
     private _lastTreeRefresh: number = 0;
 
-    private readonly pickListener = (event: MouseEvent): void => this.onCanvasPick(event);
-    private readonly hoverPickListener = (event: MouseEvent): void => this.onCanvasHoverPick(event);
-    private readonly pickEscListener = (event: KeyboardEvent): void =>
-    {
-        if(event.code === 'Escape') this.stopPickMode();
-    };
-
-    public constructor(canvas: HTMLCanvasElement, onClosed: () => void)
+    public constructor(canvas: HTMLCanvasElement, onClosed: () => void) 
     {
         this._canvas = canvas;
         this._onClosed = onClosed;
@@ -220,7 +212,32 @@ class WindowDebuggerPanel
         this.loop();
     }
 
-    private startDrag(event: MouseEvent, target: HTMLElement): void
+    public dispose(): void 
+    {
+        cancelAnimationFrame(this._rafId);
+
+        if(this._pickModeActive) 
+        {
+            this.stopPickMode();
+        }
+
+        this._root.remove();
+        this._selectedHighlight.remove();
+        this._hoverHighlight.remove();
+        document.getElementById('hwd-pick-menu')?.remove();
+        this._onClosed();
+    }
+
+    private readonly pickListener = (event: MouseEvent): void => this.onCanvasPick(event);
+
+    private readonly hoverPickListener = (event: MouseEvent): void => this.onCanvasHoverPick(event);
+
+    private readonly pickEscListener = (event: KeyboardEvent): void => 
+    {
+        if(event.code === 'Escape') this.stopPickMode();
+    };
+
+    private startDrag(event: MouseEvent, target: HTMLElement): void 
     {
         if((event.target as HTMLElement).closest('.hwd-close')) return;
 
@@ -234,7 +251,7 @@ class WindowDebuggerPanel
         target.style.top = `${rect.top}px`;
         target.style.right = 'auto';
 
-        const onMove = (moveEvent: MouseEvent): void =>
+        const onMove = (moveEvent: MouseEvent): void => 
         {
             const maxLeft = window.innerWidth - target.offsetWidth;
             const maxTop = window.innerHeight - target.offsetHeight;
@@ -243,7 +260,7 @@ class WindowDebuggerPanel
             target.style.top = `${Math.min(Math.max(0, moveEvent.clientY - offsetY), Math.max(0, maxTop))}px`;
         };
 
-        const onUp = (): void =>
+        const onUp = (): void => 
         {
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('mouseup', onUp);
@@ -253,50 +270,32 @@ class WindowDebuggerPanel
         document.addEventListener('mouseup', onUp);
     }
 
-    public dispose(): void
-    {
-        cancelAnimationFrame(this._rafId);
-
-        if(this._pickModeActive)
-        {
-            this.stopPickMode();
-        }
-
-        this._root.remove();
-        this._selectedHighlight.remove();
-        this._hoverHighlight.remove();
-        document.getElementById('hwd-pick-menu')?.remove();
-        this._onClosed();
-    }
-
-    private setTab(tab: 'layouts' | 'skins'): void
+    private setTab(tab: 'layouts' | 'skins'): void 
     {
         this._activeTab = tab;
 
-        for(const [name, btn] of Object.entries(this._tabButtons))
+        for(const [name, btn] of Object.entries(this._tabButtons)) 
         {
             btn.classList.toggle('hwd-tab-active', name === tab);
         }
 
-        if(tab === 'layouts')
+        if(tab === 'layouts') 
         {
             this.renderLayoutsList('');
             this.renderOpenList();
 
-            if(this._selectedWindow)
+            if(this._selectedWindow) 
             {
                 this.refreshTree();
             }
         }
-        else
+        else 
         {
             this.renderSkinsList('');
         }
     }
 
-    // ── Layouts tab ──────────────────────────────────────────────────
-
-    private renderLayoutsList(filter: string): void
+    private renderLayoutsList(filter: string): void 
     {
         const windowManager = Helium.instance.windowManager;
         const names = windowManager.getRegisteredWidgetLayoutNames().sort();
@@ -317,7 +316,7 @@ class WindowDebuggerPanel
 
         const lower = filter.toLowerCase();
 
-        for(const name of names)
+        for(const name of names) 
         {
             if(lower && !name.toLowerCase().includes(lower)) continue;
 
@@ -333,12 +332,12 @@ class WindowDebuggerPanel
         this._listEl.appendChild(scroll);
     }
 
-    private spawnLayout(name: string): void
+    private spawnLayout(name: string): void 
     {
         const windowManager = Helium.instance.windowManager;
         const built = windowManager.buildWidgetLayout(name);
 
-        if(!built)
+        if(!built) 
         {
             return;
         }
@@ -353,13 +352,13 @@ class WindowDebuggerPanel
         this.renderOpenList();
     }
 
-    private renderOpenList(): void
+    private renderOpenList(): void 
     {
         this._openWindows = this._openWindows.filter(entry => !entry.window.disposed);
 
         this._openListEl.innerHTML = '';
 
-        if(this._openWindows.length === 0)
+        if(this._openWindows.length === 0) 
         {
             return;
         }
@@ -370,13 +369,13 @@ class WindowDebuggerPanel
         heading.textContent = `Open (${this._openWindows.length})`;
         this._openListEl.appendChild(heading);
 
-        for(const entry of this._openWindows)
+        for(const entry of this._openWindows) 
         {
             const row = document.createElement('div');
 
             row.className = 'hwd-open-row';
 
-            if(entry.window === this._selectedWindow)
+            if(entry.window === this._selectedWindow) 
             {
                 row.classList.add('hwd-row-selected');
             }
@@ -389,12 +388,12 @@ class WindowDebuggerPanel
             const closeBtn = document.createElement('button');
 
             closeBtn.textContent = '×';
-            closeBtn.addEventListener('click', (event) =>
+            closeBtn.addEventListener('click', (event) => 
             {
                 event.stopPropagation();
                 entry.window.destroy();
 
-                if(this._selectedWindow === entry.window)
+                if(this._selectedWindow === entry.window) 
                 {
                     this._selectedWindow = null;
                     this._treeEl.innerHTML = '';
@@ -409,9 +408,7 @@ class WindowDebuggerPanel
         }
     }
 
-    // ── Tree inspector ───────────────────────────────────────────────
-
-    private selectWindow(window: IWindow): void
+    private selectWindow(window: IWindow): void 
     {
         this._selectedWindow = window;
         this._selectedNodeWindow = null;
@@ -419,11 +416,11 @@ class WindowDebuggerPanel
         this.renderOpenList();
     }
 
-    private refreshTree(): void
+    private refreshTree(): void 
     {
         this._treeEl.innerHTML = '';
 
-        if(!this._selectedWindow || this._selectedWindow.disposed)
+        if(!this._selectedWindow || this._selectedWindow.disposed) 
         {
             this._selectedWindow = null;
 
@@ -433,18 +430,18 @@ class WindowDebuggerPanel
         const snapshot = WindowTreeInspector.snapshot(this._selectedWindow);
         let overlaps: IOverlapWarning[] | null = null;
 
-        try
+        try 
         {
             overlaps = findOverlaps(snapshot);
         }
-        catch (error)
+        catch (error) 
         {
             log.warn('Overlap detection failed', error);
         }
 
         const overlappingWindows = new Set<IWindow>();
 
-        for(const overlap of overlaps ?? [])
+        for(const overlap of overlaps ?? []) 
         {
             overlappingWindows.add(overlap.a.window);
             overlappingWindows.add(overlap.b.window);
@@ -458,15 +455,15 @@ class WindowDebuggerPanel
 
         copyBtn.className = 'hwd-copy-btn';
         copyBtn.textContent = 'Copy tree as text';
-        copyBtn.addEventListener('click', () =>
+        copyBtn.addEventListener('click', () => 
         {
             let report: string;
 
-            try
+            try 
             {
                 report = buildTreeReport(snapshot);
             }
-            catch (error)
+            catch (error) 
             {
                 log.warn('Failed to build tree report', error);
                 copyBtn.textContent = 'Copy failed';
@@ -474,15 +471,21 @@ class WindowDebuggerPanel
                 return;
             }
 
-            navigator.clipboard.writeText(report).then(() =>
+            navigator.clipboard.writeText(report).then(() => 
             {
                 copyBtn.textContent = 'Copied!';
-                setTimeout(() => { copyBtn.textContent = 'Copy tree as text'; }, 1200);
-            }).catch(() => { copyBtn.textContent = 'Copy failed'; });
+                setTimeout(() => 
+                {
+                    copyBtn.textContent = 'Copy tree as text';
+                }, 1200);
+            }).catch(() => 
+            {
+                copyBtn.textContent = 'Copy failed';
+            });
         });
         toolbar.appendChild(copyBtn);
 
-        if(overlaps === null)
+        if(overlaps === null) 
         {
             const notice = document.createElement('span');
 
@@ -490,7 +493,7 @@ class WindowDebuggerPanel
             notice.textContent = 'Overlap check skipped (tree too large)';
             toolbar.appendChild(notice);
         }
-        else if(overlaps.length > 0)
+        else if(overlaps.length > 0) 
         {
             const warning = document.createElement('span');
 
@@ -507,16 +510,16 @@ class WindowDebuggerPanel
         this.appendTreeNode(list, snapshot, 0, overlappingWindows);
         this._treeEl.appendChild(list);
 
-        if(this._selectedNodeWindow)
+        if(this._selectedNodeWindow) 
         {
             const selectedNode = findNodeByWindow(snapshot, this._selectedNodeWindow);
 
-            if(selectedNode)
+            if(selectedNode) 
             {
                 this.showDetailPanel(selectedNode);
                 this.positionHighlight(this._selectedHighlight, selectedNode.globalRect);
             }
-            else
+            else 
             {
                 this._selectedNodeWindow = null;
                 this.hideHighlight(this._selectedHighlight);
@@ -524,7 +527,7 @@ class WindowDebuggerPanel
         }
     }
 
-    private appendTreeNode(parentEl: HTMLElement, node: IWindowDebugNode, depth: number, overlappingWindows: Set<IWindow>): void
+    private appendTreeNode(parentEl: HTMLElement, node: IWindowDebugNode, depth: number, overlappingWindows: Set<IWindow>): void 
     {
         const row = document.createElement('div');
         const isOverlapping = overlappingWindows.has(node.window);
@@ -533,17 +536,17 @@ class WindowDebuggerPanel
         row.style.paddingLeft = `${depth * 14}px`;
         row.textContent = `${isOverlapping ? '⚠ ' : ''}${node.typeName} "${node.name}" (${node.rect.width}x${node.rect.height})`;
 
-        if(!node.visible)
+        if(!node.visible) 
         {
             row.classList.add('hwd-tree-row-hidden');
         }
 
-        if(isOverlapping)
+        if(isOverlapping) 
         {
             row.classList.add('hwd-tree-row-overlap');
         }
 
-        row.addEventListener('click', (event) =>
+        row.addEventListener('click', (event) => 
         {
             event.stopPropagation();
             this._selectedNodeWindow = node.window;
@@ -556,13 +559,13 @@ class WindowDebuggerPanel
 
         parentEl.appendChild(row);
 
-        for(const child of node.children)
+        for(const child of node.children) 
         {
             this.appendTreeNode(parentEl, child, depth + 1, overlappingWindows);
         }
     }
 
-    private showDetailPanel(node: IWindowDebugNode): void
+    private showDetailPanel(node: IWindowDebugNode): void 
     {
         const existing = this._treeEl.querySelector('.hwd-node-detail');
 
@@ -583,20 +586,15 @@ class WindowDebuggerPanel
         this._treeEl.insertBefore(detail, this._treeEl.firstChild);
     }
 
-    // ── Pick mode (click any live window on screen to select it) ─────
-    // Always available from the toolbar, independent of tab or whether
-    // anything is already selected/open — this is the primary way to
-    // inspect windows the app itself created (toolbar, room UI, ...).
-
-    private updatePickButton(): void
+    private updatePickButton(): void 
     {
         this._pickBtn.textContent = this._pickModeActive ? 'Click anywhere to pick... (Esc to cancel)' : 'Pick element on screen';
         this._pickBtn.classList.toggle('hwd-pick-btn-active', this._pickModeActive);
     }
 
-    private togglePickMode(): void
+    private togglePickMode(): void 
     {
-        if(this._pickModeActive)
+        if(this._pickModeActive) 
         {
             this.stopPickMode();
 
@@ -610,7 +608,7 @@ class WindowDebuggerPanel
         this.updatePickButton();
     }
 
-    private stopPickMode(): void
+    private stopPickMode(): void 
     {
         this._pickModeActive = false;
         this._canvas.removeEventListener('mousedown', this.pickListener, {capture: true});
@@ -620,7 +618,7 @@ class WindowDebuggerPanel
         this.updatePickButton();
     }
 
-    private topWindowAtEvent(event: MouseEvent): IWindow | null
+    private topWindowAtEvent(event: MouseEvent): IWindow | null 
     {
         const rect = this._canvas.getBoundingClientRect();
 
@@ -634,7 +632,7 @@ class WindowDebuggerPanel
     // whatever's layered behind/around it. This collects every window
     // whose bounds actually contain the point, deepest/topmost first, so
     // the picker can offer all of them.
-    private windowsAtEvent(event: MouseEvent): IWindow[]
+    private windowsAtEvent(event: MouseEvent): IWindow[] 
     {
         const rect = this._canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -642,7 +640,7 @@ class WindowDebuggerPanel
         const windowManager = Helium.instance.windowManager;
         const matches: IWindow[] = [];
 
-        for(let layer = CONTEXT_LAYER_COUNT - 1; layer >= 0; layer--)
+        for(let layer = CONTEXT_LAYER_COUNT - 1; layer >= 0; layer--) 
         {
             const desktop = windowManager.getDesktop(layer);
 
@@ -652,15 +650,15 @@ class WindowDebuggerPanel
         return matches;
     }
 
-    private collectWindowsAtPoint(window: IWindow, x: number, y: number, out: IWindow[]): void
+    private collectWindowsAtPoint(window: IWindow, x: number, y: number, out: IWindow[]): void 
     {
         if(!window.visible) return;
 
         const container = window as unknown as IWindowContainer;
 
-        if(typeof container.numChildren === 'number')
+        if(typeof container.numChildren === 'number') 
         {
-            for(let i = container.numChildren - 1; i >= 0; i--)
+            for(let i = container.numChildren - 1; i >= 0; i--) 
             {
                 const child = container.getChildAt(i);
 
@@ -672,17 +670,17 @@ class WindowDebuggerPanel
 
         window.getGlobalRectangle(rect);
 
-        if(x >= rect.x && x < rect.x + rect.width && y >= rect.y && y < rect.y + rect.height)
+        if(x >= rect.x && x < rect.x + rect.width && y >= rect.y && y < rect.y + rect.height) 
         {
             out.push(window);
         }
     }
 
-    private onCanvasHoverPick(event: MouseEvent): void
+    private onCanvasHoverPick(event: MouseEvent): void 
     {
         const hit = this.topWindowAtEvent(event);
 
-        if(!hit)
+        if(!hit) 
         {
             this.hideHighlight(this._hoverHighlight);
 
@@ -695,7 +693,7 @@ class WindowDebuggerPanel
         this.positionHighlight(this._hoverHighlight, globalRect);
     }
 
-    private onCanvasPick(event: MouseEvent): void
+    private onCanvasPick(event: MouseEvent): void 
     {
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -706,7 +704,7 @@ class WindowDebuggerPanel
 
         if(matches.length === 0) return;
 
-        if(matches.length === 1)
+        if(matches.length === 1) 
         {
             this.pickWindow(matches[0]);
 
@@ -716,9 +714,9 @@ class WindowDebuggerPanel
         this.showPickMenu(matches, event.clientX, event.clientY);
     }
 
-    private pickWindow(hit: IWindow): void
+    private pickWindow(hit: IWindow): void 
     {
-        if(!this._openWindows.some(entry => entry.window === hit))
+        if(!this._openWindows.some(entry => entry.window === hit)) 
         {
             this._openWindows.push({id: nextOpenId++, label: hit.name || hit.caption || '(unnamed)', window: hit});
         }
@@ -727,7 +725,7 @@ class WindowDebuggerPanel
         this.selectWindow(hit);
     }
 
-    private showPickMenu(matches: IWindow[], clientX: number, clientY: number): void
+    private showPickMenu(matches: IWindow[], clientX: number, clientY: number): void 
     {
         document.getElementById('hwd-pick-menu')?.remove();
 
@@ -745,14 +743,14 @@ class WindowDebuggerPanel
         heading.addEventListener('mousedown', (event) => this.startDrag(event, menu));
         menu.appendChild(heading);
 
-        for(const match of matches)
+        for(const match of matches) 
         {
             const row = document.createElement('div');
 
             row.className = 'hwd-pick-menu-row';
             row.textContent = `${TYPE_CODE_TO_NAME[match.type] ?? match.type} "${match.name || match.caption || '(unnamed)'}"`;
 
-            row.addEventListener('mouseenter', () =>
+            row.addEventListener('mouseenter', () => 
             {
                 const rect = {x: 0, y: 0, width: 0, height: 0};
 
@@ -760,7 +758,7 @@ class WindowDebuggerPanel
                 this.positionHighlight(this._hoverHighlight, rect);
             });
 
-            row.addEventListener('click', (event) =>
+            row.addEventListener('click', (event) => 
             {
                 event.stopPropagation();
                 menu.remove();
@@ -780,9 +778,9 @@ class WindowDebuggerPanel
         menu.style.left = `${Math.min(clientX, maxLeft)}px`;
         menu.style.top = `${Math.min(clientY, maxTop)}px`;
 
-        const closeOnClickAway = (event: MouseEvent): void =>
+        const closeOnClickAway = (event: MouseEvent): void => 
         {
-            if(!menu.contains(event.target as Node))
+            if(!menu.contains(event.target as Node)) 
             {
                 menu.remove();
                 document.removeEventListener('mousedown', closeOnClickAway, true);
@@ -793,9 +791,7 @@ class WindowDebuggerPanel
         setTimeout(() => document.addEventListener('mousedown', closeOnClickAway, true), 0);
     }
 
-    // ── Skins tab ────────────────────────────────────────────────────
-
-    private renderSkinsList(filter: string): void
+    private renderSkinsList(filter: string): void 
     {
         const windowManager = Helium.instance.windowManager;
         const descriptors = [...windowManager.elementRegistry.getAllDescriptors()]
@@ -817,7 +813,7 @@ class WindowDebuggerPanel
 
         const lower = filter.toLowerCase();
 
-        for(const descriptor of descriptors)
+        for(const descriptor of descriptors) 
         {
             const label = `${descriptor.type} / style ${descriptor.style} → ${descriptor.asset || '(no skin)'}`;
 
@@ -835,7 +831,7 @@ class WindowDebuggerPanel
         this._listEl.appendChild(scroll);
     }
 
-    private previewSkin(descriptor: IElementDescriptor): void
+    private previewSkin(descriptor: IElementDescriptor): void 
     {
         const windowManager = Helium.instance.windowManager;
         const renderer = windowManager.getRendererByTypeAndStyle(descriptor.typeId, descriptor.style);
@@ -849,7 +845,7 @@ class WindowDebuggerPanel
         heading.textContent = `${descriptor.type} / style ${descriptor.style} (${descriptor.asset || 'no skin'})`;
         this._treeEl.appendChild(heading);
 
-        if(!renderer)
+        if(!renderer) 
         {
             const empty = document.createElement('div');
 
@@ -861,7 +857,7 @@ class WindowDebuggerPanel
 
         const frames = SkinPreviewRenderer.renderStates(renderer);
 
-        if(frames.length === 0)
+        if(frames.length === 0) 
         {
             const empty = document.createElement('div');
 
@@ -875,7 +871,7 @@ class WindowDebuggerPanel
 
         grid.className = 'hwd-skin-grid';
 
-        for(const frame of frames)
+        for(const frame of frames) 
         {
             const cell = document.createElement('div');
 
@@ -902,9 +898,12 @@ class WindowDebuggerPanel
         this._treeEl.appendChild(grid);
     }
 
-    // ── Highlight overlay + refresh loop ──────────────────────────────
-
-    private positionHighlight(el: HTMLDivElement, globalRect: { x: number; y: number; width: number; height: number }): void
+    private positionHighlight(el: HTMLDivElement, globalRect: {
+        x: number;
+        y: number;
+        width: number;
+        height: number
+    }): void 
     {
         const canvasRect = this._canvas.getBoundingClientRect();
 
@@ -915,24 +914,24 @@ class WindowDebuggerPanel
         el.style.height = `${globalRect.height}px`;
     }
 
-    private hideHighlight(el: HTMLDivElement): void
+    private hideHighlight(el: HTMLDivElement): void 
     {
         el.style.display = 'none';
     }
 
-    private loop(): void
+    private loop(): void 
     {
         this._rafId = requestAnimationFrame(() => this.loop());
 
-        if(this._selectedWindow)
+        if(this._selectedWindow) 
         {
-            if(this._selectedWindow.disposed)
+            if(this._selectedWindow.disposed) 
             {
                 this._selectedWindow = null;
                 this.hideHighlight(this._selectedHighlight);
                 this.renderOpenList();
             }
-            else
+            else 
             {
                 const rect = {x: 0, y: 0, width: 0, height: 0};
 
@@ -943,15 +942,15 @@ class WindowDebuggerPanel
 
         const now = performance.now();
 
-        if(now - this._lastTreeRefresh > 1000)
+        if(now - this._lastTreeRefresh > 1000) 
         {
             this._lastTreeRefresh = now;
 
-            if(this._activeTab === 'layouts')
+            if(this._activeTab === 'layouts') 
             {
                 this.renderOpenList();
 
-                if(this._selectedWindow && !this._pickModeActive)
+                if(this._selectedWindow && !this._pickModeActive) 
                 {
                     this.refreshTree();
                 }
@@ -960,14 +959,14 @@ class WindowDebuggerPanel
     }
 }
 
-function findNodeByWindow(node: IWindowDebugNode, window: IWindow): IWindowDebugNode | null
+function findNodeByWindow(node: IWindowDebugNode, window: IWindow): IWindowDebugNode | null 
 {
-    if(node.window === window)
+    if(node.window === window) 
     {
         return node;
     }
 
-    for(const child of node.children)
+    for(const child of node.children) 
     {
         const found = findNodeByWindow(child, window);
 
@@ -996,7 +995,7 @@ const TEXT_LIKE_TYPES = new Set<number>([
 // suppressing this node; findOverlaps() tracks effective (ancestor-aware)
 // visibility separately, since a node's own `visible` flag says nothing
 // about whether an invisible parent is hiding it from the composite.
-function hasVisualContent(node: IWindowDebugNode): boolean
+function hasVisualContent(node: IWindowDebugNode): boolean 
 {
     if(node.rect.width <= 0 || node.rect.height <= 0) return false;
 
@@ -1013,8 +1012,7 @@ function hasVisualContent(node: IWindowDebugNode): boolean
     return Helium.instance.windowManager.getRendererByTypeAndStyle(window.type, window.style) !== null;
 }
 
-interface IOverlapWarning
-{
+interface IOverlapWarning {
     a: IWindowDebugNode;
     b: IWindowDebugNode;
 }
@@ -1030,11 +1028,11 @@ const MIN_OVERLAP_PX = 3;
 const MAX_OVERLAP_NODES = 400;
 
 // Returns null when the subtree is too large to check safely.
-function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
+function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null 
 {
     const flat: Array<{ node: IWindowDebugNode; ancestors: Set<IWindow>; effectivelyVisible: boolean }> = [];
 
-    const walk = (node: IWindowDebugNode, ancestors: Set<IWindow>, parentVisible: boolean): void =>
+    const walk = (node: IWindowDebugNode, ancestors: Set<IWindow>, parentVisible: boolean): void => 
     {
         const effectivelyVisible = parentVisible && node.visible;
 
@@ -1044,7 +1042,7 @@ function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
 
         childAncestors.add(node.window);
 
-        for(const child of node.children)
+        for(const child of node.children) 
         {
             walk(child, childAncestors, effectivelyVisible);
         }
@@ -1052,20 +1050,20 @@ function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
 
     walk(root, new Set(), true);
 
-    if(flat.length > MAX_OVERLAP_NODES)
+    if(flat.length > MAX_OVERLAP_NODES) 
     {
         return null;
     }
 
     const warnings: IOverlapWarning[] = [];
 
-    for(let i = 0; i < flat.length; i++)
+    for(let i = 0; i < flat.length; i++) 
     {
         const a = flat[i];
 
         if(!a.effectivelyVisible || !hasVisualContent(a.node)) continue;
 
-        for(let j = i + 1; j < flat.length; j++)
+        for(let j = i + 1; j < flat.length; j++) 
         {
             const b = flat[j];
 
@@ -1077,7 +1075,7 @@ function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
             const overlapH = Math.min(a.node.globalRect.y + a.node.globalRect.height, b.node.globalRect.y + b.node.globalRect.height)
                 - Math.max(a.node.globalRect.y, b.node.globalRect.y);
 
-            if(overlapW >= MIN_OVERLAP_PX && overlapH >= MIN_OVERLAP_PX)
+            if(overlapW >= MIN_OVERLAP_PX && overlapH >= MIN_OVERLAP_PX) 
             {
                 warnings.push({a: a.node, b: b.node});
             }
@@ -1087,7 +1085,7 @@ function findOverlaps(root: IWindowDebugNode): IOverlapWarning[] | null
     return warnings;
 }
 
-function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverlapWarning[] | null): string
+function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverlapWarning[] | null): string 
 {
     const indent = '  '.repeat(depth);
     const isInvolved = overlaps?.some(o => o.a.window === node.window || o.b.window === node.window) ?? false;
@@ -1098,7 +1096,7 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
         + `global=(${g.x},${g.y},${g.width}x${g.height}) style=${node.style} state=${node.state} `
         + `param=${node.param} visible=${node.visible}${marker}\n`;
 
-    for(const child of node.children)
+    for(const child of node.children) 
     {
         text += formatNodeText(child, depth + 1, overlaps);
     }
@@ -1106,30 +1104,30 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
     return text;
 }
 
-function buildTreeReport(root: IWindowDebugNode): string
+function buildTreeReport(root: IWindowDebugNode): string 
 {
     let overlaps: IOverlapWarning[] | null = null;
 
-    try
+    try 
     {
         overlaps = findOverlaps(root);
     }
-    catch (error)
+    catch (error) 
     {
         log.warn('Overlap detection failed', error);
     }
 
     let text = formatNodeText(root, 0, overlaps);
 
-    if(overlaps === null)
+    if(overlaps === null) 
     {
         text += '\nOverlap check skipped (tree too large).\n';
     }
-    else if(overlaps.length > 0)
+    else if(overlaps.length > 0) 
     {
         text += `\nOverlap warnings (${overlaps.length}):\n`;
 
-        for(const overlap of overlaps)
+        for(const overlap of overlaps) 
         {
             text += `  - "${overlap.a.name}" (${overlap.a.typeName}) overlaps "${overlap.b.name}" (${overlap.b.typeName})\n`;
         }
@@ -1138,7 +1136,7 @@ function buildTreeReport(root: IWindowDebugNode): string
     return text;
 }
 
-function injectStyles(): void
+function injectStyles(): void 
 {
     if(stylesInjected) return;
 

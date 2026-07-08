@@ -53,7 +53,7 @@ export const ComponentFlags = {
 /**
  * Interface struct for tracking provided interfaces
  */
-interface InterfaceStruct<T = unknown>
+interface IInterfaceStruct<T = unknown>
 {
     iid: IID<T>;
     instance: unknown;
@@ -109,7 +109,7 @@ export class Component implements IDisposable
     protected _lastDebug: string = '';
     private readonly _context: IContext;
     private readonly _events: EventEmitter;
-    private readonly _interfaces: Map<symbol, InterfaceStruct> = new Map();
+    private readonly _interfaces: Map<symbol, IInterfaceStruct> = new Map();
     private readonly _cleanupFunctions: Array<() => void> = [];
     private _requiredDependenciesCount: number = 1; // Start at 1, decremented after all deps queued
     private _pendingDependencies: Set<string> = new Set();

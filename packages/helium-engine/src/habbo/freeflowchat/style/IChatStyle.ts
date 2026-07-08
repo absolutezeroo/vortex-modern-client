@@ -1,14 +1,14 @@
 import type {Container, Rectangle} from 'pixi.js';
 
 /**
- * ChatTextFormat
+ * IChatTextFormat
  *
  * Minimal subset of AS3 flash.text.TextFormat actually populated by
  * ChatStyleLibrary — font face, size, and RGB color.
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::initializeStyleFromAssets()
  */
-export interface ChatTextFormat
+export interface IChatTextFormat
 {
     fontFace: string;
     fontSize: number;
@@ -34,7 +34,7 @@ export interface IChatStyle
     readonly isAmbassadorOnly: boolean;
     readonly isStaffOverrideable: boolean;
     readonly overlap: Rectangle | null;
-    readonly textFormat: ChatTextFormat;
+    readonly textFormat: IChatTextFormat;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/style/_SafeCls_1775.as::getNewBackgroundSprite()
     getNewBackgroundSprite(tint?: number): Container;

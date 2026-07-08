@@ -8,7 +8,7 @@
 import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 import {FurnitureParticleSystemParticle} from './FurnitureParticleSystemParticle';
 
-interface ParticleConfig
+interface IParticleConfig
 {
     lifeTime: number;
     isEmitter: boolean;
@@ -29,7 +29,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
     private _gravity: number = 0;
     private _airFriction: number = 0;
     private _shape: string = '';
-    private _particleConfigs: ParticleConfig[] = [];
+    private _particleConfigs: IParticleConfig[] = [];
     private _maxParticles: number = 0;
     private _particlesPerFrame: number = 0;
     private _totalEmitted: number = 0;
@@ -282,7 +282,7 @@ export class FurnitureParticleSystemEmitter extends FurnitureParticleSystemParti
         }
     }
 
-    private getRandomParticleConfiguration(): ParticleConfig | null
+    private getRandomParticleConfiguration(): IParticleConfig | null
     {
         if(this._particleConfigs.length === 0)
         {

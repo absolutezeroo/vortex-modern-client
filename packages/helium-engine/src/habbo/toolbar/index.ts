@@ -15,6 +15,6 @@ export * from './memenu';
 export * from './offers';
 
 // Types
-export type {HabboToolbarEvents} from './HabboToolbar';
+export type {IHabboToolbarEvents} from './HabboToolbar';
 export type {IExtensionView} from './IExtensionView';
 export type {IHabboToolbar} from './IHabboToolbar';

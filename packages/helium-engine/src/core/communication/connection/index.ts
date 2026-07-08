@@ -7,4 +7,4 @@ export {SocketConnection} from './SocketConnection';
 // Types
 export type {IConnection} from './IConnection';
 export type {IConnectionCallback} from './IConnectionCallback';
-export type {ConnectionEvents} from './SocketConnection';
+export type {IConnectionEvents} from './SocketConnection';

@@ -11,7 +11,7 @@
  */
 import {Sprite, Texture} from 'pixi.js';
 
-interface AlphaHitData
+interface IAlphaHitData
 {
     width: number;
     height: number;
@@ -20,7 +20,7 @@ interface AlphaHitData
 
 export class ExtendedSprite extends Sprite
 {
-    private static readonly _alphaHitCache: WeakMap<Texture, AlphaHitData | null> = new WeakMap();
+    private static readonly _alphaHitCache: WeakMap<Texture, IAlphaHitData | null> = new WeakMap();
 
     private _updateID1: number = -1;
     private _updateID2: number = -1;
@@ -204,7 +204,7 @@ export class ExtendedSprite extends Sprite
         return data.alpha[(y * data.width + x) * 4 + 3] > this._alphaTolerance;
     }
 
-    private static getAlphaHitData(texture: Texture): AlphaHitData | null
+    private static getAlphaHitData(texture: Texture): IAlphaHitData | null
     {
         if(ExtendedSprite._alphaHitCache.has(texture))
         {

@@ -4,7 +4,7 @@ import type {IWindowRenderer} from '../graphics/IWindowRenderer';
 import type {IInteractiveWindow} from '../components/IInteractiveWindow';
 import type {IDesktopWindow} from '../components/IDesktopWindow';
 import type {EventProcessorState} from './EventProcessorState';
-import type {MouseEventEntry} from './MouseEventQueue';
+import type {IMouseEventEntry} from './MouseEventQueue';
 import type {WindowEvent} from '../events/WindowEvent';
 import {RegionController} from '../components/RegionController';
 import type {WindowController} from '../WindowController';
@@ -174,7 +174,7 @@ export class MouseEventProcessor
         this._absMouseX = -1;
         this._absMouseY = -1;
 
-        let entry: MouseEventEntry | null;
+        let entry: IMouseEventEntry | null;
 
         while((entry = queue.next()) !== null)
         {
@@ -388,7 +388,7 @@ export class MouseEventProcessor
         state.eventTrackers = this._eventTrackers;
     }
 
-    private passMouseEvent(window: WindowController, entry: MouseEventEntry, fromParent: boolean = false): WindowController | null
+    private passMouseEvent(window: WindowController, entry: IMouseEventEntry, fromParent: boolean = false): WindowController | null
     {
         if(window.disposed)
         {
@@ -503,7 +503,7 @@ export class MouseEventProcessor
         return window;
     }
 
-    private dispatchMouseEvent(window: WindowController, entry: MouseEventEntry, eventType: string): boolean
+    private dispatchMouseEvent(window: WindowController, entry: IMouseEventEntry, eventType: string): boolean
     {
         const windowEvent = this.convertMouseEventType(entry, window, null, eventType);
         const handled = window.update(window, windowEvent);
@@ -519,7 +519,7 @@ export class MouseEventProcessor
     }
 
     private convertMouseEventType(
-        entry: MouseEventEntry,
+        entry: IMouseEventEntry,
         target: IWindow,
         related: IWindow | null,
         overrideType: string | null = null

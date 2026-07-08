@@ -12,7 +12,7 @@ import {RoomObjectVariableEnum} from '../RoomObjectVariableEnum';
 import type {IStuffData} from './IStuffData';
 import {StuffDataBase} from './StuffDataBase';
 
-export interface HighScoreEntry
+export interface IHighScoreEntry
 {
     users: string[];
     score: number;
@@ -37,9 +37,9 @@ export class HighScoreStuffData extends StuffDataBase implements IStuffData
         return this._clearType;
     }
 
-    private _entries: HighScoreEntry[] = [];
+    private _entries: IHighScoreEntry[] = [];
 
-    get entries(): HighScoreEntry[]
+    get entries(): IHighScoreEntry[]
     {
         return this._entries;
     }

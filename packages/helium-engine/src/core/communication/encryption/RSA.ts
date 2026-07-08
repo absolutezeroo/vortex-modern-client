@@ -7,17 +7,17 @@ export class RSA
     private static readonly DEFAULT_MODULUS = 'E228E8E9C40CFB0D2081B165376E921B844B5E581D88DBEA54CC038DA3CD9B00DC7281C172FCF3DF64D595EAA12BFF08BE7B346E95A920D05FC84B4E079C071BFFBF810D0BD0C994A302DD61200DDEFE28DC59BB3B803B243625FCEDC6665715ADCCF7CD94EA7A4B70AF8F0A7BD1097B50B306B871CBEAD90966CF1A1A4809C3';
     private static readonly DEFAULT_EXPONENT = '3';
 
-    private readonly modulus: bigint;
-    private readonly exponent: bigint;
-    private readonly blockSize: number;
+    private readonly _modulus: bigint;
+    private readonly _exponent: bigint;
+    private readonly _blockSize: number;
 
     constructor(modulusHex?: string, exponentHex?: string)
     {
-        this.modulus = BigInt('0x' + (modulusHex || RSA.DEFAULT_MODULUS));
-        this.exponent = BigInt('0x' + (exponentHex || RSA.DEFAULT_EXPONENT));
+        this._modulus = BigInt('0x' + (modulusHex || RSA.DEFAULT_MODULUS));
+        this._exponent = BigInt('0x' + (exponentHex || RSA.DEFAULT_EXPONENT));
 
         // Calculate block size (modulus byte length)
-        this.blockSize = Math.ceil(this.modulus.toString(16).length / 2);
+        this._blockSize = Math.ceil(this._modulus.toString(16).length / 2);
     }
 
     /**
@@ -30,10 +30,10 @@ export class RSA
         const dataInt = this.bytesToBigInt(data);
 
         // RSA encrypt: ciphertext = plaintext^e mod n
-        const encrypted = this.modPow(dataInt, this.exponent, this.modulus);
+        const encrypted = this.modPow(dataInt, this._exponent, this._modulus);
 
         // Convert back to bytes with proper padding
-        return this.bigIntToBytes(encrypted, this.blockSize);
+        return this.bigIntToBytes(encrypted, this._blockSize);
     }
 
     /**
@@ -46,7 +46,7 @@ export class RSA
         const sigInt = this.bytesToBigInt(signature);
 
         // RSA verify: plaintext = signature^e mod n
-        const decrypted = this.modPow(sigInt, this.exponent, this.modulus);
+        const decrypted = this.modPow(sigInt, this._exponent, this._modulus);
 
         // Convert back to bytes
         return this.bigIntToBytes(decrypted);
@@ -230,14 +230,14 @@ export class RSA
     private addPKCS1Padding(data: Uint8Array): Uint8Array
     {
         // PKCS1 format: 0x00 0x02 [random non-zero bytes] 0x00 [data]
-        const paddingLength = this.blockSize - data.length - 3;
+        const paddingLength = this._blockSize - data.length - 3;
 
         if(paddingLength < 8)
         {
             throw new Error('Data too long for RSA encryption');
         }
 
-        const padded = new Uint8Array(this.blockSize);
+        const padded = new Uint8Array(this._blockSize);
 
         padded[0] = 0x00;
         padded[1] = 0x02;

@@ -1,4 +1,4 @@
-import type {BadgeData, BadgeFilterType, IBadgesModel} from './IBadgesModel';
+import type {IBadgeData, BadgeFilterType, IBadgesModel} from './IBadgesModel';
 import {BadgeFilter} from './IBadgesModel';
 import {Badge} from './Badge';
 
@@ -36,7 +36,7 @@ export class BadgesModel implements IBadgesModel
     }
 
     initBadges(
-        badges: BadgeData[],
+        badges: IBadgeData[],
         getName: (id: string) => string,
         getDesc: (id: string) => string
     ): void

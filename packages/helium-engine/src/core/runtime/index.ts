@@ -11,7 +11,7 @@ export {DefaultErrorReporter} from './DefaultErrorReporter';
 export {createIID, getIIDName} from './IID';
 
 // Types
-export type {DependencyEventListener} from './ComponentDependency';
+export type {IDependencyEventListener} from './ComponentDependency';
 export type {InterfaceCallback, IContext, IUpdateReceiver} from './IContext';
 export type {ICore} from './ICore';
 export type {ICoreConfiguration} from './ICoreConfiguration';

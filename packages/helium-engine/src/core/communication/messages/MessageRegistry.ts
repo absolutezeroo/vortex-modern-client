@@ -12,20 +12,20 @@ const log = Logger.getLogger('Registry');
 export class MessageRegistry
 {
     // Composer class name -> Message ID
-    private composerToId: Map<string, number> = new Map();
+    private _composerToId: Map<string, number> = new Map();
 
     // Event class name -> Message ID
-    private eventClassToId: Map<string, number> = new Map();
+    private _eventClassToId: Map<string, number> = new Map();
 
     // Message ID -> Array of event handlers
-    private idToEvents: Map<number, IMessageEvent[]> = new Map();
+    private _idToEvents: Map<number, IMessageEvent[]> = new Map();
 
     // Composer class -> Message ID (direct reference)
-    private composerClassToId: Map<ComposerClass, number> = new Map();
+    private _composerClassToId: Map<ComposerClass, number> = new Map();
 
     // Reverse lookups: Message ID -> Class name
-    private idToComposerName: Map<number, string> = new Map();
-    private idToEventName: Map<number, string> = new Map();
+    private _idToComposerName: Map<number, string> = new Map();
+    private _idToEventName: Map<number, string> = new Map();
 
     /**
 	 * Register all messages from a configuration
@@ -51,7 +51,7 @@ export class MessageRegistry
     registerMessageEvent(event: IMessageEvent): void
     {
         const className = event.constructor.name;
-        const id = this.eventClassToId.get(className);
+        const id = this._eventClassToId.get(className);
 
         if(id === undefined)
         {
@@ -59,7 +59,7 @@ export class MessageRegistry
             return;
         }
 
-        let events = this.idToEvents.get(id);
+        let events = this._idToEvents.get(id);
 
         if(events && events.length > 0)
         {
@@ -70,7 +70,7 @@ export class MessageRegistry
         {
             // Create new parser instance
             events = events ?? [];
-            this.idToEvents.set(id, events);
+            this._idToEvents.set(id, events);
             event.parser = new event.parserClass();
         }
 
@@ -83,14 +83,14 @@ export class MessageRegistry
     unregisterMessageEvent(event: IMessageEvent): void
     {
         const className = event.constructor.name;
-        const id = this.eventClassToId.get(className);
+        const id = this._eventClassToId.get(className);
 
         if(id === undefined)
         {
             return;
         }
 
-        const events = this.idToEvents.get(id);
+        const events = this._idToEvents.get(id);
         if(!events)
         {
             return;
@@ -110,7 +110,7 @@ export class MessageRegistry
     {
         // Try by class reference first
         const composerClass = composer.constructor as ComposerClass;
-        const idByClass = this.composerClassToId.get(composerClass);
+        const idByClass = this._composerClassToId.get(composerClass);
         if(idByClass !== undefined)
         {
             return idByClass;
@@ -118,7 +118,7 @@ export class MessageRegistry
 
         // Fallback to class name
         const className = composer.constructor.name;
-        const id = this.composerToId.get(className);
+        const id = this._composerToId.get(className);
         return id ?? -1;
     }
 
@@ -127,7 +127,7 @@ export class MessageRegistry
 	 */
     getMessageEventsForId(id: number): IMessageEvent[] | null
     {
-        return this.idToEvents.get(id) ?? null;
+        return this._idToEvents.get(id) ?? null;
     }
 
     /**
@@ -135,7 +135,7 @@ export class MessageRegistry
 	 */
     hasMessageEvents(id: number): boolean
     {
-        const events = this.idToEvents.get(id);
+        const events = this._idToEvents.get(id);
         return events !== undefined && events.length > 0;
     }
 
@@ -144,7 +144,7 @@ export class MessageRegistry
 	 */
     getIncomingMessageName(id: number): string
     {
-        const name = this.idToEventName.get(id);
+        const name = this._idToEventName.get(id);
         return name ? name.replace('MessageEvent', '') : 'Unknown';
     }
 
@@ -153,7 +153,7 @@ export class MessageRegistry
 	 */
     getOutgoingMessageName(id: number): string
     {
-        const name = this.idToComposerName.get(id);
+        const name = this._idToComposerName.get(id);
         return name ? name.replace('MessageComposer', '') : 'Unknown';
     }
 
@@ -162,7 +162,7 @@ export class MessageRegistry
 	 */
     hasIncomingMessage(id: number): boolean
     {
-        return this.idToEventName.has(id);
+        return this._idToEventName.has(id);
     }
 
     /**
@@ -170,7 +170,7 @@ export class MessageRegistry
 	 */
     hasOutgoingMessage(id: number): boolean
     {
-        return this.idToComposerName.has(id);
+        return this._idToComposerName.has(id);
     }
 
     /**
@@ -178,12 +178,12 @@ export class MessageRegistry
 	 */
     clear(): void
     {
-        this.composerToId.clear();
-        this.eventClassToId.clear();
-        this.idToEvents.clear();
-        this.composerClassToId.clear();
-        this.idToComposerName.clear();
-        this.idToEventName.clear();
+        this._composerToId.clear();
+        this._eventClassToId.clear();
+        this._idToEvents.clear();
+        this._composerClassToId.clear();
+        this._idToComposerName.clear();
+        this._idToEventName.clear();
     }
 
     /**
@@ -193,14 +193,14 @@ export class MessageRegistry
     {
         const className = composerClass.name;
 
-        if(this.composerToId.has(className))
+        if(this._composerToId.has(className))
         {
             log.warn(`Duplicate message ID definition for composer ${className}`);
         }
 
-        this.composerToId.set(className, id);
-        this.composerClassToId.set(composerClass, id);
-        this.idToComposerName.set(id, className);
+        this._composerToId.set(className, id);
+        this._composerClassToId.set(composerClass, id);
+        this._idToComposerName.set(id, className);
     }
 
     /**
@@ -210,12 +210,12 @@ export class MessageRegistry
     {
         const className = eventClass.name;
 
-        if(this.eventClassToId.has(className))
+        if(this._eventClassToId.has(className))
         {
             log.warn(`Duplicate message ID definition for event ${className}`);
         }
 
-        this.eventClassToId.set(className, id);
-        this.idToEventName.set(id, className);
+        this._eventClassToId.set(className, id);
+        this._idToEventName.set(id, className);
     }
 }

@@ -12,7 +12,7 @@
  * unrelated feature.
  */
 import {Logger} from '@core/utils/Logger';
-import {ChangelogService, type ChangelogCommit} from './ChangelogService';
+import {ChangelogService, type IChangelogCommit} from './ChangelogService';
 import './changelog-ui.scss';
 
 const log = Logger.getLogger('ChangelogWindow');
@@ -27,8 +27,8 @@ export class ChangelogWindow
     private _overlay: HTMLDivElement | null = null;
     private _panel: HTMLDivElement | null = null;
     private _listElement: HTMLDivElement | null = null;
-    private _commits: ChangelogCommit[] | null = null;
-    private _loading: Promise<ChangelogCommit[]> | null = null;
+    private _commits: IChangelogCommit[] | null = null;
+    private _loading: Promise<IChangelogCommit[]> | null = null;
     private _disposed: boolean = false;
 
     /**
@@ -69,7 +69,7 @@ export class ChangelogWindow
     }
 
     /** Fetches commits once and caches them; safe to call repeatedly. */
-    private ensureCommitsLoaded(): Promise<ChangelogCommit[]>
+    private ensureCommitsLoaded(): Promise<IChangelogCommit[]>
     {
         if(this._commits) return Promise.resolve(this._commits);
 
@@ -235,7 +235,7 @@ export class ChangelogWindow
         this._listElement.appendChild(empty);
     }
 
-    private renderCommits(commits: ChangelogCommit[]): void
+    private renderCommits(commits: IChangelogCommit[]): void
     {
         if(!this._listElement) return;
 

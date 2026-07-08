@@ -6,4 +6,4 @@ export {BadgesModel} from './BadgesModel';
 export {BadgeFilter} from './IBadgesModel';
 
 // Types
-export type {BadgeFilterType, BadgeData, IBadgesModel,} from './IBadgesModel';
+export type {BadgeFilterType, IBadgeData, IBadgesModel,} from './IBadgesModel';

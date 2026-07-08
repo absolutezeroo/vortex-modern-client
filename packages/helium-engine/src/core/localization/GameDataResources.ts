@@ -1,13 +1,13 @@
 import type {IGameDataResources} from './IGameDataResources';
 
-interface HashEntry {
+interface IHashEntry {
     name: string;
     url: string;
     hash: string;
 }
 
-interface HashesData {
-    hashes: HashEntry[];
+interface IHashesData {
+    hashes: IHashEntry[];
 }
 
 /**
@@ -88,10 +88,10 @@ export class GameDataResources implements IGameDataResources
     // AS3: sources/win63_version/core/localization/class_2118.as::parse()
     static parse(data: string): GameDataResources 
     {
-        let parsed: HashesData;
+        let parsed: IHashesData;
         try 
         {
-            parsed = JSON.parse(data) as HashesData;
+            parsed = JSON.parse(data) as IHashesData;
         }
         catch
         {

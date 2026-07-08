@@ -4,7 +4,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 /**
  * Represents a single pending call for help entry.
  */
-export interface PendingCall
+export interface IPendingCall
 {
     callId: string;
     timestamp: string;
@@ -19,9 +19,9 @@ export interface PendingCall
  */
 export class CallForHelpPendingCallsMessageParser implements IMessageParser
 {
-    private _calls: PendingCall[] = [];
+    private _calls: IPendingCall[] = [];
 
-    get calls(): PendingCall[]
+    get calls(): IPendingCall[]
     {
         return this._calls;
     }

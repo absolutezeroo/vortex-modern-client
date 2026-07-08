@@ -3,7 +3,7 @@ import type {IDisposable} from '@core/runtime';
 /**
  * Perk allowance data
  */
-export interface PerkAllowance
+export interface IPerkAllowance
 {
     readonly code: string;
     readonly errorMessage: string;

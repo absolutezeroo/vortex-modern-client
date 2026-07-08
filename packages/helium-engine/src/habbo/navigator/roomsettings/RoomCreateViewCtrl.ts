@@ -17,7 +17,7 @@ import {Util} from '../Util';
 /**
  * Room layout definition.
  */
-interface RoomLayout
+interface IRoomLayout
 {
     requiredClubLevel: number;
     tileSize: number;
@@ -46,9 +46,9 @@ export class RoomCreateViewCtrl
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_content
     private _content: IWindowContainer | null = null;
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_layouts
-    private _layouts: RoomLayout[] = [];
+    private _layouts: IRoomLayout[] = [];
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_selectedLayout
-    private _selectedLayout: RoomLayout | null = null;
+    private _selectedLayout: IRoomLayout | null = null;
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_roomNameManager
     private _roomNameManager: TextFieldManager | null = null;
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::_roomDescManager
@@ -325,7 +325,7 @@ export class RoomCreateViewCtrl
     }
 
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::addThumbnail()
-    private addThumbnail(row: IWindowContainer, layout: RoomLayout, leftColumn: boolean): void
+    private addThumbnail(row: IWindowContainer, layout: IRoomLayout, leftColumn: boolean): void
     {
         if(!this._navigator) return;
 
@@ -430,7 +430,7 @@ export class RoomCreateViewCtrl
     }
 
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::findLayout()
-    private findLayout(tags: string[]): RoomLayout | null
+    private findLayout(tags: string[]): IRoomLayout | null
     {
         for(const tag of tags)
         {
@@ -443,7 +443,7 @@ export class RoomCreateViewCtrl
     }
 
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::getLayout()
-    private getLayout(name: string): RoomLayout | null
+    private getLayout(name: string): IRoomLayout | null
     {
         for(const layout of this._layouts)
         {
@@ -454,7 +454,7 @@ export class RoomCreateViewCtrl
     }
 
     // AS3: sources/win63_version/habbo/navigator/roomsettings/RoomCreateViewCtrl.as::isAllowed()
-    private isAllowed(layout: RoomLayout, requireMembership: boolean): boolean
+    private isAllowed(layout: IRoomLayout, requireMembership: boolean): boolean
     {
         if(layout.requiredClubLevel === 0) return true;
         if(!requireMembership) return true;

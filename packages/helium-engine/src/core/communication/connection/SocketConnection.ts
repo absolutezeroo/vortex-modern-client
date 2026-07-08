@@ -15,7 +15,7 @@ import {PreEncryptionMessageComposer} from '../messages/PreEncryptionMessageComp
 
 const log = Logger.getLogger('Socket');
 
-export interface ConnectionEvents
+export interface IConnectionEvents
 {
     connected: () => void;
     disconnected: () => void;
@@ -27,30 +27,30 @@ export interface ConnectionEvents
     messageEvent: (event: IMessageEvent) => void;
 }
 
-export class SocketConnection extends EventEmitter<ConnectionEvents> implements IConnection
+export class SocketConnection extends EventEmitter<IConnectionEvents> implements IConnection
 {
-    private socket: WebSocket | null = null;
-    private receivedBuffer: ByteArray = new ByteArray();
-    private pendingMessages: ByteArray[] = [];
-    private pendingComposers: IMessageComposer<unknown[]>[] = [];
-    private pendingReceivedMessages: IMessageDataWrapper[] = [];
+    private _socket: WebSocket | null = null;
+    private _receivedBuffer: ByteArray = new ByteArray();
+    private _pendingMessages: ByteArray[] = [];
+    private _pendingComposers: IMessageComposer<unknown[]>[] = [];
+    private _pendingReceivedMessages: IMessageDataWrapper[] = [];
 
-    private clientToServerEncryption: IEncryption | null = null;
-    private serverToClientEncryption: IEncryption | null = null;
-    private authenticated: boolean = false;
-    private configurationReady: boolean = false;
+    private _clientToServerEncryption: IEncryption | null = null;
+    private _serverToClientEncryption: IEncryption | null = null;
+    private _authenticated: boolean = false;
+    private _configurationReady: boolean = false;
 
-    private messageRegistry: MessageRegistry = new MessageRegistry();
-    private wireFormatter: IWireFormatter = new WireFormatter();
-    private timeoutId: ReturnType<typeof setTimeout> | null = null;
-    private callback: IConnectionCallback | null;
-    private host: string = '';
-    private port: number = 0;
+    private _messageRegistry: MessageRegistry = new MessageRegistry();
+    private _wireFormatter: IWireFormatter = new WireFormatter();
+    private _timeoutId: ReturnType<typeof setTimeout> | null = null;
+    private _callback: IConnectionCallback | null;
+    private _host: string = '';
+    private _port: number = 0;
 
     constructor(callback?: IConnectionCallback)
     {
         super();
-        this.callback = callback ?? null;
+        this._callback = callback ?? null;
     }
 
     private _connected: boolean = false;
@@ -86,9 +86,9 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
             return false;
         }
 
-        this.host = host;
-        this.port = port;
-        this.callback?.connectionInit?.(host, port);
+        this._host = host;
+        this._port = port;
+        this._callback?.connectionInit?.(host, port);
 
         let url: string;
         if(host.startsWith('ws://') || host.startsWith('wss://'))
@@ -107,8 +107,8 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
 
         try
         {
-            this.socket = new WebSocket(url);
-            this.socket.binaryType = 'arraybuffer';
+            this._socket = new WebSocket(url);
+            this._socket.binaryType = 'arraybuffer';
             this.setupEventListeners();
             this.startTimeout();
             return true;
@@ -116,7 +116,7 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
         catch (error)
         {
             log.error(`WebSocket error: ${(error as Error).message}`);
-            this.callback?.connectionError?.(error as Error);
+            this._callback?.connectionError?.(error as Error);
             return false;
         }
     }
@@ -124,16 +124,16 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
     createSocket(): void
     {
         this.close();
-        this.receivedBuffer.clear();
-        this.pendingMessages = [];
-        this.clientToServerEncryption = null;
-        this.serverToClientEncryption = null;
-        this.socket = null;
+        this._receivedBuffer.clear();
+        this._pendingMessages = [];
+        this._clientToServerEncryption = null;
+        this._serverToClientEncryption = null;
+        this._socket = null;
     }
 
-    addListener<T extends EventEmitter.EventNames<ConnectionEvents>>(
+    addListener<T extends EventEmitter.EventNames<IConnectionEvents>>(
         type: T,
-        listener: EventEmitter.EventListener<ConnectionEvents, T>,
+        listener: EventEmitter.EventListener<IConnectionEvents, T>,
         context?: unknown
     ): this;
     addListener(type: string, listener: (...args: unknown[]) => void, context?: unknown): this;
@@ -142,18 +142,18 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
         switch(type)
         {
             case 'connect':
-                return super.addListener('connected', listener as EventEmitter.EventListener<ConnectionEvents, 'connected'>, context);
+                return super.addListener('connected', listener as EventEmitter.EventListener<IConnectionEvents, 'connected'>, context);
             case 'close':
-                return super.addListener('disconnected', listener as EventEmitter.EventListener<ConnectionEvents, 'disconnected'>, context);
+                return super.addListener('disconnected', listener as EventEmitter.EventListener<IConnectionEvents, 'disconnected'>, context);
             case 'ioError':
             case 'securityError':
-                return super.addListener('error', listener as EventEmitter.EventListener<ConnectionEvents, 'error'>, context);
+                return super.addListener('error', listener as EventEmitter.EventListener<IConnectionEvents, 'error'>, context);
             default:
                 // TODO(AS3): sources/win63_version/core/communication/connection/IConnection.as addListener()
                 // Map any additional Flash socket event names that are used by future ports.
                 return super.addListener(
-                    type as EventEmitter.EventNames<ConnectionEvents>,
-                    listener as EventEmitter.EventListener<ConnectionEvents, EventEmitter.EventNames<ConnectionEvents>>,
+                    type as EventEmitter.EventNames<IConnectionEvents>,
+                    listener as EventEmitter.EventListener<IConnectionEvents, EventEmitter.EventNames<IConnectionEvents>>,
                     context
                 );
         }
@@ -166,22 +166,22 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
             return false;
         }
 
-        if(!this.clientToServerEncryption || (this.authenticated && !this.configurationReady))
+        if(!this._clientToServerEncryption || (this._authenticated && !this._configurationReady))
         {
-            this.pendingComposers.push(composer);
+            this._pendingComposers.push(composer);
             return false;
         }
 
-        const messageId = this.messageRegistry.getMessageIdForComposer(composer);
+        const messageId = this._messageRegistry.getMessageIdForComposer(composer);
         if(messageId < 0)
         {
             log.warn(`Unknown composer: ${composer.constructor.name}`);
             return false;
         }
 
-        const encoded = this.wireFormatter.encode(messageId, composer.getMessageArray());
+        const encoded = this._wireFormatter.encode(messageId, composer.getMessageArray());
 
-        this.clientToServerEncryption.encipher(encoded);
+        this._clientToServerEncryption.encipher(encoded);
 
         return this.sendRaw(encoded, messageId);
     }
@@ -193,7 +193,7 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
             return false;
         }
 
-        const messageId = this.messageRegistry.getMessageIdForComposer(composer);
+        const messageId = this._messageRegistry.getMessageIdForComposer(composer);
         if(messageId < 0)
         {
             log.warn(`Unknown composer: ${composer.constructor.name}`);
@@ -205,26 +205,26 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
             return false;
         }
 
-        const encoded = this.wireFormatter.encode(messageId, composer.getMessageArray());
+        const encoded = this._wireFormatter.encode(messageId, composer.getMessageArray());
         return this.sendRaw(encoded, messageId);
     }
 
     setEncryption(clientToServer: IEncryption, serverToClient: IEncryption): void
     {
-        this.clientToServerEncryption = clientToServer;
-        this.serverToClientEncryption = serverToClient;
+        this._clientToServerEncryption = clientToServer;
+        this._serverToClientEncryption = serverToClient;
     }
 
     isAuthenticated(): void
     {
-        this.authenticated = true;
+        this._authenticated = true;
 
         this.flushPendingComposers();
     }
 
     isConfigured(): void
     {
-        this.configurationReady = true;
+        this._configurationReady = true;
 
         this.flushPendingReceivedMessages();
         this.flushPendingComposers();
@@ -232,52 +232,52 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
 
     getServerToClientEncryption(): IEncryption | null
     {
-        return this.serverToClientEncryption;
+        return this._serverToClientEncryption;
     }
 
     getClientToServerEncryption(): IEncryption | null
     {
-        return this.clientToServerEncryption;
+        return this._clientToServerEncryption;
     }
 
     registerMessageClasses(config: IMessageConfiguration): void
     {
-        this.messageRegistry.registerMessages(config);
+        this._messageRegistry.registerMessages(config);
     }
 
     addMessageEvent(event: IMessageEvent): void
     {
-        this.messageRegistry.registerMessageEvent(event);
+        this._messageRegistry.registerMessageEvent(event);
     }
 
     removeMessageEvent(event: IMessageEvent): void
     {
-        this.messageRegistry.unregisterMessageEvent(event);
+        this._messageRegistry.unregisterMessageEvent(event);
     }
 
     processReceivedData(): void
     {
-        if(this.receivedBuffer.length === 0)
+        if(this._receivedBuffer.length === 0)
         {
             return;
         }
 
-        this.receivedBuffer.position = 0;
+        this._receivedBuffer.position = 0;
 
         try
         {
-            const messages = this.wireFormatter.splitMessages(this.receivedBuffer, this);
+            const messages = this._wireFormatter.splitMessages(this._receivedBuffer, this);
 
             for(const wrapper of messages)
             {
                 const messageId = wrapper.getMessageId();
 
                 this.emit('message', messageId);
-                this.callback?.messageReceived?.(String(0));
+                this._callback?.messageReceived?.(String(0));
 
-                if(this.authenticated && !this.configurationReady)
+                if(this._authenticated && !this._configurationReady)
                 {
-                    this.pendingReceivedMessages.push(wrapper);
+                    this._pendingReceivedMessages.push(wrapper);
                     continue;
                 }
 
@@ -296,8 +296,8 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
             // the same corrupted buffer from position 0 with an already-advanced keystream, producing
             // a new garbage length value forever - an infinite console-spamming loop, not a recoverable
             // condition. Treat it as fatal: clear the buffer and close the connection.
-            this.receivedBuffer.clear();
-            this.callback?.connectionError?.(error as Error);
+            this._receivedBuffer.clear();
+            this._callback?.connectionError?.(error as Error);
             this.emit('error', error as Error);
             this.close();
         }
@@ -307,13 +307,13 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
     {
         this.clearTimeout();
 
-        if(this.socket)
+        if(this._socket)
         {
-            if(this.socket.readyState === WebSocket.OPEN)
+            if(this._socket.readyState === WebSocket.OPEN)
             {
-                this.socket.close();
+                this._socket.close();
             }
-            this.socket = null;
+            this._socket = null;
         }
 
         this._connected = false;
@@ -327,17 +327,17 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
         }
 
         this.close();
-        this.receivedBuffer.clear();
-        this.pendingMessages = [];
-        this.pendingComposers = [];
-        this.pendingReceivedMessages = [];
-        this.messageRegistry.clear();
-        this.wireFormatter.dispose();
-        this.clientToServerEncryption = null;
-        this.serverToClientEncryption = null;
-        this.authenticated = false;
-        this.configurationReady = false;
-        this.callback = null;
+        this._receivedBuffer.clear();
+        this._pendingMessages = [];
+        this._pendingComposers = [];
+        this._pendingReceivedMessages = [];
+        this._messageRegistry.clear();
+        this._wireFormatter.dispose();
+        this._clientToServerEncryption = null;
+        this._serverToClientEncryption = null;
+        this._authenticated = false;
+        this._configurationReady = false;
+        this._callback = null;
         this.removeAllListeners();
 
         this._disposed = true;
@@ -345,36 +345,36 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
 
     private setupEventListeners(): void
     {
-        if(!this.socket)
+        if(!this._socket)
         {
             return;
         }
 
-        this.socket.onopen = () =>
+        this._socket.onopen = () =>
         {
             this.clearTimeout();
             this._connected = true;
-            this.callback?.connectionOpened?.();
+            this._callback?.connectionOpened?.();
             this.emit('connected');
             this.flushPendingMessages();
         };
 
-        this.socket.onclose = () =>
+        this._socket.onclose = () =>
         {
             this.clearTimeout();
             this._connected = false;
-            this.callback?.connectionClosed?.();
+            this._callback?.connectionClosed?.();
             this.emit('disconnected');
         };
 
-        this.socket.onerror = () =>
+        this._socket.onerror = () =>
         {
             const error = new Error('WebSocket error');
-            this.callback?.connectionError?.(error);
+            this._callback?.connectionError?.(error);
             this.emit('error', error);
         };
 
-        this.socket.onmessage = (event) =>
+        this._socket.onmessage = (event) =>
         {
             if(!event.data)
             {
@@ -400,22 +400,22 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
     private onDataReceived(data: ArrayBuffer): void
     {
         const bytes = ByteArray.fromArrayBuffer(data);
-        const oldPosition = this.receivedBuffer.position;
-        this.receivedBuffer.position = this.receivedBuffer.length;
-        this.receivedBuffer.writeBytes(bytes);
-        this.receivedBuffer.position = oldPosition;
+        const oldPosition = this._receivedBuffer.position;
+        this._receivedBuffer.position = this._receivedBuffer.length;
+        this._receivedBuffer.writeBytes(bytes);
+        this._receivedBuffer.position = oldPosition;
     }
 
     private startTimeout(): void
     {
         this.clearTimeout();
-        this.timeoutId = setTimeout(() =>
+        this._timeoutId = setTimeout(() =>
         {
-            if(!this._connected && this.socket)
+            if(!this._connected && this._socket)
             {
-                this.socket.close();
+                this._socket.close();
                 const error = new Error('Connection timeout');
-                this.callback?.connectionError?.(error);
+                this._callback?.connectionError?.(error);
                 this.emit('error', error);
             }
         }, this._timeout);
@@ -423,37 +423,37 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
 
     private clearTimeout(): void
     {
-        if(this.timeoutId)
+        if(this._timeoutId)
         {
-            clearTimeout(this.timeoutId);
-            this.timeoutId = null;
+            clearTimeout(this._timeoutId);
+            this._timeoutId = null;
         }
     }
 
     private sendRaw(data: ByteArray, messageId?: number): boolean
     {
-        if(!this.socket)
+        if(!this._socket)
         {
             return false;
         }
 
         if(!this._connected)
         {
-            this.pendingMessages.push(data.clone());
+            this._pendingMessages.push(data.clone());
             return true;
         }
 
-        if(this.socket.readyState !== WebSocket.OPEN)
+        if(this._socket.readyState !== WebSocket.OPEN)
         {
             return false;
         }
 
         try
         {
-            this.socket.send(data.toArrayBuffer());
+            this._socket.send(data.toArrayBuffer());
             if(messageId !== undefined)
             {
-                this.callback?.messageSent?.(String(messageId));
+                this._callback?.messageSent?.(String(messageId));
             }
             return true;
         }
@@ -466,22 +466,22 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
 
     private flushPendingMessages(): void
     {
-        while(this.pendingMessages.length > 0)
+        while(this._pendingMessages.length > 0)
         {
-            const message = this.pendingMessages.shift()!;
+            const message = this._pendingMessages.shift()!;
             this.sendRaw(message);
         }
     }
 
     private flushPendingComposers(): void
     {
-        if(!this.clientToServerEncryption || !this.configurationReady)
+        if(!this._clientToServerEncryption || !this._configurationReady)
         {
             return;
         }
 
-        const composers = this.pendingComposers;
-        this.pendingComposers = [];
+        const composers = this._pendingComposers;
+        this._pendingComposers = [];
 
         for(const composer of composers)
         {
@@ -491,8 +491,8 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
 
     private flushPendingReceivedMessages(): void
     {
-        const messages = this.pendingReceivedMessages;
-        this.pendingReceivedMessages = [];
+        const messages = this._pendingReceivedMessages;
+        this._pendingReceivedMessages = [];
 
         for(const message of messages)
         {
@@ -503,7 +503,7 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
     private handleReceivedMessage(wrapper: IMessageDataWrapper): void
     {
         const messageId = wrapper.getMessageId();
-        const events = this.messageRegistry.getMessageEventsForId(messageId);
+        const events = this._messageRegistry.getMessageEventsForId(messageId);
 
         if(!events || events.length === 0)
         {
@@ -542,7 +542,7 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
         catch (error)
         {
             log.error(`Parse error for ${messageId}: ${(error as Error).message}`, error);
-            this.callback?.messageParseError?.(wrapper);
+            this._callback?.messageParseError?.(wrapper);
         }
     }
 }

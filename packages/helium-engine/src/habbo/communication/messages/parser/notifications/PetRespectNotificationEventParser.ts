@@ -1,6 +1,6 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import type {PetInfoData} from '../../incoming/notifications/PetFigureDataParser';
+import type {IPetInfoData} from '../../incoming/notifications/PetFigureDataParser';
 import {parsePetInfoData} from '../../incoming/notifications/PetFigureDataParser';
 
 /**
@@ -28,9 +28,9 @@ export class PetRespectNotificationEventParser implements IMessageParser
         return this._petOwnerId;
     }
 
-    private _petData: PetInfoData | null = null;
+    private _petData: IPetInfoData | null = null;
 
-    get petData(): PetInfoData | null
+    get petData(): IPetInfoData | null
     {
         return this._petData;
     }

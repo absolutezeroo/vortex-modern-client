@@ -20,7 +20,7 @@ export * from './handler';
 // Types
 export type {IHabboGroupInfoManager} from './IHabboGroupInfoManager';
 export type {IIgnoredUsersManager} from './IIgnoredUsersManager';
-export type {PerkAllowance, IPerkManager,} from './IPerkManager';
+export type {IPerkAllowance, IPerkManager,} from './IPerkManager';
 export type {IPetInfo} from './IPetInfo';
 export type {IRoomHandlerListener} from './IRoomHandlerListener';
 export type {RoomSessionStateType, IRoomSession,} from './IRoomSession';

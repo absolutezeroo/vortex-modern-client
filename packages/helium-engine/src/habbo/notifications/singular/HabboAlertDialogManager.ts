@@ -6,7 +6,7 @@ const log = Logger.getLogger('HabboAlertDialogManager');
 /**
  * Events emitted by the alert dialog manager
  */
-export interface HabboAlertDialogManagerEvents
+export interface IHabboAlertDialogManagerEvents
 {
     'moderatorCaution': (message: string, url: string) => void;
     'moderatorMessage': (message: string, url: string) => void;
@@ -24,7 +24,7 @@ export interface HabboAlertDialogManagerEvents
  *
  * @see source_as_win63/habbo/notifications/singular/HabboAlertDialogManager.as
  */
-export class HabboAlertDialogManager extends EventEmitter<HabboAlertDialogManagerEvents>
+export class HabboAlertDialogManager extends EventEmitter<IHabboAlertDialogManagerEvents>
 {
     constructor()
     {

@@ -7,7 +7,7 @@ import type {IFurnitureData} from './IFurnitureData';
 
 const log = Logger.getLogger('FurnitureDataParser');
 
-export interface FurnitureDataParserEvents
+export interface IFurnitureDataParserEvents
 {
     FDP_furniture_data_ready: [];
     FDP_furniture_data_error: [error: Error];
@@ -26,7 +26,7 @@ export class FurnitureDataParser
     private _wallItemsByName: Map<string, number[]>;
     private _localization: IHabboLocalizationManager | null;
     private _critical: boolean;
-    private _events: EventEmitter<FurnitureDataParserEvents> = new EventEmitter();
+    private _events: EventEmitter<IFurnitureDataParserEvents> = new EventEmitter();
     private _disposed: boolean = false;
 
     // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::FurnitureDataParser()
@@ -47,7 +47,7 @@ export class FurnitureDataParser
         this._critical = critical;
     }
 
-    get events(): EventEmitter<FurnitureDataParserEvents>
+    get events(): EventEmitter<IFurnitureDataParserEvents>
     {
         return this._events;
     }

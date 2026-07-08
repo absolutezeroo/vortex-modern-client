@@ -17,7 +17,7 @@
  *     and re-serves the commit list, and point fetchRepo() at that instead.
  */
 
-export interface ChangelogCommit
+export interface IChangelogCommit
 {
     /** Display label for the source repo, e.g. "Emulator". */
     repoLabel: string;
@@ -32,19 +32,19 @@ export interface ChangelogCommit
     url: string;
 }
 
-interface ChangelogSource
+interface IChangelogSource
 {
     label: string;
     owner: string;
     repo: string;
 }
 
-const SOURCES: ChangelogSource[] = [
+const SOURCES: IChangelogSource[] = [
     { label: 'Emulator', owner: 'absolutezeroo', repo: 'vortex-cloud' },
     { label: 'Client', owner: 'absolutezeroo', repo: 'vortex-modern-client' },
 ];
 
-interface GitHubCommitResponse
+interface IGitHubCommitResponse
 {
     sha: string;
     html_url: string;
@@ -62,13 +62,13 @@ export class ChangelogService
 	 * newest-first. Sources that fail (rate-limited, offline, etc.) are silently
 	 * skipped rather than failing the whole list.
 	 */
-    public static async fetchAll(perRepo: number = 15): Promise<ChangelogCommit[]>
+    public static async fetchAll(perRepo: number = 15): Promise<IChangelogCommit[]>
     {
         const results = await Promise.allSettled(
             SOURCES.map((source) => ChangelogService.fetchRepo(source, perRepo))
         );
 
-        const commits: ChangelogCommit[] = [];
+        const commits: IChangelogCommit[] = [];
 
         for(const result of results)
         {
@@ -83,7 +83,7 @@ export class ChangelogService
         return commits;
     }
 
-    private static async fetchRepo(source: ChangelogSource, perPage: number): Promise<ChangelogCommit[]>
+    private static async fetchRepo(source: IChangelogSource, perPage: number): Promise<IChangelogCommit[]>
     {
         const url = `https://api.github.com/repos/${source.owner}/${source.repo}/commits?per_page=${perPage}`;
         const response = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
@@ -93,7 +93,7 @@ export class ChangelogService
             throw new Error(`GitHub API returned ${response.status} for ${source.owner}/${source.repo}`);
         }
 
-        const data = await response.json() as GitHubCommitResponse[];
+        const data = await response.json() as IGitHubCommitResponse[];
 
         return data.map((item) => ({
             repoLabel: source.label,

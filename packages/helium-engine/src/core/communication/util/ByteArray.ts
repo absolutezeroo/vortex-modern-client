@@ -7,23 +7,23 @@ export class ByteArray
     private static readonly _encoder: TextEncoder = new TextEncoder();
     private static readonly _decoder: TextDecoder = new TextDecoder('utf-8');
 
-    private buffer: ArrayBuffer;
-    private view: DataView;
+    private _buffer: ArrayBuffer;
+    private _view: DataView;
 
     constructor(buffer?: ArrayBuffer | number)
     {
         if(buffer instanceof ArrayBuffer)
         {
-            this.buffer = buffer;
+            this._buffer = buffer;
             this._length = buffer.byteLength;
         }
         else
         {
             const size = buffer ?? 1024;
-            this.buffer = new ArrayBuffer(size);
+            this._buffer = new ArrayBuffer(size);
             this._length = 0;
         }
-        this.view = new DataView(this.buffer);
+        this._view = new DataView(this._buffer);
     }
 
     private _position: number = 0;
@@ -53,7 +53,7 @@ export class ByteArray
 
     set length(value: number)
     {
-        if(value > this.buffer.byteLength)
+        if(value > this._buffer.byteLength)
         {
             this.expand(value);
         }
@@ -74,7 +74,7 @@ export class ByteArray
     static fromUint8Array(array: Uint8Array): ByteArray
     {
         const byteArray = new ByteArray(array.length);
-        const targetArray = new Uint8Array(byteArray.buffer);
+        const targetArray = new Uint8Array(byteArray._buffer);
         targetArray.set(array);
         byteArray._length = array.length;
         return byteArray;
@@ -99,7 +99,7 @@ export class ByteArray
         {
             throw new RangeError(`Index ${index} out of bounds`);
         }
-        return this.view.getUint8(index);
+        return this._view.getUint8(index);
     }
 
     /**
@@ -111,11 +111,11 @@ export class ByteArray
         {
             throw new RangeError(`Index ${index} out of bounds`);
         }
-        if(index >= this.buffer.byteLength)
+        if(index >= this._buffer.byteLength)
         {
             this.expand(index + 1);
         }
-        this.view.setUint8(index, value & 0xFF);
+        this._view.setUint8(index, value & 0xFF);
         if(index >= this._length)
         {
             this._length = index + 1;
@@ -125,7 +125,7 @@ export class ByteArray
     writeByte(value: number): void
     {
         this.ensureCapacity(1);
-        this.view.setInt8(this._position, value);
+        this._view.setInt8(this._position, value);
         this._position += 1;
         if(this._position > this._length)
         {
@@ -136,7 +136,7 @@ export class ByteArray
     writeUnsignedByte(value: number): void
     {
         this.ensureCapacity(1);
-        this.view.setUint8(this._position, value);
+        this._view.setUint8(this._position, value);
         this._position += 1;
         if(this._position > this._length)
         {
@@ -147,7 +147,7 @@ export class ByteArray
     writeShort(value: number): void
     {
         this.ensureCapacity(2);
-        this.view.setInt16(this._position, value, false); // Big-endian
+        this._view.setInt16(this._position, value, false); // Big-endian
         this._position += 2;
         if(this._position > this._length)
         {
@@ -158,7 +158,7 @@ export class ByteArray
     writeUnsignedShort(value: number): void
     {
         this.ensureCapacity(2);
-        this.view.setUint16(this._position, value, false);
+        this._view.setUint16(this._position, value, false);
         this._position += 2;
         if(this._position > this._length)
         {
@@ -169,7 +169,7 @@ export class ByteArray
     writeInt(value: number): void
     {
         this.ensureCapacity(4);
-        this.view.setInt32(this._position, value, false);
+        this._view.setInt32(this._position, value, false);
         this._position += 4;
         if(this._position > this._length)
         {
@@ -180,7 +180,7 @@ export class ByteArray
     writeUnsignedInt(value: number): void
     {
         this.ensureCapacity(4);
-        this.view.setUint32(this._position, value, false);
+        this._view.setUint32(this._position, value, false);
         this._position += 4;
         if(this._position > this._length)
         {
@@ -191,7 +191,7 @@ export class ByteArray
     writeFloat(value: number): void
     {
         this.ensureCapacity(4);
-        this.view.setFloat32(this._position, value, false);
+        this._view.setFloat32(this._position, value, false);
         this._position += 4;
         if(this._position > this._length)
         {
@@ -202,7 +202,7 @@ export class ByteArray
     writeDouble(value: number): void
     {
         this.ensureCapacity(8);
-        this.view.setFloat64(this._position, value, false);
+        this._view.setFloat64(this._position, value, false);
         this._position += 8;
         if(this._position > this._length)
         {
@@ -223,7 +223,7 @@ export class ByteArray
         const encoded = ByteArray._encoder.encode(value);
         this.writeUnsignedShort(encoded.length);
         this.ensureCapacity(encoded.length);
-        new Uint8Array(this.buffer).set(encoded, this._position);
+        new Uint8Array(this._buffer).set(encoded, this._position);
         this._position += encoded.length;
         if(this._position > this._length)
         {
@@ -238,7 +238,7 @@ export class ByteArray
     {
         const encoded = ByteArray._encoder.encode(value);
         this.ensureCapacity(encoded.length);
-        new Uint8Array(this.buffer).set(encoded, this._position);
+        new Uint8Array(this._buffer).set(encoded, this._position);
         this._position += encoded.length;
         if(this._position > this._length)
         {
@@ -258,8 +258,8 @@ export class ByteArray
 
         this.ensureCapacity(length);
 
-        const sourceArray = new Uint8Array(source.buffer, offset, length);
-        const targetArray = new Uint8Array(this.buffer);
+        const sourceArray = new Uint8Array(source._buffer, offset, length);
+        const targetArray = new Uint8Array(this._buffer);
         targetArray.set(sourceArray, this._position);
 
         this._position += length;
@@ -275,7 +275,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getInt8(this._position);
+        const value = this._view.getInt8(this._position);
         this._position += 1;
         return value;
     }
@@ -286,7 +286,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getUint8(this._position);
+        const value = this._view.getUint8(this._position);
         this._position += 1;
         return value;
     }
@@ -297,7 +297,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getInt16(this._position, false);
+        const value = this._view.getInt16(this._position, false);
         this._position += 2;
         return value;
     }
@@ -308,7 +308,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getUint16(this._position, false);
+        const value = this._view.getUint16(this._position, false);
         this._position += 2;
         return value;
     }
@@ -319,7 +319,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getInt32(this._position, false);
+        const value = this._view.getInt32(this._position, false);
         this._position += 4;
         return value;
     }
@@ -330,7 +330,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getUint32(this._position, false);
+        const value = this._view.getUint32(this._position, false);
         this._position += 4;
         return value;
     }
@@ -341,7 +341,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getFloat32(this._position, false);
+        const value = this._view.getFloat32(this._position, false);
         this._position += 4;
         return value;
     }
@@ -352,7 +352,7 @@ export class ByteArray
         {
             throw new RangeError('End of buffer');
         }
-        const value = this.view.getFloat64(this._position, false);
+        const value = this._view.getFloat64(this._position, false);
         this._position += 8;
         return value;
     }
@@ -381,7 +381,7 @@ export class ByteArray
             throw new RangeError('End of buffer');
         }
 
-        const bytes = new Uint8Array(this.buffer, this._position, length);
+        const bytes = new Uint8Array(this._buffer, this._position, length);
         const value = ByteArray._decoder.decode(bytes);
         this._position += length;
         return value;
@@ -402,14 +402,14 @@ export class ByteArray
             throw new RangeError('End of buffer');
         }
 
-        const sourceArray = new Uint8Array(this.buffer, this._position, length);
+        const sourceArray = new Uint8Array(this._buffer, this._position, length);
 
-        if(offset + length > target.buffer.byteLength)
+        if(offset + length > target._buffer.byteLength)
         {
             target.length = offset + length;
         }
 
-        const targetArray = new Uint8Array(target.buffer);
+        const targetArray = new Uint8Array(target._buffer);
         targetArray.set(sourceArray, offset);
 
         if(offset + length > target.length)
@@ -434,7 +434,7 @@ export class ByteArray
 	 */
     getUint8ArrayView(): Uint8Array
     {
-        return new Uint8Array(this.buffer, 0, this._length);
+        return new Uint8Array(this._buffer, 0, this._length);
     }
 
     /**
@@ -442,7 +442,7 @@ export class ByteArray
 	 */
     toUint8Array(): Uint8Array
     {
-        return new Uint8Array(this.buffer.slice(0, this._length));
+        return new Uint8Array(this._buffer.slice(0, this._length));
     }
 
     /**
@@ -450,7 +450,7 @@ export class ByteArray
 	 */
     toArrayBuffer(): ArrayBuffer
     {
-        return this.buffer.slice(0, this._length);
+        return this._buffer.slice(0, this._length);
     }
 
     /**
@@ -459,8 +459,8 @@ export class ByteArray
     clone(): ByteArray
     {
         const clone = new ByteArray(this._length);
-        const sourceArray = new Uint8Array(this.buffer, 0, this._length);
-        const targetArray = new Uint8Array(clone.buffer);
+        const sourceArray = new Uint8Array(this._buffer, 0, this._length);
+        const targetArray = new Uint8Array(clone._buffer);
         targetArray.set(sourceArray);
         clone._length = this._length;
         clone._position = this._position;
@@ -472,7 +472,7 @@ export class ByteArray
 	 */
     private expand(minCapacity: number): void
     {
-        let newCapacity = this.buffer.byteLength;
+        let newCapacity = this._buffer.byteLength;
         while(newCapacity < minCapacity)
         {
             newCapacity = Math.max(newCapacity * 2, 16);
@@ -480,11 +480,11 @@ export class ByteArray
 
         const newBuffer = new ArrayBuffer(newCapacity);
         const newView = new Uint8Array(newBuffer);
-        const oldView = new Uint8Array(this.buffer);
+        const oldView = new Uint8Array(this._buffer);
         newView.set(oldView.subarray(0, this._length));
 
-        this.buffer = newBuffer;
-        this.view = new DataView(this.buffer);
+        this._buffer = newBuffer;
+        this._view = new DataView(this._buffer);
     }
 
     /**
@@ -493,7 +493,7 @@ export class ByteArray
     private ensureCapacity(additionalBytes: number): void
     {
         const required = this._position + additionalBytes;
-        if(required > this.buffer.byteLength)
+        if(required > this._buffer.byteLength)
         {
             this.expand(required);
         }

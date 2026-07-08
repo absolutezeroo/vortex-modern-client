@@ -5,18 +5,18 @@ import type {AssetTypeDeclaration} from './AssetTypeDeclaration';
 import {Logger} from '@core/utils/Logger';
 
 /**
- * Point structure for offset
+ * IPoint structure for offset
  */
-export interface Point
+export interface IPoint
 {
     x: number;
     y: number;
 }
 
 /**
- * Rectangle structure for region
+ * IRectangle structure for region
  */
-export interface Rectangle
+export interface IRectangle
 {
     x: number;
     y: number;
@@ -68,16 +68,16 @@ export class BitmapDataAsset implements ILazyAsset
         return this._disposed;
     }
 
-    private _offset: Point = {x: 0, y: 0};
+    private _offset: IPoint = {x: 0, y: 0};
 
-    get offset(): Point
+    get offset(): IPoint
     {
         return this._offset;
     }
 
-    private _rectangle: Rectangle | null = null;
+    private _rectangle: IRectangle | null = null;
 
-    get rectangle(): Rectangle | null
+    get rectangle(): IRectangle | null
     {
         if(!this._rectangle && this._bitmap)
         {

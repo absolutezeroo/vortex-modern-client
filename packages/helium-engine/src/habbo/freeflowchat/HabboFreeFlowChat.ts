@@ -28,7 +28,7 @@ const log = Logger.getLogger('HabboFreeFlowChat');
 /**
  * Events emitted by HabboFreeFlowChat for the UI layer.
  */
-export interface HabboFreeFlowChatEvents
+export interface IHabboFreeFlowChatEvents
 {
     'chatInserted': (item: ChatItem) => void;
     'roomEntered': () => void;
@@ -156,13 +156,13 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 *
 	 * @see MEMORY.md - NEVER override the events getter in Component subclasses
 	 */
-    private _chatEvents: EventEmitter<HabboFreeFlowChatEvents> = new EventEmitter();
+    private _chatEvents: EventEmitter<IHabboFreeFlowChatEvents> = new EventEmitter();
 
     /**
 	 * Event emitter for the UI layer to listen to chat events.
 	 * Named chatEvents to avoid conflicting with Component.events.
 	 */
-    get chatEvents(): EventEmitter<HabboFreeFlowChatEvents>
+    get chatEvents(): EventEmitter<IHabboFreeFlowChatEvents>
     {
         return this._chatEvents;
     }

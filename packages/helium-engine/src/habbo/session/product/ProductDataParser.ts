@@ -9,7 +9,7 @@ const log = Logger.getLogger('ProductDataParser');
 /**
  * Events emitted by ProductDataParser
  */
-export interface ProductDataParserEvents
+export interface IProductDataParserEvents
 {
     PDP_product_data_ready: [];
     PDP_product_data_error: [error: Error];
@@ -35,9 +35,9 @@ export class ProductDataParser
         this.loadData(url);
     }
 
-    private _events: EventEmitter<ProductDataParserEvents> = new EventEmitter();
+    private _events: EventEmitter<IProductDataParserEvents> = new EventEmitter();
 
-    get events(): EventEmitter<ProductDataParserEvents>
+    get events(): EventEmitter<IProductDataParserEvents>
     {
         return this._events;
     }

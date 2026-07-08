@@ -8,4 +8,4 @@ export {createTradingUser} from './TradingUser';
 // Types
 export type {ITradingModel} from './ITradingModel';
 export type {TradingStateType} from './TradingState';
-export type {TradingUser} from './TradingUser';
+export type {ITradingUser} from './TradingUser';

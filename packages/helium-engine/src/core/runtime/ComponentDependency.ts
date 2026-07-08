@@ -3,7 +3,7 @@ import type {IID} from './IID';
 /**
  * Event listener descriptor for component dependencies
  */
-export interface DependencyEventListener
+export interface IDependencyEventListener
 {
     /** Event type to listen for */
     type: string;
@@ -38,13 +38,13 @@ export class ComponentDependency<T = unknown>
     private readonly _identifier: IID<T>;
     private readonly _setter: ((instance: T | null) => void) | null;
     private readonly _required: boolean;
-    private readonly _eventListeners: DependencyEventListener[] | null;
+    private readonly _eventListeners: IDependencyEventListener[] | null;
 
     constructor(
         identifier: IID<T>,
         setter: ((instance: T | null) => void) | null = null,
         required: boolean = true,
-        eventListeners: DependencyEventListener[] | null = null
+        eventListeners: IDependencyEventListener[] | null = null
     )
     {
         this._identifier = identifier;
@@ -80,7 +80,7 @@ export class ComponentDependency<T = unknown>
     /**
 	 * Event listeners to attach when the dependency is resolved
 	 */
-    get eventListeners(): DependencyEventListener[] | null
+    get eventListeners(): IDependencyEventListener[] | null
     {
         return this._eventListeners;
     }

@@ -4,7 +4,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 /**
  * Avatar effect data
  */
-export interface AvatarEffect
+export interface IAvatarEffect
 {
     type: number;
     subType: number;
@@ -21,9 +21,9 @@ export interface AvatarEffect
  */
 export class AvatarEffectsMessageParser implements IMessageParser
 {
-    private _effects: AvatarEffect[] = [];
+    private _effects: IAvatarEffect[] = [];
 
-    get effects(): AvatarEffect[]
+    get effects(): IAvatarEffect[]
     {
         return this._effects;
     }
@@ -39,7 +39,7 @@ export class AvatarEffectsMessageParser implements IMessageParser
         const count = wrapper.readInt();
         for(let i = 0; i < count; i++)
         {
-            const effect: AvatarEffect = {
+            const effect: IAvatarEffect = {
                 type: wrapper.readInt(),
                 subType: wrapper.readInt(),
                 duration: wrapper.readInt(),

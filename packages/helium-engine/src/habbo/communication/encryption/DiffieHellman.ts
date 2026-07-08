@@ -9,21 +9,21 @@ const log = Logger.getLogger('Encryption');
  */
 class BigIntWrapper
 {
-    private value: bigint;
+    private _value: bigint;
 
     constructor(value: bigint | string | number = 0n)
     {
         if(typeof value === 'string')
         {
-            this.value = BigInt(value);
+            this._value = BigInt(value);
         }
         else if(typeof value === 'number')
         {
-            this.value = BigInt(value);
+            this._value = BigInt(value);
         }
         else
         {
-            this.value = value;
+            this._value = value;
         }
     }
 
@@ -58,21 +58,21 @@ class BigIntWrapper
     {
         if(radix === 16)
         {
-            return this.value.toString(16);
+            return this._value.toString(16);
         }
         else if(radix === 10)
         {
-            return this.value.toString(10);
+            return this._value.toString(10);
         }
         else
         {
             // Manual conversion for other radixes
-            if(this.value === 0n) return '0';
+            if(this._value === 0n) return '0';
 
             const base = BigInt(radix);
             const digits: string[] = [];
 
-            let remaining = this.value;
+            let remaining = this._value;
 
             while(remaining > 0n)
             {
@@ -93,18 +93,18 @@ class BigIntWrapper
     modPow(exponent: BigIntWrapper, modulus: BigIntWrapper): BigIntWrapper
     {
         let result = 1n;
-        let base = this.value % modulus.value;
-        let exp = exponent.value;
+        let base = this._value % modulus._value;
+        let exp = exponent._value;
 
         while(exp > 0n)
         {
             if(exp % 2n === 1n)
             {
-                result = (result * base) % modulus.value;
+                result = (result * base) % modulus._value;
             }
 
             exp = exp / 2n;
-            base = (base * base) % modulus.value;
+            base = (base * base) % modulus._value;
         }
 
         return new BigIntWrapper(result);
@@ -112,16 +112,16 @@ class BigIntWrapper
 
     compareTo(other: BigIntWrapper): number
     {
-        if(this.value < other.value) return -1;
+        if(this._value < other._value) return -1;
 
-        if(this.value > other.value) return 1;
+        if(this._value > other._value) return 1;
 
         return 0;
     }
 
     getValue(): bigint
     {
-        return this.value;
+        return this._value;
     }
 }
 
@@ -130,15 +130,15 @@ class BigIntWrapper
  */
 export class DiffieHellman implements IKeyExchange
 {
-    private prime: BigIntWrapper;
-    private generator: BigIntWrapper;
-    private privateKey: BigIntWrapper | null = null;
-    private publicKey: BigIntWrapper | null = null;
-    private serverPublicKey: BigIntWrapper | null = null;
-    private sharedKey: BigIntWrapper | null = null;
+    private _prime: BigIntWrapper;
+    private _generator: BigIntWrapper;
+    private _privateKey: BigIntWrapper | null = null;
+    private _publicKey: BigIntWrapper | null = null;
+    private _serverPublicKey: BigIntWrapper | null = null;
+    private _sharedKey: BigIntWrapper | null = null;
 
-    private readonly minimumPublicKey = new BigIntWrapper(2n);
-    private readonly minimumSharedKey = new BigIntWrapper(2n);
+    private readonly _minimumPublicKey = new BigIntWrapper(2n);
+    private readonly _minimumSharedKey = new BigIntWrapper(2n);
 
     /**
 	 * Create a new Diffie-Hellman key exchange
@@ -147,8 +147,8 @@ export class DiffieHellman implements IKeyExchange
 	 */
     constructor(primeHex: string, generatorHex: string)
     {
-        this.prime = BigIntWrapper.fromRadix(primeHex, 16);
-        this.generator = BigIntWrapper.fromRadix(generatorHex, 16);
+        this._prime = BigIntWrapper.fromRadix(primeHex, 16);
+        this._generator = BigIntWrapper.fromRadix(generatorHex, 16);
     }
 
     /**
@@ -158,10 +158,10 @@ export class DiffieHellman implements IKeyExchange
     {
         try
         {
-            this.privateKey = BigIntWrapper.fromRadix(privateKeyHex, radix);
+            this._privateKey = BigIntWrapper.fromRadix(privateKeyHex, radix);
 
             // Calculate public key: g^privateKey mod p
-            this.publicKey = this.generator.modPow(this.privateKey, this.prime);
+            this._publicKey = this._generator.modPow(this._privateKey, this._prime);
 
             return true;
         }
@@ -178,15 +178,15 @@ export class DiffieHellman implements IKeyExchange
 	 */
     generateSharedKey(serverPublicKeyHex: string, radix: number = 16): string
     {
-        if(!this.privateKey)
+        if(!this._privateKey)
         {
             throw new Error('DiffieHellman not initialized');
         }
 
-        this.serverPublicKey = BigIntWrapper.fromRadix(serverPublicKeyHex, radix);
+        this._serverPublicKey = BigIntWrapper.fromRadix(serverPublicKeyHex, radix);
 
         // Calculate shared key: serverPublicKey^privateKey mod p
-        this.sharedKey = this.serverPublicKey.modPow(this.privateKey, this.prime);
+        this._sharedKey = this._serverPublicKey.modPow(this._privateKey, this._prime);
 
         return this.getSharedKey(radix);
     }
@@ -196,12 +196,12 @@ export class DiffieHellman implements IKeyExchange
 	 */
     getPublicKey(radix: number = 16): string
     {
-        if(!this.publicKey)
+        if(!this._publicKey)
         {
             throw new Error('DiffieHellman not initialized');
         }
 
-        return this.publicKey.toRadix(radix);
+        return this._publicKey.toRadix(radix);
     }
 
     /**
@@ -209,11 +209,11 @@ export class DiffieHellman implements IKeyExchange
 	 */
     getSharedKey(radix: number = 16): string
     {
-        if(!this.sharedKey)
+        if(!this._sharedKey)
         {
             throw new Error('Shared key not generated');
         }
-        return this.sharedKey.toRadix(radix);
+        return this._sharedKey.toRadix(radix);
     }
 
     /**
@@ -221,8 +221,8 @@ export class DiffieHellman implements IKeyExchange
 	 */
     isValidServerPublicKey(): boolean
     {
-        if(!this.serverPublicKey) return false;
-        return this.serverPublicKey.compareTo(this.minimumPublicKey) >= 0;
+        if(!this._serverPublicKey) return false;
+        return this._serverPublicKey.compareTo(this._minimumPublicKey) >= 0;
     }
 
     /**
@@ -230,7 +230,7 @@ export class DiffieHellman implements IKeyExchange
 	 */
     isValidSharedKey(): boolean
     {
-        if(!this.sharedKey) return false;
-        return this.sharedKey.compareTo(this.minimumSharedKey) >= 0;
+        if(!this._sharedKey) return false;
+        return this._sharedKey.compareTo(this._minimumSharedKey) >= 0;
     }
 }

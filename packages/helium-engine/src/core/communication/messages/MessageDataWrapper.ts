@@ -7,40 +7,40 @@ import type {IMessageDataWrapper} from './IMessageDataWrapper';
  */
 export class MessageDataWrapper implements IMessageDataWrapper
 {
-    private readonly messageId: number;
-    private readonly data: ByteArray;
+    private readonly _messageId: number;
+    private readonly _data: ByteArray;
 
     constructor(messageId: number, data: ByteArray)
     {
-        this.messageId = messageId;
-        this.data = data;
+        this._messageId = messageId;
+        this._data = data;
     }
 
     get bytesAvailable(): number
     {
-        return this.data.bytesAvailable;
+        return this._data.bytesAvailable;
     }
 
     getMessageId(): number
     {
-        return this.messageId;
+        return this._messageId;
     }
 
     readString(): string
     {
-        return this.data.readUTF();
+        return this._data.readUTF();
     }
 
     readInt(): number
     {
-        return this.data.readInt();
+        return this._data.readInt();
     }
 
     readLong(): number
     {
         // Read as two 32-bit unsigned integers (big-endian)
-        const high = this.data.readUnsignedInt();
-        const low = this.data.readUnsignedInt();
+        const high = this._data.readUnsignedInt();
+        const low = this._data.readUnsignedInt();
 
         // Check if negative (high bit set)
         const isNegative = (high & 0x80000000) !== 0;
@@ -66,26 +66,26 @@ export class MessageDataWrapper implements IMessageDataWrapper
 
     readBoolean(): boolean
     {
-        return this.data.readBoolean();
+        return this._data.readBoolean();
     }
 
     readShort(): number
     {
-        return this.data.readShort();
+        return this._data.readShort();
     }
 
     readByte(): number
     {
-        return this.data.readByte();
+        return this._data.readByte();
     }
 
     readFloat(): number
     {
-        return this.data.readFloat();
+        return this._data.readFloat();
     }
 
     readDouble(): number
     {
-        return this.data.readDouble();
+        return this._data.readDouble();
     }
 }

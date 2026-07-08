@@ -15,7 +15,7 @@ import type {IVector3d} from '@room/utils/IVector3d';
 import type {IGetImageListener} from './IGetImageListener';
 import type {ImageResult} from './ImageResult';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
-import type {RoomEngineRectangle} from './RoomEngine';
+import type {IRoomEngineRectangle} from './RoomEngine';
 
 export interface IRoomEngine extends IDisposable
 {
@@ -231,7 +231,7 @@ export interface IRoomEngine extends IDisposable
     setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
-    getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null;
+    getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null;
 
     /**
 	 * Sets the scale of a room canvas, optionally centering on a point.

@@ -19,7 +19,7 @@
  */
 
 /** A single entry in the bundle manifest. */
-interface BundleEntry
+interface IBundleEntry
 {
     /** Byte offset within the data section. */
     offset: number;
@@ -29,10 +29,10 @@ interface BundleEntry
 }
 
 /** The manifest stored at the beginning of the bundle. */
-interface BundleManifest
+interface IBundleManifest
 {
     version: number;
-    entries: Record<string, BundleEntry>;
+    entries: Record<string, IBundleEntry>;
 }
 
 /**
@@ -56,12 +56,12 @@ export class AssetBundle
      */
     private static readonly _decoder = new TextDecoder();
 
-    private _manifest: BundleManifest;
+    private _manifest: IBundleManifest;
     private _data: ArrayBuffer;
     private _dataOffset: number;
     private _urlCache: Map<string, string> = new Map();
 
-    private constructor(manifest: BundleManifest, data: ArrayBuffer, dataOffset: number)
+    private constructor(manifest: IBundleManifest, data: ArrayBuffer, dataOffset: number)
     {
         this._manifest = manifest;
         this._data = data;
@@ -181,7 +181,7 @@ export class AssetBundle
 
         const entryCount = view.getUint32(cursor, false);
         cursor += 4;
-        const entries: Record<string, BundleEntry> = {};
+        const entries: Record<string, IBundleEntry> = {};
 
         for(let i = 0; i < entryCount; i++)
         {
@@ -209,7 +209,7 @@ export class AssetBundle
             entries[key] = {offset, size};
         }
 
-        const manifest: BundleManifest =
+        const manifest: IBundleManifest =
             {
                 version,
                 entries

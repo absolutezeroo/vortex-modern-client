@@ -7,14 +7,14 @@ import type {IEncryption} from '@core/communication/encryption/IEncryption';
  */
 export class ArcFour implements IEncryption
 {
-    private i: number = 0;
-    private j: number = 0;
-    private sbox: Uint8Array = new Uint8Array(256);
+    private _i: number = 0;
+    private _j: number = 0;
+    private _sbox: Uint8Array = new Uint8Array(256);
 
     // Marked state for rollback
-    private markedI: number = 0;
-    private markedJ: number = 0;
-    private markedSbox: Uint8Array = new Uint8Array(256);
+    private _markedI: number = 0;
+    private _markedJ: number = 0;
+    private _markedSbox: Uint8Array = new Uint8Array(256);
 
     /**
 	 * Initialize the cipher with a key (Key-Scheduling Algorithm)
@@ -24,7 +24,7 @@ export class ArcFour implements IEncryption
         // Initialize S-box with identity permutation
         for(let i = 0; i < 256; i++)
         {
-            this.sbox[i] = i;
+            this._sbox[i] = i;
         }
 
         // Key-scheduling algorithm (KSA)
@@ -33,15 +33,15 @@ export class ArcFour implements IEncryption
 
         for(let i = 0; i < 256; i++)
         {
-            j = (j + this.sbox[i] + key.getByte(i % keyLength)) & 0xFF;
+            j = (j + this._sbox[i] + key.getByte(i % keyLength)) & 0xFF;
             // Swap sbox[i] and sbox[j]
-            const temp = this.sbox[i];
-            this.sbox[i] = this.sbox[j];
-            this.sbox[j] = temp;
+            const temp = this._sbox[i];
+            this._sbox[i] = this._sbox[j];
+            this._sbox[j] = temp;
         }
 
-        this.i = 0;
-        this.j = 0;
+        this._i = 0;
+        this._j = 0;
     }
 
     /**
@@ -71,9 +71,9 @@ export class ArcFour implements IEncryption
 	 */
     mark(): void
     {
-        this.markedI = this.i;
-        this.markedJ = this.j;
-        this.markedSbox.set(this.sbox);
+        this._markedI = this._i;
+        this._markedJ = this._j;
+        this._markedSbox.set(this._sbox);
     }
 
     /**
@@ -81,9 +81,9 @@ export class ArcFour implements IEncryption
 	 */
     reset(): void
     {
-        this.i = this.markedI;
-        this.j = this.markedJ;
-        this.sbox.set(this.markedSbox);
+        this._i = this._markedI;
+        this._j = this._markedJ;
+        this._sbox.set(this._markedSbox);
     }
 
     /**
@@ -91,15 +91,15 @@ export class ArcFour implements IEncryption
 	 */
     private next(): number
     {
-        this.i = (this.i + 1) & 0xFF;
-        this.j = (this.j + this.sbox[this.i]) & 0xFF;
+        this._i = (this._i + 1) & 0xFF;
+        this._j = (this._j + this._sbox[this._i]) & 0xFF;
 
         // Swap sbox[i] and sbox[j]
-        const temp = this.sbox[this.i];
-        this.sbox[this.i] = this.sbox[this.j];
-        this.sbox[this.j] = temp;
+        const temp = this._sbox[this._i];
+        this._sbox[this._i] = this._sbox[this._j];
+        this._sbox[this._j] = temp;
 
         // Return keystream byte
-        return this.sbox[(this.sbox[this.i] + this.sbox[this.j]) & 0xFF];
+        return this._sbox[(this._sbox[this._i] + this._sbox[this._j]) & 0xFF];
     }
 }

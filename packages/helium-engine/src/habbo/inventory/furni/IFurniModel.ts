@@ -1,6 +1,6 @@
 import type {GroupItem} from '../items/GroupItem';
 import type {FurnitureItem} from '../items/FurnitureItem';
-import type {FurnitureItemData} from '../items/FurnitureItemData';
+import type {IFurnitureItemData} from '../items/FurnitureItemData';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 
 /**
@@ -22,7 +22,7 @@ export interface IFurniModel
 	 * Insert furniture from server message (full list)
 	 * Returns info about what changed for the store to update signals
 	 */
-    insertFurniture(items: Map<number, FurnitureItemData>): {
+    insertFurniture(items: Map<number, IFurnitureItemData>): {
         addedCount: number;
         removedCount: number;
         isFirstLoad: boolean;

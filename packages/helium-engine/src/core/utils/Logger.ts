@@ -13,7 +13,7 @@ export enum LogLevel
 /**
  * Logger configuration
  */
-export interface LoggerConfig
+export interface ILoggerConfig
 {
     showTimestamp: boolean;
     showLevel: boolean;
@@ -55,7 +55,7 @@ export class Logger
     };
 
     private _name: string;
-    private _config: LoggerConfig = {
+    private _config: ILoggerConfig = {
         showTimestamp: true,
         showLevel: true,
         showSource: true,
@@ -135,7 +135,7 @@ export class Logger
     /**
 	 * Configure the logger
 	 */
-    configure(config: Partial<LoggerConfig>): void
+    configure(config: Partial<ILoggerConfig>): void
     {
         this._config = {...this._config, ...config};
     }

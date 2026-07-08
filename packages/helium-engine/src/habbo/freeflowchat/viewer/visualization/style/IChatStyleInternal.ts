@@ -1,8 +1,8 @@
 import type {Container, Point, Rectangle} from 'pixi.js';
-import type {ChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
+import type {IChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
 
 /**
- * ChatLinkStyleSheet
+ * IChatLinkStyleSheet
  *
  * Minimal subset of AS3 flash.text.StyleSheet actually populated by
  * ChatStyleLibrary — the hyperlink colors used inside `allowHTML` bubbles
@@ -10,7 +10,7 @@ import type {ChatTextFormat} from '@habbo/freeflowchat/style/IChatStyle';
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::initializeStyleFromAssets()
  */
-export interface ChatLinkStyleSheet
+export interface IChatLinkStyleSheet
 {
     linkColor: string;
     linkHoverColor: string;
@@ -32,8 +32,8 @@ export interface IChatStyleInternal
 {
     getNewBackgroundSprite(tint?: number): Container;
 
-    readonly textFormat: ChatTextFormat;
-    readonly styleSheet: ChatLinkStyleSheet | null;
+    readonly textFormat: IChatTextFormat;
+    readonly styleSheet: IChatLinkStyleSheet | null;
     readonly pointer: ImageBitmap | null;
     readonly pointerOffsetToBubbleBottom: number;
 

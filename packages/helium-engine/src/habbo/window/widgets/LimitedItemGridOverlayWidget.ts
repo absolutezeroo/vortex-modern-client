@@ -22,8 +22,8 @@ export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidg
 {
     public static readonly TYPE: string = 'limited_item_overlay_grid';
 
-    private readonly SHINE_INTERVAL_MS: number = 10000;
-    private readonly SHINE_LENGTH_MS: number = 250;
+    private readonly _shineIntervalMs: number = 10000;
+    private readonly _shineLengthMs: number = 250;
 
     private _widgetWindow: IWidgetWindow | null = null;
     private _windowManager: IHabboWindowManager | null = null;

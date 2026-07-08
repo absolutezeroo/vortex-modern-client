@@ -25,4 +25,4 @@ export * from './visualization';
 // Types
 export type {RoomObjectCategory} from './RoomObjectCategoryEnum';
 export type {RoomObjectType} from './RoomObjectTypeEnum';
-export type {Point} from './RoomWallData';
+export type {IPoint} from './RoomWallData';

@@ -8,4 +8,4 @@ export * from './enum';
 export {HabboConfigurationManager} from './HabboConfigurationManager';
 
 // Types
-export type {HabboConfigurationManagerEvents, IHabboConfigurationManager,} from './IHabboConfigurationManager';
+export type {IHabboConfigurationManagerEvents, IHabboConfigurationManager,} from './IHabboConfigurationManager';

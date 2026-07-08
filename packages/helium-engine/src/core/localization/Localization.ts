@@ -2,7 +2,7 @@ import type {ILocalizable} from './ILocalizable';
 import type {ILocalization} from './ILocalization';
 import type {ICoreLocalizationManager} from './ICoreLocalizationManager';
 
-interface ParameterData
+interface IParameterData
 {
     id: string;
     value: string;
@@ -17,7 +17,7 @@ export class Localization implements ILocalization
 {
     private readonly _manager: ICoreLocalizationManager;
     private readonly _key: string;
-    private _parameters: Map<string, ParameterData> | null = null;
+    private _parameters: Map<string, IParameterData> | null = null;
     private _listeners: Set<ILocalizable> | null = null;
 
     constructor(manager: ICoreLocalizationManager, key: string, value: string | null = null)

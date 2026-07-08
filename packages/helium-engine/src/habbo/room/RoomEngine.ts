@@ -105,12 +105,12 @@ const OBJECT_ID_SELECTION_ARROW = -3;
 const OBJECT_TYPE_SELECTION_ARROW = 'selection_arrow';
 const ROOM_DRAG_THRESHOLD = 15;
 
-interface RoomEngineRoomInstanceData
+interface IRoomEngineRoomInstanceData
 {
     roomCamera: RoomCamera;
 }
 
-export interface RoomEngineRectangle
+export interface IRoomEngineRectangle
 {
     left: number;
     top: number;
@@ -142,7 +142,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _toolbar: IHabboToolbar | null = null;
     private _contentLoader: RoomContentLoader;
     private _contentLoaderEvents: EventEmitter = new EventEmitter();
-    private _roomInstanceData: Map<number, RoomEngineRoomInstanceData>;
+    private _roomInstanceData: Map<number, IRoomEngineRoomInstanceData>;
     private _boundOnContentLoaded: ((type: string) => void) = this.onContentLoaded.bind(this);
     private _boundOnContentLoaderReady: (() => void) = this.onContentLoaderReady.bind(this);
     private _pendingFurnitureViz: Map<string, Array<{
@@ -799,7 +799,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomInstanceData()
-    private getRoomInstanceData(roomId: number): RoomEngineRoomInstanceData
+    private getRoomInstanceData(roomId: number): IRoomEngineRoomInstanceData
     {
         let data = this._roomInstanceData.get(roomId);
 
@@ -3566,7 +3566,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::getActiveRoomBoundingRectangle()
-    private getActiveRoomBoundingRectangle(canvasId: number): RoomEngineRectangle | null
+    private getActiveRoomBoundingRectangle(canvasId: number): IRoomEngineRectangle | null
     {
         return this.getRoomObjectBoundingRectangle(
             this._activeRoomId,
@@ -3577,7 +3577,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
-    getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): RoomEngineRectangle | null
+    getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null
     {
         const canvas = this._renderingCanvases.get(roomId * 1000 + canvasId);
         const geometry = canvas?.geometry ?? null;

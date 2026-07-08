@@ -1,4 +1,4 @@
-import type {IPerkManager, PerkAllowance} from './IPerkManager';
+import type {IPerkManager, IPerkAllowance} from './IPerkManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {SessionDataManager} from './SessionDataManager';
 import {PerkAllowancesMessageEvent} from '@habbo/communication/messages/incoming/perk';
@@ -13,7 +13,7 @@ export class PerkManager implements IPerkManager
     private _ready: boolean = false;
     private _sessionDataManager: SessionDataManager | null = null;
     private _perkAllowancesMessageEvent: IMessageEvent | null = null;
-    private _perks: Map<string, PerkAllowance> | null = new Map();
+    private _perks: Map<string, IPerkAllowance> | null = new Map();
 
     constructor(sessionDataManager: SessionDataManager)
     {

@@ -13,7 +13,7 @@ import type {DefaultAttStruct} from '../utils/DefaultAttStruct';
  */
 export class SkinContainer implements ISkinContainer
 {
-    protected static statesByRenderPriority: number[] | null = null;
+    protected static _statesByRenderPriority: number[] | null = null;
     private static readonly MAX_STYLE_COUNT: number = 100;
     private _renderers: Map<number, (ISkinRenderer | null)[]> = new Map();
     private _defaults: Map<number, (DefaultAttStruct | null)[]> = new Map();
@@ -22,9 +22,9 @@ export class SkinContainer implements ISkinContainer
 
     constructor()
     {
-        if(SkinContainer.statesByRenderPriority === null)
+        if(SkinContainer._statesByRenderPriority === null)
         {
-            SkinContainer.statesByRenderPriority = [64, 32, 16, 8, 4, 2, 1, 0];
+            SkinContainer._statesByRenderPriority = [64, 32, 16, 8, 4, 2, 1, 0];
         }
     }
 
@@ -197,7 +197,7 @@ export class SkinContainer implements ISkinContainer
 
         if(renderer)
         {
-            for(const priority of SkinContainer.statesByRenderPriority!)
+            for(const priority of SkinContainer._statesByRenderPriority!)
             {
                 if((state & priority) === priority)
                 {

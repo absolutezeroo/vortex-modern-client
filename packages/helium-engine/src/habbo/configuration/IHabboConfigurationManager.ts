@@ -6,7 +6,7 @@ import type {ICoreConfiguration} from '@core/runtime/ICoreConfiguration';
  *
  * Based on AS3: com.sulake.habbo.configuration.enum.HabboConfigurationEvent
  */
-export interface HabboConfigurationManagerEvents
+export interface IHabboConfigurationManagerEvents
 {
     /**
 	 * Configuration loaded successfully

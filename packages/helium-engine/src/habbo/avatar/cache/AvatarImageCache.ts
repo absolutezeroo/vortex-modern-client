@@ -11,7 +11,7 @@ import {AvatarImageBodyPartCache} from './AvatarImageBodyPartCache';
 import {AvatarImageActionCache} from './AvatarImageActionCache';
 import {AvatarImageDirectionCache} from './AvatarImageDirectionCache';
 import {AvatarImageBodyPartContainer} from '../AvatarImageBodyPartContainer';
-import type {ColorTransformData} from './ImageData';
+import type {IColorTransformData} from './ImageData';
 import {ImageData} from './ImageData';
 
 /**
@@ -576,7 +576,7 @@ export class AvatarImageCache
                     offset.x += this._scale === AvatarScaleType.LARGE ? 65 : 31;
                 }
 
-                const colorTransform: ColorTransformData | null = hasColorTransform ? colorMult : null;
+                const colorTransform: IColorTransformData | null = hasColorTransform ? colorMult : null;
 
                 // Combine asset-level flip with alias flip for draw-time flipping
                 // In AS3, BitmapData is pre-flipped; we flip at draw time instead
@@ -801,7 +801,7 @@ export class AvatarImageCache
         destY: number,
         width: number,
         height: number,
-        colorTransform: ColorTransformData
+        colorTransform: IColorTransformData
     ): void
     {
         if(width <= 0 || height <= 0) return;

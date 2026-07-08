@@ -1,7 +1,7 @@
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 
-export interface PetData
+export interface IPetData
 {
     id: number;
     name: string;
@@ -36,9 +36,9 @@ export class PetInventoryMessageParser implements IMessageParser
         return this._fragmentNo;
     }
 
-    private _pets: PetData[] = [];
+    private _pets: IPetData[] = [];
 
-    get pets(): PetData[]
+    get pets(): IPetData[]
     {
         return this._pets;
     }

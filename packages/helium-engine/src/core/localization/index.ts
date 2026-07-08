@@ -9,7 +9,7 @@ export {LocalizationDefinition} from './LocalizationDefinition';
 export {LocalizationEvent} from './LocalizationEvent';
 
 // Types
-export type {LocalizationManagerEvents, ICoreLocalizationManager,} from './ICoreLocalizationManager';
+export type {ILocalizationManagerEvents, ICoreLocalizationManager,} from './ICoreLocalizationManager';
 export type {IGameDataResources} from './IGameDataResources';
 export type {ILocalizable} from './ILocalizable';
 export type {ILocalization} from './ILocalization';

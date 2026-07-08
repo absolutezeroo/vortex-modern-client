@@ -9,5 +9,5 @@ export * from './feed';
 export * from './singular';
 
 // Types
-export type {HabboNotificationEvents} from './HabboNotifications';
+export type {IHabboNotificationEvents} from './HabboNotifications';
 export type {IHabboNotifications} from './IHabboNotifications';

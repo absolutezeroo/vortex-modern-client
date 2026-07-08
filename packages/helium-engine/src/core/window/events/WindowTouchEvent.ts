@@ -10,10 +10,8 @@ import {WindowEvent} from './WindowEvent';
  *
  * @see sources/win63_2021_version/com/sulake/core/window/events/WindowTouchEvent.as
  */
-export class WindowTouchEvent extends WindowEvent
+export class WindowTouchEvent extends WindowEvent 
 {
-    // ── Event type constants ─────────────────────────────────────────
-
     public static readonly TOUCH_BEGIN: string = 'WTE_BEGIN';
     public static readonly TOUCH_END: string = 'WTE_END';
     public static readonly TOUCH_MOVE: string = 'WTE_MOVE';
@@ -37,23 +35,23 @@ export class WindowTouchEvent extends WindowEvent
     public sizeY: number = 0;
 
     /**
-	 * Allocates a WindowTouchEvent from the pool or creates a new one.
-	 *
-	 * @param type - The event type string
-	 * @param window - The target window
-	 * @param related - The related window
-	 * @param localX - X coordinate relative to the target window
-	 * @param localY - Y coordinate relative to the target window
-	 * @param sizeX - Touch area width
-	 * @param sizeY - Touch area height
-	 * @param stageX - X coordinate relative to the stage
-	 * @param stageY - Y coordinate relative to the stage
-	 * @param pressure - Touch pressure
-	 * @param altKey - Whether the Alt key is pressed
-	 * @param ctrlKey - Whether the Ctrl key is pressed
-	 * @param shiftKey - Whether the Shift key is pressed
-	 * @returns A pooled or new WindowTouchEvent instance
-	 */
+     * Allocates a WindowTouchEvent from the pool or creates a new one.
+     *
+     * @param type - The event type string
+     * @param window - The target window
+     * @param related - The related window
+     * @param localX - X coordinate relative to the target window
+     * @param localY - Y coordinate relative to the target window
+     * @param sizeX - Touch area width
+     * @param sizeY - Touch area height
+     * @param stageX - X coordinate relative to the stage
+     * @param stageY - Y coordinate relative to the stage
+     * @param pressure - Touch pressure
+     * @param altKey - Whether the Alt key is pressed
+     * @param ctrlKey - Whether the Ctrl key is pressed
+     * @param shiftKey - Whether the Shift key is pressed
+     * @returns A pooled or new WindowTouchEvent instance
+     */
     public static allocateTouch(
         type: string,
         window: IWindow | null,
@@ -68,7 +66,7 @@ export class WindowTouchEvent extends WindowEvent
         altKey: boolean = false,
         ctrlKey: boolean = false,
         shiftKey: boolean = false
-    ): WindowTouchEvent
+    ): WindowTouchEvent 
     {
         const event: WindowTouchEvent = (WindowTouchEvent._touchPool.length > 0)
             ? WindowTouchEvent._touchPool.pop()!
@@ -94,9 +92,9 @@ export class WindowTouchEvent extends WindowEvent
     }
 
     /**
-	 * Creates a clone of this touch event via the pool.
-	 */
-    public override clone(): WindowEvent
+     * Creates a clone of this touch event via the pool.
+     */
+    public override clone(): WindowEvent 
     {
         return WindowTouchEvent.allocateTouch(
             this._type, this._window, this._related,
@@ -107,9 +105,9 @@ export class WindowTouchEvent extends WindowEvent
     }
 
     /**
-	 * Returns a string representation of this touch event.
-	 */
-    public override toString(): string
+     * Returns a string representation of this touch event.
+     */
+    public override toString(): string 
     {
         return `WindowTouchEvent { type: ${this._type} cancelable: ${this._cancelable} window: ${this._window} localX: ${this.localX} localY: ${this.localY} }`;
     }

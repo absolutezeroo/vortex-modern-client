@@ -32,7 +32,7 @@ export function parsePetFigureData(wrapper: IMessageDataWrapper): PetFigureData
  *
  * @see source_as_win63/habbo/communication/messages/parser/inventory/pets/class_1679.as
  */
-export interface PetInfoData
+export interface IPetInfoData
 {
     id: number;
     name: string;
@@ -40,7 +40,7 @@ export interface PetInfoData
     level: number;
 }
 
-export function parsePetInfoData(wrapper: IMessageDataWrapper): PetInfoData
+export function parsePetInfoData(wrapper: IMessageDataWrapper): IPetInfoData
 {
     const id = wrapper.readInt();
     const name = wrapper.readString();

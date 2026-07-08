@@ -123,7 +123,7 @@ import type {
 } from '../communication/messages/parser/inventory/AchievementsScoreMessageParser';
 import type {FigureSetIdsMessageParser} from '../communication/messages/parser/inventory/FigureSetIdsMessageParser';
 import type {
-    AvatarEffect,
+    IAvatarEffect,
     AvatarEffectsMessageParser
 } from '../communication/messages/parser/inventory/AvatarEffectsMessageParser';
 import type {
@@ -547,9 +547,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._boundFurnitureNames;
     }
 
-    private _avatarEffects: AvatarEffect[] = [];
+    private _avatarEffects: IAvatarEffect[] = [];
 
-    get avatarEffects(): AvatarEffect[]
+    get avatarEffects(): IAvatarEffect[]
     {
         return this._avatarEffects;
     }

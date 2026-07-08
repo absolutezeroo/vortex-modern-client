@@ -23,7 +23,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  */
 export class TextFieldController extends TextController implements ITextFieldWindow
 {
-    private static readonly _WORD_DELIMS: RegExp = /[~%&!\\;:"',<>?#\s.\-()=\[\]{}\^_]/g;
+    private static readonly WORD_DELIMS: RegExp = /[~%&!\\;:"',<>?#\s.\-()=\[\]{}\^_]/g;
     protected _inputElement: HTMLInputElement | HTMLTextAreaElement | null = null;
     private _maxLength: number = 0;
     private _focusCapturer: boolean = false;
@@ -296,9 +296,9 @@ export class TextFieldController extends TextController implements ITextFieldWin
         const positions: number[] = [0];
         let match: RegExpExecArray | null;
 
-        TextFieldController._WORD_DELIMS.lastIndex = 0;
+        TextFieldController.WORD_DELIMS.lastIndex = 0;
 
-        while((match = TextFieldController._WORD_DELIMS.exec(text)) !== null)
+        while((match = TextFieldController.WORD_DELIMS.exec(text)) !== null)
         {
             if(match.index < text.length)
             {
