@@ -52,13 +52,55 @@ export default tseslint.config(
 
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'separate-type-imports' }],
+            // AS3-ported stub parameters (TODO(AS3) signatures kept for API-shape fidelity) and
+            // caught-but-unhandled errors are conventionally prefixed `_` throughout this codebase
+            // to mark them as intentionally unused - the default rule has no exception for that.
+            '@typescript-eslint/no-unused-vars':
+            [
+                'error',
+                { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }
+            ],
             '@typescript-eslint/naming-convention':
             [
                 'error',
                 { selector: 'class', format: ['PascalCase'] },
+                // `declare global { interface Window { ... } }` augments the DOM's own global
+                // interface - it must keep that exact name to merge, so it can't take an `I` prefix.
+                { selector: 'interface', filter: { regex: '^Window$', match: true }, format: null },
                 { selector: 'interface', format: ['PascalCase'], prefix: ['I'] },
                 { selector: 'enumMember', format: ['PascalCase'] },
-                { selector: 'classProperty', modifiers: ['static', 'readonly'], format: ['UPPER_CASE'] },
+                // naming-convention resolves which selector applies by summed modifier bit-weight
+                // (public=8/protected=16/private=32/static=4/readonly=2), not by array order or
+                // modifier count - so the old unqualified `{static, readonly}` selector (weight 6)
+                // never actually won against the single-modifier accessibility selectors below it
+                // (TS treats an omitted accessibility keyword as implicit `public`, so EVERY class
+                // property has one of public/protected/private set). Every AS3 constant declared
+                // with an accessibility keyword (`public static readonly FOO = ...`, the norm for
+                // ported AS3 constants) was silently being checked against the camelCase instance-
+                // field rule instead of `UPPER_CASE`. Combining the accessibility modifier into the
+                // constant selectors themselves gives each one a higher weight than its plain
+                // accessibility counterpart (14/22/38 vs 8/16/32), so it's checked first. This
+                // covers fixed enum-like arrays too (e.g. `DIRECTIONS`/`SCALES` value lists), which
+                // this codebase already UPPER_CASEs like any other constant. The established
+                // exception (458 conforming constants vs. these 15) is a `private static readonly`
+                // field holding a genuine mutable runtime instance - an event-recycling object pool
+                // (`_pool`/`_disposePool`/`_keyboardPool`/`_linkPool`/`_mousePool`/`_touchPool`), a
+                // scratch/temp object reused to avoid per-call allocations (`_tempRect`,
+                // `_helperVector`), or a lazily-populated cache (`_alphaHitCache`, `_toolEvents`,
+                // `_propertySetters`, `_previewWindow`, `_encoder`/`_decoder`, `_startTime`) - not a
+                // fixed value, so it keeps the ordinary private-field `_camelCase` convention.
+                // Excluded by name rather than by type: type-aware filtering needs a
+                // `parserOptions.project`, which isn't configured, and would be wrong here anyway -
+                // pools/caches and fixed-value arrays share the same `T[]`/`Map<...>` shape.
+                { selector: 'classProperty', modifiers: ['public', 'static', 'readonly'], format: ['UPPER_CASE'] },
+                { selector: 'classProperty', modifiers: ['protected', 'static', 'readonly'], format: ['UPPER_CASE'] },
+                {
+                    selector: 'classProperty', modifiers: ['private', 'static', 'readonly'], format: ['UPPER_CASE'],
+                    filter: {
+                        regex: '^_(pool|disposePool|keyboardPool|linkPool|mousePool|touchPool|tempRect|helperVector|alphaHitCache|toolEvents|propertySetters|previewWindow|encoder|decoder|startTime)$',
+                        match: false
+                    }
+                },
                 { selector: 'classProperty', modifiers: ['private'], format: ['camelCase'], leadingUnderscore: 'require' },
                 { selector: 'classProperty', modifiers: ['protected'], format: ['camelCase'], leadingUnderscore: 'require' },
                 { selector: 'classProperty', modifiers: ['public'], format: ['camelCase'], leadingUnderscore: 'forbid' },
