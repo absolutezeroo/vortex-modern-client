@@ -5,10 +5,12 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
+import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 
 /**
  * AbstractView
@@ -24,6 +26,7 @@ export class AbstractView extends Component
     protected _avatarManager: IAvatarRenderManager | null = null;
     protected _localizationManager: IHabboLocalizationManager | null = null;
     protected _sessionDataManager: ISessionDataManager | null = null;
+    protected _tracking: IHabboTracking | null = null;
 
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
@@ -62,6 +65,13 @@ export class AbstractView extends Component
                 (manager: IHabboLocalizationManager | null) =>
                 {
                     this._localizationManager = manager;
+                }
+            ),
+            new ComponentDependency(
+                IID_HabboTracking,
+                (tracking: IHabboTracking | null) =>
+                {
+                    this._tracking = tracking;
                 }
             ),
         ];

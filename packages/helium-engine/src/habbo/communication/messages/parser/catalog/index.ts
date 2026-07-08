@@ -10,3 +10,5 @@ export * from './PurchaseOKMessageEventParser';
 export * from './PurchaseErrorMessageEventParser';
 export * from './PurchaseNotAllowedMessageEventParser';
 export * from './NotEnoughBalanceMessageEventParser';
+export * from './LimitedOfferAppearingNextMessageEventParser';
+export * from './CatalogPageWithEarliestExpiryMessageEventParser';

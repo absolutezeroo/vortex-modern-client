@@ -13,7 +13,7 @@ export interface ITextWindow extends IWindow, IScrollableWindow
 {
     readonly bold: boolean;
     readonly italic: boolean;
-    readonly underline: boolean;
+    underline: boolean;
     readonly fontFace: string;
     readonly fontSize: number;
     readonly length: number;
@@ -30,6 +30,8 @@ export interface ITextWindow extends IWindow, IScrollableWindow
     wordWrap: boolean;
     autoSize: string;
     etchingColor: number;
+    etchingPosition: string;
+    border: boolean;
 
     appendText(text: string): void;
 

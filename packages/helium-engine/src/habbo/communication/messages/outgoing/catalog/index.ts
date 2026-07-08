@@ -5,3 +5,5 @@ export * from './GetCatalogPageComposer';
 export * from './GetProductOfferComposer';
 export * from './PurchaseFromCatalogComposer';
 export * from './BuildersClubQueryFurniCountMessageComposer';
+export * from './GetLimitedOfferAppearingNextComposer';
+export * from './GetCatalogPageWithEarliestExpiryComposer';

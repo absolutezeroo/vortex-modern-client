@@ -367,6 +367,15 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         }
     }
 
+    // AS3: sources/win63_version/habbo/quest/HabboQuestEngine.as::reenableRoomCompetitionWindow()
+    reenableRoomCompetitionWindow(): void
+    {
+        if(this._competitionController)
+        {
+            this._competitionController.dontShowAgain = false;
+        }
+    }
+
     /**
 	 * Get the user's achievement level for a given category and badge
 	 *

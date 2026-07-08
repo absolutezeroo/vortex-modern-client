@@ -54,4 +54,9 @@ export interface IHabboQuestEngine extends ILinkEventTracker
 	 * Navigate to a random quest room
 	 */
     goToQuestRooms(): void;
+
+    /**
+	 * Clear the "don't show again" flag on the room-competition submission window
+	 */
+    reenableRoomCompetitionWindow(): void;
 }

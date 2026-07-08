@@ -120,13 +120,23 @@ import {
     PurchaseErrorMessageEvent,
     PurchaseNotAllowedMessageEvent,
     PurchaseOKMessageEvent,
+    LimitedOfferAppearingNextMessageEvent,
+    CatalogPageWithEarliestExpiryMessageEvent,
 } from './messages/incoming/catalog';
 
 // Incoming Events - Landing View
-import {PromoArticlesMessageEvent,} from './messages/incoming/landingview';
+import {PromoArticlesMessageEvent, CommunityVoteReceivedEvent,} from './messages/incoming/landingview';
 
-// Incoming Events - Quest (hall of fame)
-import {CommunityGoalHallOfFameMessageEvent,} from './messages/incoming/quest';
+// Incoming Events - Competition
+import {CurrentTimingCodeMessageEvent} from './messages/incoming/competition';
+
+// Incoming Events - Quest
+import {
+    CommunityGoalHallOfFameMessageEvent,
+    QuestDailyMessageEvent,
+    CommunityGoalProgressMessageEvent,
+    ConcurrentUsersGoalProgressMessageEvent,
+} from './messages/incoming/quest';
 
 // Incoming Events - Room Session
 import {
@@ -346,6 +356,7 @@ import {
     SetRoomSessionTagsMessageComposer,
     ToggleStaffPickMessageComposer,
     UpdateHomeRoomMessageComposer,
+    ForwardToARandomPromotedRoomMessageComposer,
 } from './messages/outgoing/navigator';
 
 // Outgoing Composers - New Navigator
@@ -474,7 +485,7 @@ import {
 import {PollAnswerComposer, PollRejectComposer, PollStartComposer,} from './messages/outgoing/poll';
 
 // Outgoing Composers - Landing View
-import {GetPromoArticlesComposer,} from './messages/outgoing/landingview';
+import {GetPromoArticlesComposer, CommunityGoalVoteMessageComposer,} from './messages/outgoing/landingview';
 
 // Outgoing Composers - Catalog
 import {
@@ -485,10 +496,26 @@ import {
     GetProductOfferComposer,
     PurchaseFromCatalogComposer,
     BuildersClubQueryFurniCountMessageComposer,
+    GetLimitedOfferAppearingNextComposer,
+    GetCatalogPageWithEarliestExpiryComposer,
 } from './messages/outgoing/catalog';
 
-// Outgoing Composers - Quest (hall of fame)
-import {GetCommunityGoalHallOfFameMessageComposer,} from './messages/outgoing/quest';
+// Outgoing Composers - Quest
+import {
+    GetCommunityGoalHallOfFameMessageComposer,
+    GetDailyQuestMessageComposer,
+    ActivateQuestMessageComposer,
+    CancelQuestMessageComposer,
+    GetCommunityGoalProgressMessageComposer,
+    GetConcurrentUsersGoalProgressMessageComposer,
+    GetConcurrentUsersRewardMessageComposer,
+} from './messages/outgoing/quest';
+
+// Outgoing Composers - Talent
+import {GetTalentTrackMessageComposer} from './messages/outgoing/talent';
+
+// Outgoing Composers - Competition
+import {GetCurrentTimingCodeMessageComposer} from './messages/outgoing/competition';
 
 // Outgoing Composers - Notifications
 import {GetMOTDMessageComposer} from './messages/outgoing/notifications';
@@ -575,6 +602,7 @@ import {
     SetActivatedBadgesComposer,
     UnacceptTradingComposer,
     WithdrawCreditVaultMessageComposer,
+    RequestABadgeComposer,
 } from './messages/outgoing/inventory';
 
 /**
@@ -872,9 +900,15 @@ export class HabboMessages implements IMessageConfiguration
 
         // === LANDING VIEW ===
         this._events.set(1655, PromoArticlesMessageEvent);
+        this._events.set(551, CommunityVoteReceivedEvent);
+
+        // === COMPETITION ===
+        this._events.set(1179, CurrentTimingCodeMessageEvent);
 
         // === CATALOG (bonus rare) ===
         this._events.set(1984, BonusRareInfoMessageEvent);
+        this._events.set(2178, LimitedOfferAppearingNextMessageEvent);
+        this._events.set(3672, CatalogPageWithEarliestExpiryMessageEvent);
         this._events.set(3771, ClubGiftInfoEvent);
         this._events.set(2248, CatalogIndexMessageEvent);
         this._events.set(1405, CatalogPageMessageEvent);
@@ -883,8 +917,11 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1872, PurchaseNotAllowedMessageEvent);
         this._events.set(3883, NotEnoughBalanceMessageEvent);
 
-        // === QUEST (hall of fame) ===
+        // === QUEST ===
         this._events.set(2134, CommunityGoalHallOfFameMessageEvent);
+        this._events.set(1935, QuestDailyMessageEvent);
+        this._events.set(3520, CommunityGoalProgressMessageEvent);
+        this._events.set(3636, ConcurrentUsersGoalProgressMessageEvent);
 
         // === ROOM SETTINGS ===
         this._events.set(1028, RoomSettingsDataEvent);
@@ -939,6 +976,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3973, MyFriendsRoomsSearchMessageComposer);
         this._composers.set(282, ForwardToSomeRoomMessageComposer);
         this._composers.set(1474, ConvertGlobalRoomIdMessageComposer);
+        this._composers.set(2120, ForwardToARandomPromotedRoomMessageComposer);
         this._composers.set(3860, CancelEventMessageComposer);
         this._composers.set(289, EditEventMessageComposer);
         this._composers.set(2683, CompetitionRoomsSearchMessageComposer);
@@ -1113,12 +1151,16 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2862, AvatarEffectActivatedComposer);
         this._composers.set(1253, AvatarEffectSelectedComposer);
         this._composers.set(3837, ResetUnseenItemsComposer);
+        this._composers.set(2276, RequestABadgeComposer);
 
         // === LANDING VIEW ===
         this._composers.set(1827, GetPromoArticlesComposer);
+        this._composers.set(1104, CommunityGoalVoteMessageComposer);
 
         // === CATALOG (bonus rare) ===
         this._composers.set(957, GetBonusRareInfoMessageComposer);
+        this._composers.set(3747, GetLimitedOfferAppearingNextComposer);
+        this._composers.set(3841, GetCatalogPageWithEarliestExpiryComposer);
         this._composers.set(1604, GetClubGiftMessageComposer);
         this._composers.set(1606, GetCatalogIndexComposer);
         this._composers.set(2400, GetCatalogPageComposer);
@@ -1126,8 +1168,20 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2697, PurchaseFromCatalogComposer);
         this._composers.set(2340, BuildersClubQueryFurniCountMessageComposer);
 
-        // === QUEST (hall of fame) ===
+        // === QUEST ===
         this._composers.set(1034, GetCommunityGoalHallOfFameMessageComposer);
+        this._composers.set(725, GetDailyQuestMessageComposer);
+        this._composers.set(3504, ActivateQuestMessageComposer);
+        this._composers.set(2391, CancelQuestMessageComposer);
+        this._composers.set(3742, GetCommunityGoalProgressMessageComposer);
+        this._composers.set(277, GetConcurrentUsersGoalProgressMessageComposer);
+        this._composers.set(1258, GetConcurrentUsersRewardMessageComposer);
+
+        // === TALENT ===
+        this._composers.set(96, GetTalentTrackMessageComposer);
+
+        // === COMPETITION ===
+        this._composers.set(1332, GetCurrentTimingCodeMessageComposer);
 
         // === INVENTORY - TRADING ===
         this._composers.set(3123, OpenTradingComposer);

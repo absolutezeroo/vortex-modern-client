@@ -33,4 +33,14 @@ export interface IStaticBitmapWrapperWindow extends IWindow
 	 * and inherits this property from it, same as AS3.
 	 */
     pivotPoint: number;
+
+    /**
+	 * Whether the bitmap stretches horizontally to fill the window width.
+	 */
+    stretchedX: boolean;
+
+    /**
+	 * Whether the bitmap stretches vertically to fill the window height.
+	 */
+    stretchedY: boolean;
 }

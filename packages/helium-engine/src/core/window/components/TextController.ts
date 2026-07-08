@@ -6,7 +6,6 @@ import {WindowController} from '../WindowController';
 import {WindowEvent} from '../events/WindowEvent';
 import {PropertyStruct} from '../utils/PropertyStruct';
 import {TextStyleManager} from '../utils/TextStyleManager';
-import {TextStyle} from '../utils/TextStyle';
 import {TextMargins} from '../utils/TextMargins';
 import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
 
@@ -240,6 +239,17 @@ export class TextController extends WindowController implements ITextWindow
     public set etchingPosition(value: string)
     {
         this._etchingPosition = value;
+        this.refreshTextImage();
+    }
+
+    public get border(): boolean
+    {
+        return this._border;
+    }
+
+    public set border(value: boolean)
+    {
+        this._border = value;
         this.refreshTextImage();
     }
 
@@ -1149,6 +1159,10 @@ export class TextController extends WindowController implements ITextWindow
         return TextController._measureCtx;
     }
 
+    // Keys are wire-format property names (snake_case, e.g. from JSON layout
+    // data) dispatching to setter logic - they must stay snake_case to match
+    // what's actually parsed, not camelCase.
+    /* eslint-disable @typescript-eslint/naming-convention */
     protected static createPropertySetterTable(): Record<string, (ctrl: TextController, value: unknown) => void>
     {
         return {
@@ -1333,6 +1347,7 @@ export class TextController extends WindowController implements ITextWindow
             },
         };
     }
+    /* eslint-enable @typescript-eslint/naming-convention */
 
     public resetExplicitStyle(): void
     {

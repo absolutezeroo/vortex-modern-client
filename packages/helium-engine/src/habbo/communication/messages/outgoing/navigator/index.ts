@@ -1,3 +1,4 @@
+export * from './ForwardToARandomPromotedRoomMessageComposer';
 export * from './GetGuestRoomMessageComposer';
 export * from './CreateFlatMessageComposer';
 export * from './AddFavouriteRoomMessageComposer';

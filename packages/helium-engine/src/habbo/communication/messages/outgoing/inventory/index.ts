@@ -4,6 +4,8 @@ export {RequestFurniInventoryComposer} from './RequestFurniInventoryComposer';
 // Badges
 export {GetBadgesComposer} from './GetBadgesComposer';
 export {SetActivatedBadgesComposer} from './SetActivatedBadgesComposer';
+export {RequestABadgeComposer} from './RequestABadgeComposer';
+export {GetIsBadgeRequestFulfilledComposer} from './GetIsBadgeRequestFulfilledComposer';
 
 // Effects
 export {AvatarEffectActivatedComposer} from './AvatarEffectActivatedComposer';

@@ -1,4 +1,5 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
+import type {IUpdateReceiver} from '@core/runtime/IContext';
 import type {IElementDescriptionData} from './IElementDescriptor';
 import type {ElementRegistry} from './ElementRegistry';
 import type {IWindow} from '@core/window/IWindow';
@@ -169,6 +170,12 @@ export interface IHabboWindowManager extends IDisposable {
 
     // AS3: sources/win63_version/habbo/window/class_38.as::getDesktop()
     getDesktop(layer: number): IWindow | null;
+
+    // AS3: sources/win63_version/habbo/window/class_38.as::registerUpdateReceiver()
+    registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
+
+    // AS3: sources/win63_version/habbo/window/class_38.as::removeUpdateReceiver()
+    removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
     // AS3: sources/win63_version/habbo/window/class_38.as::findWindowByName()
     findWindowByName(name: string): IWindow | null;
