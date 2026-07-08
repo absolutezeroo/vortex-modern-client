@@ -521,14 +521,14 @@ export class SocketConnection extends EventEmitter<ConnectionEvents> implements 
                     }
                     catch (error)
                     {
-                        log.error(`Handler error for ${messageId}: ${(error as Error).message}`);
+                        log.error(`Handler error for ${messageId}: ${(error as Error).message}`, error);
                     }
                 }
             }
         }
         catch (error)
         {
-            log.error(`Parse error for ${messageId}: ${(error as Error).message}`);
+            log.error(`Parse error for ${messageId}: ${(error as Error).message}`, error);
             this.callback?.messageParseError?.(wrapper);
         }
     }

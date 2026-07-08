@@ -61,7 +61,7 @@ export class MessageRegistry
 
         let events = this.idToEvents.get(id);
 
-        if(events)
+        if(events && events.length > 0)
         {
             // Reuse parser from first event handler
             event.parser = events[0].parser;
@@ -69,7 +69,7 @@ export class MessageRegistry
         else
         {
             // Create new parser instance
-            events = [];
+            events = events ?? [];
             this.idToEvents.set(id, events);
             event.parser = new event.parserClass();
         }
