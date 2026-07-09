@@ -32,10 +32,15 @@ const BADGE_SLOT_COUNT = 5;
 
 export class InfoStandUserView
 {
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4549
     protected _widget: InfoStandWidget;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_window
     protected _window: IItemListWindow | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4558
     protected _infoBorder: IWindowContainer | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_4641
     protected _elementList: IItemListWindow | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_5253
     protected _profileLink: IWindowContainer | null = null;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::InfoStandUserView()
@@ -287,6 +292,7 @@ export class InfoStandUserView
 	 * rest of the relationship-status feature (needs RoomSessionFavouriteGroupUpdateEvent
 	 * wiring, not part of the Phase 1 identity scope).
 	 */
+    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::setRelationshipStatuses()
     public setRelationshipStatuses(_statuses: unknown): void
     {
     }

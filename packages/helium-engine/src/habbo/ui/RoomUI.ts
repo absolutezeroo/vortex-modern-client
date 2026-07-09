@@ -71,6 +71,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     private _landingView: IHabboLandingView | null = null;
     private _habboTracking: IHabboTracking | null = null;
     private _habboGroupsManager: IHabboGroupsManager | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::friendList
     private _friendList: IHabboFriendList | null = null;
     private _widgetFactory: RoomWidgetFactory;
     private _desktops: Map<string, RoomDesktop> = new Map();

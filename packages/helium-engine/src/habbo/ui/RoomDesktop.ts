@@ -260,11 +260,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._habboGroupsManager;
     }
 
+    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::set habboGroupsManager()
     public set habboGroupsManager(value: IHabboGroupsManager | null)
     {
         this._habboGroupsManager = value;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::friendList
     private _friendList: IHabboFriendList | null = null;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
@@ -273,6 +275,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._friendList;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::set friendList()
     public set friendList(value: IHabboFriendList | null)
     {
         this._friendList = value;
@@ -891,7 +894,11 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._roomCanvasDisplayObject = null;
     }
 
-    private readonly roomViewGeometryEventHandler = (_event: unknown): void => 
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onRoomViewResized()
+    // TS deviation: one handler bound to all four resize/relocate event types
+    // (WE_RESIZED/WE_RELOCATED/WE_PARENT_RESIZED/WE_PARENT_RELOCATED) instead of
+    // separate AS3 listener methods, since they all just re-sync canvas geometry.
+    private readonly roomViewGeometryEventHandler = (_event: unknown): void =>
     {
         this.syncRoomCanvasDisplayObject();
 
@@ -908,7 +915,8 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         );
     };
 
-    private readonly canvasWindowEventHandler = (event: unknown): void => 
+    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::mouseEventHandler()
+    private readonly canvasWindowEventHandler = (event: unknown): void =>
     {
         const mouseEvent = event as WindowMouseEvent;
         let type: string;

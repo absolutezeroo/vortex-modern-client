@@ -10,7 +10,9 @@ import type {ITextFormat} from '../components/ITextWindow';
 // dropped as text, never executed or otherwise acted upon.
 export interface IParsedHtmlText
 {
+    // TS-only: the plain text with all recognized/unrecognized tags stripped.
     text: string;
+    // TS-only: TextController.setTextFormat()-compatible ranges over `text`.
     runs: Array<{ start: number; end: number; format: ITextFormat }>;
 }
 

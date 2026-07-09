@@ -357,6 +357,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 	 * habboGroupsManager.updateVisibleExtendedProfile() and the trailing
 	 * composer send are deferred with the group/respect fields.
 	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
     private handleGetUserInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void
     {
         const container = this._container;

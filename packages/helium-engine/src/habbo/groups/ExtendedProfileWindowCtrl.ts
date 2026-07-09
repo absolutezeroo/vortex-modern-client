@@ -45,9 +45,13 @@ const BADGE_SLOT_COUNT = 5;
 
 export class ExtendedProfileWindowCtrl
 {
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4571
     private _groupsManager: HabboGroupsManager | null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4556
     private _profile: ExtendedProfileData | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7764
     private _badgeUpdateExpected: boolean = false;
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7676
     // Set when onProfileChanged() silently re-requests an already-open profile,
@@ -105,6 +109,7 @@ export class ExtendedProfileWindowCtrl
         return this._badgeUpdateExpected;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::set badgeUpdateExpected()
     set badgeUpdateExpected(value: boolean)
     {
         this._badgeUpdateExpected = value;
@@ -327,6 +332,9 @@ export class ExtendedProfileWindowCtrl
         this._badgeUpdateExpected = false;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::setSelectedBadge()
+    // TS deviation: AS3 takes (index, badge data object, playGlow) — simplified to
+    // (index, badgeId) since no rarity/glow data reaches this call (see onUserBadges()).
     private setSelectedBadge(index: number, badgeId: string): void
     {
         const widgetWindow = this._window?.findChildByName(`badge_${index}`) as IWidgetWindow | null;

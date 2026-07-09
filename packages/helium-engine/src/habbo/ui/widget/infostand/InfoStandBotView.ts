@@ -21,9 +21,13 @@ const BADGE_SLOT_COUNT = 5;
 
 export class InfoStandBotView
 {
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::_SafeStr_4549
     private _widget: InfoStandWidget;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::_window
     private _window: IItemListWindow | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::_SafeStr_4558
     private _infoBorder: IWindowContainer | null = null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::_SafeStr_4641
     private _elementList: IItemListWindow | null = null;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandBotView.as::InfoStandBotView()

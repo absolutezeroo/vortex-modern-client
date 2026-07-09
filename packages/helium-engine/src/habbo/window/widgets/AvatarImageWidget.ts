@@ -73,8 +73,11 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     private _bitmap: IBitmapWrapperWindow | null = null;
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_region
     private _region: IWindow | null = null;
-    // TS-only: bound event handler refs for removeEventListener
+    // TS-only: bound event handler refs for removeEventListener - AS3's
+    // addEventListener/removeEventListener take the listener function itself,
+    // no separate bound reference needed.
     private _onClickBound: (event: WindowMouseEvent) => void;
+    // TS-only: see _onClickBound above.
     private _onAvatarRendererReadyBound: () => void;
     private _avatarRendererReadyRegistered: boolean = false;
     private _placeholderRequestId: number = 0;
