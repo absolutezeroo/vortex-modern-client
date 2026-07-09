@@ -556,8 +556,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      * Creates a widget by type code.
      *
      * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createWidget()
-     * TODO(AS3): only "RWE_INFOSTAND" is wired up so far; other widget types
-     * (chat, me-menu, room tools, etc.) still fall through to the stub log.
+     * TODO(AS3): only "RWE_INFOSTAND"/"RWE_ROOM_TOOLS"/"RWE_CHAT_INPUT_WIDGET"/
+     * "RWE_CHAT_WIDGET" are wired up so far (4 of the 45 AS3 RWE_* widget
+     * types); the rest still fall through to the stub log.
      */
     public createWidget(type: string): void 
     {

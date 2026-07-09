@@ -13,15 +13,19 @@ Widgets absents notables, avec impact utilisateur direct si un jour sollicités 
 
 C'est un chantier connu — le code le dit lui-même sans détour (`TODO(AS3)` en en-tête des deux fichiers). Rien de caché ici, contrairement aux bugs des Parties 1-2. Je le documente surtout pour donner le chiffre exact et la liste précise, plus utile que "des widgets manquent".
 
-## 2. Commentaire obsolète dans `RoomDesktop.ts:542`
+## 2. Commentaire obsolète dans `RoomDesktop.ts:542` — ✅ Résolu (2026-07-09)
 
 Le docstring dit *"only RWE_INFOSTAND is wired up so far"* — faux, le switch juste en dessous gère 4 cas, pas 1. Le commentaire n'a pas été mis à jour au fur et à mesure que `RWE_ROOM_TOOLS`, `RWE_CHAT_INPUT_WIDGET` et `RWE_CHAT_WIDGET` ont été ajoutés. Pas un bug fonctionnel, mais trompeur pour quiconque lit uniquement le commentaire (risque de ré-implémenter par erreur un widget déjà fait). Fix : mettre à jour le commentaire, une ligne.
 
-## 3. Gap fonctionnel concret trouvé dans une partie "faite" : pas d'info utilisateur dans l'infostand
+**Résolution :** commentaire corrigé (liste les 4 types réellement câblés + le total AS3 de 45).
+
+## 3. Gap fonctionnel concret trouvé dans une partie "faite" : pas d'info utilisateur dans l'infostand — ✅ Résolu (2026-07-09)
 
 `InfoStandWidgetHandler.ts:263-282` (`handleGetObjectInfoMessage`) ne route que les catégories `10`/`20` (meuble sol / meuble mur) vers l'affichage d'info. La catégorie `100` (utilisateur — cliquer sur un avatar dans la room) est un `TODO(AS3)` explicite, non routée.
 
 **Impact :** cliquer sur un avatar dans la room pour voir sa fiche (infostand utilisateur — pseudo, motto, badges) ne fait rien. Cliquer sur un meuble ou un animal fonctionne. C'est le seul gap fonctionnel "silencieux" trouvé dans ce module (les autres sont tous auto-documentés en tête de fichier) — celui-ci est enterré au milieu d'un switch, pas signalé en en-tête de fichier, donc plus facile à rater en lisant vite.
+
+**Résolution :** catégorie 100 routée (user/bot/object), `InfoStandUserView`/`InfoStandBotView` portées pour de vrai (identité : avatar, motto, statut en ligne, lien profil). Le clic sur le lien du pseudo ouvre en plus le profil étendu complet (nouveau `ExtendedProfileWindowCtrl`, scope de base). Deux bugs indépendants trouvés et corrigés en cours de route (composer `GetExtendedProfileMessageComposer` jamais enregistré dans `HabboMessages.ts` ; `HabboGroupsManager` qui ne s'initialisait jamais à cause d'une dépendance DI requise mais jamais fournie) — voir `docs/IMPLEMENTATION_STATUS.md` pour le détail complet. Groupes/statut de relation/glow de badge restent `TODO(AS3)` (scope Phase 2, non traité).
 
 ## 4. Ce qui a été vérifié sain
 
