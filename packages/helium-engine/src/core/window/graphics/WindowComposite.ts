@@ -3,7 +3,7 @@ import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
 import {PivotPoint} from '../enum/PivotPoint';
 import {WindowType} from '../enum/WindowType';
-import {quoteFontFamilyList} from '../utils/CanvasFontString';
+import {buildCanvasFontString} from '../utils/CanvasFontString';
 
 type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
 
@@ -1001,11 +1001,7 @@ export class WindowComposite
         const b = textColor & 0xFF;
 
         // Build CSS font string
-        let fontStr = '';
-
-        if(isItalic) fontStr += 'italic ';
-        if(isBold) fontStr += 'bold ';
-        fontStr += `${fontSize}px ${quoteFontFamilyList(fontFace)}`;
+        const fontStr = buildCanvasFontString(fontSize, fontFace, isBold, isItalic);
 
         ctx.font = fontStr;
         ctx.fillStyle = `rgb(${r},${g},${b})`;
@@ -1118,15 +1114,15 @@ export class WindowComposite
         }
 
         // Duck-type per-range TextFormat overrides from TextController
-        // (chat-message links: a colored/underlined substring within an
-        // otherwise plain-styled text window — see TextController.setTextFormat()).
+        // (chat-message links, and <b>/<i>/<u> runs from FormattedTextController's
+        // HTML-lite parser — see TextController.setTextFormat()).
         const formatRuns = (window as unknown as {
-            formatRuns?: ReadonlyArray<{ start: number; end: number; format: { color?: number | null; underline?: boolean | null } }>;
+            formatRuns?: ReadonlyArray<{ start: number; end: number; format: { color?: number | null; underline?: boolean | null; bold?: boolean | null; italic?: boolean | null } }>;
         }).formatRuns;
 
         if(formatRuns && formatRuns.length > 0)
         {
-            this.drawTextLineWithRuns(ctx, displayText, formatRuns, textX, textY, maxWidth, spacing, fontSize, `rgb(${r},${g},${b})`, clipY, clipHeight);
+            this.drawTextLineWithRuns(ctx, displayText, formatRuns, textX, textY, maxWidth, spacing, fontSize, fontFace, isBold, isItalic, `rgb(${r},${g},${b})`, clipY, clipHeight);
         }
         else
         {
@@ -1351,12 +1347,15 @@ export class WindowComposite
     private drawTextLineWithRuns(
         ctx: OffscreenCanvasRenderingContext2D,
         text: string,
-        runs: ReadonlyArray<{ start: number; end: number; format: { color?: number | null; underline?: boolean | null } }>,
+        runs: ReadonlyArray<{ start: number; end: number; format: { color?: number | null; underline?: boolean | null; bold?: boolean | null; italic?: boolean | null } }>,
         x: number,
         y: number,
         maxWidth: number,
         spacing: number,
         fontSize: number,
+        fontFace: string,
+        baseBold: boolean,
+        baseItalic: boolean,
         baseFillStyle: string,
         clipY?: number,
         clipHeight?: number
@@ -1374,15 +1373,29 @@ export class WindowComposite
 
         let drawX = x;
         const maxX = x + maxWidth;
+        const baseFontStr = buildCanvasFontString(fontSize, fontFace, baseBold, baseItalic);
+        let currentFontStr = baseFontStr;
+
+        ctx.font = currentFontStr;
 
         for(let i = 0; i < text.length; i++)
         {
             const char = text.charAt(i);
+            const run = runs.find((r) => i >= r.start && i < r.end);
+            const runFontStr = run
+                ? buildCanvasFontString(fontSize, fontFace, run.format.bold ?? baseBold, run.format.italic ?? baseItalic)
+                : baseFontStr;
+
+            if(runFontStr !== currentFontStr)
+            {
+                ctx.font = runFontStr;
+                currentFontStr = runFontStr;
+            }
+
             const charWidth = ctx.measureText(char).width;
 
             if(drawX + charWidth > maxX) break;
 
-            const run = runs.find((r) => i >= r.start && i < r.end);
             const fillStyle = (run?.format.color != null) ? this.colorToRgbString(run.format.color) : baseFillStyle;
 
             ctx.fillStyle = fillStyle;

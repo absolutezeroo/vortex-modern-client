@@ -11,7 +11,6 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {AvatarRenderEvent} from '@habbo/avatar/enum/AvatarRenderEvent';
 import {Logger} from '@core/utils/Logger';
-import {Helium} from '../../../Helium';
 import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
@@ -75,7 +74,7 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     // AS3: sources/win63_version/habbo/window/widgets/AvatarImageWidget.as::_region
     private _region: IWindow | null = null;
     // TS-only: bound event handler refs for removeEventListener
-    private _onClickBound: Function;
+    private _onClickBound: (event: WindowMouseEvent) => void;
     private _onAvatarRendererReadyBound: () => void;
     private _avatarRendererReadyRegistered: boolean = false;
     private _placeholderRequestId: number = 0;
@@ -497,14 +496,22 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     // TS-only: converts a PixiJS Texture (AvatarImage.getCroppedImage()/getImage()'s real return
     // type) into a real ImageBitmap the way IBitmapWrapperWindow.bitmap expects.
     //
-    // Uses renderer.extract.canvas() rather than reading texture.source.resource directly -
-    // PixiJS doesn't guarantee a CPU-side resource stays attached to a TextureSource once
-    // it's been uploaded to the GPU, so that field can be undefined for a perfectly valid
-    // texture. extract.canvas() is PixiJS's own supported readback path (see
-    // RoomEngine.pixiTextureToCanvas() for the same fix on the room-icon side).
+    // Reads texture.source.resource directly (the canvas AvatarImage.getImage() just drew the
+    // avatar into via Texture.from({resource: offscreenCanvas})) rather than
+    // renderer.extract.canvas(), which is for textures that have actually gone through a PixiJS
+    // render pass (e.g. RoomEngine.pixiTextureToCanvas()'s loaded-asset icon textures — a
+    // genuinely different case where the CPU-side resource can be detached after GPU upload).
+    // A freshly-created canvas-backed texture like this one hasn't been rendered by anything yet,
+    // so extract.canvas() read back a blank/black square instead of the composited avatar.
+    // Matches the working pattern already used by ProductGridItem.renderAvatarImage() for the
+    // same AvatarImage.getCroppedImage() texture shape.
     private static textureToImageBitmap(texture: Texture | null): Promise<ImageBitmap | null>
     {
         if(!texture) return Promise.resolve(null);
+
+        const resource = (texture as unknown as { source?: { resource?: CanvasImageSource } }).source?.resource;
+
+        if(!resource) return Promise.resolve(null);
 
         try
         {
@@ -512,9 +519,18 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
 
             if(frame.width < 1 || frame.height < 1) return Promise.resolve(null);
 
-            const canvas = Helium.instance.application.renderer.extract.canvas(texture);
+            const canvas = document.createElement('canvas');
 
-            return createImageBitmap(canvas as HTMLCanvasElement);
+            canvas.width = frame.width;
+            canvas.height = frame.height;
+
+            const ctx = canvas.getContext('2d');
+
+            if(!ctx) return Promise.resolve(null);
+
+            ctx.drawImage(resource, frame.x, frame.y, frame.width, frame.height, 0, 0, frame.width, frame.height);
+
+            return createImageBitmap(canvas);
         }
         catch (error)
         {

@@ -555,6 +555,7 @@ import {
     DeselectFavouriteHabboGroupMessageComposer,
     GetEmailStatusComposer,
     GetExtendedProfileByNameMessageComposer,
+    GetExtendedProfileMessageComposer,
     GetHabboGroupDetailsMessageComposer,
     GetIgnoredUsersMessageComposer,
     GetSelectedBadgesMessageComposer,
@@ -1096,6 +1097,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(948, DeselectFavouriteHabboGroupMessageComposer);
         this._composers.set(3225, GetEmailStatusComposer);
         this._composers.set(2167, GetExtendedProfileByNameMessageComposer);
+        this._composers.set(2187, GetExtendedProfileMessageComposer);
         this._composers.set(3859, GetHabboGroupDetailsMessageComposer);
         this._composers.set(2077, GetIgnoredUsersMessageComposer);
         this._composers.set(2316, GetSelectedBadgesMessageComposer);

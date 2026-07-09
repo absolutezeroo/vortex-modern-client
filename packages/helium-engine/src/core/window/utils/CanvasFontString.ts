@@ -34,6 +34,21 @@ export function quoteFontFamilyList(fontFace: string): string
 }
 
 /**
+ * Builds a Canvas 2D `ctx.font` string from the same style/weight fields
+ * TextController exposes (fontSize/fontFace/bold/italic).
+ */
+export function buildCanvasFontString(fontSize: number, fontFace: string, bold: boolean, italic: boolean): string
+{
+    let fontStr = '';
+
+    if(italic) fontStr += 'italic ';
+    if(bold) fontStr += 'bold ';
+    fontStr += `${fontSize}px ${quoteFontFamilyList(fontFace)}`;
+
+    return fontStr;
+}
+
+/**
  * Returns the full line height (ascent + descent) needed to render a line of
  * text for the currently-set `ctx.font`, without clipping descenders.
  *

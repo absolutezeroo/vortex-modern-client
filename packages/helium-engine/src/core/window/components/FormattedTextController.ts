@@ -2,6 +2,7 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import {TextController} from './TextController';
 import type {WindowEvent} from '../events/WindowEvent';
+import {parseHtmlFormatting} from '../utils/HtmlFormatting';
 
 /**
  * Controller for formatted (HTML) text windows.
@@ -37,9 +38,12 @@ export class FormattedTextController extends TextController
 	 *
 	 * In AS3 this mirrors TextController localization flow but writes html text.
 	 */
+    // `text` returns the rendered plain text (Flash's TextField.text strips
+    // markup); `htmlText` (inherited getter) keeps the raw markup, matching
+    // Flash's own text/htmlText distinction.
     public override get text(): string
     {
-        return this.htmlText;
+        return this._text;
     }
 
     public override set text(value: string)
@@ -62,17 +66,24 @@ export class FormattedTextController extends TextController
             return;
         }
 
-        this._htmlText = this._caption;
-        this._text = this._caption;
-        this.refreshTextImage();
+        this.applyHtmlFormatting(this._caption);
     }
 
     public set localization(value: string)
     {
         if(value == null) return;
 
-        this._htmlText = this.limitStringLength(value);
-        this._text = this._htmlText;
+        this.applyHtmlFormatting(this.limitStringLength(value));
+    }
+
+    // TS-only: shared by set text()/set localization() — see HtmlFormatting.ts.
+    private applyHtmlFormatting(html: string): void
+    {
+        const {text, runs} = parseHtmlFormatting(html);
+
+        this._htmlText = html;
+        this._text = text;
+        this._formatRuns = runs;
         this.refreshTextImage();
     }
 }

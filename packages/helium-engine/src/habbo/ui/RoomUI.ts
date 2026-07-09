@@ -24,6 +24,7 @@ import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
+import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 
@@ -38,6 +39,7 @@ import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
+import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
@@ -69,6 +71,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     private _landingView: IHabboLandingView | null = null;
     private _habboTracking: IHabboTracking | null = null;
     private _habboGroupsManager: IHabboGroupsManager | null = null;
+    private _friendList: IHabboFriendList | null = null;
     private _widgetFactory: RoomWidgetFactory;
     private _desktops: Map<string, RoomDesktop> = new Map();
     private _currentDesktop: RoomDesktop | null = null;
@@ -306,6 +309,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 false
             ),
             new ComponentDependency(
+                IID_HabboFriendList,
+                (friendList: IHabboFriendList | null) =>
+                {
+                    this._friendList = friendList;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.friendList = friendList;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
                 IID_HabboNavigator,
                 (navigator: IHabboNavigator | null) => 
                 {
@@ -363,6 +379,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.catalog = this._catalog;
         desktop.habboTracking = this._habboTracking;
         desktop.habboGroupsManager = this._habboGroupsManager;
+        desktop.friendList = this._friendList;
         desktop.navigator = this._navigator;
         desktop.communicationManager = this._communicationManager;
 
@@ -485,7 +502,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         }
 
         // Dispose all desktops
-        for(const [identifier, desktop] of this._desktops) 
+        for(const desktop of this._desktops.values())
         {
             desktop.dispose();
         }

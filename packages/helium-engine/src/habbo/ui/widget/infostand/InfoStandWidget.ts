@@ -5,12 +5,13 @@
  * @see sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as
  *
  * Container for all infostand sub-views (furni/user/pet/bot/rentable-bot/
- * jukebox/crackable-furni/song-disk). Only the furni-facing views are fully
- * ported; the rest are inert stubs (see InfoStandUserView.ts and siblings) —
- * this class still constructs and wires all of them to match AS3's structure,
- * so `selectView()`/`hideChildren()` naturally no-op for the stubbed views
- * (their `window` is always `null`, so `mainContainer.getChildByName(...)`
- * never finds them).
+ * jukebox/crackable-furni/song-disk). Furni, user, and bot views are fully
+ * ported (user/bot at Phase 1 identity-only scope — see InfoStandUserView.ts's
+ * header for what's deferred). Pet/rentable-bot/jukebox/crackable-furni/
+ * song-disk are still inert stubs — this class still constructs and wires all
+ * of them to match AS3's structure, so `selectView()`/`hideChildren()`
+ * naturally no-op for the stubbed ones (their `window` is always `null`, so
+ * `mainContainer.getChildByName(...)` never finds them).
  */
 import type {EventEmitter} from 'eventemitter3';
 import type {IWindow} from '@core/window/IWindow';
@@ -24,6 +25,7 @@ import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import {RoomWidgetRoomObjectUpdateEvent} from '../events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetFurniInfoUpdateEvent} from '../events/RoomWidgetFurniInfoUpdateEvent';
+import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import {RoomWidgetInfostandExtraParamEnum} from '../enums/RoomWidgetInfostandExtraParamEnum';
 import {RoomWidgetRoomObjectMessage} from '../messages/RoomWidgetRoomObjectMessage';
 import type {InfoStandWidgetHandler} from '@habbo/ui/handler/InfoStandWidgetHandler';
@@ -143,9 +145,9 @@ export class InfoStandWidget extends RoomWidgetBase
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::favouriteGroupUpdated()
-    // TODO(AS3): userView is a stub (see InfoStandUserView.ts) — this naturally no-ops
-    // because `mainContainer.getChildByName('infostand_user_view')` never finds a child
-    // (the stub view never adds itself), matching AS3's own visibility guard.
+    // TODO(AS3): no current caller — needs a RoomSessionFavouriteGroupUpdateEvent
+    // handler wired somewhere upstream to actually invoke this. userView is real
+    // now (InfoStandUserView.ts), so this will work correctly once something calls it.
     public favouriteGroupUpdated(userRoomId: number, groupId: number, _webId: number, groupName: string): void
     {
         if(this._userData.userRoomId !== userRoomId) return;
@@ -268,18 +270,30 @@ export class InfoStandWidget extends RoomWidgetBase
     // TODO(AS3): InfoStandWidget.as::onUpdateTimer() — periodic pet-info refresh,
     // deferred with the rest of the pet view (see InfoStandPetView.ts).
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onUserInfo()
-    // TODO(AS3): param is RoomWidgetUserInfoUpdateEvent (not yet ported — user view is
-    // a stub, see InfoStandUserView.ts). Real behavior: userData.setData(event); bail if
-    // sessionDataManager.isBlocked(event.webID); userView.update(event); selectView(USER).
-    private onUserInfo = (_event: unknown): void =>
+    /**
+	 * Phase 1 (identity only) simplification: AS3 also tracks a `selectedBadges`
+	 * preserve/glow pair (shouldPreserveDisplayedBadges()/shouldPlayGlowForUserInfo(),
+	 * comparing against the previously-displayed user's badges to avoid a
+	 * re-glow flicker on repeat clicks) and stops a tooltip-close timer — both
+	 * deferred as display polish, not needed for basic identity display.
+	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onUserInfo()
+    private onUserInfo = (event: RoomWidgetUserInfoUpdateEvent): void =>
     {
+        this._userData.setData(event);
+
+        if(this.handler.container?.sessionDataManager?.isBlocked(event.webID)) return;
+
+        this._userView.update(event);
+        this.selectView(VIEW_NAME.USER);
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onBotInfo()
-    // TODO(AS3): param is RoomWidgetUserInfoUpdateEvent — bot view is a stub.
-    private onBotInfo = (_event: unknown): void =>
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onBotInfo()
+    private onBotInfo = (event: RoomWidgetUserInfoUpdateEvent): void =>
     {
+        this._userData.setData(event);
+        this._botView.update(event);
+        this.selectView(VIEW_NAME.BOT);
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onRentableBotInfo()
@@ -346,8 +360,11 @@ export class InfoStandWidget extends RoomWidgetBase
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::updateUserData()
-    // TODO(AS3): user/bot views are stubs — this naturally no-ops (setFigure/setMotto are
-    // inert on the stub views).
+    // TODO(AS3): no current caller — the AS3 source dispatches this from a live
+    // figure/motto-change server push (RoomSessionUserFigureUpdateEvent-ish)
+    // that isn't wired to call it yet. User/bot views are real now (see
+    // InfoStandUserView.ts/InfoStandBotView.ts), so this will work correctly
+    // once something calls it.
     public updateUserData(userId: number, figure: string, achievementScore: number, motto: string, mottoEnabled: boolean): void
     {
         if(userId !== this._userData.userId) return;

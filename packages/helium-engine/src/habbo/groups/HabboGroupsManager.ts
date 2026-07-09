@@ -1,5 +1,6 @@
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
+import type {IWindow} from '@core/window/IWindow';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IMessageComposer} from '@core/communication/messages/IMessageComposer';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
@@ -28,12 +29,16 @@ import {
     HabboGroupDeactivatedMessageEvent,
     HabboGroupDetailsMessageEvent,
     HabboGroupJoinFailedMessageEvent,
+    HabboUserBadgesMessageEvent,
+    ExtendedProfileMessageEvent,
+    ExtendedProfileChangedMessageEvent,
     type HabboGroupDetailsData
 } from '@habbo/communication/messages/incoming/users';
 import {
     GetExtendedProfileMessageComposer,
     GetHabboGroupDetailsMessageComposer
 } from '@habbo/communication/messages/outgoing/users';
+import {ExtendedProfileWindowCtrl} from './ExtendedProfileWindowCtrl';
 
 const log = Logger.getLogger('Groups');
 
@@ -65,10 +70,14 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     private _habboTracking: IHabboTracking | null = null;
     private _messageEvents: IMessageEvent[] = [];
     private _groupDetailsById: Map<number, HabboGroupDetailsData> = new Map();
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_5106
+    private readonly _extendedProfileWindowCtrl: ExtendedProfileWindowCtrl;
 
     constructor(context: IContext)
     {
         super(context);
+
+        this._extendedProfileWindowCtrl = new ExtendedProfileWindowCtrl(this);
     }
 
     /**
@@ -125,7 +134,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
                 (friendList: IHabboFriendList | null) =>
                 {
                     this._friendList = friendList;
-                }
+                },
+                false
             ),
             new ComponentDependency(
                 IID_HabboCatalog,
@@ -211,9 +221,10 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 	 *
 	 * @param userId The user ID whose profile should be updated
 	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::updateVisibleExtendedProfile()
     updateVisibleExtendedProfile(userId: number): void
     {
-        log.debug('updateVisibleExtendedProfile:', userId);
+        this._extendedProfileWindowCtrl.updateVisibleExtendedProfile(userId);
     }
 
     /**
@@ -237,6 +248,62 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this.context.createLinkEvent('groupforum/' + groupId);
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get localization()
+    get localization(): IHabboLocalizationManager | null
+    {
+        return this._localization;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get windowManager()
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get friendlist()
+    get friendlist(): IHabboFriendList | null
+    {
+        return this._friendList;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get newNavigator()
+    get newNavigator(): IHabboNewNavigator | null
+    {
+        return this._newNavigator;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get sessionDataManager()
+    get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get habboTracking()
+    get habboTracking(): IHabboTracking | null
+    {
+        return this._habboTracking;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get avatarId()
+    get avatarId(): number
+    {
+        return this._sessionDataManager?.userId ?? 0;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::get isActivityDisplayEnabled()
+    get isActivityDisplayEnabled(): boolean
+    {
+        return this.getBoolean('activity.point.display.enabled');
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::getXmlWindow()
+    // Delegates to windowManager.buildWidgetLayout() (fetch-asset-by-name + buildFromXML,
+    // same as AS3's manual asset lookup) matching InfoStandWidget.getXmlWindow()'s pattern.
+    getXmlWindow(name: string): IWindow | null
+    {
+        return this._windowManager?.buildWidgetLayout(name) ?? null;
+    }
+
     dispose(): void
     {
         if(this._disposed) return;
@@ -249,6 +316,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._messageEvents.length = 0;
         this._groupDetailsById.clear();
         this.context.removeLinkEventTracker(this);
+        this.context.removeLinkEventTracker(this._extendedProfileWindowCtrl);
+        this._extendedProfileWindowCtrl.dispose();
         this._communicationManager = null;
 
         super.dispose();
@@ -257,6 +326,10 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     protected override initComponent(): void
     {
         this.context.addLinkEventTracker(this);
+        this.context.addLinkEventTracker(this._extendedProfileWindowCtrl);
+        this.addMessageEvent(new ExtendedProfileMessageEvent(this.onExtendedProfile.bind(this)));
+        this.addMessageEvent(new ExtendedProfileChangedMessageEvent(this.onExtendedProfileChanged.bind(this)));
+        this.addMessageEvent(new HabboUserBadgesMessageEvent(this.onUserBadgesMessage.bind(this)));
         this.addMessageEvent(new HabboGroupDetailsMessageEvent(this.onGroupDetails.bind(this)));
         this.addMessageEvent(new GroupDetailsChangedMessageEvent(this.onGroupDetailsChanged.bind(this)));
         this.addMessageEvent(new HabboGroupDeactivatedMessageEvent(this.onGroupDeactivated.bind(this)));
@@ -265,7 +338,10 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         log.debug('Groups manager initialized');
     }
 
-    private send(composer: IMessageComposer<unknown[]>): void
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::send()
+    // Public: called externally by ExtendedProfileWindowCtrl (matches AS3, which
+    // also calls _SafeStr_4571.send(...) from outside this class).
+    send(composer: IMessageComposer<unknown[]>): void
     {
         this._communicationManager?.connection?.send(composer);
     }
@@ -279,6 +355,33 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 
         this._communicationManager.addMessageEvent(event);
         this._messageEvents.push(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::onExtendedProfile()
+    private onExtendedProfile(event: IMessageEvent): void
+    {
+        const data = (event as ExtendedProfileMessageEvent).data;
+
+        log.debug(`onExtendedProfile: received, userId=${data?.userId} openProfileWindow=${data?.openProfileWindow}`);
+
+        if(!data || !data.openProfileWindow) return;
+
+        this._extendedProfileWindowCtrl.badgeUpdateExpected = true;
+        this._extendedProfileWindowCtrl.onProfile(data);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::onExtendedProfileChanged()
+    private onExtendedProfileChanged(event: IMessageEvent): void
+    {
+        this._extendedProfileWindowCtrl.onProfileChanged((event as ExtendedProfileChangedMessageEvent).userId);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/groups/HabboGroupsManager.as::onUserBadgesMessage()
+    private onUserBadgesMessage(event: IMessageEvent): void
+    {
+        const badgesEvent = event as HabboUserBadgesMessageEvent;
+
+        this._extendedProfileWindowCtrl.onUserBadges(badgesEvent.userId, badgesEvent.badges);
     }
 
     private onGroupDetails(event: IMessageEvent): void

@@ -20,6 +20,7 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
+import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 import type {RoomDesktopLayoutManager} from './RoomDesktopLayoutManager';
@@ -46,6 +47,8 @@ export interface IRoomWidgetHandlerContainer
     readonly habboTracking: IHabboTracking | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboGroupsManager()
     readonly habboGroupsManager: IHabboGroupsManager | null;
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
+    readonly friendList: IHabboFriendList | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
     // TODO(AS3): no concrete implementation exists yet — always null, see IHabboUserDefinedRoomEvents.ts.
     readonly userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null;

@@ -30,6 +30,7 @@ import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
+import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
@@ -259,9 +260,22 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._habboGroupsManager;
     }
 
-    public set habboGroupsManager(value: IHabboGroupsManager | null) 
+    public set habboGroupsManager(value: IHabboGroupsManager | null)
     {
         this._habboGroupsManager = value;
+    }
+
+    private _friendList: IHabboFriendList | null = null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
+    public get friendList(): IHabboFriendList | null
+    {
+        return this._friendList;
+    }
+
+    public set friendList(value: IHabboFriendList | null)
+    {
+        this._friendList = value;
     }
 
     private _navigator: IHabboNavigator | null = null;
@@ -488,16 +502,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 this._canvasWrapper.y = 0;
                 this._canvasWrapper.width = viewRect.width;
                 this._canvasWrapper.height = viewRect.height;
-                this._canvasWrapper.addEventListener(WindowMouseEvent.CLICK, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.DOUBLE_CLICK, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.MOVE, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.DOWN, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.UP, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowMouseEvent.UP_OUTSIDE, this._canvasWindowEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_RESIZED, this._roomViewGeometryEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_RELOCATED, this._roomViewGeometryEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RESIZED, this._roomViewGeometryEventHandler);
-                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RELOCATED, this._roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.CLICK, this.canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.DOUBLE_CLICK, this.canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.MOVE, this.canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.DOWN, this.canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.UP, this.canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowMouseEvent.UP_OUTSIDE, this.canvasWindowEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_RESIZED, this.roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_RELOCATED, this.roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RESIZED, this.roomViewGeometryEventHandler);
+                this._canvasWrapper.addEventListener(WindowEvent.WE_PARENT_RELOCATED, this.roomViewGeometryEventHandler);
 
                 // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::createRoomView()
                 // var_174.setDisplayObject(_loc17_)
@@ -551,9 +565,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             return;
         }
 
-        let handler: IRoomWidgetHandler | null = null;
+        let handler: IRoomWidgetHandler;
 
-        switch(type) 
+        switch(type)
         {
             case 'RWE_INFOSTAND':
                 handler = new InfoStandWidgetHandler(null);
@@ -596,7 +610,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             this._widgetEventHandlers.set(eventType, handler);
         }
 
-        const widget = this._widgetFactory?.createWidget(type, handler) as IRoomWidget | null | undefined;
+        const widget = (this._widgetFactory?.createWidget(type, handler) ?? null) as IRoomWidget | null;
 
         if(!widget) 
         {
@@ -684,9 +698,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         const currentScale = this._roomEngine.getRoomCanvasScale(roomId, canvasId);
 
         // Zoom in/out based on wheel direction
-        let newScale = currentScale;
+        let newScale: number;
 
-        if(deltaY < 0) 
+        if(deltaY < 0)
         {
             newScale = Math.min(currentScale * 1.1, 2.0);
         }
@@ -825,9 +839,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
 
         // Dispose all widgets
-        for(const [type, widget] of this._widgets) 
+        for(const widget of this._widgets.values())
         {
-            if(widget && typeof (widget as any).dispose === 'function') 
+            if(widget && typeof (widget as any).dispose === 'function')
             {
                 (widget as any).dispose();
             }
@@ -840,16 +854,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         if(this._canvasWrapper) 
         {
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.CLICK, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOUBLE_CLICK, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.MOVE, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOWN, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP_OUTSIDE, this._canvasWindowEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_RESIZED, this._roomViewGeometryEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_RELOCATED, this._roomViewGeometryEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this._roomViewGeometryEventHandler);
-            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RELOCATED, this._roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.CLICK, this.canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOUBLE_CLICK, this.canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.MOVE, this.canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.DOWN, this.canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP, this.canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowMouseEvent.UP_OUTSIDE, this.canvasWindowEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_RESIZED, this.roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_RELOCATED, this.roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this.roomViewGeometryEventHandler);
+            this._canvasWrapper.removeEventListener(WindowEvent.WE_PARENT_RELOCATED, this.roomViewGeometryEventHandler);
 
             const displayObjectWrapper = this._canvasWrapper as unknown as IDisplayObjectWrapper;
 
@@ -877,7 +891,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._roomCanvasDisplayObject = null;
     }
 
-    private readonly _roomViewGeometryEventHandler = (_event: unknown): void => 
+    private readonly roomViewGeometryEventHandler = (_event: unknown): void => 
     {
         this.syncRoomCanvasDisplayObject();
 
@@ -894,12 +908,12 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         );
     };
 
-    private readonly _canvasWindowEventHandler = (event: unknown): void => 
+    private readonly canvasWindowEventHandler = (event: unknown): void => 
     {
         const mouseEvent = event as WindowMouseEvent;
-        let type = '';
+        let type: string;
 
-        switch(mouseEvent.type) 
+        switch(mouseEvent.type)
         {
             case WindowMouseEvent.CLICK:
                 type = 'click';

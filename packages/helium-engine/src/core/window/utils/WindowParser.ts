@@ -343,7 +343,6 @@ export class WindowParser implements IWindowParser
         }
 
         caption = decodeEscaped(String(this.parseAttribute(node, 'caption', sharedVars, caption)));
-        caption = resolveLocalizationTokens(caption);
 
         let tags: string[] | null = null;
 

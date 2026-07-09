@@ -507,6 +507,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
         if(!events || events.length === 0)
         {
+            log.debug(`No registered handler for incoming message id ${messageId} (${this._messageRegistry.getIncomingMessageName(messageId)})`);
             return;
         }
 
