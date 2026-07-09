@@ -52,6 +52,7 @@ export class RoomChatItem
     private _userId: number = 0;
     private _senderName: string = '';
     private _message: string = '';
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::var_790 (var_1993 in win63_2023_version)
     private _links: IChatLink[] | null = null;
     // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::var_1629 (var_2506 in win63_2023_version)
     // [start,end) char ranges within the final message text, one per `_links` entry.

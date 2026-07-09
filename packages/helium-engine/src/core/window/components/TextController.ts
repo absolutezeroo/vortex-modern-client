@@ -18,10 +18,14 @@ interface ITextLayout
     height: number;
 }
 
+// TS-only: internal storage type for TextController._formatRuns (see setTextFormat()).
 export interface ITextFormatRange
 {
+    // TS-only: start index of the range (inclusive), in `text` coordinates.
     start: number;
+    // TS-only: end index of the range (exclusive), in `text` coordinates.
     end: number;
+    // TS-only: the format override applied to [start, end).
     format: ITextFormat;
 }
 
@@ -101,6 +105,8 @@ export class TextController extends WindowController implements ITextWindow
     // TextField resetting all character formatting on content replacement.
     protected _formatRuns: ITextFormatRange[] = [];
 
+    // TS-only: exposes _formatRuns to WindowComposite's duck-typed read
+    // (see WindowComposite.compositeText()'s per-range rendering branch).
     public get formatRuns(): ReadonlyArray<ITextFormatRange>
     {
         return this._formatRuns;

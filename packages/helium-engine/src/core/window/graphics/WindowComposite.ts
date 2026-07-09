@@ -1342,9 +1342,12 @@ export class WindowComposite
 	 * (unlike drawTextLine()'s spacing===0 fast path) since every char needs
 	 * an independent run lookup.
 	 *
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as
-	 * (renderView()'s `var_1993`/links branch drives this via TextController.setTextFormat())
+	 * Driven by RoomChatItem.applyMessageLinks()'s TextController.setTextFormat()
+	 * calls (AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView(),
+	 * the links/var_1993 branch).
 	 */
+    // TS-only: no AS3 equivalent — Flash's native TextField renders per-range
+    // TextFormat runs itself; this is the Canvas2D port's replacement.
     private drawTextLineWithRuns(
         ctx: OffscreenCanvasRenderingContext2D,
         text: string,
@@ -1401,6 +1404,7 @@ export class WindowComposite
         ctx.restore();
     }
 
+    // TS-only: small ARGB->CSS helper shared by drawTextLineWithRuns().
     private colorToRgbString(color: number): string
     {
         const r = (color >> 16) & 0xFF;

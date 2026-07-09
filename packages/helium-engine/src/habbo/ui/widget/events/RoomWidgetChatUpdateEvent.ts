@@ -32,6 +32,7 @@ export class RoomWidgetChatUpdateEvent extends RoomWidgetUpdateEvent
     private _userCategory: number;
     private _userType: number;
     private _petType: number;
+    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/events/RoomWidgetChatUpdateEvent.as::get links()
     private _links: IChatLink[] | null;
     private _userX: number;
     private _userY: number;
@@ -72,6 +73,7 @@ export class RoomWidgetChatUpdateEvent extends RoomWidgetUpdateEvent
     public get userCategory(): number { return this._userCategory; }
     public get userType(): number { return this._userType; }
     public get petType(): number { return this._petType; }
+    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/events/RoomWidgetChatUpdateEvent.as::get links()
     public get links(): IChatLink[] | null { return this._links; }
     public get userX(): number { return this._userX; }
     public get userY(): number { return this._userY; }

@@ -25,6 +25,9 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     public static readonly CHAT_TYPE_PET_SPEED = 9;
     public static readonly CHAT_TYPE_MUTE_REMAINING = 10;
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::RoomSessionChatEvent()
+    // `links` passes the parser's raw link objects straight through, matching
+    // AS3 (RoomChatHandler.as never transforms them either).
     constructor(
         type: string,
         session: IRoomSession,
@@ -73,6 +76,7 @@ export class RoomSessionChatEvent extends RoomSessionEvent
         return this._styleId;
     }
 
+    // AS3: sources/win63_version/habbo/session/events/RoomSessionChatEvent.as::get links()
     private _links: IChatLink[] | null;
 
     get links(): IChatLink[] | null
