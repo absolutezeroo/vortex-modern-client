@@ -93,6 +93,13 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
     }
 
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::processEvent()
+    // TODO(AS3): AS3 wraps this whole method in
+    // `if(container.freeFlowChat && !container.freeFlowChat.isDisabledInPreferences)`.
+    // IRoomWidgetHandlerContainer has no freeFlowChat property yet (habbo/freeflowchat
+    // isn't wired into RoomUI/RoomDesktop - same gap already flagged in
+    // widget/roomtools/RoomToolsWidget.ts and RoomToolsToolbarCtrl.ts), so this guard
+    // is intentionally omitted rather than ported with a field that's always undefined
+    // (which would disable all chat bubble rendering, not just this preference).
     public processEvent(event: {type: string}): void
     {
         if(!this._container) return;
@@ -195,8 +202,9 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         if(chatEvent.chatType === 11)
         {
             // TODO(AS3): generic "translate raw text through localization" passthrough
-            // not ported — IHabboLocalizationManager.getLocalization()/registerParameter()/
-            // getLocalizationRaw() don't exist yet.
+            // not ported yet. IHabboLocalizationManager.getLocalization()/registerParameter()/
+            // getLocalizationRaw() already exist (see ExtendedProfileWindowCtrl.ts for a live
+            // caller) - this is just not-yet-done, not blocked on missing infra.
             styleId = 1;
         }
 

@@ -7,7 +7,7 @@
  * TODO(AS3): AS3 builds a style from an XML descriptor (bitmaps + speak/
  * whisper/shout layout asset ids). The master catalog XML
  * (`roomchat_styles_chatstyles_xml`, listing all 26 styles) exists in
- * `sources/win63_2023_version/binaryDataXml_organized/non-layouts/2113_chatstyles_xml.xml`
+ * `sources/win63_2023_version/binaryDataXml_organized/non-layouts/454_chatstyles_xml$<hash>.xml`
  * but hasn't been bundled into packages/helium-client/src/assets yet — that's
  * an asset-pipeline gap, not a code gap. Only the "normal" style (id 0) is
  * constructed here directly from its known bundled asset names, structured so

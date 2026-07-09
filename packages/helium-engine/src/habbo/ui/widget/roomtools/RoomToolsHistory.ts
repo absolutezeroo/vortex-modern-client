@@ -5,25 +5,15 @@
  *
  * Visited-rooms dropdown list shown when the room-history toolbar button
  * is toggled.
- *
- * TODO(AS3): the per-row "room_tools_history_item" layout asset is not
- * bundled (only room_tools_toolbar/room_tools_info/room_tools_history exist
- * in packages/helium-client/src/assets/window-layouts/). populate() logs and
- * no-ops instead of throwing so the toggle button remains usable (it still
- * opens/closes an empty window) while the visited-room list itself is not
- * yet rendered. Add the missing layout to restore full parity.
  */
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import {Logger} from '@core/utils/Logger';
 import type {GuestRoomData} from '@habbo/communication/messages/incoming/navigator/GuestRoomData';
 import type {RoomToolsWidgetHandler} from '@habbo/ui/handler/RoomToolsWidgetHandler';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
-
-const log = Logger.getLogger('RoomToolsHistory');
 
 const PADDING = 5;
 const SPACING = 2;
@@ -49,17 +39,6 @@ export class RoomToolsHistory
     public populate(rooms: GuestRoomData[]): void
     {
         if(!this._window || !this._windowManager) return;
-
-        const probe = this._windowManager.buildWidgetLayout('room_tools_history_item_xml');
-
-        if(!probe)
-        {
-            log.warn('room_tools_history_item_xml layout not bundled — history list will not render (see TODO(AS3) header)');
-
-            return;
-        }
-
-        probe.dispose();
 
         let previous: IWindow | null = null;
 
