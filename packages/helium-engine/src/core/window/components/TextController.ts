@@ -1,6 +1,6 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
-import type {ITextWindow} from './ITextWindow';
+import type {ITextWindow, ITextFormat} from './ITextWindow';
 import type {IMargins} from '../utils/IMargins';
 import {WindowController} from '../WindowController';
 import {WindowEvent} from '../events/WindowEvent';
@@ -16,6 +16,13 @@ interface ITextLayout
     lines: string[];
     width: number;
     height: number;
+}
+
+export interface ITextFormatRange
+{
+    start: number;
+    end: number;
+    format: ITextFormat;
 }
 
 /**
@@ -84,6 +91,21 @@ export class TextController extends WindowController implements ITextWindow
     protected _numLinesCache: number = 1;
     protected _maxScrollHCache: number = 0;
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::_field
+    // Flash's own top-padding quirk for TextField content — must match
+    // WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER, which renders the same text.
+    private static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
+
+    // TS-only: per-range TextFormat overrides applied via setTextFormat().
+    // Cleared whenever `text`/`htmlText` is reassigned, matching Flash's
+    // TextField resetting all character formatting on content replacement.
+    protected _formatRuns: ITextFormatRange[] = [];
+
+    public get formatRuns(): ReadonlyArray<ITextFormatRange>
+    {
+        return this._formatRuns;
+    }
+
     constructor(
         name: string,
         type: number,
@@ -127,6 +149,8 @@ export class TextController extends WindowController implements ITextWindow
     public set text(value: string)
     {
         if(value == null) return;
+
+        this._formatRuns = [];
 
         if(this._localized)
         {
@@ -450,6 +474,8 @@ export class TextController extends WindowController implements ITextWindow
     {
         if(value == null) return;
 
+        this._formatRuns = [];
+
         if(this._localized)
         {
             this.removeLocalizationListenerForCaption();
@@ -541,6 +567,94 @@ export class TextController extends WindowController implements ITextWindow
         this._caption = this._text;
         this._htmlText = this._text;
         this.refreshTextImage();
+    }
+
+    /**
+	 * Maps a point local to this window (0,0 = top-left) to a character
+	 * index in `text`, or -1 if the point isn't over any character.
+	 *
+	 * TODO(AS3): word-wrapped continuation lines aren't reverse-mapped here —
+	 * only explicit '\n' breaks are accounted for. The only current caller
+	 * (chat-bubble message links, see RoomChatItem.testMessageLinkMouseClick())
+	 * always renders single-line, unwrapped text, so this doesn't affect real
+	 * behavior yet.
+	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getCharIndexAtPoint()
+    public getCharIndexAtPoint(localX: number, localY: number): number
+    {
+        if(!this._text) return -1;
+
+        const lineHeight = this.getLineHeight();
+        const paragraphs = this._text.split('\n');
+        const lineIndex = Math.floor((localY - this._marginTop - TextController.FLASH_TEXT_FIELD_TOP_GUTTER) / lineHeight);
+
+        if(lineIndex < 0 || lineIndex >= paragraphs.length) return -1;
+
+        let charOffset = 0;
+
+        for(let i = 0; i < lineIndex; i++)
+        {
+            charOffset += paragraphs[i].length + 1;
+        }
+
+        const line = paragraphs[lineIndex];
+        const ctx = TextController.getMeasureContext();
+
+        ctx.font = this.buildCanvasFontString();
+
+        let x = this._marginLeft;
+
+        for(let i = 0; i < line.length; i++)
+        {
+            const charWidth = ctx.measureText(line.charAt(i)).width + this._spacing;
+
+            if(localX >= x && localX < x + charWidth)
+            {
+                return charOffset + i;
+            }
+
+            x += charWidth;
+        }
+
+        return -1;
+    }
+
+    /**
+	 * Returns the base text format (color/underline/bold/italic/font/size).
+	 * AS3's native TextField.getTextFormat(begin, end) can return the format
+	 * of a sub-range when both indexes are given, but every real caller here
+	 * (RoomChatItem, to seed a format it then narrows via setTextFormat())
+	 * calls it with no arguments for the whole-field base format, so a
+	 * per-range read isn't implemented.
+	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::getTextFormat()
+    public getTextFormat(_beginIndex: number = -1, _endIndex: number = -1): ITextFormat
+    {
+        return {
+            font: this._fontFace,
+            size: this._fontSize,
+            color: this._textColor,
+            bold: this._bold,
+            italic: this._italic,
+            underline: this._underline,
+        };
+    }
+
+    /**
+	 * Applies a format override to a character range. Faithful to AS3: only
+	 * takes effect when a valid range is given (0 <= beginIndex < endIndex <
+	 * text.length) — calling this with no range is a silent no-op in the
+	 * original too (TextController.as::setTextFormat() guards on exactly
+	 * this condition before touching `_field`).
+	 */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::setTextFormat()
+    public setTextFormat(format: ITextFormat, beginIndex: number = -1, endIndex: number = -1): void
+    {
+        if(beginIndex >= 0 && endIndex > beginIndex && endIndex < this._text.length)
+        {
+            this._formatRuns.push({start: beginIndex, end: endIndex, format});
+            this.refreshTextImage();
+        }
     }
 
     public setTextMargins(value: IMargins): void
@@ -685,6 +799,7 @@ export class TextController extends WindowController implements ITextWindow
         cloned._textHeightCache = this._textHeightCache;
         cloned._numLinesCache = this._numLinesCache;
         cloned._maxScrollHCache = this._maxScrollHCache;
+        cloned._formatRuns = [...this._formatRuns];
 
         return cloned;
     }

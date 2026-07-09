@@ -1,4 +1,5 @@
 import type {IRoomSession} from '../IRoomSession';
+import type {IChatLink} from '../../communication/messages/parser/room/chat/ChatMessageEventParser';
 import {RoomSessionEvent} from './RoomSessionEvent';
 
 /**
@@ -31,7 +32,7 @@ export class RoomSessionChatEvent extends RoomSessionEvent
         text: string,
         chatType: number,
         styleId: number,
-        links: string[] | null = null,
+        links: IChatLink[] | null = null,
         extraParam: number = -1
     )
     {
@@ -72,9 +73,9 @@ export class RoomSessionChatEvent extends RoomSessionEvent
         return this._styleId;
     }
 
-    private _links: string[] | null;
+    private _links: IChatLink[] | null;
 
-    get links(): string[] | null
+    get links(): IChatLink[] | null
     {
         return this._links;
     }

@@ -1,7 +1,6 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
-import {WindowParam} from '../enum/WindowParam';
 import {PivotPoint} from '../enum/PivotPoint';
 import {WindowType} from '../enum/WindowType';
 import {quoteFontFamilyList} from '../utils/CanvasFontString';
@@ -1118,7 +1117,21 @@ export class WindowComposite
             this.drawEtching(ctx, displayText, textX, textY, maxWidth, etchColor, tw.etchingPosition, spacing, clipY, clipHeight);
         }
 
-        this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing, clipY, clipHeight);
+        // Duck-type per-range TextFormat overrides from TextController
+        // (chat-message links: a colored/underlined substring within an
+        // otherwise plain-styled text window — see TextController.setTextFormat()).
+        const formatRuns = (window as unknown as {
+            formatRuns?: ReadonlyArray<{ start: number; end: number; format: { color?: number | null; underline?: boolean | null } }>;
+        }).formatRuns;
+
+        if(formatRuns && formatRuns.length > 0)
+        {
+            this.drawTextLineWithRuns(ctx, displayText, formatRuns, textX, textY, maxWidth, spacing, fontSize, `rgb(${r},${g},${b})`, clipY, clipHeight);
+        }
+        else
+        {
+            this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing, clipY, clipHeight);
+        }
     }
 
     /**
@@ -1322,6 +1335,81 @@ export class WindowComposite
         ctx.restore();
     }
 
+    /**
+	 * Per-character variant of drawTextLine() that applies a per-range color/
+	 * underline override where a format run covers the character, and the
+	 * base fill style everywhere else. Always walks character-by-character
+	 * (unlike drawTextLine()'s spacing===0 fast path) since every char needs
+	 * an independent run lookup.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as
+	 * (renderView()'s `var_1993`/links branch drives this via TextController.setTextFormat())
+	 */
+    private drawTextLineWithRuns(
+        ctx: OffscreenCanvasRenderingContext2D,
+        text: string,
+        runs: ReadonlyArray<{ start: number; end: number; format: { color?: number | null; underline?: boolean | null } }>,
+        x: number,
+        y: number,
+        maxWidth: number,
+        spacing: number,
+        fontSize: number,
+        baseFillStyle: string,
+        clipY?: number,
+        clipHeight?: number
+    ): void
+    {
+        if(!text) return;
+
+        const resolvedClipY = clipY ?? y - 2;
+        const resolvedClipHeight = clipHeight ?? 4096;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+        ctx.clip();
+
+        let drawX = x;
+        const maxX = x + maxWidth;
+
+        for(let i = 0; i < text.length; i++)
+        {
+            const char = text.charAt(i);
+            const charWidth = ctx.measureText(char).width;
+
+            if(drawX + charWidth > maxX) break;
+
+            const run = runs.find((r) => i >= r.start && i < r.end);
+            const fillStyle = (run?.format.color != null) ? this.colorToRgbString(run.format.color) : baseFillStyle;
+
+            ctx.fillStyle = fillStyle;
+            ctx.fillText(char, drawX, y);
+
+            if(run?.format.underline)
+            {
+                ctx.strokeStyle = fillStyle;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(drawX, y + fontSize + 1);
+                ctx.lineTo(drawX + charWidth, y + fontSize + 1);
+                ctx.stroke();
+            }
+
+            drawX += charWidth + spacing;
+        }
+
+        ctx.restore();
+    }
+
+    private colorToRgbString(color: number): string
+    {
+        const r = (color >> 16) & 0xFF;
+        const g = (color >> 8) & 0xFF;
+        const b = color & 0xFF;
+
+        return `rgb(${r},${g},${b})`;
+    }
+
     private wrapLine(
         ctx: OffscreenCanvasRenderingContext2D,
         line: string,
@@ -1437,8 +1525,8 @@ export class WindowComposite
         const eg = (color >> 8) & 0xFF;
         const eb = color & 0xFF;
 
-        let dx = 0;
-        let dy = 1;
+        let dx: number;
+        let dy: number;
 
         switch(position)
         {

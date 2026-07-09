@@ -9,7 +9,7 @@ import {ShoutMessageEvent} from '../../communication/messages/incoming/room/chat
 import {WhisperMessageEvent} from '../../communication/messages/incoming/room/chat/WhisperMessageEvent';
 
 // Parsers
-import type {ChatMessageEventParser} from '../../communication/messages/parser/room/chat/ChatMessageEventParser';
+import type {ChatMessageEventParser, IChatLink} from '../../communication/messages/parser/room/chat/ChatMessageEventParser';
 
 // Events
 import {RoomSessionChatEvent} from '../events/RoomSessionChatEvent';
@@ -73,7 +73,7 @@ export class RoomChatHandler extends BaseHandler
         text: string,
         chatType: number,
         styleId: number,
-        links: string[] | null = null,
+        links: IChatLink[] | null = null,
         extraParam: number = -1
     ): void
     {
@@ -118,19 +118,12 @@ export class RoomChatHandler extends BaseHandler
             return;
         }
 
-        // Convert links array to string array if present
-        let links: string[] | null = null;
-        if(parser.links !== null)
-        {
-            links = parser.links.map(link => link.displayText);
-        }
-
         this.dispatchChatEvent(
             parser.userId,
             parser.text,
             RoomSessionChatEvent.CHAT_TYPE_SPEAK,
             parser.styleId,
-            links
+            parser.links
         );
     }
 
@@ -151,19 +144,12 @@ export class RoomChatHandler extends BaseHandler
             return;
         }
 
-        // Convert links array to string array if present
-        let links: string[] | null = null;
-        if(parser.links !== null)
-        {
-            links = parser.links.map(link => link.displayText);
-        }
-
         this.dispatchChatEvent(
             parser.userId,
             parser.text,
             RoomSessionChatEvent.CHAT_TYPE_WHISPER,
             parser.styleId,
-            links
+            parser.links
         );
     }
 
@@ -184,19 +170,12 @@ export class RoomChatHandler extends BaseHandler
             return;
         }
 
-        // Convert links array to string array if present
-        let links: string[] | null = null;
-        if(parser.links !== null)
-        {
-            links = parser.links.map(link => link.displayText);
-        }
-
         this.dispatchChatEvent(
             parser.userId,
             parser.text,
             RoomSessionChatEvent.CHAT_TYPE_SHOUT,
             parser.styleId,
-            links
+            parser.links
         );
     }
 }

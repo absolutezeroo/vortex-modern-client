@@ -48,7 +48,7 @@ export class ChatItem
         this._text = event.text;
         this._chatType = event.chatType;
         this._style = event.styleId;
-        this._links = event.links ? [...event.links] : [];
+        this._links = event.links ? event.links.map((link) => link.displayText) : [];
         this._forcedColor = forcedColor;
         this._forcedScreenLocation = forcedScreenLocation;
         this._forcedFigure = forcedFigure;

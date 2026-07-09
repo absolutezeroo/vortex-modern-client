@@ -9,10 +9,9 @@
  * style, lays out name/message/pointer/user-image, and composites the
  * background bubble image.
  *
- * TODO(AS3): clickable links embedded in chat messages (the `links`/
- * `var_1993` branch — per-substring TextFormat + click-to-open-URL) are not
- * ported; ITextWindow doesn't expose getCharIndexAtPoint()/setTextFormat()
- * for a text range yet. Messages with links render as plain text for now.
+ * Clickable links embedded in chat messages (the `links`/`var_1993` branch —
+ * per-substring TextFormat + click-to-open-URL) ARE ported: see
+ * applyMessageText()'s default case and testMessageLinkMouseClick().
  */
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -21,14 +20,21 @@ import type {ILabelWindow} from '@core/window/components/ILabelWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowParam} from '@core/window/enum/WindowParam';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {RoomWidgetChatUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetChatUpdateEvent';
+import type {IChatLink} from '@habbo/communication/messages/parser/room/chat/ChatMessageEventParser';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {RoomChatWidget} from './RoomChatWidget';
 
 const RESPECT_ICON_MARGIN_RIGHT = 35;
 const NAME_ICON_MARGIN = 26;
+
+// AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView() (links branch, switch(styleId - 2))
+const LINK_COLOR_STYLE_2 = 0xDDDDDD; // AS3 decimal 14540253
+const LINK_COLOR_DEFAULT = 0x295BA6; // AS3 decimal 2710438
 
 export class RoomChatItem
 {
@@ -46,7 +52,10 @@ export class RoomChatItem
     private _userId: number = 0;
     private _senderName: string = '';
     private _message: string = '';
-    private _links: unknown[] | null = null;
+    private _links: IChatLink[] | null = null;
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::var_1629 (var_2506 in win63_2023_version)
+    // [start,end) char ranges within the final message text, one per `_links` entry.
+    private _linkRanges: Array<[number, number]> | null = null;
     private _senderX: number = 0;
     private _senderImage: ImageBitmap | null = null;
     private _senderColor: number = 0;
@@ -379,11 +388,94 @@ export class RoomChatItem
                 this._width = RESPECT_ICON_MARGIN_RIGHT;
                 break;
             default:
-                // TODO(AS3): links-in-message rendering (var_1993 branch) not ported —
-                // see file header. Renders as plain text regardless of `this._links`.
-                messageText.text = this._message;
+                this.applyMessageLinks(messageText);
                 break;
         }
+    }
+
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::renderView() (links/var_1993 branch)
+    private applyMessageLinks(messageText: ITextWindow): void
+    {
+        if(!this._links || this._links.length === 0)
+        {
+            messageText.text = this._message;
+            return;
+        }
+
+        const ranges: Array<[number, number]> = [];
+
+        for(let i = 0; i < this._links.length; i++)
+        {
+            const displayText = this._links[i].displayText;
+            const placeholder = `{${i}}`;
+            const start = this._message.indexOf(placeholder);
+            const end = start + displayText.length;
+
+            ranges.push([start, end]);
+            this._message = this._message.replace(placeholder, displayText);
+        }
+
+        this._linkRanges = ranges;
+        messageText.text = this._message;
+        messageText.immediateClickMode = true;
+        messageText.setParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT, false);
+        messageText.setParamFlag(WindowParam.FORCE_CLIPPING, true);
+
+        const format = messageText.getTextFormat();
+
+        format.color = this._styleId === 2 ? LINK_COLOR_STYLE_2 : LINK_COLOR_DEFAULT;
+        format.underline = true;
+
+        // A malformed link (placeholder missing from the text) yields
+        // start === -1, which setTextFormat()'s own range guard already
+        // rejects silently — matching AS3's catch(RangeError) fallback
+        // without needing a try/catch here.
+        for(const [start, end] of ranges)
+        {
+            messageText.setTextFormat(format, start, end);
+        }
+    }
+
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::testMessageLinkMouseClick()
+    private testMessageLinkMouseClick(localX: number, localY: number): boolean
+    {
+        if(!this._links || !this._linkRanges) return false;
+
+        const messageText = this.findChild('message') as unknown as ITextWindow | null;
+
+        if(!messageText) return false;
+
+        const messageWindow = messageText as unknown as IWindow;
+        const charIndex = messageText.getCharIndexAtPoint(localX - messageWindow.x, localY - messageWindow.y);
+
+        if(charIndex < 0) return false;
+
+        for(let i = 0; i < this._linkRanges.length; i++)
+        {
+            const [start, end] = this._linkRanges[i];
+
+            if(charIndex >= start && charIndex <= end)
+            {
+                const link = this._links[i];
+
+                // AS3 distinguishes 3 link kinds (external-warning/habboMain/new-tab)
+                // via a per-link int; the parsed wire data here only carries a
+                // boolean `isTrusted`, so trusted links collapse to the
+                // "habboMain" case and untrusted ones show the external warning.
+                if(!link.isTrusted)
+                {
+                    HabboWebTools.openExternalLinkWarning(link.url);
+                }
+                else
+                {
+                    HabboWebTools.openWebPage(this._siteUrl + link.url, HabboWebTools.WINDOW_HABBO_MAIN);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/widget/roomchat/RoomChatItem.as::enableDragTooltip()
@@ -426,8 +518,20 @@ export class RoomChatItem
         window.addEventListener(WindowMouseEvent.UP, this.onBubbleMouseUp);
     }
 
+    // AS3: sources/win63_version/habbo/ui/widget/roomchat/RoomChatItem.as::onBubbleMouseClick()
+    // win63_2023_version's `if(var_1993 && false)` is decompiler corruption
+    // (constant-folded); win63_version's clean `var_790 && var_790.length > 0`
+    // is the real condition, confirmed against both copies.
     private onBubbleMouseClick = (event: WindowMouseEvent): void =>
     {
+        if(this._links && this._links.length > 0)
+        {
+            if(this.testMessageLinkMouseClick(event.localX, event.localY))
+            {
+                return;
+            }
+        }
+
         this._widget?.onItemMouseClick(this._userId, this._senderName, this._senderCategory, this._roomId, event);
     };
 
