@@ -31,6 +31,7 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
@@ -279,6 +280,21 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     public set friendList(value: IHabboFriendList | null)
     {
         this._friendList = value;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::_freeFlowChat
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::get freeFlowChat()
+    public get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::set freeFlowChat()
+    public set freeFlowChat(value: IHabboFreeFlowChat | null)
+    {
+        this._freeFlowChat = value;
     }
 
     private _navigator: IHabboNavigator | null = null;

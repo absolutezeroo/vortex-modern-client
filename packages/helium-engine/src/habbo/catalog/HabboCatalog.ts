@@ -36,6 +36,9 @@ import {
 import type {
     ActivityPointsMessageParser
 } from '@habbo/communication/messages/parser/notifications/ActivityPointsMessageParser';
+import {ScrSendUserInfoEvent} from '@habbo/communication/messages/incoming/users/ScrSendUserInfoEvent';
+import type {ScrSendUserInfoMessageParser} from '@habbo/communication/messages/parser/users/ScrSendUserInfoMessageParser';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
 import {GetCatalogPageComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogPageComposer';
 import {GetProductOfferComposer} from '@habbo/communication/messages/outgoing/catalog/GetProductOfferComposer';
@@ -883,6 +886,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new ActivityPointsMessageEvent(this.onActivityPoints.bind(this)));
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
+        this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 
@@ -1230,5 +1234,35 @@ export class HabboCatalog extends Component implements IHabboCatalog
         }
 
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onSubscriptionInfo()
+    // TODO(AS3): the responseType === RESPONSE_TYPE_PURCHASE branch (reset() + reopen the page
+    // remembered via rememberPageDuringVipPurchase()) isn't ported - reset() tears down and
+    // reloads the whole catalog (navigators/viewer/product data) after a club purchase, and its
+    // prerequisite rememberPageDuringVipPurchase() is still a no-op stub (see its own TODO above).
+    private onSubscriptionInfo(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as ScrSendUserInfoMessageParser | null;
+
+        if(!parser) return;
+
+        this._purse.clubDays = Math.max(0, parser.daysToPeriodEnd);
+        this._purse.clubPeriods = Math.max(0, parser.periodsSubscribedAhead);
+        this._purse.isVIP = parser.isVIP;
+        this._purse.pastClubDays = parser.pastClubDays;
+        this._purse.pastVipDays = parser.pastVipDays;
+        this._purse.isExpiring = parser.responseType === 3;
+        this._purse.minutesUntilExpiration = parser.minutesUntilExpiration;
+        this._purse.minutesSinceLastModified = parser.minutesSinceLastModified;
+
+        if(parser.productName === 'habbo_club' || parser.productName === 'club_habbo')
+        {
+            HabboWebTools.subscriptionUpdated(parser.isVIP && parser.minutesUntilExpiration > 0);
+        }
+
+        this.updatePurse();
     }
 }

@@ -12,6 +12,7 @@ import type {IHabboCatalog} from '@habbo/catalog';
 import type {IHabboLocalizationManager} from '@habbo/localization';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHeliumConfig} from './Helium';
 import type {IHeliumLoadingScreen} from './IHeliumLoadingScreen';
 
@@ -33,6 +34,7 @@ export interface IHelium extends IDisposable
     readonly localization: IHabboLocalizationManager;
     readonly windowManager: IHabboWindowManager;
     readonly toolbar: IHabboToolbar;
+    readonly assets: IAssetLibrary;
 
     /**
 	 * Connect to the Habbo server

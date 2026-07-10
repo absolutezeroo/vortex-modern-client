@@ -13,6 +13,7 @@
 import {Logger} from '@core/utils/Logger';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IDisplayObjectWrapper} from '@core/window/components/IDisplayObjectWrapper';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -248,13 +249,16 @@ export class RoomDesktopLayoutManager
     }
 
     /**
-	 * Gets the chat container window.
+	 * Gets the chat container window - a "display_object_wrapper" element
+	 * (room_desktop_layout_xml.json's "container_new_chat", tagged "room_new_chat"),
+	 * so freeFlowChat's root display object can be mounted into it via
+	 * setDisplayObject(), matching AS3's layoutManager.getChatContainer().setDisplayObject(...).
 	 */
-    public getChatContainer(): IWindowContainer | null
+    public getChatContainer(): IDisplayObjectWrapper | null
     {
         if(!this._layoutContainer) return null;
 
-        return this._layoutContainer.findChildByTag(ROOM_NEW_CHAT) as IWindowContainer | null;
+        return this._layoutContainer.findChildByTag(ROOM_NEW_CHAT) as IDisplayObjectWrapper | null;
     }
 
     /**

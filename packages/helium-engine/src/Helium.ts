@@ -19,6 +19,7 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IHelium} from './IHelium';
 import type {IHeliumLoadingScreen} from './IHeliumLoadingScreen';
@@ -268,6 +269,11 @@ export class Helium implements IHelium
     get toolbar(): IHabboToolbar
     {
         return this._habboMain!.toolbar;
+    }
+
+    get assets(): IAssetLibrary
+    {
+        return this._habboMain!.assets;
     }
 
     get roomUI(): IRoomUI

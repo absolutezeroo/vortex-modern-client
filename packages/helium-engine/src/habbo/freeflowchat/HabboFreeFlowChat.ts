@@ -12,7 +12,9 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
-import type {IFreeFlowChatRoomSessionManager, IHabboFreeFlowChat} from './IHabboFreeFlowChat';
+import type {IVector3d} from '@room/utils/IVector3d';
+import type {IPoint} from '@room/utils/IRoomGeometry';
+import type {IFreeFlowChatRoomSessionManager, IHabboFreeFlowChat, IRoomChatSettings} from './IHabboFreeFlowChat';
 import {ChatEventHandler} from './data/ChatEventHandler';
 import {RoomSessionEventHandler} from './data/RoomSessionEventHandler';
 import {ChatHistoryBuffer} from './history/ChatHistoryBuffer';
@@ -20,6 +22,11 @@ import type {ChatItem} from './data/ChatItem';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
 import {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
+import {ChatFlowViewer} from './viewer/ChatFlowViewer';
+import {ChatFlowStage} from './viewer/simulation/ChatFlowStage';
+import {ChatViewController} from './ChatViewController';
+import {ChatMarkup} from './viewer/enum/ChatMarkup';
+import type {IChatStyleInternal} from './viewer/visualization/style/IChatStyleInternal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -106,12 +113,113 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._chatBubbleFactory?.chatStyleLibrary ?? null;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatBubbleFactory()
+    get chatBubbleFactory(): ChatBubbleFactory | null
+    {
+        return this._chatBubbleFactory;
+    }
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
-    // TODO(AS3): AS3 derives this from `roomChatSettings.mode === 1` (an unported
-    // user-preference struct) — always false until that lands.
     get roomChatBorderLimited(): boolean
     {
+        return this._roomChatSettings?.mode === 1;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
+    // TODO(AS3): never populated — the server preferences message this comes from isn't
+    // parsed yet, so this stays null (every reader already null-checks it, matching AS3).
+    private _roomChatSettings: IRoomChatSettings | null = null;
+
+    get roomChatSettings(): IRoomChatSettings | null
+    {
+        return this._roomChatSettings;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatFontSizeMode
+    private _chatFontSizeMode: number = 0;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeMode()
+    get chatFontSizeMode(): number
+    {
+        return this._chatFontSizeMode;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatFontSizeMode()
+    // TODO(AS3): AS3 sends `new SetChatStylePreferenceComposer(preferedChatStyle,
+    // chatFontSizeMode)` here to persist the choice server-side - that composer isn't
+    // ported yet (2-arg form, evolved from the older single-styleId version - see
+    // preferedChatStyle's setter below for the same gap). The in-memory value still drives
+    // rendering (chatFontSizeScale), only server persistence is missing.
+    set chatFontSizeMode(value: number)
+    {
+        this._chatFontSizeMode = value < 0 ? 0 : (value > 4 ? 4 : value);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
+    get chatFontSizeScale(): number
+    {
+        switch(this._chatFontSizeMode - 1)
+        {
+            case 0: return 1.15;
+            case 1: return 1.3;
+            case 2: return 1.5;
+            case 3: return 1.75;
+            default: return 1;
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get displayObject()
+    // Set by roomEntered() once the ChatViewController exists (see viewer/ChatViewController.ts).
+    private _displayObject: Container | null = null;
+
+    get displayObject(): Container | null
+    {
+        return this._displayObject;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
+    // Adapted, not a line-for-line port: AS3 reconstructs absolute Flash-stage coordinates
+    // (stage.stageWidth/stageHeight center + scaled room-canvas point + offset) because its
+    // chat layer floats in a separate DisplayObject tree from the room's own sub-stage.
+    // This port renders everything in one PixiJS canvas already sharing the room's
+    // coordinate space, so the simpler getScreenPoint()+offset composition already proven
+    // correct by the legacy bubble system (ChatWidgetHandler.ts::handleChatEvent()) applies
+    // directly, without the stage-center reconstruction term.
+    getScreenPointFromRoomLocation(roomId: number, location: IVector3d): IPoint
+    {
+        const zero: IPoint = {x: 0, y: 0};
+
+        if(!this._roomEngine) return zero;
+
+        const geometry = this._roomEngine.getRoomCanvasGeometry(roomId);
+
+        if(!geometry) return zero;
+
+        const point = geometry.getScreenPoint(location);
+
+        if(!point) return zero;
+
+        const offset = this._roomEngine.getRoomCanvasScreenOffset(roomId);
+
+        return offset ? {x: point.x + offset.x, y: point.y + offset.y} : point;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
+    // TODO(AS3): always false — roomUI.mouseEventPositionHasContextMenu() isn't ported
+    // (RoomUI has no context-menu hit-testing yet, and HabboFreeFlowChat has no roomUI
+    // dependency wired in — see IHabboFreeFlowChat.ts's doc comment on this method).
+    clickHasToPropagate(_event: unknown): boolean
+    {
         return false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::selectAvatarWithChatItem()
+    // TODO(AS3): no-op — AS3 delegates to roomEngine.selectAvatar(roomId, userId), which
+    // isn't ported (same room-object-selection gap ChatInputWidgetHandler.ts's "@Name"
+    // mention-autocomplete TODO already flags); moderation reporting and the
+    // RWROM_GET_OBJECT_INFO widget message aren't ported either.
+    selectAvatarWithChatItem(_item: ChatItem): void
+    {
     }
 
     private _preferedChatStyle: number = 1;
@@ -121,6 +229,13 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._preferedChatStyle;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set preferedChatStyle()
+    // TODO(AS3): AS3 sends `new SetChatStylePreferenceComposer(preferedChatStyle,
+    // chatFontSizeMode)` here — a 2-arg form combining both preferences in one message,
+    // evolved from the older single-styleId composer (still what's referenced below in
+    // the commented-out send). Neither the composer's real (2026) field layout nor its
+    // older 1-arg version is ported yet; the per-message styleId sent with every chat
+    // (RoomChatInputView's future selectedStyleId -> sendChat()) doesn't depend on this.
     set preferedChatStyle(value: number)
     {
         this._preferedChatStyle = value;
@@ -274,16 +389,34 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return new ManualNineSliceSprite(scale9Grid, background);
     }
 
+    private _chatFlowStage: ChatFlowStage | null = null;
+    private _chatFlowViewer: ChatFlowViewer | null = null;
+    private _chatViewController: ChatViewController | null = null;
+
+    get chatFlowViewer(): ChatFlowViewer | null
+    {
+        return this._chatFlowViewer;
+    }
+
     /**
 	 * Called when a room session is created/entered.
-	 * Sets the in-room flag and emits a roomEntered event for the UI.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
+	 * TODO(AS3): ChatHistoryScrollView/ChatHistoryTray (the drag-down history panel) are
+	 * not built here — see ChatViewController.ts's header. displayObject/chatFlowViewer
+	 * still work without them; the history toggle button stays a no-op.
 	 */
     roomEntered(): void
     {
         this._isInRoom = true;
 
-        if(this._isInitialized)
+        if(this._isInitialized && this._chatBubbleFactory)
         {
+            this._chatFlowStage = new ChatFlowStage(this);
+            this._chatFlowViewer = new ChatFlowViewer(this, this._chatFlowStage);
+            this._chatViewController = new ChatViewController(this._chatFlowViewer);
+            this._displayObject = this._chatViewController.rootDisplayObject;
+
             this._chatEvents.emit('roomEntered');
 
             log.debug('Room entered');
@@ -292,30 +425,81 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 
     /**
 	 * Called when a room session has ended/left.
-	 * Clears the in-room flag and emits a roomLeft event for the UI.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
 	 */
     roomLeft(): void
     {
+        this._chatViewController?.dispose();
+        this._chatViewController = null;
+
+        this._chatFlowViewer?.dispose();
+        this._chatFlowViewer = null;
+
+        this._chatFlowStage?.dispose();
+        this._chatFlowStage = null;
+
+        this._displayObject = null;
         this._isInRoom = false;
         this._chatEvents.emit('roomLeft');
         log.debug('Room left');
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::fixHtml()
+    // Escapes raw HTML if the style doesn't allow it, then applies ChatMarkup's
+    // [tag]/@color@ shorthand - see ChatTextLayout.ts's parseInlineMarkup() for how the
+    // resulting <b>/<i>/<u>/<font color> tags get turned into styled runs (no real HTML
+    // text component in this port).
+    private fixHtml(item: ChatItem, style: IChatStyleInternal): void
+    {
+        if(!style.allowHTML)
+        {
+            item.text = item.text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            item.text = item.text.replace(/&#[0-9]+;/g, '');
+            item.text = item.text.replace(/&#x[0-9]+;/g, '');
+        }
+
+        const color = style.textFormat?.color ?? 0;
+
+        if(style.isNotification)
+        {
+            item.text = ChatMarkup.applyToElements(item.text, color);
+        }
+
+        item.text = ChatMarkup.applyColourToChat(item.text, color);
+    }
+
     /**
-	 * Insert a chat item into the chat system.
-	 * Adds to the history buffer and emits a chatInserted event for the UI layer.
+	 * Insert a chat item into the chat system: adds it to the history buffer,
+	 * builds a live PooledChatBubble for it, places it via the (currently
+	 * minimal - see ChatFlowStage.ts) chat flow stage, and hands it to the
+	 * viewer to display.
+	 *
+	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::insertChat()
 	 *
 	 * @param item The chat item to insert
 	 */
     insertChat(item: ChatItem): void
     {
-        if(!this._isInitialized || !this._chatHistory || this._isDisabledInPreferences)
+        if(!this._isInitialized || !this._chatHistory || this._isDisabledInPreferences || !this._chatFlowStage || !this._chatFlowViewer || !this._chatBubbleFactory)
         {
             return;
         }
 
+        const style = this._chatBubbleFactory.chatStyleLibrary?.getStyle(item.style);
+
+        if(style) this.fixHtml(item, style);
+
         this._chatHistory.insertChat(item);
         this._chatEvents.emit('chatInserted', item);
+
+        const bubble = this._chatBubbleFactory.getNewChatBubble(item);
+
+        if(!bubble) return;
+
+        const position = this._chatFlowStage.insertBubble(bubble);
+
+        this._chatFlowViewer.insertBubble(bubble, position);
     }
 
     /**

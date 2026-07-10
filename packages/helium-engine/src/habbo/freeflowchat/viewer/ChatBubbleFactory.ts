@@ -13,6 +13,8 @@ import {ChatStyle} from './visualization/style/ChatStyle';
 import {BlankStyle} from './visualization/style/BlankStyle';
 import type {IChatStyleInternal} from './visualization/style/IChatStyleInternal';
 import {PooledChatBubble} from './visualization/PooledChatBubble';
+import {ChatBubble} from './visualization/ChatBubble';
+import type {IUserData} from '@habbo/session/IUserData';
 
 const log = Logger.getLogger('ChatBubbleFactory');
 
@@ -102,40 +104,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         this.applySpecialChatContent(item, name);
 
         const style: IChatStyleInternal = this._chatStyleLibrary?.getStyle(item.style) ?? new BlankStyle();
-        let face: ImageBitmap | null = style instanceof ChatStyle ? style.iconImage : null;
-        let color = 0;
-
-        if(item.forcedFigure || item.forcedUserName)
-        {
-            if(!face)
-            {
-                face = this.getUserImage(item.forcedFigure ?? '');
-            }
-        }
-        else if(userData)
-        {
-            const figure = userData.figure;
-
-            color = this._avatarColorCache.get(figure) ?? 0;
-
-            if(!face)
-            {
-                switch(userData.type - 1)
-                {
-                    case 0:
-                        face = this.getUserImage(figure);
-                        break;
-                    case 1:
-                    {
-                        const roomObject = this._chatFlow.roomEngine?.getRoomObject(item.roomId, userData.roomObjectId, 100) ?? null;
-                        const posture = roomObject?.getModel().getString('figure_posture') ?? null;
-
-                        face = this.getPetImage(figure, 2, true, 32, posture);
-                        break;
-                    }
-                }
-            }
-        }
+        const {face, color} = this.resolveFaceAndColor(item, style, userData);
 
         let bubble = this._pool.pop();
 
@@ -185,7 +154,9 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryLineEntry()
-    getHistoryLineEntry(item: ChatItem): IChatHistoryEntry | null
+    // TS note: async — see ChatBubble.ts::toImageBitmap()'s header for why (no
+    // synchronous caller exists yet to break).
+    async getHistoryLineEntry(item: ChatItem): Promise<IChatHistoryEntry | null>
     {
         if(!this._chatFlow) return null;
 
@@ -219,13 +190,53 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
             canIgnore = false;
         }
 
-        // TODO(AS3): AS3 also resolves a `face` image here (identical to
-        // getNewChatBubble()'s forcedFigure/avatar/pet switch above) and renders
-        // `new ChatBubble(item, style, face, name, color, chatFlow, 1)`, then
-        // rasterizes it via `drawToBitmap()` into the bitmap passed below.
-        // ChatBubble.as (511 lines) isn't ported yet, so that resolution would be
-        // dead work right now — restore it here once ChatBubble exists.
-        return new ChatHistoryEntryBitmapBubble(item, canIgnore, webId, name, null, style.overlap);
+        const {face, color} = this.resolveFaceAndColor(item, style, userData);
+        const chatBubble = new ChatBubble(item, style, face, name, item.forcedColor ? (item.forcedColor >>> 0) : color, this._chatFlow, 1);
+        const bitmap = await chatBubble.toImageBitmap();
+
+        chatBubble.dispose();
+
+        return new ChatHistoryEntryBitmapBubble(item, canIgnore, webId, name, bitmap, style.overlap);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewChatBubble()
+    // and ::getHistoryLineEntry() share this exact face/color resolution inline in AS3
+    // (duplicated in both methods there); factored out here since it's identical logic.
+    private resolveFaceAndColor(item: ChatItem, style: IChatStyleInternal, userData: IUserData | null): {face: ImageBitmap | null; color: number}
+    {
+        let face: ImageBitmap | null = style instanceof ChatStyle ? style.iconImage : null;
+        let color = 0;
+
+        if(item.forcedFigure || item.forcedUserName)
+        {
+            if(!face) face = this.getUserImage(item.forcedFigure ?? '');
+        }
+        else if(userData)
+        {
+            const figure = userData.figure;
+
+            color = this._avatarColorCache.get(figure) ?? 0;
+
+            if(!face)
+            {
+                switch(userData.type - 1)
+                {
+                    case 0:
+                        face = this.getUserImage(figure);
+                        break;
+                    case 1:
+                    {
+                        const roomObject = this._chatFlow?.roomEngine?.getRoomObject(item.roomId, userData.roomObjectId, 100) ?? null;
+                        const posture = roomObject?.getModel().getString('figure_posture') ?? null;
+
+                        face = this.getPetImage(figure, 2, true, 32, posture);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return {face, color};
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryRoomChangeEntry()

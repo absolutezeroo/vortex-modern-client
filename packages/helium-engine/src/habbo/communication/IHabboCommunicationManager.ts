@@ -3,7 +3,6 @@ import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IEncryption} from '@core/communication/encryption/IEncryption';
 import type {IKeyExchange} from '@core/communication/handshake/IKeyExchange';
-import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {HabboCommunicationEventType} from './enum';
 import type {IHabboWebApiListener} from './IHabboWebApiListener';
 import type {IHabboWebApiSession} from './IHabboWebApiSession';
@@ -53,11 +52,6 @@ export interface IHabboCommunicationManager
 	 * AS3: set tcpNoDelay()
 	 */
     set tcpNoDelay(value: boolean);
-
-    /**
-	 * Get the session data manager
-	 */
-    readonly sessionDataManager: ISessionDataManager | null;
 
     /**
 	 * Whether currently connected to server

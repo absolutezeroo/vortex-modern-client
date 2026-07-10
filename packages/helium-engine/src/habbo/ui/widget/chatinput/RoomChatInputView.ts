@@ -1,16 +1,18 @@
 /**
  * RoomChatInputView
  *
- * @see sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as
+ * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as
  *
- * TODO(AS3): scope-reduced for the first pass — custom chat styles
- * (ChatStyleSelector/chatStyleLibrary), the NUX first-time chat reminder
- * animation, the "chat dimmer" room-enter-effect overlay, and the help-button
- * hover tooltip are not ported. The core input box (create/position/focus/
- * type/send, whisper+shout mode parsing, typing indicator, flood control) is.
+ * TODO(AS3): scope-reduced for the first pass — the habbicon selector
+ * (HabbiconSelector), the NUX first-time chat reminder animation, the "chat
+ * dimmer" room-enter-effect overlay, and the help-button hover tooltip are
+ * not ported. The core input box (create/position/focus/type/send,
+ * whisper+shout mode parsing, typing indicator, flood control) and the chat
+ * style selector are.
  */
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IFocusWindow} from '@core/window/components/IFocusWindow';
@@ -18,9 +20,13 @@ import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {RoomWidgetChatTypingMessage} from '@habbo/ui/widget/messages/RoomWidgetChatTypingMessage';
+import {ChatStyleSelector} from './styleselector/ChatStyleSelector';
 import type {RoomChatInputWidget} from './RoomChatInputWidget';
 
 const MARGIN_H = 12;
+const NFT_CHAT_STYLE_MIN = 1000;
+const NFT_CHAT_STYLE_MAX = 9999;
+const STATIC_CHAT_STYLE_MAX = 1000;
 
 export class RoomChatInputView
 {
@@ -31,6 +37,8 @@ export class RoomChatInputView
     private _blockText: IWindow | null = null;
     private _helpHoverRegion: IRegionWindow | null = null;
     private _bubbleCont: IWindowContainer | null = null;
+    private _chatStyleMenuContainer: IWindowContainer | null = null;
+    private _chatStyleSelector: ChatStyleSelector | null = null;
     private _whisperModeId: string;
     private _shoutModeId: string;
     private _speakModeId: string;
@@ -56,10 +64,25 @@ export class RoomChatInputView
         return this._window;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get widget()
+    public get widget(): RoomChatInputWidget | null
+    {
+        return this._widget;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get chatStyleMenuContainer()
+    public get chatStyleMenuContainer(): IWindowContainer | null
+    {
+        return this._chatStyleMenuContainer;
+    }
+
     // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::dispose()
     public dispose(): void
     {
         this.clearTimers();
+
+        this._chatStyleSelector?.dispose();
+        this._chatStyleSelector = null;
 
         if(this._input)
         {
@@ -67,6 +90,11 @@ export class RoomChatInputView
             this._input.removeEventListener(WindowKeyboardEvent.KEY_DOWN, this.onKeyDown);
             this._input.removeEventListener(WindowEvent.WE_CHANGE, this.onInputChanged);
             this._input = null;
+        }
+
+        if(this._window)
+        {
+            this._window.procedure = null;
         }
 
         if(this._window?.desktop)
@@ -100,6 +128,13 @@ export class RoomChatInputView
             this._window.height = desktop.height;
         }
 
+        // AS3 sets this right after building the window, before any child lookup or
+        // input wiring below - matters because createOrUpdateChatStylesView() (which
+        // can fail if the server hasn't enabled/populated custom chat styles) runs
+        // dead last, *after* the input's own listeners are already attached; a crash
+        // in the optional chat-styles setup must never take basic typing down with it.
+        this._window.procedure = this.chatInputWindowProcedure;
+
         this._bubbleCont = this._window.findChildByName('bubblecont') as IWindowContainer | null;
 
         if(this._bubbleCont)
@@ -111,6 +146,7 @@ export class RoomChatInputView
         this._inputBorder = this._bubbleCont?.findChildByName('input_border') ?? null;
         this._blockText = this._bubbleCont?.findChildByName('block_text') ?? null;
         this._helpHoverRegion = this._bubbleCont?.findChildByName('helpbutton_show_hover_region') as IRegionWindow | null;
+        this._chatStyleMenuContainer = this._window.findChildByName('chatstyles_menu') as IWindowContainer | null;
 
         this.updatePosition();
 
@@ -125,6 +161,8 @@ export class RoomChatInputView
         }
 
         this._window.addEventListener(WindowEvent.WE_PARENT_RESIZED, this.onParentResized);
+
+        this.createOrUpdateChatStylesView();
     }
 
     private onParentResized = (): void => this.updatePosition();
@@ -165,6 +203,8 @@ export class RoomChatInputView
         }
 
         this._bubbleCont.x = Math.max(centeredX, leftBound);
+
+        this._chatStyleSelector?.alignMenuToSelector();
     }
 
     // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::hideFloodBlocking()
@@ -378,14 +418,149 @@ export class RoomChatInputView
         if(this._typingTimer !== null) { clearTimeout(this._typingTimer); this._typingTimer = null; }
         if(this._idleTimer !== null) { clearTimeout(this._idleTimer); this._idleTimer = null; }
 
-        this._widget.sendChat(text, chatType, recipientName, 0);
+        // AS3: styleId defaults to 0 and is only ever read from the selector when custom
+        // styles are enabled - selectedStyleId itself can legitimately be -1 ("unchanged
+        // since last send"), passed straight through rather than collapsed to 0.
+        const styleId = this.customChatStylesEnabled() && this._chatStyleSelector ? this._chatStyleSelector.selectedStyleId : 0;
+
+        this._widget.sendChat(text, chatType, recipientName, styleId);
         this._isTyping = false;
 
         this._input.text = restoreText;
         this._lastText = restoreText;
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputView.as::getChatInputY()
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::customChatStylesEnabled()
+    private customChatStylesEnabled(): boolean
+    {
+        return this._widget?.roomUi?.getBoolean('custom.chat.styles.enabled') ?? false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createOrUpdateChatStylesView()
+    public createOrUpdateChatStylesView(): void
+    {
+        const container = this._widget?.handler.container;
+        const freeFlowChat = container?.freeFlowChat;
+        const chatStyleLibrary = freeFlowChat?.chatStyleLibrary;
+        const sessionDataManager = container?.sessionDataManager;
+
+        if(this.customChatStylesEnabled() && container && !container.roomSession.isGameSession && freeFlowChat && chatStyleLibrary && sessionDataManager)
+        {
+            const disabledIds = (this._widget?.roomUi?.getProperty('disabled.custom.chat.styles') ?? '').split(',');
+            const isStaff = sessionDataManager.hasSecurity(4);
+            const allowed: number[] = [];
+
+            for(const styleId of chatStyleLibrary.getStyleIds())
+            {
+                const style = chatStyleLibrary.getStyle(styleId);
+
+                if(!style || style.isSystemStyle) continue;
+
+                if(styleId >= NFT_CHAT_STYLE_MIN && styleId <= NFT_CHAT_STYLE_MAX)
+                {
+                    if(sessionDataManager.hasNftChatStyle(styleId)) allowed.push(styleId);
+
+                    continue;
+                }
+
+                if(styleId < STATIC_CHAT_STYLE_MAX && !style.purchasable)
+                {
+                    if(style.isStaffOverrideable && isStaff) { allowed.push(styleId); continue; }
+                    if(style.isAmbassadorOnly && (isStaff || sessionDataManager.isAmbassador)) { allowed.push(styleId); continue; }
+                    if(disabledIds.indexOf(String(styleId)) !== -1) continue;
+                    if(style.isHcOnly && sessionDataManager.hasClub) { allowed.push(styleId); continue; }
+                    if(!style.isHcOnly && !style.isAmbassadorOnly) { allowed.push(styleId); continue; }
+                }
+
+                if(sessionDataManager.hasPurchasableChatStyle(styleId)) allowed.push(styleId);
+            }
+
+            this.createChatStyleSelectorMenuItems(allowed);
+        }
+        else
+        {
+            const chatInputContainer = this._bubbleCont?.findChildByName('chat_input_container');
+
+            if(chatInputContainer && 'removeListItemAt' in chatInputContainer)
+            {
+                (chatInputContainer as unknown as IItemListWindow).removeListItemAt(0);
+            }
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createChatStyleSelectorMenuItems()
+    private createChatStyleSelectorMenuItems(allowedIds: number[]): void
+    {
+        const container = this._widget?.handler.container;
+        const freeFlowChat = container?.freeFlowChat;
+        const chatStyleLibrary = freeFlowChat?.chatStyleLibrary;
+
+        if(!chatStyleLibrary) return;
+
+        if(!this._chatStyleSelector)
+        {
+            const stylesButton = this._bubbleCont?.findChildByName('styles') as IWindowContainer | null;
+
+            this._chatStyleSelector = new ChatStyleSelector(this, stylesButton);
+            this._chatStyleSelector.gridColumns = Math.min(Math.max(Math.floor(allowedIds.length / 6) + 1, 4), 6);
+        }
+        else
+        {
+            this._chatStyleSelector.clear();
+        }
+
+        for(let i = allowedIds.length - 1; i >= 0; i--)
+        {
+            const styleId = allowedIds[i];
+            const style = chatStyleLibrary.getStyle(styleId);
+
+            if(style) this._chatStyleSelector.addItem(styleId, style.selectorPreview);
+        }
+
+        this._chatStyleSelector.initSelection();
+        this._chatStyleSelector.initFontSizeSelection(freeFlowChat?.chatFontSizeMode ?? 0);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideHabbiconSelector()
+    // TODO(AS3): no-op - HabbiconSelector isn't ported (matches AS3's own
+    // `if(_habbiconSelector) ...` guard, which is always false here).
+    public hideHabbiconSelector(): void
+    {
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideChatStyleSelector()
+    public hideChatStyleSelector(): void
+    {
+        if(this._chatStyleSelector) this._chatStyleSelector.hide();
+        else if(this._chatStyleMenuContainer) this._chatStyleMenuContainer.visible = false;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideTransientSelectors()
+    public hideTransientSelectors(): void
+    {
+        this.hideHabbiconSelector();
+        this.hideChatStyleSelector();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::chatInputWindowProcedure()
+    private chatInputWindowProcedure = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type === 'WME_CLICK') this.hideSelectorsIfClickOutside(window);
+        else if(event.type === 'WME_CLICK_AWAY') this.hideSelectorsIfClickOutside(event.related);
+    };
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideSelectorsIfClickOutside()
+    // TODO(AS3): the habbicon-selector half of this guard is omitted - always false, see
+    // hideHabbiconSelector()'s header.
+    private hideSelectorsIfClickOutside(clicked: IWindow | null): void
+    {
+        if(this._chatStyleSelector?.visible && !this._chatStyleSelector.containsWindow(clicked))
+        {
+            this._chatStyleSelector.hide();
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::getChatInputY()
     public getChatInputY(): number
     {
         const container = this._window?.findChildByName('chat_input_container');

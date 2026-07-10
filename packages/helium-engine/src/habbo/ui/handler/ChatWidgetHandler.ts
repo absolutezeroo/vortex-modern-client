@@ -93,16 +93,18 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
     }
 
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::processEvent()
-    // TODO(AS3): AS3 wraps this whole method in
-    // `if(container.freeFlowChat && !container.freeFlowChat.isDisabledInPreferences)`.
-    // IRoomWidgetHandlerContainer has no freeFlowChat property yet (habbo/freeflowchat
-    // isn't wired into RoomUI/RoomDesktop - same gap already flagged in
-    // widget/roomtools/RoomToolsWidget.ts and RoomToolsToolbarCtrl.ts), so this guard
-    // is intentionally omitted rather than ported with a field that's always undefined
-    // (which would disable all chat bubble rendering, not just this preference).
+    // Older source trees (flash_version/win63_version) guard this whole method with
+    // `if(container.freeFlowChat && !container.freeFlowChat.isDisabledInPreferences) return;`
+    // (a user preference to fall back to the legacy bubble system). The primary source
+    // (win63_2026_crypted_version) dropped that preference entirely along with the legacy
+    // RWE_CHAT_WIDGET widget itself (RoomUI no longer even creates it once freeFlowChat is
+    // present - see RoomUI.ts's REE_INITIALIZED handling) - freeflowchat is mandatory
+    // there. This guard is a safety net for the (normally momentary) window before the
+    // freeFlowChat DI dependency resolves, not a user-facing toggle.
     public processEvent(event: {type: string}): void
     {
         if(!this._container) return;
+        if(this._container.freeFlowChat) return;
 
         switch(event.type)
         {

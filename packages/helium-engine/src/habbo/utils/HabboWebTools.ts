@@ -12,6 +12,7 @@ export interface IHabboWebToolsEvents
     'logout': () => void;
     'disconnect': (reason: number, message: string) => void;
     'figureUpdated': (figure: string) => void;
+    'subscriptionUpdated': (isActive: boolean) => void;
 }
 
 /**
@@ -177,6 +178,19 @@ export class HabboWebTools
         HabboWebTools._toolEvents.emit('figureUpdated', figure);
 
         log.debug('Figure updated: ' + figure);
+    }
+
+    /**
+	 * Notify that the user's club subscription status changed
+	 *
+	 * @param isActive Whether the club subscription is currently active
+	 * @see sources/win63_version/habbo/catalog/HabboCatalog.as::onSubscriptionInfo() (ExternalInterface.call("FlashExternalInterface.subscriptionUpdated", ...))
+	 */
+    static subscriptionUpdated(isActive: boolean): void
+    {
+        HabboWebTools._toolEvents.emit('subscriptionUpdated', isActive);
+
+        log.debug('Subscription updated: ' + isActive);
     }
 
     /**

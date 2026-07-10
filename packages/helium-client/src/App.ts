@@ -1,5 +1,7 @@
 import type {IHeliumConfig} from 'helium-engine';
 import {Helium} from 'helium-engine';
+import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
+import {UnknownAsset} from '@core/assets/UnknownAsset';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {ISkinData} from '@core/window';
@@ -187,35 +189,131 @@ async function loadWebFonts(bundle: AssetBundle): Promise<void>
     }));
 }
 
-function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, string> 
+function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, string>
 {
     const assets: Record<string, string> = {};
     const commonConfiguration = bundle.getText('configurations/common_configuration_txt.txt');
     const localizationConfiguration = bundle.getText('configurations/localization_configuration_txt.txt');
 
-    if(commonConfiguration !== null) 
+    if(commonConfiguration !== null)
     {
         assets.common_configuration = commonConfiguration;
     }
 
-    if(localizationConfiguration !== null) 
+    if(localizationConfiguration !== null)
     {
         assets.localization_configuration = localizationConfiguration;
     }
 
     const bundleKeys = bundle.listKeys();
 
-    for(const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES) 
+    for(const assetName of EMBEDDED_AVATAR_XML_ASSET_NAMES)
     {
         const content = readEmbeddedAvatarXmlAsset(bundle, bundleKeys, assetName);
 
-        if(content !== null) 
+        if(content !== null)
         {
             assets[assetName] = content;
         }
     }
 
+    const chatStylesXml = bundle.getText('configurations/chatstyles_xml.xml');
+
+    if(chatStylesXml !== null)
+    {
+        assets.chatstyles_xml = chatStylesXml;
+    }
+
+    const chatStylesManifest = readChatStylesManifest(bundle);
+
+    if(chatStylesManifest)
+    {
+        for(const [styleId, flags] of Object.entries(chatStylesManifest))
+        {
+            if(!flags.hasRegpoints) continue;
+
+            const content = bundle.getText(`configurations/style_${styleId}_regpoints.txt`);
+
+            if(content !== null) assets[`style_${styleId}_regpoints`] = content;
+        }
+    }
+
     return assets;
+}
+
+interface IChatStyleAssetFlags
+{
+    hasBase: boolean;
+    hasPointer: boolean;
+    hasEmblem: boolean;
+    hasEmblemMultiline: boolean;
+    hasIcon: boolean;
+    hasColor: boolean;
+    hasSelectorPreview: boolean;
+    hasRegpoints: boolean;
+}
+
+const CHAT_STYLE_IMAGE_SUFFIX_BY_FLAG: Record<string, string> = {
+    hasBase: 'chat_bubble_base',
+    hasPointer: 'chat_bubble_pointer',
+    hasEmblem: 'chat_bubble_emblem',
+    hasEmblemMultiline: 'chat_bubble_emblem_multiline',
+    hasIcon: 'icon',
+    hasColor: 'chat_bubble_color',
+    hasSelectorPreview: 'selector_preview',
+};
+
+function readChatStylesManifest(bundle: AssetBundle): Record<string, IChatStyleAssetFlags> | null
+{
+    const raw = bundle.getText('configurations/chatstyles-manifest.json');
+
+    if(raw === null) return null;
+
+    return parseJson<Record<string, IChatStyleAssetFlags>>(raw);
+}
+
+/**
+ * Registers every extracted chat-style bitmap (packages/helium-client/tools/
+ * import-chatstyles.mjs's output) into AssetLibrary as a raw ImageBitmap - NOT through
+ * the standard image/png -> BitmapDataAsset pipeline (registerImageAssets() below, blob
+ * URLs consumed by WindowManager), because ChatStyle.ts::getNewBackgroundSprite() draws
+ * these directly via OffscreenCanvas.drawImage(), which needs a real ImageBitmap, not the
+ * PixiJS Texture BitmapDataAsset.content would return.
+ *
+ * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset bundling.
+ */
+async function registerChatStyleImageAssets(helium: Helium, imageBundle: AssetBundle, xmlBundle: AssetBundle): Promise<void>
+{
+    const manifest = readChatStylesManifest(xmlBundle);
+
+    if(!manifest) return;
+
+    const declaration = helium.assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
+		?? new AssetTypeDeclaration('application/octet-stream', UnknownAsset);
+
+    const tasks: Promise<void>[] = [];
+
+    for(const [styleId, flags] of Object.entries(manifest))
+    {
+        for(const [flagKey, suffix] of Object.entries(CHAT_STYLE_IMAGE_SUFFIX_BY_FLAG))
+        {
+            if(!flags[flagKey as keyof IChatStyleAssetFlags]) continue;
+
+            const assetName = `style_${styleId}_${suffix}`;
+
+            tasks.push(imageBundle.getImageBitmap(`images/${assetName}.png`).then((bitmap) =>
+            {
+                if(!bitmap) return;
+
+                const asset = new UnknownAsset(declaration, assetName);
+
+                asset.setUnknownContent(bitmap);
+                helium.assets.setAsset(assetName, asset, true);
+            }));
+        }
+    }
+
+    await Promise.all(tasks);
 }
 
 function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], assetName: string): string | null 
@@ -422,6 +520,12 @@ export class HeliumApp
         // Register bundled webfonts (Volter/Ubuntu) before anything renders text —
         // see loadWebFonts() for why this was previously silently missing.
         await loadWebFonts(xmlBundle);
+
+        // Chat-style bitmaps need real ImageBitmaps (not the standard image/png ->
+        // BitmapDataAsset/Texture pipeline) - see registerChatStyleImageAssets()'s own
+        // header comment for why. chatstyles_xml/regpoints text already went in above via
+        // embeddedConfigurations.
+        await registerChatStyleImageAssets(helium, imageBundle, xmlBundle);
 
         // Mount the "What's New" changelog button now, not after login/connect —
         // it's an independent overlay (not a room/toolbar window) and should stay

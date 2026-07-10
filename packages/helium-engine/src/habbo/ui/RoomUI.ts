@@ -25,6 +25,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 
@@ -40,6 +41,8 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
+import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
+import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
 import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
@@ -73,6 +76,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     private _habboGroupsManager: IHabboGroupsManager | null = null;
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::friendList
     private _friendList: IHabboFriendList | null = null;
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
     private _widgetFactory: RoomWidgetFactory;
     private _desktops: Map<string, RoomDesktop> = new Map();
     private _currentDesktop: RoomDesktop | null = null;
@@ -120,9 +124,15 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * The catalog manager, used to construct widgets that need it (e.g. infostand).
      */
-    public get catalog(): IHabboCatalog | null 
+    public get catalog(): IHabboCatalog | null
     {
         return this._catalog;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::get chatStyleLibrary()
+    public get chatStyleLibrary(): IChatStyleLibrary | null
+    {
+        return this._freeFlowChat?.chatStyleLibrary ?? null;
     }
 
     private _navigator: IHabboNavigator | null = null;
@@ -322,6 +332,21 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 },
                 false
             ),
+            // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::onPerkAllowances()
+            // wires the same dependency via a ComponentDependency(new IIDHabboFreeFlowChat(), ...).
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (freeFlowChat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = freeFlowChat;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.freeFlowChat = freeFlowChat;
+                    }
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_HabboNavigator,
                 (navigator: IHabboNavigator | null) => 
@@ -381,6 +406,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.habboTracking = this._habboTracking;
         desktop.habboGroupsManager = this._habboGroupsManager;
         desktop.friendList = this._friendList;
+        desktop.freeFlowChat = this._freeFlowChat;
         desktop.navigator = this._navigator;
         desktop.communicationManager = this._communicationManager;
 
@@ -627,8 +653,25 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
                     desktop.createRoomView(canvasId);
 
+                    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomUI.as::roomEventHandler()
+                    // (REE_INITIALIZED case) - when freeFlowChat is present, its
+                    // displayObject is mounted into the room_new_chat layout slot instead
+                    // of creating the legacy chat-bubble widget. This source tree dropped
+                    // RWE_CHAT_WIDGET entirely (RoomWidgetEnum no longer even declares a
+                    // CHAT_WIDGET constant) - freeflowchat is the sole renderer now.
+                    if(desktop.freeFlowChat)
+                    {
+                        if(desktop.freeFlowChat.displayObject)
+                        {
+                            desktop.layoutManager.getChatContainer()?.setDisplayObject(desktop.freeFlowChat.displayObject);
+                        }
+                    }
+                    else
+                    {
+                        desktop.createWidget('RWE_CHAT_WIDGET');
+                    }
+
                     // Create room widgets (stubs for now)
-                    desktop.createWidget('RWE_CHAT_WIDGET');
                     desktop.createWidget('RWE_CHAT_INPUT_WIDGET');
                     desktop.createWidget('RWE_INFOSTAND');
                     desktop.createWidget('RWE_ME_MENU');

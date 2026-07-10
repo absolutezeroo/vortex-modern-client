@@ -1,4 +1,5 @@
 import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
+import type {IChatLink} from '@habbo/communication/messages/parser/room/chat/ChatMessageEventParser';
 import type {IVector3d} from '@room/utils/IVector3d';
 
 /**
@@ -48,7 +49,7 @@ export class ChatItem
         this._text = event.text;
         this._chatType = event.chatType;
         this._style = event.styleId;
-        this._links = event.links ? event.links.map((link) => link.displayText) : [];
+        this._links = event.links ?? [];
         this._forcedColor = forcedColor;
         this._forcedScreenLocation = forcedScreenLocation;
         this._forcedFigure = forcedFigure;
@@ -110,9 +111,13 @@ export class ChatItem
         this._style = value;
     }
 
-    private _links: string[];
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/data/ChatItem.as::links
+    // Was `string[]` (display text only) — widened to the full parsed IChatLink[]
+    // (url/displayText/isTrusted) since ChatBubble/PooledChatBubble need the real url to
+    // build a clickable link, and RoomSessionChatEvent already carries it unmodified.
+    private _links: IChatLink[];
 
-    get links(): string[]
+    get links(): IChatLink[]
     {
         return this._links;
     }

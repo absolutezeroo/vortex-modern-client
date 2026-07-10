@@ -9,6 +9,18 @@ import {ChatStyle, type IChatStyleDescriptor} from './ChatStyle';
 
 const log = Logger.getLogger('ChatStyleLibrary');
 
+interface IChatStyleAttributes
+{
+    assetId: string;
+    isSystemStyle: boolean;
+    purchasable: boolean;
+    isHcOnly: boolean;
+    isStaffOverrideable: boolean;
+    allowHTML: boolean;
+    isAmbassadorOnly: boolean;
+    isNotification: boolean;
+}
+
 /**
  * ChatStyleLibrary
  *
@@ -16,16 +28,14 @@ const log = Logger.getLogger('ChatStyleLibrary');
  * every `<style>` entry from its `style_<assetId>_*` bitmap assets and
  * `style_<assetId>_regpoints` config text.
  *
- * TODO(AS3): `chatstyles_xml` and the per-style `style_<assetId>_*`
- * bitmap/regpoints assets it references aren't bundled into
- * packages/helium-client/src/assets yet — an asset-pipeline gap, not a code
- * gap (same situation as @habbo/ui/widget/roomchat/style/ChatBubbleStyle's
- * sibling catalog). The catalog XML itself already exists at
- * sources/win63_2023_version/binaryDataXml_organized/non-layouts/454_chatstyles_xml$12d8bfe617173ccd8e74fa168cd72dda1735114579.xml
- * — only the per-style regpoints/bitmap assets are missing (they only exist,
- * as legacy binary blobs, for a handful of styles under sources/flash_version).
- * Until bundled, the constructor logs a warning per style it can't build and
- * `getStyle()` degrades to returning null instead of AS3's implicit crash.
+ * TS-only note: unlike AS3's synchronously-embedded assets, this port's
+ * per-style bitmaps are registered into the asset library asynchronously
+ * (App.ts's registerChatStyleImageAssets(), after Helium.bootstrap()
+ * resolves), which is after this component is constructed. So styles are
+ * built lazily on first `getStyle()`/`getStyleIds()`-driven access instead of
+ * eagerly in the constructor - by the time anything actually renders a
+ * bubble or opens the style selector, image registration has long since
+ * completed. The constructor only parses the catalog's `<style>` attributes.
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as
  */
@@ -35,6 +45,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 
     private _assets: IAssetLibrary | null;
     private readonly _styles: Map<number, ChatStyle> = new Map();
+    private readonly _styleAttributes: Map<number, IChatStyleAttributes> = new Map();
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::ChatStyleLibrary()
     constructor(assets: IAssetLibrary)
@@ -54,25 +65,54 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         for(const styleNode of Array.from(root.children).filter((element) => element.tagName === 'style'))
         {
             const id = parseInt(styleNode.getAttribute('id') ?? '0', 10);
-            const assetId = styleNode.getAttribute('assetId') ?? '';
-            const isSystemStyle = styleNode.getAttribute('systemStyle') === 'true';
-            const purchasable = styleNode.getAttribute('purchasable') === 'true';
-            const isHcOnly = styleNode.getAttribute('hcOnly') === 'true';
-            const isStaffOverrideable = styleNode.getAttribute('staffOverrideable') === 'true';
-            const allowHTML = styleNode.getAttribute('allowHTML') === 'true';
-            const isAmbassadorOnly = styleNode.getAttribute('ambassadorOnly') === 'true';
-            const isNotification = styleNode.getAttribute('notification') === 'true';
 
-            try
-            {
-                const style = this.initializeStyleFromAssets(assetId, isSystemStyle, purchasable, isHcOnly, isStaffOverrideable, allowHTML, isAmbassadorOnly, isNotification);
+            this._styleAttributes.set(id, {
+                assetId: styleNode.getAttribute('assetId') ?? '',
+                isSystemStyle: styleNode.getAttribute('systemStyle') === 'true',
+                purchasable: styleNode.getAttribute('purchasable') === 'true',
+                isHcOnly: styleNode.getAttribute('hcOnly') === 'true',
+                isStaffOverrideable: styleNode.getAttribute('staffOverrideable') === 'true',
+                allowHTML: styleNode.getAttribute('allowHTML') === 'true',
+                isAmbassadorOnly: styleNode.getAttribute('ambassadorOnly') === 'true',
+                isNotification: styleNode.getAttribute('notification') === 'true',
+            });
+        }
+    }
 
-                this._styles.set(id, style);
-            }
-            catch (error)
-            {
-                log.warn(`Error initializing chat style: ${id}, error message: ${error}`);
-            }
+    // TS-only: lazily builds (and caches) the ChatStyle for one catalog entry -
+    // see the class header for why this replaced eager construction.
+    private buildStyle(id: number): ChatStyle | null
+    {
+        const cached = this._styles.get(id);
+
+        if(cached) return cached;
+
+        const attributes = this._styleAttributes.get(id);
+
+        if(!attributes) return null;
+
+        try
+        {
+            const style = this.initializeStyleFromAssets(
+                attributes.assetId,
+                attributes.isSystemStyle,
+                attributes.purchasable,
+                attributes.isHcOnly,
+                attributes.isStaffOverrideable,
+                attributes.allowHTML,
+                attributes.isAmbassadorOnly,
+                attributes.isNotification
+            );
+
+            this._styles.set(id, style);
+
+            return style;
+        }
+        catch (error)
+        {
+            log.warn(`Error initializing chat style: ${id}, error message: ${error}`);
+
+            return null;
         }
     }
 
@@ -265,7 +305,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyleIds()
     getStyleIds(): number[]
     {
-        return Array.from(this._styles.keys());
+        return Array.from(this._styleAttributes.keys());
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyle()
@@ -274,7 +314,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
     // the fuller shape (pointer margins, emblem, styleSheet...) to build a bubble.
     getStyle(styleId: number): ChatStyle | null
     {
-        return this._styles.get(styleId) ?? this._styles.get(ChatStyleLibrary.DEFAULT_STYLE_ID) ?? null;
+        return this.buildStyle(styleId) ?? this.buildStyle(ChatStyleLibrary.DEFAULT_STYLE_ID);
     }
 
     private get assets(): IAssetLibrary
@@ -301,6 +341,7 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
 
         this._disposed = true;
         this._styles.clear();
+        this._styleAttributes.clear();
         this._assets = null;
     }
 }

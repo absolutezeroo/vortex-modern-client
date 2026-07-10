@@ -12,6 +12,7 @@ import type {IHeliumConfig} from "./Helium";
 import type {IRoomMessageHandler} from "@habbo/room/IRoomMessageHandler";
 import type {IHabboWindowManager} from "@habbo/window/IHabboWindowManager";
 import type {IHabboToolbar} from "@habbo/toolbar/IHabboToolbar";
+import type {IAssetLibrary} from "@core/assets/IAssetLibrary";
 import type {Application} from 'pixi.js';
 
 export interface IHeliumMain extends IDisposable
@@ -31,6 +32,7 @@ export interface IHeliumMain extends IDisposable
     readonly habboCommunication: IHabboCommunicationManager;
     readonly windowManager: IHabboWindowManager;
     readonly toolbar: IHabboToolbar;
+    readonly assets: IAssetLibrary;
 
     /**
 	 * Initialize the engine orchestrator.

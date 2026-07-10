@@ -3,7 +3,6 @@ import {ArcFour} from '@habbo/communication/encryption/ArcFour';
 import {DiffieHellman} from '@habbo/communication/encryption/DiffieHellman';
 import {Logger} from '@core/utils/Logger';
 import {HabboMessages} from './HabboMessages';
-import {SessionDataManager} from '../session/SessionDataManager';
 import type { HabboCommunicationEventType} from './enum/HabboCommunicationEvent';
 import {HabboCommunicationEvent} from './enum/HabboCommunicationEvent';
 import type {IHabboCommunicationManager} from './IHabboCommunicationManager';
@@ -15,7 +14,6 @@ import type {IMessageConfiguration} from '@core/communication/messages/IMessageC
 import type {IEncryption} from '@core/communication/encryption/IEncryption';
 import type {IKeyExchange} from '@core/communication/handshake/IKeyExchange';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IConnectionActions} from './IConnectionActions';
 import type {IHabboWebApiListener} from './IHabboWebApiListener';
 import type {IHabboWebApiSession} from './IHabboWebApiSession';
@@ -57,13 +55,6 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
     {
         super(context);
         this._messageConfig = new HabboMessages();
-    }
-
-    private _sessionDataManager: SessionDataManager | null = null;
-
-    get sessionDataManager(): ISessionDataManager | null
-    {
-        return this._sessionDataManager;
     }
 
     private _connection: IConnection | null = null;
@@ -198,14 +189,6 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
         }
 
         this.createConnection();
-
-        // Dispose previous SessionDataManager
-        if(this._sessionDataManager)
-        {
-            this._sessionDataManager.dispose();
-        }
-
-        this._sessionDataManager = new SessionDataManager(this.context);
 
         this._portIndex = -1;
         this._connectionAttempt = 1;

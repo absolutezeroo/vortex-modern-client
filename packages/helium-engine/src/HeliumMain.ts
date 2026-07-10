@@ -28,6 +28,7 @@ import {Core} from '@core/Core';
 import {AssetLibrary} from '@core/assets/AssetLibrary';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {XmlAsset} from '@core/assets/XmlAsset';
+import {TextAsset} from '@core/assets/TextAsset';
 import {CoreCommunicationManager} from '@core/communication/CoreCommunicationManager';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
 import {CoreSetup} from '@core/runtime/CoreComponentContext';
@@ -55,6 +56,7 @@ import {IID_Core} from '@iid/IIDCore';
 import {HabboProperty} from '@habbo/configuration';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
@@ -64,6 +66,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import type {IHeliumMain} from "./IHeliumMain";
 import type {IHeliumLoadingScreen} from './IHeliumLoadingScreen';
 import type {Application, Ticker} from 'pixi.js';
@@ -227,6 +230,16 @@ export class HeliumMain implements IHeliumMain
         }
 
         return this._avatarRenderManager;
+    }
+
+    get assets(): IAssetLibrary
+    {
+        if(!this._assets)
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
+
+        return this._assets;
     }
 
     private _windowManager: HabboWindowManager | null = null;
@@ -524,6 +537,47 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
+	 * Registers the freeflowchat "chatstyles_xml" catalog (as an XmlAsset, matching
+	 * ChatStyleLibrary.ts::content cast to Document) and every "style_<id>_regpoints"
+	 * config text (as a TextAsset, matching its content cast to string) found in
+	 * config.embeddedConfigurations. Per-style bitmap assets are registered separately
+	 * (image decoding is async) - see App.ts's chat-style image registration step.
+	 *
+	 * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset
+	 * bundling (same rationale as registerEmbeddedAvatarAssets() above).
+	 */
+    private registerChatStyleTextAssets(config?: IHeliumConfig): void
+    {
+        if(!this._assets || !config?.embeddedConfigurations)
+        {
+            return;
+        }
+
+        const xmlDeclaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
+			?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
+        const textDeclaration = this._assets.getAssetTypeDeclarationByMimeType('text/plain')
+			?? new AssetTypeDeclaration('text/plain', TextAsset, null, 'txt');
+
+        for(const [assetName, content] of Object.entries(config.embeddedConfigurations))
+        {
+            if(assetName === 'chatstyles_xml')
+            {
+                const asset = new XmlAsset(xmlDeclaration, assetName);
+
+                asset.setUnknownContent(content);
+                this._assets.setAsset(assetName, asset, true);
+            }
+            else if(/^style_.+_regpoints$/.test(assetName))
+            {
+                const asset = new TextAsset(textDeclaration, assetName);
+
+                asset.setUnknownContent(content);
+                this._assets.setAsset(assetName, asset, true);
+            }
+        }
+    }
+
+    /**
 	 * Create Core and prepare all components.
 	 *
 	 * AS3: HabboAirMain.prepareCore() calls Core.instantiate(stage, 1, reporter, dict),
@@ -547,6 +601,7 @@ export class HeliumMain implements IHeliumMain
         this._assets = new AssetLibrary(ctx);
         ctx.attachComponent(this._assets, [IID_AssetLibrary]);
         this.registerEmbeddedAvatarAssets(config);
+        this.registerChatStyleTextAssets(config);
 
         // Core Communication Manager — low-level socket communication
         const coreCommunication = new CoreCommunicationManager(ctx);
@@ -692,8 +747,8 @@ export class HeliumMain implements IHeliumMain
         ctx.attachComponent(this._toolbar, [IID_HabboToolbar]);
 
         // 12i. FreeFlowChat
-        this._freeFlowChat = new HabboFreeFlowChat(ctx);
-        ctx.attachComponent(this._freeFlowChat, []);
+        this._freeFlowChat = new HabboFreeFlowChat(ctx, 0, this._assets);
+        ctx.attachComponent(this._freeFlowChat, [IID_HabboFreeFlowChat]);
 
         // 12j. Window Manager
         this._windowManager = new HabboWindowManager(ctx);
