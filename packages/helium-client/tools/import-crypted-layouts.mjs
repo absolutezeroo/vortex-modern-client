@@ -45,9 +45,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
-const CRYPTED_LAYOUTS_DIR = path.join(CRYPTED_ROOT, 'src', 'layouts');
-const LAYOUTS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_LAYOUTS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
 const ELEMENT_DESCRIPTION_PATH = path.resolve(__dirname, '../src/assets/window-skins/element-description.json');
 
 /**
@@ -128,9 +127,26 @@ const PARAM_MAP =
     'force_clipping': 0x40000000, 'inherit_caption': 0x80000000
 };
 
+// --crypted-root and --out default to their usual repo-relative locations but can be
+// pointed elsewhere (e.g. a relocated sources/ dump) via CLI flags - see the dashboard's
+// toolRegistry.ts, which surfaces these as directory-picker fields.
 function parseArgs()
 {
-    return {write: process.argv.includes('--write')};
+    const argv = process.argv.slice(2);
+    const args =
+    {
+        write: argv.includes('--write'),
+        cryptedRoot: DEFAULT_CRYPTED_ROOT,
+        out: DEFAULT_LAYOUTS_OUT_DIR
+    };
+
+    for(let i = 0; i < argv.length; i += 1)
+    {
+        if(argv[i] === '--crypted-root') { args.cryptedRoot = path.resolve(argv[i + 1]); i += 1; }
+        else if(argv[i] === '--out') { args.out = path.resolve(argv[i + 1]); i += 1; }
+    }
+
+    return args;
 }
 
 function readBinaryAsXml(filePath)
@@ -464,15 +480,16 @@ function compileLayoutAs(layoutRoot, sourcePath, trueName)
 function main()
 {
     const args = parseArgs();
+    const cryptedLayoutsDir = path.join(args.cryptedRoot, 'src', 'layouts');
 
-    if(!fs.existsSync(CRYPTED_LAYOUTS_DIR))
+    if(!fs.existsSync(cryptedLayoutsDir))
     {
-        console.error(`Crypted layouts dump not found at ${CRYPTED_LAYOUTS_DIR} - skipping.`);
+        console.error(`Crypted layouts dump not found at ${cryptedLayoutsDir} - skipping.`);
         process.exit(0);
     }
 
     console.log('Loading crypted-tree name manifest...');
-    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(CRYPTED_ROOT);
+    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(args.cryptedRoot);
 
     console.log(`Scanned ${asFileCount} .as files, ${comFileCount} *Com.as manifests, resolved ${embedToFieldNames.size} embeds to true field names.`);
 
@@ -482,7 +499,7 @@ function main()
     // instead of being skipped as "already present". Comparing lowercased names avoids
     // ever attempting that write in the first place.
     const existingNames = new Set(
-        fs.readdirSync(LAYOUTS_OUT_DIR)
+        fs.readdirSync(args.out)
             .filter((f) => f.endsWith('.json'))
             .map((f) => f.slice(0, -5).toLowerCase())
     );
@@ -492,7 +509,7 @@ function main()
     let notLayoutXml = 0;
     let decodeFailed = 0;
 
-    for(const fileName of fs.readdirSync(CRYPTED_LAYOUTS_DIR))
+    for(const fileName of fs.readdirSync(cryptedLayoutsDir))
     {
         const embedShortName = resolveRawFileName(fileName, obfuscatedNameMap);
 
@@ -510,7 +527,7 @@ function main()
 
         if(missingNames.length === 0) continue;
 
-        const sourcePath = path.join(CRYPTED_LAYOUTS_DIR, fileName);
+        const sourcePath = path.join(cryptedLayoutsDir, fileName);
         const xml = readBinaryAsXml(sourcePath);
 
         if(xml === null)
@@ -536,7 +553,7 @@ function main()
 
             if(!compiledLayout) continue;
 
-            const targetPath = path.join(LAYOUTS_OUT_DIR, `${trueName}.json`);
+            const targetPath = path.join(args.out, `${trueName}.json`);
 
             if(args.write)
             {
@@ -587,7 +604,7 @@ function reconcileWindowLayoutAliases(args, existingNames)
     {
         if(existingNames.has(name.toLowerCase())) continue;
 
-        const verbatimPath = path.join(LAYOUTS_OUT_DIR, `${name}_xml.json`);
+        const verbatimPath = path.join(args.out, `${name}_xml.json`);
 
         if(!fs.existsSync(verbatimPath))
         {
@@ -599,7 +616,7 @@ function reconcileWindowLayoutAliases(args, existingNames)
 
         data.name = name;
 
-        const targetPath = path.join(LAYOUTS_OUT_DIR, `${name}.json`);
+        const targetPath = path.join(args.out, `${name}.json`);
 
         if(args.write)
         {

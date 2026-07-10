@@ -17,7 +17,8 @@
     "import:crypted-images": "node ./tools/import-crypted-images.mjs --write",
     "import:crypted-layouts": "node ./tools/import-crypted-layouts.mjs --write",
     "import:crypted-skins": "node ./tools/import-crypted-skins.mjs --write",
-    "import:crypted-assets": "node ./tools/import-crypted-images.mjs --write && node ./tools/import-crypted-layouts.mjs --write && node ./tools/import-crypted-skins.mjs --write"
+    "import:crypted-assets": "node ./tools/import-crypted-images.mjs --write && node ./tools/import-crypted-layouts.mjs --write && node ./tools/import-crypted-skins.mjs --write",
+    "tools": "node ./tools/dashboard/server.ts"
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",

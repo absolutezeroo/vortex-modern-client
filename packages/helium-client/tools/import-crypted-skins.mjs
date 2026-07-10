@@ -31,9 +31,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
-const CRYPTED_LAYOUTS_DIR = path.join(CRYPTED_ROOT, 'src', 'layouts');
-const SKINS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-skins');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_SKINS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-skins');
 
 const SCALE_TYPE = {fixed: 0, move: 1, strech: 2, stretch: 2, tiled: 4, center: 8};
 
@@ -137,9 +136,26 @@ const STATE_MAP =
     'pressed': 16, 'disabled': 32, 'locked': 64, 'disposed': 1073741824
 };
 
+// --crypted-root and --out default to their usual repo-relative locations but can be
+// pointed elsewhere (e.g. a relocated sources/ dump) via CLI flags - see the dashboard's
+// toolRegistry.ts, which surfaces these as directory-picker fields.
 function parseArgs()
 {
-    return {write: process.argv.includes('--write')};
+    const argv = process.argv.slice(2);
+    const args =
+    {
+        write: argv.includes('--write'),
+        cryptedRoot: DEFAULT_CRYPTED_ROOT,
+        out: DEFAULT_SKINS_OUT_DIR
+    };
+
+    for(let i = 0; i < argv.length; i += 1)
+    {
+        if(argv[i] === '--crypted-root') { args.cryptedRoot = path.resolve(argv[i + 1]); i += 1; }
+        else if(argv[i] === '--out') { args.out = path.resolve(argv[i + 1]); i += 1; }
+    }
+
+    return args;
 }
 
 function readBinaryAsXml(filePath)
@@ -437,15 +453,16 @@ function compileSkinAs(skinNode, sourcePath, trueId)
 function main()
 {
     const args = parseArgs();
+    const cryptedLayoutsDir = path.join(args.cryptedRoot, 'src', 'layouts');
 
-    if(!fs.existsSync(CRYPTED_LAYOUTS_DIR))
+    if(!fs.existsSync(cryptedLayoutsDir))
     {
-        console.error(`Crypted layouts dump not found at ${CRYPTED_LAYOUTS_DIR} - skipping.`);
+        console.error(`Crypted layouts dump not found at ${cryptedLayoutsDir} - skipping.`);
         process.exit(0);
     }
 
     console.log('Loading crypted-tree name manifest...');
-    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(CRYPTED_ROOT);
+    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(args.cryptedRoot);
 
     console.log(`Scanned ${asFileCount} .as files, ${comFileCount} *Com.as manifests, resolved ${embedToFieldNames.size} embeds to true field names.`);
 
@@ -453,7 +470,7 @@ function main()
     // macOS silently redirect a differently-cased write onto an existing file instead of
     // creating a new one, which would corrupt unrelated stage-1 content.
     const existingIds = new Set(
-        fs.readdirSync(SKINS_OUT_DIR)
+        fs.readdirSync(args.out)
             .filter((f) => f.endsWith('.json') && f !== 'element-description.json')
             .map((f) => f.slice(0, -5).toLowerCase())
     );
@@ -463,7 +480,7 @@ function main()
     let notSkinXml = 0;
     let decodeFailed = 0;
 
-    for(const fileName of fs.readdirSync(CRYPTED_LAYOUTS_DIR))
+    for(const fileName of fs.readdirSync(cryptedLayoutsDir))
     {
         const embedShortName = resolveRawFileName(fileName, obfuscatedNameMap);
 
@@ -479,7 +496,7 @@ function main()
 
         const isElementDescription = fieldNames.has(ELEMENT_DESCRIPTION_FIELD_NAME);
         const elementDescriptionMissing = isElementDescription
-            && !fs.existsSync(path.join(SKINS_OUT_DIR, `${ELEMENT_DESCRIPTION_OUTPUT_NAME}.json`));
+            && !fs.existsSync(path.join(args.out, `${ELEMENT_DESCRIPTION_OUTPUT_NAME}.json`));
 
         const trueIds = [...fieldNames]
             .filter((f) => f !== ELEMENT_DESCRIPTION_FIELD_NAME)
@@ -488,7 +505,7 @@ function main()
 
         if(missingIds.length === 0 && !elementDescriptionMissing) continue;
 
-        const sourcePath = path.join(CRYPTED_LAYOUTS_DIR, fileName);
+        const sourcePath = path.join(cryptedLayoutsDir, fileName);
         const xml = readBinaryAsXml(sourcePath);
 
         if(xml === null)
@@ -511,7 +528,7 @@ function main()
         if(elementDescriptionMissing)
         {
             const compiledElementDescription = parseElementDescriptionXml(skinNode, sourcePath, ELEMENT_DESCRIPTION_OUTPUT_NAME);
-            const targetPath = path.join(SKINS_OUT_DIR, `${ELEMENT_DESCRIPTION_OUTPUT_NAME}.json`);
+            const targetPath = path.join(args.out, `${ELEMENT_DESCRIPTION_OUTPUT_NAME}.json`);
 
             if(args.write)
             {
@@ -529,7 +546,7 @@ function main()
         for(const trueId of missingIds)
         {
             const compiledSkin = compileSkinAs(skinNode, sourcePath, trueId);
-            const targetPath = path.join(SKINS_OUT_DIR, `${trueId}.json`);
+            const targetPath = path.join(args.out, `${trueId}.json`);
 
             if(args.write)
             {

@@ -24,12 +24,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const VORTEX_CLIENT_ROOT = path.resolve(repoRoot, '..', 'vortex-client');
-const VORTEX_SRC = path.join(VORTEX_CLIENT_ROOT, 'src');
-const VORTEX_BINARY_DATA = path.join(VORTEX_SRC, 'binaryData');
+const DEFAULT_VORTEX_CLIENT_ROOT = path.resolve(repoRoot, '..', 'vortex-client');
 const OUTPUT_PATH = path.resolve(__dirname, 'uid-to-name-manifest.json');
 
 const CONST_CLASS_RE = /public\s+static\s+const\s+(\w+)\s*:\s*Class\s*=\s*(\w+)\s*;/g;
+
+// --vortex-root defaults to the usual sibling checkout but can be pointed elsewhere via
+// CLI flag - see the dashboard's toolRegistry.ts, which surfaces this as a directory-picker
+// field.
+function parseArgs()
+{
+    const argv = process.argv.slice(2);
+    const args = {vortexRoot: DEFAULT_VORTEX_CLIENT_ROOT};
+
+    for (let i = 0; i < argv.length; i += 1)
+    {
+        if (argv[i] === '--vortex-root') { args.vortexRoot = path.resolve(argv[i + 1]); i += 1; }
+    }
+
+    return args;
+}
 
 function findComFiles(dir)
 {
@@ -61,13 +75,17 @@ function extractUid(xmlContent)
 
 function main()
 {
-    if (!fs.existsSync(VORTEX_CLIENT_ROOT))
+    const args = parseArgs();
+    const vortexSrc = path.join(args.vortexRoot, 'src');
+    const vortexBinaryData = path.join(vortexSrc, 'binaryData');
+
+    if (!fs.existsSync(args.vortexRoot))
     {
-        console.error(`vortex-client not found at ${VORTEX_CLIENT_ROOT} - skipping manifest build.`);
+        console.error(`vortex-client not found at ${args.vortexRoot} - skipping manifest build.`);
         process.exit(0);
     }
 
-    const comFiles = findComFiles(VORTEX_SRC);
+    const comFiles = findComFiles(vortexSrc);
     const uidToName = {};
     const nameToUid = {};
     let resolvedCount = 0;
@@ -78,7 +96,7 @@ function main()
     {
         for (const {realName, refName} of parseManifest(comFile))
         {
-            const binPath = path.join(VORTEX_BINARY_DATA, `${refName}.bin`);
+            const binPath = path.join(vortexBinaryData, `${refName}.bin`);
 
             if (!fs.existsSync(binPath))
             {

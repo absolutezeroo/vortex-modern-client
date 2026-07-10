@@ -34,15 +34,35 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
-const CRYPTED_IMAGES_DIR = path.join(CRYPTED_ROOT, 'src', 'images');
-const LAYOUTS_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
-const SKINS_DIR = path.resolve(__dirname, '../src/assets/window-skins');
-const IMAGES_DIR = path.resolve(__dirname, '../src/assets/images');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_LAYOUTS_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
+const DEFAULT_SKINS_DIR = path.resolve(__dirname, '../src/assets/window-skins');
+const DEFAULT_IMAGES_DIR = path.resolve(__dirname, '../src/assets/images');
 
+// All four directories below default to their usual repo-relative locations but can be
+// pointed elsewhere (e.g. a relocated sources/ dump) via CLI flags - see the dashboard's
+// toolRegistry.ts, which surfaces these as directory-picker fields.
 function parseArgs()
 {
-    return {write: process.argv.includes('--write')};
+    const argv = process.argv.slice(2);
+    const args =
+    {
+        write: argv.includes('--write'),
+        cryptedRoot: DEFAULT_CRYPTED_ROOT,
+        layoutsDir: DEFAULT_LAYOUTS_DIR,
+        skinsDir: DEFAULT_SKINS_DIR,
+        imagesDir: DEFAULT_IMAGES_DIR
+    };
+
+    for(let i = 0; i < argv.length; i += 1)
+    {
+        if(argv[i] === '--crypted-root') { args.cryptedRoot = path.resolve(argv[i + 1]); i += 1; }
+        else if(argv[i] === '--layouts-dir') { args.layoutsDir = path.resolve(argv[i + 1]); i += 1; }
+        else if(argv[i] === '--skins-dir') { args.skinsDir = path.resolve(argv[i + 1]); i += 1; }
+        else if(argv[i] === '--images-dir') { args.imagesDir = path.resolve(argv[i + 1]); i += 1; }
+    }
+
+    return args;
 }
 
 // Builds embedShortName -> absolute raw-dump file path, resolving obfuscated
@@ -98,15 +118,16 @@ function collectAssetUriReferences(dirs)
 function main()
 {
     const args = parseArgs();
+    const cryptedImagesDir = path.join(args.cryptedRoot, 'src', 'images');
 
-    if(!fs.existsSync(CRYPTED_ROOT))
+    if(!fs.existsSync(args.cryptedRoot))
     {
-        console.error(`Crypted source tree not found at ${CRYPTED_ROOT} - skipping.`);
+        console.error(`Crypted source tree not found at ${args.cryptedRoot} - skipping.`);
         process.exit(0);
     }
 
     console.log('Loading crypted-tree name manifest...');
-    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(CRYPTED_ROOT);
+    const {obfuscatedNameMap, embedToFieldNames, asFileCount, comFileCount} = loadCryptedManifest(args.cryptedRoot);
 
     console.log(`Scanned ${asFileCount} .as files, ${comFileCount} *Com.as manifests, resolved ${embedToFieldNames.size} embeds to true field names.`);
 
@@ -117,14 +138,14 @@ function main()
     // these Sets drive "already present"/alias-source decisions too, so they need the
     // same case-insensitive treatment to report accurately.
     const existingImages = new Set(
-        fs.readdirSync(IMAGES_DIR)
+        fs.readdirSync(args.imagesDir)
             .filter((f) => f.toLowerCase().endsWith('.png'))
             .map((f) => f.slice(0, -4).toLowerCase())
     );
 
-    const embedToRawFile = buildEmbedToRawFile(CRYPTED_IMAGES_DIR, obfuscatedNameMap);
+    const embedToRawFile = buildEmbedToRawFile(cryptedImagesDir, obfuscatedNameMap);
 
-    console.log(`Found ${embedToRawFile.size} embeds with real pixel data in ${path.relative(repoRoot, CRYPTED_IMAGES_DIR)}.`);
+    console.log(`Found ${embedToRawFile.size} embeds with real pixel data in ${path.relative(repoRoot, cryptedImagesDir)}.`);
 
     // Pass 1: base population under each embed's own short name.
     let basePopulated = 0;
@@ -133,7 +154,7 @@ function main()
     {
         if(existingImages.has(embedShortName.toLowerCase())) continue;
 
-        const targetPath = path.join(IMAGES_DIR, `${embedShortName}.png`);
+        const targetPath = path.join(args.imagesDir, `${embedShortName}.png`);
 
         if(args.write)
         {
@@ -147,7 +168,7 @@ function main()
     console.log(`${args.write ? 'Base-populated' : '[dry-run] would base-populate'} ${basePopulated} image(s) under their own embed name.`);
 
     // Pass 2: true-name fill-in for asset_uri references.
-    const referencedNames = collectAssetUriReferences([LAYOUTS_DIR, SKINS_DIR]);
+    const referencedNames = collectAssetUriReferences([args.layoutsDir, args.skinsDir]);
 
     console.log(`Found ${referencedNames.size} distinct non-templated asset_uri references in compiled layouts/skins.`);
 
@@ -180,7 +201,7 @@ function main()
 
             if(existingImages.has(embedShortName.toLowerCase()) && !source)
             {
-                source = {kind: 'alias', path: path.join(IMAGES_DIR, `${embedShortName}.png`), embedShortName};
+                source = {kind: 'alias', path: path.join(args.imagesDir, `${embedShortName}.png`), embedShortName};
             }
         }
 
@@ -197,7 +218,7 @@ function main()
 
     for(const {name, source} of toCopy)
     {
-        const targetPath = path.join(IMAGES_DIR, `${name}.png`);
+        const targetPath = path.join(args.imagesDir, `${name}.png`);
 
         if(fs.existsSync(targetPath)) continue;
 
