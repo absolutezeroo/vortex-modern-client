@@ -8,9 +8,11 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {HabboCatalog} from './HabboCatalog';
 import type {IPurchasableOffer} from './IPurchasableOffer';
 import {ActivityPointTypeEnum} from './purse/ActivityPointTypeEnum';
+import {VipBenefitsWindow} from './club/VipBenefitsWindow';
 
 // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::BADGE_CHATSTYLE_WIDGET_NAME
 const BADGE_CHATSTYLE_WIDGET_NAME = 'HCU_dynamic_badge';
@@ -42,6 +44,8 @@ export class HabboCatalogUtils implements IGetImageListener
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountHighestFlatPriceStep
     // Same not-yet-parsed config message as _bundleDiscountFlatPriceSteps above.
     private _bundleDiscountHighestFlatPriceStep: number = 0;
+
+    private _vipBenefitsWindow: VipBenefitsWindow | null = null;
 
     constructor(catalog: HabboCatalog)
     {
@@ -356,6 +360,32 @@ export class HabboCatalogUtils implements IGetImageListener
     discountShownEventTrack(): void
     {
         this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'discountItemShown', 'client.bundle.discounts');
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::showVipBenefits()
+    showVipBenefits(): void
+    {
+        if(this._catalog?.getBoolean('catalog.vip.benefits.enabled'))
+        {
+            if(this._vipBenefitsWindow == null || this._vipBenefitsWindow.disposed)
+            {
+                this._vipBenefitsWindow = new VipBenefitsWindow(this._catalog);
+            }
+        }
+        else
+        {
+            this.openLink(this._catalog?.getProperty('link.format.club') ?? '');
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalogUtils.as::openLink()
+    openLink(url: string): void
+    {
+        if(url !== '')
+        {
+            this._catalog?.windowManager?.alert('${catalog.alert.external.link.title}', '${catalog.alert.external.link.desc}', 0, (dialog) => dialog.dispose());
+            HabboWebTools.openWebPage(url, 'habboMain');
+        }
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::showExtraOnProduct()

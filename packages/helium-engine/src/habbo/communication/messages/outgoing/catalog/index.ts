@@ -8,3 +8,7 @@ export * from './BuildersClubQueryFurniCountMessageComposer';
 export * from './GetLimitedOfferAppearingNextComposer';
 export * from './GetCatalogPageWithEarliestExpiryComposer';
 export * from './RedeemVoucherMessageComposer';
+export * from './GetClubOffersMessageComposer';
+export * from './PurchaseVipMembershipExtensionComposer';
+export * from './PurchaseBasicMembershipExtensionComposer';
+export * from './SelectClubGiftComposer';

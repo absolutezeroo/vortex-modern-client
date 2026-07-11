@@ -33,6 +33,10 @@ import {ActivityPointDisplayCatalogWidget} from './widgets/ActivityPointDisplayC
 import {RedeemItemCodeCatalogWidget} from './widgets/RedeemItemCodeCatalogWidget';
 import {SpacesNewCatalogWidget} from './widgets/SpacesNewCatalogWidget';
 import {BundlePurchaseExtraInfoWidget} from './widgets/BundlePurchaseExtraInfoWidget';
+import {ClubBuyCatalogWidget} from './widgets/ClubBuyCatalogWidget';
+import {VipBuyCatalogWidget} from './widgets/VipBuyCatalogWidget';
+import {LoyaltyVipBuyCatalogWidget} from './widgets/LoyaltyVipBuyCatalogWidget';
+import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
 
@@ -313,13 +317,14 @@ export class CatalogPage implements ICatalogPage
     }
 
     // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // 23 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
+    // 28 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
     // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
     // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/
     // soldLtdItemsWidget/madMoneyWidget/addOnBadgeViewWidget/featuredItemsWidget/colourGridWidget/
     // bundleGridScrollWidget/activityPointDisplayWidget/redeemItemCodeWidget/spacesNewWidget/
-    // bundlePurchaseExtraInfoWidget) - the rest (trophyWidget, ...) fall through and are silently
-    // skipped, matching AS3's own switch (no default case = unmatched names do nothing).
+    // bundlePurchaseExtraInfoWidget/clubGiftWidget/clubBuyWidget/vipBuyWidget/loyaltyVipBuyWidget/
+    // vipGiftWidget) - the rest (trophyWidget, ...) fall through and are silently skipped, matching
+    // AS3's own switch (no default case = unmatched names do nothing).
     private createWidget(window: IWindowContainer): void
     {
         switch(window.name)
@@ -406,6 +411,21 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.BUNDLE_PURCHASE_EXTRA_INFO:
                 this._widgets.push(new BundlePurchaseExtraInfoWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.CLUB_GIFT:
+                this._widgets.push(new ClubGiftWidget(window, this._catalog!.getClubGiftController()!, this._catalog!));
+                break;
+            case CatalogWidgetName.CLUB_BUY:
+                this._widgets.push(new ClubBuyCatalogWidget(window));
+                break;
+            case CatalogWidgetName.VIP_BUY:
+                this._widgets.push(new VipBuyCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.LOYALTY_VIP_BUY:
+                this._widgets.push(new LoyaltyVipBuyCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.VIP_GIFT:
+                this._widgets.push(new VipBuyCatalogWidget(window, this._catalog!, true));
                 break;
         }
     }

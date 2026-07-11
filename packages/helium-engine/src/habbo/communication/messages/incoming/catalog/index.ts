@@ -15,3 +15,5 @@ export * from './LimitedOfferAppearingNextMessageEvent';
 export * from './CatalogPageWithEarliestExpiryMessageEvent';
 export * from './VoucherRedeemOkMessageEvent';
 export * from './VoucherRedeemErrorMessageEvent';
+export * from './HabboClubOffersMessageEvent';
+export * from './HabboClubExtendOfferMessageEvent';

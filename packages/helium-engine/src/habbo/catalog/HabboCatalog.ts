@@ -44,6 +44,7 @@ import type {ScrSendUserInfoMessageParser} from '@habbo/communication/messages/p
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
 import {GetCatalogPageComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogPageComposer';
+import {PurchaseFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseFromCatalogComposer';
 import {GetProductOfferComposer} from '@habbo/communication/messages/outgoing/catalog/GetProductOfferComposer';
 import {CatalogIndexMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogIndexMessageEvent';
 import type {
@@ -60,6 +61,17 @@ import {VoucherRedeemOkMessageEvent} from '@habbo/communication/messages/incomin
 import type {VoucherRedeemOkMessageEventParser} from '@habbo/communication/messages/parser/catalog/VoucherRedeemOkMessageEventParser';
 import {VoucherRedeemErrorMessageEvent} from '@habbo/communication/messages/incoming/catalog/VoucherRedeemErrorMessageEvent';
 import type {VoucherRedeemErrorMessageEventParser} from '@habbo/communication/messages/parser/catalog/VoucherRedeemErrorMessageEventParser';
+import {GetClubOffersMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetClubOffersMessageComposer';
+import {HabboClubOffersMessageEvent} from '@habbo/communication/messages/incoming/catalog/HabboClubOffersMessageEvent';
+import type {HabboClubOffersMessageEventParser} from '@habbo/communication/messages/parser/catalog/HabboClubOffersMessageEventParser';
+import {HabboClubExtendOfferMessageEvent} from '@habbo/communication/messages/incoming/catalog/HabboClubExtendOfferMessageEvent';
+import {PurchaseVipMembershipExtensionComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseVipMembershipExtensionComposer';
+import {PurchaseBasicMembershipExtensionComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseBasicMembershipExtensionComposer';
+import {ClubGiftInfoEvent} from '@habbo/communication/messages/incoming/catalog/ClubGiftInfoEvent';
+import type {ClubGiftInfoEventParser} from '@habbo/communication/messages/parser/catalog/ClubGiftInfoEventParser';
+import {ClubBuyController} from './club/ClubBuyController';
+import {ClubExtendController} from './club/ClubExtendController';
+import {ClubGiftController} from './club/ClubGiftController';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import {PurchaseConfirmationDialog} from './purchase/PurchaseConfirmationDialog';
@@ -104,6 +116,12 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _pendingPageId: number = 0;
     private _messageEvents: IMessageEvent[] = [];
     private _purse: Purse = new Purse();
+
+    private _clubBuyController: ClubBuyController | null = null;
+
+    private _clubExtendController: ClubExtendController | null = null;
+
+    private _clubGiftController: ClubGiftController | null = null;
     private _earnings: CatalogEarnings = new CatalogEarnings();
     private _purchaseWillBeGift: boolean = false;
     private _purchaseConfirmationDialog: PurchaseConfirmationDialog | null = null;
@@ -391,10 +409,58 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // The room-ad purchase flow (extend-rental-from-room-ad) isn't ported; always null means
     // PurchaseCatalogWidget's room-ad-specific checks are always skipped, which is correct for
 
+    // AS3's HabboCatalog itself doubles as a config accessor (getBoolean/getProperty/propertyExists
+    // are already inherited from Component, delegating to context.configuration - these two
+    // mirror that same pattern for the two config methods Component doesn't already expose).
+    interpolate(value: string): string
+    {
+        return this.context.configuration?.interpolate(value) ?? value;
+    }
+
+    updateUrlProtocol(url: string): string
+    {
+        return this.context.configuration?.updateUrlProtocol(url) ?? url;
+    }
+
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseWillBeGift()
-    purchaseWillBeGift(isGift: boolean): void 
+    purchaseWillBeGift(isGift: boolean): void
     {
         this._purchaseWillBeGift = isGift;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProduct()
+    // TODO(AS3): the roomAdPurchaseData-based extend/replace branch is not ported - roomAdPurchaseData
+    // is a pre-existing always-null stub on this port (see its own getter's note), so the real AS3
+    // condition (`roomAdPurchaseData == null || roomAdPurchaseData.offerId != offerId`) is always
+    // true here, matching the simple PurchaseFromCatalogComposer path unconditionally.
+    purchaseProduct(pageId: number, offerId: number, extraParam: string = '', quantity: number = 1): void
+    {
+        this.connection?.send(new PurchaseFromCatalogComposer(pageId, offerId, extraParam, quantity));
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseVipMembershipExtension()
+    purchaseVipMembershipExtension(offerId: number): void
+    {
+        this.connection?.send(new PurchaseVipMembershipExtensionComposer(offerId));
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseBasicMembershipExtension()
+    purchaseBasicMembershipExtension(offerId: number): void
+    {
+        this.connection?.send(new PurchaseBasicMembershipExtensionComposer(offerId));
+    }
+
+    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::doNotCloseAfterVipPurchase()
+    // Sibling of the pre-existing rememberPageDuringVipPurchase()/forgetPageDuringVipPurchase()
+    // stubs below - all three back the same deferred "reopen the remembered page after a club
+    // purchase" flow (see onSubscriptionInfo()'s own TODO).
+    doNotCloseAfterVipPurchase(): void
+    {
+    }
+
+    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::forgetPageDuringVipPurchase()
+    forgetPageDuringVipPurchase(): void
+    {
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::sendRoomAdPurchaseInitiatedEvent()
@@ -772,12 +838,56 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // Real logic loads a named asset from the asset library and, on a cache miss, retrieves
     // it via retrievePreviewAsset() (async network fetch) before applying it - that fetch
 
-    public getPurse(): Purse 
+    public getPurse(): Purse
     {
         return this._purse;
     }
 
-    public getEarnings(): CatalogEarnings 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubBuyController()
+    // Controllers are created eagerly in initComponent() (see createClubBuyController() etc.
+    // below), not lazily here - matches AS3, where these are plain field getters.
+    public getClubBuyController(): ClubBuyController | null
+    {
+        return this._clubBuyController;
+    }
+
+    private createClubBuyController(): void
+    {
+        if(this._clubBuyController == null)
+        {
+            this._clubBuyController = new ClubBuyController(this, this.connection);
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubExtendController()
+    public getClubExtendController(): ClubExtendController | null
+    {
+        return this._clubExtendController;
+    }
+
+    private createClubExtendController(): void
+    {
+        if(this._clubExtendController == null)
+        {
+            this._clubExtendController = new ClubExtendController(this);
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getClubGiftController()
+    public getClubGiftController(): ClubGiftController | null
+    {
+        return this._clubGiftController;
+    }
+
+    private createClubGiftController(): void
+    {
+        if(this._clubGiftController == null)
+        {
+            this._clubGiftController = new ClubGiftController(this);
+        }
+    }
+
+    public getEarnings(): CatalogEarnings
     {
         return this._earnings;
     }
@@ -824,8 +934,10 @@ export class HabboCatalog extends Component implements IHabboCatalog
     {
     }
 
-    public getHabboClubOffers(_clubType: number): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getHabboClubOffers()
+    public getHabboClubOffers(source: number): void
     {
+        this.connection?.send(new GetClubOffersMessageComposer(source));
     }
 
     public openClubCenter(): void 
@@ -889,12 +1001,12 @@ export class HabboCatalog extends Component implements IHabboCatalog
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
-    // TODO(AS3): several one-time setup steps are skipped, each because their backing system
-    // isn't ported yet: refreshFurniData(), createRecycler(), createMarketPlace(),
-    // createClubGiftController()/getGiftWrappingConfiguration()/createClubBuyController()/
-    // createClubExtendController() (the club/ purchase controllers - separate from the already-
-    // ported clubcenter/ status display), createGroupMembershipsController(), initBundleDiscounts(),
-    // and the BuildersClubQueryFurniCountMessageComposer send. The core main-window/navigator/
+    // TODO(AS3): several one-time setup steps are still skipped, each because their backing
+    // system isn't ported yet: refreshFurniData(), createRecycler(), createMarketPlace(),
+    // getGiftWrappingConfiguration(), createGroupMembershipsController(), initBundleDiscounts().
+    // createClubGiftController()/createClubBuyController()/createClubExtendController() (the
+    // club/ purchase controllers - separate from the already-ported clubcenter/ status display)
+    // are now real - see below. The core main-window/navigator/
 
     public itemAddedToInventory(_classId: number, _itemId: number, _category: number): void 
     {
@@ -941,6 +1053,9 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
         this.addMessageEvent(new VoucherRedeemOkMessageEvent(this.onVoucherRedeemOk.bind(this)));
         this.addMessageEvent(new VoucherRedeemErrorMessageEvent(this.onVoucherRedeemError.bind(this)));
+        this.addMessageEvent(new HabboClubOffersMessageEvent(this.onHabboClubOffers.bind(this)));
+        this.addMessageEvent(new HabboClubExtendOfferMessageEvent(this.onHabboClubExtendOffer.bind(this)));
+        this.addMessageEvent(new ClubGiftInfoEvent(this.onClubGiftInfo.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 
@@ -966,6 +1081,9 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.createCatalogNavigators();
         this.createCatalogViewer();
         this.updatePurse();
+        this.createClubGiftController();
+        this.createClubBuyController();
+        this.createClubExtendController();
         this._initialized = true;
         this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));
         this.connection?.send(new BuildersClubQueryFurniCountMessageComposer());
@@ -1360,6 +1478,44 @@ export class HabboCatalog extends Component implements IHabboCatalog
         const description = `\${catalog.alert.voucherredeem.error.description.${parser.errorCode}}`;
 
         this._windowManager?.alert('${catalog.alert.voucherredeem.error.title}', description, 0, this.alertDialogEventProcessor);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboClubOffers()
+    private onHabboClubOffers(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as HabboClubOffersMessageEventParser | null;
+
+        if(!parser || !this._clubBuyController) return;
+
+        if(parser.source === 0 || parser.source === 1 || parser.source === 2 || parser.source === 6)
+        {
+            this._clubBuyController.onOffers(parser.offers);
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onHabboClubExtendOffer()
+    // Unlike onHabboClubOffers() above, AS3 forwards the raw event here (not its parser) -
+    // ClubExtendController.onOffer() does its own event.getParser() extraction. Preserved as-is,
+    // a genuine inconsistency in the primary source between these two otherwise-similar handlers.
+    private onHabboClubExtendOffer(event: IMessageEvent): void
+    {
+        if(!this._initialized) this.init();
+
+        if(this._clubExtendController) this._clubExtendController.onOffer(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onClubGiftInfo()
+    private onClubGiftInfo(event: IMessageEvent): void
+    {
+        if(!event || !this._clubGiftController) return;
+
+        const parser = event.parser as ClubGiftInfoEventParser | null;
+
+        if(!parser) return;
+
+        this._clubGiftController.setInfo(parser.daysUntilNextGift, parser.giftsAvailable, parser.offers, parser.giftData);
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::alertDialogEventProcessor()

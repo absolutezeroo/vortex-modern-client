@@ -124,6 +124,8 @@ import {
     CatalogPageWithEarliestExpiryMessageEvent,
     VoucherRedeemOkMessageEvent,
     VoucherRedeemErrorMessageEvent,
+    HabboClubOffersMessageEvent,
+    HabboClubExtendOfferMessageEvent,
 } from './messages/incoming/catalog';
 
 // Incoming Events - Landing View
@@ -502,6 +504,10 @@ import {
     GetLimitedOfferAppearingNextComposer,
     GetCatalogPageWithEarliestExpiryComposer,
     RedeemVoucherMessageComposer,
+    GetClubOffersMessageComposer,
+    PurchaseVipMembershipExtensionComposer,
+    PurchaseBasicMembershipExtensionComposer,
+    SelectClubGiftComposer,
 } from './messages/outgoing/catalog';
 
 // Outgoing Composers - Quest
@@ -923,6 +929,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3883, NotEnoughBalanceMessageEvent);
         this._events.set(2083, VoucherRedeemOkMessageEvent);
         this._events.set(2211, VoucherRedeemErrorMessageEvent);
+        this._events.set(2426, HabboClubOffersMessageEvent);
+        this._events.set(3509, HabboClubExtendOfferMessageEvent);
 
         // === QUEST ===
         this._events.set(2134, CommunityGoalHallOfFameMessageEvent);
@@ -1177,6 +1185,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2697, PurchaseFromCatalogComposer);
         this._composers.set(2340, BuildersClubQueryFurniCountMessageComposer);
         this._composers.set(471, RedeemVoucherMessageComposer);
+        this._composers.set(2965, GetClubOffersMessageComposer);
+        this._composers.set(415, PurchaseVipMembershipExtensionComposer);
+        this._composers.set(3352, PurchaseBasicMembershipExtensionComposer);
+        this._composers.set(227, SelectClubGiftComposer);
 
         // === QUEST ===
         this._composers.set(1034, GetCommunityGoalHallOfFameMessageComposer);
