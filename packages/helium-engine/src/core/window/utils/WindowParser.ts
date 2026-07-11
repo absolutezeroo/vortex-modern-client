@@ -1,5 +1,6 @@
 import type {IWindowParser} from './IWindowParser';
 import type {IWindow} from '../IWindow';
+import type {IWindowContext} from '../IWindowContext';
 import type {IStaticBitmapWrapperWindow} from '../components/IStaticBitmapWrapperWindow';
 import type {BoxSizerController} from '../components/BoxSizerController';
 import {PropertyStruct} from './PropertyStruct';
@@ -33,12 +34,25 @@ export class WindowParser implements IWindowParser
 
     private _disposed: boolean = false;
 
-    public get disposed(): boolean 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/utils/WindowParser.as::WindowParser()
+    // AS3's constructor takes and stores the owning context, independent of whatever `parent` a
+    // given parseAndConstruct() call is passed - buildFromXML() calls it with `parent = null`
+    // (see HabboWindowManagerComponent.as::buildFromXML()), and this is how the top-level
+    // constructed window still resolves a context/theme to build under despite having no parent
+    // to read `.context` off of.
+    private readonly _context: IWindowContext;
+
+    public constructor(context: IWindowContext)
+    {
+        this._context = context;
+    }
+
+    public get disposed(): boolean
     {
         return this._disposed;
     }
 
-    public parseAndConstruct(layout: XmlLayoutInput, parent: IWindow, namedWindows: Map<string, IWindow> | null): IWindow | null 
+    public parseAndConstruct(layout: XmlLayoutInput, parent: IWindow | null, namedWindows: Map<string, IWindow> | null): IWindow | null
     {
         const root = this.resolveLayoutRoot(layout);
 
@@ -69,7 +83,7 @@ export class WindowParser implements IWindowParser
             {
                 const filters = this.parseFilters(filtersNode, sharedVars);
 
-                if(filters.length > 0) 
+                if(filters.length > 0 && parent)
                 {
                     parent.filters = filters;
                 }
@@ -247,10 +261,10 @@ export class WindowParser implements IWindowParser
 
     private parseWindowNodes(
         nodes: Element[],
-        parent: IWindow,
+        parent: IWindow | null,
         sharedVars: Map<string, unknown>,
         namedWindows: Map<string, IWindow> | null
-    ): IWindow | null 
+    ): IWindow | null
     {
         let last: IWindow | null = null;
 
@@ -296,10 +310,10 @@ export class WindowParser implements IWindowParser
 
     private parseSingleWindowEntity(
         node: Element,
-        parent: IWindow,
+        parent: IWindow | null,
         sharedVars: Map<string, unknown>,
         namedWindows: Map<string, IWindow> | null
-    ): IWindow | null 
+    ): IWindow | null
     {
         const resolvedType = TYPE_NAME_TO_CODE[node.nodeName];
         const typeId = resolvedType !== undefined ? resolvedType : WindowType.NULL;
@@ -359,20 +373,23 @@ export class WindowParser implements IWindowParser
             addGridItemAt?: (item: IWindow, index: number) => IWindow;
             numGridItems?: number;
             numListItems?: number;
-        };
+        } | null;
         // AS3 appends a layout child through the parent's IIterable iterator
         // (`iterator[iterator.length] = child`). That iterator is type-specific:
         // ItemListIterator routes to addListItemAt, ItemGridIterator routes to
         // addGridItemAt. A grid must therefore append cells via its grid logic
         // (columns), not as raw addListItemAt children - otherwise grid items land
         // as side-by-side columns instead of stacking (e.g. Club Center's
-        // status_title / status_info).
-        const parentIsItemGrid = !isInternalLayoutChild && typeof listParent.addGridItemAt === 'function';
+        // status_title / status_info). A null parent (the root of a buildFromXML() call - see
+        // this class's constructor note) is never itself list/grid-appended.
+        const parentIsItemGrid = !isInternalLayoutChild && typeof listParent?.addGridItemAt === 'function';
         const parentIsItemList = !isInternalLayoutChild
             && !parentIsItemGrid
-            && typeof listParent.addListItemAt === 'function';
+            && typeof listParent?.addListItemAt === 'function';
 
-        const window = parent.context.create(
+        // AS3: falls back to this parser's own constructor-injected context when there's no
+        // parent to read `.context` off of (see this class's constructor note).
+        const window = (parent ? parent.context : this._context).create(
             name,
             '',
             typeId,

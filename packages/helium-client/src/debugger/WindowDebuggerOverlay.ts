@@ -565,7 +565,7 @@ class WindowDebuggerPanel
         }
     }
 
-    private showDetailPanel(node: IWindowDebugNode): void 
+    private showDetailPanel(node: IWindowDebugNode): void
     {
         const existing = this._treeEl.querySelector('.hwd-node-detail');
 
@@ -581,6 +581,9 @@ class WindowDebuggerPanel
             `rect: ${node.rect.x}, ${node.rect.y}, ${node.rect.width}x${node.rect.height}`,
             `dynamicStyle: ${node.dynamicStyle || '(none)'}`,
             `tags: ${node.tags.join(', ') || '(none)'}`,
+            '',
+            'ancestor chain (root first):',
+            buildAncestorChainText(node.window),
         ].join('\n');
 
         this._treeEl.insertBefore(detail, this._treeEl.firstChild);
@@ -959,7 +962,31 @@ class WindowDebuggerPanel
     }
 }
 
-function findNodeByWindow(node: IWindowDebugNode, window: IWindow): IWindowDebugNode | null 
+// Walks IWindow.parent up to the root so a floating/misplaced window's real
+// attachment point (which desktop/layer, or none at all) is visible - the
+// tree view above only ever shows descendants of whatever was picked/opened,
+// never ancestors, so there was previously no way to tell "nested correctly
+// under the catalog window" apart from "orphaned directly under a desktop".
+function buildAncestorChainText(window: IWindow): string
+{
+    const chain: IWindow[] = [];
+    let current: IWindow | null = window;
+    let guard = 0;
+
+    while(current && guard++ < 64)
+    {
+        chain.push(current);
+        current = current.parent;
+    }
+
+    chain.reverse();
+
+    return chain
+        .map((win, depth) => `${'  '.repeat(depth)}${TYPE_CODE_TO_NAME[win.type] ?? win.type} "${win.name || win.caption || '(unnamed)'}" (${win.x}, ${win.y}, ${win.width}x${win.height}) visible=${win.visible}`)
+        .join('\n');
+}
+
+function findNodeByWindow(node: IWindowDebugNode, window: IWindow): IWindowDebugNode | null
 {
     if(node.window === window) 
     {
@@ -1104,20 +1131,22 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
     return text;
 }
 
-function buildTreeReport(root: IWindowDebugNode): string 
+function buildTreeReport(root: IWindowDebugNode): string
 {
     let overlaps: IOverlapWarning[] | null = null;
 
-    try 
+    try
     {
         overlaps = findOverlaps(root);
     }
-    catch (error) 
+    catch (error)
     {
         log.warn('Overlap detection failed', error);
     }
 
-    let text = formatNodeText(root, 0, overlaps);
+    let text = `ancestor chain (root first):\n${buildAncestorChainText(root.window)}\n\n`;
+
+    text += formatNodeText(root, 0, overlaps);
 
     if(overlaps === null) 
     {

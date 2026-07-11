@@ -440,15 +440,20 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     /**
      * Build a window tree from an XML layout definition.
      */
-    public buildFromXML(xml: string | Document | Element, layer: number = 1, _vars?: Map<string, string> | null): IWindow 
+    public buildFromXML(xml: string | Document | Element, layer: number = 1, _vars?: Map<string, string> | null): IWindow
     {
         const context = this.getWindowContext(layer);
         const parser = context.getWindowParser();
         const desktop = context.getDesktopWindow();
 
-        if(parser && desktop) 
+        if(parser && desktop)
         {
-            const result = parser.parseAndConstruct(xml, desktop, null) as IWindow;
+            // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
+            // AS3 passes `null` as parent here, not the desktop - the constructed window is
+            // returned standalone, unattached, for the caller to place wherever it belongs (see
+            // WindowParser's constructor note for how it still resolves a context/theme without a
+            // parent to read `.context` off of).
+            const result = parser.parseAndConstruct(xml, null, null) as IWindow;
 
             // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::buildFromXML()
             // Every frame built this way gets its help button wired to openHelpPage().
@@ -1470,7 +1475,7 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
             context.setDesktop(desktop);
 
             // Create parser for XML layout building
-            const parser = new WindowParser();
+            const parser = new WindowParser(context);
 
             context.setParser(parser);
 

@@ -66,6 +66,14 @@ export class RoomDesktopLayoutManager
         {
             this._layoutContainer.width = desktop.width;
             this._layoutContainer.height = desktop.height;
+
+            // AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::setLayout()
+            // buildWidgetLayout() no longer auto-attaches the built root to a desktop (that was a
+            // bug of its own - see HabboWindowManager.buildFromXML()'s note); AS3 always did this
+            // explicitly right here, this port was silently relying on that other bug for the
+            // whole room desktop layout (room view, infostand, room tools, ...) to ever become
+            // visible/interactive at all.
+            (desktop as unknown as IWindowContainer).addChild(this._layoutContainer);
         }
 
         const infostandContainer = this._layoutContainer.findChildByTag('room_widget_infostand');
