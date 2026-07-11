@@ -472,6 +472,7 @@ import {
 import {
     CompostPlantComposer,
     GetPetCommandsComposer,
+    GiveSupplementToPetMessageComposer,
     HarvestPetComposer,
     MountPetComposer,
     PickUpPetComposer,
@@ -1058,6 +1059,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3379, TogglePetBreedingPermissionComposer);
         this._composers.set(856, CompostPlantComposer);
         this._composers.set(3202, UseProductForPetComposer);
+        this._composers.set(957, GiveSupplementToPetMessageComposer);
 
         // === POLL ===
         this._composers.set(1773, PollStartComposer);
@@ -1160,7 +1162,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1104, CommunityGoalVoteMessageComposer);
 
         // === CATALOG (bonus rare) ===
-        this._composers.set(957, GetBonusRareInfoMessageComposer);
+        this._composers.set(75, GetBonusRareInfoMessageComposer);
         this._composers.set(3747, GetLimitedOfferAppearingNextComposer);
         this._composers.set(3841, GetCatalogPageWithEarliestExpiryComposer);
         this._composers.set(1604, GetClubGiftMessageComposer);
