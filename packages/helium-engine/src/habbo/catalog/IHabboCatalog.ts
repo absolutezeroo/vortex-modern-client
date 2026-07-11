@@ -10,6 +10,7 @@ import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IPurchasableOffer} from './IPurchasableOffer';
 import type {HabboCatalogUtils} from './HabboCatalogUtils';
 import type {ICatalogNavigator} from './navigation/ICatalogNavigator';
+import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
 
 /**
  * Interface for the Habbo catalog.
@@ -34,6 +35,7 @@ export interface IHabboCatalog
     readonly collectorHub: unknown | null;
     readonly utils: HabboCatalogUtils;
     readonly currentCatalogNavigator: ICatalogNavigator | null;
+    readonly frontPageItems: FrontPageItem[] | null;
 
     getSeasonalCurrencyActivityPointType(): number;
 

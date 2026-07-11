@@ -14,6 +14,7 @@ import type {CatalogWidgetColourIndexEvent} from './events/CatalogWidgetColourIn
 import {CatalogWidgetColoursEvent} from './events/CatalogWidgetColoursEvent';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {SetExtraPurchaseParameterEvent} from './events/SetExtraPurchaseParameterEvent';
+import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
 /**
@@ -76,7 +77,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
     {
         if(!super.init()) return false;
 
-        this.attachWidgetView('itemGridWidget');
+        this.attachWidgetView(CatalogWidgetName.ITEM_GRID);
 
         const isFixed = this._window.tags.indexOf('FIXED') > -1;
 
@@ -90,6 +91,10 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
 
         this._itemGrid.verticalSpacing = 0;
 
+        // TS deviation: AS3 calls buildFromXML() fresh per grid item (a transient, immediately-
+        // attached construction every time - see createGridItem()'s own note). This port instead
+        // builds one shared instance up front and clones it per item, since buildWidgetLayout()
+        // has no equivalent of AS3's raw-XML-template argument.
         this._gridItemLayout = this.page.viewer.catalog.windowManager!.buildWidgetLayout('gridItem');
         this._gridItemWithPriceSingle = this.page.viewer.catalog.windowManager!.buildWidgetLayout('grid_item_with_price_single');
         this._gridItemWithPriceMulti = this.page.viewer.catalog.windowManager!.buildWidgetLayout('grid_item_with_price_multi');
@@ -110,9 +115,9 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
         return true;
     }
 
-    select(item: IGridItem, dispatchColours: boolean): void 
+    select(item: IGridItem, dispatchColours: boolean): void
     {
-        if(this._selectedGridItem != null) 
+        if(this._selectedGridItem != null)
         {
             this._selectedGridItem.deactivate();
         }

@@ -1,6 +1,4 @@
-import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {HabboCatalog} from '../../HabboCatalog';
@@ -13,8 +11,9 @@ import {CatalogWidgetInitPurchaseEvent} from './events/CatalogWidgetInitPurchase
 import {SetRoomPreviewerStuffDataEvent} from './events/SetRoomPreviewerStuffDataEvent';
 import {CatalogWidgetSpinnerEvent} from './events/CatalogWidgetSpinnerEvent';
 import {CatalogWidgetToggleEvent} from './events/CatalogWidgetToggleEvent';
-import {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
+import type {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
 import {RentUtils} from './utils/RentUtils';
+import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
 const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
@@ -94,7 +93,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
             return true;
         }
 
-        this.attachWidgetView('purchaseWidget');
+        this.attachWidgetView(CatalogWidgetName.PURCHASE);
         this.window.findChildByName('selection_information')!.visible = true;
         this.window.findChildByName('default_buttons')!.visible = false;
         this._noGiftOption = false;
@@ -260,7 +259,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
                     return;
                 }
 
-                if (roomAdPurchaseData.name == null || roomAdPurchaseData.name.length < 5 || roomAdPurchaseData.name.substring(0, 1) === ' ')
+                if(roomAdPurchaseData.name == null || roomAdPurchaseData.name.length < 5 || roomAdPurchaseData.name.substring(0, 1) === ' ')
                 {
                     this._catalog!.windowManager!.alert('${roomad.error.title}', '${roomad.alert.name.empty}', 0, (dialog) =>
                     {

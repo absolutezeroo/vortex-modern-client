@@ -8,6 +8,7 @@ import {ActivityPointTypeEnum} from '../../purse/ActivityPointTypeEnum';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {CatalogWidgetSpinnerEvent} from './events/CatalogWidgetSpinnerEvent';
 import {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
+import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
 /**
@@ -67,7 +68,7 @@ export class TotalPriceCatalogWidget extends CatalogWidget
             return true;
         }
 
-        this.attachWidgetView('totalPriceWidget');
+        this.attachWidgetView(CatalogWidgetName.TOTAL_PRICE);
         this.window.visible = false;
 
         if(!this._catalog!.multiplePurchaseEnabled) return true;

@@ -6,7 +6,6 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IDisplayObjectWrapper} from '@core/window/components/IDisplayObjectWrapper';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
-import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {Vector3d} from '@room/utils/Vector3d';
@@ -19,14 +18,15 @@ import type {IPurchasableOffer} from '../../IPurchasableOffer';
 import type {IProduct} from '../IProduct';
 import {ProductDisplayWrapper} from '../ProductDisplayWrapper';
 import type {ProductImageWidget} from '../../../window/widgets/ProductImageWidget';
-import {BundleProductContainer} from '../BundleProductContainer';
+import type {BundleProductContainer} from '../BundleProductContainer';
 import type {IDragAndDropDoneReceiver} from '../IDragAndDropDoneReceiver';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {SetRoomPreviewerStuffDataEvent} from './events/SetRoomPreviewerStuffDataEvent';
 import {CatalogWidgetSpinnerEvent} from './events/CatalogWidgetSpinnerEvent';
 import {CatalogWidgetBundleDisplayExtraInfoEvent} from './events/CatalogWidgetBundleDisplayExtraInfoEvent';
 import {ExtraInfoItemData} from './bundlepurchaseinfodisplay/ExtraInfoItemData';
-import {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
+import type {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
+import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
 const log = Logger.getLogger('ProductViewCatalogWidget');
@@ -115,6 +115,10 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     // RoomPreviewerWidget.syncCanvasPosition() already does for the inventory item preview.
     private _canvasDisplayObject: Container | null = null;
 
+    // Pre-existing repo-wide pattern for bound-callback private fields (RoomPreviewer.ts,
+    // RoomPreviewerWidget.ts); the naming-convention rule's `method` selector misclassifies
+    // arrow-function class properties.
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     private readonly _syncCanvasPositionBound = (): void => this.syncCanvasPosition();
 
     private _previewOffset: {x: number; y: number} = {x: 0, y: 0};
@@ -208,7 +212,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     {
         if(!super.init()) return false;
 
-        this.attachWidgetView('productViewWidget');
+        this.attachWidgetView(CatalogWidgetName.PRODUCT_VIEW);
 
         if(!this._isEmbedded)
         {

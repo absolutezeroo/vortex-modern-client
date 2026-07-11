@@ -37,6 +37,7 @@ import type {
     ActivityPointsMessageParser
 } from '@habbo/communication/messages/parser/notifications/ActivityPointsMessageParser';
 import {ScrSendUserInfoEvent} from '@habbo/communication/messages/incoming/users/ScrSendUserInfoEvent';
+import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
 import type {ScrSendUserInfoMessageParser} from '@habbo/communication/messages/parser/users/ScrSendUserInfoMessageParser';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
@@ -223,9 +224,17 @@ export class HabboCatalog extends Component implements IHabboCatalog
         return this.getBoolean('builders.club.enabled');
     }
 
-    get collectorHub(): unknown | null 
+    get collectorHub(): unknown | null
     {
         return null;
+    }
+
+    private _frontPageItems: FrontPageItem[] | null = null;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::get frontPageItems()
+    get frontPageItems(): FrontPageItem[] | null
+    {
+        return this._frontPageItems;
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get roomPreviewer()
@@ -380,7 +389,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::requestSelectedItemToMover()
     // Needs CatalogObjectMover (drag-offer-into-room-canvas flow), which isn't ported (see
     // Offer.ts's port notes).
-    requestSelectedItemToMover(_receiver: unknown, _offer: IPurchasableOffer): void 
+    requestSelectedItemToMover(_receiver: unknown, _offer: IPurchasableOffer, _placeMany: boolean = false): void
     {
     }
 
@@ -703,6 +712,20 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // the active navigator page's allowDragging, and Builders Club furniture-placement
     // status (getBuilderFurniPlaceableStatusForOffer(), itself dependent on room-session
     // furniture counts) - none of that catalog/room-session cross-wiring exists yet.
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
+    // TODO(AS3): real logic needs builderFurniCount/builderFurniLimit and roomSession
+    // (isRoomOwner/isGuildRoom/roomControllerLevel/userDataManager, none of which are wired on
+    // this port yet) via the further getBuilderFurniPlaceableStatus() - always returning 0
+    // ("placeable") is the safe default: BuilderCatalogWidget's place buttons stay enabled and
+    // show no false error, and the actual placement action (requestSelectedItemToMover()) is
+    // itself still a CatalogObjectMover-blocked stub, so nothing is placed either way yet.
+    public getBuilderFurniPlaceableStatusForOffer(_offer: IPurchasableOffer | null): number
+    {
+        if(_offer == null) return 1;
+
+        return 0;
+    }
 
     // path isn't wired up yet. The synchronous cache-hit path is implemented for real.
     public setImageFromAsset(target: unknown, assetName: string | null, _onAssetReady?: ((event: unknown) => void) | null): void 
@@ -1180,7 +1203,12 @@ export class HabboCatalog extends Component implements IHabboCatalog
             }
         }
 
-        if(this._catalogViewer != null && this._pendingPageId === parser.pageId) 
+        if(parser.frontPageItems != null && parser.frontPageItems.length > 0)
+        {
+            this._frontPageItems = parser.frontPageItems;
+        }
+
+        if(this._catalogViewer != null && this._pendingPageId === parser.pageId)
         {
             this._catalogViewer.showCatalogPage(
                 parser.pageId,

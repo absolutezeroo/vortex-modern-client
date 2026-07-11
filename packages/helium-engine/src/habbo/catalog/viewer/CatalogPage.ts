@@ -17,6 +17,20 @@ import {LocalizationCatalogWidget} from './widgets/LocalizationCatalogWidget';
 import {SpinnerCatalogWidget} from './widgets/SpinnerCatalogWidget';
 import {TotalPriceCatalogWidget} from './widgets/TotalPriceCatalogWidget';
 import {UniqueLimitedItemWidget} from './widgets/UniqueLimitedItemWidget';
+import {SpecialInfoWidget} from './widgets/SpecialInfoWidget';
+import {WarningCatalogWidget} from './widgets/WarningCatalogWidget';
+import {TextInputCatalogWidget} from './widgets/TextInputCatalogWidget';
+import {FirstProductSelectorCatalogWidget} from './widgets/FirstProductSelectorCatalogWidget';
+import {SingleViewCatalogWidget} from './widgets/SingleViewCatalogWidget';
+import {BuilderCatalogWidget} from './widgets/BuilderCatalogWidget';
+import {SoldLtdItemsCatalogWidget} from './widgets/SoldLtdItemsCatalogWidget';
+import {MadMoneyCatalogWidget} from './widgets/MadMoneyCatalogWidget';
+import {AddOnBadgeViewCatalogWidget} from './widgets/AddOnBadgeViewCatalogWidget';
+import {FeaturedItemsCatalogWidget} from './widgets/FeaturedItemsCatalogWidget';
+import {ColourGridCatalogWidget} from './widgets/ColourGridCatalogWidget';
+import {BundleGridViewCatalogWidget} from './widgets/BundleGridViewCatalogWidget';
+import {ActivityPointDisplayCatalogWidget} from './widgets/ActivityPointDisplayCatalogWidget';
+import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
 
 const log = Logger.getLogger('CatalogPage');
@@ -295,16 +309,19 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // Only 7 of the ~45 AS3 cases are ported (itemGridWidget/simplePriceWidget/productViewWidget/
-    // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget) - the rest (colourGridWidget,
-    // spacesNewWidget, trophyWidget, ...) fall through and are silently skipped, matching AS3's
-    // own switch (no default case = unmatched names do nothing).
+    // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
+    // 20 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
+    // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
+    // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/
+    // soldLtdItemsWidget/madMoneyWidget/addOnBadgeViewWidget/featuredItemsWidget/colourGridWidget/
+    // bundleGridScrollWidget/activityPointDisplayWidget) - the rest (spacesNewWidget, trophyWidget,
+    // ...) fall through and are silently skipped, matching AS3's own switch (no default case =
+    // unmatched names do nothing).
     private createWidget(window: IWindowContainer): void
     {
         switch(window.name)
         {
-            case 'itemGridWidget':
+            case CatalogWidgetName.ITEM_GRID:
                 if(this._itemGridWidget == null)
                 {
                     this._itemGridWidget = new ItemGridCatalogWidget(
@@ -316,23 +333,62 @@ export class CatalogPage implements ICatalogPage
                 }
 
                 break;
-            case 'simplePriceWidget':
+            case CatalogWidgetName.SIMPLE_PRICE:
                 this._widgets.push(new SimplePriceCatalogWidget(window, this._catalog!));
                 break;
-            case 'productViewWidget':
+            case CatalogWidgetName.PRODUCT_VIEW:
                 this._widgets.push(new ProductViewCatalogWidget(window, this._catalog!));
                 break;
-            case 'purchaseWidget':
+            case CatalogWidgetName.SINGLE_VIEW:
+                this._widgets.push(new SingleViewCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.PURCHASE:
                 this._widgets.push(new PurchaseCatalogWidget(window, this._catalog!));
                 break;
-            case 'spinnerWidget':
+            case CatalogWidgetName.SPINNER:
                 this._widgets.push(new SpinnerCatalogWidget(window, this._catalog!));
                 break;
-            case 'totalPriceWidget':
+            case CatalogWidgetName.TOTAL_PRICE:
                 this._widgets.push(new TotalPriceCatalogWidget(window, this._catalog!));
                 break;
-            case 'limitedItemWidget':
+            case CatalogWidgetName.LIMITED_ITEM:
                 this._widgets.push(new UniqueLimitedItemWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.TEXT_INPUT:
+                this._widgets.push(new TextInputCatalogWidget(window));
+                break;
+            case CatalogWidgetName.SPECIAL_INFO:
+                this._widgets.push(new SpecialInfoWidget(window));
+                break;
+            case CatalogWidgetName.WARNING:
+                this._widgets.push(new WarningCatalogWidget(window));
+                break;
+            case CatalogWidgetName.FIRST_PRODUCT_AUTO_SELECTOR:
+                this._widgets.push(new FirstProductSelectorCatalogWidget(window));
+                break;
+            case CatalogWidgetName.BUILDER:
+                this._widgets.push(new BuilderCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.SOLD_LTD_ITEMS:
+                this._widgets.push(new SoldLtdItemsCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.MAD_MONEY:
+                this._widgets.push(new MadMoneyCatalogWidget(window));
+                break;
+            case CatalogWidgetName.ADD_ON_BADGE_VIEW:
+                this._widgets.push(new AddOnBadgeViewCatalogWidget(window));
+                break;
+            case CatalogWidgetName.FEATURED_ITEMS:
+                this._widgets.push(new FeaturedItemsCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.COLOUR_GRID:
+                this._widgets.push(new ColourGridCatalogWidget(window));
+                break;
+            case CatalogWidgetName.BUNDLE_GRID_SCROLL:
+                this._widgets.push(new BundleGridViewCatalogWidget(window));
+                break;
+            case CatalogWidgetName.ACTIVITY_POINT_DISPLAY:
+                this._widgets.push(new ActivityPointDisplayCatalogWidget(window));
                 break;
         }
     }

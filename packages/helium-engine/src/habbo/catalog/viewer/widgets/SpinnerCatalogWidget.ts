@@ -5,6 +5,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {HabboCatalog} from '../../HabboCatalog';
 import {CatalogWidgetSpinnerEvent} from './events/CatalogWidgetSpinnerEvent';
+import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
 const SPIN_BUTTONDOWN_HOLD_VALUE_STEP_DELAY_MS = 75;
@@ -73,7 +74,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
     {
         if(!super.init()) return false;
 
-        this.attachWidgetView('spinnerWidget');
+        this.attachWidgetView(CatalogWidgetName.SPINNER);
         this.window.visible = false;
 
         if(!this._catalog!.multiplePurchaseEnabled) return true;
