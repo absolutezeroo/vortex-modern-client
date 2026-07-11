@@ -397,7 +397,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return room.getObject(OBJECT_ID_SELECTION_ARROW, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR) as IRoomObjectController | null;
     }
 
-    getIsPlayingGame(roomId: number): boolean
+    getIsPlayingGame(_roomId: number): boolean
     {
         return false; // TODO: implement game state
     }
@@ -473,7 +473,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._pendingThumbnailListeners.delete(type);
 
         const asset = success ? this.assets?.getAssetByName(type) ?? null : null;
-        const texture = (asset?.content as Texture | undefined) ?? null;
+        const texture = (asset?.content as Texture | null) ?? null;
 
         this.deliverIconTexture(typeId, texture, listeners);
     }
@@ -722,7 +722,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             result.data = null;
 
             const asset = this.assets.getAssetByName(assetName);
-            const texture = (asset?.content as Texture | undefined) ?? null;
+            const texture = (asset?.content as Texture | null) ?? null;
 
             this.deliverIconTexture(id, texture, [listener]);
         }
@@ -914,7 +914,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         usagePolicy: number,
         ownerId: number,
         ownerName: string | null,
-        synchronize = true
+        _synchronize = true
     ): boolean
     {
         const room = this.getRoomInstance(roomId);
@@ -1917,8 +1917,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         ownerId: number,
         ownerName: string,
         synchronized: boolean,
-        refresh: boolean,
-        sizeZ: number
+        _refresh: boolean,
+        _sizeZ: number
     ): boolean
     {
         return this.addRoomObjectFurniture(
@@ -1944,8 +1944,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         location: IVector3d,
         direction: IVector3d,
         state: number,
-        data: IStuffData | null,
-        extra: number
+        _data: IStuffData | null,
+        _extra: number
     ): boolean
     {
         const room = this.getRoomInstance(roomId);
@@ -1986,8 +1986,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         location: IVector3d | null,
         direction: IVector3d | null,
         state: number,
-        data: IStuffData | null,
-        extra?: number
+        _data: IStuffData | null,
+        _extra?: number
     ): boolean
     {
         const room = this.getRoomInstance(roomId);
@@ -2057,8 +2057,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     disposeObjectFurniture(
         roomId: number,
         id: number,
-        pickerId?: number,
-        refresh?: boolean
+        _pickerId?: number,
+        _refresh?: boolean
     ): boolean
     {
         return this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
@@ -2075,7 +2075,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         usagePolicy: number,
         ownerId: number,
         ownerName: string,
-        secondsToExpiration: number
+        _secondsToExpiration: number
     ): boolean
     {
         return this.addRoomObjectWallItem(
@@ -2097,7 +2097,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         location: IVector3d | null,
         direction: IVector3d | null,
         state: number,
-        data: string
+        _data: string
     ): boolean
     {
         const room = this.getRoomInstance(roomId);
@@ -2137,7 +2137,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     disposeObjectWallItem(
         roomId: number,
         id: number,
-        pickerId?: number
+        _pickerId?: number
     ): boolean
     {
         return this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL);
@@ -2369,6 +2369,38 @@ export class RoomEngine extends Component implements IRoomEngine,
     setStage(stage: Container): void
     {
         this._pixiStage = stage;
+    }
+
+    /**
+	 * Mounts an externally-owned display object directly onto the PixiJS
+	 * stage, above every room rendering canvas already added (children
+	 * appended later render on top).
+	 *
+	 * TS-only: no AS3 equivalent. AS3's DisplayObjectWrapperController wraps
+	 * a genuine Flash DisplayObject that gets added to the same unified
+	 * display tree as everything else; this port splits UI chrome (drawn via
+	 * WindowComposite onto a separate Canvas2D element) from room content
+	 * (rendered by this WebGL/PixiJS stage). WindowComposite's "punch a
+	 * transparent hole" trick for display_object_wrapper windows only reveals
+	 * whatever is *already* part of this same PixiJS stage underneath that
+	 * screen rect - callers like HabboFreeFlowChat (freeflowchat's live chat
+	 * bubbles) need this explicit mount point since their content has no
+	 * other path onto the stage.
+	 */
+    addStageChild(displayObject: Container): void
+    {
+        this._pixiStage?.addChild(displayObject);
+    }
+
+    /**
+	 * Removes a display object previously added via addStageChild().
+	 */
+    removeStageChild(displayObject: Container): void
+    {
+        if(this._pixiStage && displayObject.parent === this._pixiStage)
+        {
+            this._pixiStage.removeChild(displayObject);
+        }
     }
 
     /**
@@ -2763,7 +2795,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     /**
 	 * Gets the room geometry for a canvas.
 	 */
-    getRoomCanvasGeometry(roomId: number, canvasId: number = 1): import('@room/utils/IRoomGeometry').IRoomGeometry | null
+    getRoomCanvasGeometry(roomId: number, canvasId: number = 1): IRoomGeometry | null
     {
         const key = roomId * 1000 + canvasId;
         const canvas = this._renderingCanvases.get(key);
@@ -2838,7 +2870,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.removeUpdateReceiver(this);
 
         // Dispose all rendering canvases
-        for(const [key, canvas] of this._renderingCanvases)
+        for(const [, canvas] of this._renderingCanvases)
         {
             const resizeHandler = this._resizeHandlers.get(canvas);
 

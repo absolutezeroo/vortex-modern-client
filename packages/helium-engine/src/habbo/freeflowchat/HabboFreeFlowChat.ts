@@ -5,12 +5,17 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
+import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import type {IAssetLibrary} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
+import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
+import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IPoint} from '@room/utils/IRoomGeometry';
@@ -66,9 +71,12 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     private _isInRoom: boolean = false;
     private _isInitialized: boolean = false;
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::HabboFreeFlowChat()
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
         super(context, flags, assetLibrary);
+
+        this.refreshEffectiveChatSettings();
     }
 
     private _sessionDataManager: ISessionDataManager | null = null;
@@ -106,6 +114,14 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._localizations;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get avatarRenderManager()
+    private _avatarRenderManager: IAvatarRenderManager | null = null;
+
+    get avatarRenderManager(): IAvatarRenderManager | null
+    {
+        return this._avatarRenderManager;
+    }
+
     private _chatBubbleFactory: ChatBubbleFactory | null = null;
 
     get chatStyleLibrary(): IChatStyleLibrary | null
@@ -125,14 +141,86 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._roomChatSettings?.mode === 1;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatMode
+    private _chatMode: number = 0;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatBubbleWidth
+    private _chatBubbleWidth: number = 1;
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get/set chatScrollSpeed() (backing field, "_-51u")
+    private _chatScrollSpeed: number = 1;
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
-    // TODO(AS3): never populated — the server preferences message this comes from isn't
-    // parsed yet, so this stays null (every reader already null-checks it, matching AS3).
+    // Built by refreshEffectiveChatSettings() from _chatMode/_chatBubbleWidth/_chatScrollSpeed,
+    // which the constructor already calls once (matching AS3's own constructor) - so this is
+    // never actually null in practice, same as AS3. onAccountPreferences() (below) is the only
+    // thing that ever changes these three away from their built-in defaults (mode=0/free-flow,
+    // bubbleWidth=1/normal, scrollSpeed=1/normal -> ChatFlowStage's 6000ms tier, not the
+    // 10000ms "no settings at all" fallback ChatFlowStage.ts falls back to if this were null).
     private _roomChatSettings: IRoomChatSettings | null = null;
 
     get roomChatSettings(): IRoomChatSettings | null
     {
         return this._roomChatSettings;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::refreshEffectiveChatSettings()
+    private refreshEffectiveChatSettings(): void
+    {
+        this._roomChatSettings = {
+            mode: this._chatMode,
+            bubbleWidth: this._chatBubbleWidth,
+            scrollSpeed: this._chatScrollSpeed,
+        };
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatMode()
+    private sanitizeChatMode(value: number): number
+    {
+        return value === 0 || value === 1 ? value : 0;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatBubbleWidth()
+    private sanitizeChatBubbleWidth(value: number): number
+    {
+        return value === 0 || value === 1 || value === 2 ? value : 1;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::sanitizeChatScrollSpeed()
+    private sanitizeChatScrollSpeed(value: number): number
+    {
+        return value === 0 || value === 1 || value === 2 ? value : 1;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clampChatFontSizeMode()
+    private clampChatFontSizeMode(value: number): number
+    {
+        return value < 0 ? 0 : (value > 4 ? 4 : value);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onAccountPreferences()
+    // TODO(AS3): onRoomChatSettings()/onGuestRoomData() (the two other AS3 call sites that
+    // also touch refreshEffectiveChatSettings()) aren't wired - both only ever update
+    // floodSensitivity, a field this port's roomChatSettings doesn't expose yet (nothing
+    // reads it - ChatFlowStage only needs mode/bubbleWidth/scrollSpeed, which only
+    // onAccountPreferences ever changes). See IRoomChatSettings for the same note.
+    private onAccountPreferences(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as AccountPreferencesParser;
+
+        if(!parser) return;
+
+        this._preferedChatStyle = parser.preferedChatStyle;
+        this._chatFontSizeMode = this.clampChatFontSizeMode(parser.chatSizePreference);
+        this._chatMode = this.sanitizeChatMode(parser.chatMode);
+        this._chatBubbleWidth = this.sanitizeChatBubbleWidth(parser.chatBubbleWidth);
+        this._chatScrollSpeed = this.sanitizeChatScrollSpeed(parser.chatScrollSpeed);
+
+        this.refreshEffectiveChatSettings();
+
+        if(this._isInRoom) this._chatFlowStage?.refreshSettings();
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatFontSizeMode
@@ -152,7 +240,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     // rendering (chatFontSizeScale), only server persistence is missing.
     set chatFontSizeMode(value: number)
     {
-        this._chatFontSizeMode = value < 0 ? 0 : (value > 4 ? 4 : value);
+        this._chatFontSizeMode = this.clampChatFontSizeMode(value);
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
@@ -178,13 +266,23 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::getScreenPointFromRoomLocation()
-    // Adapted, not a line-for-line port: AS3 reconstructs absolute Flash-stage coordinates
-    // (stage.stageWidth/stageHeight center + scaled room-canvas point + offset) because its
-    // chat layer floats in a separate DisplayObject tree from the room's own sub-stage.
-    // This port renders everything in one PixiJS canvas already sharing the room's
-    // coordinate space, so the simpler getScreenPoint()+offset composition already proven
-    // correct by the legacy bubble system (ChatWidgetHandler.ts::handleChatEvent()) applies
-    // directly, without the stage-center reconstruction term.
+    // `geometry.getScreenPoint()` returns a point relative to the isometric
+    // camera's own centre, not the canvas's top-left - AS3 recentres it onto
+    // the Flash stage (stage.stageWidth/stageHeight / 2) before adding the
+    // scaled raw point and the pan offset. An earlier version of this method
+    // dropped that recentring term, reasoning that ChatFlowViewer.rootDisplayObject
+    // shares the room's own coordinate space directly - wrong: it's mounted
+    // into a window-system container (RoomDesktopLayoutManager.getChatContainer()),
+    // a *separate* display tree from the room canvas, exactly like AS3's
+    // "separate DisplayObject tree" case this method exists to handle. Confirmed
+    // via live diagnostic: every bubble was landing at a large negative x/y
+    // (e.g. x=-534 for a valid, on-screen avatar position) until this term was
+    // restored. `stage.stageWidth/stageHeight` has no direct equivalent here
+    // (this port has one PixiJS canvas, not per-room Flash sub-stages); using
+    // window.innerWidth/innerHeight instead, matching the same stand-in
+    // PooledChatBubble.ts already uses for AS3's stage.stageWidth elsewhere in
+    // this same feature (the canvas is resized to the window by default - see
+    // Helium.ts's `resizeTo: config?.resizeTo ?? window`).
     getScreenPointFromRoomLocation(roomId: number, location: IVector3d): IPoint
     {
         const zero: IPoint = {x: 0, y: 0};
@@ -192,16 +290,33 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         if(!this._roomEngine) return zero;
 
         const geometry = this._roomEngine.getRoomCanvasGeometry(roomId);
+        const canvasScale = this._roomEngine.getRoomCanvasScale(roomId);
+        const stageWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+        const stageHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
 
-        if(!geometry) return zero;
+        let x = (stageWidth * canvasScale) / 2;
+        let y = (stageHeight * canvasScale) / 2;
 
-        const point = geometry.getScreenPoint(location);
+        if(geometry)
+        {
+            const point = geometry.getScreenPoint(location);
 
-        if(!point) return zero;
+            if(point)
+            {
+                x += point.x * canvasScale;
+                y += point.y * canvasScale;
 
-        const offset = this._roomEngine.getRoomCanvasScreenOffset(roomId);
+                const offset = this._roomEngine.getRoomCanvasScreenOffset(roomId);
 
-        return offset ? {x: point.x + offset.x, y: point.y + offset.y} : point;
+                if(offset)
+                {
+                    x += offset.x;
+                    y += offset.y;
+                }
+            }
+        }
+
+        return {x, y};
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clickHasToPropagate()
@@ -330,6 +445,14 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                 },
                 false
             ),
+            new ComponentDependency(
+                IID_AvatarRenderManager,
+                (manager: IAvatarRenderManager | null) =>
+                {
+                    this._avatarRenderManager = manager;
+                },
+                false
+            ),
         ];
     }
 
@@ -415,7 +538,20 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
             this._chatFlowStage = new ChatFlowStage(this);
             this._chatFlowViewer = new ChatFlowViewer(this, this._chatFlowStage);
             this._chatViewController = new ChatViewController(this._chatFlowViewer);
-            this._displayObject = this._chatViewController.rootDisplayObject;
+
+            const rootDisplayObject = this._chatViewController.rootDisplayObject;
+
+            this._displayObject = rootDisplayObject;
+
+            // TS-only, see RoomEngine.ts::addStageChild(). RoomUI.ts also calls
+            // getChatContainer()?.setDisplayObject(this._displayObject) so
+            // WindowComposite punches a transparent hole for it at the right
+            // screen rect, but that alone never puts this container on the
+            // actual PixiJS stage - it's only bookkeeping for the window
+            // system's own (separately Canvas2D-composited) tree. Without this
+            // call every bubble renders into a display object that's never
+            // part of any rendered scene at all.
+            if(rootDisplayObject) this._roomEngine?.addStageChild(rootDisplayObject);
 
             this._chatEvents.emit('roomEntered');
 
@@ -430,6 +566,8 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 */
     roomLeft(): void
     {
+        if(this._displayObject) this._roomEngine?.removeStageChild(this._displayObject);
+
         this._chatViewController?.dispose();
         this._chatViewController = null;
 
@@ -581,6 +719,8 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         this._roomSessionEventHandler = new RoomSessionEventHandler(this);
         this._chatBubbleFactory = new ChatBubbleFactory(this);
         this._isInitialized = true;
+
+        this._communication?.addHabboConnectionMessageEvent(new AccountPreferencesEvent(this.onAccountPreferences.bind(this)));
 
         log.info('HabboFreeFlowChat initialized');
 

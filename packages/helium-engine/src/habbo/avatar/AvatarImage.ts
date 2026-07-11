@@ -258,9 +258,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 */
     public setDirectionAngle(setType: string, angle: number): void
     {
-        let direction = 0;
-
-        direction = Math.trunc(angle / 45);
+        const direction = Math.trunc(angle / 45);
         this.setDirection(setType, direction);
     }
 
@@ -697,18 +695,78 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             this._image.destroy();
         }
 
-        this._image = Texture.from({resource: offscreen, alphaMode: 'premultiply-alpha-on-upload'});
+        const unscaledTexture = Texture.from({resource: offscreen, alphaMode: 'premultiply-alpha-on-upload'});
+
+        // Cache the unscaled result if eligible - AS3 caches the full-size bitmap
+        // *before* resampling the return value (see resampleCanvas()'s header
+        // comment below), so a later call always recomputes at whatever scale
+        // it asks for rather than reusing a scaled copy.
+        if(cacheKey != null && isCacheable)
+        {
+            this.cacheFullImage(cacheKey, unscaledTexture);
+        }
+
+        // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getImage() -
+        // `if(param3 != 1) var_48 = class_2495.resampleBitmapData(var_48,param3);`
+        this._image = scale !== 1
+            ? Texture.from({resource: AvatarImage.resampleCanvas(offscreen, scale), alphaMode: 'premultiply-alpha-on-upload'})
+            : unscaledTexture;
         this._fullImageFromCache = false;
         this._needsUpdate = false;
 
-        // Cache the result if eligible
-        if(cacheKey != null && isCacheable && this._image)
-        {
-            this.cacheFullImage(cacheKey, this._image);
-            this._fullImageFromCache = true;
-        }
-
         return this._image;
+    }
+
+    // AS3: sources/win63_version/habbo/utils/class_2495.as::resizeBitmapData()
+    private static resizeCanvas(source: OffscreenCanvas, scale: number): OffscreenCanvas
+    {
+        const width = Math.max(1, Math.round(source.width * scale));
+        const height = Math.max(1, Math.round(source.height * scale));
+        const target = new OffscreenCanvas(width, height);
+        const ctx = target.getContext('2d')!;
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(source, 0, 0, source.width, source.height, 0, 0, width, height);
+
+        return target;
+    }
+
+    /**
+	 * AS3: sources/win63_version/habbo/utils/class_2495.as::resampleBitmapData()
+     *
+     * Real containing-class name unrecoverable from any of the three source
+     * trees (obfuscated `_SafeCls_2871` in the primary tree, generic
+     * decompiler-assigned `class_2495` in the secondary tree, absent from the
+     * tertiary tree) - the method's own name is real/legible, only the class
+     * wrapping it isn't. Progressively halves for downscales below 0.5x
+     * (better quality than one big downscale) instead of a single resize,
+     * matching the real algorithm exactly - this is what makes getImage()'s
+     * `scale` parameter (e.g. HabboFaceFocuser's 0.5x "zoomed" head-icon crop)
+     * actually shrink the composited canvas instead of being silently ignored.
+	 */
+    private static resampleCanvas(source: OffscreenCanvas, scale: number): OffscreenCanvas
+    {
+        if(scale >= 1) return AvatarImage.resizeCanvas(source, scale);
+
+        let current = source;
+        let currentScale = 1;
+
+        do
+        {
+            if(scale < 0.5 * currentScale)
+            {
+                current = AvatarImage.resizeCanvas(current, 0.5);
+                currentScale = 0.5 * currentScale;
+            }
+            else
+            {
+                current = AvatarImage.resizeCanvas(current, scale / currentScale);
+                currentScale = scale;
+            }
+        }
+        while(currentScale !== scale);
+
+        return current;
     }
 
     /**
@@ -801,7 +859,11 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             0, 0, cropWidth, cropHeight
         );
 
-        return Texture.from({resource: cropped, alphaMode: 'premultiply-alpha-on-upload'});
+        // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() -
+        // `if(param2 != 1) _loc12_ = class_2495.resampleBitmapData(_loc12_,param2);`
+        const resource = scale !== 1 ? AvatarImage.resampleCanvas(cropped, scale) : cropped;
+
+        return Texture.from({resource, alphaMode: 'premultiply-alpha-on-upload'});
     }
 
     // AS3: sources/win63_version/habbo/avatar/AvatarImage.as::getCroppedImage() — Rectangle.union()

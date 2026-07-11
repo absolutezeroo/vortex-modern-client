@@ -1,9 +1,6 @@
-import {Logger} from '@core/utils/Logger';
 import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
 import type {IHabboFreeFlowChat} from '../IHabboFreeFlowChat';
 import {ChatItem} from './ChatItem';
-
-const log = Logger.getLogger('ChatEventHandler');
 
 /**
  * Room chat event listener. Listens to RoomSessionChatEvent on the
@@ -73,10 +70,18 @@ export class ChatEventHandler
     {
         if(!this._freeFlowChat) return;
 
-        // TODO: When IRoomEngine.getRoomObject is available, resolve user location
-        // const roomObject = this._freeFlowChat.roomEngine?.getRoomObject(event.session.roomId, event.userId, 100);
-        // const userLocation = roomObject?.getLocation() ?? null;
-        const userLocation = null;
+        const senderData = this._freeFlowChat.roomSessionManager
+            ?.getSession(event.session.roomId)
+            ?.userDataManager.getUserDataByIndex(event.userId) ?? null;
+
+        if(senderData && this._freeFlowChat.sessionDataManager?.isBlocked(senderData.webID)) return;
+
+        // AS3 passes event.userId directly (not senderData.roomObjectId) as the
+        // object id here - in freeflowchat's RoomSessionChatEvent, userId already
+        // is the room-local object id, distinct from ChatBubbleFactory's use of
+        // userData.roomObjectId elsewhere for the same lookup.
+        const roomObject = this._freeFlowChat.roomEngine?.getRoomObject(event.session.roomId, event.userId, 100) ?? null;
+        const userLocation = roomObject?.getLocation() ?? null;
 
         const now = Math.floor(performance.now());
 

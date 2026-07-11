@@ -23,7 +23,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  */
 export class TextFieldController extends TextController implements ITextFieldWindow
 {
-    private static readonly WORD_DELIMS: RegExp = /[~%&!\\;:"',<>?#\s.\-()=\[\]{}\^_]/g;
+    private static readonly WORD_DELIMS: RegExp = /[~%&!\\;:"',<>?#\s.\-()=[\]{}^_]/g;
     protected _inputElement: HTMLInputElement | HTMLTextAreaElement | null = null;
     private _maxLength: number = 0;
     private _focusCapturer: boolean = false;
@@ -635,6 +635,24 @@ export class TextFieldController extends TextController implements ITextFieldWin
     }
 
     /**
+	 * Resolves a DOM `KeyboardEvent` to a Flash-style `charCode`.
+	 *
+	 * `KeyboardEvent.key` is the actual typed character for printable keys
+	 * (correctly case-sensitive/layout-aware, e.g. `'a'`/`'A'`/`' '`), but for
+	 * non-printable keys it's a multi-character name (`'Enter'`, `'Backspace'`,
+	 * `'Tab'`, ...) - naively taking `.charCodeAt(0)` of that name silently
+	 * produced the first letter's code instead (`'Enter'` -> `'E'` -> 69, not
+	 * 13), so e.g. RoomChatInputView's `charCode === 13` send-on-Enter check
+	 * never matched. Falls back to the legacy `keyCode` for those, which still
+	 * carries the expected control-character values (Enter=13, Backspace=8,
+	 * Tab=9, ...).
+	 */
+    private static resolveCharCode(e: KeyboardEvent): number
+    {
+        return e.key?.length === 1 ? e.key.charCodeAt(0) : (e.keyCode ?? 0);
+    }
+
+    /**
 	 * Dispatches a WKE_KEY_DOWN event through the window system.
 	 */
     private onKeyDownEvent(e: KeyboardEvent): void
@@ -648,7 +666,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
             const wke = WindowKeyboardEvent.allocateKeyboard(
                 WindowKeyboardEvent.KEY_DOWN,
                 e.keyCode ?? 0,
-                e.key?.charCodeAt(0) ?? 0,
+                TextFieldController.resolveCharCode(e),
                 this,
                 null,
                 e.altKey,
@@ -688,7 +706,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
             const wke = WindowKeyboardEvent.allocateKeyboard(
                 WindowKeyboardEvent.KEY_UP,
                 e.keyCode ?? 0,
-                e.key?.charCodeAt(0) ?? 0,
+                TextFieldController.resolveCharCode(e),
                 this,
                 null,
                 e.altKey,

@@ -451,6 +451,14 @@ export class PooledChatBubble extends Container
         return this._style?.overlap ?? null;
     }
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get scrolledUserPositionX()
+    get scrolledUserPositionX(): number
+    {
+        const offset = this._chatFlow?.roomEngine?.getRoomCanvasScreenOffset(this.roomId) ?? null;
+
+        return this.userScreenPos.x - (offset?.x ?? 0);
+    }
+
     get hasHitDesktopMargin(): boolean
     {
         return this._hasHitDesktopMargin;

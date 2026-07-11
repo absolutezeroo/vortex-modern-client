@@ -15,6 +15,7 @@ import type {IChatStyleInternal} from './visualization/style/IChatStyleInternal'
 import {PooledChatBubble} from './visualization/PooledChatBubble';
 import {ChatBubble} from './visualization/ChatBubble';
 import type {IUserData} from '@habbo/session/IUserData';
+import {HabboFaceFocuser} from '@habbo/utils/HabboFaceFocuser';
 
 const log = Logger.getLogger('ChatBubbleFactory');
 
@@ -28,14 +29,11 @@ const MAX_DISPOSABLE_BITMAPS = 30;
  * speaker's face image (avatar/pet), name, and the "special" system
  * messages (respect, handitem, mutetime, ping, pet events...) along the way.
  *
- * TODO(AS3): `getUserImage()`/`getPetImage()` always return null — same gap
- * documented in @habbo/ui/handler/ChatWidgetHandler.ts: avatar head-crop
- * needs a Texture→ImageBitmap conversion utility and a ported
- * HabboFaceFocuser, and `IRoomEngine.getPetImage()`/`PetFigureData` don't
- * exist yet. `PooledChatBubble`/`ChatHistoryEntryBitmapBubble`/
- * `ChatHistoryRoomChangeEntry` are structural stubs (visual composition —
- * `ChatBubble.as`, 511 lines — isn't ported); this factory resolves all the
- * real data (style, face, name, special content) and hands it to them.
+ * `getUserImage()` builds the bubble's avatar head-crop via
+ * `avatarRenderManager.createAvatarImage()` + `HabboFaceFocuser.focusUserFace()`.
+ * TODO(AS3): `getPetImage()` still always returns null — same gap documented
+ * in @habbo/ui/handler/ChatWidgetHandler.ts: `IRoomEngine.getPetImage()`/
+ * `PetFigureData` don't exist yet.
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as
  */
@@ -252,17 +250,43 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getUserImage()
-    // TODO(AS3): avatar head-crop for chat bubbles isn't wired — same gap documented in
-    // @habbo/ui/handler/ChatWidgetHandler.ts (IAvatarImage.getCroppedImage() returns a
-    // PixiJS Texture, not ImageBitmap; there's no conversion utility, and HabboFaceFocuser isn't ported).
-    getUserImage(_figureString: string): ImageBitmap | null
+    getUserImage(figureString: string): ImageBitmap | null
     {
-        return null;
+        let image = this._avatarImageCache.get(figureString) ?? null;
+
+        if(!image)
+        {
+            const zoomEnabled = this._chatFlow?.getBoolean('zoom.enabled') ?? false;
+            const avatarImage = this._chatFlow?.avatarRenderManager
+                ?.createAvatarImage(figureString, zoomEnabled ? 'h' : 'sh', '', this, null) ?? null;
+
+            if(avatarImage)
+            {
+                image = HabboFaceFocuser.focusUserFace(avatarImage, 'head', 2, zoomEnabled ? 0.5 : 1);
+
+                const partColor = avatarImage.getPartColor('ch');
+
+                avatarImage.dispose();
+
+                if(partColor) this._avatarColorCache.set(figureString, partColor.rgb);
+            }
+        }
+
+        if(image) this._avatarImageCache.set(figureString, image);
+
+        return image;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getPetImage()
-    // TODO(AS3): same gap as ChatWidgetHandler's getPetImage() — IRoomEngine.getPetImage()
-    // and PetFigureData aren't ported yet.
+    // TODO(AS3): same gap as ChatWidgetHandler's getPetImage() — genuinely blocked, not
+    // deferred out of laziness: AS3's real implementation needs
+    // roomEngine.getPetImage(typeId, paletteId, color, direction, size, listener,
+    // isSpecialType35, extraParam, customParts, posture), which doesn't exist anywhere in
+    // this port's IRoomEngine (confirmed via search — no pet sprite-composition/rendering
+    // code exists in habbo/room/ at all). `PetFigureData` (the figure-string parser AS3's
+    // version constructs here) does exist (habbo/avatar/pets/PetFigureData.ts), but that
+    // alone isn't enough - porting the actual pet avatar renderer is a separate, comparably
+    // sized feature to the avatar render manager itself, out of scope for chat bubbles.
     private getPetImage(_figureString: string, _direction: number, _sitting: boolean, _size: number, _posture: string | null): ImageBitmap | null
     {
         return null;

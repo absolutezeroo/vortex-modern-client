@@ -209,6 +209,16 @@ export class ChatStyleSelector implements IDisposable
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::set gridColumns()
+    // TS-only addition: also pins limits.maxWidth to the same value. The
+    // itemgrid_vertical layout node carries resize_on_item_update="true" (real
+    // AS3 layout data, not invented here), which grows the grid's own width by
+    // one cell every time addGridItem() creates a new column - so the wrap
+    // check in ItemGridController.resolveColumnForNextItem() (`... <= this._width`)
+    // was always comparing against a width that had *just* grown to fit one
+    // more column, and every style landed in a single ever-widening row
+    // instead of wrapping. Capping maxWidth here freezes the ceiling this
+    // property is meant to express without touching resize_on_item_update
+    // itself or any other ItemGridController consumer.
     set gridColumns(columns: number)
     {
         const grid = this._gridView?.grid;
@@ -216,8 +226,10 @@ export class ChatStyleSelector implements IDisposable
         if(!this._styleTemplateWindow || !grid) return;
 
         const cellWidth = this._styleTemplateWindow.width;
+        const width = columns > 1 ? (columns - 1) * (cellWidth + 1) + cellWidth : cellWidth + 16;
 
-        grid.width = columns > 1 ? (columns - 1) * (cellWidth + 1) + cellWidth : cellWidth + 16;
+        grid.width = width;
+        grid.limits.maxWidth = width;
     }
 
     private get selected(): ChatStyleGridEntry | null

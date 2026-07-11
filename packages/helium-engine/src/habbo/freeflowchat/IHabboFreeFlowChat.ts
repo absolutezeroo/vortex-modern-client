@@ -5,6 +5,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrary';
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IPoint} from '@room/utils/IRoomGeometry';
@@ -14,10 +15,18 @@ import type {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
 import type {ChatFlowViewer} from './viewer/ChatFlowViewer';
 
 /**
- * Mirrors AS3's roomChatSettings struct (a server-synced preference bundle:
- * bubble display mode, width, scroll speed). Not ported from a real incoming
- * message parser yet - defaults to null (AS3-faithful: every reader already
- * null-checks it) until that preferences message lands.
+ * Mirrors AS3's roomChatSettings struct (a preference bundle: bubble display
+ * mode, width, scroll speed). AS3 self-initializes this in its constructor
+ * (mode=0/free-flow, bubbleWidth=1/normal, scrollSpeed=1/normal) via
+ * refreshEffectiveChatSettings() - it is never actually null in practice, and
+ * this port matches that (see HabboFreeFlowChat's constructor). The account
+ * preferences message (onAccountPreferences()) is the only thing that
+ * updates these three away from that default once a real session connects.
+ *
+ * TODO(AS3): AS3's struct also carries `floodSensitivity`, set from two other
+ * message handlers (onRoomChatSettings()/onGuestRoomData()) neither of which
+ * are wired here - omitted from this interface since nothing in this port
+ * reads it yet (only mode/bubbleWidth/scrollSpeed feed ChatFlowStage/PooledChatBubble).
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatSettings()
  */
@@ -92,6 +101,20 @@ export interface IHabboFreeFlowChat
 	 * system chat messages (respect, handitem, mutetime, ping, pet events...).
 	 */
     readonly localizations: IHabboLocalizationManager | null;
+
+    /**
+	 * Avatar render manager, used by ChatBubbleFactory.getUserImage() to build
+	 * the head-only avatar image HabboFaceFocuser crops for a bubble's face slot.
+	 */
+    readonly avatarRenderManager: IAvatarRenderManager | null;
+
+    /**
+	 * Component.getBoolean() - exposed here since ChatBubbleFactory only ever
+	 * holds an IHabboFreeFlowChat reference. AS3's own getUserImage() reads
+	 * "zoom.enabled" straight off _SafeStr_4617 (the concrete HabboFreeFlowChat)
+	 * the same way.
+	 */
+    getBoolean(key: string): boolean;
 
     /**
 	 * Whether the room chat text field should be width-limited/bordered.

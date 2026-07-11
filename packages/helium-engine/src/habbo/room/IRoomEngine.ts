@@ -230,6 +230,19 @@ export interface IRoomEngine extends IDisposable
 	 */
     setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
 
+    /**
+	 * Mounts an externally-owned display object directly onto the PixiJS
+	 * stage, above every room rendering canvas already added.
+	 *
+	 * TS-only: no AS3 equivalent - see RoomEngine.ts's implementation for why.
+	 */
+    addStageChild(displayObject: Container): void;
+
+    /**
+	 * Removes a display object previously added via addStageChild().
+	 */
+    removeStageChild(displayObject: Container): void;
+
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
     getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null;
 

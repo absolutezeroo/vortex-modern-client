@@ -910,8 +910,13 @@ export class HeliumApp
         window.addEventListener('resize', this._onResize);
     }
 
-    /** Bound resize handler. */
-    private _onResize = (): void => 
+    /**
+     * Bound resize handler. Arrow-function class property misclassified as a
+     * "method" by the naming-convention rule (see ProductViewCatalogWidget.ts's
+     * _syncCanvasPositionBound for the same note).
+     */
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    private _onResize = (): void =>
     {
         this.resizeCanvas();
     };
@@ -1053,8 +1058,20 @@ export class HeliumApp
     }
 
     /** Canvas mousedown handler. */
-    private _onMouseDown = (e: MouseEvent): void => 
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- see _onResize's note
+    private _onMouseDown = (e: MouseEvent): void =>
     {
+        // <canvas> isn't natively focusable, so the browser's default mousedown
+        // action blurs whatever currently has DOM focus (moving it to <body>)
+        // once every listener on this event has run. That happens *after* the
+        // window-system dispatch below, which can synchronously call
+        // TextFieldController.focus() -> HTMLInputElement.focus() on a text
+        // field's hidden input — so without suppressing the browser's default,
+        // that focus call is immediately undone: the caret still renders (it's
+        // driven by this port's own internal focus flag) but document.activeElement
+        // reverts to <body>, so keystrokes never reach the hidden input at all.
+        e.preventDefault();
+
         const {x, y} = this.getCanvasCoords(e);
         const helium = Helium.instance;
         const hit = helium.windowManager.findWindowAtPoint(x, y);
@@ -1168,7 +1185,8 @@ export class HeliumApp
     };
 
     /** Canvas mousemove handler. */
-    private _onMouseMove = (e: MouseEvent): void => 
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- see _onResize's note
+    private _onMouseMove = (e: MouseEvent): void =>
     {
         const {x, y} = this.getCanvasCoords(e);
         const helium = Helium.instance;
@@ -1237,7 +1255,8 @@ export class HeliumApp
     };
 
     /** Canvas mouseup handler (fallback for non-drag scenarios). */
-    private _onMouseUp = (e: MouseEvent): void => 
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- see _onResize's note
+    private _onMouseUp = (e: MouseEvent): void =>
     {
         // If doc-level handlers are active, they handle the UP
         if(this._docUpHandler) return;
@@ -1278,7 +1297,8 @@ export class HeliumApp
     };
 
     /** Canvas wheel handler. */
-    private _onWheel = (e: WheelEvent): void => 
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- see _onResize's note
+    private _onWheel = (e: WheelEvent): void =>
     {
         const {x, y} = this.getCanvasCoords(e);
         const helium = Helium.instance;
@@ -1341,7 +1361,8 @@ export class HeliumApp
     };
 
     /** Prevent right-click context menu on the canvas. */
-    private _onContextMenu = (e: Event): void => 
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- see _onResize's note
+    private _onContextMenu = (e: Event): void =>
     {
         e.preventDefault();
     };
