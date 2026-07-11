@@ -49,7 +49,7 @@ import { MessageComposer } from '@core/communication/messages/MessageComposer';
 /**
  * Sends a request to open a flat connection.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/communication/messages/outgoing/room/OpenFlatConnectionMessageComposer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/outgoing/room/OpenFlatConnectionMessageComposer.as
  */
 export class OpenFlatConnectionMessageComposer extends MessageComposer<ConstructorParameters<typeof OpenFlatConnectionMessageComposer>>
 {
@@ -97,7 +97,7 @@ import type { IMessageParser } from '@core/communication/messages/IMessageParser
 /**
  * Parses room info data from the server.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/communication/messages/parser/room/RoomInfoParser.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/room/RoomInfoParser.as
  */
 export class RoomInfoParser implements IMessageParser
 {
@@ -170,7 +170,7 @@ import { RoomInfoParser } from './RoomInfoParser';
 /**
  * Event fired when room info is received.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/communication/messages/incoming/room/RoomInfoEvent.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/incoming/room/RoomInfoEvent.as
  */
 export class RoomInfoEvent extends MessageEvent implements IMessageEvent
 {
@@ -205,7 +205,7 @@ import type { IHabboCommunicationManager } from '@habbo/communication/IHabboComm
 /**
  * Manages room instances and their lifecycle.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/room/RoomManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as
  */
 export class RoomManager extends Component implements IRoomManager
 {
@@ -303,7 +303,7 @@ import type { IConnection } from '@core/communication/connections/IConnection';
 /**
  * Handles room-related messages from the server.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/session/handler/RoomDataHandler.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomDataHandler.as
  */
 export class RoomDataHandler
 {
@@ -372,7 +372,7 @@ import type { IMessageDataWrapper } from '@core/communication/messages/IMessageD
 /**
  * Represents a room entry from navigation results.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/navigator/RoomDataParser.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/RoomDataParser.as
  */
 export class RoomDataParser
 {
@@ -421,7 +421,7 @@ import type { IRoomInstance } from './IRoomInstance';
 /**
  * Interface for the room manager.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/room/IRoomManager.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomManager.as
  */
 export interface IRoomManager
 {
@@ -475,7 +475,7 @@ The Flash window/UI system is fully ported. UI windows are TypeScript classes us
 /**
  * Navigator search results window.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/navigator/NavigatorSearchResultsView.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/NavigatorSearchResultsView.as
  */
 export class NavigatorSearchResultsView
 {
@@ -1105,14 +1105,14 @@ export class RoomObject implements IRoomObjectController
 
 ```typescript
 /**
- * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/communication/messages/parser/handshake/AuthenticationOKMessageParser.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/handshake/AuthenticationOKMessageParser.as
  */
 ```
 
 ### Rules
 
 - Every class doc starts with "Based on AS3: `com.sulake.package.ClassName`"
-- Use `@see sources/win63_2026_crypted_version/src/com/sulake/...` for specific file references
+- Use `@see sources/WIN63-202607011411-782849652/src/com/sulake/...` for specific file references
 - IID files reference their AS3 counterpart: "Based on AS3: `com.sulake.iid.IIDRoomEngine`"
 - If no AS3 counterpart exists (new TypeScript-only class), omit the AS3 reference
 

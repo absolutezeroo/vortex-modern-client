@@ -2,7 +2,7 @@
 
 **Auteur :** Claude, à la demande de Clayton
 **Date :** 2026-07-08
-**Méthode :** Lecture directe du code TypeScript et comparaison manuelle avec `win63_2026_crypted_version` (source AS3 primaire). Ce rapport ne reprend **pas** le contenu de `docs/WIN63_DIVERGENCES_AUDIT.md` ni `docs/AUDIT_AS3_CONFORMITY.md` — ces documents auto-générés ont été utilisés une seule fois comme point de départ pour repérer des pistes, puis chaque piste a été vérifiée manuellement ligne par ligne. Une bonne partie de ce que ces docs signalent comme "divergence high" s'est révélé être du bruit (renommages, changements d'architecture volontaires) ; ce rapport ne liste que ce qui a été confirmé par lecture directe.
+**Méthode :** Lecture directe du code TypeScript et comparaison manuelle avec `WIN63-202607011411-782849652` (source AS3 primaire). Ce rapport ne reprend **pas** le contenu de `docs/WIN63_DIVERGENCES_AUDIT.md` ni `docs/AUDIT_AS3_CONFORMITY.md` — ces documents auto-générés ont été utilisés une seule fois comme point de départ pour repérer des pistes, puis chaque piste a été vérifiée manuellement ligne par ligne. Une bonne partie de ce que ces docs signalent comme "divergence high" s'est révélé être du bruit (renommages, changements d'architecture volontaires) ; ce rapport ne liste que ce qui a été confirmé par lecture directe.
 
 **Partie 1 — Périmètre :** `packages/helium-engine/src/core/window/**` et `packages/helium-engine/src/habbo/window/**`, hors parsers et sérialiseurs (`WindowParser.ts`, `WindowXmlAssetParser.ts`, `WindowLayoutXmlSerializer.ts`).
 

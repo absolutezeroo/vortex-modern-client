@@ -25,15 +25,15 @@ Enforcement rules live in `.claude/rules/` and are auto-loaded into every sessio
 
 | Directory                              | Priority    | Package roots                        | Files  |
 |-----------------------------------------|-------------|---------------------------------------|--------|
-| `sources/win63_2026_crypted_version/`   | **PRIMARY** | `src/com/sulake/{habbo,room,core,iid}/` | ~3,369 |
+| `sources/WIN63-202607011411-782849652/`   | **PRIMARY** | `src/com/sulake/{habbo,room,core,iid}/` | ~3,369 |
 | `sources/win63_version/`                | Secondary   | `habbo/`, `room/`                      | ~4,465 |
 | `sources/flash_version/`                | Tertiary    | `com/sulake/habbo/`                    | ~7,160 |
 
-`win63_2026_crypted_version` is a later, obfuscated client build and is the primary day-to-day reference. It mirrors `win63_version` one directory level deeper (`src/com/sulake/<module>/` instead of `<module>/`) and both trees line up 1:1 file-for-file. Where an identifier is obfuscated past readability (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path in `win63_version` to recover the real name — never invent one. Ignore the flat `_SafeCls_N.as` files directly under its `src/` root and everything under `src/unknowns/` (`_SafePkg_N/`) — that is an unrelated, fully-obfuscated module bundled in the same dump, not part of the Habbo client.
+`WIN63-202607011411-782849652` is a later, obfuscated client build and is the primary day-to-day reference. It mirrors `win63_version` one directory level deeper (`src/com/sulake/<module>/` instead of `<module>/`) and both trees line up 1:1 file-for-file. Where an identifier is obfuscated past readability (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path in `win63_version` to recover the real name — never invent one. Ignore the flat `_SafeCls_N.as` files directly under its `src/` root and everything under `src/unknowns/` (`_SafePkg_N/`) — that is an unrelated, fully-obfuscated module bundled in the same dump, not part of the Habbo client.
 
 `sources/win63_2023_version/` is not a code source — it is where the checked-in `binaryDataXml_organized/{layouts,skins}` window JSON assets are compiled from (see `packages/helium-client/tools/compile-window-*.mjs`). `sources/win63_2026_crypted_version/src/layouts/` and `src/_assets/` hold the same raw XML/PNG resources (same `$<hash>` filenames), but flat/unsorted — the compile scripts still default to `win63_2023_version` since it already has them split into `layouts/`/`skins/`/`non-layouts/`.
 
-Path mapping: `sources/win63_2026_crypted_version/src/com/sulake/<module>/` ↔ `sources/win63_version/<module>/` ↔ `sources/flash_version/com/sulake/habbo/<module>/`
+Path mapping: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/` ↔ `sources/win63_version/<module>/` ↔ `sources/flash_version/com/sulake/habbo/<module>/`
 
 ## Documentation
 

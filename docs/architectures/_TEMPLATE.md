@@ -2,7 +2,7 @@
 
 ## Overview
 
-What this module does, one paragraph. Which AS3 package it maps to (`sources/win63_2026_crypted_version/src/com/sulake/habbo/<module>/`, cross-referenced against `sources/win63_version/habbo/<module>/` for obfuscated names).
+What this module does, one paragraph. Which AS3 package it maps to (`sources/WIN63-202607011411-782849652/src/com/sulake/habbo/<module>/`, cross-referenced against `sources/win63_version/habbo/<module>/` for obfuscated names).
 
 ## AS3 class map
 
