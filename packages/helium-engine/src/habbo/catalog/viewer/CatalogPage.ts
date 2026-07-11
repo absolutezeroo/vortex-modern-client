@@ -36,6 +36,8 @@ import {BundlePurchaseExtraInfoWidget} from './widgets/BundlePurchaseExtraInfoWi
 import {ClubBuyCatalogWidget} from './widgets/ClubBuyCatalogWidget';
 import {VipBuyCatalogWidget} from './widgets/VipBuyCatalogWidget';
 import {LoyaltyVipBuyCatalogWidget} from './widgets/LoyaltyVipBuyCatalogWidget';
+import {MarketPlaceCatalogWidget} from './widgets/MarketPlaceCatalogWidget';
+import {MarketPlaceOwnItemsCatalogWidget} from './widgets/MarketPlaceOwnItemsCatalogWidget';
 import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
@@ -426,6 +428,12 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.VIP_GIFT:
                 this._widgets.push(new VipBuyCatalogWidget(window, this._catalog!, true));
+                break;
+            case CatalogWidgetName.MARKET_PLACE:
+                this._widgets.push(new MarketPlaceCatalogWidget(window));
+                break;
+            case CatalogWidgetName.MARKET_PLACE_OWN_ITEMS:
+                this._widgets.push(new MarketPlaceOwnItemsCatalogWidget(window));
                 break;
         }
     }

@@ -11,6 +11,7 @@ import type {IPurchasableOffer} from './IPurchasableOffer';
 import type {HabboCatalogUtils} from './HabboCatalogUtils';
 import type {ICatalogNavigator} from './navigation/ICatalogNavigator';
 import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
+import type {IMarketPlace} from './marketplace/IMarketPlace';
 
 /**
  * Interface for the Habbo catalog.
@@ -73,13 +74,15 @@ export interface IHabboCatalog
     getPurse(): IHabboCatalogPurse;
     getEarnings(): ICatalogEarnings;
     getRecycler(): unknown | null;
-    getMarketPlace(): unknown | null;
-    getPublicMarketPlaceOffers(minPrice: number, maxPrice: number, searchQuery: string, filter: number): void;
-    getOwnMarketPlaceOffers(): void;
+    getMarketPlace(): IMarketPlace | null;
+    getPublicMarketPlaceOffers(minPrice: number, maxPrice: number, searchString: string, category: number, combineUniques?: boolean): void;
+    getOwnMarketPlaceOffers(category?: number): void;
+    cancelAllMarketPlaceOffers(): void;
+    clearOwnMarketPlaceHistory(status: number): void;
     buyMarketPlaceOffer(offerId: number): void;
     redeemSoldMarketPlaceOffers(): void;
     redeemExpiredMarketPlaceOffer(offerId: number): void;
-    getMarketplaceItemStats(furniType: number, furniCategory: number): void;
+    getMarketplaceItemStats(category: number, furniId: number, extraData?: string | null): void;
     showNotEnoughCreditsAlert(): void;
     showNotEnoughActivityPointsAlert(activityPointType: number): void;
     getHabboClubOffers(clubType: number): void;

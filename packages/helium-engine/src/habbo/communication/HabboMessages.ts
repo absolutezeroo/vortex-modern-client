@@ -128,6 +128,18 @@ import {
     HabboClubExtendOfferMessageEvent,
 } from './messages/incoming/catalog';
 
+// Incoming Events - Marketplace
+import {
+    MarketPlaceOffersEvent,
+    MarketPlaceOwnOffersEvent,
+    MarketplaceBuyOfferResultEvent,
+    MarketplaceCancelOfferResultEvent,
+    MarketplaceCancelAllOffersResultEvent,
+    MarketplaceClearOwnHistoryResultEvent,
+    MarketplaceConfigurationEvent,
+    MarketplaceItemStatsEvent,
+} from './messages/incoming/marketplace';
+
 // Incoming Events - Landing View
 import {PromoArticlesMessageEvent, CommunityVoteReceivedEvent,} from './messages/incoming/landingview';
 
@@ -509,6 +521,19 @@ import {
     PurchaseBasicMembershipExtensionComposer,
     SelectClubGiftComposer,
 } from './messages/outgoing/catalog';
+
+// Outgoing Composers - Marketplace
+import {
+    GetMarketplaceConfigurationMessageComposer,
+    GetMarketplaceOffersMessageComposer,
+    GetMarketplaceOwnOffersMessageComposer,
+    CancelAllMarketplaceOffersMessageComposer,
+    ClearOwnMarketplaceHistoryMessageComposer,
+    BuyMarketplaceOfferMessageComposer,
+    RedeemMarketplaceOfferCreditsMessageComposer,
+    CancelMarketplaceOfferMessageComposer,
+    GetMarketplaceItemStatsComposer,
+} from './messages/outgoing/marketplace';
 
 // Outgoing Composers - Quest
 import {
@@ -931,6 +956,14 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2211, VoucherRedeemErrorMessageEvent);
         this._events.set(2426, HabboClubOffersMessageEvent);
         this._events.set(3509, HabboClubExtendOfferMessageEvent);
+        this._events.set(2442, MarketPlaceOffersEvent);
+        this._events.set(88, MarketPlaceOwnOffersEvent);
+        this._events.set(2249, MarketplaceBuyOfferResultEvent);
+        this._events.set(2448, MarketplaceCancelOfferResultEvent);
+        this._events.set(921, MarketplaceCancelAllOffersResultEvent);
+        this._events.set(1760, MarketplaceClearOwnHistoryResultEvent);
+        this._events.set(1397, MarketplaceConfigurationEvent);
+        this._events.set(2821, MarketplaceItemStatsEvent);
 
         // === QUEST ===
         this._events.set(2134, CommunityGoalHallOfFameMessageEvent);
@@ -1083,7 +1116,11 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3990, GetMOTDMessageComposer);
 
         // === TRACKING ===
-        this._composers.set(1242, LatencyPingRequestMessageComposer);
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // registers this composer's real class (_SafeCls_2653, confirmed via LatencyTracker.as's
+        // single-int-param usage) at 544, not 1242 - 1242 belongs to
+        // ClearOwnMarketplaceHistoryMessageComposer, a different composer in the same registry.
+        this._composers.set(544, LatencyPingRequestMessageComposer);
         this._composers.set(3636, LatencyPingReportMessageComposer);
         this._composers.set(879, LagWarningReportMessageComposer);
         this._composers.set(1536, PerformanceLogMessageComposer);
@@ -1189,6 +1226,16 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(415, PurchaseVipMembershipExtensionComposer);
         this._composers.set(3352, PurchaseBasicMembershipExtensionComposer);
         this._composers.set(227, SelectClubGiftComposer);
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        this._composers.set(780, GetMarketplaceConfigurationMessageComposer);
+        this._composers.set(2731, GetMarketplaceOffersMessageComposer);
+        this._composers.set(2086, GetMarketplaceOwnOffersMessageComposer);
+        this._composers.set(831, CancelAllMarketplaceOffersMessageComposer);
+        this._composers.set(1242, ClearOwnMarketplaceHistoryMessageComposer);
+        this._composers.set(252, BuyMarketplaceOfferMessageComposer);
+        this._composers.set(3546, RedeemMarketplaceOfferCreditsMessageComposer);
+        this._composers.set(2096, CancelMarketplaceOfferMessageComposer);
+        this._composers.set(1552, GetMarketplaceItemStatsComposer);
 
         // === QUEST ===
         this._composers.set(1034, GetCommunityGoalHallOfFameMessageComposer);

@@ -18,58 +18,58 @@ import {HsvLayerColor} from './HsvLayerColor';
  * - `fillRect()` → `ctx.fillRect()`
  * - `colorTransform()` → `ctx.globalCompositeOperation = 'multiply'`
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as
  */
-export class BitmapSkinRenderer extends SkinRenderer
+export class BitmapSkinRenderer extends SkinRenderer 
 {
     /** Bitmap cache: "entityName@templateName" → OffscreenCanvas crop. */
     private _bitmapCache: Map<string, OffscreenCanvas> = new Map();
 
-    constructor(name: string)
+    constructor(name: string) 
     {
         super(name);
     }
 
     /**
-	 * Draws the skin for the given window state.
-	 *
-	 * Algorithm (faithful port of AS3 BitmapSkinRenderer.draw):
-	 * 1. Resolve state → layout + template (fallback to state 0)
-	 * 2. Compute deltaW/deltaH (target size - layout base size)
-	 * 3. For each layout entity, apply scale mode and draw from atlas
-	 * 4. Colorize if needed
-	 *
-	 * @param window - The window to render
-	 * @param ctx - The canvas context to draw into
-	 * @param rect - The target rectangle
-	 * @param state - The resolved window state
-	 * @param _colorize - Colorization flag (unused, window.color is checked directly)
-	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::draw()
+     * Draws the skin for the given window state.
+     *
+     * Algorithm (faithful port of AS3 BitmapSkinRenderer.draw):
+     * 1. Resolve state → layout + template (fallback to state 0)
+     * 2. Compute deltaW/deltaH (target size - layout base size)
+     * 3. For each layout entity, apply scale mode and draw from atlas
+     * 4. Colorize if needed
+     *
+     * @param window - The window to render
+     * @param ctx - The canvas context to draw into
+     * @param rect - The target rectangle
+     * @param state - The resolved window state
+     * @param _colorize - Colorization flag (unused, window.color is checked directly)
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::draw()
     public override draw(
         window: IWindow,
         ctx: OffscreenCanvasRenderingContext2D,
         rect: { x: number; y: number; width: number; height: number },
         state: number,
         _colorize: boolean
-    ): void
+    ): void 
     {
         // Resolve layout and template for this state, fallback to DEFAULT (0)
         let layout = this.getLayoutByState(state);
         let template = this.getTemplateByState(state);
 
-        if(!layout || !template)
+        if(!layout || !template) 
         {
             layout = this.getLayoutByState(0);
             template = this.getTemplateByState(0);
         }
 
-        if(!layout || !template)
+        if(!layout || !template) 
         {
             return;
         }
 
-        if(!template.atlas)
+        if(!template.atlas) 
         {
             return;
         }
@@ -91,7 +91,7 @@ export class BitmapSkinRenderer extends SkinRenderer
         const colorB = doColorize ? (color & 0xFF) / 255 : 1;
 
         // Render each layout entity
-        for(let i = 0; i < layout.numEntities; i++)
+        for(let i = 0; i < layout.numEntities; i++) 
         {
             const layoutEntity = layout.getEntityAt(i);
             const templateEntity = template.getEntityByName(layoutEntity.name);
@@ -115,7 +115,7 @@ export class BitmapSkinRenderer extends SkinRenderer
             let destH = layoutEntity.region.height;
 
             // Apply horizontal scale mode
-            switch(layoutEntity.scaleH)
+            switch(layoutEntity.scaleH) 
             {
                 case SkinLayoutEntity.SCALE_FIXED:
                     break;
@@ -134,7 +134,7 @@ export class BitmapSkinRenderer extends SkinRenderer
             }
 
             // Apply vertical scale mode
-            switch(layoutEntity.scaleV)
+            switch(layoutEntity.scaleV) 
             {
                 case SkinLayoutEntity.SCALE_FIXED:
                     break;
@@ -158,7 +158,7 @@ export class BitmapSkinRenderer extends SkinRenderer
             // falling back to the regular "multiply" colorize otherwise.
             let drawSource: OffscreenCanvas | ImageBitmap = piece;
 
-            if(!window.background && layoutEntity.colorize && layoutEntity.colorizeMethod === SkinLayoutEntity.COLORIZE_METHOD_HSV_LAYER)
+            if(!window.background && layoutEntity.colorize && layoutEntity.colorizeMethod === SkinLayoutEntity.COLORIZE_METHOD_HSV_LAYER) 
             {
                 const derived = HsvLayerColor.deriveColor(color, layoutEntity.shade);
                 const r = ((derived >> 16) & 0xFF) / 255;
@@ -167,7 +167,7 @@ export class BitmapSkinRenderer extends SkinRenderer
 
                 drawSource = this.colorizeEntity(piece, srcW, srcH, r, g, b);
             }
-            else if(doColorize && layoutEntity.colorize)
+            else if(doColorize && layoutEntity.colorize) 
             {
                 drawSource = this.colorizeEntity(piece, srcW, srcH, colorR, colorG, colorB);
             }
@@ -184,19 +184,19 @@ export class BitmapSkinRenderer extends SkinRenderer
             const tiled = layoutEntity.scaleH === SkinLayoutEntity.SCALE_TILED || layoutEntity.scaleV === SkinLayoutEntity.SCALE_TILED;
             const stretched = layoutEntity.scaleH === SkinLayoutEntity.SCALE_STRETCH || layoutEntity.scaleV === SkinLayoutEntity.SCALE_STRETCH;
 
-            if(tiled)
+            if(tiled) 
             {
                 if(destW < 1 || destH < 1) continue;
 
                 this.drawTiled(ctx, drawSource, srcW, srcH, destX, destY, destW, destH);
             }
-            else if(stretched)
+            else if(stretched) 
             {
                 if(destW < 1 || destH < 1) continue;
 
                 ctx.drawImage(drawSource, 0, 0, srcW, srcH, destX, destY, destW, destH);
             }
-            else
+            else 
             {
                 // No scale mode calls for resizing — direct unscaled copy at native size
                 ctx.drawImage(drawSource, 0, 0, srcW, srcH, destX, destY, srcW, srcH);
@@ -204,7 +204,7 @@ export class BitmapSkinRenderer extends SkinRenderer
         }
     }
 
-    public override dispose(): void
+    public override dispose(): void 
     {
         if(this._disposed) return;
 
@@ -214,15 +214,15 @@ export class BitmapSkinRenderer extends SkinRenderer
     }
 
     /**
-	 * Gets or creates a cached bitmap piece for a template entity.
-	 *
-	 * Key format: "entityName@templateName"
-	 *
-	 * @param template - The skin template
-	 * @param entity - The template entity
-	 * @returns The cropped OffscreenCanvas piece, or null
-	 */
-    private getBitmapFromCache(template: SkinTemplate, entity: SkinTemplateEntity): OffscreenCanvas | null
+     * Gets or creates a cached bitmap piece for a template entity.
+     *
+     * Key format: "entityName@templateName"
+     *
+     * @param template - The skin template
+     * @param entity - The template entity
+     * @returns The cropped OffscreenCanvas piece, or null
+     */
+    private getBitmapFromCache(template: SkinTemplate, entity: SkinTemplateEntity): OffscreenCanvas | null 
     {
         const key = `${entity.name}@${template.name}`;
 
@@ -253,19 +253,19 @@ export class BitmapSkinRenderer extends SkinRenderer
     }
 
     /**
-	 * Creates a colorized copy of a bitmap piece.
-	 *
-	 * Uses canvas composite 'multiply' to apply the color,
-	 * then 'destination-in' to restore the alpha channel.
-	 *
-	 * @param piece - The source piece
-	 * @param width - The piece width
-	 * @param height - The piece height
-	 * @param r - Red multiplier (0-1)
-	 * @param g - Green multiplier (0-1)
-	 * @param b - Blue multiplier (0-1)
-	 * @returns The colorized piece
-	 */
+     * Creates a colorized copy of a bitmap piece.
+     *
+     * Uses canvas composite 'multiply' to apply the color,
+     * then 'destination-in' to restore the alpha channel.
+     *
+     * @param piece - The source piece
+     * @param width - The piece width
+     * @param height - The piece height
+     * @param r - Red multiplier (0-1)
+     * @param g - Green multiplier (0-1)
+     * @param b - Blue multiplier (0-1)
+     * @returns The colorized piece
+     */
     private colorizeEntity(
         piece: OffscreenCanvas,
         width: number,
@@ -273,7 +273,7 @@ export class BitmapSkinRenderer extends SkinRenderer
         r: number,
         g: number,
         b: number
-    ): OffscreenCanvas
+    ): OffscreenCanvas 
     {
         const canvas = new OffscreenCanvas(width, height);
         const ctx = canvas.getContext('2d');
@@ -298,17 +298,17 @@ export class BitmapSkinRenderer extends SkinRenderer
     }
 
     /**
-	 * Draws a source tiled across the destination area.
-	 *
-	 * @param ctx - The target context
-	 * @param source - The source bitmap
-	 * @param srcW - Source width
-	 * @param srcH - Source height
-	 * @param destX - Destination X
-	 * @param destY - Destination Y
-	 * @param destW - Destination width
-	 * @param destH - Destination height
-	 */
+     * Draws a source tiled across the destination area.
+     *
+     * @param ctx - The target context
+     * @param source - The source bitmap
+     * @param srcW - Source width
+     * @param srcH - Source height
+     * @param destX - Destination X
+     * @param destY - Destination Y
+     * @param destW - Destination width
+     * @param destH - Destination height
+     */
     private drawTiled(
         ctx: OffscreenCanvasRenderingContext2D,
         source: OffscreenCanvas | ImageBitmap,
@@ -318,16 +318,16 @@ export class BitmapSkinRenderer extends SkinRenderer
         destY: number,
         destW: number,
         destH: number
-    ): void
+    ): void 
     {
         ctx.save();
         ctx.beginPath();
         ctx.rect(destX, destY, destW, destH);
         ctx.clip();
 
-        for(let ty = 0; ty < destH; ty += srcH)
+        for(let ty = 0; ty < destH; ty += srcH) 
         {
-            for(let tx = 0; tx < destW; tx += srcW)
+            for(let tx = 0; tx < destW; tx += srcW) 
             {
                 const drawW = Math.min(srcW, destW - tx);
                 const drawH = Math.min(srcH, destH - ty);

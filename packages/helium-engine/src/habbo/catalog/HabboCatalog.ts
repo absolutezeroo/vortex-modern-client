@@ -72,6 +72,27 @@ import type {ClubGiftInfoEventParser} from '@habbo/communication/messages/parser
 import {ClubBuyController} from './club/ClubBuyController';
 import {ClubExtendController} from './club/ClubExtendController';
 import {ClubGiftController} from './club/ClubGiftController';
+import type {IMarketPlace} from './marketplace/IMarketPlace';
+import {MarketPlaceLogic} from './marketplace/MarketPlaceLogic';
+import {GetMarketplaceOffersMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/GetMarketplaceOffersMessageComposer';
+import {GetMarketplaceOwnOffersMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/GetMarketplaceOwnOffersMessageComposer';
+import {CancelAllMarketplaceOffersMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/CancelAllMarketplaceOffersMessageComposer';
+import {ClearOwnMarketplaceHistoryMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/ClearOwnMarketplaceHistoryMessageComposer';
+import {BuyMarketplaceOfferMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/BuyMarketplaceOfferMessageComposer';
+import {RedeemMarketplaceOfferCreditsMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/RedeemMarketplaceOfferCreditsMessageComposer';
+import {CancelMarketplaceOfferMessageComposer} from '@habbo/communication/messages/outgoing/marketplace/CancelMarketplaceOfferMessageComposer';
+import {GetMarketplaceItemStatsComposer} from '@habbo/communication/messages/outgoing/marketplace/GetMarketplaceItemStatsComposer';
+import {MarketPlaceOffersEvent} from '@habbo/communication/messages/incoming/marketplace/MarketPlaceOffersEvent';
+import {MarketPlaceOwnOffersEvent} from '@habbo/communication/messages/incoming/marketplace/MarketPlaceOwnOffersEvent';
+import {MarketplaceBuyOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceBuyOfferResultEvent';
+import {MarketplaceCancelOfferResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCancelOfferResultEvent';
+import {MarketplaceCancelAllOffersResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceCancelAllOffersResultEvent';
+import {MarketplaceClearOwnHistoryResultEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceClearOwnHistoryResultEvent';
+import {MarketplaceConfigurationEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceConfigurationEvent';
+import type {MarketplaceConfigurationEventParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceConfigurationEventParser';
+import {MarketplaceItemStatsEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceItemStatsEvent';
+import type {MarketplaceItemStatsEventParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceItemStatsEventParser';
+import {MarketplaceItemStats} from './marketplace/MarketplaceItemStats';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import {PurchaseConfirmationDialog} from './purchase/PurchaseConfirmationDialog';
@@ -122,6 +143,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _clubExtendController: ClubExtendController | null = null;
 
     private _clubGiftController: ClubGiftController | null = null;
+
+    private _marketPlace: MarketPlaceLogic | null = null;
     private _earnings: CatalogEarnings = new CatalogEarnings();
     private _purchaseWillBeGift: boolean = false;
     private _purchaseConfirmationDialog: PurchaseConfirmationDialog | null = null;
@@ -892,38 +915,73 @@ export class HabboCatalog extends Component implements IHabboCatalog
         return this._earnings;
     }
 
-    public getRecycler(): unknown | null 
+    public getRecycler(): unknown | null
     {
         return null;
     }
 
-    public getMarketPlace(): unknown | null 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketPlace()
+    public getMarketPlace(): IMarketPlace | null
     {
-        return null;
+        return this._marketPlace;
     }
 
-    public getPublicMarketPlaceOffers(_minPrice: number, _maxPrice: number, _searchQuery: string, _filter: number): void 
+    private createMarketPlace(): void
     {
+        if(this._marketPlace == null && this._windowManager != null && this._roomEngine != null)
+        {
+            this._marketPlace = new MarketPlaceLogic(this, this._windowManager, this._roomEngine);
+        }
     }
 
-    public getOwnMarketPlaceOffers(): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getPublicMarketPlaceOffers()
+    public getPublicMarketPlaceOffers(minPrice: number, maxPrice: number, searchString: string, category: number, combineUniques: boolean = true): void
     {
+        this.connection?.send(new GetMarketplaceOffersMessageComposer(minPrice, maxPrice, searchString, category, combineUniques));
     }
 
-    public buyMarketPlaceOffer(_offerId: number): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getOwnMarketPlaceOffers()
+    public getOwnMarketPlaceOffers(category: number = 1): void
     {
+        this.connection?.send(new GetMarketplaceOwnOffersMessageComposer(category));
     }
 
-    public redeemSoldMarketPlaceOffers(): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::cancelAllMarketPlaceOffers()
+    public cancelAllMarketPlaceOffers(): void
     {
+        this.connection?.send(new CancelAllMarketplaceOffersMessageComposer());
     }
 
-    public redeemExpiredMarketPlaceOffer(_offerId: number): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::clearOwnMarketPlaceHistory()
+    public clearOwnMarketPlaceHistory(status: number): void
     {
+        this.connection?.send(new ClearOwnMarketplaceHistoryMessageComposer(status));
     }
 
-    public getMarketplaceItemStats(_furniType: number, _furniCategory: number): void 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::buyMarketPlaceOffer()
+    public buyMarketPlaceOffer(offerId: number): void
     {
+        this.connection?.send(new BuyMarketplaceOfferMessageComposer(offerId));
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemSoldMarketPlaceOffers()
+    public redeemSoldMarketPlaceOffers(): void
+    {
+        this.connection?.send(new RedeemMarketplaceOfferCreditsMessageComposer());
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::redeemExpiredMarketPlaceOffer()
+    public redeemExpiredMarketPlaceOffer(offerId: number): void
+    {
+        this.connection?.send(new CancelMarketplaceOfferMessageComposer(offerId));
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketplaceItemStats()
+    public getMarketplaceItemStats(category: number, furniId: number, extraData: string | null = null): void
+    {
+        if(!this._communication) return;
+
+        this.connection?.send(new GetMarketplaceItemStatsComposer(category, furniId, extraData));
     }
 
     public showNotEnoughCreditsAlert(): void 
@@ -1056,6 +1114,14 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new HabboClubOffersMessageEvent(this.onHabboClubOffers.bind(this)));
         this.addMessageEvent(new HabboClubExtendOfferMessageEvent(this.onHabboClubExtendOffer.bind(this)));
         this.addMessageEvent(new ClubGiftInfoEvent(this.onClubGiftInfo.bind(this)));
+        this.addMessageEvent(new MarketPlaceOffersEvent(this.onMarketPlaceOffers.bind(this)));
+        this.addMessageEvent(new MarketPlaceOwnOffersEvent(this.onMarketPlaceOwnOffers.bind(this)));
+        this.addMessageEvent(new MarketplaceBuyOfferResultEvent(this.onMarketPlaceBuyResult.bind(this)));
+        this.addMessageEvent(new MarketplaceCancelOfferResultEvent(this.onMarketPlaceCancelResult.bind(this)));
+        this.addMessageEvent(new MarketplaceCancelAllOffersResultEvent(this.onMarketPlaceCancelAllResult.bind(this)));
+        this.addMessageEvent(new MarketplaceClearOwnHistoryResultEvent(this.onMarketPlaceClearOwnHistoryResult.bind(this)));
+        this.addMessageEvent(new MarketplaceConfigurationEvent(this.onMarketplaceConfiguration.bind(this)));
+        this.addMessageEvent(new MarketplaceItemStatsEvent(this.onMarketplaceItemStats.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 
@@ -1084,6 +1150,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.createClubGiftController();
         this.createClubBuyController();
         this.createClubExtendController();
+        this.createMarketPlace();
         this._initialized = true;
         this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));
         this.connection?.send(new BuildersClubQueryFurniCountMessageComposer());
@@ -1516,6 +1583,78 @@ export class HabboCatalog extends Component implements IHabboCatalog
         if(!parser) return;
 
         this._clubGiftController.setInfo(parser.daysUntilNextGift, parser.giftsAvailable, parser.offers, parser.giftData);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceOffers()
+    private onMarketPlaceOffers(event: IMessageEvent): void
+    {
+        this._marketPlace?.onOffers(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceOwnOffers()
+    private onMarketPlaceOwnOffers(event: IMessageEvent): void
+    {
+        this._marketPlace?.onOwnOffers(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceBuyResult()
+    private onMarketPlaceBuyResult(event: IMessageEvent): void
+    {
+        this._marketPlace?.onBuyResult(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceCancelResult()
+    private onMarketPlaceCancelResult(event: IMessageEvent): void
+    {
+        this._marketPlace?.onCancelResult(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceCancelAllResult()
+    private onMarketPlaceCancelAllResult(event: IMessageEvent): void
+    {
+        this._marketPlace?.onCancelAllResult(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketPlaceClearOwnHistoryResult()
+    private onMarketPlaceClearOwnHistoryResult(event: IMessageEvent): void
+    {
+        this._marketPlace?.onClearOwnHistoryResult(event);
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceItemStats()
+    private onMarketplaceItemStats(event: IMessageEvent): void
+    {
+        if(!event || !this._marketPlace) return;
+
+        const parser = event.parser as MarketplaceItemStatsEventParser | null;
+
+        if(!parser) return;
+
+        const stats = new MarketplaceItemStats();
+
+        stats.averagePrice = parser.averagePrice;
+        stats.offerCount = parser.offerCount;
+        stats.historyLength = parser.historyLength;
+        stats.dayOffsets = parser.dayOffsets;
+        stats.averagePrices = parser.averagePrices;
+        stats.soldAmounts = parser.soldAmounts;
+        stats.furniCategoryId = parser.furniCategoryId;
+        stats.furniTypeId = parser.furniTypeId;
+        stats.lowestCurrentPrice = parser.lowestCurrentPrice;
+        stats.suggestedPrice = parser.suggestedPrice;
+        this._marketPlace.itemStats = stats;
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceConfiguration()
+    private onMarketplaceConfiguration(event: IMessageEvent): void
+    {
+        if(!event || !this._marketPlace) return;
+
+        const parser = event.parser as MarketplaceConfigurationEventParser | null;
+
+        if(!parser) return;
+
+        this._marketPlace.averagePricePeriod = parser.averagePricePeriod;
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::alertDialogEventProcessor()

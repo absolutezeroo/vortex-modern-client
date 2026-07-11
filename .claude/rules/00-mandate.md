@@ -3,7 +3,7 @@
 Before writing any implementation code, you MUST complete these steps IN ORDER:
 
 1. **Read the AS3 source file** — Find and read the corresponding AS3 file IN ITS ENTIRETY
-   - Primary: `sources/win63_2026_crypted_version/src/com/sulake/<module>/<Class>.as` — if an identifier is obfuscated (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path one level up (`sources/win63_version/<module>/<Class>.as`) to recover the real name; never invent one
+   - Primary: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/<Class>.as` — if an identifier is obfuscated (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path one level up (`sources/win63_version/<module>/<Class>.as`) to recover the real name; never invent one
    - Secondary: `sources/win63_version/<module>/<Class>.as`
    - Tertiary: `sources/flash_version/com/sulake/habbo/<module>/<Class>.as`
 2. **Read the AS3 interface** — `I<Class>.as` + `handler/` directory if present
