@@ -13,3 +13,5 @@ export * from './PurchaseNotAllowedMessageEvent';
 export * from './NotEnoughBalanceMessageEvent';
 export * from './LimitedOfferAppearingNextMessageEvent';
 export * from './CatalogPageWithEarliestExpiryMessageEvent';
+export * from './VoucherRedeemOkMessageEvent';
+export * from './VoucherRedeemErrorMessageEvent';

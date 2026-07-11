@@ -7,3 +7,4 @@ export * from './PurchaseFromCatalogComposer';
 export * from './BuildersClubQueryFurniCountMessageComposer';
 export * from './GetLimitedOfferAppearingNextComposer';
 export * from './GetCatalogPageWithEarliestExpiryComposer';
+export * from './RedeemVoucherMessageComposer';

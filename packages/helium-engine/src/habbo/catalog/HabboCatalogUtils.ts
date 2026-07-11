@@ -39,6 +39,10 @@ export class HabboCatalogUtils implements IGetImageListener
     // discount steps apply, matching AS3's own default before that message arrives.
     private _bundleDiscountFlatPriceSteps: number[] = [];
 
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::_bundleDiscountHighestFlatPriceStep
+    // Same not-yet-parsed config message as _bundleDiscountFlatPriceSteps above.
+    private _bundleDiscountHighestFlatPriceStep: number = 0;
+
     constructor(catalog: HabboCatalog)
     {
         this._catalog = catalog;
@@ -321,6 +325,37 @@ export class HabboCatalogUtils implements IGetImageListener
     get bundleDiscountFlatPriceSteps(): number[]
     {
         return this._bundleDiscountFlatPriceSteps;
+    }
+
+    // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalogUtils.as::get bundleDiscountHighestFlatPriceStep()
+    // Only ever set by resolveBundleDiscountFlatPriceSteps() (same not-yet-parsed config message
+    // as _bundleDiscountFlatPriceSteps above), which isn't called anywhere in this port yet -
+    // defaulting to 0 matches AS3's own pre-resolve default.
+    get bundleDiscountHighestFlatPriceStep(): number
+    {
+        return this._bundleDiscountHighestFlatPriceStep;
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::spinnerValueChangedEventTrack()
+    // TS simplification: AS3 hand-rolls a "log once" boolean flag per method, identical to what
+    // HabboTracking.trackEventLogOncePerSession() already generalizes (keyed by type+value+unit) -
+    // since one HabboCatalogUtils instance lives exactly as long as one HabboCatalog/session, the
+    // two scopes are equivalent here, so this delegates instead of duplicating the flag fields.
+    spinnerValueChangedEventTrack(): void
+    {
+        this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'spinnerValueChanged', 'client.bundle.discounts');
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::bundlesInfoShownEventTrack()
+    bundlesInfoShownEventTrack(): void
+    {
+        this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'bundlesInfoOpened', 'client.bundle.discounts');
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::discountShownEventTrack()
+    discountShownEventTrack(): void
+    {
+        this._catalog?.tracking?.trackEventLogOncePerSession('Catalog', 'discountItemShown', 'client.bundle.discounts');
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalogUtils.as::showExtraOnProduct()

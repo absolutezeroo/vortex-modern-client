@@ -7,7 +7,17 @@ export class ExtraInfoItemData
 {
     static readonly TYPE_PROMO: number = 0;
 
+    static readonly TYPE_BUNDLES_INFO_SCREEN: number = 1;
+
+    // TS-only names: the real AS3 identifiers for type values 2 and 4 are unrecoverable (generic
+    // decompiler names in all three source trees - _SafeStr_11302/const_211/_Str_14097 for 2,
+    // _SafeStr_11722/const_501/_Str_18371 for 4). Derived from ExtraInfoViewManager.as::addItem()'s
+    // switch, which unambiguously maps 2 -> ExtraInfoDiscountValueItem and 4 -> ExtraInfoBonusAchievementItem.
+    static readonly TYPE_DISCOUNT_VALUE: number = 2;
+
     static readonly TYPE_BONUS_BADGE: number = 3;
+
+    static readonly TYPE_BONUS_ACHIEVEMENT: number = 4;
 
     static readonly TYPE_RESET_MESSAGE: number = 5;
 

@@ -30,6 +30,9 @@ import {FeaturedItemsCatalogWidget} from './widgets/FeaturedItemsCatalogWidget';
 import {ColourGridCatalogWidget} from './widgets/ColourGridCatalogWidget';
 import {BundleGridViewCatalogWidget} from './widgets/BundleGridViewCatalogWidget';
 import {ActivityPointDisplayCatalogWidget} from './widgets/ActivityPointDisplayCatalogWidget';
+import {RedeemItemCodeCatalogWidget} from './widgets/RedeemItemCodeCatalogWidget';
+import {SpacesNewCatalogWidget} from './widgets/SpacesNewCatalogWidget';
+import {BundlePurchaseExtraInfoWidget} from './widgets/BundlePurchaseExtraInfoWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
 
@@ -310,13 +313,13 @@ export class CatalogPage implements ICatalogPage
     }
 
     // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // 20 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
+    // 23 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
     // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
     // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/
     // soldLtdItemsWidget/madMoneyWidget/addOnBadgeViewWidget/featuredItemsWidget/colourGridWidget/
-    // bundleGridScrollWidget/activityPointDisplayWidget) - the rest (spacesNewWidget, trophyWidget,
-    // ...) fall through and are silently skipped, matching AS3's own switch (no default case =
-    // unmatched names do nothing).
+    // bundleGridScrollWidget/activityPointDisplayWidget/redeemItemCodeWidget/spacesNewWidget/
+    // bundlePurchaseExtraInfoWidget) - the rest (trophyWidget, ...) fall through and are silently
+    // skipped, matching AS3's own switch (no default case = unmatched names do nothing).
     private createWidget(window: IWindowContainer): void
     {
         switch(window.name)
@@ -389,6 +392,20 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.ACTIVITY_POINT_DISPLAY:
                 this._widgets.push(new ActivityPointDisplayCatalogWidget(window));
+                break;
+            case CatalogWidgetName.REDEEM_ITEM_CODE:
+                this._widgets.push(new RedeemItemCodeCatalogWidget(window));
+                break;
+            case CatalogWidgetName.SPACES_NEW:
+                this._widgets.push(new SpacesNewCatalogWidget(
+                    window,
+                    this._catalog!.sessionDataManager as ISessionDataManager,
+                    this._catalog!.catalogType
+                ));
+
+                break;
+            case CatalogWidgetName.BUNDLE_PURCHASE_EXTRA_INFO:
+                this._widgets.push(new BundlePurchaseExtraInfoWidget(window, this._catalog!));
                 break;
         }
     }

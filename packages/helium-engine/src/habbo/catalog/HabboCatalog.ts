@@ -23,7 +23,9 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
+import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
 import {CreditBalanceEvent} from '@habbo/communication/messages/incoming/inventory/purse/CreditBalanceEvent';
@@ -53,7 +55,13 @@ import type {
 } from '@habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser';
 import {GetCatalogIndexComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogIndexComposer';
 import {BuildersClubQueryFurniCountMessageComposer} from '@habbo/communication/messages/outgoing/catalog/BuildersClubQueryFurniCountMessageComposer';
+import {RedeemVoucherMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RedeemVoucherMessageComposer';
+import {VoucherRedeemOkMessageEvent} from '@habbo/communication/messages/incoming/catalog/VoucherRedeemOkMessageEvent';
+import type {VoucherRedeemOkMessageEventParser} from '@habbo/communication/messages/parser/catalog/VoucherRedeemOkMessageEventParser';
+import {VoucherRedeemErrorMessageEvent} from '@habbo/communication/messages/incoming/catalog/VoucherRedeemErrorMessageEvent';
+import type {VoucherRedeemErrorMessageEventParser} from '@habbo/communication/messages/parser/catalog/VoucherRedeemErrorMessageEventParser';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
+import type {IDisposable} from '@core/runtime/IDisposable';
 import {PurchaseConfirmationDialog} from './purchase/PurchaseConfirmationDialog';
 import type {IHabboCatalog} from './IHabboCatalog';
 import type {IPurchasableOffer} from './IPurchasableOffer';
@@ -86,6 +94,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
 {
     private _communication: IHabboCommunicationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
+
+    private _tracking: IHabboTracking | null = null;
     private _mainWindow: IWindowContainer | null = null;
     private _catalogNavigators: Map<string, CatalogNavigator> | null = null;
     private _catalogViewer: CatalogViewer | null = null;
@@ -108,6 +118,15 @@ export class HabboCatalog extends Component implements IHabboCatalog
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    // TS-only: no direct AS3 equivalent (AS3's HabboTracking is reached via a global singleton,
+    // HabboTracking.getInstance()) - exposed here so HabboCatalogUtils's
+    // spinnerValueChangedEventTrack()/bundlesInfoShownEventTrack()/discountShownEventTrack() can
+    // reach it through the existing DI ComponentDependency pattern instead.
+    get tracking(): IHabboTracking | null
+    {
+        return this._tracking;
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get mainContainer()
@@ -338,10 +357,18 @@ export class HabboCatalog extends Component implements IHabboCatalog
 
                     this._toolbar = toolbar;
 
-                    if(toolbar) 
+                    if(toolbar)
                     {
                         toolbar.toolbarEvents.on(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
                     }
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboTracking,
+                (tracking: IHabboTracking | null) =>
+                {
+                    this._tracking = tracking;
                 },
                 false
             ),
@@ -472,8 +499,10 @@ export class HabboCatalog extends Component implements IHabboCatalog
         }
     }
 
-    public redeemVoucher(_voucher: string): void 
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::redeemVoucher()
+    public redeemVoucher(voucher: string): void
     {
+        this.connection?.send(new RedeemVoucherMessageComposer(voucher));
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::loadCatalogPage()
@@ -910,6 +939,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
+        this.addMessageEvent(new VoucherRedeemOkMessageEvent(this.onVoucherRedeemOk.bind(this)));
+        this.addMessageEvent(new VoucherRedeemErrorMessageEvent(this.onVoucherRedeemError.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 
@@ -1292,5 +1323,58 @@ export class HabboCatalog extends Component implements IHabboCatalog
         }
 
         this.updatePurse();
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onVoucherRedeemOk()
+    private onVoucherRedeemOk(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as VoucherRedeemOkMessageEventParser | null;
+
+        if(!parser) return;
+
+        let description = '${catalog.alert.voucherredeem.ok.description}';
+
+        if(parser.productName !== '')
+        {
+            const key = 'catalog.alert.voucherredeem.ok.description.furni';
+
+            this._localization?.registerParameter(key, 'productName', parser.productName);
+            this._localization?.registerParameter(key, 'productDescription', parser.productDescription);
+            description = `\${${key}}`;
+        }
+
+        this._windowManager?.alert('${catalog.alert.voucherredeem.ok.title}', description, 0, this.alertDialogEventProcessor);
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onVoucherRedeemError()
+    private onVoucherRedeemError(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as VoucherRedeemErrorMessageEventParser | null;
+
+        if(!parser) return;
+
+        const description = `\${catalog.alert.voucherredeem.error.description.${parser.errorCode}}`;
+
+        this._windowManager?.alert('${catalog.alert.voucherredeem.error.title}', description, 0, this.alertDialogEventProcessor);
+    }
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::alertDialogEventProcessor()
+    private alertDialogEventProcessor = (dialog: IDisposable, _event: WindowEvent): void =>
+    {
+        dialog.dispose();
+        this.resetPlacedOfferData();
+    };
+
+    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::resetPlacedOfferData()
+    // TODO(AS3): resetObjectMover() (CatalogObjectMover teardown) and the placed-offer-preview
+    // state it tracks (PlacedObjectPurchaseData) are Phase 4 scope (CatalogObjectMover) and don't
+    // exist on this port yet - nothing sets that state today, so this is currently a faithful
+    // no-op rather than a shortcut. Kept as a real method so Phase 4 has the right hook to fill in.
+    public resetPlacedOfferData(_placingItem: boolean = false): void
+    {
     }
 }
