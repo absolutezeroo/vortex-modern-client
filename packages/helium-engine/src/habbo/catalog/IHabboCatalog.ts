@@ -12,6 +12,7 @@ import type {HabboCatalogUtils} from './HabboCatalogUtils';
 import type {ICatalogNavigator} from './navigation/ICatalogNavigator';
 import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
 import type {IMarketPlace} from './marketplace/IMarketPlace';
+import type {IRecycler} from './recycler/IRecycler';
 
 /**
  * Interface for the Habbo catalog.
@@ -46,7 +47,7 @@ export interface IHabboCatalog
     sendGetProductOffer(offerId: number): void;
     getRecyclerStatus(): void;
     getRecyclerPrizes(): void;
-    sendRecycleItems(items: unknown[]): void;
+    sendRecycleItems(items: number[]): void;
     toggleCatalog(catalogType: string, forceOpen?: boolean, showMainWindow?: boolean): void;
     openCatalog(): void;
     openCatalogPage(pageName: string, catalogType?: string | null): void;
@@ -73,7 +74,7 @@ export interface IHabboCatalog
     setImageFromAsset(target: unknown, assetName: string | null, onAssetReady?: ((event: unknown) => void) | null): void;
     getPurse(): IHabboCatalogPurse;
     getEarnings(): ICatalogEarnings;
-    getRecycler(): unknown | null;
+    getRecycler(): IRecycler | null;
     getMarketPlace(): IMarketPlace | null;
     getPublicMarketPlaceOffers(minPrice: number, maxPrice: number, searchString: string, category: number, combineUniques?: boolean): void;
     getOwnMarketPlaceOffers(category?: number): void;

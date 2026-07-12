@@ -16,3 +16,6 @@ export * from './VoucherRedeemOkMessageEventParser';
 export * from './VoucherRedeemErrorMessageEventParser';
 export * from './HabboClubOffersMessageEventParser';
 export * from './HabboClubExtendOfferMessageEventParser';
+export * from './RecyclerStatusMessageEventParser';
+export * from './RecyclerFinishedMessageEventParser';
+export * from './RecyclerPrizesMessageEventParser';

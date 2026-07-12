@@ -43,4 +43,13 @@ export interface IStaticBitmapWrapperWindow extends IWindow
 	 * Whether the bitmap stretches vertically to fill the window height.
 	 */
     stretchedY: boolean;
+
+    /**
+	 * Rotation angle in degrees, applied to the bitmap content.
+	 *
+	 * Already implemented on the concrete BitmapDataController (see
+	 * IBitmapWrapperWindow's TODO(AS3) note) - exposed here because
+	 * RecyclerEngineAnimator needs to spin the recycler's pointer arrow.
+	 */
+    rotation: number;
 }

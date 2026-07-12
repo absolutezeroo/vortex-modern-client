@@ -93,6 +93,17 @@ import type {MarketplaceConfigurationEventParser} from '@habbo/communication/mes
 import {MarketplaceItemStatsEvent} from '@habbo/communication/messages/incoming/marketplace/MarketplaceItemStatsEvent';
 import type {MarketplaceItemStatsEventParser} from '@habbo/communication/messages/parser/marketplace/MarketplaceItemStatsEventParser';
 import {MarketplaceItemStats} from './marketplace/MarketplaceItemStats';
+import type {IRecycler} from './recycler/IRecycler';
+import {RecyclerLogic} from './recycler/RecyclerLogic';
+import {GetRecyclerStatusMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRecyclerStatusMessageComposer';
+import {GetRecyclerPrizesMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRecyclerPrizesMessageComposer';
+import {RecycleItemsMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RecycleItemsMessageComposer';
+import {RecyclerStatusMessageEvent} from '@habbo/communication/messages/incoming/catalog/RecyclerStatusMessageEvent';
+import type {RecyclerStatusMessageEventParser} from '@habbo/communication/messages/parser/catalog/RecyclerStatusMessageEventParser';
+import {RecyclerFinishedMessageEvent} from '@habbo/communication/messages/incoming/catalog/RecyclerFinishedMessageEvent';
+import type {RecyclerFinishedMessageEventParser} from '@habbo/communication/messages/parser/catalog/RecyclerFinishedMessageEventParser';
+import {RecyclerPrizesMessageEvent} from '@habbo/communication/messages/incoming/catalog/RecyclerPrizesMessageEvent';
+import type {RecyclerPrizesMessageEventParser} from '@habbo/communication/messages/parser/catalog/RecyclerPrizesMessageEventParser';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import {PurchaseConfirmationDialog} from './purchase/PurchaseConfirmationDialog';
@@ -145,6 +156,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _clubGiftController: ClubGiftController | null = null;
 
     private _marketPlace: MarketPlaceLogic | null = null;
+    private _recycler: RecyclerLogic | null = null;
     private _earnings: CatalogEarnings = new CatalogEarnings();
     private _purchaseWillBeGift: boolean = false;
     private _purchaseConfirmationDialog: PurchaseConfirmationDialog | null = null;
@@ -503,8 +515,9 @@ export class HabboCatalog extends Component implements IHabboCatalog
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::requestSelectedItemToMover()
-    // Needs CatalogObjectMover (drag-offer-into-room-canvas flow), which isn't ported (see
-    // Offer.ts's port notes).
+    // CatalogObjectMover (habbo/catalog/viewer/CatalogObjectMover.ts) is now ported, but this
+    // drag-offer-into-room-canvas flow (owning an instance of it, feeding it the purchased offer)
+    // isn't wired up yet.
     requestSelectedItemToMover(_receiver: unknown, _offer: IPurchasableOffer, _placeMany: boolean = false): void
     {
     }
@@ -611,16 +624,22 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.connection?.send(new GetProductOfferComposer(offerId));
     }
 
-    public getRecyclerStatus(): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRecyclerStatus()
+    public getRecyclerStatus(): void
     {
+        this.connection?.send(new GetRecyclerStatusMessageComposer());
     }
 
-    public getRecyclerPrizes(): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRecyclerPrizes()
+    public getRecyclerPrizes(): void
     {
+        this.connection?.send(new GetRecyclerPrizesMessageComposer());
     }
 
-    public sendRecycleItems(_items: unknown[]): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::sendRecycleItems()
+    public sendRecycleItems(items: number[]): void
     {
+        this.connection?.send(new RecycleItemsMessageComposer(items));
     }
 
     // tracked). The core open/close/navigate flow is real.
@@ -634,7 +653,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
         const catalogTypeChanged = catalogType !== this._catalogType;
 
         this._catalogType = catalogType;
-        // TODO(AS3): cancelFurniInMover() - CatalogObjectMover isn't ported (see Offer.ts's notes).
+        // TODO(AS3): cancelFurniInMover() - needs an owned CatalogObjectMover instance to cancel,
+        // see requestSelectedItemToMover()'s note above.
 
         if(this._mainWindow == null) 
         {
@@ -778,16 +798,27 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.context.createLinkEvent('habblet/open/credits');
     }
 
-    public setupInventoryForRecycler(_enabled: boolean): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::setupInventoryForRecycler()
+    // TODO(AS3): delegates to _inventory.setupRecycler() in AS3 (habbo/inventory/recycler/RecyclerModel.as,
+    // toggles the inventory's "recyclable items" filter view) - HabboInventory isn't wired into
+    // HabboCatalog yet, so this is a no-op until that dependency exists.
+    public setupInventoryForRecycler(_enabled: boolean): void
     {
     }
 
-    public requestInventoryFurniToRecycler(): number 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::requestInventoryFurniToRecycler()
+    // TODO(AS3): delegates to _inventory.requestSelectedFurniToRecycler() in AS3 (RecyclerModel.as::lockSelectedFurni()) -
+    // same HabboInventory gap as setupInventoryForRecycler(). Returning 0 matches AS3's own
+    // "nothing selected/lockable" result, which RecyclerLogic.placeObjectAtSlot() already handles.
+    public requestInventoryFurniToRecycler(): number
     {
         return 0;
     }
 
-    public returnInventoryFurniFromRecycler(_itemId: number): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::returnInventoryFurniFromRecycler()
+    // TODO(AS3): delegates to _inventory.returnInventoryFurniFromRecycler() in AS3 (RecyclerModel.as::releaseFurni()) -
+    // same HabboInventory gap. Returning false matches AS3's own "nothing to release" result.
+    public returnInventoryFurniFromRecycler(_itemId: number): boolean
     {
         return false;
     }
@@ -915,9 +946,18 @@ export class HabboCatalog extends Component implements IHabboCatalog
         return this._earnings;
     }
 
-    public getRecycler(): unknown | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRecycler()
+    public getRecycler(): IRecycler | null
     {
-        return null;
+        return this._recycler;
+    }
+
+    private createRecycler(): void
+    {
+        if(this._recycler == null && this._windowManager != null)
+        {
+            this._recycler = new RecyclerLogic(this, this._windowManager);
+        }
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getMarketPlace()
@@ -1060,11 +1100,11 @@ export class HabboCatalog extends Component implements IHabboCatalog
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
     // TODO(AS3): several one-time setup steps are still skipped, each because their backing
-    // system isn't ported yet: refreshFurniData(), createRecycler(), createMarketPlace(),
-    // getGiftWrappingConfiguration(), createGroupMembershipsController(), initBundleDiscounts().
+    // system isn't ported yet: refreshFurniData(), getGiftWrappingConfiguration(),
+    // createGroupMembershipsController(), initBundleDiscounts().
     // createClubGiftController()/createClubBuyController()/createClubExtendController() (the
-    // club/ purchase controllers - separate from the already-ported clubcenter/ status display)
-    // are now real - see below. The core main-window/navigator/
+    // club/ purchase controllers - separate from the already-ported clubcenter/ status display),
+    // createMarketPlace(), and createRecycler() are now real - see below. The core main-window/navigator/
 
     public itemAddedToInventory(_classId: number, _itemId: number, _category: number): void 
     {
@@ -1122,6 +1162,9 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new MarketplaceClearOwnHistoryResultEvent(this.onMarketPlaceClearOwnHistoryResult.bind(this)));
         this.addMessageEvent(new MarketplaceConfigurationEvent(this.onMarketplaceConfiguration.bind(this)));
         this.addMessageEvent(new MarketplaceItemStatsEvent(this.onMarketplaceItemStats.bind(this)));
+        this.addMessageEvent(new RecyclerStatusMessageEvent(this.onRecyclerStatus.bind(this)));
+        this.addMessageEvent(new RecyclerFinishedMessageEvent(this.onRecyclerFinished.bind(this)));
+        this.addMessageEvent(new RecyclerPrizesMessageEvent(this.onRecyclerPrizes.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 
@@ -1151,6 +1194,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.createClubBuyController();
         this.createClubExtendController();
         this.createMarketPlace();
+        this.createRecycler();
         this._initialized = true;
         this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));
         this.connection?.send(new BuildersClubQueryFurniCountMessageComposer());
@@ -1621,6 +1665,36 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this._marketPlace?.onClearOwnHistoryResult(event);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRecyclerStatus()
+    private onRecyclerStatus(event: IMessageEvent): void
+    {
+        const parser = event.parser as RecyclerStatusMessageEventParser | null;
+
+        if(!parser || !this._recycler) return;
+
+        this._recycler.setSystemStatus(parser.recyclerStatus, parser.recyclerTimeoutSeconds);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRecyclerFinished()
+    private onRecyclerFinished(event: IMessageEvent): void
+    {
+        const parser = event.parser as RecyclerFinishedMessageEventParser | null;
+
+        if(!parser || !this._recycler) return;
+
+        this._recycler.setFinished(parser.recyclerFinishedStatus, parser.prizeId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRecyclerPrizes()
+    private onRecyclerPrizes(event: IMessageEvent): void
+    {
+        const parser = event.parser as RecyclerPrizesMessageEventParser | null;
+
+        if(!parser || !this._recycler) return;
+
+        this._recycler.storePrizeTable(parser.prizeLevels);
+    }
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceItemStats()
     private onMarketplaceItemStats(event: IMessageEvent): void
     {
@@ -1665,10 +1739,12 @@ export class HabboCatalog extends Component implements IHabboCatalog
     };
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::resetPlacedOfferData()
-    // TODO(AS3): resetObjectMover() (CatalogObjectMover teardown) and the placed-offer-preview
-    // state it tracks (PlacedObjectPurchaseData) are Phase 4 scope (CatalogObjectMover) and don't
-    // exist on this port yet - nothing sets that state today, so this is currently a faithful
-    // no-op rather than a shortcut. Kept as a real method so Phase 4 has the right hook to fill in.
+    // TODO(AS3): CatalogObjectMover (habbo/catalog/viewer/CatalogObjectMover.ts) is now ported,
+    // but resetObjectMover() (its teardown call here) and the placed-offer-preview state it
+    // tracks (PlacedObjectPurchaseData) still need HabboCatalog to actually own a
+    // CatalogObjectMover instance (same gap as requestSelectedItemToMover()/cancelFurniInMover()
+    // above) - nothing sets that state today, so this is currently a faithful no-op rather than
+    // a shortcut.
     public resetPlacedOfferData(_placingItem: boolean = false): void
     {
     }

@@ -38,6 +38,8 @@ import {VipBuyCatalogWidget} from './widgets/VipBuyCatalogWidget';
 import {LoyaltyVipBuyCatalogWidget} from './widgets/LoyaltyVipBuyCatalogWidget';
 import {MarketPlaceCatalogWidget} from './widgets/MarketPlaceCatalogWidget';
 import {MarketPlaceOwnItemsCatalogWidget} from './widgets/MarketPlaceOwnItemsCatalogWidget';
+import {RecyclerCatalogWidget} from './widgets/RecyclerCatalogWidget';
+import {RecyclerPrizesCatalogWidget} from './widgets/RecyclerPrizesCatalogWidget';
 import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
@@ -319,14 +321,15 @@ export class CatalogPage implements ICatalogPage
     }
 
     // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // 28 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
+    // 32 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
     // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
     // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/
     // soldLtdItemsWidget/madMoneyWidget/addOnBadgeViewWidget/featuredItemsWidget/colourGridWidget/
     // bundleGridScrollWidget/activityPointDisplayWidget/redeemItemCodeWidget/spacesNewWidget/
     // bundlePurchaseExtraInfoWidget/clubGiftWidget/clubBuyWidget/vipBuyWidget/loyaltyVipBuyWidget/
-    // vipGiftWidget) - the rest (trophyWidget, ...) fall through and are silently skipped, matching
-    // AS3's own switch (no default case = unmatched names do nothing).
+    // vipGiftWidget/marketPlaceWidget/marketPlaceOwnItemsWidget/recyclerWidget/recyclerPrizesWidget) -
+    // the rest (trophyWidget, ...) fall through and are silently skipped, matching AS3's own switch
+    // (no default case = unmatched names do nothing).
     private createWidget(window: IWindowContainer): void
     {
         switch(window.name)
@@ -434,6 +437,12 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.MARKET_PLACE_OWN_ITEMS:
                 this._widgets.push(new MarketPlaceOwnItemsCatalogWidget(window));
+                break;
+            case CatalogWidgetName.RECYCLER:
+                this._widgets.push(new RecyclerCatalogWidget(window));
+                break;
+            case CatalogWidgetName.RECYCLER_PRIZES:
+                this._widgets.push(new RecyclerPrizesCatalogWidget(window));
                 break;
         }
     }

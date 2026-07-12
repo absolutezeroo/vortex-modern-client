@@ -50,6 +50,7 @@ import type {RoomRenderingCanvas} from './renderer/RoomRenderingCanvas';
 import type {IStuffData} from './object/data/IStuffData';
 import type {IGetImageListener} from './IGetImageListener';
 import {ImageResult} from './ImageResult';
+import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
 
 // Messages
 import {RoomObjectMoveUpdateMessage} from './messages/RoomObjectMoveUpdateMessage';
@@ -597,6 +598,29 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         this._pendingPlacement = null;
         this.removeObjectMoverIconSprite();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
+    // TODO(AS3): the concrete implementation (obfuscated class_34.as) covers full room-object
+    // selection (placement AND already-placed objects being moved/inspected) and isn't ported -
+    // only initializeRoomObjectInsert()'s pending-placement state is tracked here. Always
+    // returns null until that's ported; callers (CatalogObjectMover, RecyclerCatalogWidget)
+    // already null-check this before use.
+    getSelectedObjectData(_roomId: number): ISelectedRoomObjectData | null
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setObjectMoverIconSpriteVisible()
+    setObjectMoverIconSpriteVisible(visible: boolean): void
+    {
+        if(this._moverIconSprite) this._moverIconSprite.visible = visible;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getObjectMoverIconSpriteVisible()
+    getObjectMoverIconSpriteVisible(): boolean
+    {
+        return this._moverIconSprite?.visible ?? false;
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::setObjectMoverIconSprite()

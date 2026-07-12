@@ -30,27 +30,27 @@ export class CatalogWidgetName
     static readonly COLOUR_GRID: string = 'colourGridWidget';
     static readonly BUNDLE_GRID_SCROLL: string = 'bundleGridScrollWidget';
     static readonly ACTIVITY_POINT_DISPLAY: string = 'activityPointDisplayWidget';
-
-    // Not ported yet - listed so future work registers its case via this constant instead of a
-    // raw string literal (see this session's roadmap in docs/IMPLEMENTATION_STATUS.md).
-    static readonly SONG_DISK_PRODUCT_VIEW: string = 'songDiskProductViewWidget';
-    static readonly TRAX_PREVIEW: string = 'traxPreviewWidget';
     static readonly REDEEM_ITEM_CODE: string = 'redeemItemCodeWidget';
     static readonly SPACES_NEW: string = 'spacesNewWidget';
-    static readonly ROOM_PREVIEW: string = 'roomPreviewWidget';
-    static readonly TROPHY: string = 'trophyWidget';
-    static readonly PETS: string = 'petsWidget';
-    static readonly NEW_PETS: string = 'newPetsWidget';
-    static readonly ROOM_ADS_CATALOG: string = 'roomAdsCatalogWidget';
-    static readonly RECYCLER: string = 'recyclerWidget';
-    static readonly RECYCLER_PRIZES: string = 'recyclerPrizesWidget';
-    static readonly MARKET_PLACE: string = 'marketPlaceWidget';
-    static readonly MARKET_PLACE_OWN_ITEMS: string = 'marketPlaceOwnItemsWidget';
     static readonly CLUB_GIFT: string = 'clubGiftWidget';
     static readonly CLUB_BUY: string = 'clubBuyWidget';
     static readonly VIP_BUY: string = 'vipBuyWidget';
     static readonly LOYALTY_VIP_BUY: string = 'loyaltyVipBuyWidget';
     static readonly VIP_GIFT: string = 'vipGiftWidget';
+    static readonly MARKET_PLACE: string = 'marketPlaceWidget';
+    static readonly MARKET_PLACE_OWN_ITEMS: string = 'marketPlaceOwnItemsWidget';
+    static readonly RECYCLER: string = 'recyclerWidget';
+    static readonly RECYCLER_PRIZES: string = 'recyclerPrizesWidget';
+
+    // Not ported yet - listed so future work registers its case via this constant instead of a
+    // raw string literal (see this session's roadmap in docs/IMPLEMENTATION_STATUS.md).
+    static readonly SONG_DISK_PRODUCT_VIEW: string = 'songDiskProductViewWidget';
+    static readonly TRAX_PREVIEW: string = 'traxPreviewWidget';
+    static readonly ROOM_PREVIEW: string = 'roomPreviewWidget';
+    static readonly TROPHY: string = 'trophyWidget';
+    static readonly PETS: string = 'petsWidget';
+    static readonly NEW_PETS: string = 'newPetsWidget';
+    static readonly ROOM_ADS_CATALOG: string = 'roomAdsCatalogWidget';
     static readonly BUY_GUILD: string = 'buyGuildWidget';
     static readonly GUILD_BADGE_VIEW: string = 'guildBadgeViewWidget';
     static readonly GUILD_SELECTOR: string = 'guildSelectorWidget';

@@ -14,6 +14,7 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IGetImageListener} from './IGetImageListener';
 import type {ImageResult} from './ImageResult';
+import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {IRoomEngineRectangle} from './RoomEngine';
 
@@ -43,6 +44,20 @@ export interface IRoomEngine extends IDisposable
 
     // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
     cancelRoomObjectInsert(): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
+    // TODO(AS3): the concrete RoomEngine.as (obfuscated class_34.as) implementation of this
+    // covers full room-object selection (placement AND already-placed objects being moved/
+    // inspected) and isn't ported - only initializeRoomObjectInsert()'s pending-placement state
+    // is tracked here. This always returns null until that's ported, which callers (e.g.
+    // CatalogObjectMover, RecyclerCatalogWidget) already null-check before use.
+    getSelectedObjectData(roomId: number): ISelectedRoomObjectData | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setObjectMoverIconSpriteVisible()
+    setObjectMoverIconSpriteVisible(visible: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getObjectMoverIconSpriteVisible()
+    getObjectMoverIconSpriteVisible(): boolean;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::initializeRoom()
     initializeRoom(

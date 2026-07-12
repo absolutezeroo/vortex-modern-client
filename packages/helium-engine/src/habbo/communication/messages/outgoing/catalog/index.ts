@@ -12,3 +12,6 @@ export * from './GetClubOffersMessageComposer';
 export * from './PurchaseVipMembershipExtensionComposer';
 export * from './PurchaseBasicMembershipExtensionComposer';
 export * from './SelectClubGiftComposer';
+export * from './GetRecyclerStatusMessageComposer';
+export * from './GetRecyclerPrizesMessageComposer';
+export * from './RecycleItemsMessageComposer';
