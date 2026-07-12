@@ -8,3 +8,5 @@ export * from './TogglePetBreedingPermissionComposer';
 export * from './CompostPlantComposer';
 export * from './UseProductForPetComposer';
 export * from './GiveSupplementToPetMessageComposer';
+export * from './IssuePetCommandMessageComposer';
+export * from './MovePetMessageComposer';
