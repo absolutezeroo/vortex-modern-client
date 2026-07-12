@@ -11,6 +11,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IRoomCreator} from './IRoomCreator';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IVector3d} from '@room/utils/IVector3d';
+import {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
 
 // Message Events - Room Session
 import {RoomReadyMessageEvent} from '../communication/messages/incoming/room/session/RoomReadyMessageEvent';
@@ -124,7 +125,7 @@ import type {IRoomMessageHandler} from "@habbo/room/IRoomMessageHandler";
 
 const log = Logger.getLogger('RoomMessageHandler');
 
-export class RoomMessageHandler implements IRoomMessageHandler
+export class RoomMessageHandler implements IRoomMessageHandler 
 {
     public static readonly EFFECT_NONE = 0;
     public static readonly EFFECT_ROOM_SHAKE = 1;
@@ -138,7 +139,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
     private _legacyWallGeometry: LegacyWallGeometry;
     private _entryTileEvent: RoomEntryTileMessageEvent | null = null;
 
-    constructor(roomCreator: IRoomCreator)
+    constructor(roomCreator: IRoomCreator) 
     {
         this._roomCreator = roomCreator;
         this._planeParser = new RoomPlaneParser();
@@ -147,14 +148,14 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
     private _connection: IConnection | null = null;
 
-    set connection(connection: IConnection | null)
+    set connection(connection: IConnection | null) 
     {
-        if(this._connection !== null)
+        if(this._connection !== null) 
         {
             return;
         }
 
-        if(connection !== null)
+        if(connection !== null) 
         {
             this._connection = connection;
 
@@ -195,25 +196,25 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
     protected _disposed: boolean = false;
 
-    get disposed(): boolean
+    get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    dispose(): void
+    dispose(): void 
     {
-        if(!this._disposed)
+        if(!this._disposed) 
         {
             this._connection = null;
             this._roomCreator = null;
         }
     }
 
-    setCurrentRoom(roomId: number): void
+    setCurrentRoom(roomId: number): void 
     {
-        if(this._currentRoomId !== 0)
+        if(this._currentRoomId !== 0) 
         {
-            if(this._roomCreator !== null)
+            if(this._roomCreator !== null) 
             {
                 this._roomCreator.disposeRoom(this._currentRoomId);
             }
@@ -222,61 +223,61 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._currentRoomId = roomId;
     }
 
-    resetCurrentRoom(): void
+    resetCurrentRoom(): void 
     {
         this._currentRoomId = 0;
     }
 
-    onRoomReady(event: IMessageEvent): void
+    onRoomReady(event: IMessageEvent): void 
     {
         const roomReadyEvent = event as RoomReadyMessageEvent;
 
-        if(roomReadyEvent === null || event.connection === null)
+        if(roomReadyEvent === null || event.connection === null) 
         {
             return;
         }
 
         const parser = roomReadyEvent.getParser() as RoomReadyMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
-        if(this._currentRoomId !== parser.roomId)
+        if(this._currentRoomId !== parser.roomId) 
         {
             this.setCurrentRoom(parser.roomId);
         }
 
         const roomType = parser.roomType;
 
-        if(this._roomCreator !== null)
+        if(this._roomCreator !== null) 
         {
             this._roomCreator.setWorldType(parser.roomId, roomType);
         }
     }
 
     /**
-	 * Handle furniture aliases from server.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onFurnitureAliases
-	 */
-    onFurnitureAliases(event: IMessageEvent): void
+     * Handle furniture aliases from server.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onFurnitureAliases
+     */
+    onFurnitureAliases(event: IMessageEvent): void 
     {
-        if(this._roomCreator === null || event.connection === null)
+        if(this._roomCreator === null || event.connection === null) 
         {
             return;
         }
 
         const aliasesEvent = event as FurnitureAliasesMessageEvent;
 
-        if(aliasesEvent === null)
+        if(aliasesEvent === null) 
         {
             return;
         }
 
         const parser = aliasesEvent.parser as FurnitureAliasesMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -285,74 +286,85 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
         log.debug(`[RoomMessageHandler] Received ${count} furniture aliases`);
 
-        for(let i = 0; i < count; i++)
+        for(let i = 0; i < count; i++) 
         {
             const name = parser.getName(i);
             const alias = parser.getAlias(i);
 
-            if(name !== null && alias !== null)
+            if(name !== null && alias !== null) 
             {
                 this._roomCreator.setRoomObjectAlias(name, alias);
             }
         }
     }
 
-    onHeightMap(event: IMessageEvent): void
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMap()
+    onHeightMap(event: IMessageEvent): void 
     {
         const heightMapEvent = event as HeightMapMessageEvent;
 
-        if(heightMapEvent === null)
+        if(heightMapEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = heightMapEvent.getParser() as HeightMapMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
-        // Process height map data
-        // This creates the stacking height map used for furniture placement
-        log.debug(`[RoomMessageHandler] Height map received: ${parser.width}x${parser.height}`);
+        const map = new FurniStackingHeightMap(parser.width, parser.height);
+
+        for(let y = 0; y < parser.height; y++) 
+        {
+            for(let x = 0; x < parser.width; x++) 
+            {
+                map.setTileHeight(x, y, parser.getTileHeight(x, y));
+                map.setStackingBlocked(x, y, parser.getStackingBlocked(x, y));
+                map.setIsRoomTile(x, y, parser.isRoomTile(x, y));
+            }
+        }
+
+        this._roomCreator.setFurniStackingHeightMap(this._currentRoomId, map);
     }
 
     /**
-	 * Handle entry tile data (arrives BEFORE FloorHeightMap).
-	 * Based on AS3: RoomMessageHandler.onEntryTileData
-	 */
-    onEntryTileData(event: IMessageEvent): void
+     * Handle entry tile data (arrives BEFORE FloorHeightMap).
+     * Based on AS3: RoomMessageHandler.onEntryTileData
+     */
+    onEntryTileData(event: IMessageEvent): void 
     {
         this._entryTileEvent = event as RoomEntryTileMessageEvent;
     }
 
     /**
-	 * Handle floor height map data. Detects door position and generates planes.
-	 * Based on AS3: RoomMessageHandler.onFloorHeightMap (lines 540-627)
-	 */
-    onFloorHeightMap(event: IMessageEvent): void
+     * Handle floor height map data. Detects door position and generates planes.
+     * Based on AS3: RoomMessageHandler.onFloorHeightMap (lines 540-627)
+     */
+    onFloorHeightMap(event: IMessageEvent): void 
     {
         const floorEvent = event as FloorHeightMapMessageEvent;
 
-        if(floorEvent === null)
+        if(floorEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = floorEvent.getParser() as FloorHeightMapMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -367,7 +379,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         // Get entry tile data if available (arrives before FloorHeightMap)
         let entryTileParser: RoomEntryTileMessageParser | null = null;
 
-        if(this._entryTileEvent !== null)
+        if(this._entryTileEvent !== null) 
         {
             entryTileParser = this._entryTileEvent.getParser() as RoomEntryTileMessageParser;
         }
@@ -379,23 +391,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
         let doorDir: number = 0;
 
         // Scan tiles: detect door and set heights (AS3 lines 579-596)
-        for(let y = 0; y < height; y++)
+        for(let y = 0; y < height; y++) 
         {
-            for(let x = 0; x < width; x++)
+            for(let x = 0; x < width; x++) 
             {
                 const tileHeight = parser.getTileHeight(x, y);
 
                 // Door detection: check if tile is on the border and has 3 blocked neighbors
                 // AS3 condition: (y > 0 && y < height-1 || x > 0 && x < width-1) && height != -110
-                if((y > 0 && y < height - 1 || x > 0 && x < width - 1) && tileHeight !== -110)
+                if((y > 0 && y < height - 1 || x > 0 && x < width - 1) && tileHeight !== -110) 
                 {
                     // If we have entry tile data, only check that specific tile
-                    if(entryTileParser === null || (x === entryTileParser.x && y === entryTileParser.y))
+                    if(entryTileParser === null || (x === entryTileParser.x && y === entryTileParser.y)) 
                     {
                         // Pattern 1: top + left + bottom blocked â†’ door direction 90 (facing right)
                         if(parser.getTileHeight(x, y - 1) === -110
-							&& parser.getTileHeight(x - 1, y) === -110
-							&& parser.getTileHeight(x, y + 1) === -110)
+                            && parser.getTileHeight(x - 1, y) === -110
+                            && parser.getTileHeight(x, y + 1) === -110) 
                         {
                             doorX = x + 0.5;
                             doorY = y;
@@ -405,8 +417,8 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
                         // Pattern 2: top + left + right blocked â†’ door direction 180 (facing down)
                         if(parser.getTileHeight(x, y - 1) === -110
-							&& parser.getTileHeight(x - 1, y) === -110
-							&& parser.getTileHeight(x + 1, y) === -110)
+                            && parser.getTileHeight(x - 1, y) === -110
+                            && parser.getTileHeight(x + 1, y) === -110) 
                         {
                             doorX = x;
                             doorY = y + 0.5;
@@ -425,9 +437,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
         // Initialize legacy wall geometry with height data for wall item positioning
         this._legacyWallGeometry.initialize(width, height, parser.fixedWallsHeight);
 
-        for(let y = 0; y < height; y++)
+        for(let y = 0; y < height; y++) 
         {
-            for(let x = 0; x < width; x++)
+            for(let x = 0; x < width; x++) 
             {
                 this._legacyWallGeometry.setTileHeight(x, y, parser.getTileHeight(x, y));
             }
@@ -437,7 +449,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         const doorTileX = Math.floor(doorX);
         const doorTileY = Math.floor(doorY);
 
-        if(doorFound)
+        if(doorFound) 
         {
             this._planeParser.setTileHeight(doorTileX, doorTileY, doorZ);
         }
@@ -449,7 +461,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
 
         // Set door tile height AFTER with wallHeight added (AS3 line 601)
-        if(doorFound)
+        if(doorFound) 
         {
             this._planeParser.setTileHeight(
                 Math.floor(doorX), Math.floor(doorY),
@@ -460,7 +472,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
 
         // Initialize room with plane parser data and door info
-        if(this._roomCreator !== null)
+        if(this._roomCreator !== null) 
         {
             this._roomCreator.initializeRoom(
                 this._currentRoomId,
@@ -473,108 +485,115 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
+    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMapUpdate()
     onHeightMapUpdate(event: IMessageEvent): void
     {
         const updateEvent = event as HeightMapUpdateMessageEvent;
 
-        if(updateEvent === null)
+        if(updateEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = updateEvent.getParser() as HeightMapUpdateMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
-        // Process tile updates
+        const map = this._roomCreator.getFurniStackingHeightMap(this._currentRoomId);
+
+        if(map === null) 
+        {
+            return;
+        }
+
         while(parser.next())
         {
-            const x = parser.x;
-            const y = parser.y;
-            const height = parser.tileHeight;
-            const blocked = parser.isStackingBlocked;
-            // Update tile height map
+            map.setTileHeight(parser.x, parser.y, parser.tileHeight);
+            map.setStackingBlocked(parser.x, parser.y, parser.isStackingBlocked);
+            map.setIsRoomTile(parser.x, parser.y, parser.isRoomTile);
         }
+
+        this._roomCreator.refreshTileObjectMap(this._currentRoomId, 'RoomMessageHandler.onHeightMapUpdate()');
     }
 
-    onObjects(event: IMessageEvent): void
+    onObjects(event: IMessageEvent): void 
     {
         const objectsEvent = event as ObjectsMessageEvent;
 
-        if(objectsEvent === null)
+        if(objectsEvent === null) 
         {
             return;
         }
 
         const parser = objectsEvent.getParser() as ObjectsMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
         const count = parser.objectCount;
 
-        for(let i = 0; i < count; i++)
+        for(let i = 0; i < count; i++) 
         {
             const data = parser.getObject(i);
 
-            if(data !== null)
+            if(data !== null) 
             {
                 this.addFloorFurniture(this._currentRoomId, data);
             }
         }
     }
 
-    onObjectAdd(event: IMessageEvent): void
+    onObjectAdd(event: IMessageEvent): void 
     {
         const addEvent = event as ObjectAddMessageEvent;
 
-        if(addEvent === null)
+        if(addEvent === null) 
         {
             return;
         }
 
         const parser = addEvent.getParser() as ObjectAddMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
         const data = parser.object;
 
-        if(data !== null)
+        if(data !== null) 
         {
             this.addFloorFurniture(this._currentRoomId, data);
         }
     }
 
-    onObjectUpdate(event: IMessageEvent): void
+    onObjectUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as ObjectUpdateMessageEvent;
 
-        if(updateEvent === null)
+        if(updateEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = updateEvent.getParser() as ObjectUpdateMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -598,23 +617,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
-    onObjectRemove(event: IMessageEvent): void
+    onObjectRemove(event: IMessageEvent): void 
     {
         const removeEvent = event as ObjectRemoveMessageEvent;
 
-        if(removeEvent === null)
+        if(removeEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = removeEvent.getParser() as ObjectRemoveMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -626,23 +645,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
-    onObjectDataUpdate(event: IMessageEvent): void
+    onObjectDataUpdate(event: IMessageEvent): void 
     {
         const dataEvent = event as ObjectDataUpdateMessageEvent;
 
-        if(dataEvent === null)
+        if(dataEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = dataEvent.getParser() as ObjectDataUpdateMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -657,83 +676,83 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
-    onItems(event: IMessageEvent): void
+    onItems(event: IMessageEvent): void 
     {
         const itemsEvent = event as ItemsMessageEvent;
 
-        if(itemsEvent === null)
+        if(itemsEvent === null) 
         {
             return;
         }
 
         const parser = itemsEvent.getParser() as ItemsMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
         const count = parser.itemCount;
 
-        for(let i = 0; i < count; i++)
+        for(let i = 0; i < count; i++) 
         {
             const data = parser.getItem(i);
 
-            if(data !== null)
+            if(data !== null) 
             {
                 this.addWallItem(this._currentRoomId, data);
             }
         }
     }
 
-    onItemAdd(event: IMessageEvent): void
+    onItemAdd(event: IMessageEvent): void 
     {
         const addEvent = event as ItemAddMessageEvent;
 
-        if(addEvent === null)
+        if(addEvent === null) 
         {
             return;
         }
 
         const parser = addEvent.getParser() as ItemAddMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
         const data = parser.data;
 
-        if(data !== null)
+        if(data !== null) 
         {
             this.addWallItem(this._currentRoomId, data);
         }
     }
 
-    onItemUpdate(event: IMessageEvent): void
+    onItemUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as ItemUpdateMessageEvent;
 
-        if(updateEvent === null)
+        if(updateEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = updateEvent.getParser() as ItemUpdateMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
         const data = parser.data;
 
-        if(data !== null)
+        if(data !== null) 
         {
             // Convert wall coordinates to 3D world position using LegacyWallGeometry
             const location = this._legacyWallGeometry.getLocation(
@@ -754,23 +773,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
-    onItemRemove(event: IMessageEvent): void
+    onItemRemove(event: IMessageEvent): void 
     {
         const removeEvent = event as ItemRemoveMessageEvent;
 
-        if(removeEvent === null)
+        if(removeEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = removeEvent.getParser() as ItemRemoveMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -782,64 +801,64 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
-    onUsers(event: IMessageEvent): void
+    onUsers(event: IMessageEvent): void 
     {
         const usersEvent = event as UsersMessageEvent;
 
-        if(usersEvent === null)
+        if(usersEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = usersEvent.getParser() as UsersMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
-        for(let i = 0; i < parser.userCount; i++)
+        for(let i = 0; i < parser.userCount; i++) 
         {
             const data = parser.getUser(i);
 
-            if(data !== null)
+            if(data !== null) 
             {
                 this.addUser(this._currentRoomId, data);
             }
         }
     }
 
-    onUserUpdate(event: IMessageEvent): void
+    onUserUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as UserUpdateMessageEvent;
 
-        if(updateEvent === null)
+        if(updateEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = updateEvent.getParser() as UserUpdateMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
 
-        for(let i = 0; i < parser.userCount; i++)
+        for(let i = 0; i < parser.userCount; i++) 
         {
             const data = parser.getUser(i);
 
-            if(data === null)
+            if(data === null) 
             {
                 continue;
             }
@@ -848,7 +867,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             const direction: IVector3d = new Vector3d(data.bodyDir);
             let target: IVector3d | null = null;
 
-            if(data.isMoving)
+            if(data.isMoving) 
             {
                 target = new Vector3d(data.targetX, data.targetY, data.targetZ);
             }
@@ -861,12 +880,12 @@ export class RoomMessageHandler implements IRoomMessageHandler
             let hasSwimAction = false;
             const actions = data.actions;
 
-            for(const action of actions)
+            for(const action of actions) 
             {
                 const actionType = action.actionType;
                 const actionParameter = action.actionParameter;
 
-                switch(actionType)
+                switch(actionType) 
                 {
                     case 'flatctrl':
                         this._roomCreator.updateObjectUserAction(
@@ -878,7 +897,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                         break;
 
                     case 'sign':
-                        if(actions.length === 1)
+                        if(actions.length === 1) 
                         {
                             updateStandPosture = false;
                         }
@@ -892,7 +911,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                         break;
 
                     case 'gst':
-                        if(actions.length === 1)
+                        if(actions.length === 1) 
                         {
                             updateStandPosture = false;
                         }
@@ -925,7 +944,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 }
             }
 
-            if(!hasMoveAction && hasSwimAction)
+            if(!hasMoveAction && hasSwimAction) 
             {
                 hasPosture = true;
                 posture = 'float';
@@ -945,7 +964,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 data.skipPositionUpdate
             );
 
-            if(hasPosture)
+            if(hasPosture) 
             {
                 this._roomCreator.updateObjectUserPosture(
                     this._currentRoomId,
@@ -954,7 +973,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                     postureParameter
                 );
             }
-            else if(updateStandPosture)
+            else if(updateStandPosture) 
             {
                 this._roomCreator.updateObjectUserPosture(
                     this._currentRoomId,
@@ -966,23 +985,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
-    onUserRemove(event: IMessageEvent): void
+    onUserRemove(event: IMessageEvent): void 
     {
         const removeEvent = event as UserRemoveMessageEvent;
 
-        if(removeEvent === null)
+        if(removeEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = removeEvent.getParser() as UserRemoveMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -990,23 +1009,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._roomCreator.disposeObjectUser(this._currentRoomId, parser.roomIndex);
     }
 
-    onSlideUpdate(event: IMessageEvent): void
+    onSlideUpdate(event: IMessageEvent): void 
     {
         const slideEvent = event as SlideObjectBundleMessageEvent;
 
-        if(slideEvent === null)
+        if(slideEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = slideEvent.getParser() as SlideObjectBundleMessageParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -1016,7 +1035,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._roomCreator.updateObjectFurniture(this._currentRoomId, parser.id, null, null, 2, null);
 
         // Process sliding objects
-        for(const obj of parser.objectList)
+        for(const obj of parser.objectList) 
         {
             this._roomCreator.updateObjectFurnitureLocation(
                 this._currentRoomId,
@@ -1028,7 +1047,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
 
         // Process sliding avatar
-        if(parser.avatar !== null)
+        if(parser.avatar !== null) 
         {
             this._roomCreator.updateObjectUser(
                 this._currentRoomId,
@@ -1039,9 +1058,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
-    addFloorFurniture(roomId: number, data: FurnitureFloorData): void
+    addFloorFurniture(roomId: number, data: FurnitureFloorData): void 
     {
-        if(data === null || this._roomCreator === null)
+        if(data === null || this._roomCreator === null) 
         {
             return;
         }
@@ -1049,7 +1068,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         const location: IVector3d = new Vector3d(data.x, data.y, data.z);
         const direction: IVector3d = new Vector3d(data.dir);
 
-        if(data.staticClass !== null)
+        if(data.staticClass !== null) 
         {
             this._roomCreator.addObjectFurnitureByName(
                 roomId,
@@ -1062,7 +1081,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 data.extra
             );
         }
-        else
+        else 
         {
             this._roomCreator.addObjectFurniture(
                 roomId,
@@ -1084,9 +1103,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
-    addWallItem(roomId: number, data: FurnitureWallData): void
+    addWallItem(roomId: number, data: FurnitureWallData): void 
     {
-        if(data === null || this._roomCreator === null)
+        if(data === null || this._roomCreator === null) 
         {
             return;
         }
@@ -1114,9 +1133,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
-    addUser(roomId: number, data: RoomUserData): void
+    addUser(roomId: number, data: RoomUserData): void 
     {
-        if(data === null || this._roomCreator === null)
+        if(data === null || this._roomCreator === null) 
         {
             return;
         }
@@ -1135,7 +1154,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
 
         // Check if this is the own user
-        if(data.webID === this._ownUserId)
+        if(data.webID === this._ownUserId) 
         {
             this._roomCreator.setOwnUserId(roomId, data.roomIndex);
         }
@@ -1152,21 +1171,21 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle user typing status update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onTypingStatus
-	 */
-    onTypingStatus(event: IMessageEvent): void
+     * Handle user typing status update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onTypingStatus
+     */
+    onTypingStatus(event: IMessageEvent): void 
     {
         const typingEvent = event as UserTypingMessageEvent;
 
-        if(typingEvent === null)
+        if(typingEvent === null) 
         {
             return;
         }
 
         const parser = typingEvent.getParser() as UserTypingMessageEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -1182,26 +1201,26 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle user expression update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onExpression
-	 */
-    onExpression(event: IMessageEvent): void
+     * Handle user expression update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onExpression
+     */
+    onExpression(event: IMessageEvent): void 
     {
         const expressionEvent = event as ExpressionMessageEvent;
 
-        if(expressionEvent === null)
+        if(expressionEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = expressionEvent.getParser() as ExpressionMessageEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -1215,19 +1234,19 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle user dance update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onDance
-	 */
-    onDance(event: IMessageEvent): void
+     * Handle user dance update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onDance
+     */
+    onDance(event: IMessageEvent): void 
     {
         const danceEvent = event as DanceMessageEvent;
 
-        if(danceEvent === null || danceEvent.getParser() === null)
+        if(danceEvent === null || danceEvent.getParser() === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
@@ -1243,19 +1262,19 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle avatar effect update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onAvatarEffect
-	 */
-    onAvatarEffect(event: IMessageEvent): void
+     * Handle avatar effect update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onAvatarEffect
+     */
+    onAvatarEffect(event: IMessageEvent): void 
     {
         const effectEvent = event as AvatarEffectMessageEvent;
 
-        if(effectEvent === null || effectEvent.getParser() === null)
+        if(effectEvent === null || effectEvent.getParser() === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
@@ -1271,19 +1290,19 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle avatar sleep status update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onAvatarSleep
-	 */
-    onAvatarSleep(event: IMessageEvent): void
+     * Handle avatar sleep status update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onAvatarSleep
+     */
+    onAvatarSleep(event: IMessageEvent): void 
     {
         const sleepEvent = event as SleepMessageEvent;
 
-        if(sleepEvent === null || sleepEvent.getParser() === null)
+        if(sleepEvent === null || sleepEvent.getParser() === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
@@ -1301,26 +1320,26 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle carry object update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onCarryObject
-	 */
-    onCarryObject(event: IMessageEvent): void
+     * Handle carry object update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onCarryObject
+     */
+    onCarryObject(event: IMessageEvent): void 
     {
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const carryEvent = event as CarryObjectMessageEvent;
 
-        if(carryEvent === null)
+        if(carryEvent === null) 
         {
             return;
         }
 
         const parser = carryEvent.getParser() as CarryObjectMessageEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -1334,26 +1353,26 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle use object update.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onUseObject
-	 */
-    onUseObject(event: IMessageEvent): void
+     * Handle use object update.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onUseObject
+     */
+    onUseObject(event: IMessageEvent): void 
     {
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const useEvent = event as UseObjectMessageEvent;
 
-        if(useEvent === null)
+        if(useEvent === null) 
         {
             return;
         }
 
         const parser = useEvent.getParser() as UseObjectMessageEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -1367,26 +1386,26 @@ export class RoomMessageHandler implements IRoomMessageHandler
     }
 
     /**
-	 * Handle user figure change.
-	 * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onUserChange
-	 */
-    onUserChange(event: IMessageEvent): void
+     * Handle user figure change.
+     * Based on AS3: com.sulake.habbo.room.RoomMessageHandler.onUserChange
+     */
+    onUserChange(event: IMessageEvent): void 
     {
         const changeEvent = event as UserChangeMessageEvent;
 
-        if(changeEvent === null)
+        if(changeEvent === null) 
         {
             return;
         }
 
-        if(this._roomCreator === null)
+        if(this._roomCreator === null) 
         {
             return;
         }
 
         const parser = changeEvent.getParser() as UserChangeMessageEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }

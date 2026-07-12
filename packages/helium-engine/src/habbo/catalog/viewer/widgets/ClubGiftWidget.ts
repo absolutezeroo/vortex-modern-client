@@ -4,6 +4,9 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import {Vector3d} from '@room/utils/Vector3d';
 import type {HabboCatalog} from '../../HabboCatalog';
 import type {IPurchasableOffer} from '../../IPurchasableOffer';
 import type {IProduct} from '../IProduct';
@@ -22,7 +25,7 @@ const DAYS_IN_MONTH = 31;
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as
  */
-export class ClubGiftWidget extends CatalogWidget
+export class ClubGiftWidget extends CatalogWidget implements IGetImageListener
 {
     private _controller: ClubGiftController | null;
 
@@ -31,6 +34,13 @@ export class ClubGiftWidget extends CatalogWidget
     private _preview: IWindowContainer | null = null;
 
     private _catalog: HabboCatalog | null;
+
+    // AS3: no direct equivalent - AS3's showPreview() passes a null listener and reads
+    // ImageResult.data synchronously; this port never trusts that (see ImageResult.ts), so the
+    // preview image is delivered async via imageReady() instead, tracked by the pending request id.
+    private _pendingPreviewId: number = -1;
+
+    private _previewTargetRectangle: {x: number; y: number; width: number; height: number} | null = null;
 
     constructor(window: IWindowContainer, controller: ClubGiftController, catalog: HabboCatalog)
     {
@@ -48,6 +58,8 @@ export class ClubGiftWidget extends CatalogWidget
 
         this._controller = null;
         this._catalog = null;
+        this._pendingPreviewId = -1;
+        this._previewTargetRectangle = null;
         this._preview?.dispose();
         this._preview = null;
     }
@@ -306,14 +318,83 @@ export class ClubGiftWidget extends CatalogWidget
 
         if(!offer) return;
 
-        // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::showPreview()
-        // Needs RoomEngine.getFurnitureImage()/getWallItemImage() (offscreen furniture/room image
-        // rendering) - Phase 5 scope, not ported yet. Hover-preview stays inert until then.
+        if(event.type === WindowMouseEvent.OVER)
+        {
+            const rectangle = {x: 0, y: 0, width: 0, height: 0};
+
+            window.getGlobalRectangle(rectangle);
+            this.showPreview(offer, rectangle);
+        }
+
         if(event.type === WindowMouseEvent.OUT) this.hidePreview();
     };
 
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::showPreview()
+    private showPreview(offer: IPurchasableOffer, targetRectangle: {x: number; y: number; width: number; height: number}): void
+    {
+        if(!offer || !offer.productContainer) return;
+
+        const roomEngine = this.page?.viewer?.roomEngine;
+
+        if(!this.page || !this.page.viewer || !roomEngine) return;
+
+        const product = offer.product;
+
+        if(!product) return;
+
+        if(!this._preview)
+        {
+            this._preview = (this._catalog as HabboCatalog)?.utils.createWindow('club_gift_preview') as unknown as IWindowContainer | null;
+        }
+
+        if(!this._preview) return;
+
+        this._previewTargetRectangle = targetRectangle;
+
+        switch(product.productType)
+        {
+            case 's':
+                this._pendingPreviewId = roomEngine.getFurnitureImage(product.productClassId, new Vector3d(90, 0, 0), 64, this, 0, product.extraParam).id;
+                break;
+            case 'i':
+                this._pendingPreviewId = roomEngine.getWallItemImage(product.productClassId, new Vector3d(90, 0, 0), 64, this, 0, product.extraParam).id;
+                break;
+            default:
+                return;
+        }
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageReady()
+    imageReady(id: number, data: ImageBitmap | null): void
+    {
+        if(id !== this._pendingPreviewId || !data || !this._preview || !this._previewTargetRectangle) return;
+
+        const image = this._preview.findChildByName('image') as unknown as IBitmapWrapperWindow | null;
+
+        if(!image) return;
+
+        image.width = data.width;
+        image.height = data.height;
+        image.bitmap = data;
+
+        const target = this._previewTargetRectangle;
+        const centerX = target.x + target.width / 2;
+        const centerY = target.y + target.height / 2;
+
+        this._preview.setGlobalPosition({x: centerX - this._preview.width / 2, y: centerY - this._preview.height / 2});
+        this._preview.visible = true;
+        this._preview.activate();
+    }
+
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ClubGiftWidget.as::imageFailed()
+    imageFailed(_id: number): void
+    {
+    }
+
     private hidePreview(): void
     {
+        this._pendingPreviewId = -1;
+
         if(this._preview) this._preview.visible = false;
     }
 }

@@ -5,6 +5,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import {Vector3d} from '@room/utils/Vector3d';
 import type {IProductDisplayInfo} from './IProductDisplayInfo';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import {ImageResult} from '@habbo/room/ImageResult';
@@ -202,17 +203,40 @@ export class ProductImageWidget implements IWidget, IGetImageListener
             case -1:
                 this.setUnknownImage();
                 break;
-            case 0: // wall item
-                // TODO(AS3): needs IRoomEngine.getWallItemImage() (angled 3D preview,
-                // distinct from getWallItemIcon()) - not ported yet.
-                log.debug('[ProductImageWidget] Wall item image preview not implemented yet');
-                this.clearPreviewer();
+            case 0: { // wall item
+                const wallItemData = windowManager.sessionDataManager?.getWallItemData(parseInt(info.itemTypeId, 10)) ?? null;
+
+                if(!wallItemData)
+                {
+                    this.clearPreviewer();
+                    break;
+                }
+
+                if(ProductCategoryMapping.categoryMapping('I', wallItemData.id) === 1)
+                {
+                    this.setImageResult(
+                        windowManager.roomEngine?.getWallItemImage(wallItemData.id, new Vector3d(90, 0, 0), 64, this, 0, info.extraData) ?? null
+                    );
+                }
+                else
+                {
+                    this.clearPreviewer();
+                }
+
                 break;
-            case 1: // floor item
-                // TODO(AS3): needs IRoomEngine.getFurnitureImage() - not ported yet.
-                log.debug('[ProductImageWidget] Floor item image preview not implemented yet');
-                this.clearPreviewer();
+            }
+            case 1: { // floor item
+                const floorItemData = windowManager.sessionDataManager?.getFloorItemData(parseInt(info.itemTypeId, 10)) ?? null;
+
+                if(!floorItemData)
+                {
+                    this.clearPreviewer();
+                    break;
+                }
+
+                this.setImageResult(windowManager.roomEngine?.getFurnitureImage(floorItemData.id, new Vector3d(90, 0, 0), 64, this) ?? null);
                 break;
+            }
             case 2: // pixel effect preview on an avatar
                 if(info.itemTypeId === '')
                 {
@@ -481,8 +505,8 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         if(badge) badge.blend = value;
         if(pet) pet.blend = value;
 
-        (pet?.widget as PetImageWidget | undefined)?.refresh();
-        (badge?.widget as BadgeImageWidget | undefined)?.refresh();
+        (pet?.widget as PetImageWidget | null)?.refresh();
+        (badge?.widget as BadgeImageWidget | null)?.refresh();
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::imageReady()

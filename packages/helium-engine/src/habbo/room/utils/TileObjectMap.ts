@@ -117,6 +117,17 @@ export class TileObjectMap
         this._map.fill(null);
     }
 
+    /**
+	 * Rebuild the whole map from scratch from a fresh object list.
+	 * Based on AS3 TileObjectMap.populate()
+	 */
+    populate(objects: readonly IRoomObject[]): void
+    {
+        this.clear();
+
+        for(const object of objects) this.addRoomObject(object);
+    }
+
     dispose(): void
     {
         this._map = [];

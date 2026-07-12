@@ -16,6 +16,10 @@ export class RoomEngineObjectEvent extends RoomEngineEvent
     public static readonly REOE_OBJECT_PLACED = 'REOE_OBJECT_PLACED';
     public static readonly REOE_OBJECT_REQUEST_MOVE = 'REOE_OBJECT_REQUEST_MOVE';
     public static readonly REOE_OBJECT_REQUEST_ROTATE = 'REOE_OBJECT_REQUEST_ROTATE';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::_SafeStr_10306
+    // (recovered name/value from win63_version cross-reference: real AS3 string is "REOE_UPDATED",
+    // unlike this port's other REOE_OBJECT_* constants which use an "_OBJECT_" naming variant)
+    public static readonly REOE_UPDATED = 'REOE_UPDATED';
 
     constructor(type: string, roomId: number, objectId: number, category: number)
     {

@@ -19,6 +19,8 @@ export {UserUpdateMessageEvent} from './UserUpdateMessageEvent';
 export {UserRemoveMessageEvent} from './UserRemoveMessageEvent';
 export {SlideObjectBundleMessageEvent} from './SlideObjectBundleMessageEvent';
 export {RoomEntryInfoMessageEvent} from './RoomEntryInfoMessageEvent';
+export {RoomVisualizationSettingsEvent} from './RoomVisualizationSettingsEvent';
+export {RoomPropertyMessageEvent} from './RoomPropertyMessageEvent';
 
 // Data types
 export {FurnitureFloorData} from './FurnitureFloorData';

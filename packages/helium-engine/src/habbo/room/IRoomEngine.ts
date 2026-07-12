@@ -32,6 +32,86 @@ export interface IRoomEngine extends IDisposable
     // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
     getWallItemIcon(type: number, listener: IGetImageListener, param?: string | null): ImageResult;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureImage()
+    getFurnitureImage(
+        type: number,
+        direction: IVector3d,
+        scale: number,
+        listener: IGetImageListener,
+        backgroundColor?: number,
+        param?: string | null,
+        state?: number,
+        frameCount?: number,
+        stuffData?: unknown,
+        forceGeneric?: boolean
+    ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemImage()
+    getWallItemImage(
+        type: number,
+        direction: IVector3d,
+        scale: number,
+        listener: IGetImageListener,
+        backgroundColor?: number,
+        param?: string | null,
+        state?: number,
+        frameCount?: number
+    ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomImage()
+    getRoomImage(
+        floorType: string | null,
+        wallType: string | null,
+        landscapeType: string | null,
+        scale: number,
+        listener: IGetImageListener,
+        extra?: string | null
+    ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetImage()
+    getPetImage(
+        type: number,
+        paletteId: number,
+        color: number,
+        direction: IVector3d,
+        scale: number,
+        listener: IGetImageListener,
+        fullImage?: boolean,
+        backgroundColor?: number,
+        customParts?: {layerId: number; partId: number; paletteId: number}[] | null,
+        posture?: string | null
+    ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectImage()
+    getRoomObjectImage(
+        roomId: number,
+        objectId: number,
+        category: number,
+        direction: IVector3d,
+        scale: number,
+        listener: IGetImageListener,
+        backgroundColor?: number
+    ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
+    getGenericRoomObjectImage(
+        type: string | null,
+        param: string,
+        direction: IVector3d,
+        scale: number,
+        listener: IGetImageListener | null,
+        backgroundColor?: number,
+        extra?: string | null,
+        stuffData?: unknown,
+        state?: number,
+        frameCount?: number,
+        posture?: string | null,
+        originalId?: number
+    ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::isRoomObjectContentAvailable()
+    isRoomObjectContentAvailable(type: string): boolean;
+
     // AS3: sources/win63_version/habbo/room/class_34.as::initializeRoomObjectInsert()
     initializeRoomObjectInsert(
         source: string,

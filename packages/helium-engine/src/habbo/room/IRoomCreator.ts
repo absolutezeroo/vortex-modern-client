@@ -9,6 +9,8 @@
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IStuffData} from './object/data/IStuffData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
+import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
+import type {TileObjectMap} from './utils/TileObjectMap';
 
 export interface IRoomCreator
 {
@@ -235,4 +237,28 @@ export interface IRoomCreator
 	 * Maps a furniture type name to an alias name.
 	 */
     setRoomObjectAlias(name: string, alias: string): void;
+
+    /**
+	 * Store the furniture stacking height map for a room.
+	 * Based on AS3: RoomEngine.setFurniStackingHeightMap()
+	 */
+    setFurniStackingHeightMap(roomId: number, map: FurniStackingHeightMap): void;
+
+    /**
+	 * Get the furniture stacking height map for a room.
+	 * Based on AS3: RoomEngine.getFurniStackingHeightMap()
+	 */
+    getFurniStackingHeightMap(roomId: number): FurniStackingHeightMap | null;
+
+    /**
+	 * Rebuild the tile->floor-object spatial index for a room from scratch.
+	 * Based on AS3: RoomEngine.refreshTileObjectMap()
+	 */
+    refreshTileObjectMap(roomId: number, reason: string): void;
+
+    /**
+	 * Get the tile->floor-object spatial index for a room.
+	 * Based on AS3: RoomEngine.getTileObjectMap()
+	 */
+    getTileObjectMap(roomId: number): TileObjectMap | null;
 }

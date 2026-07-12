@@ -264,7 +264,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Create a new room instance.
 	 */
-    createRoom(id: string, data: unknown): IRoomInstance | null
+    createRoom(id: string, _data: unknown): IRoomInstance | null
     {
         if(this._state < RoomManagerState.INITIALIZED)
         {
@@ -363,7 +363,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 *
 	 * @see AS3 RoomManager.update() lines 593-608
 	 */
-    update(time: number): void
+    update(_time: number): void
     {
         this.processLoadedContentTypes();
 
@@ -467,7 +467,24 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
             {
                 controller.setEventHandler(logic);
                 logic.object = controller;
-                logic.initialize(null);
+
+                // Only initialize logic here when real content is already available.
+                // FurnitureLogic.initialize() locks several model variables
+                // (furniture_allowed_directions, furniture_size_x/y/z, ...) with
+                // RoomObjectModel's immutable flag (matching real AS3's own
+                // setNumberArray/setNumber semantics - the first `protect=true` write
+                // wins and all subsequent writes to that key are silently ignored).
+                // Calling this with placeholder content would permanently lock those
+                // variables to the placeholder's generic values, and the real
+                // re-initialization from updateObjectContents() below would then be
+                // silently dropped once the real content loads. When using placeholder
+                // content (initialized=false), leave logic uninitialized here and let
+                // updateObjectContents() perform the one real initialize() call once
+                // the actual content is ready.
+                if(initialized)
+                {
+                    logic.initialize(visualizationConfig);
+                }
             }
         }
 
@@ -640,6 +657,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 
         const visualizationType = this._contentLoader.getVisualizationType(contentType);
         const logicType = this._contentLoader.getLogicType(contentType);
+        const visualizationConfig = this._contentLoader.getVisualizationXML(contentType);
 
         for(const room of this._rooms.values())
         {
@@ -677,7 +695,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
                             const spriteViz = visualization as IRoomObjectSpriteVisualization;
                             spriteViz.assetCollection = this._contentLoader.getGraphicAssetCollection(contentType);
                             const vizData = this._visualizationFactory.getRoomObjectVisualizationData(
-                                contentType, visualizationType, this._contentLoader.getVisualizationXML(contentType)
+                                contentType, visualizationType, visualizationConfig
                             );
 
                             if(vizData)
@@ -698,7 +716,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
                         {
                             controller.setEventHandler(logic);
                             logic.object = controller;
-                            logic.initialize(null);
+                            logic.initialize(visualizationConfig);
                         }
                     }
 

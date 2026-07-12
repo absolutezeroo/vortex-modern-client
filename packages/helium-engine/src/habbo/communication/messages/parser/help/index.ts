@@ -11,6 +11,7 @@ export * from './ChatReviewSessionResultsMessageParser';
 export * from './ChatReviewSessionStartedMessageParser';
 export * from './ChatReviewSessionVotingStatusMessageParser';
 export * from './CheckUserNameResultMessageParser';
+export * from './FaqTextMessageParser';
 export * from './GuideOnDutyStatusMessageParser';
 export * from './GuideReportingStatusMessageParser';
 export * from './GuideSessionAttachedMessageParser';

@@ -44,8 +44,6 @@ const log = Logger.getLogger('ProductViewCatalogWidget');
  *   pixel-level sprite compositing (addEffectSprites()) onto a canvas, which requires bridging
  *   PixiJS Texture output to ImageBitmap the way ProductGridItem.renderAvatarImage() does, but
  *   for a multi-layer composite rather than a single crop.
- * - the no-room-canvas fallback (roomEngine.getFurnitureImage()/getWallItemImage()) - these
- *   engine methods aren't ported. Only the roomPreviewer-canvas path works.
  * - class_3172/ProductImageConfiguration's pre-rendered special-product image table.
  * - ProductDisplayWrapper (the generic default-case product renderer).
  * - furniture/wall-item preview ROTATION specifically: RoomPreviewer.canRotatePreviewFurniture()/
@@ -1052,9 +1050,9 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         switch(product.productType)
         {
             case 's':
-                return this.renderFurniturePreview(product, roomPreviewer, roomPreviewer != null && this._roomCanvas != null);
+                return this.renderFurniturePreview(offer, product, roomPreviewer, roomPreviewer != null && this._roomCanvas != null);
             case 'i':
-                return this.renderWallItemPreview(product, roomPreviewer);
+                return this.renderWallItemPreview(offer, product, roomPreviewer);
             case 'r':
                 // TODO(AS3): rentable/avatar-effect preview needs multi-layer sprite compositing
                 // (addEffectSprites()) - not ported, see class doc comment.
@@ -1091,13 +1089,19 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
     // ("s" product-type branch)
-    private renderFurniturePreview(product: IProduct, roomPreviewer: RoomPreviewer | null, hasRoomCanvas: boolean): {mode: number; canRotate: boolean}
+    private renderFurniturePreview(offer: IPurchasableOffer, product: IProduct, roomPreviewer: RoomPreviewer | null, hasRoomCanvas: boolean): {mode: number; canRotate: boolean}
     {
         if(!hasRoomCanvas || roomPreviewer == null)
         {
-            // TODO(AS3): no-room-canvas fallback needs roomEngine.getFurnitureImage(), which
-            // isn't ported.
-            log.warn('[Product View Catalog Widget] Furniture preview without room canvas not ported yet');
+            const roomEngine = this.page?.viewer?.roomEngine;
+
+            if(roomEngine != null)
+            {
+                const result = roomEngine.getFurnitureImage(
+                    product.productClassId, new Vector3d(90, 0, 0), 64, this, 0, product.extraParam, -1, -1, this._overrideStuffData);
+
+                offer.previewCallbackId = result.id;
+            }
 
             return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }
@@ -1135,7 +1139,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct()
     // ("i" product-type branch)
-    private renderWallItemPreview(product: IProduct, roomPreviewer: RoomPreviewer | null): {mode: number; canRotate: boolean}
+    private renderWallItemPreview(offer: IPurchasableOffer, product: IProduct, roomPreviewer: RoomPreviewer | null): {mode: number; canRotate: boolean}
     {
         const furnitureData = product.furnitureData;
 
@@ -1158,9 +1162,14 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             };
         }
 
-        // TODO(AS3): no-room-canvas fallback needs roomEngine.getWallItemImage(), which
-        // isn't ported.
-        log.warn('[Product View Catalog Widget] Wall item preview without room canvas not ported yet');
+        const roomEngine = this.page?.viewer?.roomEngine;
+
+        if(roomEngine != null)
+        {
+            const result = roomEngine.getWallItemImage(product.productClassId, new Vector3d(90, 0, 0), 64, this, 0, product.extraParam);
+
+            offer.previewCallbackId = result.id;
+        }
 
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
     }
@@ -1205,8 +1214,8 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     }
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::imageReady()
-    // TODO(AS3): only reachable from the unported no-room-canvas fallback (getFurnitureImage()/
-    // getWallItemImage()); never invoked while that fallback stays unported.
+    // Reached from the no-room-canvas fallback in renderFurniturePreview()/renderWallItemPreview()
+    // (Phase 5, getFurnitureImage()/getWallItemImage()).
     imageReady(id: number, data: ImageBitmap | null): void
     {
         if(this.disposed || this.page == null || this.page.offers == null) return;

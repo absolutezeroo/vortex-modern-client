@@ -47,10 +47,9 @@ type WidgetConstructor = new (window: IWidgetWindow, windowManager: IHabboWindow
  *
  * Port of AS3 WidgetClasses (widget registry) + HabboWindowManagerComponent.createWidget().
  *
- * TODO(AS3): ProductImageWidget's wall/floor-item and pixel-effect preview cases are
- * stubbed - they need IRoomEngine.getWallItemImage()/getFurnitureImage() (angled 3D
- * preview renders, distinct from the icon versions ProductIconWidget uses) and an
- * EffectPreviewer class, neither of which exist yet. See ProductImageWidget.ts itself.
+ * TODO(AS3): ProductImageWidget's pixel-effect preview case is still stubbed - it needs an
+ * EffectPreviewer class, which doesn't exist yet (the wall/floor-item cases now use
+ * IRoomEngine.getWallItemImage()/getFurnitureImage(), Phase 5). See ProductImageWidget.ts itself.
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/WidgetClasses.as
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::createWidget()

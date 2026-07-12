@@ -15,7 +15,7 @@ import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset
 import {RoomObjectSpriteVisualization} from '@room/object/visualization/RoomObjectSpriteVisualization';
 import {FurnitureVisualizationData} from './FurnitureVisualizationData';
 
-export class FurnitureVisualization extends RoomObjectSpriteVisualization
+export class FurnitureVisualization extends RoomObjectSpriteVisualization 
 {
     protected static readonly Z_MULTIPLIER: number = Math.sqrt(0.5);
     private static readonly UPDATE_INTERVAL: number = 41;
@@ -49,7 +49,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     private _lookThroughChanged: boolean = false;
     private _filtersChanged: boolean = false;
 
-    constructor()
+    constructor() 
     {
         super();
         this.reset();
@@ -57,9 +57,9 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     private _lookThrough: boolean = false;
 
-    set lookThrough(value: boolean)
+    set lookThrough(value: boolean) 
     {
-        if(this._lookThrough !== value)
+        if(this._lookThrough !== value) 
         {
             this._lookThroughChanged = true;
             this._lookThrough = value;
@@ -68,12 +68,12 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     private _filters: unknown[] | null = null;
 
-    get filters(): unknown[] | null
+    get filters(): unknown[] | null 
     {
         return this._filters;
     }
 
-    set filters(value: unknown[] | null)
+    set filters(value: unknown[] | null) 
     {
         this._filters = value;
         this._filtersChanged = true;
@@ -81,31 +81,31 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
     protected override _direction: number = -1;
 
-    protected get direction(): number
+    protected get direction(): number 
     {
         return this._direction;
     }
 
-    protected set direction(value: number)
+    protected set direction(value: number) 
     {
         this._direction = value;
     }
 
     private _data: FurnitureVisualizationData | null = null;
 
-    protected get data(): FurnitureVisualizationData | null
+    protected get data(): FurnitureVisualizationData | null 
     {
         return this._data;
     }
 
     private _type: string = '';
 
-    protected get type(): string
+    protected get type(): string 
     {
         return this._type;
     }
 
-    override dispose(): void
+    override dispose(): void 
     {
         super.dispose();
         this._data = null;
@@ -122,11 +122,11 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         this._filters = null;
     }
 
-    override initialize(data: IRoomObjectVisualizationData): boolean
+    override initialize(data: IRoomObjectVisualizationData): boolean 
     {
         this.reset();
 
-        if(data === null || !(data instanceof FurnitureVisualizationData))
+        if(data === null || !(data instanceof FurnitureVisualizationData)) 
         {
             return false;
         }
@@ -137,21 +137,21 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return true;
     }
 
-    override update(geometry: IRoomGeometry, time: number, update: boolean, skipUpdate: boolean): void
+    override update(geometry: IRoomGeometry, time: number, update: boolean, skipUpdate: boolean): void 
     {
-        if(geometry === null)
+        if(geometry === null) 
         {
             return;
         }
 
-        if(time < this._lastUpdateTime + FurnitureVisualization.UPDATE_INTERVAL)
+        if(time < this._lastUpdateTime + FurnitureVisualization.UPDATE_INTERVAL) 
         {
             return;
         }
 
         this._lastUpdateTime += FurnitureVisualization.UPDATE_INTERVAL;
 
-        if(this._lastUpdateTime + FurnitureVisualization.UPDATE_INTERVAL < time)
+        if(this._lastUpdateTime + FurnitureVisualization.UPDATE_INTERVAL < time) 
         {
             this._lastUpdateTime = time - FurnitureVisualization.UPDATE_INTERVAL;
         }
@@ -159,23 +159,23 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         let fullUpdate = false;
         const scale = geometry.scale;
 
-        if(this.updateObject(scale, geometry.direction.x))
+        if(this.updateObject(scale, geometry.direction.x)) 
         {
             fullUpdate = true;
         }
 
-        if(this.updateModel(scale))
+        if(this.updateModel(scale)) 
         {
             fullUpdate = true;
         }
 
-        if(this._lookThroughChanged)
+        if(this._lookThroughChanged) 
         {
             fullUpdate = true;
             this._lookThroughChanged = false;
         }
 
-        if(this._filtersChanged)
+        if(this._filtersChanged) 
         {
             fullUpdate = true;
             this._filtersChanged = false;
@@ -183,17 +183,17 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
         let animationUpdate = 0;
 
-        if(skipUpdate)
+        if(skipUpdate) 
         {
             this._updatedLayers |= this.updateAnimation(scale);
         }
-        else
+        else 
         {
             animationUpdate = this.updateAnimation(scale) | this._updatedLayers;
             this._updatedLayers = 0;
         }
 
-        if(fullUpdate || animationUpdate !== 0)
+        if(fullUpdate || animationUpdate !== 0) 
         {
             this.updateSprites(scale, fullUpdate, animationUpdate);
             this._scale = scale;
@@ -201,7 +201,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         }
     }
 
-    protected override reset(): void
+    protected override reset(): void 
     {
         super.reset();
         this._direction = -1;
@@ -220,27 +220,27 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         this.createSprites(0);
     }
 
-    protected updateSprites(scale: number, fullUpdate: boolean, animatedLayers: number): void
+    protected updateSprites(scale: number, fullUpdate: boolean, animatedLayers: number): void 
     {
-        if(this._layerCount !== this.spriteCount)
+        if(this._layerCount !== this.spriteCount) 
         {
             this.createSprites(this._layerCount);
         }
 
-        if(fullUpdate)
+        if(fullUpdate) 
         {
-            for(let i = this.spriteCount - 1; i >= 0; i--)
+            for(let i = this.spriteCount - 1; i >= 0; i--) 
             {
                 this.updateSprite(scale, i);
             }
         }
-        else
+        else 
         {
             let layer = 0;
 
-            while(animatedLayers > 0)
+            while(animatedLayers > 0) 
             {
-                if(animatedLayers & 1)
+                if(animatedLayers & 1) 
                 {
                     this.updateSprite(scale, layer);
                 }
@@ -253,17 +253,17 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         this._alphaChanged = false;
     }
 
-    protected updateSprite(scale: number, layerIndex: number): void
+    protected updateSprite(scale: number, layerIndex: number): void 
     {
         const assetName = this.getSpriteAssetName(scale, layerIndex);
         const sprite = this.getSprite(layerIndex);
 
-        if(sprite === null)
+        if(sprite === null) 
         {
             return;
         }
 
-        if(assetName === null || assetName.length === 0)
+        if(assetName === null || assetName.length === 0) 
         {
             this.resetSprite(sprite, layerIndex);
             return;
@@ -280,9 +280,9 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
             sprite.flipV = asset.flipV;
             sprite.direction = this._direction;
 
-            let zOffset = 0;
+            let zOffset: number;
 
-            if(layerIndex !== this._shadowLayerIndex)
+            if(layerIndex !== this._shadowLayerIndex) 
             {
                 sprite.tag = this.getSpriteTag(scale, this._direction, layerIndex);
                 sprite.alpha = this.getSpriteAlpha(scale, this._direction, layerIndex);
@@ -294,7 +294,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
                 zOffset = this.getSpriteZOffset(scale, this._direction, layerIndex);
                 zOffset -= layerIndex * 0.001;
             }
-            else
+            else 
             {
                 // Shadow sprite
                 sprite.offsetX = asset.offsetX;
@@ -305,7 +305,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
                 zOffset = 1;
             }
 
-            if(this._lookThrough)
+            if(this._lookThrough) 
             {
                 sprite.alpha = Math.floor(sprite.alpha * 0.2);
             }
@@ -317,25 +317,25 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
             sprite.assetPosture = this.getPostureForAssetFile(scale, asset.libraryAssetName);
             sprite.clickHandling = this._clickHandling;
 
-            if(sprite.blendMode !== 'add')
+            if(sprite.blendMode !== 'add') 
             {
                 sprite.filters = this._filters;
             }
         }
-        else
+        else 
         {
             this.resetSprite(sprite, layerIndex);
         }
     }
 
-    protected getLibraryAssetNameForSprite(asset: IGraphicAsset, _sprite: IRoomObjectSprite): string
+    protected getLibraryAssetNameForSprite(asset: IGraphicAsset, _sprite: IRoomObjectSprite): string 
     {
         return asset.libraryAssetName;
     }
 
-    protected getBlendMode(ink: number): string
+    protected getBlendMode(ink: number): string 
     {
-        switch(ink)
+        switch(ink) 
         {
             case 1:
                 return 'add';
@@ -356,11 +356,11 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         }
     }
 
-    protected updateObject(scale: number, geometryDirection: number): boolean
+    protected updateObject(scale: number, geometryDirection: number): boolean 
     {
         const roomObject = this.object;
 
-        if(roomObject === null)
+        if(roomObject === null) 
         {
             return false;
         }
@@ -386,33 +386,33 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return false;
     }
 
-    protected updateModel(_scale: number): boolean
+    protected updateModel(_scale: number): boolean 
     {
         const roomObject = this.object;
 
-        if(roomObject === null)
+        if(roomObject === null) 
         {
             return false;
         }
 
         const model = roomObject.getModel();
 
-        if(model === null)
+        if(model === null) 
         {
             return false;
         }
 
-        if(this._updateModelCounter !== model.getUpdateID())
+        if(this._updateModelCounter !== model.getUpdateID()) 
         {
             this._selectedColor = model.getNumber('furniture_color') || 0;
             let alphaMultiplier = model.getNumber('furniture_alpha_multiplier');
 
-            if(isNaN(alphaMultiplier))
+            if(isNaN(alphaMultiplier)) 
             {
                 alphaMultiplier = 1;
             }
 
-            if(alphaMultiplier !== this._alphaMultiplier)
+            if(alphaMultiplier !== this._alphaMultiplier) 
             {
                 this._alphaMultiplier = alphaMultiplier;
                 this._alphaChanged = true;
@@ -429,40 +429,40 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return false;
     }
 
-    protected getAdClickUrl(model: { getString(key: string): string | null }): string | null
+    protected getAdClickUrl(model: { getString(key: string): string | null }): string | null 
     {
         return model.getString('furniture_ad_url');
     }
 
-    protected updateAnimation(_scale: number): number
+    protected updateAnimation(_scale: number): number 
     {
         return 0;
     }
 
-    protected updateLayerCount(count: number): void
+    protected updateLayerCount(count: number): void 
     {
         this._layerCount = count;
         this._shadowLayerIndex = this._layerCount - this.getAdditionalSpriteCount();
     }
 
-    protected getAdditionalSpriteCount(): number
+    protected getAdditionalSpriteCount(): number 
     {
         return 1;
     }
 
-    protected getFrameNumber(_scale: number, _layerIndex: number): number
+    protected getFrameNumber(_scale: number, _layerIndex: number): number 
     {
         return 0;
     }
 
-    protected getPostureForAssetFile(_scale: number, _libraryAssetName: string): string | null
+    protected getPostureForAssetFile(_scale: number, _libraryAssetName: string): string | null 
     {
         return null;
     }
 
-    protected getAsset(name: string, _layerIndex: number = -1): IGraphicAsset | null
+    protected getAsset(name: string, _layerIndex: number = -1): IGraphicAsset | null 
     {
-        if(this.assetCollection !== null)
+        if(this.assetCollection !== null) 
         {
             return this.assetCollection.getAsset(name);
         }
@@ -470,9 +470,9 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return null;
     }
 
-    protected getSpriteAssetName(scale: number, layerIndex: number): string
+    protected getSpriteAssetName(scale: number, layerIndex: number): string 
     {
-        if(this._data === null || layerIndex >= FurnitureVisualizationData.LAYER_NAMES.length)
+        if(this._data === null || layerIndex >= FurnitureVisualizationData.LAYER_NAMES.length) 
         {
             return '';
         }
@@ -480,13 +480,13 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         let baseName = this._assetNames[layerIndex] || null;
         let needsFrame = this._assetNamesHaveFrame[layerIndex] || false;
 
-        if(baseName === null || baseName.length === 0)
+        if(baseName === null || baseName.length === 0) 
         {
             baseName = this.getSpriteAssetNameWithoutFrame(scale, layerIndex, true);
             needsFrame = this._resolvedSize !== 1;
         }
 
-        if(needsFrame)
+        if(needsFrame) 
         {
             return baseName + this.getFrameNumber(scale, layerIndex);
         }
@@ -494,34 +494,34 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return baseName;
     }
 
-    protected getSpriteAssetNameWithoutFrame(scale: number, layerIndex: number, cache: boolean): string
+    protected getSpriteAssetNameWithoutFrame(scale: number, layerIndex: number, cache: boolean): string 
     {
         const resolvedSize = cache ? this._resolvedSize : this.getSize(scale);
         const isIcon = resolvedSize === 1;
 
         let layerName: string;
 
-        if(layerIndex !== this._shadowLayerIndex)
+        if(layerIndex !== this._shadowLayerIndex) 
         {
             layerName = FurnitureVisualizationData.LAYER_NAMES[layerIndex];
         }
-        else
+        else 
         {
             layerName = 'sd';
         }
 
         let assetName: string;
 
-        if(isIcon)
+        if(isIcon) 
         {
             assetName = this._type + '_icon_' + layerName;
         }
-        else
+        else 
         {
             assetName = this._type + '_' + resolvedSize + '_' + layerName + '_' + this._direction + '_';
         }
 
-        if(cache)
+        if(cache) 
         {
             this._assetNames[layerIndex] = assetName;
             this._assetNamesHaveFrame[layerIndex] = !isIcon;
@@ -530,14 +530,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return assetName;
     }
 
-    protected getSpriteTag(scale: number, direction: number, layerIndex: number): string
+    protected getSpriteTag(scale: number, direction: number, layerIndex: number): string 
     {
-        if(this._spriteTags[layerIndex] !== null && this._spriteTags[layerIndex] !== undefined)
+        if(this._spriteTags[layerIndex] !== null && this._spriteTags[layerIndex] !== undefined) 
         {
             return this._spriteTags[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return '';
         }
@@ -548,14 +548,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return tag;
     }
 
-    protected getSpriteAlpha(scale: number, direction: number, layerIndex: number): number
+    protected getSpriteAlpha(scale: number, direction: number, layerIndex: number): number 
     {
-        if(this._spriteAlphas[layerIndex] !== null && this._spriteAlphas[layerIndex] !== undefined && !this._alphaChanged)
+        if(this._spriteAlphas[layerIndex] !== null && this._spriteAlphas[layerIndex] !== undefined && !this._alphaChanged) 
         {
             return this._spriteAlphas[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return 255;
         }
@@ -567,14 +567,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return alpha;
     }
 
-    protected getSpriteColor(scale: number, layerIndex: number, colorId: number): number
+    protected getSpriteColor(scale: number, layerIndex: number, colorId: number): number 
     {
-        if(this._spriteColors[layerIndex] !== null && this._spriteColors[layerIndex] !== undefined)
+        if(this._spriteColors[layerIndex] !== null && this._spriteColors[layerIndex] !== undefined) 
         {
             return this._spriteColors[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return 0xFFFFFF;
         }
@@ -585,14 +585,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return color;
     }
 
-    protected getSpriteXOffset(scale: number, direction: number, layerIndex: number): number
+    protected getSpriteXOffset(scale: number, direction: number, layerIndex: number): number 
     {
-        if(this._spriteXOffsets[layerIndex] !== null && this._spriteXOffsets[layerIndex] !== undefined)
+        if(this._spriteXOffsets[layerIndex] !== null && this._spriteXOffsets[layerIndex] !== undefined) 
         {
             return this._spriteXOffsets[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return 0;
         }
@@ -603,16 +603,16 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return offset;
     }
 
-    protected getSpriteYOffset(scale: number, direction: number, layerIndex: number): number
+    protected getSpriteYOffset(scale: number, direction: number, layerIndex: number): number 
     {
-        if(layerIndex !== this._shadowLayerIndex)
+        if(layerIndex !== this._shadowLayerIndex) 
         {
-            if(this._spriteYOffsets[layerIndex] !== null && this._spriteYOffsets[layerIndex] !== undefined)
+            if(this._spriteYOffsets[layerIndex] !== null && this._spriteYOffsets[layerIndex] !== undefined) 
             {
                 return this._spriteYOffsets[layerIndex]!;
             }
 
-            if(this._data !== null)
+            if(this._data !== null) 
             {
                 const offset = this._data.getYOffset(scale, direction, layerIndex);
                 this._spriteYOffsets[layerIndex] = offset;
@@ -627,14 +627,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return Math.ceil(this._furnitureLift * (scale / 2));
     }
 
-    protected getSpriteMouseCapture(scale: number, direction: number, layerIndex: number): boolean
+    protected getSpriteMouseCapture(scale: number, direction: number, layerIndex: number): boolean 
     {
-        if(this._spriteMouseCaptures[layerIndex] !== null && this._spriteMouseCaptures[layerIndex] !== undefined)
+        if(this._spriteMouseCaptures[layerIndex] !== null && this._spriteMouseCaptures[layerIndex] !== undefined) 
         {
             return this._spriteMouseCaptures[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return true;
         }
@@ -645,14 +645,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return capture;
     }
 
-    protected getSpriteInk(scale: number, direction: number, layerIndex: number): number
+    protected getSpriteInk(scale: number, direction: number, layerIndex: number): number 
     {
-        if(this._spriteInks[layerIndex] !== null && this._spriteInks[layerIndex] !== undefined)
+        if(this._spriteInks[layerIndex] !== null && this._spriteInks[layerIndex] !== undefined) 
         {
             return this._spriteInks[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return 0;
         }
@@ -663,14 +663,14 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return ink;
     }
 
-    protected getSpriteZOffset(scale: number, direction: number, layerIndex: number): number
+    protected getSpriteZOffset(scale: number, direction: number, layerIndex: number): number 
     {
-        if(this._spriteZOffsets[layerIndex] !== null && this._spriteZOffsets[layerIndex] !== undefined)
+        if(this._spriteZOffsets[layerIndex] !== null && this._spriteZOffsets[layerIndex] !== undefined) 
         {
             return this._spriteZOffsets[layerIndex]!;
         }
 
-        if(this._data === null)
+        if(this._data === null) 
         {
             return 0;
         }
@@ -681,9 +681,9 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return offset;
     }
 
-    protected getSize(scale: number): number
+    protected getSize(scale: number): number 
     {
-        if(this._data !== null)
+        if(this._data !== null) 
         {
             return this._data.getSize(scale);
         }
@@ -691,7 +691,7 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         return scale;
     }
 
-    private resetSprite(sprite: IRoomObjectSprite, layerIndex: number): void
+    private resetSprite(sprite: IRoomObjectSprite, layerIndex: number): void 
     {
         sprite.texture = null;
         sprite.assetName = '';
@@ -705,15 +705,15 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         sprite.relativeDepth = 0;
         sprite.clickHandling = false;
 
-        if(this._alphaChanged)
+        if(this._alphaChanged) 
         {
             this._spriteAlphas[layerIndex] = null;
         }
     }
 
-    private updateAssetAndSpriteCache(scale: number, direction: number): void
+    private updateAssetAndSpriteCache(scale: number, direction: number): void 
     {
-        if(this._cachedDirectionId !== direction || this._cachedScale !== scale)
+        if(this._cachedDirectionId !== direction || this._cachedScale !== scale) 
         {
             this._assetNames = [];
             this._assetNamesHaveFrame = [];

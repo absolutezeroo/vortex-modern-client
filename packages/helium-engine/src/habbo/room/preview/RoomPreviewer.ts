@@ -100,11 +100,11 @@ export class RoomPreviewer
     // this flag onRoomInitialized() → updateObjectRoom() would recurse forever.
     private _updatingObjectRoom: boolean = false;
 
-    private readonly _updatePreviewRoomViewBound = (): void => this.updatePreviewRoomView();
-    private readonly _onRoomObjectAddedBound = (event: RoomEngineObjectEvent): void =>
+    private readonly updatePreviewRoomViewBound = (): void => this.updatePreviewRoomView();
+    private readonly onRoomObjectAddedBound = (event: RoomEngineObjectEvent): void =>
         this.onRoomObjectAdded(event.roomId, event.objectId, event.category);
 
-    private readonly _onRoomInitializedBound = (event: RoomEngineEvent): void => this.onRoomInitialized(event);
+    private readonly onRoomInitializedBound = (event: RoomEngineEvent): void => this.onRoomInitialized(event);
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::RoomPreviewer()
     constructor(roomEngine: IRoomEngine, previewRoomId: number = 1)
@@ -116,12 +116,12 @@ export class RoomPreviewer
         {
             // AS3 listens to "REOE_ADDED"/"REOE_CONTENT_UPDATED"; the ported engine
             // surfaces object placement through REOE_OBJECT_ADDED.
-            this._roomEngine.events.on(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this._onRoomObjectAddedBound);
-            this._roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, this._onRoomInitializedBound);
+            this._roomEngine.events.on(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this.onRoomObjectAddedBound);
+            this._roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, this.onRoomInitializedBound);
 
             // TS deviation (see class doc comment): re-run the framing math every
             // frame because the AS3 content-loaded event isn't fully available.
-            this._roomEngine.registerCanvasSyncCallback(this._updatePreviewRoomViewBound);
+            this._roomEngine.registerCanvasSyncCallback(this.updatePreviewRoomViewBound);
         }
     }
 
@@ -879,61 +879,57 @@ export class RoomPreviewer
     }
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getGenericRoomObjectImage()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::getGenericRoomObjectImage()
-    // Should delegate to _roomEngine.getGenericRoomObjectImage(...); IRoomEngine has
-    // no getGenericRoomObjectImage equivalent yet.
     getGenericRoomObjectImage(
-        _classType: string,
-        _imageType: string,
-        _direction: IVector3d,
-        _scale: number,
-        _listener: IGetImageListener | null,
-        _backgroundColor: number = 0,
-        _extras: string | null = null,
-        _stuffData: IStuffData | null = null,
-        _state: number = -1,
-        _frameCount: number = -1,
-        _objectData: string | null = null
+        classType: string,
+        imageType: string,
+        direction: IVector3d,
+        scale: number,
+        listener: IGetImageListener | null,
+        backgroundColor: number = 0,
+        extras: string | null = null,
+        stuffData: IStuffData | null = null,
+        state: number = -1,
+        frameCount: number = -1,
+        objectData: string | null = null
     ): ImageResult | null
     {
         if(this.isRoomEngineReady)
         {
-            // Not wired yet.
+            return this._roomEngine!.getGenericRoomObjectImage(
+                classType, imageType, direction, scale, listener, backgroundColor, extras, stuffData, state, frameCount, objectData);
         }
 
         return null;
     }
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectImage()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectImage()
-    // Should delegate to _roomEngine.getRoomObjectImage(previewRoomId, 1, ...);
-    // IRoomEngine has no getRoomObjectImage equivalent yet.
-    getRoomObjectImage(_type: number, _direction: IVector3d, _scale: number, _listener: IGetImageListener | null, _backgroundColor: number = 0): ImageResult | null
+    getRoomObjectImage(category: number, direction: IVector3d, scale: number, listener: IGetImageListener | null, backgroundColor: number = 0): ImageResult | null
     {
-        if(this.isRoomEngineReady)
+        if(this.isRoomEngineReady && listener !== null)
         {
-            // Not wired yet.
+            return this._roomEngine!.getRoomObjectImage(
+                this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, category, direction, scale, listener, backgroundColor);
         }
 
         return null;
     }
 
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectCurrentImage()
-    // TODO(AS3): sources/win63_version/habbo/room/preview/RoomPreviewer.as::getRoomObjectCurrentImage()
-    // AS3 returns visualization.getImage(0xFFFFFF, -1); IRoomObjectVisualization has
-    // no getImage equivalent yet.
-    getRoomObjectCurrentImage(): ImageBitmap | null
+    // TS deviation: returns HTMLCanvasElement instead of AS3's BitmapData - both are synchronous,
+    // in-memory rasterizations (see IRoomObjectVisualization.getImage()'s own doc comment);
+    // converting to ImageBitmap would need this to become async, which would change the
+    // "give me the currently-rendered frame right now" pull semantics this method exists for.
+    getRoomObjectCurrentImage(): HTMLCanvasElement | null
     {
         if(this.isRoomEngineReady)
         {
             const object = this._roomEngine!.getRoomObject(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, 100);
+
             if(object)
             {
                 const visualization = object.getVisualization();
-                if(visualization)
-                {
-                    // Not wired yet.
-                }
+
+                if(visualization) return visualization.getImage(0xFFFFFF, -1);
             }
         }
 
@@ -961,9 +957,9 @@ export class RoomPreviewer
 
         if(this._roomEngine)
         {
-            this._roomEngine.events.off(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this._onRoomObjectAddedBound);
-            this._roomEngine.events.off(RoomEngineEvent.REE_INITIALIZED, this._onRoomInitializedBound);
-            this._roomEngine.unregisterCanvasSyncCallback(this._updatePreviewRoomViewBound);
+            this._roomEngine.events.off(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this.onRoomObjectAddedBound);
+            this._roomEngine.events.off(RoomEngineEvent.REE_INITIALIZED, this.onRoomInitializedBound);
+            this._roomEngine.unregisterCanvasSyncCallback(this.updatePreviewRoomViewBound);
         }
 
         this._backgroundFill?.destroy();

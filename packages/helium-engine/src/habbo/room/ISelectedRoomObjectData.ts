@@ -21,7 +21,7 @@ export interface ISelectedRoomObjectData
     readonly typeId: number;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/ISelectedRoomObjectData.as::get instanceData()
-    readonly instanceData: string;
+    readonly instanceData: string | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/ISelectedRoomObjectData.as::get stuffData()
     readonly stuffData: IStuffData | null;
@@ -33,5 +33,5 @@ export interface ISelectedRoomObjectData
     readonly animFrame: number;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/ISelectedRoomObjectData.as::get posture()
-    readonly posture: string;
+    readonly posture: string | null;
 }

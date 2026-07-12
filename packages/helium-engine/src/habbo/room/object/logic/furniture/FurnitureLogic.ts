@@ -23,6 +23,12 @@ export class FurnitureLogic extends MovingObjectLogic
 {
     private static readonly BOUNCE_STEPS = 8;
     private static readonly BOUNCE_STEP_HEIGHT = 0.0625;
+    // AS3's update(k) advances _bouncingStep once per call with no internal throttle - real
+    // AS3's engine tick itself ran at a fixed, much lower rate than this port's raw
+    // requestAnimationFrame-driven ticker. FurnitureVisualization.ts already self-throttles to
+    // 41ms (~24fps) to reproduce the original sprite-update cadence; the bounce step advance
+    // needs the same compensating throttle or it completes ~2-3x too fast on a 60fps+ display.
+    private static readonly BOUNCE_UPDATE_INTERVAL = 41;
 
     private _mouseOver: boolean = false;
     private _sizeX: number = 0;
@@ -33,6 +39,7 @@ export class FurnitureLogic extends MovingObjectLogic
     private _centerZ: number = 0;
     private _hasLocation: boolean = false;
     private _bounceStep: number = 0;
+    private _lastBounceUpdateTime: number = -Infinity;
     private _storedRotateMessage: RoomObjectUpdateMessage | null = null;
     private _locationOffset: Vector3d = new Vector3d();
     private _directions: number[] = [];
@@ -121,18 +128,27 @@ export class FurnitureLogic extends MovingObjectLogic
         this._sizeZ = 0;
         this._directions = [];
 
-        // Parse dimensions from XML/JSON data
+        // Parse dimensions from JSON data. The compiled bundle nests the furniture's
+        // logic config (matching AS3's `param1` in this method) under a `logic` key,
+        // alongside sibling `assets`/`spritesheet`/`visualizations` keys - not at the
+        // data root.
+        type DirectionEntry = number | { id: number };
+
         const config = data as {
-            model?: {
-                dimensions?: { x?: number; y?: number; z?: number; centerZ?: number };
-                directions?: { direction?: Array<{ id: number }> };
+            logic?: {
+                model?: {
+                    dimensions?: { x?: number; y?: number; z?: number; centerZ?: number };
+                    directions?: DirectionEntry[] | DirectionEntry;
+                };
+                customvars?: { variable?: Array<{ name: string }> } | Array<{ name: string }>;
             };
-            customvars?: { variable?: Array<{ name: string }> };
         };
 
-        if(config.model?.dimensions)
+        const logicData = config.logic;
+
+        if(logicData?.model?.dimensions)
         {
-            const dims = config.model.dimensions;
+            const dims = logicData.model.dimensions;
             this._sizeX = dims.x ?? 0;
             this._sizeY = dims.y ?? 0;
             this._sizeZ = dims.z ?? 0;
@@ -141,12 +157,20 @@ export class FurnitureLogic extends MovingObjectLogic
             this._centerZ = dims.centerZ ?? (this._sizeZ / 2);
         }
 
-        if(config.model?.directions?.direction)
+        const rawDirections = logicData?.model?.directions;
+
+        if(rawDirections !== undefined)
         {
-            for(const dir of config.model.directions.direction)
+            // Entries are plain direction-index numbers (e.g. [0, 2, 4, 6]); some
+            // bundles may still wrap them as {id} objects (XML->JSON conversion
+            // quirk also handled elsewhere in RoomContentLoader.ts).
+            const directionList = Array.isArray(rawDirections) ? rawDirections : [rawDirections];
+
+            for(const dir of directionList)
             {
-                this._directions.push(dir.id);
+                this._directions.push(typeof dir === 'number' ? dir : dir.id);
             }
+
             this._directions.sort((a, b) => a - b);
         }
 
@@ -157,10 +181,13 @@ export class FurnitureLogic extends MovingObjectLogic
         }
 
         // Set custom variables
-        if(config.customvars?.variable)
+        const customVarsSource = logicData?.customvars;
+        const customVarsList = Array.isArray(customVarsSource) ? customVarsSource : customVarsSource?.variable;
+
+        if(customVarsList)
         {
             const customVars: string[] = [];
-            for(const v of config.customvars.variable)
+            for(const v of customVarsList)
             {
                 customVars.push(v.name);
             }
@@ -432,6 +459,7 @@ export class FurnitureLogic extends MovingObjectLogic
 				currentLoc.z === message.loc.z)
             {
                 this._bounceStep = 1;
+                this._lastBounceUpdateTime = -Infinity;
                 this._storedRotateMessage = message;
                 return;
             }
@@ -450,8 +478,9 @@ export class FurnitureLogic extends MovingObjectLogic
     {
         super.update(time);
 
-        if(this._bounceStep > 0)
+        if(this._bounceStep > 0 && time >= this._lastBounceUpdateTime + FurnitureLogic.BOUNCE_UPDATE_INTERVAL)
         {
+            this._lastBounceUpdateTime = time;
             this._bounceStep++;
 
             if(this._bounceStep > FurnitureLogic.BOUNCE_STEPS)
@@ -508,7 +537,7 @@ export class FurnitureLogic extends MovingObjectLogic
         return model.getString('furniture_ad_url');
     }
 
-    protected handleAdClick(id: number, type: string, url: string): void
+    protected handleAdClick(_id: number, _type: string, _url: string): void
     {
         if(this.eventDispatcher !== null)
         {

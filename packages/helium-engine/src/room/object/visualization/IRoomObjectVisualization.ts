@@ -14,11 +14,21 @@ export interface IRoomObjectVisualization
     object: IRoomObject | null;
     readonly boundingRectangle: { x: number; y: number; width: number; height: number };
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/IRoomObjectVisualization.as::get image()
+    readonly image: HTMLCanvasElement | null;
+
     dispose(): void;
 
     initialize(data: IRoomObjectVisualizationData): boolean;
 
     update(geometry: IRoomGeometry, time: number, update: boolean, skipUpdate: boolean): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/IRoomObjectVisualization.as::getImage()
+    // TS deviation: returns an HTMLCanvasElement instead of AS3's BitmapData - both are
+    // synchronous, in-memory rasterizations (PixiJS's renderer.extract.canvas() is
+    // synchronous, matching BitmapData's timing); converting to ImageBitmap is the
+    // caller's job (RoomEngine), same async boundary already established by ImageResult.ts.
+    getImage(backgroundColor: number, originalId: number): HTMLCanvasElement | null;
 
     getInstanceId(): number;
 

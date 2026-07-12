@@ -11,6 +11,7 @@ export * from './ChatReviewSessionResultsMessageEvent';
 export * from './ChatReviewSessionStartedMessageEvent';
 export * from './ChatReviewSessionVotingStatusMessageEvent';
 export * from './CheckUserNameResultMessageEvent';
+export * from './FaqTextMessageEvent';
 export * from './GuideOnDutyStatusMessageEvent';
 export * from './GuideReportingStatusMessageEvent';
 export * from './GuideSessionAttachedMessageEvent';

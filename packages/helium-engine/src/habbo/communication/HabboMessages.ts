@@ -199,6 +199,8 @@ import {
     ObjectsMessageEvent,
     ObjectUpdateMessageEvent,
     RoomEntryInfoMessageEvent,
+    RoomPropertyMessageEvent,
+    RoomVisualizationSettingsEvent,
     SlideObjectBundleMessageEvent,
     UserRemoveMessageEvent,
     UsersMessageEvent,
@@ -225,6 +227,9 @@ import {
 // Incoming Events - Room Pet
 import {PetVocalMessageEvent} from './messages/incoming/room/pet';
 
+// Incoming Events - User Defined Room Events (Wired)
+import {WiredPermissionsEvent} from './messages/incoming/userdefinedroomevents';
+
 // Incoming Events - Poll
 import {
     PollContentsEvent,
@@ -236,7 +241,11 @@ import {
 } from './messages/incoming/poll';
 
 // Incoming Events - Help (name change events)
-import {ChangeUserNameResultMessageEvent, UserNameChangedMessageEvent,} from './messages/incoming/help';
+import {
+    ChangeUserNameResultMessageEvent,
+    FaqTextMessageEvent,
+    UserNameChangedMessageEvent,
+} from './messages/incoming/help';
 
 // Incoming Events - Error
 import {ErrorReportEvent} from './messages/incoming/error';
@@ -858,6 +867,16 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2613, UserUpdateMessageEvent);
         this._events.set(3693, UserRemoveMessageEvent);
         this._events.set(2794, SlideObjectBundleMessageEvent);
+        // AS3: sources/win63_version/habbo/communication/messages/incoming/room/engine/RoomPropertyMessageEvent.as
+        // (name recovered; obfuscated in primary dump as _SafeStr_4546[1956] = _SafeCls_2935,
+        // sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2935.as - exact
+        // field match: floorType/wallType/landscapeType/animatedLandscapeType).
+        this._events.set(1956, RoomPropertyMessageEvent);
+        // AS3: sources/win63_version/habbo/communication/messages/incoming/room/engine/RoomVisualizationSettingsEvent.as
+        // (name recovered; obfuscated in primary dump as _SafeStr_4546[2986] = _SafeCls_2101,
+        // sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2101.as - exact
+        // field match: wallsHidden/wallThicknessMultiplier/floorThicknessMultiplier).
+        this._events.set(2986, RoomVisualizationSettingsEvent);
 
         // === ROOM CHAT ===
         this._events.set(311, ChatMessageEvent);
@@ -896,6 +915,14 @@ export class HabboMessages implements IMessageConfiguration
         // Vortex-custom (not in official AS3 dumps): vortex-client commit d6bc0d0 "feat(pets): add
         // pet vocal message, IssuePetCommand compositor and command UI"
         this._events.set(3073, PetVocalMessageEvent);
+
+        // === WIRED ===
+        // AS3: sources/win63_version/habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredPermissionsEvent.as
+        // (name recovered; obfuscated in primary dump as _SafeStr_4546[3483] = _SafeCls_3768,
+        // sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2538/_SafeCls_3768.as, whose
+        // parser is the real, non-obfuscated com/sulake/habbo/communication/messages/parser/
+        // userdefinedroomevents/wiredmenu/_SafeCls_2783.as - exact field match: canModify/canRead).
+        this._events.set(3483, WiredPermissionsEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -936,6 +963,16 @@ export class HabboMessages implements IMessageConfiguration
         // === HELP (name change) ===
         this._events.set(2319, UserNameChangedMessageEvent);
         this._events.set(1621, ChangeUserNameResultMessageEvent);
+
+        // === HELP (FAQ) ===
+        // AS3: sources/flash_version/src/com/sulake/habbo/communication/messages/incoming/help/FaqTextMessageEvent.as
+        // (name recovered via sources/flash_version/OriginalClassNames.txt; obfuscated in primary dump
+        // as _SafeStr_4546[2913] = _SafeCls_3480, sources/WIN63-202607011411-782849652/src/unknowns/
+        // _SafePkg_1843/_SafeCls_3480.as, whose parser is the real, non-obfuscated
+        // com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as - exact field match:
+        // questionId/answerText - vs. sources/flash_version's FaqTextMessageParser). Response to
+        // GetFaqTextMessageComposer(questionId), not yet ported.
+        this._events.set(2913, FaqTextMessageEvent);
 
         // === PREFERENCES ===
         this._events.set(724, AccountPreferencesEvent);
