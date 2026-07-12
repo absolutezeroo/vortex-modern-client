@@ -104,6 +104,8 @@ import {RoomObjectDataUpdateMessage} from './messages/RoomObjectDataUpdateMessag
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
 import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
+import {RoomObjectRoomPlaneVisibilityUpdateMessage} from './messages/RoomObjectRoomPlaneVisibilityUpdateMessage';
+import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoomPlanePropertyUpdateMessage';
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
@@ -1833,6 +1835,76 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         this.events.emit(RoomEngineEvent.REE_INITIALIZED, new RoomEngineEvent(RoomEngineEvent.REE_INITIALIZED, roomId));
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoom()
+    // TODO(AS3): the "room object doesn't exist yet" branch (buffering the update until the room
+    // object is created) is decompiler-corrupted in win63_version (`null.floorType = param2`-style
+    // lines that cannot be the real code) - not ported; this always requires the room object to
+    // already exist, matching every current call site (live property pushes after room entry).
+    updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate: boolean = false): boolean
+    {
+        const room = this.getRoomInstance(roomId);
+        const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
+
+        if(!roomObject) return false;
+
+        const eventHandler = roomObject.getEventHandler();
+
+        if(!eventHandler) return false;
+
+        if(floorType != null)
+        {
+            if(room && !skipModelUpdate) room.setString(RoomObjectVariableEnum.ROOM_FLOOR_TYPE, floorType);
+
+            eventHandler.processUpdateMessage(new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_FLOOR_UPDATE, floorType));
+        }
+
+        if(wallType != null)
+        {
+            if(room && !skipModelUpdate) room.setString(RoomObjectVariableEnum.ROOM_WALL_TYPE, wallType);
+
+            eventHandler.processUpdateMessage(new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_WALL_UPDATE, wallType));
+        }
+
+        if(landscapeType != null)
+        {
+            if(room && !skipModelUpdate) room.setString(RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE, landscapeType);
+
+            eventHandler.processUpdateMessage(new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_LANDSCAPE_UPDATE, landscapeType));
+        }
+
+        return true;
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoomVisibilities()
+    updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible: boolean = true): boolean
+    {
+        const room = this.getRoomInstance(roomId);
+        const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
+        const eventHandler = roomObject?.getEventHandler();
+
+        if(!eventHandler) return false;
+
+        eventHandler.processUpdateMessage(new RoomObjectRoomPlaneVisibilityUpdateMessage(RoomObjectRoomPlaneVisibilityUpdateMessage.WALL_VISIBILITY, wallsVisible));
+        eventHandler.processUpdateMessage(new RoomObjectRoomPlaneVisibilityUpdateMessage(RoomObjectRoomPlaneVisibilityUpdateMessage.FLOOR_VISIBILITY, floorVisible));
+
+        return true;
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoomPlaneThicknesses()
+    updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean
+    {
+        const room = this.getRoomInstance(roomId);
+        const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
+        const eventHandler = roomObject?.getEventHandler();
+
+        if(!eventHandler) return false;
+
+        eventHandler.processUpdateMessage(new RoomObjectRoomPlanePropertyUpdateMessage(RoomObjectRoomPlanePropertyUpdateMessage.WALL_THICKNESS, wallThicknessMultiplier));
+        eventHandler.processUpdateMessage(new RoomObjectRoomPlanePropertyUpdateMessage(RoomObjectRoomPlanePropertyUpdateMessage.FLOOR_THICKNESS, floorThicknessMultiplier));
+
+        return true;
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()

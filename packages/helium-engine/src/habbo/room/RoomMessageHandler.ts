@@ -41,6 +41,12 @@ import {UserRemoveMessageEvent} from '../communication/messages/incoming/room/en
 import {
     SlideObjectBundleMessageEvent
 } from '../communication/messages/incoming/room/engine/SlideObjectBundleMessageEvent';
+import {
+    RoomPropertyMessageEvent
+} from '../communication/messages/incoming/room/engine/RoomPropertyMessageEvent';
+import {
+    RoomVisualizationSettingsEvent
+} from '../communication/messages/incoming/room/engine/RoomVisualizationSettingsEvent';
 
 // Message Events - Room Chat
 import {UserTypingMessageEvent} from '../communication/messages/incoming/room/chat/UserTypingMessageEvent';
@@ -82,6 +88,12 @@ import type {
 import type {
     FurnitureAliasesMessageParser
 } from '../communication/messages/parser/room/engine/FurnitureAliasesMessageParser';
+import type {
+    RoomPropertyMessageEventParser
+} from '../communication/messages/parser/room/engine/RoomPropertyMessageEventParser';
+import type {
+    RoomVisualizationSettingsEventParser
+} from '../communication/messages/parser/room/engine/RoomVisualizationSettingsEventParser';
 import type {FurnitureFloorData} from '../communication/messages/incoming/room/engine/FurnitureFloorData';
 import type {FurnitureWallData} from '../communication/messages/incoming/room/engine/FurnitureWallData';
 import type {RoomUserData} from '../communication/messages/incoming/room/engine/RoomUserData';
@@ -178,6 +190,8 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new UserUpdateMessageEvent(this.onUserUpdate.bind(this)));
             connection.addMessageEvent(new UserRemoveMessageEvent(this.onUserRemove.bind(this)));
             connection.addMessageEvent(new SlideObjectBundleMessageEvent(this.onSlideUpdate.bind(this)));
+            connection.addMessageEvent(new RoomPropertyMessageEvent(this.onRoomProperty.bind(this)));
+            connection.addMessageEvent(new RoomVisualizationSettingsEvent(this.onRoomVisualizationSettings.bind(this)));
 
             // Room layout events
             connection.addMessageEvent(new RoomEntryTileMessageEvent(this.onEntryTileData.bind(this)));
@@ -291,11 +305,68 @@ export class RoomMessageHandler implements IRoomMessageHandler
             const name = parser.getName(i);
             const alias = parser.getAlias(i);
 
-            if(name !== null && alias !== null) 
+            if(name !== null && alias !== null)
             {
                 this._roomCreator.setRoomObjectAlias(name, alias);
             }
         }
+    }
+
+    /**
+     * Handle a live room floor/wall/landscape texture update.
+     * Based on AS3: sources/win63_version/habbo/room/class_1788.as::onRoomProperty()
+     */
+    onRoomProperty(event: IMessageEvent): void
+    {
+        if(this._roomCreator === null || this._currentRoomId === 0)
+        {
+            return;
+        }
+
+        const propertyEvent = event as RoomPropertyMessageEvent;
+
+        if(propertyEvent === null)
+        {
+            return;
+        }
+
+        const parser = propertyEvent.parser as RoomPropertyMessageEventParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        this._roomCreator.updateObjectRoom(this._currentRoomId, parser.floorType, parser.wallType, parser.landscapeType);
+    }
+
+    /**
+     * Handle a live room wall-visibility / wall+floor thickness update.
+     * Based on AS3: sources/win63_version/habbo/room/class_1788.as::onRoomVisualizationSettings()
+     */
+    onRoomVisualizationSettings(event: IMessageEvent): void
+    {
+        if(this._roomCreator === null || this._currentRoomId === 0)
+        {
+            return;
+        }
+
+        const settingsEvent = event as RoomVisualizationSettingsEvent;
+
+        if(settingsEvent === null)
+        {
+            return;
+        }
+
+        const parser = settingsEvent.parser as RoomVisualizationSettingsEventParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        this._roomCreator.updateObjectRoomVisibilities(this._currentRoomId, !parser.wallsHidden, true);
+        this._roomCreator.updateObjectRoomPlaneThicknesses(this._currentRoomId, parser.wallThicknessMultiplier, parser.floorThicknessMultiplier);
     }
 
     // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMap()

@@ -272,6 +272,12 @@ export interface IRoomEngine extends IDisposable
 
     initializeRoomVisuals(roomId: number, floorType: string, wallType: string, landscapeType: string, worldType: number): void;
 
+    updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate?: boolean): boolean;
+
+    updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible?: boolean): boolean;
+
+    updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean;
+
     // Room data
     getRoomOwnObjectId(roomId: number): number;
 

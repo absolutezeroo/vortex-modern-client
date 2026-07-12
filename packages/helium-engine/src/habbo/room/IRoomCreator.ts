@@ -261,4 +261,28 @@ export interface IRoomCreator
 	 * Based on AS3: RoomEngine.getTileObjectMap()
 	 */
     getTileObjectMap(roomId: number): TileObjectMap | null;
+
+    /**
+	 * Update the room's floor/wall/landscape texture type(s).
+	 * Based on AS3: RoomEngine.updateObjectRoom()
+	 */
+    updateObjectRoom(
+        roomId: number,
+        floorType?: string | null,
+        wallType?: string | null,
+        landscapeType?: string | null,
+        skipModelUpdate?: boolean
+    ): boolean;
+
+    /**
+	 * Update the room's wall/floor plane visibility.
+	 * Based on AS3: RoomEngine.updateObjectRoomVisibilities()
+	 */
+    updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible?: boolean): boolean;
+
+    /**
+	 * Update the room's wall/floor plane thickness multipliers.
+	 * Based on AS3: RoomEngine.updateObjectRoomPlaneThicknesses()
+	 */
+    updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean;
 }
