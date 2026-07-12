@@ -337,7 +337,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
             return;
         }
 
-        this._roomCreator.updateObjectRoom(this._currentRoomId, parser.floorType, parser.wallType, parser.landscapeType);
+        this._roomCreator.updateObjectRoom(
+            this._currentRoomId,
+            this.normalizeRoomPropertyValue(parser.floorType),
+            this.normalizeRoomPropertyValue(parser.wallType),
+            this.normalizeRoomPropertyValue(parser.landscapeType)
+        );
+    }
+
+    // Vortex-emulator quirk, not AS3: the server's room record uses "0" as its DB
+    // "unset" sentinel for floor/wall/landscape paint (Turbo.Rooms/Grains/RoomGrain.cs)
+    // and sends it as a literal RoomPropertyMessageComposer value instead of either
+    // omitting the property or sending the real default motif ids - applying "0" as a
+    // texture id verbatim renders a real (wrong) motif instead of the intended default
+    // look, so it's treated the same as "not sent" here.
+    private normalizeRoomPropertyValue(value: string | null): string | null
+    {
+        return value === '0' ? null : value;
     }
 
     /**
