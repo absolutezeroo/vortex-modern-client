@@ -150,15 +150,30 @@ function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkin
  * "Ubuntu"), expecting those families to already be registered. Without this,
  * every window/button caption silently falls back to Arial/sans-serif — no
  * console warning, since an unregistered CSS font-family is just skipped.
+ *
+ * Two more real mismatches of the same kind, both previously unregistered
+ * under any name:
+ * - Chat bubbles use the plain family `"Volter"` (`ChatStyleLibrary.as`'s
+ *   real default — verified byte-for-byte at `ChatStyleLibrary.as:114` in
+ *   the primary `WIN63-202607011411-782849652` source — no "(Goldfish)"
+ *   suffix, and none of the 89 real chat styles in `chatstyles_xml.xml`
+ *   override it), which never matched the `"Volter (Goldfish)"` registration
+ *   above, so chat text silently rendered in the browser default font.
+ * - `"UbuntuThick"` is used verbatim as a literal `font_face` in real AS3
+ *   layout XML (`games_main`, `snowwar_*`) but isn't derived from
+ *   `TextStyleManager` at all, so it was never registered under any name.
  */
 const WEBFONT_FACES: Array<{ family: string; file: string; weight?: string; style?: string }> = [
     {family: 'Volter (Goldfish)', file: 'webfonts/Volter.ttf', weight: 'normal'},
     {family: 'Volter (Goldfish)', file: 'webfonts/Volter Bold.ttf', weight: 'bold'},
+    {family: 'Volter', file: 'webfonts/Volter.ttf', weight: 'normal'},
+    {family: 'Volter', file: 'webfonts/Volter Bold.ttf', weight: 'bold'},
     {family: 'Ubuntu', file: 'webfonts/Ubuntu.ttf', weight: 'normal', style: 'normal'},
     {family: 'Ubuntu', file: 'webfonts/Ubuntu-b.ttf', weight: 'bold'},
     {family: 'Ubuntu', file: 'webfonts/Ubuntu-i.ttf', style: 'italic'},
     {family: 'Ubuntu', file: 'webfonts/Ubuntu-ib.ttf', weight: 'bold', style: 'italic'},
     {family: 'Ubuntu Condensed', file: 'webfonts/Ubuntu-C.ttf', weight: 'normal'},
+    {family: 'UbuntuThick', file: 'webfonts/Ubuntu-thick-b.ttf', weight: 'normal'},
 ];
 
 async function loadWebFonts(bundle: AssetBundle): Promise<void> 
