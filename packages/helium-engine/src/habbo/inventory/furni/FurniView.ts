@@ -8,6 +8,7 @@ import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {FurniModel} from './FurniModel';
 import type {GroupItem} from '../items/GroupItem';
 import type {FurnitureItem} from '../items/FurnitureItem';
@@ -350,7 +351,10 @@ export class FurniView
                 else
                 {
                     this._roomPreviewer.updateRoomWallsAndFloorVisibility(false, true);
-                    this._roomPreviewer.addFurnitureIntoRoom(groupItem.type, new Vector3d(90, 0, 0), groupItem.stuffData, groupItem.extra.toString());
+                    // `groupItem.stuffData` is typed via the older, narrower habbo/inventory/items/IStuffData
+                    // (this module's own pre-existing duplicate of habbo/room/object/data/IStuffData, out
+                    // of scope to unify here) - cast, not a behavior change.
+                    this._roomPreviewer.addFurnitureIntoRoom(groupItem.type, new Vector3d(90, 0, 0), groupItem.stuffData as unknown as IStuffData, groupItem.extra.toString());
                 }
             }
         }

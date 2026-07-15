@@ -56,6 +56,15 @@ import type {
 } from '@habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser';
 import {GetCatalogIndexComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogIndexComposer';
 import {BuildersClubQueryFurniCountMessageComposer} from '@habbo/communication/messages/outgoing/catalog/BuildersClubQueryFurniCountMessageComposer';
+import {PurchaseOKMessageEvent} from '@habbo/communication/messages/incoming/catalog/PurchaseOKMessageEvent';
+import type {PurchaseOKMessageEventParser} from '@habbo/communication/messages/parser/catalog/PurchaseOKMessageEventParser';
+import {PurchaseErrorMessageEvent} from '@habbo/communication/messages/incoming/catalog/PurchaseErrorMessageEvent';
+import type {PurchaseErrorMessageEventParser} from '@habbo/communication/messages/parser/catalog/PurchaseErrorMessageEventParser';
+import {PurchaseNotAllowedMessageEvent} from '@habbo/communication/messages/incoming/catalog/PurchaseNotAllowedMessageEvent';
+import type {PurchaseNotAllowedMessageEventParser} from '@habbo/communication/messages/parser/catalog/PurchaseNotAllowedMessageEventParser';
+import {NotEnoughBalanceMessageEvent} from '@habbo/communication/messages/incoming/catalog/NotEnoughBalanceMessageEvent';
+import type {NotEnoughBalanceMessageEventParser} from '@habbo/communication/messages/parser/catalog/NotEnoughBalanceMessageEventParser';
+import {CatalogFurniPurchaseEvent} from './navigation/events/CatalogFurniPurchaseEvent';
 import {RedeemVoucherMessageComposer} from '@habbo/communication/messages/outgoing/catalog/RedeemVoucherMessageComposer';
 import {VoucherRedeemOkMessageEvent} from '@habbo/communication/messages/incoming/catalog/VoucherRedeemOkMessageEvent';
 import type {VoucherRedeemOkMessageEventParser} from '@habbo/communication/messages/parser/catalog/VoucherRedeemOkMessageEventParser';
@@ -1214,6 +1223,10 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
+        this.addMessageEvent(new PurchaseOKMessageEvent(this.onPurchaseOK.bind(this)));
+        this.addMessageEvent(new PurchaseErrorMessageEvent(this.onPurchaseError.bind(this)));
+        this.addMessageEvent(new PurchaseNotAllowedMessageEvent(this.onPurchaseNotAllowed.bind(this)));
+        this.addMessageEvent(new NotEnoughBalanceMessageEvent(this.onNotEnoughBalance.bind(this)));
         this.addMessageEvent(new VoucherRedeemOkMessageEvent(this.onVoucherRedeemOk.bind(this)));
         this.addMessageEvent(new VoucherRedeemErrorMessageEvent(this.onVoucherRedeemError.bind(this)));
         this.addMessageEvent(new HabboClubOffersMessageEvent(this.onHabboClubOffers.bind(this)));
@@ -1625,6 +1638,78 @@ export class HabboCatalog extends Component implements IHabboCatalog
         }
 
         this.updatePurse();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseOK()
+    // TODO(AS3): AS3 also plays an icon-flyover animation toward the toolbar using the active
+    // confirmation dialog's own icon bitmap (getIconWrapper()/isGiftPurchase()/productType) and
+    // calls its ltdRaffleEnded()/dispose(). PurchaseConfirmationDialog.ts is a documented minimal
+    // stub (see its own header comment) that sends the composer and disposes itself immediately
+    // on confirm, without waiting for or tracking this response - it exposes none of that state,
+    // so only the one side effect that's still meaningful today (the CatalogFurniPurchaseEvent
+    // signal, e.g. for tutorial/achievement tracking) is ported.
+    private onPurchaseOK(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as PurchaseOKMessageEventParser | null;
+        const offer = parser?.offer;
+
+        if(offer)
+        {
+            this.events.emit(CatalogFurniPurchaseEvent.CATALOG_FURNI_PURCHASE, new CatalogFurniPurchaseEvent(offer.localizationId));
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseError()
+    private onPurchaseError(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as PurchaseErrorMessageEventParser | null;
+
+        if(!parser) return;
+
+        const description = parser.errorCode > 0
+            ? `\${catalog.alert.purchaseerror.description.${parser.errorCode}}`
+            : '${catalog.alert.purchaseerror.description}';
+
+        this._windowManager?.alert('${catalog.alert.purchaseerror.title}', description, 0, this.alertDialogEventProcessor);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onPurchaseNotAllowed()
+    private onPurchaseNotAllowed(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as PurchaseNotAllowedMessageEventParser | null;
+
+        if(!parser) return;
+
+        const description = parser.errorCode - 1 === 0
+            ? '${catalog.alert.purchasenotallowed.hc.description}'
+            : '${catalog.alert.purchasenotallowed.unknown.description}';
+
+        this._windowManager?.alert('${catalog.alert.purchasenotallowed.title}', description, 0, this.alertDialogEventProcessor);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onNotEnoughBalance()
+    private onNotEnoughBalance(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.parser as NotEnoughBalanceMessageEventParser | null;
+
+        if(!parser) return;
+
+        if(parser.notEnoughCredits)
+        {
+            this.showNotEnoughCreditsAlert();
+        }
+        else if(parser.notEnoughActivityPoints)
+        {
+            this.showNotEnoughActivityPointsAlert(parser.activityPointType);
+        }
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onVoucherRedeemOk()
