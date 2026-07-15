@@ -353,7 +353,12 @@ export class FurniView
                     this._roomPreviewer.updateRoomWallsAndFloorVisibility(false, true);
                     // `groupItem.stuffData` is typed via the older, narrower habbo/inventory/items/IStuffData
                     // (this module's own pre-existing duplicate of habbo/room/object/data/IStuffData, out
-                    // of scope to unify here) - cast, not a behavior change.
+                    // of scope to unify here) - its concrete classes don't implement the fuller
+                    // interface's writeRoomObjectModel()/initializeFromRoomObjectModel(), so this cast is
+                    // a real, structural lie about the object's shape, not just a type-system technicality.
+                    // Safe only because RoomEngine.ts -> FurnitureLogic.handleDataUpdateMessage() now
+                    // guards with a typeof check before calling writeRoomObjectModel() on whatever this
+                    // resolves to at runtime - without that guard this throws on every item click.
                     this._roomPreviewer.addFurnitureIntoRoom(groupItem.type, new Vector3d(90, 0, 0), groupItem.stuffData as unknown as IStuffData, groupItem.extra.toString());
                 }
             }
@@ -433,7 +438,7 @@ export class FurniView
         }
 
         const previewWidget = this._window.findChildByName('furni_preview_widget') as IWidgetWindow | null;
-        const roomPreviewerWidget = previewWidget?.widget as IRoomPreviewerWidget | undefined;
+        const roomPreviewerWidget = (previewWidget?.widget ?? null) as IRoomPreviewerWidget | null;
 
         this._roomPreviewer = roomPreviewerWidget?.roomPreviewer ?? null;
 

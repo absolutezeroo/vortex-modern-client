@@ -144,7 +144,15 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         if(!(this.hasConfig(config, 'anonymous') ? this.getConfigBoolean(config, 'anonymous') : false))
         {
             pointer = (assets.getAssetByName(`style_${assetId}_chat_bubble_pointer`)?.content as ImageBitmap | null) ?? null;
-            pointerY = parseInt(this.getConfigCSV(config, 'pointerY')![0], 10);
+
+            // AS3's own initializeStyleFromAssets() reads getConfigCSV(config,"pointerY")[0]
+            // with no hasConfig() guard, unlike every sibling property in this same method
+            // (fontFace/fontSize/textColorRGB/etc.) - a real, unguarded AS3 bug, not a porting
+            // deviation. A style whose config lacks "pointerY" (observed for style id 3) throws
+            // there in AS3 too; guarded here to match the established sibling pattern instead of
+            // reproducing the crash, since the surrounding try/catch already just no-ops the
+            // style on failure regardless.
+            pointerY = this.hasConfig(config, 'pointerY') ? parseInt(this.getConfigCSV(config, 'pointerY')![0], 10) : 0;
             pointerXMargins = this.hasConfig(config, 'pointerXMargins') ? this.getConfigIntArray(config, 'pointerXMargins') : null;
         }
 

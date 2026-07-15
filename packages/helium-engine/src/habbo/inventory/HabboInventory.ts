@@ -34,6 +34,7 @@ import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
+import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {
     GetBadgesComposer,
     GetBotInventoryComposer,
@@ -267,7 +268,17 @@ export class HabboInventory extends Component implements IHabboInventory
                 IID_RoomSessionManager,
                 (manager: IRoomSessionManager | null) =>
                 {
+                    // sessionEvents is a dedicated EventEmitter (not Component.events - see
+                    // RoomSessionManager.ts), so it can't use ComponentDependency's built-in
+                    // eventListeners param (that subscribes to .events). Subscribe/unsubscribe
+                    // manually, matching the IID_HabboToolbar dependency below.
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+
                     this._roomSessionManager = manager;
+
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
                 },
                 false
             ),
@@ -310,11 +321,32 @@ export class HabboInventory extends Component implements IHabboInventory
         this._view?.onHabboToolbarEvent(event);
     };
 
+    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::roomSessionEventHandler()
+    // TODO(AS3): the RSDUE_ALLOW_PETS case (petsModel.updatePetsAllowed()) and RSE_ENDED's
+    // deselectAllEffects() aren't ported - PetsModel.ts has no updatePetsAllowed() and the
+    // avatar-effects inventory tab (EffectsModel) isn't ported at all yet. This only restores
+    // the RSE_STARTED -> furniModel.updateView() refresh, which is what re-evaluates the
+    // "place in room"/rent/use action buttons against the now-current room session - without it,
+    // HabboInventory.roomSession (recomputed from roomSessionManager.getSession() on every
+    // access) could still be null/stale if the inventory was opened mid room-entry, and nothing
+    // ever re-ran updateActionButtons() afterwards.
+    private onRoomSessionEvent = (event: RoomSessionEvent): void =>
+    {
+        if(!this.isVisible) return;
+
+        if(event.type === RoomSessionEvent.RSE_STARTED)
+        {
+            this._furniModel?.updateView();
+        }
+    };
+
     override dispose(): void
     {
         if(this.disposed) return;
 
         this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
 
         for(const event of this._furniMessageEvents)
         {

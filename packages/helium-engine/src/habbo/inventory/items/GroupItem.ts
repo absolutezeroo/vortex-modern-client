@@ -978,9 +978,9 @@ export class GroupItem implements IGetImageListener
     }
 
     // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::itemEventProc()
-    private itemEventProc = (event: WindowEvent, _window: IWindow): void => 
+    private itemEventProc = (event: WindowEvent, _window: IWindow): void =>
     {
-        switch(event.type) 
+        switch(event.type)
         {
             case WindowMouseEvent.UP:
                 this._wasDragCandidate = false;

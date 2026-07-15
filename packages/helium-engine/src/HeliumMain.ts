@@ -12,6 +12,7 @@ import {RoomEngine, RoomMessageHandler} from '@habbo/room';
 import {HabboRoomRendererFactory} from '@habbo/room/renderer/HabboRoomRendererFactory';
 import {RoomManager} from '@room/RoomManager';
 import {RoomSessionManager} from '@habbo/session/RoomSessionManager';
+import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {SessionDataManager} from '@habbo/session/SessionDataManager';
 import {HabboCampaigns} from '@habbo/campaign/HabboCampaigns';
 import {AdManager} from '@habbo/advertisement/AdManager';
@@ -769,6 +770,30 @@ export class HeliumMain implements IHeliumMain
 
         // 12. Room Message Handler - bridges communication to room engine
         this._roomMessageHandler = new RoomMessageHandler(this._roomEngine);
+
+        // AS3: sources/win63_version/habbo/room/class_34.as::onRoomSessionEvent()
+        // AS3's RoomEngine owns/constructs the message handler directly (`var_761 = new
+        // class_1788(this)`) and subscribes to its own RoomSessionManager dependency's
+        // RSE_STARTED/RSE_ENDED to keep the handler's "current room" tracking and the engine's
+        // room-instance lifecycle in sync. This port constructs RoomMessageHandler here instead
+        // (composition root) rather than inside RoomEngine.ts, so the equivalent wiring lives
+        // here. Missing this wiring meant rejoining a room you were already in never disposed
+        // the stale room instance first (RoomMessageHandler.onRoomReady()'s own "did the room id
+        // change" check saw no change from the last visit and skipped setCurrentRoom()'s
+        // disposal), duplicating the avatar and every other room object on rejoin.
+        if(this._roomSessionManager)
+        {
+            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_STARTED, (event: RoomSessionEvent) =>
+            {
+                this._roomMessageHandler?.setCurrentRoom(event.session.roomId);
+            });
+
+            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_ENDED, (event: RoomSessionEvent) =>
+            {
+                this._roomMessageHandler?.resetCurrentRoom();
+                this._roomEngine?.disposeRoom(event.session.roomId);
+            });
+        }
 
         // Wire RoomMessageHandler to the connection.
         await Promise.resolve();
