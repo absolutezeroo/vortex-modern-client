@@ -4,6 +4,8 @@ export * from './BlockUserUpdateMessageEvent';
 export * from './ChangeEmailResultEvent';
 export * from './EmailStatusResultEvent';
 export * from './GroupDetailsChangedMessageEvent';
+export * from './GuildMembership';
+export * from './GuildMembershipsMessageEvent';
 export * from './ExtendedProfileChangedMessageEvent';
 export * from './ExtendedProfileData';
 export * from './ExtendedProfileMessageEvent';

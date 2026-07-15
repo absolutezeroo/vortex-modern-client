@@ -76,4 +76,10 @@ export class StringArrayStuffData extends StuffDataBase implements IStuffData
 
         return '';
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/StringArrayStuffData.as::setArray()
+    setArray(data: string[]): void
+    {
+        this._data = data;
+    }
 }

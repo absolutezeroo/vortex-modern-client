@@ -4,6 +4,7 @@ export * from './BlockUserUpdateMessageParser';
 export * from './ChangeEmailResultParser';
 export * from './EmailStatusResultParser';
 export * from './GroupDetailsChangedMessageParser';
+export * from './GuildMembershipsMessageEventParser';
 export * from './ExtendedProfileChangedMessageParser';
 export * from './ExtendedProfileMessageParser';
 export * from './HabboGroupBadgesMessageParser';

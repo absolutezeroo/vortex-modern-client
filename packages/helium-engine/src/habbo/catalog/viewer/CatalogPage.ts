@@ -40,6 +40,10 @@ import {MarketPlaceCatalogWidget} from './widgets/MarketPlaceCatalogWidget';
 import {MarketPlaceOwnItemsCatalogWidget} from './widgets/MarketPlaceOwnItemsCatalogWidget';
 import {RecyclerCatalogWidget} from './widgets/RecyclerCatalogWidget';
 import {RecyclerPrizesCatalogWidget} from './widgets/RecyclerPrizesCatalogWidget';
+import {BuyGuildWidget} from './widgets/BuyGuildWidget';
+import {GuildBadgeViewCatalogWidget} from './widgets/GuildBadgeViewCatalogWidget';
+import {GuildSelectorCatalogWidget} from './widgets/GuildSelectorCatalogWidget';
+import {GuildForumSelectorCatalogWidget} from './widgets/GuildForumSelectorCatalogWidget';
 import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
@@ -321,13 +325,14 @@ export class CatalogPage implements ICatalogPage
     }
 
     // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // 32 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
+    // 36 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
     // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
     // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/
     // soldLtdItemsWidget/madMoneyWidget/addOnBadgeViewWidget/featuredItemsWidget/colourGridWidget/
     // bundleGridScrollWidget/activityPointDisplayWidget/redeemItemCodeWidget/spacesNewWidget/
     // bundlePurchaseExtraInfoWidget/clubGiftWidget/clubBuyWidget/vipBuyWidget/loyaltyVipBuyWidget/
-    // vipGiftWidget/marketPlaceWidget/marketPlaceOwnItemsWidget/recyclerWidget/recyclerPrizesWidget) -
+    // vipGiftWidget/marketPlaceWidget/marketPlaceOwnItemsWidget/recyclerWidget/recyclerPrizesWidget/
+    // buyGuildWidget/guildBadgeViewWidget/guildSelectorWidget/guildForumSelectorWidget) -
     // the rest (trophyWidget, ...) fall through and are silently skipped, matching AS3's own switch
     // (no default case = unmatched names do nothing).
     private createWidget(window: IWindowContainer): void
@@ -443,6 +448,18 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.RECYCLER_PRIZES:
                 this._widgets.push(new RecyclerPrizesCatalogWidget(window));
+                break;
+            case CatalogWidgetName.BUY_GUILD:
+                this._widgets.push(new BuyGuildWidget(window));
+                break;
+            case CatalogWidgetName.GUILD_BADGE_VIEW:
+                this._widgets.push(new GuildBadgeViewCatalogWidget(window, this._catalog!.getGroupMembershipsController()!));
+                break;
+            case CatalogWidgetName.GUILD_SELECTOR:
+                this._widgets.push(new GuildSelectorCatalogWidget(window, this._catalog!.getGroupMembershipsController()!));
+                break;
+            case CatalogWidgetName.GUILD_FORUM_SELECTOR:
+                this._widgets.push(new GuildForumSelectorCatalogWidget(window, this._catalog!.getGroupMembershipsController()!));
                 break;
         }
     }

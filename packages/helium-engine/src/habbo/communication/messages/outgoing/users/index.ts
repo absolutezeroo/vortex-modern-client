@@ -6,6 +6,8 @@ export {DeselectFavouriteHabboGroupMessageComposer} from './DeselectFavouriteHab
 export {GetEmailStatusComposer} from './GetEmailStatusComposer';
 export {GetExtendedProfileByNameMessageComposer} from './GetExtendedProfileByNameMessageComposer';
 export {GetExtendedProfileMessageComposer} from './GetExtendedProfileMessageComposer';
+export {GetGuildCreationInfoMessageComposer} from './GetGuildCreationInfoMessageComposer';
+export {GetGuildMembershipsMessageComposer} from './GetGuildMembershipsMessageComposer';
 export {GetHabboGroupDetailsMessageComposer} from './GetHabboGroupDetailsMessageComposer';
 export {GetHabboGroupBadgesMessageComposer} from './GetHabboGroupBadgesMessageComposer';
 export {GetIgnoredUsersMessageComposer} from './GetIgnoredUsersMessageComposer';

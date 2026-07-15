@@ -106,6 +106,13 @@ import {RecyclerPrizesMessageEvent} from '@habbo/communication/messages/incoming
 import type {RecyclerPrizesMessageEventParser} from '@habbo/communication/messages/parser/catalog/RecyclerPrizesMessageEventParser';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IDisposable} from '@core/runtime/IDisposable';
+import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
+import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
+import type {IHabboNewNavigator} from '@habbo/navigator/IHabboNewNavigator';
+import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
+import {GuildSettingsChangedInManageEvent} from '@habbo/groups/events/GuildSettingsChangedInManageEvent';
+import {GuildMembershipsMessageEvent} from '@habbo/communication/messages/incoming/users/GuildMembershipsMessageEvent';
+import {GuildMembershipsController} from './guilds/GuildMembershipsController';
 import {PurchaseConfirmationDialog} from './purchase/PurchaseConfirmationDialog';
 import type {IHabboCatalog} from './IHabboCatalog';
 import type {IPurchasableOffer} from './IPurchasableOffer';
@@ -214,9 +221,19 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _roomEngine: IRoomEngine | null = null;
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::get roomEngine()
-    get roomEngine(): IRoomEngine | null 
+    get roomEngine(): IRoomEngine | null
     {
         return this._roomEngine;
+    }
+
+    private _newNavigator: IHabboNewNavigator | null = null;
+
+    private _groupMembershipsController: GuildMembershipsController | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get navigator()
+    get navigator(): IHabboNavigator | null
+    {
+        return this._newNavigator?.legacyNavigator ?? null;
     }
 
     private _utils: HabboCatalogUtils = new HabboCatalogUtils(this);
@@ -424,6 +441,38 @@ export class HabboCatalog extends Component implements IHabboCatalog
                     this._tracking = tracking;
                 },
                 false
+            ),
+            new ComponentDependency(
+                IID_HabboNewNavigator,
+                (navigator: IHabboNewNavigator | null) =>
+                {
+                    this._newNavigator = navigator;
+                },
+                false
+            ),
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dependencies
+            // AS3 subscribes to IHabboGroupsManager's GSCIME_GUILD_VISUAL_SETTINGS_CHANGED event
+            // with no plain setter (null) - only the event listener matters here. Currently dormant:
+            // HabboGroupsManager never dispatches this event yet (the guild-settings management UI
+            // that would fire it isn't ported), so onGuildVisualSettingsChanged() is real but
+            // unreachable today, same as ClubBuyController.showConfirmation()'s documented gap.
+            new ComponentDependency(
+                IID_HabboGroupsManager,
+                null,
+                false,
+                [
+                    {
+                        type: GuildSettingsChangedInManageEvent.GUILD_VISUAL_SETTINGS_CHANGED,
+                        // Deferred read of this.onGuildVisualSettingsChanged: this array is built
+                        // inside the base Component constructor, before this class's own arrow-
+                        // function field initializers have run - a direct `this.onX` reference here
+                        // would capture `undefined`. Wrapping it in a fresh closure defers the
+                        // property read until the listener actually fires, by which point
+                        // construction has completed (same reasoning as onHabboToolbarEvent above,
+                        // which is safe only because it's read inside a nested setter callback).
+                        callback: (...args: unknown[]) => this.onGuildVisualSettingsChanged(args[0] as GuildSettingsChangedInManageEvent)
+                    }
+                ]
             ),
         ];
     }
@@ -941,6 +990,21 @@ export class HabboCatalog extends Component implements IHabboCatalog
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getGroupMembershipsController()
+    public getGroupMembershipsController(): GuildMembershipsController | null
+    {
+        return this._groupMembershipsController;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createGroupMembershipsController()
+    private createGroupMembershipsController(): void
+    {
+        if(this._groupMembershipsController == null)
+        {
+            this._groupMembershipsController = new GuildMembershipsController(this);
+        }
+    }
+
     public getEarnings(): CatalogEarnings
     {
         return this._earnings;
@@ -1101,10 +1165,11 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::init()
     // TODO(AS3): several one-time setup steps are still skipped, each because their backing
     // system isn't ported yet: refreshFurniData(), getGiftWrappingConfiguration(),
-    // createGroupMembershipsController(), initBundleDiscounts().
+    // initBundleDiscounts().
     // createClubGiftController()/createClubBuyController()/createClubExtendController() (the
     // club/ purchase controllers - separate from the already-ported clubcenter/ status display),
-    // createMarketPlace(), and createRecycler() are now real - see below. The core main-window/navigator/
+    // createMarketPlace(), createRecycler(), and createGroupMembershipsController() are now real -
+    // see below. The core main-window/navigator/
 
     public itemAddedToInventory(_classId: number, _itemId: number, _category: number): void 
     {
@@ -1165,6 +1230,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new RecyclerStatusMessageEvent(this.onRecyclerStatus.bind(this)));
         this.addMessageEvent(new RecyclerFinishedMessageEvent(this.onRecyclerFinished.bind(this)));
         this.addMessageEvent(new RecyclerPrizesMessageEvent(this.onRecyclerPrizes.bind(this)));
+        this.addMessageEvent(new GuildMembershipsMessageEvent(this.onGuildMemberships.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 
@@ -1193,6 +1259,7 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.createClubGiftController();
         this.createClubBuyController();
         this.createClubExtendController();
+        this.createGroupMembershipsController();
         this.createMarketPlace();
         this.createRecycler();
         this._initialized = true;
@@ -1352,10 +1419,16 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.connection?.send(new GetCatalogIndexComposer(catalogType));
     }
 
-    private onWindowClose = (_event: WindowEvent): void => 
+    private onWindowClose = (_event: WindowEvent): void =>
     {
         this.hideMainWindow();
         this._catalogViewer?.catalogWindowClosed();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onGuildVisualSettingsChanged()
+    private onGuildVisualSettingsChanged = (event: GuildSettingsChangedInManageEvent): void =>
+    {
+        this._groupMembershipsController?.onGuildVisualSettingsChanged(event.guildId);
     };
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::onHabboToolbarEvent()
@@ -1693,6 +1766,12 @@ export class HabboCatalog extends Component implements IHabboCatalog
         if(!parser || !this._recycler) return;
 
         this._recycler.storePrizeTable(parser.prizeLevels);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onGuildMemberships()
+    public onGuildMemberships(event: IMessageEvent): void
+    {
+        this._groupMembershipsController?.onGuildMembershipsMessageEvent(event);
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::onMarketplaceItemStats()

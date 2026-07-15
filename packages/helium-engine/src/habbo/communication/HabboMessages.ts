@@ -260,6 +260,7 @@ import {
     ExtendedProfileChangedMessageEvent,
     ExtendedProfileMessageEvent,
     GroupDetailsChangedMessageEvent,
+    GuildMembershipsMessageEvent,
     HabboGroupBadgesMessageEvent,
     HabboGroupDeactivatedMessageEvent,
     HabboGroupDetailsMessageEvent,
@@ -614,6 +615,8 @@ import {
     GetEmailStatusComposer,
     GetExtendedProfileByNameMessageComposer,
     GetExtendedProfileMessageComposer,
+    GetGuildCreationInfoMessageComposer,
+    GetGuildMembershipsMessageComposer,
     GetHabboGroupDetailsMessageComposer,
     GetIgnoredUsersMessageComposer,
     GetSelectedBadgesMessageComposer,
@@ -937,6 +940,10 @@ export class HabboMessages implements IMessageConfiguration
         // has no other callers in the engine.
         this._events.set(3909, ChangeEmailResultEvent);
         this._events.set(1400, HabboGroupBadgesMessageEvent);
+        // AS3-verified (vortex-emulator Turbo.Revisions/Revision20260701/Headers.cs:1014,
+        // "GuildMembershipsMessageComposer = 3994 ... onGuildMemberships @ HabboCatalog"):
+        // matches the real consumer confirmed by reading HabboCatalog.as directly.
+        this._events.set(3994, GuildMembershipsMessageEvent);
         this._events.set(2847, HabboGroupDetailsMessageEvent);
         this._events.set(12, GroupDetailsChangedMessageEvent);
         this._events.set(2087, HabboGroupDeactivatedMessageEvent);
@@ -1174,6 +1181,11 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2174, MyFrequentRoomHistorySearchMessageComposer);
         this._composers.set(1091, MyRoomRightsSearchMessageComposer);
         this._composers.set(2224, MyGuildBasesSearchMessageComposer);
+        // AS3-verified (vortex-emulator Turbo.Revisions/Revision20260701/Headers.cs:184/181):
+        // "GetGuildMembershipsMessageEvent = 3918 ... registerGuildSelectorWidget()" and
+        // "GetGuildCreationInfoMessageEvent = 2989 ... BuyGuildWidget::onButtonClicked()".
+        this._composers.set(3918, GetGuildMembershipsMessageComposer);
+        this._composers.set(2989, GetGuildCreationInfoMessageComposer);
         this._composers.set(184, MyRecommendedRoomsMessageComposer);
         this._composers.set(3744, GuildBaseSearchMessageComposer);
         this._composers.set(3101, SetRoomSessionTagsMessageComposer);
