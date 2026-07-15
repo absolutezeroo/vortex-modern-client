@@ -432,7 +432,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
             this._view.onSearchResults(results, this._lastSource);
         }
 
-        // log.debug(`Search results: ${results.blocks.length} blocks`);
+        log.debug(`Search results: ${results.blocks.length} blocks`);
     }
 
     onLiftedRooms(rooms: NavigatorLiftedRoomData[]): void
@@ -461,7 +461,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 
         this._navigatorEvents.emit('navigator:savedSearches', searches);
 
-        // log.debug(`Saved searches: ${searches.length}`);
+        log.debug(`Saved searches: ${searches.length}`);
     }
 
     onCollapsedCategories(categories: string[]): void
@@ -470,7 +470,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 
         this._navigatorEvents.emit('navigator:collapsed', categories);
 
-        // log.debug(`Collapsed categories: ${categories.length}`);
+        log.debug(`Collapsed categories: ${categories.length}`);
     }
 
     /**

@@ -128,7 +128,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         return true;
     }
 
-    override update(geometry: IRoomGeometry, time: number, update: boolean, skipUpdate: boolean): void
+    override update(geometry: IRoomGeometry, time: number, _update: boolean, _skipUpdate: boolean): void
     {
         const roomObject = this.object;
 
@@ -238,7 +238,7 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 
         this.createPlanesAndSprites(planeParser);
 
-        log.debug(`[RoomVisualization] Created ${this._planes.length} planes`);
+        log.debug(`Created ${this._planes.length} planes`);
     }
 
     protected defineSprites(startIndex: number = 0): void

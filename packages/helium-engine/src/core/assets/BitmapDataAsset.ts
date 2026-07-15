@@ -4,6 +4,8 @@ import type {IAsset} from './IAsset';
 import type {AssetTypeDeclaration} from './AssetTypeDeclaration';
 import {Logger} from '@core/utils/Logger';
 
+const log = Logger.getLogger('BitmapDataAsset');
+
 /**
  * IPoint structure for offset
  */
@@ -141,6 +143,7 @@ export class BitmapDataAsset implements ILazyAsset
                 }
                 catch (_e)
                 {
+                    log.debug('Texture.destroy() failed (already destroyed?)', _e);
                 }
             }
 
@@ -218,7 +221,7 @@ export class BitmapDataAsset implements ILazyAsset
             return;
         }
 
-        Logger.getLogger('BitmapDataAsset').warn('Unknown content type:', typeof this._unknown);
+        log.warn('Unknown content type:', typeof this._unknown);
         this._unknown = null;
     }
 

@@ -575,7 +575,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     {
         if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
         {
-            log.warn(`[RoomEngine] Wall/avatar item placement is not implemented yet (category ${category})`);
+            log.warn(`Wall/avatar item placement is not implemented yet (category ${category})`);
 
             return false;
         }
@@ -2012,7 +2012,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         // Guard against double initialization (server can send height map twice)
         if(this._initializedRooms.has(roomId)) 
         {
-            log.debug(`[RoomEngine] Room ${roomId} already initialized, skipping`);
+            log.debug(`Room ${roomId} already initialized, skipping`);
 
             return;
         }
@@ -2033,7 +2033,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         // If we have plane data, store it for rendering
         if(planeParser !== null) 
         {
-            log.debug(`[RoomEngine] Initializing room ${roomId} with ${planeParser.planeCount} planes`);
+            log.debug(`Initializing room ${roomId} with ${planeParser.planeCount} planes`);
 
             const roomObject = room.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController;
 
@@ -2146,7 +2146,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(roomVisualization) 
             {
-                log.debug(`[RoomEngine] Created room visualization for room ${roomId}`);
+                log.debug(`Created room visualization for room ${roomId}`);
             }
 
             // Load tile cursor content (.nitro bundle) — goes through the same content loading pipeline as furniture
@@ -3276,7 +3276,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             },
             imageFailed: () =>
             {
-                log.warn(`[RoomEngine] setObjectMoverIconSprite: failed to render icon (id=${id}, category=${category}, direct=${direct})`);
+                log.warn(`setObjectMoverIconSprite: failed to render icon (id=${id}, category=${category}, direct=${direct})`);
             },
         };
 
@@ -4058,7 +4058,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!vizData) 
         {
-            log.warn('[RoomEngine] Room bundle has no roomVisualization data');
+            log.warn('Room bundle has no roomVisualization data');
             return;
         }
 
@@ -4099,7 +4099,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         this._roomVisualizationData.initializeAssetCollection(canvasTextures);
 
-        log.debug(`[RoomEngine] Room visualization data initialized with ${canvasTextures.size} textures`);
+        log.debug(`Room visualization data initialized with ${canvasTextures.size} textures`);
     }
 
     /**

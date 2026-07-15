@@ -152,7 +152,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
         const figureString = figure.getFigureString();
         const libs = this.getLibsToDownload(figure);
 
-        // log.debug(`loadFigureSetData: ${figureString} → ${libs.length} libs to download: [${libs.map(l => l.libraryName).join(', ')}]`);
+        log.debug(`loadFigureSetData: ${figureString} → ${libs.length} libs to download: [${libs.map(l => l.libraryName).join(', ')}]`);
 
         if(libs.length > 0)
         {
@@ -271,7 +271,7 @@ export class AvatarAssetDownloadManager extends EventEmitter
             return;
         }
 
-        // log.debug(`Parsing figure map with ${libraries.length} library entries`);
+        log.debug(`Parsing figure map with ${libraries.length} library entries`);
 
         for(const libData of libraries)
         {

@@ -1,6 +1,9 @@
 import EventEmitter from 'eventemitter3';
 import type {IStructureData} from './IStructureData';
 import {parseXmlDocument} from './AvatarXmlUtils';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('AvatarStructureDownload');
 
 /**
  * Downloads and applies additional avatar structure data (figure part lists).
@@ -48,7 +51,7 @@ export class AvatarStructureDownload extends EventEmitter
         }
         catch (error)
         {
-            console.error('[AvatarStructureDownload] Failed to download structure data', error);
+            log.error('Failed to download structure data', error);
         }
     }
 }

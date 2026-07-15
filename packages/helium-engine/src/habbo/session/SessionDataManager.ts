@@ -1578,7 +1578,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         // Track the highest security level ever seen
         this._topSecurityLevel = Math.max(this._topSecurityLevel, parser.securityLevel);
 
-        // log.debug(`Rights: Club=${this._clubLevel}, Security=${this._securityLevel}, Ambassador=${this._isAmbassador}`);
+        log.debug(`Rights: Club=${this._clubLevel}, Security=${this._securityLevel}, Ambassador=${this._isAmbassador}`);
     }
 
     private onNoobnessLevel(event: IMessageEvent): void
@@ -1591,7 +1591,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._noobnessLevel = parser.noobnessLevel;
 
-        // log.debug(`Noobness level: ${this._noobnessLevel}`);
+        log.debug(`Noobness level: ${this._noobnessLevel}`);
     }
 
     private onAvailabilityStatus(event: IMessageEvent): void
@@ -1612,7 +1612,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
             this.notifyFurniDataListeners();
         }
 
-        // log.debug(`Availability: Open=${this._systemOpen}, ShutDown=${this._systemShutDown}`);
+        log.debug(`Availability: Open=${this._systemOpen}, ShutDown=${this._systemShutDown}`);
     }
 
     private onFigureUpdate(event: IMessageEvent): void
@@ -1626,7 +1626,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._figure = parser.figure;
         this._gender = parser.gender;
 
-        // log.debug(`Figure updated: ${this._figure}`);
+        log.debug(`Figure updated: ${this._figure}`);
     }
 
     private onIsFirstLoginOfDay(event: IMessageEvent): void
@@ -1639,7 +1639,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._isFirstLoginOfDay = parser.isFirstLoginOfDay;
 
-        // log.debug(`First login of day: ${this._isFirstLoginOfDay}`);
+        log.debug(`First login of day: ${this._isFirstLoginOfDay}`);
     }
 
     private onNavigatorSettings(event: IMessageEvent): void
@@ -1653,7 +1653,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._homeRoomId = parser.homeRoomId;
         this._roomIdToEnter = parser.roomIdToEnter;
 
-        // log.debug(`Navigator: HomeRoom=${this._homeRoomId}, RoomToEnter=${this._roomIdToEnter}`);
+        log.debug(`Navigator: HomeRoom=${this._homeRoomId}, RoomToEnter=${this._roomIdToEnter}`);
     }
 
     private onFavourites(event: IMessageEvent): void
@@ -1667,7 +1667,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._favouriteRoomsLimit = parser.limit;
         this._favouriteRooms = [...parser.favouriteRoomIds];
 
-        // log.debug(`Favourites: ${this._favouriteRooms.length}/${this._favouriteRoomsLimit}`);
+        log.debug(`Favourites: ${this._favouriteRooms.length}/${this._favouriteRoomsLimit}`);
     }
 
     private onActivityPoints(event: IMessageEvent): void
@@ -1680,7 +1680,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._activityPoints = new Map(parser.points);
 
-        // log.debug(`Activity points: ${this._activityPoints.size} types`);
+        log.debug(`Activity points: ${this._activityPoints.size} types`);
     }
 
     private onInfoFeedEnable(event: IMessageEvent): void
@@ -1693,7 +1693,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._infoFeedEnabled = parser.enabled;
 
-        // log.debug(`Info feed enabled: ${this._infoFeedEnabled}`);
+        log.debug(`Info feed enabled: ${this._infoFeedEnabled}`);
     }
 
     private onAchievementsScore(event: IMessageEvent): void
@@ -1706,7 +1706,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._achievementScore = parser.score;
 
-        // log.debug(`Achievement score: ${this._achievementScore}`);
+        log.debug(`Achievement score: ${this._achievementScore}`);
     }
 
     private onFigureSetIds(event: IMessageEvent): void
@@ -1720,7 +1720,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._figureSetIds = [...parser.figureSetIds];
         this._boundFurnitureNames = [...parser.boundFurnitureNames];
 
-        // log.debug(`Figure sets: ${this._figureSetIds.length}, Bound furniture: ${this._boundFurnitureNames.length}`);
+        log.debug(`Figure sets: ${this._figureSetIds.length}, Bound furniture: ${this._boundFurnitureNames.length}`);
     }
 
     private onAvatarEffects(event: IMessageEvent): void
@@ -1733,7 +1733,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._avatarEffects = [...parser.effects];
 
-        // log.debug(`Avatar effects: ${this._avatarEffects.length}`);
+        log.debug(`Avatar effects: ${this._avatarEffects.length}`);
     }
 
     private onMysteryBoxKeys(event: IMessageEvent): void
@@ -1752,7 +1752,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
             new MysteryBoxKeysUpdateEvent(this._mysteryBoxColor, this._mysteryBoxKeyColor)
         );
 
-        // log.debug(`Mystery box: color=${this._mysteryBoxColor}, keyColor=${this._mysteryBoxKeyColor}`);
+        log.debug(`Mystery box: color=${this._mysteryBoxColor}, keyColor=${this._mysteryBoxKeyColor}`);
     }
 
     private onInClientLink(event: IMessageEvent): void
@@ -1763,7 +1763,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this.context.createLinkEvent(parser.link);
 
-        // log.debug('InClientLink: ' + parser.link);
+        log.debug('InClientLink: ' + parser.link);
     }
 
     private onBuildersClubStatus(event: IMessageEvent): void
@@ -1779,7 +1779,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._buildersClubMaxFurniLimit = parser.maxFurniLimit;
         this._buildersClubSecondsLeftWithGrace = parser.secondsLeftWithGrace;
 
-        // log.debug(`Builders club: ${this._buildersClubSecondsLeft}s left, furni ${this._buildersClubFurniLimit}/${this._buildersClubMaxFurniLimit}`);
+        log.debug(`Builders club: ${this._buildersClubSecondsLeft}s left, furni ${this._buildersClubFurniLimit}/${this._buildersClubMaxFurniLimit}`);
     }
 
     /**
@@ -1796,7 +1796,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._accountSafetyLocked = (parser.status === 0);
 
-        // log.debug(`Account safety lock: ${this._accountSafetyLocked}`);
+        log.debug(`Account safety lock: ${this._accountSafetyLocked}`);
     }
 
     /**
@@ -1860,7 +1860,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._nftChatStyleIds = new Set(parser.chatStyleIds);
 
-        // log.debug(`NFT chat styles: ${this._nftChatStyleIds.length}`);
+        log.debug(`NFT chat styles: ${this._nftChatStyleIds.size}`);
     }
 
     private onPurchasableChatStyles(event: IMessageEvent): void
@@ -1911,7 +1911,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._isEmailVerified = parser.isVerified;
 
-        // log.debug(`Email verified: ${this._isEmailVerified}`);
+        log.debug(`Email verified: ${this._isEmailVerified}`);
     }
 
     /**
@@ -1926,7 +1926,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         if(!parser) return;
 
-        // log.debug(`Room visited: ${parser.roomId}`);
+        log.debug(`Room visited: ${parser.roomId}`);
     }
 
     /**
@@ -1948,7 +1948,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
             if(parser.sex) this._gender = parser.sex;
 
-            // log.debug(`User figure changed: ${this._figure}`);
+            log.debug(`User figure changed: ${this._figure}`);
         }
     }
 
@@ -1960,7 +1960,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
     {
         this._petRespectLeft++;
 
-        // log.debug('Pet respect failed, counter restored');
+        log.debug('Pet respect failed, counter restored');
     }
 
     /**
@@ -1983,6 +1983,6 @@ export class SessionDataManager extends Component implements ISessionDataManager
             new SessionDataPreferencesEvent(this._uiFlags)
         );
 
-        // log.debug(`Preferences: cameraFollow=${this._isRoomCameraFollowDisabled}, uiFlags=${this._uiFlags}`);
+        log.debug(`Preferences: cameraFollow=${this._isRoomCameraFollowDisabled}, uiFlags=${this._uiFlags}`);
     }
 }

@@ -107,7 +107,7 @@ export class EffectAssetDownloadLibrary extends EventEmitter
             return;
         }
 
-        // log.debug(`Downloading effect: ${this._name} from ${url}`);
+        log.debug(`Downloading effect: ${this._name} from ${url}`);
 
         try
         {
@@ -126,7 +126,7 @@ export class EffectAssetDownloadLibrary extends EventEmitter
             {
                 if(event.type === AssetLoaderEventType.COMPLETE)
                 {
-                    // log.debug(`Loaded effect: ${this._name}`);
+                    log.debug(`Loaded effect: ${this._name}`);
                     this.extractAnimation();
                     this._state = EffectAssetDownloadLibrary.STATE_READY;
                     this.emit(EffectAssetDownloadLibrary.COMPLETE, this);

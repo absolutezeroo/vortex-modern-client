@@ -3,6 +3,9 @@ import {SkinLayout} from './SkinLayout';
 import {SkinLayoutEntity} from './SkinLayoutEntity';
 import {SkinTemplate} from './SkinTemplate';
 import {SkinTemplateEntity} from './SkinTemplateEntity';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('BitmapSkinParser');
 
 /**
  * JSON data interfaces for skin descriptions.
@@ -378,7 +381,7 @@ export class BitmapSkinParser
 
         if(stateFlag === undefined)
         {
-            console.warn(`[BitmapSkinParser] Unknown window state: "${stateName}"`);
+            log.warn(`Unknown window state: "${stateName}"`);
 
             return;
         }
@@ -398,7 +401,7 @@ export class BitmapSkinParser
 	 * @param variables - Variable substitution map
 	 * @returns The resolved string
 	 */
-    private static resolveVariable(value: string | undefined | null, variables: Record<string, string>): string
+    private static resolveVariable(value: string | null, variables: Record<string, string>): string
     {
         if(value == null) return '';
 
@@ -421,7 +424,7 @@ export class BitmapSkinParser
 	 * @param variables - Variable substitution map
 	 * @returns The resolved number
 	 */
-    private static resolveNumberVariable(value: number | string | undefined | null, variables: Record<string, string>): number
+    private static resolveNumberVariable(value: number | string | null, variables: Record<string, string>): number
     {
         if(value == null) return 0;
 

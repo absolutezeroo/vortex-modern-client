@@ -493,7 +493,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
             }
         }
 
-        // log.debug(`Parsed ${result.size} localization entries from key=value format`);
+        log.debug(`Parsed ${result.size} localization entries from key=value format`);
 
         this.updateAllListeners();
 

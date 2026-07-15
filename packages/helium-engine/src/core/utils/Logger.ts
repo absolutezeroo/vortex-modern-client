@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- this is the project's designated console sink; everything else logs through Logger.getLogger(), never console directly */
+
 /**
  * Log levels
  */
@@ -106,6 +108,63 @@ export class Logger
     static setLevel(level: LogLevel): void
     {
         this._globalLevel = level;
+    }
+
+    private static readonly LOG_LEVEL_STORAGE_KEY = 'helium:logLevel';
+    private static readonly LOG_LEVEL_STORAGE_PREFIX = 'helium:logLevel:';
+
+    /**
+	 * Parse a level name ("DEBUG", "warn", ...) into a LogLevel, or null if invalid/empty.
+	 */
+    private static parseLevelName(value: string | null): LogLevel | null
+    {
+        if(!value) return null;
+
+        const level = LogLevel[value.toUpperCase() as keyof typeof LogLevel];
+
+        return typeof level === 'number' ? level : null;
+    }
+
+    /**
+	 * Set the global level for the running environment (DEBUG in dev, WARN in
+	 * production — everything logs by default otherwise, which is how the console
+	 * ends up flooded), then layer persisted overrides from localStorage on top so a
+	 * single module can be turned up (or down) at runtime without a rebuild:
+	 *
+	 *   localStorage.setItem('helium:logLevel:RoomEngine', 'DEBUG')   // one logger
+	 *   localStorage.setItem('helium:logLevel', 'INFO')               // global override
+	 *
+	 * Call once, as early as possible during startup.
+	 */
+    static configureFromEnvironment(isDev: boolean): void
+    {
+        this._globalLevel = isDev ? LogLevel.DEBUG : LogLevel.WARN;
+
+        let storage: Storage;
+
+        try
+        {
+            storage = window.localStorage;
+        }
+        catch
+        {
+            return;
+        }
+
+        const globalOverride = this.parseLevelName(storage.getItem(this.LOG_LEVEL_STORAGE_KEY));
+
+        if(globalOverride !== null) this._globalLevel = globalOverride;
+
+        for(let i = 0; i < storage.length; i++)
+        {
+            const key = storage.key(i);
+
+            if(!key || !key.startsWith(this.LOG_LEVEL_STORAGE_PREFIX)) continue;
+
+            const level = this.parseLevelName(storage.getItem(key));
+
+            if(level !== null) this._levelOverrides.set(key.slice(this.LOG_LEVEL_STORAGE_PREFIX.length), level);
+        }
     }
 
     /**

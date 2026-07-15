@@ -106,7 +106,7 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
             return;
         }
 
-        // log.debug(`Downloading: ${this._libraryName} from ${url}`);
+        log.debug(`Downloading: ${this._libraryName} from ${url}`);
 
         try
         {
@@ -125,7 +125,7 @@ export class AvatarAssetDownloadLibrary extends EventEmitter
             {
                 if(event.type === AssetLoaderEventType.COMPLETE)
                 {
-                    // log.debug(`Loaded: ${this._libraryName}`);
+                    log.debug(`Loaded: ${this._libraryName}`);
                     this._state = AvatarAssetDownloadLibrary.STATE_READY;
                     this.emit(AvatarAssetDownloadLibrary.COMPLETE, this);
                 }

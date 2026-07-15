@@ -482,8 +482,12 @@ export class HeliumApp
      *
      * @see sources/win63_2021_version/HabboAir.as
      */
-    public async init(): Promise<void> 
+    public async init(): Promise<void>
     {
+        // DEBUG in dev, WARN in production; overridable per-logger via localStorage
+        // (see Logger.configureFromEnvironment) without a rebuild.
+        Logger.configureFromEnvironment(import.meta.env.DEV);
+
         // 1. Load bundles, then bootstrap engine with AS3 embedded configuration assets
         const CORE_RATIO = 0.6;
         const bundleProgress =
