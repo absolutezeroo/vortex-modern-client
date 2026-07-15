@@ -30,6 +30,7 @@ import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/o
 import {RoomWidgetFurniInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
 import {RoomWidgetInfostandExtraParamEnum} from '@habbo/ui/widget/enums/RoomWidgetInfostandExtraParamEnum';
+import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
 import type {InfoStandWidget} from '@habbo/ui/widget/infostand/InfoStandWidget';
 
@@ -63,7 +64,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     private _container: IRoomWidgetHandlerContainer | null = null;
     private _widget: InfoStandWidget | null = null;
     private _groupDetailsEvent: IMessageEvent | null = null;
-    private readonly _pendingImageRequests: Map<number, {furniId: number; category: number}> = new Map();
+    private readonly _pendingImageRequests: Map<number, {furniId: number; category: number; roomId: number; scale: number}> = new Map();
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
     // TODO(AS3): constructor takes the jukebox/music controller for onNowPlayingChanged /
@@ -555,33 +556,42 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             event.isOwner = true;
         }
 
-        this.requestFurniImage(event, object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID));
+        this.requestFurniImage(event, roomId);
 
         container.desktopEvents.emit(event.type, event);
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage() (image portion)
-    // TS deviation: AS3's getRoomObjectImage() renders the *live placed object* (colors/
-    // state) synchronously; that pipeline is an unimplemented stub elsewhere in the engine
-    // (RoomPreviewer.getRoomObjectImage()). This uses the catalog-type icon instead
-    // (async — resolves later via imageReady() once loaded) as a stand-in.
-    private requestFurniImage(event: RoomWidgetFurniInfoUpdateEvent, typeId: number): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage() (image portion)
+    // Renders the *live placed object* (real colors/extras/state, read straight off the room
+    // object's own model) via RoomEngine.getRoomObjectImage() at scale 64 - matches AS3's first
+    // attempt. AS3 reads the result synchronously and re-requests at scale 1 if the image is
+    // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
+    // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
+    // imageFailed() below instead, once the scale-64 render actually comes back.
+    private requestFurniImage(event: RoomWidgetFurniInfoUpdateEvent, roomId: number): void
     {
         const roomEngine = this._container?.roomEngine;
 
         if(!roomEngine) return;
 
-        const result = event.category === 20
-            ? roomEngine.getWallItemIcon(typeId, this, null)
-            : roomEngine.getFurnitureIcon(typeId, this, null);
+        const result = roomEngine.getRoomObjectImage(roomId, event.id, event.category, new Vector3d(180), 64, this);
 
-        if(result.id === 0)
+        if(result.id > 0)
         {
-            event.image = result.data;
+            this._pendingImageRequests.set(result.id, {furniId: event.id, category: event.category, roomId, scale: 64});
         }
-        else if(result.id > 0)
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
+    // (the "re-request at scale 1" fallback branch)
+    private retryFurniImageAtScaleOne(pending: {furniId: number; category: number; roomId: number; scale: number}): void
+    {
+        const roomEngine = this._container?.roomEngine;
+        const result = roomEngine?.getRoomObjectImage(pending.roomId, pending.furniId, pending.category, new Vector3d(180), 1, this);
+
+        if(result && result.id > 0)
         {
-            this._pendingImageRequests.set(result.id, {furniId: event.id, category: event.category});
+            this._pendingImageRequests.set(result.id, {...pending, scale: 1});
         }
     }
 
@@ -594,13 +604,27 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(!pending || !this._widget || this._widget.furniData.id !== pending.furniId) return;
 
+        if(pending.scale === 64 && (!data || data.width > 140 || data.height > 200))
+        {
+            this.retryFurniImageAtScaleOne(pending);
+
+            return;
+        }
+
         this._widget.furniView.furniImage = data;
     }
 
     // AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageFailed()
     public imageFailed(id: number): void
     {
+        const pending = this._pendingImageRequests.get(id);
+
         this._pendingImageRequests.delete(id);
+
+        if(pending && pending.scale === 64 && this._widget && this._widget.furniData.id === pending.furniId)
+        {
+            this.retryFurniImageAtScaleOne(pending);
+        }
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::setObjectData()

@@ -9,7 +9,7 @@ import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {ImageResult} from '@habbo/room/ImageResult';
-import type {IStuffData} from '@habbo/inventory/items/IStuffData';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
 
@@ -197,6 +197,11 @@ export class RoomPreviewer
             this._currentPreviewObjectCategory = 10;
             this._currentPreviewObjectData = '';
 
+            // AS3 passes the full IStuffData (param7) straight through to addObjectFurniture()
+            // and an empty string ("") for the separate `extra` field (param12) - this port was
+            // previously collapsing the real stuff data down to `getLegacyString()` and stuffing
+            // it into the `extra` slot instead, which loses everything but format-0's single
+            // string (e.g. a guild's groupId/badgeCode/colors array never survived past index 0).
             if(this._roomEngine!.addRoomObjectFurniture(
                 this._previewRoomId,
                 RoomPreviewer.PREVIEW_OBJECT_ID,
@@ -204,12 +209,13 @@ export class RoomPreviewer
                 new Vector3d(RoomPreviewer.PREVIEW_OBJECT_LOCATION_X, RoomPreviewer.PREVIEW_OBJECT_LOCATION_Y, 0),
                 direction,
                 0,
-                data.getLegacyString(),
+                '',
                 Number.NaN,
                 -1,
                 0,
                 '',
-                true
+                true,
+                data
             ))
             {
                 this._previousAutomaticStateChangeTime = RoomPreviewer.getTimer();
@@ -255,6 +261,8 @@ export class RoomPreviewer
                 direction,
                 0,
                 legacyString,
+                Number.NaN,
+                -1,
                 0,
                 ''
             ))

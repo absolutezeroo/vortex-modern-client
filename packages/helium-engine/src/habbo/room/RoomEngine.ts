@@ -768,26 +768,28 @@ export class RoomEngine extends Component implements IRoomEngine,
         scale: number,
         listener: IGetImageListener,
         backgroundColor: number = 0
-    ): ImageResult 
+    ): ImageResult
     {
         let type: string | null = null;
         let extra: string | null = null;
         let param = '';
         const stuffData: unknown = null;
         let state = -1;
+        let objectFound = false;
 
         const room = this.getRoomInstance(roomId);
 
-        if(room !== null) 
+        if(room !== null)
         {
             const object = room.getObject(objectId, category);
 
-            if(object !== null && object.getModel() !== null) 
+            if(object !== null && object.getModel() !== null)
             {
                 type = object.getType();
                 state = object.getId();
+                objectFound = true;
 
-                switch(category) 
+                switch(category)
                 {
                     case 10:
                     case 20:
@@ -800,10 +802,30 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
         }
 
-        return this.getGenericRoomObjectImage(type, param, direction, scale, listener, backgroundColor, extra, stuffData, -1, -1, null, state);
+        // TS deviation: AS3's caller for this method (InfoStandWidgetHandler::handleGetFurniInfoMessage())
+        // passes listener=null, making getGenericRoomObjectImage() take its synchronous "content
+        // already available" branch unconditionally (the pending/isRoomObjectContentAvailable() gate
+        // is skipped entirely whenever no listener is given). This port can't do a truly synchronous
+        // capture (ImageBitmap conversion is always async - see ImageResult.ts), so listener is never
+        // null here; `objectFound` recreates the same guarantee AS3's callers rely on instead - an
+        // object that's actually alive in the room already has its content loaded by definition, so
+        // there is no need to wait on a future resolvePendingImageListeners() pass that (for content
+        // loaded long before this call) may never fire again.
+        return this.getGenericRoomObjectImage(type, param, direction, scale, listener, backgroundColor, extra, stuffData, -1, -1, null, state, objectFound);
     }
 
-    // imageFailed() - same convention already established by getGenericRoomObjectThumbnail().
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
+    // TS deviation: AS3 returns a synchronously-populated BitmapData when content is already
+    // available (id=0) and the caller reads result.data directly with no further callback.
+    // ImageBitmap conversion is always async in the browser (see ImageResult.ts), so this port
+    // always resolves via the pending id>0 path and delivers through imageReady()/imageFailed()
+    // - same convention already established by getGenericRoomObjectThumbnail(). The "content
+    // already available" branch below therefore must NOT reset result.id to 0 like AS3 does:
+    // it still delivers asynchronously (createImageBitmap() is a Promise), so the id returned to
+    // the caller has to keep matching the id used in that later imageReady()/imageFailed() call.
+    // `forceImmediate` is a TS-only addition (no AS3 equivalent - see getRoomObjectImage()'s own
+    // comment): forces this same "capture now, don't wait" branch even when
+    // isRoomObjectContentAvailable() says no, for callers that already know their content is loaded.
     getGenericRoomObjectImage(
         type: string | null,
         param: string,
@@ -816,8 +838,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         state: number = -1,
         frameCount: number = -1,
         posture: string | null = null,
-        _originalId: number = -1
-    ): ImageResult 
+        _originalId: number = -1,
+        forceImmediate: boolean = false
+    ): ImageResult
     {
         const result = new ImageResult();
 
@@ -913,7 +936,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         result.id = objectId;
 
-        if(!this.isRoomObjectContentAvailable(type) && listener !== null) 
+        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null)
         {
             // AS3 also captures a (necessarily blank, since content isn't loaded yet) image here
             // and stores it on the result - this port never trusts a synchronous ImageResult.data
@@ -928,9 +951,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             const canvas = visualization.getImage(backgroundColor, _originalId);
 
             room.disposeObject(objectId, category);
-            result.id = 0;
 
-            if(listener !== null) 
+            if(listener !== null)
             {
                 if(canvas !== null) 
                 {
@@ -1152,8 +1174,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         usagePolicy: number,
         ownerId: number,
         ownerName: string | null,
-        _synchronize = true
-    ): boolean 
+        _synchronize = true,
+        data: IStuffData | null = null
+    ): boolean
     {
         const room = this.getRoomInstance(roomId);
 
@@ -1184,21 +1207,43 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model) 
+        if(model)
         {
             model.setNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID, typeId);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA, state);
+            // AS3: _SafeCls_90.as::addObjectFurnitureFromData() - expiry_time/expirty_timestamp/
+            // usage_policy were never written here, so InfoStandWidgetHandler's getNumber() reads
+            // (both default to NaN when unset) always failed their === 1/=== 2 usage-policy checks
+            // and always computed a NaN rent-expiration - the infostand's USE button and rent
+            // extend/buyout buttons could never show regardless of server data or rights.
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIME, expiryTime);
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIMESTAMP, Date.now());
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_USAGE_POLICY, usagePolicy);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID, ownerId);
 
-            if(ownerName) 
+            if(ownerName)
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            if(extra) 
+            if(extra)
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
             }
+        }
+
+        // AS3: _SafeCls_90.as::addObjectFurnitureFromData() calls updateObjectFurniture() right
+        // after createObjectFurniture(), which dispatches a RoomObjectDataUpdateMessage carrying
+        // the real IStuffData through the object's own event handler - this port was previously
+        // dropping `data` entirely (both call sites either had no parameter for it or collapsed it
+        // to `extra.toString()`/`getLegacyString()`), so format-2+ stuff data (e.g. guild-colored
+        // furniture) never reached FurnitureGuildCustomizedLogic and rendered with un-substituted
+        // base sprite content instead of the cropped/offset badge thumbnail.
+        if(data)
+        {
+            const eventHandler = (object as IRoomObjectController).getEventHandler();
+
+            eventHandler?.processUpdateMessage(new RoomObjectDataUpdateMessage(state, data));
         }
 
         // Trigger furniture asset loading
@@ -1228,9 +1273,11 @@ export class RoomEngine extends Component implements IRoomEngine,
         direction: IVector3d,
         state: number,
         extra: string | null,
+        expiryTime: number,
+        usagePolicy: number,
         ownerId: number,
         ownerName: string | null
-    ): boolean 
+    ): boolean
     {
         const room = this.getRoomInstance(roomId);
 
@@ -1256,18 +1303,23 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model) 
+        if(model)
         {
             model.setNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID, typeId);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA, state);
+            // AS3: _SafeCls_90.as::addObjectWallItemFromData() - see addRoomObjectFurniture()'s
+            // matching comment above; the wall-item path had the exact same gap.
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_USAGE_POLICY, usagePolicy);
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIME, expiryTime);
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIMESTAMP, Date.now());
             model.setNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID, ownerId);
 
-            if(ownerName) 
+            if(ownerName)
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            if(extra) 
+            if(extra)
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
             }
@@ -1278,12 +1330,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
-    // TS deviation: AS3 returns a synchronously-populated BitmapData when content is already
-    // available (id=0). ImageBitmap conversion is always async in the browser (see ImageResult.ts),
-    // so this always resolves via the id>0 pending path and delivers through imageReady() /
-
-    getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null 
+    getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null
     {
         const room = this.getRoomInstance(roomId);
 
@@ -2141,7 +2188,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             usagePolicy,
             ownerId,
             ownerName,
-            synchronized
+            synchronized,
+            data
         );
     }
 
@@ -2289,8 +2337,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         usagePolicy: number,
         ownerId: number,
         ownerName: string,
-        _secondsToExpiration: number
-    ): boolean 
+        secondsToExpiration: number
+    ): boolean
     {
         return this.addRoomObjectWallItem(
             roomId,
@@ -2300,6 +2348,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             direction,
             state,
             data,
+            secondsToExpiration,
+            usagePolicy,
             ownerId,
             ownerName
         );

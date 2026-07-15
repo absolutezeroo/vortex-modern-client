@@ -12,6 +12,7 @@ import type {IRoomInstance} from '@room/IRoomInstance';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IVector3d} from '@room/utils/IVector3d';
+import type {IStuffData} from './object/data/IStuffData';
 import type {IGetImageListener} from './IGetImageListener';
 import type {ImageResult} from './ImageResult';
 import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
@@ -94,6 +95,7 @@ export interface IRoomEngine extends IDisposable
     ): ImageResult;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
+    // `forceImmediate` is TS-only (no AS3 equivalent) - see RoomEngine.ts's implementation comment.
     getGenericRoomObjectImage(
         type: string | null,
         param: string,
@@ -106,7 +108,8 @@ export interface IRoomEngine extends IDisposable
         state?: number,
         frameCount?: number,
         posture?: string | null,
-        originalId?: number
+        originalId?: number,
+        forceImmediate?: boolean
     ): ImageResult;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::isRoomObjectContentAvailable()
@@ -196,7 +199,8 @@ export interface IRoomEngine extends IDisposable
         usagePolicy: number,
         ownerId: number,
         ownerName: string | null,
-        synchronize?: boolean
+        synchronize?: boolean,
+        data?: IStuffData | null
     ): boolean;
 
     addRoomObjectWallItem(
@@ -207,6 +211,8 @@ export interface IRoomEngine extends IDisposable
         direction: IVector3d,
         state: number,
         extra: string | null,
+        expiryTime: number,
+        usagePolicy: number,
         ownerId: number,
         ownerName: string | null
     ): boolean;
