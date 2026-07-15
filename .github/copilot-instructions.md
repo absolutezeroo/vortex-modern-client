@@ -12,7 +12,7 @@ Before writing any implementation code, you MUST complete these steps IN ORDER:
 1. **Read the AS3 source file** — Find and read the corresponding AS3 file IN ITS ENTIRETY
    - Primary: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/<Class>.as` — if an identifier is obfuscated (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path one level up (`sources/win63_version/<module>/<Class>.as`) to recover the real name; never invent one
    - Secondary: `sources/win63_version/<module>/<Class>.as`
-   - Tertiary: `sources/flash_version/com/sulake/habbo/<module>/<Class>.as`
+   - Tertiary: `sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/<module>/<Class>.as`
 2. **Read the AS3 interface** — `I<Class>.as` + `handler/` directory if present
 3. **Check `docs/PATTERNS.md`** if implementing a Composer, Parser, Event, Manager, or UI Window
 4. **Check `docs/IMPLEMENTATION_STATUS.md`** for the current module status
@@ -88,7 +88,7 @@ For AS3 accessors and properties:
 
 Always trace to the primary (`WIN63-202607011411-782849652`) path even if the member's identifier had to be recovered by cross-referencing `sources/win63_version/<path>/<Class>.as` — the trace comment must still use a real, human-readable member name, never an obfuscated `_SafeStr_N`/`_SafeCls_N` placeholder.
 
-If the primary source does not contain the member, fall back to `sources/win63_version/...`, then `sources/flash_version/...`, and point the trace at whichever tree actually has it.
+If the primary source does not contain the member, fall back to `sources/win63_version/...`, then `sources/PRODUCTION-201601012205-226667486/...`, and point the trace at whichever tree actually has it.
 
 Incomplete members still require a compatible TypeScript signature and a `TODO(AS3)` comment with source path, class/member name, and exact remaining behavior. Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface.
 

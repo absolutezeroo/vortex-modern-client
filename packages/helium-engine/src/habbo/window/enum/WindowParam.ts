@@ -4,8 +4,8 @@
  * Controls window behavior: input handling, scaling, dragging, alignment, etc.
  * These are OR'd together to create a composite param value.
  *
- * @see sources/flash_version/com/sulake/core/window/enum/WindowParam.as
- * @see sources/flash_version/com/sulake/core/window/utils/ParamCodeTable.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/enum/WindowParam.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/ParamCodeTable.as
  */
 export const WindowParam =
     {
@@ -77,7 +77,7 @@ export type WindowParamValue = typeof WindowParam[keyof typeof WindowParam];
 /**
  * Map param name to bitwise flag value.
  *
- * @see sources/flash_version/com/sulake/core/window/utils/ParamCodeTable.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/ParamCodeTable.as
  */
 export const PARAM_NAME_TO_FLAG: Record<string, number> =
     {

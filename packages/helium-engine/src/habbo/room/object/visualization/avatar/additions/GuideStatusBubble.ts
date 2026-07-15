@@ -4,20 +4,20 @@
  * Avatar addition that shows a guide or requester status bubble
  * above the avatar, indicating participation in the guide system.
  *
- * @see sources/flash_version/com/sulake/habbo/room/object/visualization/avatar/additions/GuideStatusBubble.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/GuideStatusBubble.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';
 import type {AvatarVisualization} from '../AvatarVisualization';
 import {AvatarGuideStatus} from '@habbo/avatar/enum/AvatarGuideStatus';
 
-export class GuideStatusBubble implements IAvatarAddition
+export class GuideStatusBubble implements IAvatarAddition 
 {
     private _assetName: string | null = null;
     private _avatar: AvatarVisualization;
     private _status: number;
 
-    constructor(id: number, avatar: AvatarVisualization, status: number)
+    constructor(id: number, avatar: AvatarVisualization, status: number) 
     {
         this._id = id;
         this._avatar = avatar;
@@ -26,32 +26,32 @@ export class GuideStatusBubble implements IAvatarAddition
 
     private _id: number = -1;
 
-    get id(): number
+    get id(): number 
     {
         return this._id;
     }
 
     private _relativeDepth: number = 0;
 
-    set relativeDepth(value: number)
+    set relativeDepth(value: number) 
     {
         this._relativeDepth = value;
     }
 
-    get disposed(): boolean
+    get disposed(): boolean 
     {
         return this._avatar == null;
     }
 
     /**
-	 * Animates the guide status bubble (keeps asset updated).
-	 *
-	 * @param sprite - The sprite to animate
-	 * @returns Always false (no dynamic animation)
-	 */
-    animate(sprite: IRoomObjectSprite | null): boolean
+     * Animates the guide status bubble (keeps asset updated).
+     *
+     * @param sprite - The sprite to animate
+     * @returns Always false (no dynamic animation)
+     */
+    animate(sprite: IRoomObjectSprite | null): boolean 
     {
-        if(this._assetName && sprite)
+        if(this._assetName && sprite) 
         {
             sprite.assetName = this._assetName;
         }
@@ -60,14 +60,14 @@ export class GuideStatusBubble implements IAvatarAddition
     }
 
     /**
-	 * Updates the guide status bubble position and asset based on scale, posture, and guide status.
-	 *
-	 * @param sprite - The sprite to update
-	 * @param scale - The current visualization scale
-	 */
-    update(sprite: IRoomObjectSprite | null, scale: number): void
+     * Updates the guide status bubble position and asset based on scale, posture, and guide status.
+     *
+     * @param sprite - The sprite to update
+     * @param scale - The current visualization scale
+     */
+    update(sprite: IRoomObjectSprite | null, scale: number): void 
     {
-        if(!sprite)
+        if(!sprite) 
         {
             return;
         }
@@ -84,30 +84,30 @@ export class GuideStatusBubble implements IAvatarAddition
             ? 'user_guide_bubble_png'
             : 'user_guide_requester_bubble_png';
 
-        if(scale < 48)
+        if(scale < 48) 
         {
             this._assetName = assetBase;
             offsetX = -19;
             offsetY = -80;
             fullSize = 32;
         }
-        else
+        else 
         {
             this._assetName = assetBase;
             offsetX = -19;
             offsetY = -120;
         }
 
-        if(this._avatar.posture === 'sit')
+        if(this._avatar.posture === 'sit') 
         {
             offsetY = offsetY + (fullSize / 2);
         }
-        else if(this._avatar.posture === 'lay')
+        else if(this._avatar.posture === 'lay') 
         {
             offsetY = offsetY + fullSize;
         }
 
-        if(this._assetName != null)
+        if(this._assetName != null) 
         {
             sprite.assetName = this._assetName;
             sprite.offsetX = offsetX;
@@ -117,9 +117,9 @@ export class GuideStatusBubble implements IAvatarAddition
     }
 
     /**
-	 * Disposes of this addition and releases references.
-	 */
-    dispose(): void
+     * Disposes of this addition and releases references.
+     */
+    dispose(): void 
     {
         this._avatar = null!;
         this._assetName = null;

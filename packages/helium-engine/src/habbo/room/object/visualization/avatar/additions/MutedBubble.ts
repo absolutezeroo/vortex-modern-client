@@ -4,18 +4,18 @@
  * Avatar addition that shows a muted icon above the avatar when the
  * user has been muted by a moderator.
  *
- * @see sources/flash_version/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/room/object/visualization/avatar/additions/MutedBubble.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IAvatarAddition} from './IAvatarAddition';
 import type {AvatarVisualization} from '../AvatarVisualization';
 
-export class MutedBubble implements IAvatarAddition
+export class MutedBubble implements IAvatarAddition 
 {
     private _assetName: string | null = null;
     private _avatar: AvatarVisualization;
 
-    constructor(id: number, avatar: AvatarVisualization)
+    constructor(id: number, avatar: AvatarVisualization) 
     {
         this._id = id;
         this._avatar = avatar;
@@ -23,32 +23,32 @@ export class MutedBubble implements IAvatarAddition
 
     private _id: number = -1;
 
-    get id(): number
+    get id(): number 
     {
         return this._id;
     }
 
     private _relativeDepth: number = 0;
 
-    set relativeDepth(value: number)
+    set relativeDepth(value: number) 
     {
         this._relativeDepth = value;
     }
 
-    get disposed(): boolean
+    get disposed(): boolean 
     {
         return this._avatar == null;
     }
 
     /**
-	 * Animates the muted bubble (keeps asset updated).
-	 *
-	 * @param sprite - The sprite to animate
-	 * @returns Always false (no dynamic animation)
-	 */
-    animate(sprite: IRoomObjectSprite | null): boolean
+     * Animates the muted bubble (keeps asset updated).
+     *
+     * @param sprite - The sprite to animate
+     * @returns Always false (no dynamic animation)
+     */
+    animate(sprite: IRoomObjectSprite | null): boolean 
     {
-        if(this._assetName && sprite)
+        if(this._assetName && sprite) 
         {
             sprite.assetName = this._assetName;
         }
@@ -57,14 +57,14 @@ export class MutedBubble implements IAvatarAddition
     }
 
     /**
-	 * Updates the muted bubble position and asset based on scale and posture.
-	 *
-	 * @param sprite - The sprite to update
-	 * @param scale - The current visualization scale
-	 */
-    update(sprite: IRoomObjectSprite | null, scale: number): void
+     * Updates the muted bubble position and asset based on scale and posture.
+     *
+     * @param sprite - The sprite to update
+     * @param scale - The current visualization scale
+     */
+    update(sprite: IRoomObjectSprite | null, scale: number): void 
     {
-        if(!sprite)
+        if(!sprite) 
         {
             return;
         }
@@ -78,30 +78,30 @@ export class MutedBubble implements IAvatarAddition
 
         let fullSize = 64;
 
-        if(scale < 48)
+        if(scale < 48) 
         {
             this._assetName = 'user_muted_small_png';
             offsetX = -12;
             offsetY = -66;
             fullSize = 32;
         }
-        else
+        else 
         {
             this._assetName = 'user_muted_png';
             offsetX = -15;
             offsetY = -110;
         }
 
-        if(this._avatar.posture === 'sit')
+        if(this._avatar.posture === 'sit') 
         {
             offsetY = offsetY + (fullSize / 2);
         }
-        else if(this._avatar.posture === 'lay')
+        else if(this._avatar.posture === 'lay') 
         {
             offsetY = offsetY + fullSize;
         }
 
-        if(this._assetName != null)
+        if(this._assetName != null) 
         {
             sprite.assetName = this._assetName;
             sprite.offsetX = offsetX;
@@ -111,9 +111,9 @@ export class MutedBubble implements IAvatarAddition
     }
 
     /**
-	 * Disposes of this addition and releases references.
-	 */
-    dispose(): void
+     * Disposes of this addition and releases references.
+     */
+    dispose(): void 
     {
         this._avatar = null!;
         this._assetName = null;

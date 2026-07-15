@@ -2,7 +2,7 @@
 
 Date: 2026-06-22
 Reference AS3 unique: `sources/win63_version/`
-Reference exclue: `sources/flash_version/`
+Reference exclue: `sources/PRODUCTION-201601012205-226667486/`
 
 ## Perimetre
 

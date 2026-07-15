@@ -41,9 +41,7 @@ import {UserRemoveMessageEvent} from '../communication/messages/incoming/room/en
 import {
     SlideObjectBundleMessageEvent
 } from '../communication/messages/incoming/room/engine/SlideObjectBundleMessageEvent';
-import {
-    RoomPropertyMessageEvent
-} from '../communication/messages/incoming/room/engine/RoomPropertyMessageEvent';
+import {RoomPropertyMessageEvent} from '../communication/messages/incoming/room/engine/RoomPropertyMessageEvent';
 import {
     RoomVisualizationSettingsEvent
 } from '../communication/messages/incoming/room/engine/RoomVisualizationSettingsEvent';
@@ -305,7 +303,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             const name = parser.getName(i);
             const alias = parser.getAlias(i);
 
-            if(name !== null && alias !== null)
+            if(name !== null && alias !== null) 
             {
                 this._roomCreator.setRoomObjectAlias(name, alias);
             }
@@ -316,23 +314,23 @@ export class RoomMessageHandler implements IRoomMessageHandler
      * Handle a live room floor/wall/landscape texture update.
      * Based on AS3: sources/win63_version/habbo/room/class_1788.as::onRoomProperty()
      */
-    onRoomProperty(event: IMessageEvent): void
+    onRoomProperty(event: IMessageEvent): void 
     {
-        if(this._roomCreator === null || this._currentRoomId === 0)
+        if(this._roomCreator === null || this._currentRoomId === 0) 
         {
             return;
         }
 
         const propertyEvent = event as RoomPropertyMessageEvent;
 
-        if(propertyEvent === null)
+        if(propertyEvent === null) 
         {
             return;
         }
 
         const parser = propertyEvent.parser as RoomPropertyMessageEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -350,33 +348,28 @@ export class RoomMessageHandler implements IRoomMessageHandler
     // and sends it as a literal RoomPropertyMessageComposer value instead of either
     // omitting the property or sending the real default motif ids - applying "0" as a
     // texture id verbatim renders a real (wrong) motif instead of the intended default
-    // look, so it's treated the same as "not sent" here.
-    private normalizeRoomPropertyValue(value: string | null): string | null
-    {
-        return value === '0' ? null : value;
-    }
 
     /**
      * Handle a live room wall-visibility / wall+floor thickness update.
      * Based on AS3: sources/win63_version/habbo/room/class_1788.as::onRoomVisualizationSettings()
      */
-    onRoomVisualizationSettings(event: IMessageEvent): void
+    onRoomVisualizationSettings(event: IMessageEvent): void 
     {
-        if(this._roomCreator === null || this._currentRoomId === 0)
+        if(this._roomCreator === null || this._currentRoomId === 0) 
         {
             return;
         }
 
         const settingsEvent = event as RoomVisualizationSettingsEvent;
 
-        if(settingsEvent === null)
+        if(settingsEvent === null) 
         {
             return;
         }
 
         const parser = settingsEvent.parser as RoomVisualizationSettingsEventParser;
 
-        if(parser === null)
+        if(parser === null) 
         {
             return;
         }
@@ -385,7 +378,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
         this._roomCreator.updateObjectRoomPlaneThicknesses(this._currentRoomId, parser.wallThicknessMultiplier, parser.floorThicknessMultiplier);
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMap()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMap()
     onHeightMap(event: IMessageEvent): void 
     {
         const heightMapEvent = event as HeightMapMessageEvent;
@@ -572,8 +565,8 @@ export class RoomMessageHandler implements IRoomMessageHandler
         }
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMapUpdate()
-    onHeightMapUpdate(event: IMessageEvent): void
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomMessageHandler.as::onHeightMapUpdate()
+    onHeightMapUpdate(event: IMessageEvent): void 
     {
         const updateEvent = event as HeightMapUpdateMessageEvent;
 
@@ -601,7 +594,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             return;
         }
 
-        while(parser.next())
+        while(parser.next()) 
         {
             map.setTileHeight(parser.x, parser.y, parser.tileHeight);
             map.setStackingBlocked(parser.x, parser.y, parser.isStackingBlocked);
@@ -687,7 +680,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
         const data = parser.object;
 
-        if(data !== null)
+        if(data !== null) 
         {
             const location: IVector3d = new Vector3d(data.x, data.y, data.z);
             const direction: IVector3d = new Vector3d(data.dir);
@@ -1503,5 +1496,11 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.figure,
             parser.sex
         );
+    }
+
+    // look, so it's treated the same as "not sent" here.
+    private normalizeRoomPropertyValue(value: string | null): string | null 
+    {
+        return value === '0' ? null : value;
     }
 }

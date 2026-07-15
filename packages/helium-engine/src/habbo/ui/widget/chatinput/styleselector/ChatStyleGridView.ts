@@ -15,55 +15,56 @@ const CHAT_BAR_POPUP_OFFSET = 55;
  *
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as
  */
-export class ChatStyleGridView implements IDisposable
+export class ChatStyleGridView implements IDisposable 
 {
-    private _window: IWindowContainer | null;
-
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::ChatStyleGridView()
-    constructor(chatInputView: RoomChatInputView)
+    constructor(chatInputView: RoomChatInputView) 
     {
         this._window = chatInputView.widget?.windowManager.buildWidgetLayout('styleselector_menu_new_xml') as IWindowContainer | null;
 
         if(this._window) this._window.visible = false;
     }
 
-    get disposed(): boolean
+    private _window: IWindowContainer | null;
+
+    get window(): IWindowContainer | null 
+    {
+        return this._window;
+    }
+
+    get disposed(): boolean 
     {
         return this._window === null;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::dispose()
-    dispose(): void
-    {
-        this._window?.dispose();
-        this._window = null;
-    }
-
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::get grid()
-    get grid(): IItemGridWindow | null
+    get grid(): IItemGridWindow | null 
     {
         return (this._window?.findChildByName('itemgrid') as IItemGridWindow | null) ?? null;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::get fontSizeList()
-    get fontSizeList(): IItemListWindow | null
+    get fontSizeList(): IItemListWindow | null 
     {
         return (this._window?.findChildByName('font_size_list') as IItemListWindow | null) ?? null;
     }
 
-    get window(): IWindowContainer | null
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::dispose()
+    dispose(): void 
     {
-        return this._window;
+        this._window?.dispose();
+        this._window = null;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleGridView.as::alignToSelector()
     // Only the net effect is ported - AS3 computes an on-screen-left-border shift here
     // (SCREEN_LEFT_BORDER=92) that's immediately overwritten by the unconditional
     // `x = selectorRect.x` two lines later in every source tree checked (win63_2026,
-    // win63_version, flash_version - flash_version's own decompiler even collapsed the
+    // win63_version, PRODUCTION-201601012205-226667486 - PRODUCTION-201601012205-226667486's own decompiler even collapsed the
     // shift to `x = x + 0`, confirming it never mattered) - so the real result is always
+
     // just this.
-    alignToSelector(selector: IWindowContainer | null): void
+    alignToSelector(selector: IWindowContainer | null): void 
     {
         if(!this._window || !selector || !this._window.parent) return;
 

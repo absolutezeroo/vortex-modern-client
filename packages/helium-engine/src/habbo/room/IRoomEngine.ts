@@ -19,18 +19,35 @@ import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {IRoomEngineRectangle} from './RoomEngine';
 
-export interface IRoomEngine extends IDisposable
-{
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
+export interface IRoomEngine extends IDisposable {
+    // Event emitter
+    readonly events: EventEmitter;
+    /**
+     * The currently active room ID.
+     */
+    readonly activeRoomId: number;
+    /**
+     * Whether the active room session has the local user in decorate (furni move) mode.
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isDecorateMode()
+    readonly isDecorateMode: boolean;
+    /**
+     * Whether the room is currently in game mode.
+     */
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isGameMode()
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
+    isGameMode: boolean;
+
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
     getFurnitureType(type: number): string | null;
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
     getWallItemType(type: number, param?: string | null): string | null;
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
     getFurnitureIcon(type: number, listener: IGetImageListener, param?: string | null, stuffData?: unknown): ImageResult;
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
     getWallItemIcon(type: number, listener: IGetImageListener, param?: string | null): ImageResult;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureImage()
@@ -46,6 +63,8 @@ export interface IRoomEngine extends IDisposable
         stuffData?: unknown,
         forceGeneric?: boolean
     ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemImage()
     getWallItemImage(
@@ -79,7 +98,7 @@ export interface IRoomEngine extends IDisposable
         listener: IGetImageListener,
         fullImage?: boolean,
         backgroundColor?: number,
-        customParts?: {layerId: number; partId: number; paletteId: number}[] | null,
+        customParts?: { layerId: number; partId: number; paletteId: number }[] | null,
         posture?: string | null
     ): ImageResult;
 
@@ -94,7 +113,12 @@ export interface IRoomEngine extends IDisposable
         backgroundColor?: number
     ): ImageResult;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
+    // TODO(AS3): the concrete RoomEngine.as (obfuscated class_34.as) implementation of this
+    // covers full room-object selection (placement AND already-placed objects being moved/
+    // inspected) and isn't ported - only initializeRoomObjectInsert()'s pending-placement state
+    // is tracked here. This always returns null until that's ported, which callers (e.g.
+
     // `forceImmediate` is TS-only (no AS3 equivalent) - see RoomEngine.ts's implementation comment.
     getGenericRoomObjectImage(
         type: string | null,
@@ -128,11 +152,6 @@ export interface IRoomEngine extends IDisposable
     // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
     cancelRoomObjectInsert(): void;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
-    // TODO(AS3): the concrete RoomEngine.as (obfuscated class_34.as) implementation of this
-    // covers full room-object selection (placement AND already-placed objects being moved/
-    // inspected) and isn't ported - only initializeRoomObjectInsert()'s pending-placement state
-    // is tracked here. This always returns null until that's ported, which callers (e.g.
     // CatalogObjectMover, RecyclerCatalogWidget) already null-check before use.
     getSelectedObjectData(roomId: number): ISelectedRoomObjectData | null;
 
@@ -169,9 +188,6 @@ export interface IRoomEngine extends IDisposable
 
     // TS-only: see RoomEngine.ts for why this exists.
     unregisterCanvasSyncCallback(callback: () => void): void;
-
-    // Event emitter
-    readonly events: EventEmitter;
 
     // Room lifecycle
     createRoomInstance(roomId: number): IRoomInstance | null;
@@ -282,6 +298,8 @@ export interface IRoomEngine extends IDisposable
 
     updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible?: boolean): boolean;
 
+    // Canvas management
+
     updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean;
 
     // Room data
@@ -289,28 +307,26 @@ export interface IRoomEngine extends IDisposable
 
     setRoomOwnObjectId(roomId: number, objectId: number): void;
 
-    // Canvas management
-
     /**
-	 * Creates a rendering canvas for a room.
-	 *
-	 * @returns The PixiJS Container for the canvas, or null on failure
-	 */
+     * Creates a rendering canvas for a room.
+     *
+     * @returns The PixiJS Container for the canvas, or null on failure
+     */
     createRoomCanvas(roomId: number, canvasId: number, width: number, height: number, scale: number): Container | null;
 
     /**
-	 * Modifies the dimensions of an existing room canvas.
-	 */
+     * Modifies the dimensions of an existing room canvas.
+     */
     modifyRoomCanvas(roomId: number, canvasId: number, width: number, height: number): boolean;
 
     /**
-	 * AS3: sources/win63_version/habbo/room/IRoomEngine.as::setRoomCanvasMask()
-	 */
+     * AS3: sources/win63_version/habbo/room/IRoomEngine.as::setRoomCanvasMask()
+     */
     setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void;
 
     /**
-	 * Handles a mouse event on the room canvas.
-	 */
+     * Handles a mouse event on the room canvas.
+     */
     handleRoomCanvasMouseEvent(
         canvasId: number,
         x: number,
@@ -323,39 +339,39 @@ export interface IRoomEngine extends IDisposable
     ): void;
 
     /**
-	 * Gets the room geometry for a canvas.
-	 */
+     * Gets the room geometry for a canvas.
+     */
     getRoomCanvasGeometry(roomId: number, canvasId?: number): IRoomGeometry | null;
 
     /**
-	 * Gets the screen offset of a room canvas.
-	 */
+     * Gets the screen offset of a room canvas.
+     */
     getRoomCanvasScreenOffset(roomId: number, canvasId?: number): { x: number; y: number } | null;
 
     /**
-	 * Sets the screen offset of a room canvas.
-	 */
+     * Sets the screen offset of a room canvas.
+     */
     setRoomCanvasScreenOffset(roomId: number, canvasId: number, point: { x: number; y: number }): boolean;
 
     /**
-	 * Mounts an externally-owned display object directly onto the PixiJS
-	 * stage, above every room rendering canvas already added.
-	 *
-	 * TS-only: no AS3 equivalent - see RoomEngine.ts's implementation for why.
-	 */
+     * Mounts an externally-owned display object directly onto the PixiJS
+     * stage, above every room rendering canvas already added.
+     *
+     * TS-only: no AS3 equivalent - see RoomEngine.ts's implementation for why.
+     */
     addStageChild(displayObject: Container): void;
 
     /**
-	 * Removes a display object previously added via addStageChild().
-	 */
+     * Removes a display object previously added via addStageChild().
+     */
     removeStageChild(displayObject: Container): void;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
     getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null;
 
     /**
-	 * Sets the scale of a room canvas, optionally centering on a point.
-	 */
+     * Sets the scale of a room canvas, optionally centering on a point.
+     */
     setRoomCanvasScale(
         roomId: number,
         canvasId: number,
@@ -365,25 +381,7 @@ export interface IRoomEngine extends IDisposable
     ): void;
 
     /**
-	 * Gets the scale of a room canvas.
-	 */
+     * Gets the scale of a room canvas.
+     */
     getRoomCanvasScale(roomId: number, canvasId?: number): number;
-
-    /**
-	 * The currently active room ID.
-	 */
-    readonly activeRoomId: number;
-
-    /**
-	 * Whether the active room session has the local user in decorate (furni move) mode.
-	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isDecorateMode()
-    readonly isDecorateMode: boolean;
-
-    /**
-	 * Whether the room is currently in game mode.
-	 */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isGameMode()
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
-    isGameMode: boolean;
 }

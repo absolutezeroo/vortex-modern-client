@@ -6,9 +6,9 @@ import {TextStyle} from './TextStyle';
  * Initializes with 3 base defaults (regular, italic, bold) and parses
  * the embedded Habbo CSS to register ~60 additional named styles.
  *
- * @see sources/flash_version/com/sulake/core/window/utils/TextStyleManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/TextStyleManager.as
  */
-export class TextStyleManager
+export class TextStyleManager 
 {
     public static readonly REGULAR: string = 'regular';
     public static readonly ITALIC: string = 'italic';
@@ -24,12 +24,12 @@ export class TextStyleManager
     private static _initialized: boolean = false;
 
     /**
-	 * Ensures the style registry is initialized.
-	 *
-	 * Called automatically on first access. Registers 3 base defaults
-	 * then parses the embedded Habbo CSS to register all named styles.
-	 */
-    public static init(): void
+     * Ensures the style registry is initialized.
+     *
+     * Called automatically on first access. Registers 3 base defaults
+     * then parses the embedded Habbo CSS to register all named styles.
+     */
+    public static init(): void 
     {
         if(TextStyleManager._initialized) return;
 
@@ -74,12 +74,12 @@ export class TextStyleManager
     }
 
     /**
-	 * Retrieves a registered style by name.
-	 *
-	 * @param name - The style name (e.g. `"u_regular"`, `"id_frame_title"`)
-	 * @returns The style, or null if not found
-	 */
-    public static getStyle(name: string): TextStyle | null
+     * Retrieves a registered style by name.
+     *
+     * @param name - The style name (e.g. `"u_regular"`, `"id_frame_title"`)
+     * @returns The style, or null if not found
+     */
+    public static getStyle(name: string): TextStyle | null 
     {
         TextStyleManager.init();
 
@@ -87,33 +87,33 @@ export class TextStyleManager
     }
 
     /**
-	 * Registers or overwrites a named style.
-	 */
-    public static setStyle(name: string, style: TextStyle): void
+     * Registers or overwrites a named style.
+     */
+    public static setStyle(name: string, style: TextStyle): void 
     {
         TextStyleManager.init();
 
         style.name = name;
         TextStyleManager._styles.set(name, style);
 
-        if(TextStyleManager._styleNames.indexOf(name) === -1)
+        if(TextStyleManager._styleNames.indexOf(name) === -1) 
         {
             TextStyleManager._styleNames.push(name);
         }
     }
 
     /**
-	 * Batch-registers an array of styles.
-	 */
-    public static setStyles(styles: TextStyle[]): void
+     * Batch-registers an array of styles.
+     */
+    public static setStyles(styles: TextStyle[]): void 
     {
         TextStyleManager.init();
 
-        for(const s of styles)
+        for(const s of styles) 
         {
             TextStyleManager._styles.set(s.name, s);
 
-            if(TextStyleManager._styleNames.indexOf(s.name) === -1)
+            if(TextStyleManager._styleNames.indexOf(s.name) === -1) 
             {
                 TextStyleManager._styleNames.push(s.name);
             }
@@ -121,22 +121,22 @@ export class TextStyleManager
     }
 
     /**
-	 * Parses a CSS-like string into an array of TextStyle objects.
-	 *
-	 * The format is a simplified CSS variant where selectors are style names
-	 * (no `.` prefix) and properties use Habbo-specific names like
-	 * `etching-color`, `anti-alias-type`, etc.
-	 *
-	 * @param css - The CSS text to parse
-	 * @returns Array of parsed TextStyle objects
-	 */
-    public static parseCSS(css: string): TextStyle[]
+     * Parses a CSS-like string into an array of TextStyle objects.
+     *
+     * The format is a simplified CSS variant where selectors are style names
+     * (no `.` prefix) and properties use Habbo-specific names like
+     * `etching-color`, `anti-alias-type`, etc.
+     *
+     * @param css - The CSS text to parse
+     * @returns Array of parsed TextStyle objects
+     */
+    public static parseCSS(css: string): TextStyle[] 
     {
         const names = TextStyleManager.parseStyleNamesFromCSS(css);
         const blocks = TextStyleManager.parseCSSBlocks(css);
         const result: TextStyle[] = [];
 
-        for(let i = 0; i < names.length; i++)
+        for(let i = 0; i < names.length; i++) 
         {
             const name = names[i];
             const block = blocks[i] || '';
@@ -146,85 +146,85 @@ export class TextStyleManager
 
             const props = TextStyleManager.parseProperties(block);
 
-            if(props['color'] != null)
+            if(props['color'] != null) 
             {
                 style.color = parseInt(String(props['color']).replace('#', '0x'), 16);
             }
 
-            if(props['font-family'] != null)
+            if(props['font-family'] != null) 
             {
                 const rawFamily = String(props['font-family']).trim();
 
                 style.fontFamily = TextStyleManager.mapFontFamily(rawFamily);
 
                 // "Volter Bold" is a separate font-family in AS3 — infer bold weight
-                if(rawFamily === 'Volter Bold' && style.fontWeight == null)
+                if(rawFamily === 'Volter Bold' && style.fontWeight == null) 
                 {
                     style.fontWeight = 'bold';
                 }
             }
 
-            if(props['font-size'] != null)
+            if(props['font-size'] != null) 
             {
                 style.fontSize = parseInt(String(props['font-size']));
             }
 
-            if(props['font-style'] != null)
+            if(props['font-style'] != null) 
             {
                 style.fontStyle = String(props['font-style']).trim();
             }
 
-            if(props['font-weight'] != null)
+            if(props['font-weight'] != null) 
             {
                 style.fontWeight = String(props['font-weight']).trim();
             }
 
-            if(props['kerning'] != null)
+            if(props['kerning'] != null) 
             {
                 style.kerning = String(props['kerning']).trim() === 'true';
             }
 
-            if(props['leading'] != null)
+            if(props['leading'] != null) 
             {
                 style.leading = parseInt(String(props['leading']));
             }
 
-            if(props['letter-spacing'] != null)
+            if(props['letter-spacing'] != null) 
             {
                 style.letterSpacing = parseInt(String(props['letter-spacing']));
             }
 
-            if(props['text-decoration'] != null)
+            if(props['text-decoration'] != null) 
             {
                 style.textDecoration = String(props['text-decoration']).trim();
             }
 
-            if(props['text-indent'] != null)
+            if(props['text-indent'] != null) 
             {
                 style.textIndent = parseInt(String(props['text-indent']));
             }
 
-            if(props['anti-alias-type'] != null)
+            if(props['anti-alias-type'] != null) 
             {
                 style.antiAliasType = String(props['anti-alias-type']).trim();
             }
 
-            if(props['sharpness'] != null)
+            if(props['sharpness'] != null) 
             {
                 style.sharpness = parseInt(String(props['sharpness']));
             }
 
-            if(props['thickness'] != null)
+            if(props['thickness'] != null) 
             {
                 style.thickness = parseInt(String(props['thickness']));
             }
 
-            if(props['etching-color'] != null)
+            if(props['etching-color'] != null) 
             {
                 style.etchingColor = parseInt(String(props['etching-color']).replace('#', '0x'), 16);
             }
 
-            if(props['etching-position'] != null)
+            if(props['etching-position'] != null) 
             {
                 style.etchingPosition = String(props['etching-position']).trim();
             }
@@ -236,9 +236,9 @@ export class TextStyleManager
     }
 
     /**
-	 * Finds a registered style whose properties match a CSS snippet.
-	 */
-    public static findMatchingTextStyle(css: string): TextStyle | null
+     * Finds a registered style whose properties match a CSS snippet.
+     */
+    public static findMatchingTextStyle(css: string): TextStyle | null 
     {
         TextStyleManager.init();
 
@@ -249,7 +249,7 @@ export class TextStyleManager
         const candidate = parsed[0];
         const existing = TextStyleManager._styles.get(candidate.name);
 
-        if(existing && existing.equals(candidate))
+        if(existing && existing.equals(candidate)) 
         {
             return existing;
         }
@@ -258,9 +258,9 @@ export class TextStyleManager
     }
 
     /**
-	 * Returns all registered style names.
-	 */
-    public static enumerateStyleNames(): string[]
+     * Returns all registered style names.
+     */
+    public static enumerateStyleNames(): string[] 
     {
         TextStyleManager.init();
 
@@ -268,11 +268,11 @@ export class TextStyleManager
     }
 
     /**
-	 * Maps AS3 font family names to web-safe equivalents.
-	 */
-    private static mapFontFamily(family: string): string
+     * Maps AS3 font family names to web-safe equivalents.
+     */
+    private static mapFontFamily(family: string): string 
     {
-        switch(family)
+        switch(family) 
         {
             case 'Ubuntu':
                 return 'Ubuntu, Arial, sans-serif';
@@ -290,21 +290,21 @@ export class TextStyleManager
     }
 
     /**
-	 * Extracts style names from CSS text.
-	 *
-	 * Port of AS3 TextStyleManager.parseStyleNamesFromCSS().
-	 */
-    private static parseStyleNamesFromCSS(css: string): string[]
+     * Extracts style names from CSS text.
+     *
+     * Port of AS3 TextStyleManager.parseStyleNamesFromCSS().
+     */
+    private static parseStyleNamesFromCSS(css: string): string[] 
     {
         const names: string[] = [];
         const cleaned = css.replace(/\t/g, '').replace(/\n/g, '').replace(/\r/g, '');
 
         const segments = cleaned.split(TextStyleManager.TAG_CLOSE);
 
-        for(let seg of segments)
+        for(let seg of segments) 
         {
             // Strip leading comments
-            while(seg.indexOf(TextStyleManager.CMT_OPEN) === 0)
+            while(seg.indexOf(TextStyleManager.CMT_OPEN) === 0) 
             {
                 const closeIdx = seg.indexOf(TextStyleManager.CMT_CLOSE);
 
@@ -319,7 +319,7 @@ export class TextStyleManager
 
             const name = seg.substring(0, openIdx).replace(/\s/g, '');
 
-            if(name.length > 0)
+            if(name.length > 0) 
             {
                 names.push(name);
             }
@@ -329,15 +329,15 @@ export class TextStyleManager
     }
 
     /**
-	 * Extracts the property blocks (content between `{` and `}`) from CSS.
-	 */
-    private static parseCSSBlocks(css: string): string[]
+     * Extracts the property blocks (content between `{` and `}`) from CSS.
+     */
+    private static parseCSSBlocks(css: string): string[] 
     {
         const blocks: string[] = [];
         const regex = /\{([^}]*)\}/g;
         let match: RegExpExecArray | null;
 
-        while((match = regex.exec(css)) !== null)
+        while((match = regex.exec(css)) !== null) 
         {
             blocks.push(match[1]);
         }
@@ -346,14 +346,14 @@ export class TextStyleManager
     }
 
     /**
-	 * Parses `property: value;` pairs from a CSS block string.
-	 */
-    private static parseProperties(block: string): Record<string, string>
+     * Parses `property: value;` pairs from a CSS block string.
+     */
+    private static parseProperties(block: string): Record<string, string> 
     {
         const result: Record<string, string> = {};
         const declarations = block.split(';');
 
-        for(const decl of declarations)
+        for(const decl of declarations) 
         {
             const colonIdx = decl.indexOf(':');
 
@@ -362,7 +362,7 @@ export class TextStyleManager
             const key = decl.substring(0, colonIdx).trim();
             const value = decl.substring(colonIdx + 1).trim();
 
-            if(key.length > 0 && value.length > 0)
+            if(key.length > 0 && value.length > 0) 
             {
                 result[key] = value;
             }

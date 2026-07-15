@@ -25,10 +25,9 @@ export type AlertDialogCallback = (dialog: IDisposable, event: WindowEvent) => v
  * caption management (getButtonCaption, setButtonCaption).
  *
  * @see sources/win63_version/core/window/utils/class_3348.as
- * @see sources/flash_version/com/sulake/habbo/window/utils/IAlertDialog.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/IAlertDialog.as
  */
-export interface IAlertDialog extends IDisposable
-{
+export interface IAlertDialog extends IDisposable {
     title: string;
     summary: string;
     callback: AlertDialogCallback | null;
@@ -54,9 +53,9 @@ export interface IAlertDialog extends IDisposable
  * The window is built from XML via `buildFromXML`.
  *
  * @see sources/win63_version/habbo/window/utils/AlertDialog.as
- * @see sources/flash_version/com/sulake/habbo/window/utils/AlertDialog.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/AlertDialog.as
  */
-export class AlertDialog implements IAlertDialog
+export class AlertDialog implements IAlertDialog 
 {
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::LIST_BUTTONS
     protected static readonly LIST_BUTTONS: string = '_alert_button_list';
@@ -87,50 +86,50 @@ export class AlertDialog implements IAlertDialog
         flags: number,
         callback: AlertDialogCallback | null,
         modal: boolean
-    )
+    ) 
     {
         AlertDialog._instanceCounter++;
 
-        if(modal)
+        if(modal) 
         {
             // Build as modal: creates dimmed background + centered window
             this._modalDialog = windowManager.buildModalDialogFromXML(xml);
             this._window = this._modalDialog?.rootWindow as IWindowContainer ?? null;
         }
-        else
+        else 
         {
             // Build as non-modal in the dialog layer (2)
             this._window = windowManager.buildFromXML(xml, 2) as IWindowContainer;
         }
 
         // Default flags: BUTTON_OK | TEXT_TITLE | TEXT_SUMMARY
-        if(flags === HabboAlertDialogFlag.NULL)
+        if(flags === HabboAlertDialogFlag.NULL) 
         {
             flags = HabboAlertDialogFlag.BUTTON_OK | HabboAlertDialogFlag.TEXT_TITLE | HabboAlertDialogFlag.TEXT_SUMMARY;
         }
 
         // Remove buttons that are not in the flags
-        if(this._window)
+        if(this._window) 
         {
             const buttonList = this._window.findChildByName(AlertDialog.LIST_BUTTONS);
 
-            if(buttonList)
+            if(buttonList) 
             {
-                if(!(flags & HabboAlertDialogFlag.BUTTON_OK))
+                if(!(flags & HabboAlertDialogFlag.BUTTON_OK)) 
                 {
                     const okButton = (buttonList as IWindowContainer).getChildByName?.(AlertDialog.BUTTON_OK);
 
                     if(okButton) okButton.dispose();
                 }
 
-                if(!(flags & HabboAlertDialogFlag.BUTTON_CANCEL))
+                if(!(flags & HabboAlertDialogFlag.BUTTON_CANCEL)) 
                 {
                     const cancelButton = (buttonList as IWindowContainer).getChildByName?.(AlertDialog.BUTTON_CANCEL);
 
                     if(cancelButton) cancelButton.dispose();
                 }
 
-                if(!(flags & HabboAlertDialogFlag.BUTTON_CUSTOM))
+                if(!(flags & HabboAlertDialogFlag.BUTTON_CUSTOM)) 
                 {
                     const customButton = (buttonList as IWindowContainer).getChildByName?.(AlertDialog.BUTTON_CUSTOM);
 
@@ -151,17 +150,17 @@ export class AlertDialog implements IAlertDialog
     protected _title: string = '';
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get title()
-    public get title(): string
+    public get title(): string 
     {
         return this._title;
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set title()
-    public set title(value: string)
+    public set title(value: string) 
     {
         this._title = value;
 
-        if(this._window)
+        if(this._window) 
         {
             this._window.caption = this._title;
         }
@@ -171,21 +170,21 @@ export class AlertDialog implements IAlertDialog
     protected _summary: string = '';
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get summary()
-    public get summary(): string
+    public get summary(): string 
     {
         return this._summary;
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set summary()
-    public set summary(value: string)
+    public set summary(value: string) 
     {
         this._summary = value;
 
-        if(this._window)
+        if(this._window) 
         {
             const descriptionWindow = this._window.findChildByTag('DESCRIPTION');
 
-            if(descriptionWindow)
+            if(descriptionWindow) 
             {
                 // AS3: ITextWindow(_window.findChildByTag("DESCRIPTION")).text = var_2854
                 (descriptionWindow as IWindow & { text: string }).text = this._summary;
@@ -197,7 +196,7 @@ export class AlertDialog implements IAlertDialog
     protected _disposed: boolean = false;
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get disposed()
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
@@ -206,19 +205,19 @@ export class AlertDialog implements IAlertDialog
     protected _callback: AlertDialogCallback | null = null;
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get callback()
-    public get callback(): AlertDialogCallback | null
+    public get callback(): AlertDialogCallback | null 
     {
         return this._callback;
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set callback()
-    public set callback(value: AlertDialogCallback | null)
+    public set callback(value: AlertDialogCallback | null) 
     {
         this._callback = value;
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::get titleBarColor()
-    public get titleBarColor(): number
+    public get titleBarColor(): number 
     {
         if(!this._window) return 0;
 
@@ -226,7 +225,7 @@ export class AlertDialog implements IAlertDialog
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::set titleBarColor()
-    public set titleBarColor(value: number)
+    public set titleBarColor(value: number) 
     {
         if(!this._window) return;
 
@@ -234,13 +233,13 @@ export class AlertDialog implements IAlertDialog
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::getButtonCaption()
-    public getButtonCaption(buttonFlag: number): ICaption | null
+    public getButtonCaption(buttonFlag: number): ICaption | null 
     {
         if(this._disposed || !this._window) return null;
 
         let buttonName: string | null = null;
 
-        switch(buttonFlag)
+        switch(buttonFlag) 
         {
             case HabboAlertDialogFlag.BUTTON_OK:
                 buttonName = AlertDialog.BUTTON_OK;
@@ -268,13 +267,13 @@ export class AlertDialog implements IAlertDialog
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::setButtonCaption()
-    public setButtonCaption(buttonFlag: number, caption: ICaption): void
+    public setButtonCaption(buttonFlag: number, caption: ICaption): void 
     {
         if(this._disposed || !this._window) return;
 
         let buttonName: string | null = null;
 
-        switch(buttonFlag)
+        switch(buttonFlag) 
         {
             case HabboAlertDialogFlag.BUTTON_OK:
                 buttonName = AlertDialog.BUTTON_OK;
@@ -291,25 +290,25 @@ export class AlertDialog implements IAlertDialog
 
         const button = this._window.findChildByName(buttonName);
 
-        if(button)
+        if(button) 
         {
             button.caption = caption.text;
         }
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::dispose()
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
-        if(this._modalDialog && !this._modalDialog.disposed)
+        if(this._modalDialog && !this._modalDialog.disposed) 
         {
             this._modalDialog.dispose();
             this._modalDialog = null;
             this._window = null;
         }
 
-        if(this._window && !this._window.disposed)
+        if(this._window && !this._window.disposed) 
         {
             this._window.dispose();
             this._window = null;
@@ -320,20 +319,20 @@ export class AlertDialog implements IAlertDialog
     }
 
     // AS3: sources/win63_version/habbo/window/utils/AlertDialog.as::dialogEventProc()
-    protected dialogEventProc(event: WindowEvent, window: IWindow): void
+    protected dialogEventProc(event: WindowEvent, window: IWindow): void 
     {
-        if(event.type === WindowMouseEvent.CLICK)
+        if(event.type === WindowMouseEvent.CLICK) 
         {
-            switch(window.name)
+            switch(window.name) 
             {
                 case AlertDialog.BUTTON_OK:
-                    if(this._callback !== null)
+                    if(this._callback !== null) 
                     {
                         const okEvent = WindowEvent.allocate(WindowEvent.WE_OK, null, null);
                         this._callback(this, okEvent);
                         okEvent.recycle();
                     }
-                    else
+                    else 
                     {
                         this.dispose();
                     }
@@ -341,13 +340,13 @@ export class AlertDialog implements IAlertDialog
 
                 case AlertDialog.HEADER_BUTTON_CLOSE:
                 case AlertDialog.BUTTON_CANCEL:
-                    if(this._callback !== null)
+                    if(this._callback !== null) 
                     {
                         const cancelEvent = WindowEvent.allocate(WindowEvent.WE_CANCEL, null, null);
                         this._callback(this, cancelEvent);
                         cancelEvent.recycle();
                     }
-                    else
+                    else 
                     {
                         this.dispose();
                     }

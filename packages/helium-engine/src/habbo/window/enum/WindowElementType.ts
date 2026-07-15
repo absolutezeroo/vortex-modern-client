@@ -4,8 +4,8 @@
  * Each constant maps to a unique numeric type ID used by the window framework
  * to identify the kind of UI element (button, container, frame, etc.).
  *
- * @see sources/flash_version/com/sulake/core/window/enum/WindowType.as
- * @see sources/flash_version/com/sulake/core/window/utils/TypeCodeTable.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/enum/WindowType.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/TypeCodeTable.as
  */
 export const WindowElementType =
     {
@@ -111,7 +111,7 @@ export type WindowElementTypeValue = typeof WindowElementType[keyof typeof Windo
  * Map element tag name to type ID.
  * Used at build time and runtime to resolve XML/JSON tag names.
  *
- * @see sources/flash_version/com/sulake/core/window/utils/TypeCodeTable.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/TypeCodeTable.as
  */
 export const ELEMENT_NAME_TO_TYPE: Record<string, number> =
     {

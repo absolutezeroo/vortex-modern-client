@@ -19,14 +19,20 @@ import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import {Logger} from '@core/utils/Logger';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {StuffDataFactory} from '@habbo/room/object/data/StuffDataFactory';
-import {HabboGroupDetailsMessageEvent} from '@habbo/communication/messages/incoming/users/HabboGroupDetailsMessageEvent';
-import {GetHabboGroupDetailsMessageComposer} from '@habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
+import {
+    HabboGroupDetailsMessageEvent
+} from '@habbo/communication/messages/incoming/users/HabboGroupDetailsMessageEvent';
+import {
+    GetHabboGroupDetailsMessageComposer
+} from '@habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
 import {RoomWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetMessage';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetFurniActionMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniActionMessage';
 import {RoomWidgetGetBadgeDetailsMessage} from '@habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage';
 import {RoomWidgetOpenProfileMessage} from '@habbo/ui/widget/messages/RoomWidgetOpenProfileMessage';
-import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
+import {
+    GetExtendedProfileMessageComposer
+} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {RoomWidgetFurniInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
 import {RoomWidgetInfostandExtraParamEnum} from '@habbo/ui/widget/enums/RoomWidgetInfostandExtraParamEnum';
@@ -58,53 +64,42 @@ const UNIMPLEMENTED_WIDGET_MESSAGES = new Set<string>([
     'RWUAM_AMBASSADOR_MUTE_72HOUR', 'RWUAM_AMBASSADOR_UNMUTE',
 ]);
 
-export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageListener
+export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageListener 
 {
-    private _disposed: boolean = false;
-    private _container: IRoomWidgetHandlerContainer | null = null;
-    private _widget: InfoStandWidget | null = null;
     private _groupDetailsEvent: IMessageEvent | null = null;
-    private readonly _pendingImageRequests: Map<number, {furniId: number; category: number; roomId: number; scale: number}> = new Map();
+    private readonly _pendingImageRequests: Map<number, {
+        furniId: number;
+        category: number;
+        roomId: number;
+        scale: number
+    }> = new Map();
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
-    // TODO(AS3): constructor takes the jukebox/music controller for onNowPlayingChanged /
     // onSongInfoReceivedEvent — deferred with the jukebox/song-disk views (both stubs).
-    constructor(_musicController: unknown = null)
+    constructor(_musicController: unknown = null) 
     {
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::set widget()
-    public set widget(widget: InfoStandWidget | null)
-    {
-        this._widget = widget;
-    }
+    private _disposed: boolean = false;
 
-    public get container(): IRoomWidgetHandlerContainer | null
-    {
-        return this._container;
-    }
-
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    public get type(): string
-    {
-        return 'RWE_INFOSTAND';
-    }
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::InfoStandWidgetHandler()
+    // TODO(AS3): constructor takes the jukebox/music controller for onNowPlayingChanged /
 
-    // TODO(AS3): InfoStandWidgetHandler.as — see updateUserData() in InfoStandWidget.ts
-    // (dead code path while the user view is a stub).
-    public get isActivityDisplayEnabled(): boolean
+    private _container: IRoomWidgetHandlerContainer | null = null;
+
+    public get container(): IRoomWidgetHandlerContainer | null 
     {
-        return false;
+        return this._container;
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::set container()
-    public set container(value: IRoomWidgetHandlerContainer | null)
+    public set container(value: IRoomWidgetHandlerContainer | null) 
     {
-        if(this._container?.connection && this._groupDetailsEvent)
+        if(this._container?.connection && this._groupDetailsEvent) 
         {
             this._container.connection.removeMessageEvent(this._groupDetailsEvent);
             this._groupDetailsEvent.dispose();
@@ -115,26 +110,36 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(!value) return;
 
-        if(value.connection)
+        if(value.connection) 
         {
             this._groupDetailsEvent = new HabboGroupDetailsMessageEvent(this.onGroupDetails);
             value.connection.addMessageEvent(this._groupDetailsEvent);
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
-    private onGroupDetails = (event: IMessageEvent): void =>
+    private _widget: InfoStandWidget | null = null;
+
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::set widget()
+    public set widget(widget: InfoStandWidget | null) 
     {
-        const data = (event as HabboGroupDetailsMessageEvent).data;
+        this._widget = widget;
+    }
 
-        if(!data || !this._widget || this._widget.furniData.groupId !== data.groupId) return;
+    // TODO(AS3): InfoStandWidgetHandler.as — see updateUserData() in InfoStandWidget.ts
 
-        this._widget.furniView.groupBadgeId = data.badgeCode;
-        this._widget.furniView.groupName = data.groupName;
-    };
+    public get type(): string 
+    {
+        return 'RWE_INFOSTAND';
+    }
+
+    // (dead code path while the user view is a stub).
+    public get isActivityDisplayEnabled(): boolean 
+    {
+        return false;
+    }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::dispose()
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
@@ -144,7 +149,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::getWidgetMessages()
-    public getWidgetMessages(): string[]
+    public getWidgetMessages(): string[] 
     {
         return [
             RoomWidgetRoomObjectMessage.GET_OBJECT_INFO,
@@ -175,46 +180,46 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
-    public processWidgetMessage(message: unknown): unknown
+    public processWidgetMessage(message: unknown): unknown 
     {
         if(!(message instanceof RoomWidgetMessage) || !this._container) return null;
 
-        if(message instanceof RoomWidgetRoomObjectMessage && message.type === RoomWidgetRoomObjectMessage.GET_OBJECT_INFO)
+        if(message instanceof RoomWidgetRoomObjectMessage && message.type === RoomWidgetRoomObjectMessage.GET_OBJECT_INFO) 
         {
             this.handleGetObjectInfoMessage(message);
 
             return null;
         }
 
-        if(message instanceof RoomWidgetRoomObjectMessage && message.type === RoomWidgetRoomObjectMessage.GET_OBJECT_NAME)
+        if(message instanceof RoomWidgetRoomObjectMessage && message.type === RoomWidgetRoomObjectMessage.GET_OBJECT_NAME) 
         {
             this.handleGetObjectNameMessage(message);
 
             return null;
         }
 
-        if(message instanceof RoomWidgetFurniActionMessage)
+        if(message instanceof RoomWidgetFurniActionMessage) 
         {
             this.processFurniActionMessage(message);
 
             return null;
         }
 
-        if(message instanceof RoomWidgetGetBadgeDetailsMessage)
+        if(message instanceof RoomWidgetGetBadgeDetailsMessage) 
         {
             this._container.habboGroupsManager?.showGroupBadgeInfo(message.own, message.groupId);
 
             return null;
         }
 
-        if(message instanceof RoomWidgetOpenProfileMessage && message.type === RoomWidgetOpenProfileMessage.OPEN_USER_PROFILE)
+        if(message instanceof RoomWidgetOpenProfileMessage && message.type === RoomWidgetOpenProfileMessage.OPEN_USER_PROFILE) 
         {
             this.handleOpenProfileMessage(message);
 
             return null;
         }
 
-        if(UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type))
+        if(UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type)) 
         {
             log.debug(`TODO(AS3): unimplemented widget message ${message.type}`);
         }
@@ -222,14 +227,86 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         return null;
     }
 
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/IGetImageListener.as::imageReady()
+    public imageReady(id: number, data: ImageBitmap | null): void 
+    {
+        const pending = this._pendingImageRequests.get(id);
+
+        this._pendingImageRequests.delete(id);
+
+        if(!pending || !this._widget || this._widget.furniData.id !== pending.furniId) return;
+
+        if(pending.scale === 64 && (!data || data.width > 140 || data.height > 200)) 
+        {
+            this.retryFurniImageAtScaleOne(pending);
+
+            return;
+        }
+
+        this._widget.furniView.furniImage = data;
+    }
+
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/IGetImageListener.as::imageFailed()
+    public imageFailed(id: number): void 
+    {
+        const pending = this._pendingImageRequests.get(id);
+
+        this._pendingImageRequests.delete(id);
+
+        if(pending && pending.scale === 64 && this._widget && this._widget.furniData.id === pending.furniId) 
+        {
+            this.retryFurniImageAtScaleOne(pending);
+        }
+    }
+
+    // same ad-furni branding feature as RWFAM_SAVE_STUFF_DATA above.
+    public setObjectData(_data: Map<string, string>): void 
+    {
+        log.debug('TODO(AS3): setObjectData not wired yet');
+    }
+
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
+    // TODO(AS3): category 100 (user) branch dispatches RoomWidgetRoomObjectNameEvent —
+
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::getProcessedEvents()
+    public getProcessedEvents(): string[] 
+    {
+        return ['RSUBE_BADGES'];
+    }
+
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processEvent()
+    public processEvent(event: { type: string; userId: number; badges: string[] }): void 
+    {
+        if(event.type === 'RSUBE_BADGES' && this._widget) 
+        {
+            this._widget.refreshBadges(event.userId, event.badges);
+        }
+    }
+
+    // deferred with the pet view (stub).
+    public update(): void 
+    {
+    }
+
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
+    private onGroupDetails = (event: IMessageEvent): void => 
+    {
+        const data = (event as HabboGroupDetailsMessageEvent).data;
+
+        if(!data || !this._widget || this._widget.furniData.groupId !== data.groupId) return;
+
+        this._widget.furniView.groupBadgeId = data.badgeCode;
+        this._widget.furniView.groupName = data.groupName;
+    };
+
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWFAM_* cases)
-    private processFurniActionMessage(message: RoomWidgetFurniActionMessage): void
+    private processFurniActionMessage(message: RoomWidgetFurniActionMessage): void 
     {
         const container = this._container;
 
         if(!container?.roomEngine) return;
 
-        switch(message.type)
+        switch(message.type) 
         {
             case RoomWidgetFurniActionMessage.ROTATE:
                 container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, 'OBJECT_ROTATE_POSITIVE');
@@ -260,7 +337,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::pickupObjectWithConfirmation()
-    private pickupObjectWithConfirmation(furniId: number, furniCategory: number): void
+    private pickupObjectWithConfirmation(furniId: number, furniCategory: number): void 
     {
         const container = this._container;
 
@@ -272,21 +349,26 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.roomEngine.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectNameMessage()
-    // TODO(AS3): category 100 (user) branch dispatches RoomWidgetRoomObjectNameEvent —
     // not ported (user view is a stub).
-    private handleGetObjectNameMessage(_message: RoomWidgetRoomObjectMessage): void
+    private handleGetObjectNameMessage(_message: RoomWidgetRoomObjectMessage): void 
     {
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage() (image portion)
+    // Renders the *live placed object* (real colors/extras/state, read straight off the room
+    // object's own model) via RoomEngine.getRoomObjectImage() at scale 64 - matches AS3's first
+    // attempt. AS3 reads the result synchronously and re-requests at scale 1 if the image is
+    // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
+    // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage()
-    private handleGetObjectInfoMessage(message: RoomWidgetRoomObjectMessage): void
+    private handleGetObjectInfoMessage(message: RoomWidgetRoomObjectMessage): void 
     {
         const roomId = this._container?.roomSession.roomId;
 
         if(roomId === undefined) return;
 
-        switch(message.category)
+        switch(message.category) 
         {
             case 10:
             case 20:
@@ -298,19 +380,21 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
+
     /**
-	 * AS3's category-100 branch of handleGetObjectInfoMessage(): looks up the
-	 * clicked room object's user data and dispatches to the user/pet/bot/
-	 * rentable-bot handler by type.
-	 *
-	 * Phase 1 scope (identity only): user + bot are ported. Pet routes through
-	 * a separate composer/request flow (handleGetPetInfoMessage(), deferred
-	 * with the pet view — InfoStandPetView.ts is also a stub). Rentable bot is
-	 * deferred too — its AS3 event (RoomWidgetRentableBotInfoUpdateEvent) has
-	 * no TS port yet.
-	 */
+     * AS3's category-100 branch of handleGetObjectInfoMessage(): looks up the
+     * clicked room object's user data and dispatches to the user/pet/bot/
+     * rentable-bot handler by type.
+     *
+     * Phase 1 scope (identity only): user + bot are ported. Pet routes through
+     * a separate composer/request flow (handleGetPetInfoMessage(), deferred
+     * with the pet view — InfoStandPetView.ts is also a stub). Rentable bot is
+     * deferred too — its AS3 event (RoomWidgetRentableBotInfoUpdateEvent) has
+     * no TS port yet.
+     */
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetObjectInfoMessage() (case 100)
-    private handleGetUserObjectInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void
+    private handleGetUserObjectInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void 
     {
         const container = this._container;
 
@@ -320,7 +404,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(!userData) return;
 
-        switch(userData.type)
+        switch(userData.type) 
         {
             case 1:
                 this.handleGetUserInfoMessage(roomId, message.id, message.category, userData);
@@ -345,21 +429,21 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     /**
-	 * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
-	 *
-	 * Phase 1 (identity only) — deferred, matching the AS3 method lines ~891-967:
-	 * canBeMuted/canBeKicked/canBeBanned (moderation permission checks, needs
-	 * IRoomSession.roomModerationSettings), canTrade/canTradeReason (trade
-	 * eligibility), groupId/groupBadgeId/groupName, respectLeft/
-	 * respectReplenishesLeft, isIgnored, targetRoomControllerLevel (from the
-	 * room object's figure_flat_control model number). Badges use the existing
-	 * synchronous userDataManager.getUserBadges() instead of AS3's separate
-	 * requestUserSelectedBadges()/getUserSelectedBadges() network round-trip.
-	 * habboGroupsManager.updateVisibleExtendedProfile() and the trailing
-	 * composer send are deferred with the group/respect fields.
-	 */
+     * AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
+     *
+     * Phase 1 (identity only) — deferred, matching the AS3 method lines ~891-967:
+     * canBeMuted/canBeKicked/canBeBanned (moderation permission checks, needs
+     * IRoomSession.roomModerationSettings), canTrade/canTradeReason (trade
+     * eligibility), groupId/groupBadgeId/groupName, respectLeft/
+     * respectReplenishesLeft, isIgnored, targetRoomControllerLevel (from the
+     * room object's figure_flat_control model number). Badges use the existing
+     * synchronous userDataManager.getUserBadges() instead of AS3's separate
+     * requestUserSelectedBadges()/getUserSelectedBadges() network round-trip.
+     * habboGroupsManager.updateVisibleExtendedProfile() and the trailing
+     * composer send are deferred with the group/respect fields.
+     */
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
-    private handleGetUserInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void
+    private handleGetUserInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void 
     {
         const container = this._container;
 
@@ -374,7 +458,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         event.name = userData.name;
         event.motto = userData.custom;
 
-        if(this.isActivityDisplayEnabled)
+        if(this.isActivityDisplayEnabled) 
         {
             event.achievementScore = userData.achievementScore;
         }
@@ -385,12 +469,12 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         const object = container.roomEngine.getRoomObject(roomId, roomIndex, category);
 
-        if(object)
+        if(object) 
         {
             event.carryItem = object.getModel().getNumber(RoomObjectVariableEnum.AVATAR_CARRY_OBJECT);
         }
 
-        if(isOwnUser)
+        if(isOwnUser) 
         {
             event.realName = container.sessionDataManager.realName;
             event.allowNameChange = container.sessionDataManager.nameChangeAllowed;
@@ -402,14 +486,14 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         event.amIAnyRoomController = container.sessionDataManager.isAnyRoomController;
         event.amIAnAmbassador = container.sessionDataManager.isAmbassador;
 
-        if(!isOwnUser)
+        if(!isOwnUser) 
         {
             event.isBlocked = container.sessionDataManager.isBlocked(userData.webID);
             event.canBeAskedAsFriend = container.friendList?.canBeAskedForAFriend(userData.webID) ?? false;
 
             const friend = container.friendList?.getFriendById(userData.webID) ?? null;
 
-            if(friend)
+            if(friend) 
             {
                 event.realName = friend.realName;
                 event.isFriend = true;
@@ -423,7 +507,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetBotInfoMessage()
-    private handleGetBotInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void
+    private handleGetBotInfoMessage(roomId: number, roomIndex: number, category: number, userData: IUserData): void 
     {
         const container = this._container;
 
@@ -439,7 +523,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         const object = container.roomEngine.getRoomObject(roomId, roomIndex, category);
 
-        if(object)
+        if(object) 
         {
             event.carryItem = object.getModel().getNumber(RoomObjectVariableEnum.AVATAR_CARRY_OBJECT);
         }
@@ -455,8 +539,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.desktopEvents.emit(event.type, event);
     }
 
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::setObjectData()
+    // TODO(AS3): sends SetObjectDataMessageComposer, which doesn't exist yet —
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWOPEM_OPEN_USER_PROFILE case)
-    private handleOpenProfileMessage(message: RoomWidgetOpenProfileMessage): void
+    private handleOpenProfileMessage(message: RoomWidgetOpenProfileMessage): void 
     {
         const container = this._container;
 
@@ -470,7 +557,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
-    private handleGetFurniInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void
+    private handleGetFurniInfoMessage(message: RoomWidgetRoomObjectMessage, roomId: number): void 
     {
         const container = this._container;
 
@@ -498,21 +585,21 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         const type = object.getType();
 
-        if(type.indexOf('poster') === 0)
+        if(type.indexOf('poster') === 0) 
         {
             const posterId = parseInt(type.replace('poster', ''), 10);
 
             event.name = `\${poster_${posterId}_name}`;
             event.description = `\${poster_${posterId}_desc}`;
         }
-        else
+        else 
         {
             const typeId = model.getNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID);
             const furnitureData = message.category === 10
                 ? container.sessionDataManager?.getFloorItemData(typeId)
                 : container.sessionDataManager?.getWallItemData(typeId);
 
-            if(furnitureData)
+            if(furnitureData) 
             {
                 event.name = furnitureData.localizedName;
                 event.isNft = furnitureData.className.indexOf('nft_') === 0;
@@ -545,13 +632,13 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         const groupId = model.getNumber(RoomObjectVariableEnum.FURNITURE_GUILD_CUSTOMIZED_GUILD_ID);
 
-        if(groupId !== 0)
+        if(groupId !== 0) 
         {
             event.groupId = groupId;
             container.connection?.send(new GetHabboGroupDetailsMessageComposer(groupId, false));
         }
 
-        if(container.isOwnerOfFurniture?.(object))
+        if(container.isOwnerOfFurniture?.(object)) 
         {
             event.isOwner = true;
         }
@@ -561,14 +648,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.desktopEvents.emit(event.type, event);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage() (image portion)
-    // Renders the *live placed object* (real colors/extras/state, read straight off the room
-    // object's own model) via RoomEngine.getRoomObjectImage() at scale 64 - matches AS3's first
-    // attempt. AS3 reads the result synchronously and re-requests at scale 1 if the image is
-    // null or larger than the panel's 140x200 slot; ImageBitmap conversion is always async in
-    // the browser (see ImageResult.ts), so that same fallback check happens in imageReady()/
     // imageFailed() below instead, once the scale-64 render actually comes back.
-    private requestFurniImage(event: RoomWidgetFurniInfoUpdateEvent, roomId: number): void
+    private requestFurniImage(event: RoomWidgetFurniInfoUpdateEvent, roomId: number): void 
     {
         const roomEngine = this._container?.roomEngine;
 
@@ -576,84 +657,29 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         const result = roomEngine.getRoomObjectImage(roomId, event.id, event.category, new Vector3d(180), 64, this);
 
-        if(result.id > 0)
+        if(result.id > 0) 
         {
             this._pendingImageRequests.set(result.id, {furniId: event.id, category: event.category, roomId, scale: 64});
         }
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetFurniInfoMessage()
+    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::update()
+    // TODO(AS3): drives pet-command-tool countdowns and the pet update timer — both
+
     // (the "re-request at scale 1" fallback branch)
-    private retryFurniImageAtScaleOne(pending: {furniId: number; category: number; roomId: number; scale: number}): void
+    private retryFurniImageAtScaleOne(pending: {
+        furniId: number;
+        category: number;
+        roomId: number;
+        scale: number
+    }): void 
     {
         const roomEngine = this._container?.roomEngine;
         const result = roomEngine?.getRoomObjectImage(pending.roomId, pending.furniId, pending.category, new Vector3d(180), 1, this);
 
-        if(result && result.id > 0)
+        if(result && result.id > 0) 
         {
             this._pendingImageRequests.set(result.id, {...pending, scale: 1});
         }
-    }
-
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageReady()
-    public imageReady(id: number, data: ImageBitmap | null): void
-    {
-        const pending = this._pendingImageRequests.get(id);
-
-        this._pendingImageRequests.delete(id);
-
-        if(!pending || !this._widget || this._widget.furniData.id !== pending.furniId) return;
-
-        if(pending.scale === 64 && (!data || data.width > 140 || data.height > 200))
-        {
-            this.retryFurniImageAtScaleOne(pending);
-
-            return;
-        }
-
-        this._widget.furniView.furniImage = data;
-    }
-
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/IGetImageListener.as::imageFailed()
-    public imageFailed(id: number): void
-    {
-        const pending = this._pendingImageRequests.get(id);
-
-        this._pendingImageRequests.delete(id);
-
-        if(pending && pending.scale === 64 && this._widget && this._widget.furniData.id === pending.furniId)
-        {
-            this.retryFurniImageAtScaleOne(pending);
-        }
-    }
-
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::setObjectData()
-    // TODO(AS3): sends SetObjectDataMessageComposer, which doesn't exist yet —
-    // same ad-furni branding feature as RWFAM_SAVE_STUFF_DATA above.
-    public setObjectData(_data: Map<string, string>): void
-    {
-        log.debug('TODO(AS3): setObjectData not wired yet');
-    }
-
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::getProcessedEvents()
-    public getProcessedEvents(): string[]
-    {
-        return ['RSUBE_BADGES'];
-    }
-
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::processEvent()
-    public processEvent(event: {type: string; userId: number; badges: string[]}): void
-    {
-        if(event.type === 'RSUBE_BADGES' && this._widget)
-        {
-            this._widget.refreshBadges(event.userId, event.badges);
-        }
-    }
-
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::update()
-    // TODO(AS3): drives pet-command-tool countdowns and the pet update timer — both
-    // deferred with the pet view (stub).
-    public update(): void
-    {
     }
 }

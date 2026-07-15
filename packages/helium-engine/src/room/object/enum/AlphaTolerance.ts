@@ -5,7 +5,7 @@
  *
  * Alpha tolerance constants for sprite hit-testing.
  *
- * @see sources/flash_version/com/sulake/room/object/enum/AlphaTolerance.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/object/enum/AlphaTolerance.as
  */
 export const AlphaTolerance = {
     MATCH_ALL_PIXELS: -1,

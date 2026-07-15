@@ -379,6 +379,18 @@ export class WindowComposite
             ctx.filter = 'none';
         }
 
+        // Reset blend before recursing into children so children apply their own -
+        // `blend` is a per-window property (see WindowUtils.disableSection(), which
+        // dims a whole section by explicitly walking every child rather than relying
+        // on a single ancestor's alpha to cascade), not an inherited display-list alpha.
+        // Unconditional on purpose: a child with its own blend===1 must still get
+        // globalAlpha reset to 1 even though it never sets it itself - otherwise a
+        // translucent ancestor (e.g. styleselector_menu_new_xml's background border,
+        // blend=0.8) leaks its globalAlpha onto every descendant drawn before
+        // ctx.restore(), washing out unrelated child content (bug report: chat-style
+        // picker previews rendering dark/muddy instead of their own colors).
+        ctx.globalAlpha = 1;
+
         // Recurse into children
         const container = window as unknown as IWindowContainer;
 
@@ -651,6 +663,7 @@ export class WindowComposite
         if(blend < 1) ctx.globalAlpha = blend;
 
         ctx.drawImage(entry.canvas, 0, 0, w, h, absX, absY, w, h);
+
         ctx.restore();
     }
 

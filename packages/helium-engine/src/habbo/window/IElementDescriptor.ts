@@ -5,14 +5,13 @@
  * Each descriptor defines the defaults, states, and rendering info for
  * a particular element type + style combination.
  *
- * @see sources/flash_version/com/sulake/core/window/graphics/SkinContainer.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/graphics/SkinContainer.as
  */
 
 /**
  * Default attribute values for an element type+style.
  */
-export interface IElementDefaults
-{
+export interface IElementDefaults {
     threshold: number;
     background: boolean;
     blend: number;
@@ -26,8 +25,7 @@ export interface IElementDefaults
 /**
  * A visual state entry linking a state name to layout+template names.
  */
-export interface IElementState
-{
+export interface IElementState {
     name: string;
     layout: string;
     template: string;
@@ -36,8 +34,7 @@ export interface IElementState
 /**
  * Describes how a single element type+style should be rendered.
  */
-export interface IElementDescriptor
-{
+export interface IElementDescriptor {
     /** Element type tag name (e.g. "button", "frame") */
     type: string;
 
@@ -72,8 +69,7 @@ export interface IElementDescriptor
 /**
  * Top-level element description structure as produced by the build tool.
  */
-export interface IElementDescriptionData
-{
+export interface IElementDescriptionData {
     id: string;
     source: string;
     typeMap: Record<string, number>;

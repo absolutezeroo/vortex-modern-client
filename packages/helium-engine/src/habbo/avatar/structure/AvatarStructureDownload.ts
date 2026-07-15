@@ -9,16 +9,16 @@ const log = Logger.getLogger('AvatarStructureDownload');
  * Downloads and applies additional avatar structure data (figure part lists).
  *
  * @see sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as
- * @see sources/flash_version/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/structure/AvatarStructureDownload.as
  */
-export class AvatarStructureDownload extends EventEmitter
+export class AvatarStructureDownload extends EventEmitter 
 {
     public static readonly STRUCTURE_DONE: string = 'AVATAR_STRUCTURE_DONE';
 
     private _structureData: IStructureData;
 
     // AS3: sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as::AvatarStructureDownload()
-    constructor(url: string, structureData: IStructureData)
+    constructor(url: string, structureData: IStructureData) 
     {
         super();
 
@@ -27,13 +27,13 @@ export class AvatarStructureDownload extends EventEmitter
     }
 
     // AS3: sources/win63_version/habbo/avatar/structure/AvatarStructureDownload.as::onDataComplete()
-    private async download(url: string): Promise<void>
+    private async download(url: string): Promise<void> 
     {
-        try
+        try 
         {
             const response = await fetch(url);
 
-            if(!response.ok)
+            if(!response.ok) 
             {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
@@ -41,7 +41,7 @@ export class AvatarStructureDownload extends EventEmitter
             const text = await response.text();
             const document = parseXmlDocument(text);
 
-            if(document === null)
+            if(document === null) 
             {
                 throw new Error(`Invalid avatar structure XML from ${url}`);
             }
@@ -49,7 +49,7 @@ export class AvatarStructureDownload extends EventEmitter
             this._structureData.appendXML(document);
             this.emit(AvatarStructureDownload.STRUCTURE_DONE);
         }
-        catch (error)
+        catch (error) 
         {
             log.error('Failed to download structure data', error);
         }

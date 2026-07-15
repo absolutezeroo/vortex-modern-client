@@ -36,9 +36,9 @@ const EMBEDDED_AVATAR_ACTIONS_XML = `<actions><action  id="Default" precedence="
  * Main avatar render manager component. Initializes and manages the avatar rendering system.
  *
  * @see sources/win63_version/habbo/avatar/class_1808.as
- * @see sources/flash_version/com/sulake/habbo/avatar/AvatarRenderManager.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/avatar/AvatarRenderManager.as
  */
-export class AvatarRenderManager extends Component implements IAvatarRenderManager
+export class AvatarRenderManager extends Component implements IAvatarRenderManager 
 {
     private static readonly AVATAR_PLACEHOLDER_FIGURE: string = 'hd-99999-99999';
 
@@ -59,8 +59,9 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     private _animationsReady: boolean = false;
     private _effectMapReady: boolean = false;
     private _structureDownload: AvatarStructureDownload | null = null;
+    private _configurationCompleteHandled: boolean = false;
 
-    constructor(context: IContext)
+    constructor(context: IContext) 
     {
         super(context);
 
@@ -69,26 +70,25 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     }
 
     private _isReady: boolean = false;
-    private _configurationCompleteHandled: boolean = false;
 
-    public get isReady(): boolean
+    public get isReady(): boolean 
     {
         return this._isReady;
     }
 
-    public get effectMap(): Map<string, any>
+    public get effectMap(): Map<string, any> 
     {
         if(!this._effectAssetDownloadManager) return new Map();
 
         return this._effectAssetDownloadManager.effectMap;
     }
 
-    protected override get dependencies(): Array<ComponentDependency<any>>
+    protected override get dependencies(): Array<ComponentDependency<any>> 
     {
         return [
             new ComponentDependency(
                 IID_HabboConfigurationManager,
-                (config: IHabboConfigurationManager | null) =>
+                (config: IHabboConfigurationManager | null) => 
                 {
                     this._configuration = config;
                     this.tryOnConfigurationComplete();
@@ -98,7 +98,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             ),
             new ComponentDependency(
                 IID_AssetLibrary,
-                (assets: IAssetLibrary | null) =>
+                (assets: IAssetLibrary | null) => 
                 {
                     this._assetLibrary = assets;
                     this.tryOnConfigurationComplete();
@@ -108,57 +108,29 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         ];
     }
 
-    /**
-	 * Component's dependency injection resolves IID_HabboConfigurationManager and
-	 * IID_AssetLibrary independently and in no guaranteed order, and only attaches
-	 * the 'complete' listener once the *configuration* dependency resolves — so
-	 * relying on that listener alone breaks two ways: (1) if configuration already
-	 * finished loading (and already emitted 'complete') before this component's
-	 * dependency on it resolved, the listener is attached after the fact and never
-	 * fires again since 'complete' is one-shot, and (2) even accounting for that,
-	 * onConfigurationComplete() also needs _assetLibrary, which is a *separate*
-	 * dependency that can resolve before or after configuration with no ordering
-	 * guarantee — initDownloadManagers() would otherwise silently bail out
-	 * ("AssetLibrary not available for download managers") if it ran first. So:
-	 * check both conditions from every point either one could become satisfied,
-	 * and let onConfigurationComplete()'s own guard make repeat calls a no-op.
-	 */
-    private tryOnConfigurationComplete(): void
-    {
-        if(!this._assetLibrary || !this._configuration?.isInitialized()) return;
-
-        this.onConfigurationComplete();
-    }
-
-    // AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
-    protected override initComponent(): void
-    {
-        this.onConfigurationReady();
-    }
-
     public createAvatarImage(
         figureString: string,
         scale: string,
         gender: string,
         listener: IAvatarImageListener | null = null,
         effectListener: IAvatarEffectListener | null = null
-    ): IAvatarImage | null
+    ): IAvatarImage | null 
     {
         const figureContainer = new AvatarFigureContainer(figureString);
 
-        if(this._avatarAssetDownloadManager === null)
+        if(this._avatarAssetDownloadManager === null) 
         {
             this._pendingFigureDownloads.push([figureContainer, listener]);
 
             return null;
         }
 
-        if(gender)
+        if(gender) 
         {
             this.validateAvatarFigure(figureContainer, gender);
         }
 
-        if(this._avatarAssetDownloadManager.isReady(figureContainer))
+        if(this._avatarAssetDownloadManager.isReady(figureContainer)) 
         {
             return new AvatarImage(
                 this._structure,
@@ -170,7 +142,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             );
         }
 
-        if(this._placeholderFigure === null)
+        if(this._placeholderFigure === null) 
         {
             this._placeholderFigure = new AvatarFigureContainer(AvatarRenderManager.AVATAR_PLACEHOLDER_FIGURE);
         }
@@ -186,20 +158,20 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         );
     }
 
-    public getFigureData(): IFigureData
+    public getFigureData(): IFigureData 
     {
         return this._structure.figureData;
     }
 
-    public getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string
+    public getFigureStringWithFigureIds(figureString: string, gender: string, figureIds: number[]): string 
     {
         const figure = new AvatarFigureContainer(figureString);
 
-        for(const setId of figureIds)
+        for(const setId of figureIds) 
         {
             const partSet = this._structure.figureData.getFigurePartSet(setId);
 
-            if(partSet)
+            if(partSet) 
             {
                 figure.updatePart(partSet.type, setId, [0]);
             }
@@ -208,7 +180,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return figure.getFigureString();
     }
 
-    public isValidFigureSetForGender(setId: number, gender: string): boolean
+    public isValidFigureSetForGender(setId: number, gender: string): boolean 
     {
         const partSet = this._structure.figureData.getFigurePartSet(setId);
 
@@ -217,26 +189,26 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return partSet.gender === gender || partSet.gender === 'U';
     }
 
-    public getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[]
+    public getMandatoryAvatarPartSetIds(gender: string, clubLevel: number): string[] 
     {
         return this._structure.getMandatorySetTypeIds(gender, clubLevel);
     }
 
-    public createFigureContainer(figureString: string): IAvatarFigureContainer
+    public createFigureContainer(figureString: string): IAvatarFigureContainer 
     {
         return new AvatarFigureContainer(figureString);
     }
 
-    public isFigureReady(figure: IAvatarFigureContainer): boolean
+    public isFigureReady(figure: IAvatarFigureContainer): boolean 
     {
         if(!this._avatarAssetDownloadManager) return false;
 
         return this._avatarAssetDownloadManager.isReady(figure);
     }
 
-    public downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null = null): void
+    public downloadFigure(figure: IAvatarFigureContainer, listener: IAvatarImageListener | null = null): void 
     {
-        if(!this._avatarAssetDownloadManager)
+        if(!this._avatarAssetDownloadManager) 
         {
             this._pendingFigureDownloads.push([figure, listener]);
 
@@ -246,24 +218,24 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
     }
 
-    public injectFigureData(data: any): void
+    public injectFigureData(data: any): void 
     {
         this._structure.injectFigureData(data);
     }
 
-    public dispose(): void
+    public dispose(): void 
     {
         if(this._disposed) return;
 
         this._disposed = true;
 
-        if(this._avatarAssetDownloadManager)
+        if(this._avatarAssetDownloadManager) 
         {
             this._avatarAssetDownloadManager.dispose();
             this._avatarAssetDownloadManager = null;
         }
 
-        if(this._effectAssetDownloadManager)
+        if(this._effectAssetDownloadManager) 
         {
             this._effectAssetDownloadManager.dispose();
             this._effectAssetDownloadManager = null;
@@ -278,38 +250,8 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         super.dispose();
     }
 
-    /**
-	 * AS3 initComponent(): loads embedded avatar XML assets from AssetLibrary.
-	 *
-	 * @see sources/win63_version/habbo/avatar/class_49.as
-	 */
-    private onConfigurationReady(): void
-    {
-        if(!this._assetLibrary) return;
-
-        log.info('Loading embedded avatar XML assets...');
-
-        const embeddedActions = parseXmlDocument(EMBEDDED_AVATAR_ACTIONS_XML);
-
-        this._structure.initGeometry(this.getEmbeddedAvatarAssetContent('HabboAvatarGeometry'));
-        this._geometryReady = true;
-        this._structure.initPartSets(this.getEmbeddedAvatarAssetContent('HabboAvatarPartSets'));
-        this._partSetsReady = true;
-
-        if(embeddedActions !== null)
-        {
-            this._structure.initActions(this._assetLibrary, embeddedActions);
-        }
-
-        this._structure.initAnimation(this.getEmbeddedAvatarAssetContent('HabboAvatarAnimation'));
-        this._animationsReady = true;
-        this._structure.initFigureData(this.getEmbeddedAvatarAssetContent('HabboAvatarFigure'));
-
-        this.checkReady();
-    }
-
     // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-    public onConfigurationComplete(): void
+    public onConfigurationComplete(): void 
     {
         // Can now be invoked twice (the immediate isInitialized() check above, and
         // the 'complete' event handler) if configuration finishes loading between
@@ -323,47 +265,105 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         this.initDownloadManagers();
     }
 
-    /**
-	 * AS3 requestActions()/onAvatarActionsLoaded(): loads HabboAvatarActions XML and updates actions.
-	 *
-	 * @see sources/win63_version/habbo/avatar/class_49.as::requestActions()
-	 * @see sources/win63_version/habbo/avatar/class_49.as::onAvatarActionsLoaded()
-	 */
-    private async loadActions(): Promise<void>
+    // AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
+    protected override initComponent(): void 
     {
-        try
+        this.onConfigurationReady();
+    }
+
+    /**
+     * Component's dependency injection resolves IID_HabboConfigurationManager and
+     * IID_AssetLibrary independently and in no guaranteed order, and only attaches
+     * the 'complete' listener once the *configuration* dependency resolves — so
+     * relying on that listener alone breaks two ways: (1) if configuration already
+     * finished loading (and already emitted 'complete') before this component's
+     * dependency on it resolved, the listener is attached after the fact and never
+     * fires again since 'complete' is one-shot, and (2) even accounting for that,
+     * onConfigurationComplete() also needs _assetLibrary, which is a *separate*
+     * dependency that can resolve before or after configuration with no ordering
+     * guarantee — initDownloadManagers() would otherwise silently bail out
+     * ("AssetLibrary not available for download managers") if it ran first. So:
+     * check both conditions from every point either one could become satisfied,
+     * and let onConfigurationComplete()'s own guard make repeat calls a no-op.
+     */
+    private tryOnConfigurationComplete(): void 
+    {
+        if(!this._assetLibrary || !this._configuration?.isInitialized()) return;
+
+        this.onConfigurationComplete();
+    }
+
+    /**
+     * AS3 initComponent(): loads embedded avatar XML assets from AssetLibrary.
+     *
+     * @see sources/win63_version/habbo/avatar/class_49.as
+     */
+    private onConfigurationReady(): void 
+    {
+        if(!this._assetLibrary) return;
+
+        log.info('Loading embedded avatar XML assets...');
+
+        const embeddedActions = parseXmlDocument(EMBEDDED_AVATAR_ACTIONS_XML);
+
+        this._structure.initGeometry(this.getEmbeddedAvatarAssetContent('HabboAvatarGeometry'));
+        this._geometryReady = true;
+        this._structure.initPartSets(this.getEmbeddedAvatarAssetContent('HabboAvatarPartSets'));
+        this._partSetsReady = true;
+
+        if(embeddedActions !== null) 
+        {
+            this._structure.initActions(this._assetLibrary, embeddedActions);
+        }
+
+        this._structure.initAnimation(this.getEmbeddedAvatarAssetContent('HabboAvatarAnimation'));
+        this._animationsReady = true;
+        this._structure.initFigureData(this.getEmbeddedAvatarAssetContent('HabboAvatarFigure'));
+
+        this.checkReady();
+    }
+
+    /**
+     * AS3 requestActions()/onAvatarActionsLoaded(): loads HabboAvatarActions XML and updates actions.
+     *
+     * @see sources/win63_version/habbo/avatar/class_49.as::requestActions()
+     * @see sources/win63_version/habbo/avatar/class_49.as::onAvatarActionsLoaded()
+     */
+    private async loadActions(): Promise<void> 
+    {
+        try 
         {
             let data = this.getEmbeddedAvatarAssetContent('HabboAvatarActions', false);
 
-            if(data === null)
+            if(data === null) 
             {
                 const url = this.getAvatarActionsUrl();
 
-                if(url !== '')
+                if(url !== '') 
                 {
                     data = await this.loadXmlFromUrl(url, 'HabboAvatarActions');
                 }
             }
 
-            if(data !== null)
+            if(data !== null) 
             {
                 this._structure.updateActions(data);
                 this._actionsReady = true;
                 this.checkReady();
             }
         }
-        catch (error)
+        catch (error) 
         {
             log.error('Failed to load actions data', error);
         }
     }
 
     // AS3: sources/win63_version/habbo/avatar/class_49.as::initComponent()
-    private getEmbeddedAvatarAssetContent(assetName: string, warnIfMissing: boolean = true): unknown | null
+    private getEmbeddedAvatarAssetContent(assetName: string, warnIfMissing: boolean = true): unknown | null 
     {
-        if(!this._assetLibrary || !this._assetLibrary.hasAsset(assetName))
+        if(!this._assetLibrary || !this._assetLibrary.hasAsset(assetName)) 
         {
-            if(warnIfMissing)
+            if(warnIfMissing) 
             {
                 log.warn(`Missing embedded avatar asset: ${assetName}`);
             }
@@ -375,17 +375,17 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     }
 
     // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-    private loadFigureData(): void
+    private loadFigureData(): void 
     {
         const url = this._configuration?.getProperty('external.figurepartlist.txt') ?? '';
 
-        if(url === '')
+        if(url === '') 
         {
             return;
         }
 
         this._structureDownload = new AvatarStructureDownload(url, this._structure.figureData as unknown as IStructureData);
-        this._structureDownload.once(AvatarStructureDownload.STRUCTURE_DONE, () =>
+        this._structureDownload.once(AvatarStructureDownload.STRUCTURE_DONE, () => 
         {
             this._structureDownload = null;
             this._structure.init();
@@ -394,16 +394,16 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         });
     }
 
-    private getAvatarActionsUrl(): string
+    private getAvatarActionsUrl(): string 
     {
-        if(!this._configuration)
+        if(!this._configuration) 
         {
             return '';
         }
 
         const dynamicAvatarUrl = this._configuration.getProperty('flash.dynamic.avatar.download.url');
 
-        if(this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl))
+        if(this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl)) 
         {
             return dynamicAvatarUrl + 'HabboAvatarActions.xml';
         }
@@ -411,9 +411,9 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return '';
     }
 
-    private getEffectMapUrl(): string
+    private getEffectMapUrl(): string 
     {
-        if(!this._configuration)
+        if(!this._configuration) 
         {
             return '';
         }
@@ -423,11 +423,11 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return this.isResolvedDownloadUrlTemplate(dynamicAvatarUrl) ? dynamicAvatarUrl + 'effectmap.xml' : '';
     }
 
-    private async loadXmlFromUrl(url: string, assetName: string): Promise<Document | null>
+    private async loadXmlFromUrl(url: string, assetName: string): Promise<Document | null> 
     {
         const response = await fetch(url);
 
-        if(!response.ok)
+        if(!response.ok) 
         {
             throw new Error(`${assetName} fetch failed: ${response.status} ${response.statusText}`);
         }
@@ -435,7 +435,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         const text = await response.text();
         const document = parseXmlDocument(text);
 
-        if(document === null)
+        if(document === null) 
         {
             throw new Error(`${assetName} is not valid XML`);
         }
@@ -444,14 +444,14 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     }
 
     // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-    private initDownloadManagers(): void
+    private initDownloadManagers(): void 
     {
         const avatarDownloadUrl = this.getAvatarDownloadUrlTemplate(
             'flash.dynamic.avatar.download.url',
             'flash.dynamic.avatar.download.name.template');
         const effectDownloadUrl = avatarDownloadUrl;
 
-        if(!this._assetLibrary)
+        if(!this._assetLibrary) 
         {
             log.error('AssetLibrary not available for download managers');
 
@@ -461,7 +461,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         // Connect alias collection to asset library for sprite resolution
         this._aliasCollection.setAssetLibrary(this._assetLibrary);
 
-        if(this._avatarAssetDownloadManager === null)
+        if(this._avatarAssetDownloadManager === null) 
         {
             this._mandatoryLibrariesReady = false;
             this._avatarAssetDownloadManager = new AvatarAssetDownloadManager(
@@ -470,7 +470,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
                 this._assetLibrary,
                 this._aliasCollection,
                 () => this._isReady,
-                () =>
+                () => 
                 {
                     this._mandatoryLibrariesReady = true;
                     this.checkReady();
@@ -480,7 +480,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             this.loadFigureMap();
         }
 
-        if(this._effectAssetDownloadManager === null)
+        if(this._effectAssetDownloadManager === null) 
         {
             this._effectAssetDownloadManager = new EffectAssetDownloadManager(
                 effectDownloadUrl,
@@ -492,16 +492,16 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         }
     }
 
-    private getAvatarDownloadUrlTemplate(downloadUrlKey: string, nameTemplateKey: string): string
+    private getAvatarDownloadUrlTemplate(downloadUrlKey: string, nameTemplateKey: string): string 
     {
-        if(!this._configuration)
+        if(!this._configuration) 
         {
             return '';
         }
 
         const downloadUrl = this._configuration.getProperty(downloadUrlKey);
 
-        if(!this.isResolvedDownloadUrlTemplate(downloadUrl))
+        if(!this.isResolvedDownloadUrlTemplate(downloadUrl)) 
         {
             return '';
         }
@@ -509,25 +509,25 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         return downloadUrl + this._configuration.getProperty(nameTemplateKey);
     }
 
-    private isResolvedDownloadUrlTemplate(url: string): boolean
+    private isResolvedDownloadUrlTemplate(url: string): boolean 
     {
         return !!url && url.indexOf('${') < 0;
     }
 
-    private async loadFigureMap(): Promise<void>
+    private async loadFigureMap(): Promise<void> 
     {
-        try
+        try 
         {
             const url = this._configuration?.getProperty('flash.dynamic.avatar.download.configuration') ?? '';
 
-            if(url === '' || !this._avatarAssetDownloadManager)
+            if(url === '' || !this._avatarAssetDownloadManager) 
             {
                 return;
             }
 
             const response = await fetch(url);
 
-            if(!response.ok)
+            if(!response.ok) 
             {
                 throw new Error(`Figure map fetch failed: ${response.status} ${response.statusText}`);
             }
@@ -536,12 +536,12 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             let data = this.parseFigureMapXml(text);
             const trimmed = text.trim();
 
-            if(data === null && (trimmed.startsWith('{') || trimmed.startsWith('[')))
+            if(data === null && (trimmed.startsWith('{') || trimmed.startsWith('['))) 
             {
                 data = JSON.parse(trimmed);
             }
 
-            if(data === null)
+            if(data === null) 
             {
                 throw new Error('Figure map is not valid XML');
             }
@@ -550,21 +550,21 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             this._figureMapReady = true;
             this.checkReady();
         }
-        catch (error)
+        catch (error) 
         {
             log.error('Failed to load figure map', error);
         }
     }
 
     /**
-	 * Parses figure map XML into the JSON format expected by generateMap.
-	 *
-	 * AS3 uses XML natively. The figure map XML format is:
-	 * <map><lib id="..." revision="..."><part type="..." id="..."/></lib></map>
-	 */
-    private parseFigureMapXml(xmlText: string): any | null
+     * Parses figure map XML into the JSON format expected by generateMap.
+     *
+     * AS3 uses XML natively. The figure map XML format is:
+     * <map><lib id="..." revision="..."><part type="..." id="..."/></lib></map>
+     */
+    private parseFigureMapXml(xmlText: string): any | null 
     {
-        try
+        try 
         {
             const parser = new DOMParser();
             const doc = parser.parseFromString(xmlText, 'text/xml');
@@ -574,7 +574,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
             const libraries: any[] = [];
 
-            for(const libEl of libElements)
+            for(const libEl of libElements) 
             {
                 const id = libEl.getAttribute('id') || '';
                 const revision = libEl.getAttribute('revision') || '';
@@ -582,7 +582,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
                 const partElements = libEl.querySelectorAll('part');
 
-                for(const partEl of partElements)
+                for(const partEl of partElements) 
                 {
                     parts.push({
                         type: partEl.getAttribute('type') || '',
@@ -597,7 +597,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
             return {libraries};
         }
-        catch (error)
+        catch (error) 
         {
             log.error('XML parsing error', error);
 
@@ -606,17 +606,17 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     }
 
     // AS3: sources/win63_version/habbo/avatar/class_49.as::onConfigurationComplete()
-    private async loadEffectMap(): Promise<void>
+    private async loadEffectMap(): Promise<void> 
     {
-        try
+        try 
         {
             const url = this.getEffectMapUrl();
 
-            if(url !== '' && this._effectAssetDownloadManager)
+            if(url !== '' && this._effectAssetDownloadManager) 
             {
                 const data = await this.loadXmlFromUrl(url, 'effectmap');
 
-                if(data !== null)
+                if(data !== null) 
                 {
                     this._effectAssetDownloadManager.loadEffectMap(data);
                 }
@@ -625,24 +625,24 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
             this._effectMapReady = true;
             this.checkReady();
         }
-        catch (error)
+        catch (error) 
         {
             log.error('Failed to load effect map', error);
         }
     }
 
-    private checkReady(): void
+    private checkReady(): void 
     {
         if(this._isReady) return;
 
         if(this._geometryReady &&
-			this._partSetsReady &&
-			this._actionsReady &&
-			this._animationsReady &&
-			this._structureReady &&
-			this._figureMapReady &&
-			this._mandatoryLibrariesReady &&
-			this._effectMapReady)
+            this._partSetsReady &&
+            this._actionsReady &&
+            this._animationsReady &&
+            this._structureReady &&
+            this._figureMapReady &&
+            this._mandatoryLibrariesReady &&
+            this._effectMapReady) 
         {
             this._isReady = true;
 
@@ -653,7 +653,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         }
     }
 
-    private purgeInitDownloadBuffer(): void
+    private purgeInitDownloadBuffer(): void 
     {
         if(!this._avatarAssetDownloadManager) return;
 
@@ -661,26 +661,26 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
 
         this._pendingFigureDownloads = [];
 
-        for(const [figure, listener] of buffer)
+        for(const [figure, listener] of buffer) 
         {
-            if(listener !== null && !listener.disposed)
+            if(listener !== null && !listener.disposed) 
             {
                 this._avatarAssetDownloadManager.loadFigureSetData(figure, listener);
             }
         }
     }
 
-    private validateAvatarFigure(figure: AvatarFigureContainer, gender: string): void
+    private validateAvatarFigure(figure: AvatarFigureContainer, gender: string): void 
     {
         const mandatoryTypes = this._structure.getMandatorySetTypeIds(gender, 0);
 
-        for(const partType of mandatoryTypes)
+        for(const partType of mandatoryTypes) 
         {
-            if(!figure.hasPartType(partType))
+            if(!figure.hasPartType(partType)) 
             {
                 const defaultPartSet = this._structure.getDefaultPartSet(partType, gender);
 
-                if(defaultPartSet)
+                if(defaultPartSet) 
                 {
                     figure.updatePart(partType, defaultPartSet.id, [0]);
                 }

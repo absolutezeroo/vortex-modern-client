@@ -4,9 +4,9 @@
  * Defines the source region within the spritesheet atlas for a single
  * bitmap piece. The type is typically "bitmap" for image regions.
  *
- * @see sources/flash_version/com/sulake/core/window/graphics/renderer/SkinTemplateEntity.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/graphics/renderer/SkinTemplateEntity.as
  */
-export class SkinTemplateEntity
+export class SkinTemplateEntity 
 {
     public readonly id: number;
     public readonly name: string;
@@ -18,7 +18,7 @@ export class SkinTemplateEntity
         name: string,
         type: string,
         region: { x: number; y: number; width: number; height: number }
-    )
+    ) 
     {
         this.id = id;
         this.name = name;

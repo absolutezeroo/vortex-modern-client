@@ -526,7 +526,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.events.emit('objectsInitialized', type);
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::iconLoaded()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::iconLoaded()
     iconLoaded(typeId: number, type: string, success: boolean): void 
     {
         this.events.emit('iconLoaded', typeId, type, success);
@@ -548,7 +548,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.deliverIconTexture(typeId, texture, listeners);
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
     getFurnitureType(type: number): string | null 
     {
         return this._contentLoader?.getActiveObjectType(type) ?? null;
@@ -557,7 +557,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::resetSelectedObjectData()
     // TS scope: only handles the OBJECT_PLACE branch — this storage never sees OBJECT_MOVE/
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemType()
     getWallItemType(type: number, param: string | null = null): string | null 
     {
         return this._contentLoader?.getWallItemType(type, param) ?? null;
@@ -573,7 +573,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         stuffData: unknown = null
     ): boolean 
     {
-        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
         {
             log.warn(`Wall/avatar item placement is not implemented yet (category ${category})`);
 
@@ -641,7 +641,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // than always the target tile, which only differs from AS3 for the target tile's
     // own already-occupied footprint (a narrower case than the general validation this
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
     getWallItemIcon(type: number, listener: IGetImageListener, param: string | null = null): ImageResult 
     {
         const wallType = this._contentLoader?.getWallItemType(type, param) ?? null;
@@ -725,7 +725,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.getGenericRoomObjectImage('room', payload, new Vector3d(), scale, listener);
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureIcon()
     // `stuffData` typed `unknown` because it's currently unused by
     // getGenericRoomObjectThumbnail() (Phase 1), and callers may hold either
 
@@ -768,7 +768,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         scale: number,
         listener: IGetImageListener,
         backgroundColor: number = 0
-    ): ImageResult
+    ): ImageResult 
     {
         let type: string | null = null;
         let extra: string | null = null;
@@ -779,17 +779,17 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const room = this.getRoomInstance(roomId);
 
-        if(room !== null)
+        if(room !== null) 
         {
             const object = room.getObject(objectId, category);
 
-            if(object !== null && object.getModel() !== null)
+            if(object !== null && object.getModel() !== null) 
             {
                 type = object.getType();
                 state = object.getId();
                 objectFound = true;
 
-                switch(category)
+                switch(category) 
                 {
                     case 10:
                     case 20:
@@ -840,7 +840,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         posture: string | null = null,
         _originalId: number = -1,
         forceImmediate: boolean = false
-    ): ImageResult
+    ): ImageResult 
     {
         const result = new ImageResult();
 
@@ -936,7 +936,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         result.id = objectId;
 
-        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null)
+        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null) 
         {
             // AS3 also captures a (necessarily blank, since content isn't loaded yet) image here
             // and stores it on the result - this port never trusts a synchronous ImageResult.data
@@ -952,7 +952,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             room.disposeObject(objectId, category);
 
-            if(listener !== null)
+            if(listener !== null) 
             {
                 if(canvas !== null) 
                 {
@@ -1056,7 +1056,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._roomManager.getRoom(roomIdStr);
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::_Str_22095() (getGenericRoomObjectThumbnail)
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::_Str_22095() (getGenericRoomObjectThumbnail)
     // TS simplification: uses a simple incrementing id counter instead of AS3's
     // reserve/free NumberIdGenerator pool (no functional difference for callers,
 
@@ -1073,7 +1073,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_2223.as::set furniStackingHeightMap()
     // Rebuilding the tileObjectMap here (same width/height) whenever the stacking map is
     // replaced matches AS3's RoomInstanceData setter, which does the same as a side effect.
-    setFurniStackingHeightMap(roomId: number, map: FurniStackingHeightMap): void
+    setFurniStackingHeightMap(roomId: number, map: FurniStackingHeightMap): void 
     {
         const instanceData = this.getRoomInstanceData(roomId);
 
@@ -1084,20 +1084,20 @@ export class RoomEngine extends Component implements IRoomEngine,
         instanceData.tileObjectMap = new TileObjectMap(map.width, map.height);
     }
 
-    // AS3: sources/flash_version/src/com/sulake/habbo/room/RoomEngine.as::getFurniStackingHeightMap()
-    getFurniStackingHeightMap(roomId: number): FurniStackingHeightMap | null
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurniStackingHeightMap()
+    getFurniStackingHeightMap(roomId: number): FurniStackingHeightMap | null 
     {
         return this._roomInstanceData.get(roomId)?.furniStackingHeightMap ?? null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getTileObjectMap()
-    getTileObjectMap(roomId: number): TileObjectMap | null
+    getTileObjectMap(roomId: number): TileObjectMap | null 
     {
         return this._roomInstanceData.get(roomId)?.tileObjectMap ?? null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::refreshTileObjectMap()
-    refreshTileObjectMap(roomId: number, _reason: string): void
+    refreshTileObjectMap(roomId: number, _reason: string): void 
     {
         const map = this.getTileObjectMap(roomId);
 
@@ -1176,7 +1176,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         ownerName: string | null,
         _synchronize = true,
         data: IStuffData | null = null
-    ): boolean
+    ): boolean 
     {
         const room = this.getRoomInstance(roomId);
 
@@ -1207,7 +1207,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model)
+        if(model) 
         {
             model.setNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID, typeId);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA, state);
@@ -1221,12 +1221,12 @@ export class RoomEngine extends Component implements IRoomEngine,
             model.setNumber(RoomObjectVariableEnum.FURNITURE_USAGE_POLICY, usagePolicy);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID, ownerId);
 
-            if(ownerName)
+            if(ownerName) 
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            if(extra)
+            if(extra) 
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
             }
@@ -1239,7 +1239,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         // to `extra.toString()`/`getLegacyString()`), so format-2+ stuff data (e.g. guild-colored
         // furniture) never reached FurnitureGuildCustomizedLogic and rendered with un-substituted
         // base sprite content instead of the cropped/offset badge thumbnail.
-        if(data)
+        if(data) 
         {
             const eventHandler = (object as IRoomObjectController).getEventHandler();
 
@@ -1277,7 +1277,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         usagePolicy: number,
         ownerId: number,
         ownerName: string | null
-    ): boolean
+    ): boolean 
     {
         const room = this.getRoomInstance(roomId);
 
@@ -1303,7 +1303,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model)
+        if(model) 
         {
             model.setNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID, typeId);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA, state);
@@ -1314,12 +1314,12 @@ export class RoomEngine extends Component implements IRoomEngine,
             model.setNumber(RoomObjectVariableEnum.FURNITURE_EXPIRY_TIMESTAMP, Date.now());
             model.setNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID, ownerId);
 
-            if(ownerName)
+            if(ownerName) 
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            if(extra)
+            if(extra) 
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
             }
@@ -1330,7 +1330,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null
+    getRoomObject(roomId: number, objectId: number, category: number): IRoomObject | null 
     {
         const room = this.getRoomInstance(roomId);
 
@@ -1365,7 +1365,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::modifyRoomObject()
-    modifyRoomObject(objectId: number, category: number, action: string): boolean
+    modifyRoomObject(objectId: number, category: number, action: string): boolean 
     {
         const object = this.getRoomObject(this._activeRoomId, objectId, category);
 
@@ -1828,7 +1828,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // than reacting to specific window events.
-    setTicker(ticker: Ticker): void
+    setTicker(ticker: Ticker): void 
     {
         this._ticker?.remove(this.onTickerUpdate);
         this._ticker = ticker;
@@ -1889,7 +1889,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // object is created) is decompiler-corrupted in win63_version (`null.floorType = param2`-style
     // lines that cannot be the real code) - not ported; this always requires the room object to
     // already exist, matching every current call site (live property pushes after room entry).
-    updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate: boolean = false): boolean
+    updateObjectRoom(roomId: number, floorType?: string | null, wallType?: string | null, landscapeType?: string | null, skipModelUpdate: boolean = false): boolean 
     {
         const room = this.getRoomInstance(roomId);
         const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
@@ -1900,21 +1900,21 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(!eventHandler) return false;
 
-        if(floorType != null)
+        if(floorType != null) 
         {
             if(room && !skipModelUpdate) room.setString(RoomObjectVariableEnum.ROOM_FLOOR_TYPE, floorType);
 
             eventHandler.processUpdateMessage(new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_FLOOR_UPDATE, floorType));
         }
 
-        if(wallType != null)
+        if(wallType != null) 
         {
             if(room && !skipModelUpdate) room.setString(RoomObjectVariableEnum.ROOM_WALL_TYPE, wallType);
 
             eventHandler.processUpdateMessage(new RoomObjectRoomUpdateMessage(RoomObjectRoomUpdateMessage.ROOM_WALL_UPDATE, wallType));
         }
 
-        if(landscapeType != null)
+        if(landscapeType != null) 
         {
             if(room && !skipModelUpdate) room.setString(RoomObjectVariableEnum.ROOM_LANDSCAPE_TYPE, landscapeType);
 
@@ -1925,7 +1925,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoomVisibilities()
-    updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible: boolean = true): boolean
+    updateObjectRoomVisibilities(roomId: number, wallsVisible: boolean, floorVisible: boolean = true): boolean 
     {
         const room = this.getRoomInstance(roomId);
         const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
@@ -1940,7 +1940,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::updateObjectRoomPlaneThicknesses()
-    updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean
+    updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean 
     {
         const room = this.getRoomInstance(roomId);
         const roomObject = room?.getObject(OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM) as IRoomObjectController | null;
@@ -2250,25 +2250,25 @@ export class RoomEngine extends Component implements IRoomEngine,
         state: number,
         data: IStuffData | null,
         extra: number = NaN
-    ): boolean
+    ): boolean 
     {
         const room = this.getRoomInstance(roomId);
 
-        if(!room)
+        if(!room) 
         {
             return false;
         }
 
         const object = room.getObject(id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) as IRoomObjectController;
 
-        if(!object)
+        if(!object) 
         {
             return false;
         }
 
         const eventHandler = object.getEventHandler();
 
-        if(eventHandler)
+        if(eventHandler) 
         {
             eventHandler.processUpdateMessage(new RoomObjectUpdateMessage(location, direction));
             eventHandler.processUpdateMessage(new RoomObjectDataUpdateMessage(state, data, extra));
@@ -2317,7 +2317,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         id: number,
         _pickerId?: number,
         _refresh?: boolean
-    ): boolean
+    ): boolean 
     {
         const success = this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
 
@@ -2338,7 +2338,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         ownerId: number,
         ownerName: string,
         secondsToExpiration: number
-    ): boolean
+    ): boolean 
     {
         return this.addRoomObjectWallItem(
             roomId,
@@ -3204,7 +3204,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::resetSelectedObjectData()
-    private resetSelectedObjectData(roomId: number): void
+    private resetSelectedObjectData(roomId: number): void 
     {
         this.removeObjectMoverIconSprite();
 
@@ -3213,13 +3213,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(data === null) return;
 
-        if(data.operation === 'OBJECT_MOVE' || data.operation === 'OBJECT_MOVE_TO')
+        if(data.operation === 'OBJECT_MOVE' || data.operation === 'OBJECT_MOVE_TO') 
         {
             const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
-            if(object !== null)
+            if(object !== null) 
             {
-                if(data.operation !== 'OBJECT_MOVE_TO' && data.loc !== null && data.dir !== null)
+                if(data.operation !== 'OBJECT_MOVE_TO' && data.loc !== null && data.dir !== null) 
                 {
                     object.setLocation(data.loc);
                     object.setDirection(data.dir);
@@ -3228,7 +3228,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this.setObjectAlphaMultiplier(object, 1);
             }
         }
-        else if(data.operation === 'OBJECT_PLACE' && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        else if(data.operation === 'OBJECT_PLACE' && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
         {
             this.disposeObjectFurniture(roomId, data.id);
         }
@@ -3254,14 +3254,14 @@ export class RoomEngine extends Component implements IRoomEngine,
     // Passing it through crashes FurnitureMultiStateLogic.handleDataUpdateMessage(). The icon
     // preview doesn't need it anyway (matches the old getFurnitureIcon()-based icon, whose
     // getGenericRoomObjectThumbnail() path silently ignored this same stuffData).
-    private setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra: string | null = null): void
+    private setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra: string | null = null): void 
     {
         this.removeObjectMoverIconSprite();
 
         const roomId = this._activeRoomId;
 
         const listener: IGetImageListener = {
-            imageReady: (_id: number, data: ImageBitmap | null) =>
+            imageReady: (_id: number, data: ImageBitmap | null) => 
             {
                 if(data === null || this.getSelectedObjectData(roomId) === null) return;
 
@@ -3269,18 +3269,18 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this._moverIconSprite.anchor.set(0.5);
                 this._moverIconSprite.eventMode = 'none';
 
-                if(this._moverIconCanvas)
+                if(this._moverIconCanvas) 
                 {
                     this._moverIconCanvas.container.addChild(this._moverIconSprite);
                 }
             },
-            imageFailed: () =>
+            imageFailed: () => 
             {
                 log.warn(`setObjectMoverIconSprite: failed to render icon (id=${id}, category=${category}, direct=${direct})`);
             },
         };
 
-        if(direct)
+        if(direct) 
         {
             this.getRoomObjectImage(roomId, id, category, new Vector3d(), 1, listener);
 
@@ -3363,7 +3363,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // Same reference-height deviation as validateFurnitureLocation() below: AS3 passes the
     // object's own z explicitly as FurniStackingHeightMap.validateLocation()'s 10th param;
     // this port lets validateLocation() derive it from the first newly-checked tile instead.
-    private validateFurnitureDirection(object: IRoomObject, direction: IVector3d, stackingMap: FurniStackingHeightMap | null): boolean
+    private validateFurnitureDirection(object: IRoomObject, direction: IVector3d, stackingMap: FurniStackingHeightMap | null): boolean 
     {
         const model = object.getModel();
 
@@ -3387,7 +3387,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         let quadrant = Math.floor(((direction.x + 45) % 360) / 90);
 
-        if(quadrant === 1 || quadrant === 3)
+        if(quadrant === 1 || quadrant === 3) 
         {
             const swap = sizeX;
             sizeX = sizeY;
@@ -3396,7 +3396,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         quadrant = Math.floor(((currentDirection.x + 45) % 360) / 90);
 
-        if(quadrant === 1 || quadrant === 3)
+        if(quadrant === 1 || quadrant === 3) 
         {
             const swap = limitSizeX;
             limitSizeX = limitSizeY;
@@ -3479,7 +3479,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     private handleFurnitureMove(
         object: IRoomObjectController, data: SelectedRoomObjectData, tileX: number, tileY: number,
         stackingMap: FurniStackingHeightMap | null
-    ): boolean
+    ): boolean 
     {
         if(data.loc === null || data.dir === null) return false;
 
@@ -3562,12 +3562,12 @@ export class RoomEngine extends Component implements IRoomEngine,
             this.setObjectMoverIconSpriteVisible(true);
         }
 
-        if(object !== null)
+        if(object !== null) 
         {
             const stackingMap = this.getFurniStackingHeightMap(roomId);
             const success = this.handleFurnitureMove(object, data, tileX + 0.5, tileY + 0.5, stackingMap);
 
-            if(!success)
+            if(!success) 
             {
                 this.disposeObjectFurniture(roomId, data.id);
             }
@@ -3737,7 +3737,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectMove()
     // TS scope: category 10 (floor furniture) only, matching modifyRoomObject()'s OBJECT_MOVE case.
-    private handleObjectMove(roomId: number, tileX: number, tileY: number): void
+    private handleObjectMove(roomId: number, tileX: number, tileY: number): void 
     {
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
@@ -3760,7 +3760,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // call resetSelectedObjectData() on success (matches AS3: the selection is left in the
     // OBJECT_MOVE_TO state and only cleared by the next OBJECT_MOVE/OBJECT_PLACE call) - the
     // server's own echoed move-update message takes over the object's position from here.
-    private confirmObjectMove(roomId: number): void
+    private confirmObjectMove(roomId: number): void 
     {
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
@@ -3768,7 +3768,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
-        if(object === null)
+        if(object === null) 
         {
             this.resetSelectedObjectData(roomId);
 
@@ -3782,7 +3782,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.setObjectAlphaMultiplier(object, 1);
         this.removeObjectMoverIconSprite();
 
-        if(this._connection !== null && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        if(this._connection !== null && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
         {
             const direction = ((Math.trunc(object.getDirection().x) % 360) + 360) % 360;
             const location = object.getLocation();
@@ -4204,35 +4204,35 @@ export class RoomEngine extends Component implements IRoomEngine,
             // is being dragged (category 10 only, see initializeRoomObjectInsert()'s TODO(AS3)).
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-            if(selectedObjectData !== null && selectedObjectData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+            if(selectedObjectData !== null && selectedObjectData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
             {
-                if(selectedObjectData.operation === 'OBJECT_PLACE')
+                if(selectedObjectData.operation === 'OBJECT_PLACE') 
                 {
                     this.handleObjectPlace(this._activeRoomId, tileX, tileY);
                 }
-                else if(selectedObjectData.operation === 'OBJECT_MOVE')
+                else if(selectedObjectData.operation === 'OBJECT_MOVE') 
                 {
                     this.handleObjectMove(this._activeRoomId, tileX, tileY);
                 }
             }
         }
-        else if(event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)
+        else if(event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK) 
         {
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-            if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_PLACE')
+            if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_PLACE') 
             {
                 // AS3: _SafeCls_1821.as::placeObject() — sends the ghost's own current
                 // (already tile-snapped/direction-validated) location, then disposes it;
                 // the real furniture only appears once the server echoes the add back.
                 this.placeObject(this._activeRoomId);
             }
-            else if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_MOVE')
+            else if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_MOVE') 
             {
                 // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE_TO" case
                 this.confirmObjectMove(this._activeRoomId);
             }
-            else if(this._connection)
+            else if(this._connection) 
             {
                 this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
             }

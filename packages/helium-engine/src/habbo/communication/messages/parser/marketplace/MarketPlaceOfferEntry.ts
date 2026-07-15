@@ -9,45 +9,19 @@ import type {IStuffData} from '@habbo/inventory/items/IStuffData';
  *
  * TS-derived name: obfuscated with no readable-name counterpart in any of the
  * three source trees (win63_2026_crypted_version's `_SafeCls_2516`,
- * win63_version's `class_3020`, flash_version's `_Str_4192` are all
+ * win63_version's `class_3020`, PRODUCTION-201601012205-226667486's `_Str_4192` are all
  * decompiler placeholders). Named from usage context: this is the per-offer
  * entry produced while parsing the offers list off the wire.
  *
  * AS3: sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1899/_SafeCls_2516.as
  */
-export class MarketPlaceOfferEntry
+export class MarketPlaceOfferEntry 
 {
-    private _offerId: number;
-
-    private _furniId: number;
-
-    private _furniType: number;
-
-    private _extraData: string;
-
-    private _stuffData: IStuffData | null;
-
-    private _price: number;
-
-    private _status: number;
-
-    private _timeLeftMinutes: number;
-
-    private _averagePrice: number;
-
-    private _offerCount: number;
-
-    private _statusTime: number;
-
-    private _isUsable: boolean;
-
-    private _isUsed: boolean;
-
     // AS3: sources/win63_2026_crypted_version/src/unknowns/_SafePkg_1899/_SafeCls_2516.as::_SafeCls_2516()
     constructor(
         offerId: number, furniId: number, furniType: number, extraData: string, stuffData: IStuffData | null,
         price: number, status: number, timeLeftMinutes: number, averagePrice: number, offerCount: number = -1,
-        statusTime: number = NaN, isUsable: boolean = false, isUsed: boolean = false)
+        statusTime: number = NaN, isUsable: boolean = false, isUsed: boolean = false) 
     {
         this._offerId = offerId;
         this._furniId = furniId;
@@ -64,67 +38,93 @@ export class MarketPlaceOfferEntry
         this._isUsed = isUsed;
     }
 
-    get offerId(): number
+    private _offerId: number;
+
+    get offerId(): number 
     {
         return this._offerId;
     }
 
-    get furniId(): number
+    private _furniId: number;
+
+    get furniId(): number 
     {
         return this._furniId;
     }
 
-    get furniType(): number
+    private _furniType: number;
+
+    get furniType(): number 
     {
         return this._furniType;
     }
 
-    get extraData(): string
+    private _extraData: string;
+
+    get extraData(): string 
     {
         return this._extraData;
     }
 
-    get stuffData(): IStuffData | null
+    private _stuffData: IStuffData | null;
+
+    get stuffData(): IStuffData | null 
     {
         return this._stuffData;
     }
 
-    get price(): number
+    private _price: number;
+
+    get price(): number 
     {
         return this._price;
     }
 
-    get status(): number
+    private _status: number;
+
+    get status(): number 
     {
         return this._status;
     }
 
-    get timeLeftMinutes(): number
+    private _timeLeftMinutes: number;
+
+    get timeLeftMinutes(): number 
     {
         return this._timeLeftMinutes;
     }
 
-    get averagePrice(): number
+    private _averagePrice: number;
+
+    get averagePrice(): number 
     {
         return this._averagePrice;
     }
 
-    get offerCount(): number
+    private _offerCount: number;
+
+    get offerCount(): number 
     {
         return this._offerCount;
     }
 
-    get statusTime(): number
+    private _statusTime: number;
+
+    get statusTime(): number 
     {
         return this._statusTime;
     }
 
-    get isUsable(): boolean
+    private _isUsable: boolean;
+
+    get isUsable(): boolean 
     {
         return this._isUsable;
     }
 
-    get isUsed(): boolean
+    private _isUsed: boolean;
+
+    get isUsed(): boolean 
     {
         return this._isUsed;
     }

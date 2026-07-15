@@ -85,30 +85,30 @@ const log = Logger.getLogger('HabboMain');
  *
  * @see sources/win63_2021_version/HabboAirMain.as
  */
-export class HeliumMain implements IHeliumMain
+export class HeliumMain implements IHeliumMain 
 {
     /**
-	 * Ratio of progress bar dedicated to core/SWF loading (0.0 to CORE_RATIO).
-	 * The remaining (CORE_RATIO to 1.0) is for initialization steps.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as::CORE_RATIO
-	 */
+     * Ratio of progress bar dedicated to core/SWF loading (0.0 to CORE_RATIO).
+     * The remaining (CORE_RATIO to 1.0) is for initialization steps.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as::CORE_RATIO
+     */
     private static readonly CORE_RATIO: number = 0.6;
 
     /**
-	 * Number of initialization steps for progress tracking in the [CORE_RATIO - 1.0] range:
-	 * 1. Configuration loaded
-	 * 2. Localization loaded
-	 * 3. All components ready (core running / COMPONENT_EVENT_RUNNING)
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as::INIT_STEPS
-	 */
+     * Number of initialization steps for progress tracking in the [CORE_RATIO - 1.0] range:
+     * 1. Configuration loaded
+     * 2. Localization loaded
+     * 3. All components ready (core running / COMPONENT_EVENT_RUNNING)
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as::INIT_STEPS
+     */
     private static readonly INIT_STEPS: number = 3;
 
     /**
-	 * Embedded avatar XML assets registered from IHeliumConfig.embeddedConfigurations.
-	 * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset bundling.
-	 */
+     * Embedded avatar XML assets registered from IHeliumConfig.embeddedConfigurations.
+     * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset bundling.
+     */
     private static readonly EMBEDDED_AVATAR_XML_ASSET_NAMES: string[] = [
         'action_offset_lay',
         'action_offset_swim',
@@ -119,60 +119,46 @@ export class HeliumMain implements IHeliumMain
     ];
 
     /**
-	 * PixiJS Application reference.
-	 * Passed in from Helium shell (which owns the Application).
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as (uses stage from HabboAir)
-	 */
+     * PixiJS Application reference.
+     * Passed in from Helium shell (which owns the Application).
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as (uses stage from HabboAir)
+     */
     private _application: Application | null = null;
-
-    /**
-	 * Asset library reference (created in prepareCore).
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as (AssetLibrary is a core component)
-	 */
-    private _assets: AssetLibrary | null = null;
-
     private _heartbeatTimer: ReturnType<typeof setInterval> | null = null;
-
     /**
-	 * Loading screen reference.
-	 *
-	 * AS3: HabboAirMain receives _loadingScreen from HabboAir constructor.
-	 * Calls _loadingScreen.updateLoadingBar(progress) during initialization.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as _loadingScreen
-	 */
+     * Loading screen reference.
+     *
+     * AS3: HabboAirMain receives _loadingScreen from HabboAir constructor.
+     * Calls _loadingScreen.updateLoadingBar(progress) during initialization.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as _loadingScreen
+     */
     private _loadingScreen: IHeliumLoadingScreen | null = null;
-
     /**
-	 * Number of completed initialization steps.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as _completedInitSteps
-	 */
+     * Number of completed initialization steps.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as _completedInitSteps
+     */
     private _completedInitSteps: number = 0;
-
     /**
-	 * Whether the room engine has finished initialization.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_412
-	 */
+     * Whether the room engine has finished initialization.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_412
+     */
     private _roomEngineReady: boolean = false;
-
     /**
-	 * Whether all core components are running.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_413
-	 */
+     * Whether all core components are running.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_413
+     */
     private _coreRunning: boolean = false;
-
     /**
-	 * Guards onExitFrame()'s cleanup so it only runs once.
-	 *
-	 * @see sources/flash_version/src/HabboMain.as::dispose() (called once from onExitFrame)
-	 */
+     * Guards onExitFrame()'s cleanup so it only runs once.
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as::dispose() (called once from onExitFrame)
+     */
     private _bootFinalized: boolean = false;
-
     private _habboCommunicationManager: HabboCommunicationManager | null = null;
     private _localizationManager: HabboLocalizationManager | null = null;
     private _campaigns: HabboCampaigns | null = null;
@@ -182,26 +168,65 @@ export class HeliumMain implements IHeliumMain
     private _notifications: HabboNotifications | null = null;
     private _freeFlowChat: HabboFreeFlowChat | null = null;
     private _friendBar: HabboFriendBar | null = null;
-    private _catalog: HabboCatalog | null = null;
-    private _clubCenter: HabboClubCenter | null = null;
 
     /**
-	 * AS3: HabboAirMain(_arg_1:IHabboLoadingScreen, _arg_2:Dictionary)
-	 *
-	 * @param loadingScreen - Loading screen to update during initialization
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as constructor
-	 */
-    constructor(loadingScreen?: IHeliumLoadingScreen | null)
+     * AS3: HabboAirMain(_arg_1:IHabboLoadingScreen, _arg_2:Dictionary)
+     *
+     * @param loadingScreen - Loading screen to update during initialization
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as constructor
+     */
+    constructor(loadingScreen?: IHeliumLoadingScreen | null) 
     {
         this._loadingScreen = loadingScreen ?? null;
     }
 
+    /**
+     * Asset library reference (created in prepareCore).
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as (AssetLibrary is a core component)
+     */
+    private _assets: AssetLibrary | null = null;
+
+    get assets(): IAssetLibrary 
+    {
+        if(!this._assets) 
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
+
+        return this._assets;
+    }
+
+    private _catalog: HabboCatalog | null = null;
+
+    get catalog(): IHabboCatalog 
+    {
+        if(!this._catalog) 
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
+
+        return this._catalog;
+    }
+
+    private _clubCenter: HabboClubCenter | null = null;
+
+    get clubCenter(): IHabboClubCenter 
+    {
+        if(!this._clubCenter) 
+        {
+            throw new Error('[HabboMain] Not initialized');
+        }
+
+        return this._clubCenter;
+    }
+
     private _roomUI: RoomUI | null = null;
 
-    get roomUI(): RoomUI
+    get roomUI(): RoomUI 
     {
-        if(!this._roomUI)
+        if(!this._roomUI) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -211,9 +236,9 @@ export class HeliumMain implements IHeliumMain
 
     private _toolbar: HabboToolbar | null = null;
 
-    get toolbar(): IHabboToolbar
+    get toolbar(): IHabboToolbar 
     {
-        if(!this._toolbar)
+        if(!this._toolbar) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -223,9 +248,9 @@ export class HeliumMain implements IHeliumMain
 
     private _avatarRenderManager: AvatarRenderManager | null = null;
 
-    get avatarRenderManager(): AvatarRenderManager
+    get avatarRenderManager(): AvatarRenderManager 
     {
-        if(!this._avatarRenderManager)
+        if(!this._avatarRenderManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -233,21 +258,11 @@ export class HeliumMain implements IHeliumMain
         return this._avatarRenderManager;
     }
 
-    get assets(): IAssetLibrary
-    {
-        if(!this._assets)
-        {
-            throw new Error('[HabboMain] Not initialized');
-        }
-
-        return this._assets;
-    }
-
     private _windowManager: HabboWindowManager | null = null;
 
-    get windowManager(): IHabboWindowManager
+    get windowManager(): IHabboWindowManager 
     {
-        if(!this._windowManager)
+        if(!this._windowManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -257,16 +272,16 @@ export class HeliumMain implements IHeliumMain
 
     protected _disposed: boolean = false;
 
-    get disposed(): boolean
+    get disposed(): boolean 
     {
         return this._disposed;
     }
 
     private _navigator: HabboNavigator | null = null;
 
-    get navigator(): HabboNavigator
+    get navigator(): HabboNavigator 
     {
-        if(!this._navigator)
+        if(!this._navigator) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -276,9 +291,9 @@ export class HeliumMain implements IHeliumMain
 
     private _newNavigator: HabboNewNavigator | null = null;
 
-    get newNavigator(): HabboNewNavigator
+    get newNavigator(): HabboNewNavigator 
     {
-        if(!this._newNavigator)
+        if(!this._newNavigator) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -288,9 +303,9 @@ export class HeliumMain implements IHeliumMain
 
     private _inventory: HabboInventory | null = null;
 
-    get inventory(): HabboInventory
+    get inventory(): HabboInventory 
     {
-        if(!this._inventory)
+        if(!this._inventory) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -298,31 +313,11 @@ export class HeliumMain implements IHeliumMain
         return this._inventory;
     }
 
-    get catalog(): IHabboCatalog
-    {
-        if(!this._catalog)
-        {
-            throw new Error('[HabboMain] Not initialized');
-        }
-
-        return this._catalog;
-    }
-
-    get clubCenter(): IHabboClubCenter
-    {
-        if(!this._clubCenter)
-        {
-            throw new Error('[HabboMain] Not initialized');
-        }
-
-        return this._clubCenter;
-    }
-
     private _configurationManager: HabboConfigurationManager | null = null;
 
-    get configurationManager(): IHabboConfigurationManager
+    get configurationManager(): IHabboConfigurationManager 
     {
-        if(!this._configurationManager)
+        if(!this._configurationManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -332,9 +327,9 @@ export class HeliumMain implements IHeliumMain
 
     private _communicationDemo: HabboCommunicationDemo | null = null;
 
-    get communicationDemo(): HabboCommunicationDemo
+    get communicationDemo(): HabboCommunicationDemo 
     {
-        if(!this._communicationDemo)
+        if(!this._communicationDemo) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -344,9 +339,9 @@ export class HeliumMain implements IHeliumMain
 
     private _roomManager: RoomManager | null = null;
 
-    get roomManager(): RoomManager
+    get roomManager(): RoomManager 
     {
-        if(!this._roomManager)
+        if(!this._roomManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -356,9 +351,9 @@ export class HeliumMain implements IHeliumMain
 
     private _roomMessageHandler: RoomMessageHandler | null = null;
 
-    get roomMessageHandler(): RoomMessageHandler
+    get roomMessageHandler(): RoomMessageHandler 
     {
-        if(!this._roomMessageHandler)
+        if(!this._roomMessageHandler) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -368,9 +363,9 @@ export class HeliumMain implements IHeliumMain
 
     private _roomSessionManager: RoomSessionManager | null = null;
 
-    get roomSessionManager(): RoomSessionManager
+    get roomSessionManager(): RoomSessionManager 
     {
-        if(!this._roomSessionManager)
+        if(!this._roomSessionManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -378,9 +373,9 @@ export class HeliumMain implements IHeliumMain
         return this._roomSessionManager;
     }
 
-    get localization(): HabboLocalizationManager
+    get localization(): HabboLocalizationManager 
     {
-        if(!this._localizationManager)
+        if(!this._localizationManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -390,9 +385,9 @@ export class HeliumMain implements IHeliumMain
 
     private _roomEngine: RoomEngine | null = null;
 
-    get roomEngine(): RoomEngine
+    get roomEngine(): RoomEngine 
     {
-        if(!this._roomEngine)
+        if(!this._roomEngine) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -402,9 +397,9 @@ export class HeliumMain implements IHeliumMain
 
     private _sessionDataManager: SessionDataManager | null = null;
 
-    get sessionDataManager(): ISessionDataManager
+    get sessionDataManager(): ISessionDataManager 
     {
-        if(!this._sessionDataManager)
+        if(!this._sessionDataManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -412,9 +407,9 @@ export class HeliumMain implements IHeliumMain
         return this._sessionDataManager;
     }
 
-    get habboCommunication(): HabboCommunicationManager
+    get habboCommunication(): HabboCommunicationManager 
     {
-        if(!this._habboCommunicationManager)
+        if(!this._habboCommunicationManager) 
         {
             throw new Error('[HabboMain] Not initialized');
         }
@@ -423,19 +418,19 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Initialize the engine orchestrator.
-	 *
-	 * AS3 flow:
-	 * 1. prepareCore() — create Core, register all components
-	 * 2. addInitializationProgressListeners() — track config, localization, room engine, core running
-	 * 3. initLocalization() — activate localization definition
-	 *
-	 * @param application - The PixiJS Application (created by Helium shell)
-	 * @param config - Optional Helium configuration
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
-	 */
-    async init(application: Application, config?: IHeliumConfig): Promise<void>
+     * Initialize the engine orchestrator.
+     *
+     * AS3 flow:
+     * 1. prepareCore() — create Core, register all components
+     * 2. addInitializationProgressListeners() — track config, localization, room engine, core running
+     * 3. initLocalization() — activate localization definition
+     *
+     * @param application - The PixiJS Application (created by Helium shell)
+     * @param config - Optional Helium configuration
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+     */
+    async init(application: Application, config?: IHeliumConfig): Promise<void> 
     {
         this._application = application;
 
@@ -447,11 +442,11 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Dispose engine resources.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as dispose()
-	 */
-    dispose(): void
+     * Dispose engine resources.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as dispose()
+     */
+    dispose(): void 
     {
         if(this._disposed) return;
 
@@ -463,14 +458,14 @@ export class HeliumMain implements IHeliumMain
         this._application?.ticker.remove(this.update, this);
 
         // Stop heartbeat
-        if(this._heartbeatTimer !== null)
+        if(this._heartbeatTimer !== null) 
         {
             clearInterval(this._heartbeatTimer);
             this._heartbeatTimer = null;
         }
 
         // AS3: _loadingScreen.dispose() + _loadingScreen = null
-        if(this._loadingScreen)
+        if(this._loadingScreen) 
         {
             this._loadingScreen.dispose();
             this._loadingScreen = null;
@@ -511,82 +506,15 @@ export class HeliumMain implements IHeliumMain
         this._application = null;
     }
 
-    private registerEmbeddedAvatarAssets(config?: IHeliumConfig): void
-    {
-        if(!this._assets || !config?.embeddedConfigurations)
-        {
-            return;
-        }
-
-        const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
-			?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
-
-        for(const assetName of HeliumMain.EMBEDDED_AVATAR_XML_ASSET_NAMES)
-        {
-            const content = config.embeddedConfigurations[assetName];
-
-            if(content === undefined)
-            {
-                continue;
-            }
-
-            const asset = new XmlAsset(declaration, assetName);
-
-            asset.setUnknownContent(content);
-            this._assets.setAsset(assetName, asset, true);
-        }
-    }
-
     /**
-	 * Registers the freeflowchat "chatstyles_xml" catalog (as an XmlAsset, matching
-	 * ChatStyleLibrary.ts::content cast to Document) and every "style_<id>_regpoints"
-	 * config text (as a TextAsset, matching its content cast to string) found in
-	 * config.embeddedConfigurations. Per-style bitmap assets are registered separately
-	 * (image decoding is async) - see App.ts's chat-style image registration step.
-	 *
-	 * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset
-	 * bundling (same rationale as registerEmbeddedAvatarAssets() above).
-	 */
-    private registerChatStyleTextAssets(config?: IHeliumConfig): void
-    {
-        if(!this._assets || !config?.embeddedConfigurations)
-        {
-            return;
-        }
-
-        const xmlDeclaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
-			?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
-        const textDeclaration = this._assets.getAssetTypeDeclarationByMimeType('text/plain')
-			?? new AssetTypeDeclaration('text/plain', TextAsset, null, 'txt');
-
-        for(const [assetName, content] of Object.entries(config.embeddedConfigurations))
-        {
-            if(assetName === 'chatstyles_xml')
-            {
-                const asset = new XmlAsset(xmlDeclaration, assetName);
-
-                asset.setUnknownContent(content);
-                this._assets.setAsset(assetName, asset, true);
-            }
-            else if(/^style_.+_regpoints$/.test(assetName))
-            {
-                const asset = new TextAsset(textDeclaration, assetName);
-
-                asset.setUnknownContent(content);
-                this._assets.setAsset(assetName, asset, true);
-            }
-        }
-    }
-
-    /**
-	 * Create Core and prepare all components.
-	 *
-	 * AS3: HabboAirMain.prepareCore() calls Core.instantiate(stage, 1, reporter, dict),
-	 * then registers all component libraries via _core.prepareComponent().
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
-	 */
-    async prepareCore(config?: IHeliumConfig): Promise<void>
+     * Create Core and prepare all components.
+     *
+     * AS3: HabboAirMain.prepareCore() calls Core.instantiate(stage, 1, reporter, dict),
+     * then registers all component libraries via _core.prepareComponent().
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+     */
+    async prepareCore(config?: IHeliumConfig): Promise<void> 
     {
         const ctx = Core.instantiate(
             CoreSetup.FRAME_UPDATE_SIMPLE
@@ -622,7 +550,7 @@ export class HeliumMain implements IHeliumMain
         await Promise.resolve();
 
         // Set external variables URL if provided (must be set before download)
-        if(config?.configurationUrl)
+        if(config?.configurationUrl) 
         {
             this._configurationManager.setProperty(HabboProperty.EXTERNAL_VARIABLES, config.configurationUrl);
         }
@@ -631,22 +559,22 @@ export class HeliumMain implements IHeliumMain
         await this._configurationManager.initConfigurationDownload();
 
         // Set configuration properties from config object (after download so resetAll doesn't clear them)
-        if(config?.configuration)
+        if(config?.configuration) 
         {
-            for(const [key, value] of Object.entries(config.configuration))
+            for(const [key, value] of Object.entries(config.configuration)) 
             {
                 this._configurationManager.setProperty(key, value);
             }
         }
 
         // Also pick up top-level string properties as configuration overrides
-        if(config)
+        if(config) 
         {
             const reservedKeys = new Set(['background', 'resizeTo', 'antialias', 'resolution', 'canvas', 'connection', 'configurationUrl', 'configuration', 'embeddedConfigurations']);
 
-            for(const [key, value] of Object.entries(config))
+            for(const [key, value] of Object.entries(config)) 
             {
-                if(!reservedKeys.has(key) && typeof value === 'string')
+                if(!reservedKeys.has(key) && typeof value === 'string') 
                 {
                     this._configurationManager.setProperty(key, value);
                 }
@@ -658,7 +586,7 @@ export class HeliumMain implements IHeliumMain
         ctx.attachComponent(this._habboCommunicationManager, [IID_HabboCommunicationManager]);
 
         // Configure connection if provided
-        if(config?.connection)
+        if(config?.connection) 
         {
             this._habboCommunicationManager.configure(config.connection);
         }
@@ -666,7 +594,7 @@ export class HeliumMain implements IHeliumMain
         // 3. Communication Demo (manages login flow, IncomingMessages)
         this._communicationDemo = new HabboCommunicationDemo(ctx);
 
-        if(config?.connection?.ssoTicket)
+        if(config?.connection?.ssoTicket) 
         {
             this._communicationDemo.ssoTicket = config.connection.ssoTicket;
         }
@@ -781,14 +709,14 @@ export class HeliumMain implements IHeliumMain
         // the stale room instance first (RoomMessageHandler.onRoomReady()'s own "did the room id
         // change" check saw no change from the last visit and skipped setCurrentRoom()'s
         // disposal), duplicating the avatar and every other room object on rejoin.
-        if(this._roomSessionManager)
+        if(this._roomSessionManager) 
         {
-            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_STARTED, (event: RoomSessionEvent) =>
+            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_STARTED, (event: RoomSessionEvent) => 
             {
                 this._roomMessageHandler?.setCurrentRoom(event.session.roomId);
             });
 
-            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_ENDED, (event: RoomSessionEvent) =>
+            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_ENDED, (event: RoomSessionEvent) => 
             {
                 this._roomMessageHandler?.resetCurrentRoom();
                 this._roomEngine?.disposeRoom(event.session.roomId);
@@ -798,7 +726,7 @@ export class HeliumMain implements IHeliumMain
         // Wire RoomMessageHandler to the connection.
         await Promise.resolve();
 
-        if(this._habboCommunicationManager.connection)
+        if(this._habboCommunicationManager.connection) 
         {
             this._roomMessageHandler.connection = this._habboCommunicationManager.connection;
             this._roomEngine.connection = this._habboCommunicationManager.connection;
@@ -806,14 +734,14 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Initialize the Friend Bar (landing view, friend bar view, etc.)
-	 *
-	 * Must be called AFTER window layouts are registered by the client layer,
-	 * because the landing view builds its window from a registered layout.
-	 *
-	 * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
-	 */
-    initFriendBar(): void
+     * Initialize the Friend Bar (landing view, friend bar view, etc.)
+     *
+     * Must be called AFTER window layouts are registered by the client layer,
+     * because the landing view builds its window from a registered layout.
+     *
+     * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
+     */
+    initFriendBar(): void 
     {
         const ctx = Core.instance as CoreComponentContext;
 
@@ -824,13 +752,13 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Initialize localization.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as (inline in prepareCore)
-	 */
-    initLocalization(): void
+     * Initialize localization.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as (inline in prepareCore)
+     */
+    initLocalization(): void 
     {
-        if(this._configurationManager!.propertyExists('localization.1'))
+        if(this._configurationManager!.propertyExists('localization.1')) 
         {
             const locName = this._configurationManager!.getProperty('localization.1');
 
@@ -838,21 +766,88 @@ export class HeliumMain implements IHeliumMain
         }
     }
 
+    private registerEmbeddedAvatarAssets(config?: IHeliumConfig): void 
+    {
+        if(!this._assets || !config?.embeddedConfigurations) 
+        {
+            return;
+        }
+
+        const declaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
+            ?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
+
+        for(const assetName of HeliumMain.EMBEDDED_AVATAR_XML_ASSET_NAMES) 
+        {
+            const content = config.embeddedConfigurations[assetName];
+
+            if(content === undefined) 
+            {
+                continue;
+            }
+
+            const asset = new XmlAsset(declaration, assetName);
+
+            asset.setUnknownContent(content);
+            this._assets.setAsset(assetName, asset, true);
+        }
+    }
+
     /**
-	 * Main update loop — PixiJS ticker calls this each frame.
-	 *
-	 * Delegates to CoreComponentContext.update() which handles
-	 * priority-based update receivers, hibernation throttling, and reboot.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as (ticker integration)
-	 */
-    private update(ticker: Ticker): void
+     * Registers the freeflowchat "chatstyles_xml" catalog (as an XmlAsset, matching
+     * ChatStyleLibrary.ts::content cast to Document) and every "style_<id>_regpoints"
+     * config text (as a TextAsset, matching its content cast to string) found in
+     * config.embeddedConfigurations. Per-style bitmap assets are registered separately
+     * (image decoding is async) - see App.ts's chat-style image registration step.
+     *
+     * TS-only: no AS3 equivalent, this is infrastructure for the web port's asset
+     * bundling (same rationale as registerEmbeddedAvatarAssets() above).
+     */
+    private registerChatStyleTextAssets(config?: IHeliumConfig): void 
+    {
+        if(!this._assets || !config?.embeddedConfigurations) 
+        {
+            return;
+        }
+
+        const xmlDeclaration = this._assets.getAssetTypeDeclarationByMimeType('text/xml')
+            ?? new AssetTypeDeclaration('text/xml', XmlAsset, null, 'xml');
+        const textDeclaration = this._assets.getAssetTypeDeclarationByMimeType('text/plain')
+            ?? new AssetTypeDeclaration('text/plain', TextAsset, null, 'txt');
+
+        for(const [assetName, content] of Object.entries(config.embeddedConfigurations)) 
+        {
+            if(assetName === 'chatstyles_xml') 
+            {
+                const asset = new XmlAsset(xmlDeclaration, assetName);
+
+                asset.setUnknownContent(content);
+                this._assets.setAsset(assetName, asset, true);
+            }
+            else if(/^style_.+_regpoints$/.test(assetName)) 
+            {
+                const asset = new TextAsset(textDeclaration, assetName);
+
+                asset.setUnknownContent(content);
+                this._assets.setAsset(assetName, asset, true);
+            }
+        }
+    }
+
+    /**
+     * Main update loop — PixiJS ticker calls this each frame.
+     *
+     * Delegates to CoreComponentContext.update() which handles
+     * priority-based update receivers, hibernation throttling, and reboot.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as (ticker integration)
+     */
+    private update(ticker: Ticker): void 
     {
         if(this._disposed) return;
 
         const ctx = Core.instance as CoreComponentContext;
 
-        if(ctx)
+        if(ctx) 
         {
             ctx.update(ticker.deltaMS);
         }
@@ -861,26 +856,26 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Once both the room engine and the core are up and running, the
-	 * loading screen has done its job and can be freed.
-	 *
-	 * AS3's bootstrap Sprite (HabboMain/HabboAirMain) never holds the running
-	 * managers itself — they live independently under `_core` — so its own
-	 * `dispose()` here only detaches its init-tracking listeners and frees the
-	 * loading screen. HeliumMain also owns the manager lifecycle (for real
-	 * shutdown via `dispose()`), so only that loading-screen cleanup is mirrored
-	 * here; the rest of AS3's `dispose()` has no TS equivalent to tear down.
-	 *
-	 * @see sources/flash_version/src/HabboMain.as::onExitFrame()
-	 * @see sources/win63_2023_version/HabboAirMain.as::onExitFrame()
-	 */
-    private onExitFrame(): void
+     * Once both the room engine and the core are up and running, the
+     * loading screen has done its job and can be freed.
+     *
+     * AS3's bootstrap Sprite (HabboMain/HabboAirMain) never holds the running
+     * managers itself — they live independently under `_core` — so its own
+     * `dispose()` here only detaches its init-tracking listeners and frees the
+     * loading screen. HeliumMain also owns the manager lifecycle (for real
+     * shutdown via `dispose()`), so only that loading-screen cleanup is mirrored
+     * here; the rest of AS3's `dispose()` has no TS equivalent to tear down.
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as::onExitFrame()
+     * @see sources/win63_2023_version/HabboAirMain.as::onExitFrame()
+     */
+    private onExitFrame(): void 
     {
         if(this._bootFinalized || !this._roomEngineReady || !this._coreRunning) return;
 
         this._bootFinalized = true;
 
-        if(this._loadingScreen)
+        if(this._loadingScreen) 
         {
             this._loadingScreen.dispose();
             this._loadingScreen = null;
@@ -888,30 +883,30 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Set up listeners to track initialization progress of key components.
-	 *
-	 * AS3 listens for:
-	 * - IIDHabboConfigurationManager → onConfigurationComplete
-	 * - IIDHabboLocalizationManager → events "complete" → onLocalizationComplete
-	 * - IIDRoomEngine → events "REE_ENGINE_INITIALIZED" → onRoomEngineReady
-	 * - _core.events "COMPONENT_EVENT_RUNNING" → onCoreRunning
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as addInitializationProgressListeners()
-	 */
-    private addInitializationProgressListeners(): void
+     * Set up listeners to track initialization progress of key components.
+     *
+     * AS3 listens for:
+     * - IIDHabboConfigurationManager → onConfigurationComplete
+     * - IIDHabboLocalizationManager → events "complete" → onLocalizationComplete
+     * - IIDRoomEngine → events "REE_ENGINE_INITIALIZED" → onRoomEngineReady
+     * - _core.events "COMPONENT_EVENT_RUNNING" → onCoreRunning
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as addInitializationProgressListeners()
+     */
+    private addInitializationProgressListeners(): void 
     {
         // AS3: simpleQueueInterface(new IIDHabboConfigurationManager(), onConfigurationComplete)
         // Configuration is already loaded (we awaited initConfigurationDownload in prepareCore)
         this.onConfigurationComplete();
 
         // AS3: simpleQueueInterface(new IIDHabboLocalizationManager(), cb → events.addEventListener("complete", onLocalizationComplete))
-        if(this._localizationManager)
+        if(this._localizationManager) 
         {
             this._localizationManager.events.on('complete', () => this.onLocalizationComplete());
         }
 
         // AS3: simpleQueueInterface(new IIDRoomEngine(), cb → events.addEventListener("REE_ENGINE_INITIALIZED", onRoomEngineReady))
-        if(this._roomEngine)
+        if(this._roomEngine) 
         {
             this._roomEngine.events.on('REE_ENGINE_INITIALIZED', () => this.onRoomEngineReady());
         }
@@ -923,16 +918,16 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Update the loading bar progress.
-	 *
-	 * Progress formula: CORE_RATIO + (completedInitSteps / INIT_STEPS) * (1 - CORE_RATIO)
-	 * Maps init steps to the [0.6 - 1.0] range.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as updateProgressBar()
-	 */
-    private updateProgressBar(): void
+     * Update the loading bar progress.
+     *
+     * Progress formula: CORE_RATIO + (completedInitSteps / INIT_STEPS) * (1 - CORE_RATIO)
+     * Maps init steps to the [0.6 - 1.0] range.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as updateProgressBar()
+     */
+    private updateProgressBar(): void 
     {
-        if(this._loadingScreen != null)
+        if(this._loadingScreen != null) 
         {
             const progress = HeliumMain.CORE_RATIO + ((this._completedInitSteps / HeliumMain.INIT_STEPS) * (1 - HeliumMain.CORE_RATIO));
 
@@ -941,11 +936,11 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Called when the configuration manager has loaded.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as onConfigurationComplete()
-	 */
-    private onConfigurationComplete(): void
+     * Called when the configuration manager has loaded.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as onConfigurationComplete()
+     */
+    private onConfigurationComplete(): void 
     {
         Helium.trackLoginStep('client.init.config.loaded');
         this._completedInitSteps++;
@@ -953,20 +948,20 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Called when the localization manager has finished loading.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as onLocalizationComplete()
-	 */
-    private onLocalizationComplete(): void
+     * Called when the localization manager has finished loading.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as onLocalizationComplete()
+     */
+    private onLocalizationComplete(): void 
     {
         Helium.trackLoginStep('client.init.localization.loaded');
 
         // Wire localization resolver for WindowParser.
-        if(this._localizationManager)
+        if(this._localizationManager) 
         {
             const locMgr = this._localizationManager;
 
-            WindowParser.localizationResolver = (key: string) =>
+            WindowParser.localizationResolver = (key: string) => 
             {
                 const value = locMgr.getLocalization(key, '');
 
@@ -979,14 +974,14 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Called when the room engine has finished initialization.
-	 *
-	 * AS3: Sets _SafeStr_412 = true, starts heartbeat if spaweb=1.
-	 * When both _roomEngineReady and _coreRunning are true, the init is complete.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as onRoomEngineReady()
-	 */
-    private onRoomEngineReady(): void
+     * Called when the room engine has finished initialization.
+     *
+     * AS3: Sets _SafeStr_412 = true, starts heartbeat if spaweb=1.
+     * When both _roomEngineReady and _coreRunning are true, the init is complete.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as onRoomEngineReady()
+     */
+    private onRoomEngineReady(): void 
     {
         this._roomEngineReady = true;
         Helium.trackLoginStep('client.init.room.ready');
@@ -995,14 +990,14 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Called when all core components are running.
-	 *
-	 * AS3: Sets _SafeStr_413 = true, increments completedInitSteps.
-	 * When both _roomEngineReady and _coreRunning are true, the init is complete.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as onCoreRunning()
-	 */
-    private onCoreRunning(): void
+     * Called when all core components are running.
+     *
+     * AS3: Sets _SafeStr_413 = true, increments completedInitSteps.
+     * When both _roomEngineReady and _coreRunning are true, the init is complete.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as onCoreRunning()
+     */
+    private onCoreRunning(): void 
     {
         this._coreRunning = true;
         Helium.trackLoginStep('client.init.core.running');
@@ -1011,14 +1006,14 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Start sending heartbeat at regular intervals.
-	 *
-	 * AS3: If config "spaweb=1", sends heartbeat every 10 seconds
-	 * via HabboWebTools to keep the session alive.
-	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as startSendingHeartBeat()
-	 */
-    private startSendingHeartBeat(): void
+     * Start sending heartbeat at regular intervals.
+     *
+     * AS3: If config "spaweb=1", sends heartbeat every 10 seconds
+     * via HabboWebTools to keep the session alive.
+     *
+     * @see sources/win63_2021_version/HabboAirMain.as startSendingHeartBeat()
+     */
+    private startSendingHeartBeat(): void 
     {
         const config = this._configurationManager;
 
@@ -1028,13 +1023,13 @@ export class HeliumMain implements IHeliumMain
             ? config.getProperty('spaweb')
             : '0';
 
-        if(spaweb === '1')
+        if(spaweb === '1') 
         {
             log.info('SPA heartbeat enabled');
 
             this.sendHeartBeat();
 
-            this._heartbeatTimer = setInterval(() =>
+            this._heartbeatTimer = setInterval(() => 
             {
                 this.sendHeartBeat();
             }, 10000);
@@ -1042,24 +1037,24 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Send a heartbeat signal.
-	 *
-	 * Emits a 'heartbeat' event on the Helium instance.
-	 * The client can listen to POST this to a server endpoint.
-	 *
-	 * @see sources/win63_version/Habbo.as sendHeartBeat()
-	 */
-    private sendHeartBeat(): void
+     * Send a heartbeat signal.
+     *
+     * Emits a 'heartbeat' event on the Helium instance.
+     * The client can listen to POST this to a server endpoint.
+     *
+     * @see sources/win63_version/Habbo.as sendHeartBeat()
+     */
+    private sendHeartBeat(): void 
     {
         Helium.instance.heliumEvents.emit('heartbeat');
     }
 
     /**
-	 * Handle a core component error.
-	 *
-	 * @see sources/win63_version/HabboMain.as onCoreError()
-	 */
-    private onCoreError(message: string): void
+     * Handle a core component error.
+     *
+     * @see sources/win63_version/HabboMain.as onCoreError()
+     */
+    private onCoreError(message: string): void 
     {
         log.error(`Core error: ${message}`);
 
@@ -1067,11 +1062,11 @@ export class HeliumMain implements IHeliumMain
     }
 
     /**
-	 * Handle a core component reboot request.
-	 *
-	 * @see sources/win63_version/HabboMain.as onCoreReboot()
-	 */
-    private onCoreReboot(): void
+     * Handle a core component reboot request.
+     *
+     * @see sources/win63_version/HabboMain.as onCoreReboot()
+     */
+    private onCoreReboot(): void 
     {
         log.warn('Core reboot requested');
 

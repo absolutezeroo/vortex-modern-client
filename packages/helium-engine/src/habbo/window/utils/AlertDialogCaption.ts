@@ -6,10 +6,9 @@
  * implementation.
  *
  * @see sources/win63_version/habbo/window/utils/AlertDialogCaption.as
- * @see sources/flash_version/com/sulake/habbo/window/utils/ICaption.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/window/utils/ICaption.as
  */
-export interface ICaption
-{
+export interface ICaption {
     text: string;
     toolTip: string;
     visible: boolean;
@@ -24,9 +23,9 @@ export interface ICaption
  *
  * @see sources/win63_version/habbo/window/utils/AlertDialogCaption.as
  */
-export class AlertDialogCaption implements ICaption
+export class AlertDialogCaption implements ICaption 
 {
-    constructor(text: string, toolTip: string, visible: boolean)
+    constructor(text: string, toolTip: string, visible: boolean) 
     {
         this._text = text;
         this._toolTip = toolTip;
@@ -35,36 +34,36 @@ export class AlertDialogCaption implements ICaption
 
     private _text: string;
 
-    public get text(): string
+    public get text(): string 
     {
         return this._text;
     }
 
-    public set text(value: string)
+    public set text(value: string) 
     {
         this._text = value;
     }
 
     private _toolTip: string;
 
-    public get toolTip(): string
+    public get toolTip(): string 
     {
         return this._toolTip;
     }
 
-    public set toolTip(value: string)
+    public set toolTip(value: string) 
     {
         this._toolTip = value;
     }
 
     private _visible: boolean;
 
-    public get visible(): boolean
+    public get visible(): boolean 
     {
         return this._visible;
     }
 
-    public set visible(value: boolean)
+    public set visible(value: boolean) 
     {
         this._visible = value;
     }

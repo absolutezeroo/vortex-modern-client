@@ -4,9 +4,9 @@
  * Port of AS3's TextStyle data class. Each property is nullable so that
  * only explicitly-set values override inherited defaults.
  *
- * @see sources/flash_version/com/sulake/core/window/utils/TextStyle.as
+ * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/utils/TextStyle.as
  */
-export class TextStyle
+export class TextStyle 
 {
     public static readonly NORMAL: string = 'normal';
     public static readonly ITALIC: string = 'italic';
@@ -41,31 +41,31 @@ export class TextStyle
     public etchingPosition: string | null = null;
 
     /**
-	 * Compares all style properties (excluding name) for equality.
-	 */
-    public equals(other: TextStyle): boolean
+     * Compares all style properties (excluding name) for equality.
+     */
+    public equals(other: TextStyle): boolean 
     {
         return this.color === other.color
-			&& this.fontFamily === other.fontFamily
-			&& this.fontSize === other.fontSize
-			&& this.fontStyle === other.fontStyle
-			&& this.fontWeight === other.fontWeight
-			&& this.kerning === other.kerning
-			&& this.leading === other.leading
-			&& this.letterSpacing === other.letterSpacing
-			&& this.textDecoration === other.textDecoration
-			&& this.textIndent === other.textIndent
-			&& this.antiAliasType === other.antiAliasType
-			&& this.sharpness === other.sharpness
-			&& this.thickness === other.thickness
-			&& this.etchingColor === other.etchingColor
-			&& this.etchingPosition === other.etchingPosition;
+            && this.fontFamily === other.fontFamily
+            && this.fontSize === other.fontSize
+            && this.fontStyle === other.fontStyle
+            && this.fontWeight === other.fontWeight
+            && this.kerning === other.kerning
+            && this.leading === other.leading
+            && this.letterSpacing === other.letterSpacing
+            && this.textDecoration === other.textDecoration
+            && this.textIndent === other.textIndent
+            && this.antiAliasType === other.antiAliasType
+            && this.sharpness === other.sharpness
+            && this.thickness === other.thickness
+            && this.etchingColor === other.etchingColor
+            && this.etchingPosition === other.etchingPosition;
     }
 
     /**
-	 * Creates a deep copy of this style.
-	 */
-    public clone(): TextStyle
+     * Creates a deep copy of this style.
+     */
+    public clone(): TextStyle 
     {
         const copy = new TextStyle();
 
@@ -90,9 +90,9 @@ export class TextStyle
     }
 
     /**
-	 * Returns a CSS-like string representation for debugging.
-	 */
-    public toString(): string
+     * Returns a CSS-like string representation for debugging.
+     */
+    public toString(): string 
     {
         let out = this.name + ' {\n';
 

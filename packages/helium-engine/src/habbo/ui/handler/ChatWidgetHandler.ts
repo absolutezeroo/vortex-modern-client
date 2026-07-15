@@ -29,71 +29,74 @@ import {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
 import type {RoomChatWidget} from '@habbo/ui/widget/roomchat/RoomChatWidget';
 import {Vector3d} from '@room/utils/Vector3d';
 
-export class ChatWidgetHandler implements IRoomWidgetHandler
+export class ChatWidgetHandler implements IRoomWidgetHandler 
 {
-    private _disposed: boolean = false;
-    private _container: IRoomWidgetHandlerContainer | null = null;
-    private _connection: IConnection | null = null;
-    private _widget: RoomChatWidget | null = null;
-
-    private _referencePoint: {x: number; y: number} | null = null;
+    private _referencePoint: { x: number; y: number } | null = null;
     private _referenceScale: number = 0;
 
-    public set widget(value: RoomChatWidget)
-    {
-        this._widget = value;
-    }
+    private _disposed: boolean = false;
 
-    public get disposed(): boolean
+    public get disposed(): boolean 
     {
         return this._disposed;
     }
 
-    public get type(): string
-    {
-        return 'RWE_CHAT_WIDGET';
-    }
+    private _container: IRoomWidgetHandlerContainer | null = null;
 
-    public set container(value: IRoomWidgetHandlerContainer | null)
-    {
-        this._container = value;
-    }
-
-    public get container(): IRoomWidgetHandlerContainer | null
+    public get container(): IRoomWidgetHandlerContainer | null 
     {
         return this._container;
     }
 
-    public set connection(value: IConnection | null)
+    public set container(value: IRoomWidgetHandlerContainer | null) 
+    {
+        this._container = value;
+    }
+
+    private _connection: IConnection | null = null;
+
+    public set connection(value: IConnection | null) 
     {
         this._connection = value;
     }
 
+    private _widget: RoomChatWidget | null = null;
+
+    public set widget(value: RoomChatWidget) 
+    {
+        this._widget = value;
+    }
+
+    public get type(): string 
+    {
+        return 'RWE_CHAT_WIDGET';
+    }
+
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::dispose()
-    public dispose(): void
+    public dispose(): void 
     {
         this._disposed = true;
         this._container = null;
         this._referencePoint = null;
     }
 
-    public getWidgetMessages(): string[]
+    public getWidgetMessages(): string[] 
     {
         return [];
     }
 
-    public processWidgetMessage(_message: RoomWidgetMessage): RoomWidgetUpdateEvent | null
+    public processWidgetMessage(_message: RoomWidgetMessage): RoomWidgetUpdateEvent | null 
     {
         return null;
     }
 
-    public getProcessedEvents(): string[]
+    public getProcessedEvents(): string[] 
     {
         return ['RSCE_CHAT_EVENT', 'gce_game_chat'];
     }
 
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::processEvent()
-    // Older source trees (flash_version/win63_version) guard this whole method with
+    // Older source trees (PRODUCTION-201601012205-226667486/win63_version) guard this whole method with
     // `if(container.freeFlowChat && !container.freeFlowChat.isDisabledInPreferences) return;`
     // (a user preference to fall back to the legacy bubble system). The primary source
     // (win63_2026_crypted_version) dropped that preference entirely along with the legacy
@@ -101,12 +104,12 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
     // present - see RoomUI.ts's REE_INITIALIZED handling) - freeflowchat is mandatory
     // there. This guard is a safety net for the (normally momentary) window before the
     // freeFlowChat DI dependency resolves, not a user-facing toggle.
-    public processEvent(event: {type: string}): void
+    public processEvent(event: { type: string }): void 
     {
         if(!this._container) return;
         if(this._container.freeFlowChat) return;
 
-        switch(event.type)
+        switch(event.type) 
         {
             case RoomSessionChatEvent.RSCE_CHAT_EVENT:
                 this.handleChatEvent(event as RoomSessionChatEvent);
@@ -117,8 +120,23 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         }
     }
 
+    // TODO(AS3): see file header — avatar head image extraction not wired yet.
+    public getUserImage(_figureString: string): ImageBitmap | null 
+    {
+        return null;
+    }
+
+    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::getUserImage()
+
+    public update(): void 
+    {
+        this.updateWidgetPosition();
+    }
+
+    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::getPetImage()
+
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::processEvent() (RSCE_CHAT_EVENT branch)
-    private handleChatEvent(chatEvent: RoomSessionChatEvent): void
+    private handleChatEvent(chatEvent: RoomSessionChatEvent): void 
     {
         const container = this._container;
 
@@ -139,14 +157,14 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
 
         const screenPoint = geometry.getScreenPoint(roomObject.getLocation());
 
-        if(screenPoint)
+        if(screenPoint) 
         {
             x = screenPoint.x;
             y = screenPoint.y;
 
             const offset = container.roomEngine.getRoomCanvasScreenOffset(chatEvent.session.roomId, container.getFirstCanvasId());
 
-            if(offset)
+            if(offset) 
             {
                 x += offset.x;
                 y += offset.y;
@@ -162,11 +180,11 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         const text = chatEvent.text;
         let styleId = chatEvent.styleId;
 
-        if(userData)
+        if(userData) 
         {
             userType = userData.type;
 
-            switch(userType)
+            switch(userType) 
             {
                 case 1:
                     userImage = this.getUserImage(userData.figure);
@@ -183,25 +201,25 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
             userName = userData.name;
         }
 
-        if(chatEvent.chatType === 5)
+        if(chatEvent.chatType === 5) 
         {
             // TODO(AS3): hand-item localization lookup (widget.chatbubble.handitem) not ported.
             styleId = 1;
         }
 
-        if(chatEvent.chatType === 10)
+        if(chatEvent.chatType === 10) 
         {
             // TODO(AS3): mute-time localization lookup (widget.chatbubble.mutetime) not ported.
             styleId = 1;
         }
 
-        if(chatEvent.chatType === 7 || chatEvent.chatType === 8 || chatEvent.chatType === 9)
+        if(chatEvent.chatType === 7 || chatEvent.chatType === 8 || chatEvent.chatType === 9) 
         {
             // TODO(AS3): pet-revive/fertilize localization lookup not ported.
             styleId = 1;
         }
 
-        if(chatEvent.chatType === 11)
+        if(chatEvent.chatType === 11) 
         {
             // TODO(AS3): generic "translate raw text through localization" passthrough
             // not ported yet. IHabboLocalizationManager.getLocalization()/registerParameter()/
@@ -218,27 +236,14 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
         container.desktopEvents.emit(chatUpdateEvent.type, chatUpdateEvent);
     }
 
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::getUserImage()
-    // TODO(AS3): see file header — avatar head image extraction not wired yet.
-    public getUserImage(_figureString: string): ImageBitmap | null
-    {
-        return null;
-    }
-
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::getPetImage()
     // TODO(AS3): see file header — IRoomEngine.getPetImage() doesn't exist yet.
-    private getPetImage(_figureString: string): ImageBitmap | null
+    private getPetImage(_figureString: string): ImageBitmap | null 
     {
         return null;
-    }
-
-    public update(): void
-    {
-        this.updateWidgetPosition();
     }
 
     // AS3: sources/win63_2023_version/com/sulake/habbo/ui/handler/ChatWidgetHandler.as::updateWidgetPosition()
-    private updateWidgetPosition(): void
+    private updateWidgetPosition(): void 
     {
         const container = this._container;
 
@@ -254,7 +259,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
 
         if(this._referenceScale > 0) scaleRatio = geometry.scale / this._referenceScale;
 
-        if(!this._referencePoint)
+        if(!this._referencePoint) 
         {
             this._referencePoint = geometry.getScreenPoint(new Vector3d(0, 0, 0)) ?? {x: 0, y: 0};
             // AS3 deliberately offsets by -10 here so the scale-changed branch below
@@ -265,24 +270,27 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
 
         const point = geometry.getScreenPoint(new Vector3d(0, 0, 0));
 
-        if(point)
+        if(point) 
         {
             const offset = container.roomEngine.getRoomCanvasScreenOffset(roomId, canvasId);
 
-            if(offset)
+            if(offset) 
             {
                 point.x += offset.x;
                 point.y += offset.y;
             }
 
-            if(point.x !== this._referencePoint.x || point.y !== this._referencePoint.y)
+            if(point.x !== this._referencePoint.x || point.y !== this._referencePoint.y) 
             {
                 const dx = point.x - this._referencePoint.x * scaleRatio;
                 const dy = point.y - this._referencePoint.y * scaleRatio;
 
-                if(dx !== 0 || dy !== 0)
+                if(dx !== 0 || dy !== 0) 
                 {
-                    const event = new RoomWidgetRoomViewUpdateEvent(RoomWidgetRoomViewUpdateEvent.ROOM_VIEW_POSITION_CHANGED, null, {x: dx, y: dy});
+                    const event = new RoomWidgetRoomViewUpdateEvent(RoomWidgetRoomViewUpdateEvent.ROOM_VIEW_POSITION_CHANGED, null, {
+                        x: dx,
+                        y: dy
+                    });
 
                     container.desktopEvents.emit(event.type, event);
                 }
@@ -291,7 +299,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
             }
         }
 
-        if(geometry.scale !== this._referenceScale)
+        if(geometry.scale !== this._referenceScale) 
         {
             const event = new RoomWidgetRoomViewUpdateEvent(RoomWidgetRoomViewUpdateEvent.ROOM_VIEW_SCALE_CHANGED, null, null, geometry.scale);
 

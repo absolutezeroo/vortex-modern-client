@@ -115,36 +115,36 @@ import {
     BuildersClubSubscriptionStatusMessageEvent,
     CatalogIndexMessageEvent,
     CatalogPageMessageEvent,
+    CatalogPageWithEarliestExpiryMessageEvent,
     ClubGiftInfoEvent,
+    HabboClubExtendOfferMessageEvent,
+    HabboClubOffersMessageEvent,
+    LimitedOfferAppearingNextMessageEvent,
     NotEnoughBalanceMessageEvent,
     PurchaseErrorMessageEvent,
     PurchaseNotAllowedMessageEvent,
     PurchaseOKMessageEvent,
-    LimitedOfferAppearingNextMessageEvent,
-    CatalogPageWithEarliestExpiryMessageEvent,
-    VoucherRedeemOkMessageEvent,
-    VoucherRedeemErrorMessageEvent,
-    HabboClubOffersMessageEvent,
-    HabboClubExtendOfferMessageEvent,
-    RecyclerStatusMessageEvent,
     RecyclerFinishedMessageEvent,
     RecyclerPrizesMessageEvent,
+    RecyclerStatusMessageEvent,
+    VoucherRedeemErrorMessageEvent,
+    VoucherRedeemOkMessageEvent,
 } from './messages/incoming/catalog';
 
 // Incoming Events - Marketplace
 import {
-    MarketPlaceOffersEvent,
-    MarketPlaceOwnOffersEvent,
     MarketplaceBuyOfferResultEvent,
-    MarketplaceCancelOfferResultEvent,
     MarketplaceCancelAllOffersResultEvent,
+    MarketplaceCancelOfferResultEvent,
     MarketplaceClearOwnHistoryResultEvent,
     MarketplaceConfigurationEvent,
     MarketplaceItemStatsEvent,
+    MarketPlaceOffersEvent,
+    MarketPlaceOwnOffersEvent,
 } from './messages/incoming/marketplace';
 
 // Incoming Events - Landing View
-import {PromoArticlesMessageEvent, CommunityVoteReceivedEvent,} from './messages/incoming/landingview';
+import {CommunityVoteReceivedEvent, PromoArticlesMessageEvent,} from './messages/incoming/landingview';
 
 // Incoming Events - Competition
 import {CurrentTimingCodeMessageEvent} from './messages/incoming/competition';
@@ -152,9 +152,9 @@ import {CurrentTimingCodeMessageEvent} from './messages/incoming/competition';
 // Incoming Events - Quest
 import {
     CommunityGoalHallOfFameMessageEvent,
-    QuestDailyMessageEvent,
     CommunityGoalProgressMessageEvent,
     ConcurrentUsersGoalProgressMessageEvent,
+    QuestDailyMessageEvent,
 } from './messages/incoming/quest';
 
 // Incoming Events - Room Session
@@ -362,6 +362,7 @@ import {
     CreateFlatMessageComposer,
     DeleteFavouriteRoomMessageComposer,
     EditEventMessageComposer,
+    ForwardToARandomPromotedRoomMessageComposer,
     ForwardToSomeRoomMessageComposer,
     GetGuestRoomMessageComposer,
     GetOfficialRoomsMessageComposer,
@@ -389,7 +390,6 @@ import {
     SetRoomSessionTagsMessageComposer,
     ToggleStaffPickMessageComposer,
     UpdateHomeRoomMessageComposer,
-    ForwardToARandomPromotedRoomMessageComposer,
 } from './messages/outgoing/navigator';
 
 // Outgoing Composers - New Navigator
@@ -523,51 +523,51 @@ import {
 import {PollAnswerComposer, PollRejectComposer, PollStartComposer,} from './messages/outgoing/poll';
 
 // Outgoing Composers - Landing View
-import {GetPromoArticlesComposer, CommunityGoalVoteMessageComposer,} from './messages/outgoing/landingview';
+import {CommunityGoalVoteMessageComposer, GetPromoArticlesComposer,} from './messages/outgoing/landingview';
 
 // Outgoing Composers - Catalog
 import {
+    BuildersClubQueryFurniCountMessageComposer,
     GetBonusRareInfoMessageComposer,
     GetCatalogIndexComposer,
     GetCatalogPageComposer,
-    GetClubGiftMessageComposer,
-    GetProductOfferComposer,
-    PurchaseFromCatalogComposer,
-    BuildersClubQueryFurniCountMessageComposer,
-    GetLimitedOfferAppearingNextComposer,
     GetCatalogPageWithEarliestExpiryComposer,
-    RedeemVoucherMessageComposer,
+    GetClubGiftMessageComposer,
     GetClubOffersMessageComposer,
-    PurchaseVipMembershipExtensionComposer,
-    PurchaseBasicMembershipExtensionComposer,
-    SelectClubGiftComposer,
-    GetRecyclerStatusMessageComposer,
+    GetLimitedOfferAppearingNextComposer,
+    GetProductOfferComposer,
     GetRecyclerPrizesMessageComposer,
+    GetRecyclerStatusMessageComposer,
+    PurchaseBasicMembershipExtensionComposer,
+    PurchaseFromCatalogComposer,
+    PurchaseVipMembershipExtensionComposer,
     RecycleItemsMessageComposer,
+    RedeemVoucherMessageComposer,
+    SelectClubGiftComposer,
 } from './messages/outgoing/catalog';
 
 // Outgoing Composers - Marketplace
 import {
+    BuyMarketplaceOfferMessageComposer,
+    CancelAllMarketplaceOffersMessageComposer,
+    CancelMarketplaceOfferMessageComposer,
+    ClearOwnMarketplaceHistoryMessageComposer,
     GetMarketplaceConfigurationMessageComposer,
+    GetMarketplaceItemStatsComposer,
     GetMarketplaceOffersMessageComposer,
     GetMarketplaceOwnOffersMessageComposer,
-    CancelAllMarketplaceOffersMessageComposer,
-    ClearOwnMarketplaceHistoryMessageComposer,
-    BuyMarketplaceOfferMessageComposer,
     RedeemMarketplaceOfferCreditsMessageComposer,
-    CancelMarketplaceOfferMessageComposer,
-    GetMarketplaceItemStatsComposer,
 } from './messages/outgoing/marketplace';
 
 // Outgoing Composers - Quest
 import {
-    GetCommunityGoalHallOfFameMessageComposer,
-    GetDailyQuestMessageComposer,
     ActivateQuestMessageComposer,
     CancelQuestMessageComposer,
+    GetCommunityGoalHallOfFameMessageComposer,
     GetCommunityGoalProgressMessageComposer,
     GetConcurrentUsersGoalProgressMessageComposer,
     GetConcurrentUsersRewardMessageComposer,
+    GetDailyQuestMessageComposer,
 } from './messages/outgoing/quest';
 
 // Outgoing Composers - Talent
@@ -658,12 +658,12 @@ import {
     IncomeRewardStatusMessageComposer,
     OpenTradingComposer,
     RemoveItemFromTradeComposer,
+    RequestABadgeComposer,
     RequestFurniInventoryComposer,
     ResetUnseenItemsComposer,
     SetActivatedBadgesComposer,
     UnacceptTradingComposer,
     WithdrawCreditVaultMessageComposer,
-    RequestABadgeComposer,
 } from './messages/outgoing/inventory';
 
 /**
@@ -972,12 +972,12 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1621, ChangeUserNameResultMessageEvent);
 
         // === HELP (FAQ) ===
-        // AS3: sources/flash_version/src/com/sulake/habbo/communication/messages/incoming/help/FaqTextMessageEvent.as
-        // (name recovered via sources/flash_version/OriginalClassNames.txt; obfuscated in primary dump
+        // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/help/FaqTextMessageEvent.as
+        // (name recovered via sources/PRODUCTION-201601012205-226667486/OriginalClassNames.txt; obfuscated in primary dump
         // as _SafeStr_4546[2913] = _SafeCls_3480, sources/WIN63-202607011411-782849652/src/unknowns/
         // _SafePkg_1843/_SafeCls_3480.as, whose parser is the real, non-obfuscated
         // com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as - exact field match:
-        // questionId/answerText - vs. sources/flash_version's FaqTextMessageParser). Response to
+        // questionId/answerText - vs. sources/PRODUCTION-201601012205-226667486's FaqTextMessageParser). Response to
         // GetFaqTextMessageComposer(questionId), not yet ported.
         this._events.set(2913, FaqTextMessageEvent);
 

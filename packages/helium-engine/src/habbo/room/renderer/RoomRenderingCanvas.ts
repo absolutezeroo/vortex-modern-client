@@ -11,8 +11,7 @@
  *
  * @see sources/win63_version/room/renderer/class_3523.as
  */
-import {Container, Graphics, Texture, type Renderer} from 'pixi.js';
-import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
+import {Container, Graphics, type Renderer, Texture} from 'pixi.js';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomRenderingCanvas as IRoomRenderingCanvasInterface} from '@room/renderer/IRoomRenderingCanvas';
@@ -36,8 +35,7 @@ const FAST_FRAME_UPDATE_INTERVAL = 50;
 const MAXIMUM_VALID_FRAME_UPDATE_INTERVAL = 1000;
 const REALLY_SLOW_FRAME_UPDATE_INTERVAL = 60 * 3;
 
-interface IObjectSpriteCache
-{
+interface IObjectSpriteCache {
     initialized: boolean;
     instanceId: number;
     updateId: number;
@@ -57,13 +55,8 @@ interface IObjectSpriteCache
 /**
  * Stored visualization entry — visualization + its room object.
  */
-export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
+export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface 
 {
-    private static compareSortableSprites(a: SortableSprite, b: SortableSprite): number
-    {
-        return b.z - a.z;
-    }
-
     private _sortableSpriteList: SortableSprite[] = [];
     private _objectSpriteCaches: Map<string, IObjectSpriteCache> = new Map();
     private _spritePool: ExtendedSprite[] = [];
@@ -88,20 +81,17 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     private _haltedFrameInterval: number = 0;
     private _skipSpriteVisibilityChecking: boolean = false;
     private _useExclusionRects: boolean = false;
-    private _exclusionRects: {left: number; top: number; right: number; bottom: number}[] = [];
-    private _fpsCounterEnabled: boolean = false;
-    private _useMask: boolean = false;
+    private _exclusionRects: { left: number; top: number; right: number; bottom: number }[] = [];
     private _displayTransformDirty: boolean = true;
     private _lastRenderedWidth: number = -1;
     private _lastRenderedHeight: number = -1;
-
     private readonly _roomObjectContainer: IRoomSpriteCanvasContainer;
     private readonly _master: Container;
     private readonly _display: Container;
     private _spriteMask: Graphics | null = null;
     private readonly _id: number;
 
-    constructor(container: IRoomSpriteCanvasContainer, id: number, width: number, height: number, scale: number)
+    constructor(container: IRoomSpriteCanvasContainer, id: number, width: number, height: number, scale: number) 
     {
         this._roomObjectContainer = container;
         this._id = id;
@@ -132,42 +122,79 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         );
     }
 
-    get id(): number
+    private _fpsCounterEnabled: boolean = false;
+
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get fpsCounterEnabled()
+    get fpsCounterEnabled(): boolean 
+    {
+        return this._fpsCounterEnabled;
+    }
+
+    // AS3: sources/win63_version/room/renderer/class_3523.as::set fpsCounterEnabled()
+    set fpsCounterEnabled(value: boolean) 
+    {
+        this._fpsCounterEnabled = value;
+        // TODO(AS3): sources/win63_version/room/renderer/class_3523.as fpsCounterEnabled
+        // Flash draws TextField overlays with FPS/render/memory data. Keep the public
+        // API for parity; no Pixi overlay is created yet.
+    }
+
+    private _useMask: boolean = false;
+
+    // AS3: sources/win63_version/room/renderer/class_3523.as::get useMask()
+    get useMask(): boolean 
+    {
+        return this._useMask;
+    }
+
+    // AS3: sources/win63_version/room/renderer/class_3523.as::set useMask()
+    set useMask(value: boolean) 
+    {
+        if(value === this._useMask) 
+        {
+            return;
+        }
+
+        this._useMask = value;
+        this.updateMask();
+    }
+
+    get id(): number 
     {
         return this._id;
     }
 
     private _geometry: RoomGeometry;
 
-    get geometry(): RoomGeometry
+    get geometry(): RoomGeometry 
     {
         return this._geometry;
     }
 
     private _width: number = 0;
 
-    get width(): number
+    get width(): number 
     {
         return this._width * this._scale;
     }
 
     private _height: number = 0;
 
-    get height(): number
+    get height(): number 
     {
         return this._height * this._scale;
     }
 
     private _screenOffsetX: number = 0;
 
-    get screenOffsetX(): number
+    get screenOffsetX(): number 
     {
         return this._screenOffsetX;
     }
 
-    set screenOffsetX(value: number)
+    set screenOffsetX(value: number) 
     {
-        if(value === this._screenOffsetX)
+        if(value === this._screenOffsetX) 
         {
             return;
         }
@@ -179,14 +206,14 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     private _screenOffsetY: number = 0;
 
-    get screenOffsetY(): number
+    get screenOffsetY(): number 
     {
         return this._screenOffsetY;
     }
 
-    set screenOffsetY(value: number)
+    set screenOffsetY(value: number) 
     {
-        if(value === this._screenOffsetY)
+        if(value === this._screenOffsetY) 
         {
             return;
         }
@@ -198,66 +225,54 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     private _scale: number = 1;
 
-    get scale(): number
+    get scale(): number 
     {
         return this._scale;
     }
 
     private _mouseListener: IRoomRenderingCanvasMouseListener | null = null;
 
-    get mouseListener(): IRoomRenderingCanvasMouseListener | null
+    get mouseListener(): IRoomRenderingCanvasMouseListener | null 
     {
         return this._mouseListener;
     }
 
-    set mouseListener(value: IRoomRenderingCanvasMouseListener | null)
+    set mouseListener(value: IRoomRenderingCanvasMouseListener | null) 
     {
         this._mouseListener = value;
     }
 
-    // AS3: sources/win63_version/room/renderer/class_3523.as::get useMask()
-    get useMask(): boolean
-    {
-        return this._useMask;
-    }
+    private _disposed: boolean = false;
 
-    // AS3: sources/win63_version/room/renderer/class_3523.as::set useMask()
-    set useMask(value: boolean)
+    get disposed(): boolean 
     {
-        if(value === this._useMask)
-        {
-            return;
-        }
-
-        this._useMask = value;
-        this.updateMask();
-    }
-
-    // AS3: sources/win63_version/room/renderer/class_3523.as::get fpsCounterEnabled()
-    get fpsCounterEnabled(): boolean
-    {
-        return this._fpsCounterEnabled;
-    }
-
-    // AS3: sources/win63_version/room/renderer/class_3523.as::set fpsCounterEnabled()
-    set fpsCounterEnabled(value: boolean)
-    {
-        this._fpsCounterEnabled = value;
-        // TODO(AS3): sources/win63_version/room/renderer/class_3523.as fpsCounterEnabled
-        // Flash draws TextField overlays with FPS/render/memory data. Keep the public
-        // API for parity; no Pixi overlay is created yet.
+        return this._disposed;
     }
 
     /**
-	 * Renders the room at 1:1 scale with no screen offset and captures it to a
-	 * canvas. The AS3 version also lowers Stage.quality for the capture and
-	 * restores it afterward; PixiJS has no per-render quality knob, so that
-	 * step is dropped as a non-portable Flash-ism.
-	 *
-	 * @see sources/win63_version/room/renderer/class_3523.as::takeScreenShot() line 313
-	 */
+     * The display container (added to PixiJS stage).
+     * AS3: get displayObject() returns _master.
+     */
+    get container(): Container 
+    {
+        return this._master;
+    }
+
+    private static compareSortableSprites(a: SortableSprite, b: SortableSprite): number 
+    {
+        return b.z - a.z;
+    }
+
+    /**
+     * Renders the room at 1:1 scale with no screen offset and captures it to a
+     * canvas. The AS3 version also lowers Stage.quality for the capture and
+     * restores it afterward; PixiJS has no per-render quality knob, so that
+     * step is dropped as a non-portable Flash-ism.
+     *
+     * @see sources/win63_version/room/renderer/class_3523.as::takeScreenShot() line 313
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::takeScreenShot()
-    takeScreenShot(renderer: Renderer): HTMLCanvasElement
+    takeScreenShot(renderer: Renderer): HTMLCanvasElement 
     {
         this._skipSpriteVisibilityChecking = true;
 
@@ -282,40 +297,24 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::skipSpriteVisibilityChecking()
-    skipSpriteVisibilityChecking(): void
+    skipSpriteVisibilityChecking(): void 
     {
         this._skipSpriteVisibilityChecking = true;
         this.render(-1, true);
     }
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::resumeSpriteVisibilityChecking()
-    resumeSpriteVisibilityChecking(): void
+    resumeSpriteVisibilityChecking(): void 
     {
         this._skipSpriteVisibilityChecking = false;
         this._displayTransformDirty = true;
     }
 
-    private _disposed: boolean = false;
-
-    get disposed(): boolean
-    {
-        return this._disposed;
-    }
-
     /**
-	 * The display container (added to PixiJS stage).
-	 * AS3: get displayObject() returns _master.
-	 */
-    get container(): Container
-    {
-        return this._master;
-    }
-
-    /**
-	 * Initialize canvas dimensions.
-	 * AS3: initialize(width, height)
-	 */
-    initialize(width: number, height: number): void
+     * Initialize canvas dimensions.
+     * AS3: initialize(width, height)
+     */
+    initialize(width: number, height: number): void 
     {
         if(width < 1) width = 1;
         if(height < 1) height = 1;
@@ -327,57 +326,25 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::initialize()
     // Creates/updates a Sprite named "mask" and assigns it to _display.mask when
-    // useMask is enabled.
-    private updateMask(): void
-    {
-        if(this._spriteMask === null)
-        {
-            this._spriteMask = new Graphics();
-            this._spriteMask.label = 'mask';
-        }
-
-        this._spriteMask.clear();
-        this._spriteMask.rect(0, 0, this._width, this._height);
-        this._spriteMask.fill(0);
-
-        if(this._useMask)
-        {
-            if(this._spriteMask.parent !== this._master)
-            {
-                this._master.addChild(this._spriteMask);
-            }
-
-            this._display.mask = this._spriteMask;
-        }
-        else
-        {
-            if(this._spriteMask.parent === this._master)
-            {
-                this._master.removeChild(this._spriteMask);
-            }
-
-            this._display.mask = null;
-        }
-    }
 
     /**
-	 * Set the display zoom scale.
-	 * AS3: class_3523.setScale() updates var_337 only and does not recreate RoomGeometry.
-	 */
+     * Set the display zoom scale.
+     * AS3: class_3523.setScale() updates var_337 only and does not recreate RoomGeometry.
+     */
     setScale(
         scale: number,
         point: { x: number; y: number } | null = null,
         offset: { x: number; y: number } | null = null
-    ): void
+    ): void 
     {
         if(scale === this._scale) return;
 
-        if(point === null)
+        if(point === null) 
         {
-            point = { x: this._width / 2, y: this._height / 2 };
+            point = {x: this._width / 2, y: this._height / 2};
         }
 
-        if(offset === null)
+        if(offset === null) 
         {
             offset = point;
         }
@@ -392,31 +359,31 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this.updateDisplayTransform();
     }
 
-    setScreenOffset(x: number, y: number): void
+    setScreenOffset(x: number, y: number): void 
     {
         this.screenOffsetX = x;
         this.screenOffsetY = y;
     }
 
     /**
-	 * Main render loop. Called each frame.
-	 * Based on AS3 RoomSpriteCanvas.render()
-	 *
-	 * @see sources/flash_version/com/sulake/room/renderer/RoomSpriteCanvas.as line 390
-	 */
-    render(time: number, force: boolean = false): void
+     * Main render loop. Called each frame.
+     * Based on AS3 RoomSpriteCanvas.render()
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 390
+     */
+    render(time: number, force: boolean = false): void 
     {
-        if(time === -1)
+        if(time === -1) 
         {
             time = this._renderTimeStamp + 1;
         }
 
-        if(this._geometry === null)
+        if(this._geometry === null) 
         {
             return;
         }
 
-        if(time === this._renderTimeStamp && !force)
+        if(time === this._renderTimeStamp && !force) 
         {
             return;
         }
@@ -426,12 +393,12 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         const renderStartedAt = performance.now();
 
-        if(this._width !== this._lastRenderedWidth || this._height !== this._lastRenderedHeight)
+        if(this._width !== this._lastRenderedWidth || this._height !== this._lastRenderedHeight) 
         {
             force = true;
         }
 
-        if(this._displayTransformDirty)
+        if(this._displayTransformDirty) 
         {
             force = true;
         }
@@ -445,12 +412,12 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         // AS3: for each room object → _Str_24532()
         const objectCount = this._roomObjectContainer.getRoomObjectCount();
 
-        for(let i = 0; i < objectCount; i++)
+        for(let i = 0; i < objectCount; i++) 
         {
             const object = this._roomObjectContainer.getRoomObjectWithIndex(i);
             const objectId = this._roomObjectContainer.getRoomObjectIdWithIndex(i);
 
-            if(object !== null && objectId !== null)
+            if(object !== null && objectId !== null) 
             {
                 spriteIndex += this.renderObject(object, objectId, time, force, spriteIndex);
             }
@@ -460,17 +427,17 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._sortableSpriteList.sort(RoomRenderingCanvas.compareSortableSprites);
 
         // Trim excess sortable sprites
-        if(spriteIndex < this._sortableSpriteList.length)
+        if(spriteIndex < this._sortableSpriteList.length) 
         {
             this._sortableSpriteList.length = spriteIndex;
         }
 
         // Update ExtendedSprites from sorted list
-        for(let i = 0; i < spriteIndex; i++)
+        for(let i = 0; i < spriteIndex; i++) 
         {
             const sortable = this._sortableSpriteList[i];
 
-            if(sortable !== null)
+            if(sortable !== null) 
             {
                 this.updateSprite(i, sortable);
             }
@@ -486,80 +453,17 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._lastRenderTime = performance.now() - renderStartedAt;
     }
 
-    // AS3: sources/win63_version/room/renderer/class_3523.as::calculateUpdateInterval()
-    private calculateUpdateInterval(time: number): void
-    {
-        if(this._renderTimeStamp <= 0)
-        {
-            return;
-        }
-
-        const updateInterval = time - this._renderTimeStamp;
-
-        if(updateInterval > REALLY_SLOW_FRAME_UPDATE_INTERVAL)
-        {
-            this._haltedFrameInterval = updateInterval;
-        }
-
-        if(updateInterval > MAXIMUM_VALID_FRAME_UPDATE_INTERVAL)
-        {
-            return;
-        }
-
-        this._updateIntervalFrameCount++;
-
-        if(this._updateIntervalFrameCount === SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1)
-        {
-            this._averageUpdateInterval = updateInterval;
-            this._averageRenderTime = this._lastRenderTime;
-
-            return;
-        }
-
-        if(this._updateIntervalFrameCount <= SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1)
-        {
-            return;
-        }
-
-        const frameCount = this._updateIntervalFrameCount - SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
-
-        this._averageUpdateInterval = this._averageUpdateInterval * (frameCount - 1) / frameCount + updateInterval / frameCount;
-        this._averageRenderTime = this._averageRenderTime * (frameCount - 1) / frameCount + this._lastRenderTime / frameCount;
-
-        if(this._updateIntervalFrameCount > SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + FRAME_COUNT_FOR_UPDATE_INTERVAL)
-        {
-            this._updateIntervalFrameCount = SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
-
-            if(!this._runningSlow && this._averageUpdateInterval > SLOW_FRAME_UPDATE_INTERVAL)
-            {
-                this._runningSlow = true;
-            }
-            else if(this._runningSlow && this._averageUpdateInterval < FAST_FRAME_UPDATE_INTERVAL)
-            {
-                this._runningSlow = false;
-            }
-
-            if(this._fpsCounterEnabled)
-            {
-                // TODO(AS3): sources/win63_version/room/renderer/class_3523.as calculateUpdateInterval()
-                // Render FPS/debug TextField equivalents for Pixi when debug overlays are ported.
-            }
-
-            this._haltedFrameInterval = 0;
-        }
-    }
-
     /**
-	 * Handle mouse events by hit-testing against all room sprites.
-	 * Based on AS3 RoomSpriteCanvas.handleMouseEvent()
-	 *
-	 * @see sources/flash_version/com/sulake/room/renderer/RoomSpriteCanvas.as line 1005
-	 */
+     * Handle mouse events by hit-testing against all room sprites.
+     * Based on AS3 RoomSpriteCanvas.handleMouseEvent()
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1005
+     */
     handleMouseEvent(
         x: number, y: number, type: string,
         altKey: boolean = false, ctrlKey: boolean = false,
         shiftKey: boolean = false, buttonDown: boolean = false
-    ): boolean
+    ): boolean 
     {
         type = this.normalizeMouseEventType(type);
 
@@ -570,7 +474,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._mouseLocationY = y / this._scale;
 
         // Optimization: skip redundant mouseMove checks within same frame
-        if(this._mouseCheckCount > 0 && type === 'mouseMove')
+        if(this._mouseCheckCount > 0 && type === 'mouseMove') 
         {
             return this._mouseSpriteWasHit;
         }
@@ -586,7 +490,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         // listener (clickHandler → checkMouseClickHits) that hit-tests only
         // clickHandling sprites (ad-banner furniture), independent of and in
         // addition to the roll-over/click routing above.
-        if(type === 'click' || type === 'doubleClick')
+        if(type === 'click' || type === 'doubleClick') 
         {
             this.checkMouseClickHits(
                 Math.floor(this._mouseLocationX),
@@ -600,24 +504,24 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Get the canvas ID.
-	 *
-	 * @see sources/win63_version/room/renderer/class_3523.as line 1346
-	 */
-    getId(): number
+     * Get the canvas ID.
+     *
+     * @see sources/win63_version/room/renderer/class_3523.as line 1346
+     */
+    getId(): number 
     {
         return this._id;
     }
 
     /**
-	 * Per-frame update for mouse event processing.
-	 * Based on AS3 RoomSpriteCanvas.update()
-	 *
-	 * @see sources/win63_version/room/renderer/class_3523.as line 1326
-	 */
-    update(): void
+     * Per-frame update for mouse event processing.
+     * Based on AS3 RoomSpriteCanvas.update()
+     *
+     * @see sources/win63_version/room/renderer/class_3523.as line 1326
+     */
+    update(): void 
     {
-        if(this._mouseCheckCount === 0)
+        if(this._mouseCheckCount === 0) 
         {
             this.checkMouseHits(
                 Math.floor(this._mouseLocationX),
@@ -630,32 +534,32 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._eventId++;
     }
 
-    suppressMouseUpdate(): void
+    suppressMouseUpdate(): void 
     {
         this._mouseCheckCount = 1;
     }
 
     /**
-	 * @deprecated Use update() instead. Kept for backward compatibility.
-	 */
-    updateMouseState(): void
+     * @deprecated Use update() instead. Kept for backward compatibility.
+     */
+    updateMouseState(): void 
     {
         this.update();
     }
 
-    dispose(): void
+    dispose(): void 
     {
         if(this._disposed) return;
 
         this.cleanSprites(0);
 
-        if(this._geometry !== null)
+        if(this._geometry !== null) 
         {
             this._geometry.dispose();
         }
 
         // Dispose pooled sprites
-        for(const sprite of this._spritePool)
+        for(const sprite of this._spritePool) 
         {
             sprite.dispose();
         }
@@ -668,9 +572,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._mouseListener = null;
         this._display.mask = null;
 
-        if(this._spriteMask !== null)
+        if(this._spriteMask !== null) 
         {
-            if(this._spriteMask.parent !== null)
+            if(this._spriteMask.parent !== null) 
             {
                 this._spriteMask.parent.removeChild(this._spriteMask);
             }
@@ -683,12 +587,113 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._disposed = true;
     }
 
+    roomObjectRemoved(objectId: string): void 
+    {
+        this.disposeObjectSpriteCache(objectId);
+    }
+
+    // useMask is enabled.
+    private updateMask(): void 
+    {
+        if(this._spriteMask === null) 
+        {
+            this._spriteMask = new Graphics();
+            this._spriteMask.label = 'mask';
+        }
+
+        this._spriteMask.clear();
+        this._spriteMask.rect(0, 0, this._width, this._height);
+        this._spriteMask.fill(0);
+
+        if(this._useMask) 
+        {
+            if(this._spriteMask.parent !== this._master) 
+            {
+                this._master.addChild(this._spriteMask);
+            }
+
+            this._display.mask = this._spriteMask;
+        }
+        else 
+        {
+            if(this._spriteMask.parent === this._master) 
+            {
+                this._master.removeChild(this._spriteMask);
+            }
+
+            this._display.mask = null;
+        }
+    }
+
+    // AS3: sources/win63_version/room/renderer/class_3523.as::calculateUpdateInterval()
+    private calculateUpdateInterval(time: number): void 
+    {
+        if(this._renderTimeStamp <= 0) 
+        {
+            return;
+        }
+
+        const updateInterval = time - this._renderTimeStamp;
+
+        if(updateInterval > REALLY_SLOW_FRAME_UPDATE_INTERVAL) 
+        {
+            this._haltedFrameInterval = updateInterval;
+        }
+
+        if(updateInterval > MAXIMUM_VALID_FRAME_UPDATE_INTERVAL) 
+        {
+            return;
+        }
+
+        this._updateIntervalFrameCount++;
+
+        if(this._updateIntervalFrameCount === SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1) 
+        {
+            this._averageUpdateInterval = updateInterval;
+            this._averageRenderTime = this._lastRenderTime;
+
+            return;
+        }
+
+        if(this._updateIntervalFrameCount <= SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + 1) 
+        {
+            return;
+        }
+
+        const frameCount = this._updateIntervalFrameCount - SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
+
+        this._averageUpdateInterval = this._averageUpdateInterval * (frameCount - 1) / frameCount + updateInterval / frameCount;
+        this._averageRenderTime = this._averageRenderTime * (frameCount - 1) / frameCount + this._lastRenderTime / frameCount;
+
+        if(this._updateIntervalFrameCount > SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL + FRAME_COUNT_FOR_UPDATE_INTERVAL) 
+        {
+            this._updateIntervalFrameCount = SKIP_FRAME_COUNT_FOR_UPDATE_INTERVAL;
+
+            if(!this._runningSlow && this._averageUpdateInterval > SLOW_FRAME_UPDATE_INTERVAL) 
+            {
+                this._runningSlow = true;
+            }
+            else if(this._runningSlow && this._averageUpdateInterval < FAST_FRAME_UPDATE_INTERVAL) 
+            {
+                this._runningSlow = false;
+            }
+
+            if(this._fpsCounterEnabled) 
+            {
+                // TODO(AS3): sources/win63_version/room/renderer/class_3523.as calculateUpdateInterval()
+                // Render FPS/debug TextField equivalents for Pixi when debug overlays are ported.
+            }
+
+            this._haltedFrameInterval = 0;
+        }
+    }
+
     /**
-	 * Process a single room object's sprites into the SortableSprite list.
-	 * Based on AS3 RoomSpriteCanvas._Str_24532()
-	 *
-	 * @see sources/flash_version/com/sulake/room/renderer/RoomSpriteCanvas.as line 514
-	 */
+     * Process a single room object's sprites into the SortableSprite list.
+     * Based on AS3 RoomSpriteCanvas._Str_24532()
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 514
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::renderObject()
     private renderObject(
         object: IRoomObject,
@@ -696,11 +701,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         time: number,
         force: boolean,
         startIndex: number
-    ): number
+    ): number 
     {
         const visualization = object.getVisualization() as IRoomObjectSpriteVisualization | null;
 
-        if(visualization === null)
+        if(visualization === null) 
         {
             this.disposeObjectSpriteCache(objectId);
             return 0;
@@ -709,7 +714,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         const cache = this.getObjectSpriteCache(objectId);
         const screenPos = this.getCachedScreenLocation(object, cache);
 
-        if(screenPos === null)
+        if(screenPos === null) 
         {
             this.disposeObjectSpriteCache(objectId);
             return 0;
@@ -723,7 +728,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             this._skipObjectUpdate && this._runningSlow
         );
 
-        if(cache.locationChanged)
+        if(cache.locationChanged) 
         {
             force = true;
         }
@@ -735,11 +740,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         // Base Z with sub-pixel offset (AS3: 1.2E-7 * x)
         let baseZ = screenPos.z;
 
-        if(screenPos.x > 0)
+        if(screenPos.x > 0) 
         {
             baseZ += screenPos.x * 1.2e-7;
         }
-        else
+        else 
         {
             baseZ += (-screenPos.x) * 1.2e-7;
         }
@@ -748,12 +753,12 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         const updateId = visualization.getUpdateID();
 
         if(!force &&
-			cache.initialized &&
-			cache.instanceId === instanceId &&
-			cache.updateId === updateId &&
-			cache.screenX === screenX &&
-			cache.screenY === screenY &&
-			cache.screenZ === baseZ)
+            cache.initialized &&
+            cache.instanceId === instanceId &&
+            cache.updateId === updateId &&
+            cache.screenX === screenX &&
+            cache.screenY === screenY &&
+            cache.screenZ === baseZ) 
         {
             return cache.spriteCount;
         }
@@ -768,17 +773,17 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         const spriteCount = visualization.spriteCount;
         let localCount = 0;
 
-        for(let i = 0; i < spriteCount; i++)
+        for(let i = 0; i < spriteCount; i++) 
         {
             const sprite = visualization.getSprite(i);
 
-            if(sprite === null || !sprite.visible)
+            if(sprite === null || !sprite.visible) 
             {
                 continue;
             }
 
             // AS3: if(asset == null) continue
-            if(sprite.texture === null)
+            if(sprite.texture === null) 
             {
                 continue;
             }
@@ -788,7 +793,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             const spriteWidth = sprite.width > 0 ? sprite.width : sprite.texture.width;
             const spriteHeight = sprite.height > 0 ? sprite.height : sprite.texture.height;
 
-            if(!this.rectangleVisible(finalX, finalY, spriteWidth, spriteHeight))
+            if(!this.rectangleVisible(finalX, finalY, spriteWidth, spriteHeight)) 
             {
                 continue;
             }
@@ -801,11 +806,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             // previous sorted order between frames.
             let sortable: SortableSprite;
 
-            if(localCount < cache.sprites.length)
+            if(localCount < cache.sprites.length) 
             {
                 sortable = cache.sprites[localCount];
             }
-            else
+            else 
             {
                 sortable = new SortableSprite();
                 cache.sprites.push(sortable);
@@ -823,9 +828,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         cache.spriteCount = localCount;
 
-        if(localCount < cache.sprites.length)
+        if(localCount < cache.sprites.length) 
         {
-            for(let i = localCount; i < cache.sprites.length; i++)
+            for(let i = localCount; i < cache.sprites.length; i++) 
             {
                 cache.sprites[i].dispose();
             }
@@ -837,14 +842,14 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::rectangleVisible()
-    private rectangleVisible(x: number, y: number, width: number, height: number): boolean
+    private rectangleVisible(x: number, y: number, width: number, height: number): boolean 
     {
-        if(this._skipSpriteVisibilityChecking)
+        if(this._skipSpriteVisibilityChecking) 
         {
             return true;
         }
 
-        if(this._scale !== 1)
+        if(this._scale !== 1) 
         {
             x = (x - this._screenOffsetX) * this._scale + this._screenOffsetX;
             y = (y - this._screenOffsetY) * this._scale + this._screenOffsetY;
@@ -852,9 +857,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             height *= this._scale;
         }
 
-        if(x < this._width && x + width >= 0 && y < this._height && y + height >= 0)
+        if(x < this._width && x + width >= 0 && y < this._height && y + height >= 0) 
         {
-            if(!this._useExclusionRects)
+            if(!this._useExclusionRects) 
             {
                 return true;
             }
@@ -866,41 +871,41 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Culls a rect if it's fully contained within any registered exclusion
-	 * region. Dormant in AS3: the gating flag and exclusion list are declared
-	 * but never populated anywhere in class_3523.as, so this path is
-	 * unreachable there too — ported for structural parity.
-	 *
-	 * @see sources/win63_version/room/renderer/class_3523.as::rectangleVisibleWithExclusion() line 711
-	 */
+     * Culls a rect if it's fully contained within any registered exclusion
+     * region. Dormant in AS3: the gating flag and exclusion list are declared
+     * but never populated anywhere in class_3523.as, so this path is
+     * unreachable there too — ported for structural parity.
+     *
+     * @see sources/win63_version/room/renderer/class_3523.as::rectangleVisibleWithExclusion() line 711
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::rectangleVisibleWithExclusion()
-    private rectangleVisibleWithExclusion(x: number, y: number, width: number, height: number): boolean
+    private rectangleVisibleWithExclusion(x: number, y: number, width: number, height: number): boolean 
     {
-        if(x < 0)
+        if(x < 0) 
         {
             width += x;
             x = 0;
         }
 
-        if(y < 0)
+        if(y < 0) 
         {
             height += y;
             y = 0;
         }
 
-        if(x + width >= this._width)
+        if(x + width >= this._width) 
         {
             width -= this._width + 1 - (x + width);
         }
 
-        if(y + height >= this._height)
+        if(y + height >= this._height) 
         {
             height -= this._height + 1 - (y + height);
         }
 
-        for(const rect of this._exclusionRects)
+        for(const rect of this._exclusionRects) 
         {
-            if(x >= rect.left && x + width < rect.right && y >= rect.top && y + height < rect.bottom)
+            if(x >= rect.left && x + width < rect.right && y >= rect.top && y + height < rect.bottom) 
             {
                 return false;
             }
@@ -909,16 +914,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return true;
     }
 
-    roomObjectRemoved(objectId: string): void
-    {
-        this.disposeObjectSpriteCache(objectId);
-    }
-
-    private getObjectSpriteCache(objectId: string): IObjectSpriteCache
+    private getObjectSpriteCache(objectId: string): IObjectSpriteCache 
     {
         let cache = this._objectSpriteCaches.get(objectId);
 
-        if(cache === undefined)
+        if(cache === undefined) 
         {
             cache = {
                 initialized: false,
@@ -942,21 +942,21 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return cache;
     }
 
-    private getCachedScreenLocation(object: IRoomObject, cache: IObjectSpriteCache): Vector3d | null
+    private getCachedScreenLocation(object: IRoomObject, cache: IObjectSpriteCache): Vector3d | null 
     {
         const location = object.getLocation();
         const geometryUpdateId = this._geometry.updateId;
         const objectUpdateId = object.getUpdateID();
         let locationChanged = false;
 
-        if(geometryUpdateId !== cache.geometryUpdateId || objectUpdateId !== cache.objectUpdateId)
+        if(geometryUpdateId !== cache.geometryUpdateId || objectUpdateId !== cache.objectUpdateId) 
         {
             cache.objectUpdateId = objectUpdateId;
 
             if(geometryUpdateId !== cache.geometryUpdateId ||
-				location.x !== cache.objectUpdateLoc.x ||
-				location.y !== cache.objectUpdateLoc.y ||
-				location.z !== cache.objectUpdateLoc.z)
+                location.x !== cache.objectUpdateLoc.x ||
+                location.y !== cache.objectUpdateLoc.y ||
+                location.z !== cache.objectUpdateLoc.z) 
             {
                 cache.geometryUpdateId = geometryUpdateId;
                 cache.objectUpdateLoc.assign(location);
@@ -966,11 +966,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         cache.locationChanged = locationChanged;
 
-        if(locationChanged)
+        if(locationChanged) 
         {
             const screenLocation = this._geometry.getScreenPosition(location);
 
-            if(screenLocation === null)
+            if(screenLocation === null) 
             {
                 return null;
             }
@@ -978,29 +978,29 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             const accurateZVariable = this._roomObjectContainer.roomObjectVariableAccurateZ;
             const accurateZ = accurateZVariable ? object.getModel().getNumber(accurateZVariable) : NaN;
 
-            if(Number.isNaN(accurateZ) || accurateZ === 0)
+            if(Number.isNaN(accurateZ) || accurateZ === 0) 
             {
                 cache.roundedLoc.x = Math.round(location.x);
                 cache.roundedLoc.y = Math.round(location.y);
                 cache.roundedLoc.z = location.z;
 
-                if(cache.roundedLoc.x !== location.x || cache.roundedLoc.y !== location.y)
+                if(cache.roundedLoc.x !== location.x || cache.roundedLoc.y !== location.y) 
                 {
                     const roundedScreenLocation = this._geometry.getScreenPosition(cache.roundedLoc);
 
                     cache.screenLoc.assign(screenLocation);
 
-                    if(roundedScreenLocation !== null)
+                    if(roundedScreenLocation !== null) 
                     {
                         cache.screenLoc.z = roundedScreenLocation.z;
                     }
                 }
-                else
+                else 
                 {
                     cache.screenLoc.assign(screenLocation);
                 }
             }
-            else
+            else 
             {
                 cache.screenLoc.assign(screenLocation);
             }
@@ -1012,13 +1012,13 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return cache.screenLoc;
     }
 
-    private disposeObjectSpriteCache(objectId: string): void
+    private disposeObjectSpriteCache(objectId: string): void 
     {
         const cache = this._objectSpriteCaches.get(objectId);
 
-        if(cache !== undefined)
+        if(cache !== undefined) 
         {
-            for(let i = 0; i < cache.sprites.length; i++)
+            for(let i = 0; i < cache.sprites.length; i++) 
             {
                 cache.sprites[i].dispose();
             }
@@ -1029,41 +1029,41 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         this._objectSpriteCaches.delete(objectId);
     }
 
-    private updateDisplayTransform(): void
+    private updateDisplayTransform(): void 
     {
-        if(this._display.x !== this._screenOffsetX)
+        if(this._display.x !== this._screenOffsetX) 
         {
             this._display.x = this._screenOffsetX;
         }
 
-        if(this._display.y !== this._screenOffsetY)
+        if(this._display.y !== this._screenOffsetY) 
         {
             this._display.y = this._screenOffsetY;
         }
 
-        if(this._display.scale.x !== this._scale)
+        if(this._display.scale.x !== this._scale) 
         {
             this._display.scale.x = this._scale;
         }
 
-        if(this._display.scale.y !== this._scale)
+        if(this._display.scale.y !== this._scale) 
         {
             this._display.scale.y = this._scale;
         }
     }
 
     /**
-	 * Update or create an ExtendedSprite at the given display index.
-	 * Based on AS3 RoomSpriteCanvas.updateSprite()
-	 *
-	 * @see sources/flash_version/com/sulake/room/renderer/RoomSpriteCanvas.as line 704
-	 */
+     * Update or create an ExtendedSprite at the given display index.
+     * Based on AS3 RoomSpriteCanvas.updateSprite()
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 704
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::updateSprite()
-    private updateSprite(index: number, sortable: SortableSprite): void
+    private updateSprite(index: number, sortable: SortableSprite): void 
     {
         const sprite = sortable.sprite;
 
-        if(sprite === null)
+        if(sprite === null) 
         {
             return;
         }
@@ -1071,14 +1071,14 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         let extSprite: ExtendedSprite;
         let isNewSprite = false;
 
-        if(index >= this._spriteCount)
+        if(index >= this._spriteCount) 
         {
             // Need a new ExtendedSprite — pop from pool or create
-            if(this._spritePool.length > 0)
+            if(this._spritePool.length > 0) 
             {
                 extSprite = this._spritePool.pop()!;
             }
-            else
+            else 
             {
                 extSprite = new ExtendedSprite();
             }
@@ -1087,19 +1087,19 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             this._spriteCount++;
             isNewSprite = true;
         }
-        else
+        else 
         {
             extSprite = this._display.children[index] as ExtendedSprite;
 
-            if(!extSprite)
+            if(!extSprite) 
             {
                 return;
             }
 
             // Handle varyingDepth changes (AS3: remove and re-add)
-            if(extSprite.varyingDepth !== sprite.varyingDepth)
+            if(extSprite.varyingDepth !== sprite.varyingDepth) 
             {
-                if(extSprite.varyingDepth && !sprite.varyingDepth)
+                if(extSprite.varyingDepth && !sprite.varyingDepth) 
                 {
                     this._display.removeChildAt(index);
                     this._spritePool.push(extSprite);
@@ -1117,13 +1117,13 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         // Update sprite properties if changed
         // AS3: if(_Str_17574(instanceId, updateId))
-        if(extSprite.needsUpdate(sprite.instanceId, sprite.updateId))
+        if(extSprite.needsUpdate(sprite.instanceId, sprite.updateId)) 
         {
             extSprite.alphaTolerance = sprite.alphaTolerance;
 
             const alpha = sprite.alpha / 255;
 
-            if(extSprite.alpha !== alpha)
+            if(extSprite.alpha !== alpha) 
             {
                 extSprite.alpha = alpha;
             }
@@ -1135,11 +1135,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             extSprite.skipMouseHandling = sprite.skipMouseHandling;
 
             // Set texture (AS3: bitmapData = getBitmapData(asset, ...))
-            if(sprite.texture !== null)
+            if(sprite.texture !== null) 
             {
                 extSprite.setTexture(sprite.texture);
             }
-            else
+            else 
             {
                 extSprite.setTexture(null);
             }
@@ -1150,30 +1150,30 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             this.updateEnterRoomEffect(extSprite, sprite.spriteType, isNewSprite && RoomEnterEffect.isVisualizationOn());
 
             // Handle flipping
-            if(sprite.flipH)
+            if(sprite.flipH) 
             {
                 extSprite.scale.x = -1;
             }
-            else
+            else 
             {
                 extSprite.scale.x = 1;
             }
 
-            if(sprite.flipV)
+            if(sprite.flipV) 
             {
                 extSprite.scale.y = -1;
             }
-            else
+            else 
             {
                 extSprite.scale.y = 1;
             }
 
             // Tint (color)
-            if(sprite.color !== 0xFFFFFF)
+            if(sprite.color !== 0xFFFFFF) 
             {
                 extSprite.tint = sprite.color;
             }
-            else
+            else 
             {
                 extSprite.tint = 0xFFFFFF;
             }
@@ -1183,12 +1183,12 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         }
 
         // Always update position
-        if(extSprite.x !== sortable.x)
+        if(extSprite.x !== sortable.x) 
         {
             extSprite.x = sortable.x;
         }
 
-        if(extSprite.y !== sortable.y)
+        if(extSprite.y !== sortable.y) 
         {
             extSprite.y = sortable.y;
         }
@@ -1201,22 +1201,22 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Applies the new-user room-enter dim/reveal override to a freshly created
-	 * sprite. Dormant unless RoomEnterEffect.init() has been triggered elsewhere
-	 * (habbo/toolbar NUX flow), matching AS3 behavior where this is a no-op until
-	 * the effect is armed.
-	 *
-	 * @see sources/win63_version/room/renderer/class_3523.as::updateEnterRoomEffect() line 879
-	 */
+     * Applies the new-user room-enter dim/reveal override to a freshly created
+     * sprite. Dormant unless RoomEnterEffect.init() has been triggered elsewhere
+     * (habbo/toolbar NUX flow), matching AS3 behavior where this is a no-op until
+     * the effect is armed.
+     *
+     * @see sources/win63_version/room/renderer/class_3523.as::updateEnterRoomEffect() line 879
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::updateEnterRoomEffect()
-    private updateEnterRoomEffect(extSprite: ExtendedSprite, spriteType: number, active: boolean): void
+    private updateEnterRoomEffect(extSprite: ExtendedSprite, spriteType: number, active: boolean): void 
     {
-        if(!active || extSprite.texture === Texture.EMPTY)
+        if(!active || extSprite.texture === Texture.EMPTY) 
         {
             return;
         }
 
-        switch(spriteType)
+        switch(spriteType) 
         {
             case RoomObjectSpriteType.ROOM_PLANE:
                 extSprite.alpha = RoomEnterEffect.getDelta(0.9);
@@ -1233,18 +1233,18 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Hide or pool unused sprites beyond the active count.
-	 * Based on AS3 RoomSpriteCanvas._Str_20677()
-	 */
-    private cleanSprites(activeCount: number): void
+     * Hide or pool unused sprites beyond the active count.
+     * Based on AS3 RoomSpriteCanvas._Str_20677()
+     */
+    private cleanSprites(activeCount: number): void 
     {
-        if(activeCount < this._activeSpriteCount || this._activeSpriteCount === 0)
+        if(activeCount < this._activeSpriteCount || this._activeSpriteCount === 0) 
         {
-            for(let i = this._spriteCount - 1; i >= activeCount; i--)
+            for(let i = this._spriteCount - 1; i >= activeCount; i--) 
             {
                 const extSprite = this._display.children[i] as ExtendedSprite;
 
-                if(extSprite)
+                if(extSprite) 
                 {
                     extSprite.setTexture(null);
                     extSprite.visible = false;
@@ -1256,12 +1256,12 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Get an ExtendedSprite at the given display index.
-	 * AS3: getSprite()
-	 */
-    private getSprite(index: number): ExtendedSprite | null
+     * Get an ExtendedSprite at the given display index.
+     * AS3: getSprite()
+     */
+    private getSprite(index: number): ExtendedSprite | null 
     {
-        if(index < 0 || index >= this._spriteCount)
+        if(index < 0 || index >= this._spriteCount) 
         {
             return null;
         }
@@ -1270,27 +1270,27 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Core hit-test method. Iterates sprites in reverse order (front to back).
-	 * Based on AS3 RoomSpriteCanvas._Str_19207()
-	 *
-	 * @see sources/flash_version/com/sulake/room/renderer/RoomSpriteCanvas.as line 1069
-	 */
+     * Core hit-test method. Iterates sprites in reverse order (front to back).
+     * Based on AS3 RoomSpriteCanvas._Str_19207()
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1069
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::checkMouseHits()
     private checkMouseHits(
         x: number, y: number, type: string,
         altKey: boolean = false, ctrlKey: boolean = false,
         shiftKey: boolean = false, buttonDown: boolean = false
-    ): boolean
+    ): boolean 
     {
         let wasHit = false;
         const hitObjectIds: Set<string> = new Set();
 
         // Iterate from frontmost to backmost (AS3: i from _activeSpriteCount-1 downto 0)
-        for(let i = this._activeSpriteCount - 1; i >= 0; i--)
+        for(let i = this._activeSpriteCount - 1; i >= 0; i--) 
         {
             const extSprite = this.getSprite(i);
 
-            if(extSprite === null || !extSprite.visible)
+            if(extSprite === null || !extSprite.visible) 
             {
                 continue;
             }
@@ -1299,25 +1299,25 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             const localX = x - extSprite.x;
             const localY = y - extSprite.y;
 
-            if(!extSprite.hitTest(localX, localY))
+            if(!extSprite.hitTest(localX, localY)) 
             {
                 continue;
             }
 
-            if(extSprite.skipMouseHandling)
+            if(extSprite.skipMouseHandling) 
             {
                 continue;
             }
 
             // Skip click-handling sprites for non-click events (AS3 pattern)
-            if(extSprite.clickHandling && (type === 'click' || type === 'doubleClick'))
+            if(extSprite.clickHandling && (type === 'click' || type === 'doubleClick')) 
             {
                 continue;
             }
 
             const objectId = extSprite.identifier;
 
-            if(hitObjectIds.has(objectId))
+            if(hitObjectIds.has(objectId)) 
             {
                 continue;
             }
@@ -1326,7 +1326,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             const activeData = this._mouseActiveObjects.get(objectId);
 
             // Handle roll-over/roll-out transitions
-            if(activeData !== undefined && activeData.spriteTag !== spriteTag)
+            if(activeData !== undefined && activeData.spriteTag !== spriteTag) 
             {
                 const rollOutEvent = this.createMouseEvent(
                     0, 0, 0, 0, 'rollOut', activeData.spriteTag,
@@ -1338,7 +1338,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
             let event: RoomSpriteMouseEvent;
 
-            if(type === 'mouseMove' && (activeData === undefined || activeData.spriteTag !== spriteTag))
+            if(type === 'mouseMove' && (activeData === undefined || activeData.spriteTag !== spriteTag)) 
             {
                 // New object or different sprite → send roll_over
                 event = this.createMouseEvent(
@@ -1347,7 +1347,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
                     altKey, ctrlKey, shiftKey, buttonDown
                 );
             }
-            else
+            else 
             {
                 event = this.createMouseEvent(
                     x, y, localX, localY,
@@ -1359,7 +1359,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             }
 
             // Update active object tracking
-            if(activeData === undefined)
+            if(activeData === undefined) 
             {
                 const newData = new ObjectMouseData();
 
@@ -1368,13 +1368,13 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
                 this._mouseActiveObjects.set(objectId, newData);
             }
-            else
+            else 
             {
                 activeData.spriteTag = spriteTag;
             }
 
             // Only buffer if coordinates changed, or it's not mouse_move
-            if(type !== 'mouseMove' || x !== this._mouseOldX || y !== this._mouseOldY)
+            if(type !== 'mouseMove' || x !== this._mouseOldX || y !== this._mouseOldY) 
             {
                 this.bufferMouseEvent(event, objectId);
             }
@@ -1387,9 +1387,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         // AS3: iterate _mouseActiveObjects keys, remove those not in hitObjectIds
         const keysToRemove: string[] = [];
 
-        for(const [objectId, data] of this._mouseActiveObjects)
+        for(const [objectId, data] of this._mouseActiveObjects) 
         {
-            if(!hitObjectIds.has(objectId))
+            if(!hitObjectIds.has(objectId)) 
             {
                 const rollOutEvent = this.createMouseEvent(
                     0, 0, 0, 0, 'rollOut', data.spriteTag,
@@ -1400,7 +1400,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             }
         }
 
-        for(const key of keysToRemove)
+        for(const key of keysToRemove) 
         {
             this._mouseActiveObjects.delete(key);
         }
@@ -1415,29 +1415,29 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Hit-tests only clickHandling sprites (ad-banner furniture with a click
-	 * URL) for a click/doubleClick, independent of the normal roll-over/click
-	 * routing in checkMouseHits() (which deliberately skips clickHandling
-	 * sprites for click events).
-	 *
-	 * @see sources/win63_version/room/renderer/class_3523.as::checkMouseClickHits() line 1133
-	 */
+     * Hit-tests only clickHandling sprites (ad-banner furniture with a click
+     * URL) for a click/doubleClick, independent of the normal roll-over/click
+     * routing in checkMouseHits() (which deliberately skips clickHandling
+     * sprites for click events).
+     *
+     * @see sources/win63_version/room/renderer/class_3523.as::checkMouseClickHits() line 1133
+     */
     // AS3: sources/win63_version/room/renderer/class_3523.as::checkMouseClickHits()
     private checkMouseClickHits(
         x: number, y: number, isDoubleClick: boolean,
         altKey: boolean = false, ctrlKey: boolean = false,
         shiftKey: boolean = false, buttonDown: boolean = false
-    ): boolean
+    ): boolean 
     {
         const type = isDoubleClick ? 'doubleClick' : 'click';
         const hitObjectIds: Set<string> = new Set();
         let wasHit = false;
 
-        for(let i = this._activeSpriteCount - 1; i >= 0; i--)
+        for(let i = this._activeSpriteCount - 1; i >= 0; i--) 
         {
             const extSprite = this.getSprite(i);
 
-            if(extSprite === null || !extSprite.clickHandling)
+            if(extSprite === null || !extSprite.clickHandling) 
             {
                 continue;
             }
@@ -1445,11 +1445,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             const localX = x - extSprite.x;
             const localY = y - extSprite.y;
 
-            if(extSprite.hitTest(localX, localY))
+            if(extSprite.hitTest(localX, localY)) 
             {
                 const objectId = extSprite.identifier;
 
-                if(!hitObjectIds.has(objectId))
+                if(!hitObjectIds.has(objectId)) 
                 {
                     const spriteTag = extSprite.tag;
                     const event = this.createMouseEvent(
@@ -1472,16 +1472,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Create a RoomSpriteMouseEvent.
-	 * Based on AS3 RoomSpriteCanvas._Str_11609()
-	 */
+     * Create a RoomSpriteMouseEvent.
+     * Based on AS3 RoomSpriteCanvas._Str_11609()
+     */
     private createMouseEvent(
         x: number, y: number,
         localX: number, localY: number,
         type: string, spriteTag: string,
         altKey: boolean, ctrlKey: boolean,
         shiftKey: boolean, buttonDown: boolean
-    ): RoomSpriteMouseEvent
+    ): RoomSpriteMouseEvent 
     {
         // AS3: screenX = x - (wd/2), screenY = y - (ht/2)
         const screenX = x - Math.floor(this._width / 2);
@@ -1497,9 +1497,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         );
     }
 
-    private normalizeMouseEventType(type: string): string
+    private normalizeMouseEventType(type: string): string 
     {
-        switch(type)
+        switch(type) 
         {
             case 'mouse_move':
                 return 'mouseMove';
@@ -1519,40 +1519,40 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Buffer a mouse event for later processing.
-	 * Based on AS3 RoomSpriteCanvas._Str_14715()
-	 */
-    private bufferMouseEvent(event: RoomSpriteMouseEvent, objectId: string): void
+     * Buffer a mouse event for later processing.
+     * Based on AS3 RoomSpriteCanvas._Str_14715()
+     */
+    private bufferMouseEvent(event: RoomSpriteMouseEvent, objectId: string): void 
     {
         this._eventCache.set(objectId, event);
     }
 
     /**
-	 * Process all buffered mouse events by dispatching to room objects.
-	 * Based on AS3 RoomSpriteCanvas._Str_20604()
-	 *
-	 * @see sources/flash_version/com/sulake/room/renderer/RoomSpriteCanvas.as line 1175
-	 */
-    private processMouseEvents(): void
+     * Process all buffered mouse events by dispatching to room objects.
+     * Based on AS3 RoomSpriteCanvas._Str_20604()
+     *
+     * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 1175
+     */
+    private processMouseEvents(): void 
     {
-        for(const [objectId, event] of this._eventCache)
+        for(const [objectId, event] of this._eventCache) 
         {
             const object = this.findObjectById(objectId);
 
-            if(!object)
+            if(!object) 
             {
                 continue;
             }
 
-            if(this._mouseListener)
+            if(this._mouseListener) 
             {
                 this._mouseListener.processRoomCanvasMouseEvent(event, object, this._geometry);
             }
-            else
+            else 
             {
                 const handler = object.getMouseHandler();
 
-                if(handler)
+                if(handler) 
                 {
                     handler.mouseEvent(event, this._geometry);
                 }
@@ -1563,10 +1563,10 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * Find a room object by its composite objectId string.
-	 * AS3: container.getRoomObject(objectId)
-	 */
-    private findObjectById(objectId: string): IRoomObject | null
+     * Find a room object by its composite objectId string.
+     * AS3: container.getRoomObject(objectId)
+     */
+    private findObjectById(objectId: string): IRoomObject | null 
     {
         return this._roomObjectContainer.getRoomObject(objectId);
     }
