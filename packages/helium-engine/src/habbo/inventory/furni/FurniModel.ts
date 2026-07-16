@@ -10,6 +10,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
 import {GroupItem} from '../items/GroupItem';
+import {HabboInventoryCategoryInitializeEvent} from '../events/HabboInventoryCategoryInitializeEvent';
 import {FurnitureItem} from '../items/FurnitureItem';
 import {FurnitureCategory} from '../enum';
 import {FurniView} from './FurniView';
@@ -362,6 +363,12 @@ export class FurniModel implements IFurniModel
         isFirstLoad: boolean;
     }
     {
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::insertFurniture()
+        // Claim the category up-front; this returns true exactly once. Without it
+        // _initializedCategories stays empty, so checkCategoryInitilization() never sees the furni
+        // list as loaded and re-requests the whole inventory on every tab switch.
+        const categoryWasInitialized = this._habboInventory.setInventoryCategoryInit('furni');
+
         const existingIds = this.getAllStripIds();
         const newIds = new Set(items.keys());
         const isFirstLoad = existingIds.size === 0;
@@ -415,6 +422,17 @@ export class FurniModel implements IFurniModel
         }
 
         this._view.setViewToState();
+
+        // AS3 dispatches this at the tail of insertFurniture(), only on the pass that actually
+        // claimed the category. Its only AS3 consumer is CollectiblesController, which is not
+        // ported — the event is raised anyway so the chain is complete rather than silently absent.
+        if(categoryWasInitialized)
+        {
+            this._habboInventory.events.emit(
+                HabboInventoryCategoryInitializeEvent.HABBO_INVENTORY_CATEGORY_INITIALIZED,
+                new HabboInventoryCategoryInitializeEvent('furni')
+            );
+        }
 
         return {
             addedCount: idsToAdd.length,
