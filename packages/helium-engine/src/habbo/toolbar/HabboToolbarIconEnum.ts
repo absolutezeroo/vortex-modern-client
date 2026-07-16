@@ -16,6 +16,7 @@ export class HabboToolbarIconEnum
 
     public static readonly INVENTORY: string = 'HTIE_ICON_INVENTORY';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbarIconEnum.as::PROGRESSION
     public static readonly PROGRESSION: string = 'HTIE_ICON_PROGRESSION';
 
     public static readonly ACHIEVEMENTS: string = 'HTIE_ICON_ACHIEVEMENTS';

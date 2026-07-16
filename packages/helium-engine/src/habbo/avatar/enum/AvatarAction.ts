@@ -22,6 +22,7 @@ export class AvatarAction
     public static readonly EXPRESSION_RESPECT: string = 'respect';
     public static readonly EXPRESSION_WAVE: string = 'wave';
     public static readonly EXPRESSION_BLOW_A_KISS: string = 'blow';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/AvatarAction.as::EXPRESSION_67
     public static readonly EXPRESSION_67: string = '67';
     public static readonly EXPRESSION_LAUGH: string = 'laugh';
     public static readonly EXPRESSION_CRY: string = 'cry';
