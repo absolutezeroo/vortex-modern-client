@@ -109,11 +109,10 @@ export class HabboWebTools
 	 * Unlike openWebPage(), AS3 does not resolve this against the base URL — it navigates to the
 	 * string as given.
 	 *
-	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::navigateToURL()
-	 *
 	 * @param url The URL to navigate to
 	 * @param target The window target name; AS3 passes null to use the current window
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::navigateToURL()
     static navigateToURL(url: string, target: string | null = null): void
     {
         if(!url || url.length === 0)
