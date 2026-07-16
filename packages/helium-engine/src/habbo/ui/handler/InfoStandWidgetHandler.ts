@@ -35,6 +35,9 @@ import {
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {RoomWidgetFurniInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
+import {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent';
+import {RoomSessionPetInfoUpdateEvent} from '@habbo/session/events/RoomSessionPetInfoUpdateEvent';
+import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
 import {RoomWidgetInfostandExtraParamEnum} from '@habbo/ui/widget/enums/RoomWidgetInfostandExtraParamEnum';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
@@ -74,6 +77,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         scale: number
     }> = new Map();
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::_cachedPetImages
+    private _cachedPetImages: Map<string, ImageBitmap | null> | null = new Map();
+
     // onSongInfoReceivedEvent — deferred with the jukebox/song-disk views (both stubs).
     constructor(_musicController: unknown = null) 
     {
@@ -96,21 +102,36 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         return this._container;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::set container()
-    public set container(value: IRoomWidgetHandlerContainer | null) 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::set container()
+    // TODO(AS3): AS3 registers nine roomSessionManager listeners here; only RSPIUE_PET_INFO
+    // is wired so far. Still missing, each with its own on* handler and RoomWidget*
+    // event: RSUBE_FIGURE (onFigureUpdate), RSPIUE_ENABLED_PET_COMMANDS (onPetCommands),
+    // rsfgue_favourite_group_update (onFavouriteGroupUpdated), RSPFUE_PET_FIGURE_UPDATE
+    // (onPetFigureUpdate), RSPFUE_PET_BREEDING_RESULT, RSPFUE_PET_BREEDING,
+    // RSPFUE_CONFIRM_PET_BREEDING, RSPFUE_CONFIRM_PET_BREEDING_RESULT.
+    //
+    // AS3 dispatches these on `roomSessionManager.events`; this port routes session events
+    // through `sessionEvents` instead (see .claude/rules/20-architecture.md #4 — `events` is
+    // reserved by the DI Component base). RoomUsersHandler emits PET_INFO on exactly that
+    // emitter, so it is the correct subscription point.
+    public set container(value: IRoomWidgetHandlerContainer | null)
     {
-        if(this._container?.connection && this._groupDetailsEvent) 
+        if(this._container?.connection && this._groupDetailsEvent)
         {
             this._container.connection.removeMessageEvent(this._groupDetailsEvent);
             this._groupDetailsEvent.dispose();
             this._groupDetailsEvent = null;
         }
 
+        this._container?.roomSessionManager?.sessionEvents.off(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onPetInfo);
+
         this._container = value;
 
         if(!value) return;
 
-        if(value.connection) 
+        value.roomSessionManager?.sessionEvents.on(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onPetInfo);
+
+        if(value.connection)
         {
             this._groupDetailsEvent = new HabboGroupDetailsMessageEvent(this.onGroupDetails);
             value.connection.addMessageEvent(this._groupDetailsEvent);
@@ -138,10 +159,21 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         return false;
     }
 
-    // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::dispose()
-    public dispose(): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::dispose()
+    // AS3 walks _cachedPetImages and calls BitmapData.dispose() on each entry before
+    // dropping the map; ImageBitmap.close() is this port's equivalent (same convention as
+    // BundleProductContainer / BitmapWrapperController).
+    public dispose(): void
     {
         if(this._disposed) return;
+
+        if(this._cachedPetImages)
+        {
+            for(const image of this._cachedPetImages.values()) image?.close();
+
+            this._cachedPetImages.clear();
+            this._cachedPetImages = null;
+        }
 
         this._pendingImageRequests.clear();
         this.container = null;
@@ -288,8 +320,168 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     {
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onPetInfo()
+    private onPetInfo = (event: RoomSessionPetInfoUpdateEvent): void =>
+    {
+        const petInfo = event.petInfo;
+
+        if(!petInfo) return;
+
+        const container = this._container;
+
+        if(!container?.sessionDataManager) return;
+
+        const petData = container.roomSession.userDataManager.getPetUserData(petInfo.petId);
+
+        if(!petData) return;
+
+        const figure = petData.figure;
+        const petType = this.getPetType(figure);
+        const petRace = this.getPetRace(figure);
+
+        // Only the monsterplant (pet type 16) renders a growth-stage posture; every other
+        // type passes a null posture through to getPetImage().
+        let posture: string | null = null;
+
+        if(petType === 16)
+        {
+            posture = petInfo.level >= petInfo.adultLevel ? 'std' : `grw${petInfo.level}`;
+        }
+
+        // The cache key folds in the posture, so a growing monsterplant does not keep
+        // serving the image it was first seen with. The win63_version decompile corrupts
+        // this line to `figure + ""` and the getPetImage() call below to a null posture,
+        // which would collapse every growth stage onto one cache entry — the primary is
+        // clean and is what this follows.
+        const cacheKey = figure + (posture !== null ? `/posture=${posture}` : '');
+        let image = this._cachedPetImages?.get(cacheKey) ?? null;
+
+        if(!image)
+        {
+            image = this.getPetImage(figure, posture);
+            this._cachedPetImages?.set(cacheKey, image);
+        }
+
+        const isOwnPet = petInfo.ownerId === container.sessionDataManager.userId;
+        const infoEvent = new RoomWidgetPetInfoUpdateEvent(
+            petType, petRace, petData.name, petInfo.petId, image, isOwnPet,
+            petInfo.ownerId, petInfo.ownerName, petData.roomObjectId, petInfo.breedId
+        );
+
+        infoEvent.level = petInfo.level;
+        infoEvent.levelMax = petInfo.levelMax;
+        infoEvent.experience = petInfo.experience;
+        infoEvent.experienceMax = petInfo.experienceMax;
+        infoEvent.energy = petInfo.energy;
+        infoEvent.energyMax = petInfo.energyMax;
+        infoEvent.nutrition = petInfo.nutrition;
+        infoEvent.nutritionMax = petInfo.nutritionMax;
+        infoEvent.petRespect = petInfo.respect;
+        infoEvent.petRespectLeft = container.sessionDataManager.petRespectLeft;
+        infoEvent.age = petInfo.age;
+        infoEvent.hasFreeSaddle = petInfo.hasFreeSaddle;
+        infoEvent.isRiding = petInfo.isRiding;
+        infoEvent.canBreed = petInfo.canBreed;
+        infoEvent.canHarvest = petInfo.canHarvest;
+        infoEvent.canRevive = petInfo.canRevive;
+        infoEvent.rarityLevel = petInfo.rarityLevel;
+        infoEvent.skillTresholds = petInfo.skillTresholds;
+        infoEvent.canRemovePet = false;
+        infoEvent.accessRights = petInfo.accessRights;
+        infoEvent.maxWellBeingSeconds = petInfo.maxWellBeingSeconds;
+        infoEvent.remainingWellBeingSeconds = petInfo.remainingWellBeingSeconds;
+        infoEvent.remainingGrowingSeconds = petInfo.remainingGrowingSeconds;
+        infoEvent.hasBreedingPermission = petInfo.hasBreedingPermission;
+
+        const roomSession = container.roomSession;
+
+        if(isOwnPet)
+        {
+            infoEvent.canRemovePet = true;
+        }
+        else if(roomSession.isRoomOwner || container.sessionDataManager.isAnyRoomController || roomSession.roomControllerLevel >= 1)
+        {
+            infoEvent.canRemovePet = true;
+        }
+
+        container.desktopEvents.emit(infoEvent.type, infoEvent);
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getPetImage()
+    // AS3 passes a null listener — getPetImage() is a synchronous read for it, and a miss
+    // falls straight through to the grey placeholder. This port's IRoomEngine.getPetImage()
+    // types the listener non-nullable, so `this` goes in instead; that is inert, because
+    // imageReady()/imageFailed() only act on ids registered in _pendingImageRequests and
+    // pet requests are never registered there. RoomEngine.getPetImage() honours AS3's
+    // synchronous-hit contract (result.data set, result.id 0) once the pet content is
+    // loaded, so the placeholder branch is the not-yet-loaded case — same as AS3.
+    private getPetImage(figure: string, posture: string | null = null): ImageBitmap | null
+    {
+        const roomEngine = this._container?.roomEngine;
+
+        if(!roomEngine) return null;
+
+        const figureData = new PetFigureData(figure);
+        const result = roomEngine.getPetImage(
+            figureData.typeId, figureData.paletteId, figureData.color,
+            new Vector3d(90), 64, this, true, 0, figureData.customParts, posture
+        );
+
+        return result?.data ?? this.createPlaceholderPetImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getPetImage()
+    // (the `new BitmapData(30,30,false,4289374890)` fallback — 4289374890 is opaque #AAAAAA)
+    private createPlaceholderPetImage(): ImageBitmap | null
+    {
+        const canvas = new OffscreenCanvas(30, 30);
+        const context = canvas.getContext('2d');
+
+        if(!context) return null;
+
+        context.fillStyle = '#AAAAAA';
+        context.fillRect(0, 0, 30, 30);
+
+        return canvas.transferToImageBitmap();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getPetType()
+    private getPetType(figure: string): number
+    {
+        return this.getSpaceSeparatedInteger(figure, 0);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getPetRace()
+    private getPetRace(figure: string): number
+    {
+        return this.getSpaceSeparatedInteger(figure, 1);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::getSpaceSeparatedInteger()
+    private getSpaceSeparatedInteger(figure: string, index: number): number
+    {
+        if(figure)
+        {
+            const parts = figure.split(' ');
+
+            if(parts.length > index) return parseInt(parts[index], 10);
+        }
+
+        return -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetPetInfoMessage()
+    // TODO(AS3): the `petSelect.enabled` branch also sends PetSelectedMessageComposer(petId)
+    // (AS3 outgoing/room/pets/PetSelectedMessageComposer.as — a one-int body). Not ported:
+    // its packet header is unverified and Revision20260701 has no handler for it, so there is
+    // nothing to send it to. requestPetInfo() below is the call that actually fetches the info.
+    private handleGetPetInfoMessage(petId: number): void
+    {
+        this._container?.roomSession?.userDataManager.requestPetInfo(petId);
+    }
+
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
-    private onGroupDetails = (event: IMessageEvent): void => 
+    private onGroupDetails = (event: IMessageEvent): void =>
     {
         const data = (event as HabboGroupDetailsMessageEvent).data;
 
@@ -413,8 +605,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 this.handleGetBotInfoMessage(roomId, message.id, message.category, userData);
                 break;
             case 2:
-                // TODO(AS3): handleGetPetInfoMessage() — sends a pet-select composer and
-                // requestPetInfo(); deferred with the pet view (InfoStandPetView.ts stub).
+                // AS3 passes the pet's webID here, not the room index it passes to the
+                // user/bot handlers — requestPetInfo() keys on webID.
+                this.handleGetPetInfoMessage(userData.webID);
                 break;
             case 4:
                 // TODO(AS3): handleGetRentableBotInfoMessage() — needs a

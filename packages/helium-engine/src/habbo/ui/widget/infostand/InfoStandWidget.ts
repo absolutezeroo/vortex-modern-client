@@ -26,6 +26,7 @@ import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import {RoomWidgetRoomObjectUpdateEvent} from '../events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetFurniInfoUpdateEvent} from '../events/RoomWidgetFurniInfoUpdateEvent';
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
+import type {RoomWidgetPetInfoUpdateEvent} from '../events/RoomWidgetPetInfoUpdateEvent';
 import {RoomWidgetInfostandExtraParamEnum} from '../enums/RoomWidgetInfostandExtraParamEnum';
 import {RoomWidgetRoomObjectMessage} from '../messages/RoomWidgetRoomObjectMessage';
 import type {InfoStandWidgetHandler} from '@habbo/ui/handler/InfoStandWidgetHandler';
@@ -331,8 +332,20 @@ export class InfoStandWidget extends RoomWidgetBase
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onPetInfo()
     // TODO(AS3): param is RoomWidgetPetInfoUpdateEvent — pet view is a stub.
-    private onPetInfo = (_event: unknown): void =>
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetInfo()
+    // TODO(AS3): AS3 ends with `_updateTimer.start()`, restarting the periodic pet-info
+    // refresh (onUpdateTimer() — see the TODO above petData's getter). Deferred with it.
+    //
+    // selectView(PET) currently resolves to no window: InfoStandPetView is still a stub
+    // (`window` is always null), so mainContainer has no 'infostand_pet_view' child and
+    // selectView() hides the previous view then returns. Kept AS3-faithful on purpose —
+    // the data below lands in petData in full; only the view that reads it is missing.
+    private onPetInfo = (event: RoomWidgetPetInfoUpdateEvent): void =>
     {
+        this._petData.setData(event);
+        this._userData.petRespectLeft = event.petRespectLeft;
+        this._petView.update(this._petData);
+        this.selectView(VIEW_NAME.PET);
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onPetFigureUpdate()
