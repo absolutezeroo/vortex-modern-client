@@ -103,6 +103,8 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 
     /**
 	 * Set the object factory used to create room object logic.
+	 *
+	 * Deliberately a setter, not a DI dependency — see setVisualizationFactory().
 	 */
     setObjectFactory(factory: IRoomObjectFactory): void
     {
@@ -112,7 +114,22 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     /**
 	 * Set the visualization factory used to create room object visualizations.
 	 *
-	 * @see AS3 RoomManager dependencies getter — IRoomObjectVisualizationFactory
+	 * AS3 (RoomManager.as:83-92) resolves both factories through DI, declaring
+	 * IIDRoomObjectFactory and IIDRoomObjectVisualizationFactory in its dependencies getter. That
+	 * works there because RoomObjectFactory extends Component and a SWF component library
+	 * (binaryData/HabboRoomObjectLogicLib.as, via RoomObjectFactoryBootstrap and its manifest)
+	 * registers it against those IIDs at runtime.
+	 *
+	 * This port has no component-library loader — libraries are ES modules resolved at build time
+	 * (see CoreComponentContext.loadLibraries()) — and RoomObjectFactory is a plain class, not a
+	 * Component. Declaring the AS3 dependencies here would block on IIDs nothing ever announces and
+	 * RoomManager would never initialize. RoomEngine pushes both factories in from its own
+	 * IID_RoomManager callback instead (RoomEngine.ts:273-291).
+	 *
+	 * Ordering is safe because IID_RoomManager has exactly one consumer: RoomEngine, which cannot
+	 * create rooms before that required dependency resolves, and resolving it is what injects these.
+	 * A second consumer of IID_RoomManager would break that guarantee and get a factory-less
+	 * manager — createRoomObject() would then silently build objects with no visualization.
 	 */
     setVisualizationFactory(factory: IRoomObjectVisualizationFactory): void
     {

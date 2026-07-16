@@ -37,6 +37,10 @@ import {Logger} from '@core/utils/Logger';
 import type {IHeliumConfig} from './Helium';
 import {Helium} from './Helium';
 
+import {IID_HabboAdManager} from '@iid/IIDHabboAdManager';
+import {IID_HabboCampaigns} from '@iid/IIDHabboCampaigns';
+import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
+import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
@@ -648,24 +652,31 @@ export class HeliumMain implements IHeliumMain
         ctx.attachComponent(this._avatarRenderManager, [IID_AvatarRenderManager]);
 
         // 12b. Campaign Calendar
+        // AS3 attaches this against IIDHabboCampaigns from HabboToolbar.as:155.
         this._campaigns = new HabboCampaigns(ctx);
-        ctx.attachComponent(this._campaigns, []);
+        ctx.attachComponent(this._campaigns, [IID_HabboCampaigns]);
 
         // 12c. Advertisement Manager
+        // AS3 registers this via the HabboAdManagerCom SWF library; this port constructs it
+        // directly, so the IID has to be announced here or nothing can resolve it.
         this._adManager = new AdManager(ctx);
-        ctx.attachComponent(this._adManager, []);
+        ctx.attachComponent(this._adManager, [IID_HabboAdManager]);
 
         // 12d. Tracking
         this._tracking = new HabboTracking(ctx);
         ctx.attachComponent(this._tracking, [IID_HabboTracking]);
 
         // 12e. Groups Manager
+        // AS3 registers this via the HabboGroupsCom SWF library. Consumers waiting on the IID:
+        // HabboCatalog.ts:481, RoomUI.ts:310.
         this._groupsManager = new HabboGroupsManager(ctx);
-        ctx.attachComponent(this._groupsManager, []);
+        ctx.attachComponent(this._groupsManager, [IID_HabboGroupsManager]);
 
         // 12f. Notifications
+        // AS3 registers this via the HabboNotificationsCom SWF library. Consumers waiting on the
+        // IID: HabboQuestEngine.ts:194, SessionDataManager.ts:715.
         this._notifications = new HabboNotifications(ctx);
-        ctx.attachComponent(this._notifications, []);
+        ctx.attachComponent(this._notifications, [IID_HabboNotifications]);
 
         // 12g. Catalog
         this._catalog = new HabboCatalog(ctx, this._assets);
