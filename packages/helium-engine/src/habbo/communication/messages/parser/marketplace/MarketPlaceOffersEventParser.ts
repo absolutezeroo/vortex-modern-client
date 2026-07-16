@@ -1,7 +1,7 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import type {IStuffData} from '@habbo/inventory/items/IStuffData';
-import {StuffDataFactory} from '@habbo/inventory/items/stuffdata';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
+import {StuffDataFactory} from '@habbo/room/object/data';
 import {MarketPlaceOfferEntry} from './MarketPlaceOfferEntry';
 
 /**
@@ -61,7 +61,8 @@ export class MarketPlaceOffersEventParser implements IMessageParser
             if(furniType === 1 || furniType === 4)
             {
                 furniId = wrapper.readInt();
-                stuffData = StuffDataFactory.parseStuffData(wrapper);
+                stuffData = StuffDataFactory.getStuffDataForType(wrapper.readInt());
+                stuffData?.initializeFromIncomingMessage(wrapper);
                 isUsable = furniType === 4;
 
                 if(isUsable)
@@ -78,7 +79,7 @@ export class MarketPlaceOffersEventParser implements IMessageParser
             else if(furniType === 3)
             {
                 furniId = wrapper.readInt();
-                stuffData = StuffDataFactory.createForType(0);
+                stuffData = StuffDataFactory.getStuffDataForType(0);
 
                 if(stuffData)
                 {

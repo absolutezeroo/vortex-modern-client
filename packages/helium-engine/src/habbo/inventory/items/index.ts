@@ -3,9 +3,7 @@
 
 export {FurnitureItem} from './FurnitureItem';
 export {GroupItem} from './GroupItem';
-export * from './stuffdata';
 
 // Types
 export type {IFurnitureItemData} from './FurnitureItemData';
 export type {IFurnitureItem} from './IFurnitureItem';
-export type {IStuffData} from './IStuffData';

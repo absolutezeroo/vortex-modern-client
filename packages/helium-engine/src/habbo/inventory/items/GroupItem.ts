@@ -1,5 +1,5 @@
 import type {IFurnitureItem} from './IFurnitureItem';
-import type {IStuffData} from './IStuffData';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {FurniModel} from '../furni/FurniModel';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';

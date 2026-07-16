@@ -1,4 +1,4 @@
-import type {IStuffData} from '@habbo/inventory/items/IStuffData';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 
 /**
  * @see sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/marketplace/IMarketPlaceOfferData.as

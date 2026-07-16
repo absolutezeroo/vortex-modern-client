@@ -556,16 +556,7 @@ export class FurnitureLogic extends MovingObjectLogic
 
         if(model !== null && model !== undefined)
         {
-            // `message.data` is typed as habbo/room/object/data/IStuffData, but some callers
-            // (e.g. FurniView.ts's inventory room-previewer, which only has a GroupItem's
-            // stuffData from the older/narrower habbo/inventory/items/IStuffData - a pre-existing
-            // duplicate interface/class tree that doesn't declare writeRoomObjectModel() at all)
-            // pass through an object that doesn't actually implement it, crashing every click on
-            // an inventory item. Guard defensively instead of unifying the two IStuffData trees
-            // (out of scope here) - skipping this call for such objects matches this call path's
-            // pre-existing behavior before RoomEngine.addRoomObjectFurniture() started forwarding
-            // a real `data` argument at all (previously never invoked for these callers).
-            if(message.data !== null && typeof message.data.writeRoomObjectModel === 'function')
+            if(message.data !== null)
             {
                 message.data.writeRoomObjectModel(model);
             }

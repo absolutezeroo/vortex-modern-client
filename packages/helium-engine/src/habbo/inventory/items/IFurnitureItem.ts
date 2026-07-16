@@ -1,4 +1,4 @@
-import type {IStuffData} from './IStuffData';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 
 /**
  * Interface for furniture item data

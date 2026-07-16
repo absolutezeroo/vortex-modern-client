@@ -1,4 +1,4 @@
-import type {IStuffData} from '@habbo/inventory/items/IStuffData';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IMarketPlaceOfferData} from './IMarketPlaceOfferData';
 
 /**

@@ -1,6 +1,6 @@
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
-import type {IStuffData} from '@habbo/inventory/items/IStuffData';
-import {StuffDataFactory} from '@habbo/inventory/items/stuffdata';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
+import {StuffDataFactory} from '@habbo/room/object/data';
 
 /**
  * Parser for a single item within a trade offer.
@@ -172,7 +172,10 @@ export class TradingFurniItemParser
         this._itemTypeId = wrapper.readInt();
         this._category = wrapper.readInt();
         this._isGroupable = wrapper.readBoolean();
-        this._stuffData = StuffDataFactory.parseStuffData(wrapper);
+        // AS3 reads the format int, builds the wrapper, then initializes it from the same
+        // wrapper — two calls, never a combined helper. Read order is unchanged.
+        this._stuffData = StuffDataFactory.getStuffDataForType(wrapper.readInt());
+        this._stuffData?.initializeFromIncomingMessage(wrapper);
         this._secondsToExpiration = -1;
         this._expirationTimeStamp = Date.now();
         this._creationDay = wrapper.readInt();
