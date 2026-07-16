@@ -262,7 +262,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     }
 
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::set habboGroupsManager()
-    public set habboGroupsManager(value: IHabboGroupsManager | null)
+    public set habboGroupsManager(value: IHabboGroupsManager | null) 
     {
         this._habboGroupsManager = value;
     }
@@ -271,13 +271,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     private _friendList: IHabboFriendList | null = null;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get friendList()
-    public get friendList(): IHabboFriendList | null
+    public get friendList(): IHabboFriendList | null 
     {
         return this._friendList;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::set friendList()
-    public set friendList(value: IHabboFriendList | null)
+    public set friendList(value: IHabboFriendList | null) 
     {
         this._friendList = value;
     }
@@ -286,13 +286,13 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     private _freeFlowChat: IHabboFreeFlowChat | null = null;
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::get freeFlowChat()
-    public get freeFlowChat(): IHabboFreeFlowChat | null
+    public get freeFlowChat(): IHabboFreeFlowChat | null 
     {
         return this._freeFlowChat;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/RoomDesktop.as::set freeFlowChat()
-    public set freeFlowChat(value: IHabboFreeFlowChat | null)
+    public set freeFlowChat(value: IHabboFreeFlowChat | null) 
     {
         this._freeFlowChat = value;
     }
@@ -587,7 +587,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         let handler: IRoomWidgetHandler;
 
-        switch(type)
+        switch(type) 
         {
             case 'RWE_INFOSTAND':
                 handler = new InfoStandWidgetHandler(null);
@@ -720,7 +720,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         // Zoom in/out based on wheel direction
         let newScale: number;
 
-        if(deltaY < 0)
+        if(deltaY < 0) 
         {
             newScale = Math.min(currentScale * 1.1, 2.0);
         }
@@ -760,13 +760,6 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._desktopEvents.emit(RoomDesktop.ROOM_BACKGROUND_COLOR_CHANGED, {h, s, l});
     }
 
-    /**
-     * Translates room-engine object events (REOE_*) into widget-facing
-     * RoomWidgetRoomObjectUpdateEvents (RWROUE_*) and dispatches them on
-     * `desktopEvents`, where widgets (e.g. InfoStandWidget) listen for them.
-     *
-     * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
-     */
     public roomObjectEventHandler(event: RoomEngineObjectEvent): void 
     {
         let translatedType: string | null = null;
@@ -774,7 +767,12 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         switch(event.type) 
         {
             case RoomEngineObjectEvent.REOE_OBJECT_SELECTED:
-                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
+                // AS3 only builds the update event when selection is allowed; when it is disabled
+                // the local stays null and nothing is dispatched.
+                if(!this.isFurnitureSelectionDisabled(event)) 
+                {
+                    translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
+                }
                 break;
             case RoomEngineObjectEvent.REOE_OBJECT_DESELECTED:
                 translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
@@ -859,9 +857,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         }
 
         // Dispose all widgets
-        for(const widget of this._widgets.values())
+        for(const widget of this._widgets.values()) 
         {
-            if(widget && typeof (widget as any).dispose === 'function')
+            if(widget && typeof (widget as any).dispose === 'function') 
             {
                 (widget as any).dispose();
             }
@@ -911,11 +909,47 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._roomCanvasDisplayObject = null;
     }
 
+    /**
+     * Translates room-engine object events (REOE_*) into widget-facing
+     * RoomWidgetRoomObjectUpdateEvents (RWROUE_*) and dispatches them on
+     * `desktopEvents`, where widgets (e.g. InfoStandWidget) listen for them.
+     *
+     * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::isFurnitureSelectionDisabled()
+    private isFurnitureSelectionDisabled(event: RoomEngineObjectEvent): boolean 
+    {
+        let disabled = false;
+
+        const roomObject = this._roomEngine?.getRoomObject(event.roomId, event.objectId, event.category) ?? null;
+
+        if(roomObject !== null) 
+        {
+            const model = roomObject.getModel();
+
+            if(model !== null) 
+            {
+                if(model.getNumber(RoomObjectVariableEnum.FURNITURE_SELECTION_DISABLE) === 1) 
+                {
+                    disabled = true;
+
+                    if(this._sessionDataManager?.isAnyRoomController) 
+                    {
+                        disabled = false;
+                    }
+                }
+            }
+        }
+
+        return disabled;
+    }
+
     // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::onRoomViewResized()
     // TS deviation: one handler bound to all four resize/relocate event types
     // (WE_RESIZED/WE_RELOCATED/WE_PARENT_RESIZED/WE_PARENT_RELOCATED) instead of
+
     // separate AS3 listener methods, since they all just re-sync canvas geometry.
-    private readonly roomViewGeometryEventHandler = (_event: unknown): void =>
+    private readonly roomViewGeometryEventHandler = (_event: unknown): void => 
     {
         this.syncRoomCanvasDisplayObject();
 
@@ -933,12 +967,12 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     };
 
     // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::mouseEventHandler()
-    private readonly canvasWindowEventHandler = (event: unknown): void =>
+    private readonly canvasWindowEventHandler = (event: unknown): void => 
     {
         const mouseEvent = event as WindowMouseEvent;
         let type: string;
 
-        switch(mouseEvent.type)
+        switch(mouseEvent.type) 
         {
             case WindowMouseEvent.CLICK:
                 type = 'click';

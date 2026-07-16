@@ -104,6 +104,29 @@ export class HabboWebTools
     }
 
     /**
+	 * Navigate to a raw URL in the given target window.
+	 *
+	 * Unlike openWebPage(), AS3 does not resolve this against the base URL — it navigates to the
+	 * string as given.
+	 *
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::navigateToURL()
+	 *
+	 * @param url The URL to navigate to
+	 * @param target The window target name; AS3 passes null to use the current window
+	 */
+    static navigateToURL(url: string, target: string | null = null): void
+    {
+        if(!url || url.length === 0)
+        {
+            log.warn('Can not navigate to empty url');
+
+            return;
+        }
+
+        window.open(url, target ?? '_self');
+    }
+
+    /**
 	 * Open an external link with a warning dialog
 	 *
 	 * @param url The external URL to open

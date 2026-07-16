@@ -16,7 +16,7 @@ import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -1174,13 +1174,74 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.connection?.send(new GetMarketplaceItemStatsComposer(category, furniId, extraData));
     }
 
-    public showNotEnoughCreditsAlert(): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showNotEnoughCreditsAlert()
+    public showNotEnoughCreditsAlert(): void
     {
+        if(!this._windowManager)
+        {
+            return;
+        }
+
+        this._windowManager.confirm(
+            '${catalog.alert.notenough.title}',
+            '${catalog.alert.notenough.credits.description}',
+            0,
+            this.noCreditsConfirmDialogEventProcessor
+        );
     }
 
-    public showNotEnoughActivityPointsAlert(_activityPointType: number): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showNotEnoughActivityPointsAlert()
+    public showNotEnoughActivityPointsAlert(activityPointType: number): void
     {
+        const currencyName = this.getActivityPointName(activityPointType);
+        const title = this._localization?.getLocalizationWithParams('catalog.alert.notenough.activitypoints.title', '', 'currencyname', currencyName) ?? '';
+        const description = this._localization?.getLocalizationWithParams('catalog.alert.notenough.activitypoints.description', '', 'currencyname', currencyName) ?? '';
+
+        if(activityPointType === 0)
+        {
+            this._windowManager?.confirm(title, description, 0, this.noDucketsConfirmDialogEventProcessor);
+        }
+        else
+        {
+            this._windowManager?.alert(title, description, 0, this.alertDialogEventProcessor);
+        }
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::noCreditsConfirmDialogEventProcessor()
+    private noCreditsConfirmDialogEventProcessor = (dialog: IDisposable, event: WindowEvent): void =>
+    {
+        dialog.dispose();
+        this.resetPlacedOfferData();
+
+        if(event.type === WindowEvent.WE_OK)
+        {
+            HabboWebTools.openWebPageAndMinimizeClient(this.getProperty('web.shop.relativeUrl'));
+        }
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::noDucketsConfirmDialogEventProcessor()
+    private noDucketsConfirmDialogEventProcessor = (dialog: IDisposable, event: WindowEvent): void =>
+    {
+        dialog.dispose();
+        this.resetPlacedOfferData();
+
+        if(event.type === WindowEvent.WE_OK)
+        {
+            const url = this.getProperty('link.format.duckets');
+
+            if(url !== '')
+            {
+                this._windowManager?.alert('${catalog.alert.external.link.title}', '${catalog.alert.external.link.desc}', 0, this.onExternalLink);
+                HabboWebTools.navigateToURL(url, HabboWebTools.WINDOW_HABBO_MAIN);
+            }
+        }
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onExternalLink()
+    private onExternalLink = (dialog: IDisposable, _event: WindowEvent): void =>
+    {
+        dialog.dispose();
+    };
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getHabboClubOffers()
     public getHabboClubOffers(source: number): void
@@ -1275,9 +1336,14 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // AS3 loads this via assets.getAssetByName(name).content + buildFromXML(); this port
     // pre-compiles window layouts into a named registry instead (see IHabboWindowManager
 
-    public getActivityPointName(activityPointType: number): string 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getActivityPointName()
+    // The config supplies the localization key; it is not hardcoded. The key doubles as its own
+    // default, so an unmapped currency shows the key rather than an empty string.
+    public getActivityPointName(activityPointType: number): string
     {
-        return this._localization?.getLocalization(`achievements.activitypoint.${activityPointType}`, '') ?? '';
+        const key = this.getProperty(`activitypoint.name.${activityPointType}`);
+
+        return this._localization?.getLocalization(key, key) ?? key;
     }
 
     public canPlaceWithBC(): boolean 
