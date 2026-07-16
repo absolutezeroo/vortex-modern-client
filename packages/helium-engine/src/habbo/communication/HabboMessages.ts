@@ -226,7 +226,17 @@ import {
 } from './messages/incoming/room/furniture';
 
 // Incoming Events - Room Pet
-import {PetInfoMessageEvent, PetVocalMessageEvent} from './messages/incoming/room/pet';
+import {
+    PetInfoMessageEvent,
+    PetVocalMessageEvent,
+    PetCommandsMessageEvent,
+    PetStatusUpdateEvent,
+    PetLevelUpdateEvent,
+    PetFigureUpdateEvent,
+    PetExperienceEvent,
+    PetPlacingErrorEvent,
+    PetBreedingResultEvent
+} from './messages/incoming/room/pet';
 
 // Incoming Events - User Defined Room Events (Wired)
 import {WiredPermissionsEvent} from './messages/incoming/userdefinedroomevents';
@@ -921,6 +931,33 @@ export class HabboMessages implements IMessageConfiguration
         // pet vocal message, IssuePetCommand compositor and command UI"
         this._events.set(3073, PetVocalMessageEvent);
         this._events.set(3192, PetInfoMessageEvent);
+
+        // AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/ — the primary
+        // tree has no pet message package at all (it lives package-obfuscated under src/unknowns/),
+        // so the secondary is the authority for this whole set. Header values are taken from the
+        // emulator's own Revision20260701/Headers.cs, several of which carry its "AS3-verified"
+        // annotations; 20260701 is the revision that pairs with WIN63-202607011411 (same build,
+        // 2026-07-01 14:11).
+        //
+        // Only 332 and 3195 currently agree with the server's wire format. The other six are
+        // registered anyway because the client's job is to speak the real protocol and the fix
+        // belongs in the emulator's serializers — three of which are empty stubs. Their parse
+        // failures are caught and logged per message by SocketConnection. See the pet mismatch
+        // table in docs/CLIENT-SERVER-ARCHITECTURE.md.
+        this._events.set(332, PetCommandsMessageEvent);
+        this._events.set(2753, PetStatusUpdateEvent);
+        this._events.set(3104, PetLevelUpdateEvent);
+        this._events.set(3796, PetFigureUpdateEvent);
+        this._events.set(946, PetExperienceEvent);
+        this._events.set(3195, PetPlacingErrorEvent);
+        this._events.set(2940, PetBreedingResultEvent);
+
+        // PetRespectFailedEvent (header 31, AS3 incoming/room/pets/) is deliberately absent here:
+        // it was already ported and registered under incoming/notifications/ (see the NOTIFICATIONS
+        // block below), and its parser already reads AS3's requiredDays/avatarAgeInDays exactly.
+        // Its directory does not match the AS3 package, but re-homing it would be churn for no
+        // behaviour change — and registering a second copy at 31 would have silently overwritten
+        // the first, since _events is a Map. The server sends this one with an empty body too.
 
         // === WIRED ===
         // AS3: sources/win63_version/habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredPermissionsEvent.as

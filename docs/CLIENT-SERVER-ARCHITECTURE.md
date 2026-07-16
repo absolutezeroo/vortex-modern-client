@@ -709,11 +709,34 @@ Wired configuration (selected items, params, variable ids) is stored per-item as
 
 ## 18. Pets and Bots
 
-### Pets — Fully Implemented
+### Pets — Fully Implemented (game logic only — see the serializer gaps below)
 
 `RoomPetSystem` (`Turbo.Rooms/Grains/Systems/RoomPetSystem*.cs`, split into `.Placement`/`.Motion`/`.Care`/`.Breeding` partials) is a **room-scoped system, deliberately not a separate grain** — `PETS-DESIGN.md` explains the rationale directly: pets need continuous access to room-state for navigation, and a separate `PetGrain` would add a cross-grain-call round trip on every movement step. It reuses the same `RoomPathingSystem` A* as avatars, and runs its own needs-driven state machine (Idle → Wander → Hungry → Eat → Sleep → Command) with nutrition/energy decay over real time, XP/leveling, and learned commands.
 
 Backed by real DB entities (`PetEntity`, `PetFoodEntity`, `PetCommandEntity`, `PetLevelEntity`, `PetPaletteEntity`) with a substantial migration history (breeding fields, monsterplant fields, energy/max-uses). Handlers cover placement, feeding, commands, riding/mounting, breeding, respect. `ROADMAP.md` marks "Room/Pets: 100%". Pet position writes deliberately ride the existing dirty-flush timer rather than writing on every move (a real optimization, `CONSOLIDATION.md` O5) — but `CONSOLIDATION.md` also flags most of `RoomPetSystem`'s logic beyond feeding as having no test coverage yet.
+
+### Pets — the room→client serializers are NOT all implemented (verified 2026-07-16)
+
+The "100%" above describes the **game logic** (`RoomPetSystem`, entities, handlers), and it is accurate for that. It is **not** true of the wire layer: 6 of the 8 room-pet server→client messages cannot be consumed by a faithful client, because the emulator's serializer either writes nothing or writes a different message than the AS3 defines. Every one of these composers *is* dispatched (2-4 call sites each), so a client that registers the real protocol will receive these headers in normal play.
+
+Verified by reading `Turbo.Revisions/Revision20260701/Serializers/Room/Pets/*.cs` against `sources/win63_version/habbo/communication/messages/parser/room/pets/*.as`. **`Revision20260112` is byte-for-byte identical on all of these**, so this is unfinished work, not a regression. Note the primary AS3 tree has no pet message package at all (it is package-obfuscated under `src/unknowns/`), so `win63_version` is the authority for this set.
+
+| Header | Message | AS3 parser reads | Revision20260701 serializer writes | Status |
+|---|---|---|---|---|
+| 332 | `PetCommands` | petId, n, ids[], n, ids[] | identical | ✅ agrees |
+| 3195 | `PetPlacingError` | errorCode | errorCode | ✅ agrees |
+| 2753 | `PetStatusUpdate` | roomIndex, petId, 4× bool | **empty body (`//`)** | ❌ throws on read |
+| 3796 | `PetFigureUpdate` | roomIndex, petId, figureData, 2× bool | **empty body (`//`)** | ❌ throws on read |
+| 31 | `PetRespectFailed` | requiredDays, avatarAgeInDays | **empty body (`//`)** | ❌ throws on read |
+| 3104 | `PetLevelUpdate` | roomIndex, petId, level | petId, level | ❌ leading roomIndex missing → fields shift, throws |
+| 946 | `PetExperience` | petId, petRoomIndex, gainedExperience | petId, experience, experienceForNextLevel, level, maxLevel | ⚠️ **fails silently** |
+| 2940 | `PetBreedingResult` | 2× (int, int, string, int, string, int, bool) | petOneId, petTwoId, result | ❌ unrelated shape, throws |
+
+**`PetExperience` (946) is the dangerous one.** It is the only entry that does not throw: the server writes five ints where the client reads three, so there is always enough data on the wire and no read runs off the end. `petRoomIndex` silently receives the pet's total experience and `gainedExperience` silently receives the next-level threshold. Treat any value from `PetExperienceEventParser` as untrustworthy until the serializer is fixed.
+
+The failures are contained: `SocketConnection.handleReceivedMessage()` wraps `parser.parse()` in a try/catch, logging the error and calling `messageParseError` per message. Each packet has its own wrapper, so an over-read cannot desync the stream — a mismatched pet packet is a logged error, not a dropped connection.
+
+The client ports all of these AS3-faithfully anyway (`habbo/communication/messages/{incoming,parser}/room/pet/`), because the client's job is to speak the real protocol; **the fix belongs in the emulator's serializers**, and the three empty ones are the obvious starting point.
 
 ### Bots — Do Not Exist
 

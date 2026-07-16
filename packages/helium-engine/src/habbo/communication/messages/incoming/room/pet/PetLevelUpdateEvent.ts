@@ -1,0 +1,18 @@
+import {MessageEvent} from '@core/communication/messages/MessageEvent';
+import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
+import {PetLevelUpdateEventParser} from '@habbo/communication/messages/parser/room/pet/PetLevelUpdateEventParser';
+
+/**
+ * A pet levelled up (header 3104).
+ *
+ * The server omits the leading roomIndex — see PetLevelUpdateEventParser's header.
+ *
+ * AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/PetLevelUpdateEvent.as
+ */
+export class PetLevelUpdateEvent extends MessageEvent implements IMessageEvent
+{
+    constructor(callback: MessageEventCallback)
+    {
+        super(callback, PetLevelUpdateEventParser);
+    }
+}
