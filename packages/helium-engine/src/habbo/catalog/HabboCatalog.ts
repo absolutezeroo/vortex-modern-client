@@ -8,6 +8,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import {HabboClubLevelEnum} from '@habbo/session/enum/HabboClubLevelEnum';
+import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IProductData} from '@habbo/session/product/IProductData';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
@@ -161,7 +162,7 @@ const log = Logger.getLogger('HabboCatalog');
  *
  * @see sources/win63_version/habbo/catalog/HabboCatalog.as
  */
-export class HabboCatalog extends Component implements IHabboCatalog 
+export class HabboCatalog extends Component implements IHabboCatalog, ILinkEventTracker
 {
     private _communication: IHabboCommunicationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
@@ -1249,7 +1250,71 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.connection?.send(new GetClubOffersMessageComposer(source));
     }
 
-    public openClubCenter(): void 
+    // --- ILinkEventTracker ---
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get linkPattern()
+    public get linkPattern(): string
+    {
+        return 'catalog/';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::linkReceived()
+    public linkReceived(link: string): void
+    {
+        const parts = link.split('/');
+
+        if(parts.length < 2)
+        {
+            return;
+        }
+
+        switch(parts[1])
+        {
+            case 'open':
+                if(parts.length > 2)
+                {
+                    this.openCatalogPage(parts[2]);
+
+                    break;
+                }
+
+                this.openCatalog();
+
+                break;
+
+            case 'warehouse':
+                if(parts.length > 2)
+                {
+                    this.openCatalogPage(parts[2], 'BUILDERS_CLUB');
+
+                    break;
+                }
+
+                this.toggleCatalog('BUILDERS_CLUB', true);
+
+                break;
+
+            case 'club_buy':
+                this.openClubCenter();
+
+                break;
+
+            case 'habbicons':
+                if(this.getBoolean('habbicons.enabled'))
+                {
+                    this.context.createLinkEvent('habbicons/open');
+                }
+
+                break;
+
+            default:
+                log.debug(`Catalog unknown link-type receive: ${parts[1]}`);
+
+                break;
+        }
+    }
+
+    public openClubCenter(): void
     {
         this.context.createLinkEvent('habboUI/open/hccenter');
     }
@@ -1366,6 +1431,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this._messageEvents.length = 0;
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispose()
+        this.context.removeLinkEventTracker(this);
+
         if(this._sellablePetPalettes != null)
         {
             this._sellablePetPalettes.dispose();
@@ -1408,6 +1475,10 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new GuildMembershipsMessageEvent(this.onGuildMemberships.bind(this)));
         this.addMessageEvent(new SellablePetPalettesMessageEvent(this.onSellablePetPalettes.bind(this)));
         this.addMessageEvent(new ApproveNameMessageEvent(this.onApproveNameResult.bind(this)));
+
+        // AS3 registers the tracker here, right after the message events (HabboCatalog.as:752).
+        this.context.addLinkEventTracker(this);
+
         this.connection?.send(new GetCreditsInfoComposer());
     }
 

@@ -1,3 +1,4 @@
+import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import type {IHabboInventory, InventoryCategoryType} from './IHabboInventory';
 import type {IFurniModel} from './furni/IFurniModel';
@@ -64,7 +65,7 @@ const log = Logger.getLogger('Inventory');
  * UI is the ported window system (InventoryMainView), matching the AS3
  * class hierarchy — not SolidJS stores (SolidJS isn't a project dependency).
  */
-export class HabboInventory extends Component implements IHabboInventory
+export class HabboInventory extends Component implements IHabboInventory, ILinkEventTracker
 {
     private _communication: IHabboCommunicationManager | null = null;
     private _windowManager: IHabboWindowManager | null = null;
@@ -647,10 +648,50 @@ export class HabboInventory extends Component implements IHabboInventory
     // exist before any toolbar click can reach it.
     protected override initComponent(): void
     {
+        // AS3 registers the tracker here, before building the unseen tracker and the view
+        // (HabboInventory.as:200).
+        this.context.addLinkEventTracker(this);
+
         this._unseenItemTracker = new UnseenItemTracker(this._communication!);
         this._view = new InventoryMainView(this);
         this.registerFurniMessageEvents();
         log.info('Inventory initialized');
+    }
+
+    // --- ILinkEventTracker ---
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get linkPattern()
+    public get linkPattern(): string
+    {
+        return 'inventory/';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::linkReceived()
+    public linkReceived(link: string): void
+    {
+        const parts = link.split('/');
+
+        if(parts.length < 2)
+        {
+            return;
+        }
+
+        if(parts[1] !== 'open')
+        {
+            log.debug(`Inventory unknown link-type received: ${parts[1]}`);
+        }
+        else if(parts.length === 2)
+        {
+            this.toggleInventoryPage('furni');
+        }
+        else if(parts.length === 3)
+        {
+            this.toggleInventoryPage(parts[2]);
+        }
+        else if(parts.length === 4)
+        {
+            this.toggleInventoryPage(parts[2], parts[3]);
+        }
     }
 
     // TS-only: AS3's message routing happens elsewhere in the engine and simply
