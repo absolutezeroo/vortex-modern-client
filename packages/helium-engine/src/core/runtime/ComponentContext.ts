@@ -461,44 +461,43 @@ export class ComponentContext extends Component implements IContext
     /**
 	 * Announce that an interface is now available
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/ComponentContext.as::announceInterfaceAvailability()
     private announceInterfaceAvailability<T>(iid: IID<T>, provider: Component | T): void
     {
         const queue = (this._interfaceQueues.get(iid) ?? null) as IInterfaceQueue<T> | null;
 
         if(!queue) return;
 
-        const callbacks = [...queue.callbacks];
-        queue.callbacks.length = 0;
+        // AS3 pops receivers one at a time and re-queries the provider on each pass, because an
+        // earlier receiver can be what makes the interface available to the next. It never clears
+        // the queue up-front, and — crucially — it still calls the receiver when the instance is
+        // null, after logging. Returning early there strands the receivers: the waiting component
+        // never has its dependency resolved and stays locked for the rest of the session.
+        const count = queue.callbacks.length;
 
-        // Get the actual instance
-        const instance = provider instanceof Component
-            ? provider.queueInterface(iid)
-            : provider;
-
-        if(!instance)
+        for(let i = 0; i < count; i++)
         {
-            this.error(`Interface ${getIIDName(iid)} still unavailable!`, false, 6);
+            const instance = provider instanceof Component
+                ? provider.queueInterface(iid)
+                : provider;
 
-            return;
-        }
+            if(!instance)
+            {
+                this.error(`Interface ${getIIDName(iid)} still unavailable!`, true, 6);
+            }
 
-        // Call all queued callbacks
-        for(const callback of callbacks)
-        {
+            const callback = queue.callbacks.pop();
+
+            if(!callback) break;
+
             try
             {
-                callback(iid, instance);
+                callback(iid, instance as T);
             }
             catch (e)
             {
                 log.error('Callback error:', e);
             }
-        }
-
-        // Remove empty queue
-        if(queue.callbacks.length === 0)
-        {
-            this._interfaceQueues.delete(iid);
         }
     }
 }
