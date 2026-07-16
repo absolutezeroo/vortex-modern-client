@@ -38,6 +38,7 @@ export interface IHabboTracking
 	 *
 	 * @param currentTime The current time, used to throttle the warning report
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/IHabboTracking.as::chatLagDetected()
     chatLagDetected(currentTime: number): void;
 
     /**
