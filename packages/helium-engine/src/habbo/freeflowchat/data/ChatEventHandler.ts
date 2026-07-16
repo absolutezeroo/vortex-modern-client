@@ -28,13 +28,15 @@ export class ChatEventHandler
 
         this._onRoomChatBound = this.onRoomChat.bind(this);
 
-        if(this._freeFlowChat.roomSessionManager)
-        {
-            this._freeFlowChat.roomSessionManager.sessionEvents.on(
-                'RSCE_CHAT_EVENT',
-                this._onRoomChatBound
-            );
-        }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::ChatEventHandler()
+        // AS3 dereferences roomSessionManager here with no null check, because HabboFreeFlowChat
+        // declares that dependency as required — initComponent(), which builds this handler, cannot
+        // run before it resolves. The getter is still typed nullable, hence the assertion; guarding
+        // instead would turn a loud failure back into a silent one, which is the bug this fixes.
+        this._freeFlowChat.roomSessionManager!.sessionEvents.on(
+            'RSCE_CHAT_EVENT',
+            this._onRoomChatBound
+        );
     }
 
     get disposed(): boolean

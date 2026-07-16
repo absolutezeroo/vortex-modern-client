@@ -419,6 +419,10 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                 },
                 false
             ),
+            // AS3 (HabboFreeFlowChat.as:200) passes no required flag, so this defaults to required.
+            // It has to be: initComponent() builds ChatEventHandler, whose constructor subscribes to
+            // roomSessionManager's RSCE_CHAT_EVENT straight away. Optional here means initComponent()
+            // can run before the manager lands, and the subscription is then never made at all.
             new ComponentDependency(
                 IID_RoomSessionManager,
                 (manager: any | null) =>
@@ -427,7 +431,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                     // (the correct EventEmitter for session lifecycle events, not Component.events)
                     this._roomSessionManager = manager as IFreeFlowChatRoomSessionManager | null;
                 },
-                false
+                true
             ),
             new ComponentDependency(
                 IID_RoomEngine,
