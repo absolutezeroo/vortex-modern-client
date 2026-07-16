@@ -7,6 +7,7 @@ import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommun
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import {HabboClubLevelEnum} from '@habbo/session/enum/HabboClubLevelEnum';
 import type {IProductData} from '@habbo/session/product/IProductData';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
@@ -1197,9 +1198,20 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.context.createLinkEvent('habboUI/open/vault');
     }
 
-    public verifyClubLevel(_clubLevel: number = 1): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::verifyClubLevel()
+    // AS3 opens the HC centre here on failure, and its only caller
+    // (PurchaseCatalogWidget.as:280-283) opens it again right after. The redundancy is AS3's, and
+    // the TS caller already mirrors it — kept as-is rather than "tidied" on one side only.
+    public verifyClubLevel(clubLevel: number = 1): boolean
     {
-        return true;
+        if((this._sessionDataManager?.clubLevel ?? HabboClubLevelEnum.NO_CLUB) >= clubLevel)
+        {
+            return true;
+        }
+
+        this.openClubCenter();
+
+        return false;
     }
 
     public buySnowWarTokensOffer(_localizationId: string): void 

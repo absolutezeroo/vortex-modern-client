@@ -5,7 +5,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IMessageComposer} from '@core/communication/messages/IMessageComposer';
 import type {IHabboCommunicationManager} from '../communication/IHabboCommunicationManager';
 import type {ISessionDataManager} from './ISessionDataManager';
-import {HabboClubLevelEnum, UIFlagsEnum} from './enum';
+import {HabboClubLevelEnum, hasClub as clubLevelHasClub, hasVip as clubLevelHasVip, UIFlagsEnum} from './enum';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
@@ -597,14 +597,16 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._customData;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::get hasVip()
     get hasVip(): boolean
     {
-        return this._clubLevel >= HabboClubLevelEnum.VIP;
+        return clubLevelHasVip(this._clubLevel);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::get hasClub()
     get hasClub(): boolean
     {
-        return this._clubLevel >= HabboClubLevelEnum.CLUB;
+        return clubLevelHasClub(this._clubLevel);
     }
 
     get isNoob(): boolean
@@ -1571,7 +1573,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         if(!parser) return;
 
-        this._clubLevel = parser.clubLevel;
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::onUserRights()
+        // AS3 collapses the server's club level to {0, 2}; it never stores 1.
+        this._clubLevel = parser.clubLevel !== 0 ? HabboClubLevelEnum.VIP : HabboClubLevelEnum.NO_CLUB;
         this._securityLevel = parser.securityLevel;
         this._isAmbassador = parser.isAmbassador;
 
