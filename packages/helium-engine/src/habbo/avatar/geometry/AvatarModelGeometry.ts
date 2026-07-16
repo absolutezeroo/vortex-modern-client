@@ -25,6 +25,13 @@ export class AvatarModelGeometry
     private _avatarSet: AvatarSet;
     private _bodyParts: Map<string, Map<string, GeometryBodyPart>>;
     private _itemToBodyPart: Map<string, Map<string, GeometryBodyPart>>;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as:16
+    // bodypart id -> the bodypart it must be drawn before, from the `order-before` attribute.
+    private _orderBefore: Map<string, string> = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as:18
+    private _orderAfter: Map<string, string> = new Map();
     private _transform: Matrix4x4;
     private _camera: Vector3D;
     private _canvases: Map<string, Map<string, AvatarCanvas>>;
@@ -146,7 +153,68 @@ export class AvatarModelGeometry
 
         distances.sort((a, b) => a[0] - b[0]);
 
-        return distances.map(entry => entry[1].id);
+        const ids = distances.map(entry => entry[1].id);
+
+        // AS3 reorders the camera-distance sort afterwards, so a bodypart can be pinned relative to
+        // another regardless of depth — this is what keeps a held pet on the correct side of the arm.
+        for(const [id, target] of this._orderBefore)
+        {
+            this.placeBodyPartBefore(ids, id, target);
+        }
+
+        for(const [id, target] of this._orderAfter)
+        {
+            this.placeBodyPartAfter(ids, id, target);
+        }
+
+        return ids;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::placeBodyPartBefore()
+    // AS3 removes first and only then looks the target up, so the index already accounts for the
+    // removal — and if the target is absent from this avatar set the moved id is dropped entirely
+    // rather than put back. That is AS3's behaviour, quirk included, not an oversight here.
+    private placeBodyPartBefore(ids: string[], id: string, target: string): void
+    {
+        const from = ids.indexOf(id);
+
+        if(from === -1)
+        {
+            return;
+        }
+
+        ids.splice(from, 1);
+
+        const to = ids.indexOf(target);
+
+        if(to === -1)
+        {
+            return;
+        }
+
+        ids.splice(to, 0, id);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::placeBodyPartAfter()
+    private placeBodyPartAfter(ids: string[], id: string, target: string): void
+    {
+        const from = ids.indexOf(id);
+
+        if(from === -1)
+        {
+            return;
+        }
+
+        ids.splice(from, 1);
+
+        const to = ids.indexOf(target);
+
+        if(to === -1)
+        {
+            return;
+        }
+
+        ids.splice(to + 1, 0, id);
     }
 
     // AS3: sources/win63_version/habbo/avatar/geometry/AvatarModelGeometry.as::getParts()
@@ -256,6 +324,19 @@ export class AvatarModelGeometry
 
                 bodyPartMap.set(bodyPartId, bodyPart);
 
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/AvatarModelGeometry.as::parse()
+                // These are attributes, not child elements: the 2026 decompiler drops the `@` from
+                // E4X's computed-attribute form, so `_loc3_.@["order-before"]` reads back as
+                // `_loc3_["order-before"]`. The XML settles it — <bodypart id="petl"
+                // order-before="leftarm">. AS3 skips empty values as well as missing ones.
+                const orderBefore = getXmlAttribute(bodyPartElement, 'order-before');
+
+                if(orderBefore) this._orderBefore.set(bodyPartId, orderBefore);
+
+                const orderAfter = getXmlAttribute(bodyPartElement, 'order-after');
+
+                if(orderAfter) this._orderAfter.set(bodyPartId, orderAfter);
+
                 for(const partId of bodyPart.getPartIds(null))
                 {
                     itemMap.set(partId, bodyPart);
@@ -314,8 +395,20 @@ export class AvatarModelGeometry
                     for(const bpData of bodyParts)
                     {
                         const bodyPart = new GeometryBodyPart(bpData);
+                        const bodyPartId = String(bpData.id);
 
-                        bodyPartMap.set(String(bpData.id), bodyPart);
+                        bodyPartMap.set(bodyPartId, bodyPart);
+
+                        // Same ordering data as the XML path. AS3 has no JSON parser at all — this
+                        // path is the port's own — but the two must not disagree, or the ordering
+                        // would silently depend on which format the assets happen to ship in.
+                        const orderBefore = bpData['order-before'] ?? bpData.orderBefore;
+
+                        if(orderBefore) this._orderBefore.set(bodyPartId, String(orderBefore));
+
+                        const orderAfter = bpData['order-after'] ?? bpData.orderAfter;
+
+                        if(orderAfter) this._orderAfter.set(bodyPartId, String(orderAfter));
 
                         for(const partId of bodyPart.getPartIds(null))
                         {
