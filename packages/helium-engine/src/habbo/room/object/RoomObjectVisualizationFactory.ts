@@ -11,6 +11,7 @@
 import type {IRoomObjectVisualizationFactory} from '@room/object/IRoomObjectVisualizationFactory';
 import type {IRoomObjectVisualization} from '@room/object/visualization/IRoomObjectVisualization';
 import type {IRoomObjectVisualizationData} from '@room/object/visualization/IRoomObjectVisualizationData';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IGraphicAssetCollection} from '@room/object/visualization/utils/IGraphicAssetCollection';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import {GraphicAssetCollection} from '@room/object/visualization/utils/GraphicAssetCollection';
@@ -66,6 +67,8 @@ import {AvatarVisualizationData} from './visualization/avatar/AvatarVisualizatio
 // Visualization Data
 import {FurnitureVisualizationData} from './visualization/furniture/FurnitureVisualizationData';
 import {AnimatedFurnitureVisualizationData} from './visualization/furniture/AnimatedFurnitureVisualizationData';
+import {AnimatedPetVisualization} from './visualization/pet/AnimatedPetVisualization';
+import {AnimatedPetVisualizationData} from './visualization/pet/AnimatedPetVisualizationData';
 
 /**
  * Visualization types that use AnimatedFurnitureVisualizationData.
@@ -105,6 +108,29 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
     private _disposed: boolean = false;
 
     private _avatarRenderManager: IAvatarRenderManager | null = null;
+
+    // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as::assets
+    private _assets: IAssetLibrary | null = null;
+
+    /**
+	 * Asset library reference for pet visualization data injection.
+	 *
+	 * AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as::assets
+	 * (a Component property there; this port's factory is a plain class, so it is injected the
+	 * same way avatarRenderManager already is - see RoomEngine's ComponentDependency wiring).
+	 */
+    set assets(value: IAssetLibrary | null)
+    {
+        this._assets = value;
+
+        for(const data of this._visualizationDataCache.values())
+        {
+            if(data instanceof AnimatedPetVisualizationData)
+            {
+                data.commonAssets = value;
+            }
+        }
+    }
 
     /**
 	 * Set the avatar render manager reference for avatar visualization data injection.
@@ -246,6 +272,15 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
             case RoomObjectVisualizationEnum.RENTABLE_BOT:
                 return new AvatarVisualization();
 
+                // Pets
+                // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as
+                // `case "pet_animated": _loc3_ = AnimatedPetVisualization; break;` - this case was
+                // simply missing from the port, so every pet resolved to null here, which made
+                // RoomEngine.getGenericRoomObjectImage() bail on its `visualization === null` guard
+                // and return id = -1 for every pet image request.
+            case RoomObjectVisualizationEnum.PET_ANIMATED:
+                return new AnimatedPetVisualization();
+
             default:
                 return null;
         }
@@ -267,9 +302,35 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
             return cached;
         }
 
+        // AS3: sources/win63_version/habbo/room/object/RoomObjectVisualizationFactory.as
+        // `case "pet_animated": _loc8_ = AnimatedPetVisualizationData; break;` - a pet gets its own
+        // data class, in a branch separate from the user/bot/rentable_bot one. This port had
+        // "pet_animated" folded into the avatar branch, handing every pet an AvatarVisualizationData.
+        if(type === RoomObjectVisualizationEnum.PET_ANIMATED)
+        {
+            const petVizData = new AnimatedPetVisualizationData();
+            const ok = petVizData.initialize(data);
+
+            if(!ok)
+            {
+                petVizData.dispose();
+
+                return null;
+            }
+
+            // AS3: `_loc5_.commonAssets = assets;` - without this the pet visualization has no
+            // asset library to resolve its sprites against, so it renders nothing and getImage()
+            // returns null.
+            petVizData.commonAssets = this._assets;
+
+            this._visualizationDataCache.set(id, petVizData);
+
+            return petVizData;
+        }
+
         // Avatar visualization types use AvatarVisualizationData
         // AS3: if (_loc7_ is AvatarVisualizationData) { _loc6_.avatarRenderer = _habboAvatar; }
-        if(type === 'user' || type === 'bot' || type === 'rentable_bot' || type === 'pet_animated')
+        if(type === 'user' || type === 'bot' || type === 'rentable_bot')
         {
             const avatarVizData = new AvatarVisualizationData();
 

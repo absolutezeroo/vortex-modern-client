@@ -34,7 +34,9 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     private _assetNames: (string | null)[] = [];
     private _assetNamesHaveFrame: boolean[] = [];
     private _furnitureLift: number = 0;
-    private _resolvedSize: number = -1;
+    // protected: AnimatedPetVisualization reads this directly, as its AS3 counterpart does.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_SafeStr_4728
+    protected _resolvedSize: number = -1;
     private _cachedDirectionId: number = -1;
     private _cachedScale: number = 0;
     private _spriteTags: (string | null)[] = [];

@@ -367,15 +367,22 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
         return this._cachedSizeData;
     }
 
+    // AS3 walks the visualization node's *actual children* and hands each one to
+    // processVisualizationElement(), which reads the name off the node itself. This port used a
+    // hard-coded `['layers', 'directions', 'colors', 'animations']` instead - a furniture-only list
+    // that no subclass could extend, so AnimatedPetVisualizationData's 'postures'/'gestures' cases
+    // were unreachable dead code. With no postures parsed a pet had no animation, hence no frame
+    // offsets, and its head and tail rendered detached from the body.
+    //
+    // Iterating the real keys is safe: an unrecognised name falls through the switch and returns
+    // true, in this port exactly as in AS3 - neither has a `default: return false`.
     private processVisualizationElements(sizeData: SizeData, vizDef: Record<string, unknown>): boolean
     {
-        const elementNames = ['layers', 'directions', 'colors', 'animations'];
-
-        for(const name of elementNames)
+        for(const name of Object.keys(vizDef))
         {
             const elementData = (vizDef[name] ?? null) as Record<string, unknown> | null;
 
-            if(elementData)
+            if(elementData && typeof elementData === 'object')
             {
                 if(!this.processVisualizationElement(sizeData, name, elementData))
                 {

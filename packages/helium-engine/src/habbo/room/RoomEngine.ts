@@ -88,6 +88,7 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import {EventEmitter} from 'eventemitter3';
 import {RoomContentLoader} from './RoomContentLoader';
+import type {PetColorResult} from './PetColorResult';
 import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
@@ -200,6 +201,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         super(context, 0, assetLibrary);
         this._roomObjectFactory = new RoomObjectFactory();
         this._visualizationFactory = new RoomObjectVisualizationFactory();
+        // AS3's factory reads `assets` off its own Component base; this port's factory is a plain
+        // class, so the library is handed to it here (AnimatedPetVisualizationData.commonAssets).
+        this._visualizationFactory.assets = assetLibrary;
         this._contentLoader = new RoomContentLoader();
         this._roomData = new Map();
         this._ownUserIds = new Map();
@@ -759,6 +763,41 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.getGenericRoomObjectImage(petType, payload, direction, scale, listener, backgroundColor, null, null, -1, -1, posture);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetColor()
+    getPetColor(typeId: number, colorId: number): PetColorResult | null
+    {
+        if(this._contentLoader != null) return this._contentLoader.getPetColor(typeId, colorId);
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetColorsByTag()
+    // Returns null (not an empty array) with no content loader, matching AS3 - the caller in
+    // PetPreviewCatalogWidget iterates the result, so the distinction is preserved rather than
+    // smoothed over.
+    getPetColorsByTag(typeId: number, tag: string): PetColorResult[] | null
+    {
+        if(this._contentLoader != null) return this._contentLoader.getPetColorsByTag(typeId, tag);
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetLayerIdForTag()
+    getPetLayerIdForTag(typeId: number, tag: string): number
+    {
+        if(this._contentLoader != null) return this._contentLoader.getPetLayerIdForTag(typeId, tag);
+
+        return -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetDefaultPalette()
+    getPetDefaultPalette(typeId: number, tag: string): PetColorResult | null
+    {
+        if(this._contentLoader != null) return this._contentLoader.getPetDefaultPalette(typeId, tag);
+
+        return null;
+    }
+
     // per-format payload) until it exists.
     getRoomObjectImage(
         roomId: number,
@@ -850,7 +889,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         let room = this._roomManager.getRoom(TEMPORARY_ROOM_ID);
 
-        if(room === null) 
+        if(room === null)
         {
             room = this._roomManager.createRoom(TEMPORARY_ROOM_ID, null);
 
@@ -936,7 +975,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         result.id = objectId;
 
-        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null) 
+        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null)
         {
             // AS3 also captures a (necessarily blank, since content isn't loaded yet) image here
             // and stores it on the result - this port never trusts a synchronous ImageResult.data
@@ -952,17 +991,35 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             room.disposeObject(objectId, category);
 
-            if(listener !== null) 
+            // AS3 ends this branch with `result.id = 0` and the image already on `result.data` -
+            // the "synchronous hit" contract ImageResult's own header documents. This port used to
+            // hand the canvas to the async createImageBitmap() and deliver through imageReady()
+            // instead, on the stated grounds that Texture->ImageBitmap "is inherently asynchronous
+            // in the browser". It is not: OffscreenCanvas.transferToImageBitmap() is synchronous,
+            // and this codebase already relies on that elsewhere (ColourGridCatalogWidget).
+            //
+            // Honouring the real contract is not cosmetic. Callers that follow AS3 - every pet
+            // catalog widget - call onWidgetsInitialized() from imageReady(), which re-dispatches
+            // SelectProduct -> updateImage() -> getPetImage(). With an always-async result that
+            // re-enters imageReady() and spins forever, allocating a temporary-room object per
+            // iteration. Returning synchronously ends the chain exactly where AS3 ends it.
+            if(canvas !== null)
             {
-                if(canvas !== null) 
+                const offscreen = new OffscreenCanvas(canvas.width, canvas.height);
+                const offscreenCtx = offscreen.getContext('2d');
+
+                if(offscreenCtx !== null)
                 {
-                    createImageBitmap(canvas).then((bitmap) => listener.imageReady(objectId, bitmap)).catch(() => listener.imageFailed(objectId));
-                }
-                else 
-                {
-                    listener.imageFailed(objectId);
+                    offscreenCtx.drawImage(canvas, 0, 0);
+
+                    result.data = offscreen.transferToImageBitmap();
+                    result.id = 0;
+
+                    return result;
                 }
             }
+
+            if(listener !== null) listener.imageFailed(objectId);
         }
 
         geometry.dispose();
@@ -1207,8 +1264,15 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model) 
+        if(model)
         {
+            // AS3: _SafeCls_90.as::addObjectFurnitureFromData() - furniture_color was never written
+            // here, so FurnitureVisualization::updateObject()'s getNumber('furniture_color') read
+            // always came back unset and every colorized furni (chair_norja*2, bowl*3, ...) rendered
+            // with getColor()'s 0xFFFFFF default tint - i.e. white - instead of its palette color.
+            // The icon/image paths (getFurnitureIcon()/getFurnitureImage()) already passed the index
+            // through, which is why the same item looked correct in the catalog but white in-room.
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_COLOR, this.getFurnitureColorIndex(typeId), true);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID, typeId);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA, state);
             // AS3: _SafeCls_90.as::addObjectFurnitureFromData() - expiry_time/expirty_timestamp/
@@ -1303,8 +1367,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model) 
+        if(model)
         {
+            // AS3: _SafeCls_90.as::addObjectWallItemFromData() - same furniture_color gap as the
+            // floor path above. AS3 writes this one non-immutable (unlike the floor path's `true`).
+            model.setNumber(RoomObjectVariableEnum.FURNITURE_COLOR, this.getWallItemColorIndex(typeId), false);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_TYPE_ID, typeId);
             model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA, state);
             // AS3: _SafeCls_90.as::addObjectWallItemFromData() - see addRoomObjectFurniture()'s
@@ -4782,6 +4849,22 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._roomManager.initialize(null, this);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureColorIndex()
+    private getFurnitureColorIndex(typeId: number): number
+    {
+        if(this._contentLoader != null) return this._contentLoader.getActiveObjectColorIndex(typeId);
+
+        return 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemColorIndex()
+    private getWallItemColorIndex(typeId: number): number
+    {
+        if(this._contentLoader != null) return this._contentLoader.getWallItemColorIndex(typeId);
+
+        return 0;
+    }
+
     /**
      * Get furniture className from typeId.
      * Uses RoomContentLoader's typeId→className mapping (populated by setActiveObjectType/setWallItemType).
@@ -4791,7 +4874,7 @@ export class RoomEngine extends Component implements IRoomEngine,
      * @param category The object category (furniture or wall)
      * @returns The className string
      */
-    private getFurnitureClassName(typeId: number, category: number): string 
+    private getFurnitureClassName(typeId: number, category: number): string
     {
         // First try the content loader's typeId→className map
         const className = this._contentLoader.getClassName(typeId, category);

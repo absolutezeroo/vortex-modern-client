@@ -1,18 +1,25 @@
 /**
  * AnimatedPetVisualizationData
  *
- * @see com.sulake.habbo.room.object.visualization.pet.AnimatedPetVisualizationData
+ * Extends AnimatedFurnitureVisualizationData with pet-specific posture/gesture animation tables,
+ * held per scale in PetAnimationSizeData.
  *
- * Extends AnimatedFurnitureVisualizationData with pet-specific posture/gesture
- * animation mappings. Uses PetAnimationSizeData for animation resolution.
+ * AS3 parses these from the visualization XML; this port receives the same data already decoded
+ * from the .nitro bundle, so the element handlers take decoded objects instead of XML nodes.
  *
- * STUB - Core structure and API defined. Complex posture/gesture parsing
- * to be completed when pet rendering is implemented.
+ * TODO(AS3): `defineVisualizations()` is not overridden yet. AS3 uses it to set the
+ * head-turn flag (`_isAllowedToTurnHead = graphics.@disableheadturn != "1"`), which backs
+ * `isAllowedToTurnHead` - still hardcoded true here. It does not affect image rendering.
+ * `getZOffset()`/`getDirectionValue()`/`getTag()` below are also still stubs (no AS3 counterpart
+ * on this class - they predate this pass).
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as
  */
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {SizeData} from '../data/SizeData';
 import {AnimationSizeData} from '../data/AnimationSizeData';
 import {AnimatedFurnitureVisualizationData} from '../furniture/AnimatedFurnitureVisualizationData';
+import {PetAnimationSizeData} from './PetAnimationSizeData';
 
 export class AnimatedPetVisualizationData extends AnimatedFurnitureVisualizationData
 {
@@ -35,111 +42,110 @@ export class AnimatedPetVisualizationData extends AnimatedFurnitureVisualization
         return this._allowHeadTurn;
     }
 
-    /**
-	 * Get the animation ID for a posture name.
-	 */
-    getAnimationForPosture(_scale: number, _posture: string): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getAnimationForPosture()
+    getAnimationForPosture(scale: number, posture: string): number
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getAnimationForPosture(posture);
+
         return -1;
     }
 
-    /**
-	 * Check if gestures are disabled for a posture.
-	 */
-    getGestureDisabled(_scale: number, _posture: string): boolean
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getGestureDisabled()
+    getGestureDisabled(scale: number, posture: string): boolean
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getGestureDisabled(posture);
+
         return false;
     }
 
-    /**
-	 * Get the animation ID for a gesture name.
-	 */
-    getAnimationForGesture(_scale: number, _gesture: string): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getAnimationForGesture()
+    getAnimationForGesture(scale: number, gesture: string): number
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getAnimationForGesture(gesture);
+
         return -1;
     }
 
-    /**
-	 * Get the posture name for an animation index.
-	 */
-    getPostureForAnimation(_scale: number, _animationIndex: number, _useDefault: boolean): string | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getPostureForAnimation()
+    getPostureForAnimation(scale: number, animationIndex: number, useDefault: boolean): string | null
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getPostureForAnimation(animationIndex, useDefault);
+
         return null;
     }
 
-    /**
-	 * Get the gesture name for an animation index.
-	 */
-    getGestureForAnimation(_scale: number, _animationIndex: number): string | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getGestureForAnimation()
+    getGestureForAnimation(scale: number, animationIndex: number): string | null
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getGestureForAnimation(animationIndex);
+
         return null;
     }
 
-    /**
-	 * Get the gesture name for an animation ID.
-	 */
-    getGestureForAnimationId(_scale: number, _animationId: number): string | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getGestureForAnimationId()
+    getGestureForAnimationId(scale: number, animationId: number): string | null
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getGestureForAnimationId(animationId);
+
         return null;
     }
 
-    /**
-	 * Get the number of defined postures.
-	 */
-    getPostureCount(_scale: number): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getPostureCount()
+    getPostureCount(scale: number): number
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getPostureCount();
+
         return 0;
     }
 
-    /**
-	 * Get the number of defined gestures.
-	 */
-    getGestureCount(_scale: number): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::getGestureCount()
+    getGestureCount(scale: number): number
     {
-        // TODO: Delegate to PetAnimationSizeData
+        const sizeData = this.getSizeData(scale);
+
+        if(sizeData instanceof PetAnimationSizeData) return sizeData.getGestureCount();
+
         return 0;
     }
 
-    /**
-	 * Get the Z offset for a layer at a given direction.
-	 */
-    getZOffset(_scale: number, _direction: number, _layerIndex: number): number
-    {
-        // TODO: Implement Z offset lookup
-        return 0;
-    }
+    // AS3's AnimatedPetVisualizationData overrides exactly three members - defineVisualizations(),
+    // createSizeData() and processVisualizationElement() - and nothing else. It deliberately
+    // inherits getDirectionValue()/getZOffset()/getTag() from FurnitureVisualizationData.
+    //
+    // This port previously *added* stub overrides for those three, with no AS3 counterpart. They
+    // shadowed the parent's real implementations, and getDirectionValue() in particular returned
+    // `Math.floor(direction / 45) * 45` - i.e. the raw angle (90) instead of the visualization's
+    // own direction index (0-7). Every pet sprite was therefore looked up as "cat_64_a_90_0",
+    // which exists in no pet library, so all six layers missed and the pet rendered as nothing.
+    // Removed rather than implemented: inheriting is what AS3 does.
 
-    /**
-	 * Get the direction value (snapped to valid direction).
-	 */
-    getDirectionValue(_scale: number, _direction: number): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::createSizeData()
+    // Only scales above 1 (i.e. everything but the smallest) get posture/gesture tables.
+    protected override createSizeData(size: number, layerCount: number, angle: number): SizeData
     {
-        // TODO: Implement direction snapping
-        return Math.floor(_direction / 45) * 45;
-    }
+        if(size > 1) return new PetAnimationSizeData(layerCount, angle);
 
-    /**
-	 * Get the tag for a layer.
-	 */
-    getTag(_scale: number, _direction: number, _layerIndex: number): string
-    {
-        // TODO: Implement tag lookup from visualization data
-        return '';
-    }
-
-    protected override createSizeData(_size: number, layerCount: number, angle: number): SizeData
-    {
-        // TODO: Use PetAnimationSizeData for sizes > 1 (when pet rendering is implemented)
         return new AnimationSizeData(layerCount, angle);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualizationData.as::processVisualizationElement()
+    // AS3 casts sizeData to PetAnimationSizeData and, when the cast fails, silently skips the
+    // element and still returns true (the smallest scale has a plain AnimationSizeData) - the
+    // `instanceof` guards below reproduce that rather than treating it as an error.
     protected override processVisualizationElement(sizeData: SizeData, elementName: string, elementData: Record<string, unknown>): boolean
     {
         if(sizeData === null || elementData === null)
@@ -150,10 +156,24 @@ export class AnimatedPetVisualizationData extends AnimatedFurnitureVisualization
         switch(elementName)
         {
             case 'postures':
-                // TODO: Parse posture definitions (PetAnimationSizeData.definePostures)
+                if(sizeData instanceof PetAnimationSizeData)
+                {
+                    if(!sizeData.definePostures(elementData as {defaultPosture?: string; postures?: {id?: string; animationId?: number}[]})) return false;
+                }
+
                 return true;
             case 'gestures':
-                // TODO: Parse gesture definitions (PetAnimationSizeData.defineGestures)
+                if(sizeData instanceof PetAnimationSizeData)
+                {
+                    // AS3 reads the <gestures> node's child list; the .nitro bundle decodes that
+                    // same list to either a bare array or a { gestures: [...] } wrapper.
+                    const gestures = Array.isArray(elementData)
+                        ? elementData as {id?: string; animationId?: number}[]
+                        : (elementData as {gestures?: {id?: string; animationId?: number}[]}).gestures ?? null;
+
+                    if(!sizeData.defineGestures(gestures)) return false;
+                }
+
                 return true;
             default:
                 return super.processVisualizationElement(sizeData, elementName, elementData);

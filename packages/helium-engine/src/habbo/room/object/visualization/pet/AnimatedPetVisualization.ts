@@ -14,9 +14,11 @@
 import {Texture} from 'pixi.js';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObjectVisualizationData} from '@room/object/visualization/IRoomObjectVisualizationData';
+import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 import {AnimationStateData} from '../data/AnimationStateData';
 import type {AnimationFrame} from '../data/AnimationFrame';
 import {AnimatedFurnitureVisualization} from '../furniture/AnimatedFurnitureVisualization';
+import {FurnitureVisualizationData} from '../furniture/FurnitureVisualizationData';
 import {AnimatedPetVisualizationData} from './AnimatedPetVisualizationData';
 
 /**
@@ -67,8 +69,18 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
     private static readonly GESTURE_ANIMATION_INDEX: number = 1;
     private static readonly EXPERIENCE_BUBBLE_VISIBLE_IN_MS: number = 1000;
 
-    private _posture: string = '';
-    private _gesture: string = '';
+    // AS3 initialises both to "" and relies on the *model* returning null for an unset
+    // figure_posture/figure_gesture, so its first validateActions() pass sees `null != ""` and runs
+    // both setAnimationForIndex() calls. This port's IRoomObjectModel.getString() is typed `string`
+    // and hands back "" for a missing key, so that comparison could never fire and neither
+    // animation state was ever assigned - both kept the default animation 0, and since
+    // getSpriteXOffset()/getSpriteYOffset() sum the frames of every state, each layer's offset was
+    // applied twice (head and tail visibly detached).
+    //
+    // Initialising the fields to null instead restores the exact same first-pass behaviour ('' !==
+    // null) without changing getString()'s signature across the whole engine.
+    private _posture: string | null = null;
+    private _gesture: string | null = null;
     private _isSleeping: boolean = false;
     private _headDirection: number = 0;
     private _experienceData: ExperienceData | null = null;
@@ -142,6 +154,19 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getAnimationId()
+    // Furniture has one animation, so the base ignores the state it is handed and answers with the
+    // visualization's own shared `animationId`. A pet runs two states at once (posture + gesture),
+    // so each must answer with *its own* id.
+    //
+    // Without this override both states resolved to the same shared animation and produced
+    // identical frames - and since getSpriteXOffset()/getSpriteYOffset() sum the frames of every
+    // state, every layer's offset was applied exactly twice (head and tail visibly detached).
+    protected override getAnimationId(stateData: AnimationStateData): number
+    {
+        return stateData.animationId;
+    }
+
     protected override updateAnimation(scale: number): number
     {
         const roomObject = this.object;
@@ -160,7 +185,7 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
         return super.updateAnimation(scale);
     }
 
-    protected override updateModel(scale: number): boolean
+    protected override updateModel(_scale: number): boolean
     {
         const roomObject = this.object;
 
@@ -172,8 +197,18 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
 
         if(model.getUpdateID() !== this._updateModelCounter)
         {
-            const posture = model.getString('figure_posture') ?? '';
-            const gesture = model.getString('figure_gesture') ?? '';
+            // Do NOT coerce these to '': AS3 reads them straight off the model and compares against
+            // fields initialised to "". The catalog preview never sets figure_posture/figure_gesture
+            // (getPetImage passes no posture), so AS3 sees null, `null != ""` is true, and it
+            // therefore *does* run both setAnimationForIndex() calls on the first pass - animation 0
+            // for the posture, -1 for the gesture, which leaves the gesture state empty.
+            //
+            // With `?? ''` the comparison became '' !== '' - false - so neither state was ever set
+            // and both kept their default animation 0. getSpriteXOffset()/getSpriteYOffset() sum the
+            // frames of *every* state (faithfully to AS3), so each layer's offset was applied twice:
+            // the head and tail rendered at double their intended displacement.
+            const posture = model.getString('figure_posture');
+            const gesture = model.getString('figure_gesture');
 
             this.validateActions(posture, gesture);
 
@@ -295,6 +330,149 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
         return super.getFrameNumber(scale, layerIndex);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getAsset()
+    // A pet's sprites are palette-swapped: the base library is greyscale and the colour comes from
+    // the palette named by pet_palette_index. This override was missing entirely, so pets fell
+    // through to FurnitureVisualization.getAsset(), which calls getAsset() without a palette and
+    // therefore rendered every pet uncoloured.
+    //
+    // A layer listed in pet_custom_layer_ids additionally carries its own part id (appended to the
+    // asset name) and may override the palette with its own.
+    protected override getAsset(name: string, layerIndex: number = -1): IGraphicAsset | null
+    {
+        if(this.assetCollection === null) return null;
+
+        let paletteName = this._paletteName;
+        let partId = -1;
+
+        const customIndex = this._customLayerIds.indexOf(layerIndex);
+
+        if(customIndex > -1)
+        {
+            partId = this._customPartIds[customIndex] ?? -1;
+
+            const customPaletteId = this._customPaletteIds[customIndex] ?? -1;
+
+            paletteName = customPaletteId > -1 ? String(customPaletteId) : this._paletteName;
+        }
+
+        if(partId > -1) name += '_' + partId;
+
+        // for the real library (the first calls land on the place-holder object).
+
+        return this.assetCollection.getAssetWithPalette(name, paletteName);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getDirection()
+    // A pet's head turns independently of its body, so head sprites resolve their own direction.
+    // Without this the head was built with the body's direction and landed in the wrong place.
+    private getDirection(scale: number, layerIndex: number): number
+    {
+        if(this.isHeadSprite(layerIndex) && this._petData !== null)
+        {
+            return this._petData.getDirectionValue(scale, this._headDirection);
+        }
+
+        return this.direction;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::isHeadSprite()
+    private isHeadSprite(layerIndex: number): boolean
+    {
+        if(this._headSprites[layerIndex] == null)
+        {
+            const tag = this._petData !== null ? this._petData.getTag(this._resolvedSize, -1, layerIndex) : '';
+
+            this._headSprites[layerIndex] = tag === 'head' || tag === 'hair';
+        }
+
+        return this._headSprites[layerIndex] === true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::isNonHeadSprite()
+    private isNonHeadSprite(layerIndex: number): boolean
+    {
+        if(this._nonHeadSprites[layerIndex] == null)
+        {
+            if(layerIndex < this.spriteCount - 2)
+            {
+                const tag = this._petData !== null ? this._petData.getTag(this._resolvedSize, -1, layerIndex) : '';
+
+                this._nonHeadSprites[layerIndex] = tag != null && tag.length > 0 && tag !== 'head' && tag !== 'hair';
+            }
+            else
+            {
+                this._nonHeadSprites[layerIndex] = true;
+            }
+        }
+
+        return this._nonHeadSprites[layerIndex] === true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::isSaddleSprite()
+    private isSaddleSprite(layerIndex: number): boolean
+    {
+        if(this._saddleSprites[layerIndex] == null)
+        {
+            const tag = this._petData !== null ? this._petData.getTag(this._resolvedSize, -1, layerIndex) : '';
+
+            this._saddleSprites[layerIndex] = tag === 'saddle';
+        }
+
+        return this._saddleSprites[layerIndex] === true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getSpriteZOffset()
+    protected override getSpriteZOffset(scale: number, _direction: number, layerIndex: number): number
+    {
+        if(this._petData === null) return 0;
+
+        return this._petData.getZOffset(scale, this.getDirection(scale, layerIndex), layerIndex);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getSpriteAssetName()
+    // Differs from the furniture base in three ways: head sprites use their own direction, the
+    // second-to-last layer is always the shadow ("sd", frame 0), and the last layer has no asset.
+    // Note AS3 passes the resolved *size* to getFrameNumber(), not the scale.
+    protected override getSpriteAssetName(scale: number, layerIndex: number): string
+    {
+        // the object is still alive (getGenericRoomObjectImage disposes it right after rendering).
+
+        if(this._headOnly && this.isNonHeadSprite(layerIndex)) return '';
+
+        if(this._isRiding && this.isSaddleSprite(layerIndex)) return '';
+
+        const count = this.spriteCount;
+
+        if(layerIndex >= count - 1) return '';
+
+        const size = this.getSize(scale);
+
+        if(layerIndex < count - 2)
+        {
+            if(layerIndex >= FurnitureVisualizationData.LAYER_NAMES.length) return '';
+
+            const layerName = FurnitureVisualizationData.LAYER_NAMES[layerIndex];
+
+            if(size === 1) return `${this.type}_icon_${layerName}`;
+
+            return `${this.type}_${size}_${layerName}_${this.getDirection(scale, layerIndex)}_${this.getFrameNumber(size, layerIndex)}`;
+        }
+
+        return `${this.type}_${size}_sd_${this.getDirection(scale, layerIndex)}_0`;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getSpriteColor()
+    // The pet's user-picked colour tints every sprite except the last one, which stays white.
+    // Without this override _petColor was read off the model and then never applied to anything,
+    // so every pet rendered in its palette's own colours and ignored the colour selection.
+    protected override getSpriteColor(_scale: number, layerIndex: number, _colorId: number): number
+    {
+        if(layerIndex < this.spriteCount - 1) return this._petColor;
+
+        return 0xFFFFFF;
+    }
+
     protected override getSpriteXOffset(scale: number, direction: number, layerIndex: number): number
     {
         let offset = super.getSpriteXOffset(scale, direction, layerIndex);
@@ -353,23 +531,58 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
     /**
 	 * Validate and update posture/gesture actions.
 	 */
-    private validateActions(posture: string, gesture: string): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::validateActions()
+    // This was a stub, and it is what fed everything else: with no animation ever set, the
+    // animation states stayed empty, so getFrameNumber() fell back to 0 (wrong asset names for the
+    // layers that need a real frame) and getSpriteXOffset()/getSpriteYOffset() added no frame
+    // offsets at all - which is why the head and tail sat detached from the body.
+    private validateActions(posture: string | null, gesture: string | null): void
     {
         if(this._petData === null) return;
+
+        let resolvedGesture: string | null = gesture;
 
         if(posture !== this._posture)
         {
             this._posture = posture;
-            // TODO: Get animation ID for posture from _petData
-            // setAnimationForIndex(POSTURE_ANIMATION_INDEX, animId);
+
+            this.setAnimationForIndex(
+                AnimatedPetVisualization.POSTURE_ANIMATION_INDEX,
+                this._petData.getAnimationForPosture(this._resolvedSize, posture ?? '')
+            );
         }
 
-        if(gesture !== this._gesture)
+        // AS3 nulls the gesture out when the current posture disables gestures - note it tests the
+        // *posture*, not the gesture.
+        // library, whose own (1-posture) data would otherwise be what gets reported.
+
+        if(this._petData.getGestureDisabled(this._resolvedSize, posture ?? '')) resolvedGesture = null;
+
+        if(resolvedGesture !== this._gesture)
         {
-            this._gesture = gesture;
-            // TODO: Get animation ID for gesture from _petData
-            // setAnimationForIndex(GESTURE_ANIMATION_INDEX, animId);
+            this._gesture = resolvedGesture;
+
+            this.setAnimationForIndex(
+                AnimatedPetVisualization.GESTURE_ANIMATION_INDEX,
+                this._petData.getAnimationForGesture(this._resolvedSize, resolvedGesture ?? '')
+            );
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::getAnimationStateData()
+    private getAnimationStateData(index: number): AnimationStateData | null
+    {
+        return this._animationStates[index] ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::setAnimationForIndex()
+    private setAnimationForIndex(index: number, animationId: number): void
+    {
+        const stateData = this.getAnimationStateData(index);
+
+        if(stateData === null) return;
+
+        if(this.setSubAnimation(stateData, animationId)) this._allAnimationsOver = false;
     }
 
     /**
