@@ -1314,6 +1314,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::openClubCenter()
     public openClubCenter(): void
     {
         this.context.createLinkEvent('habboUI/open/hccenter');
