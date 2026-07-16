@@ -16,6 +16,10 @@ export const RoomObjectLogicEnum = {
     FURNITURE_STICKIE: 'furniture_stickie',
     FURNITURE_PRESENT: 'furniture_present',
     FURNITURE_TROPHY: 'furniture_trophy',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectLogicEnum.as::FURNITURE_FURNI_CHEST
+    FURNITURE_FURNI_CHEST: 'furniture_furnichest',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectLogicEnum.as::FURNITURE_COINS_CHEST
+    FURNITURE_COINS_CHEST: 'furniture_coinschest',
     FURNITURE_ECOTRON_BOX: 'furniture_ecotron_box',
     FURNITURE_DICE: 'furniture_dice',
     FURNITURE_HOCKEY_SCORE: 'furniture_hockey_score',
@@ -70,6 +74,13 @@ export const RoomObjectLogicEnum = {
     FURNITURE_EDITABLE_INTERNAL_LINK: 'furniture_editable_internal_link',
     FURNITURE_EDITABLE_ROOM_LINK: 'furniture_editable_room_link',
     FURNITURE_CRAFTING_GIZMO: 'furniture_crafting_gizmo',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectLogicEnum.as::FURNITURE_NFT_CREDIT
+    FURNITURE_NFT_CREDIT: 'furniture_nft_credit',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectLogicEnum.as:138
+    // The AS3 identifier is obfuscated in every tree that has it (_SafeStr_11143 here, const_801 in
+    // win63_version, _SafeStr_10581 in WIN63-202601121721) and the 2016 build predates NFTs, so the
+    // real name is unrecoverable. This one is derived from the value, not recovered.
+    FURNITURE_NFT_REWARD_BOX: 'furniture_nft_reward_box',
 
     // Room and users
     ROOM: 'room',
