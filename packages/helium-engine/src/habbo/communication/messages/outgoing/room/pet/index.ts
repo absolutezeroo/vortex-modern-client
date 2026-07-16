@@ -10,3 +10,5 @@ export * from './UseProductForPetComposer';
 export * from './GiveSupplementToPetMessageComposer';
 export * from './IssuePetCommandMessageComposer';
 export * from './MovePetMessageComposer';
+export * from './GetPetInfoMessageComposer';
+export * from './PetSelectedMessageComposer';

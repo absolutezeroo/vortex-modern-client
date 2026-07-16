@@ -3,6 +3,7 @@ import type {IUserData} from './IUserData';
 import {UserDataType} from './UserData';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import {GetSelectedBadgesMessageComposer} from '../communication/messages/outgoing/users/GetSelectedBadgesMessageComposer';
+import {GetPetInfoMessageComposer} from '../communication/messages/outgoing/room/pet/GetPetInfoMessageComposer';
 
 /**
  * Room user data manager
@@ -221,13 +222,16 @@ export class UserDataManager implements IUserDataManager
         }
     }
 
+    // AS3: sources/win63_version/habbo/session/UserDataManager.as::requestPetInfo()
+    // First link in the pet-infostand chain: the server answers with PetInfoMessageEvent (3192),
+    // which RoomUsersHandler turns into RoomSessionPetInfoUpdateEvent for InfoStandWidgetHandler.
     requestPetInfo(webId: number): void
     {
         const petData = this.getPetUserData(webId);
 
         if(petData && this._connection)
         {
-            // TODO(AS3): Port sources/win63_version/habbo/communication/messages/outgoing/room/pets/GetPetInfoMessageComposer.as and send it here with petData.webID.
+            this._connection.send(new GetPetInfoMessageComposer(petData.webID));
         }
     }
 

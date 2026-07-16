@@ -37,7 +37,6 @@ import {IID_RoomRendererFactory} from '@iid/IIDRoomRendererFactory';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
-import {RoomObjectLogicEnum} from './object/RoomObjectLogicEnum';
 import {RoomObjectUserTypes} from './object/RoomObjectUserTypes';
 import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
 import {RoomEngineEvent} from './events/RoomEngineEvent';
@@ -638,13 +637,6 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.getGenericRoomObjectThumbnail(activeType, colorIndex, listener, param, stuffData);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::validateFurnitureLocation()
-    // TS deviation: FurniStackingHeightMap.validateLocation()'s optional 10th
-    // (reference-height) parameter is omitted — this port's validateLocation() already
-    // derives its own reference height from the first non-limit tile scanned rather
-    // than always the target tile, which only differs from AS3 for the target tile's
-    // own already-occupied footprint (a narrower case than the general validation this
-
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getWallItemIcon()
     getWallItemIcon(type: number, listener: IGetImageListener, param: string | null = null): ImageResult 
     {
@@ -764,7 +756,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetColor()
-    getPetColor(typeId: number, colorId: number): PetColorResult | null
+    getPetColor(typeId: number, colorId: number): PetColorResult | null 
     {
         if(this._contentLoader != null) return this._contentLoader.getPetColor(typeId, colorId);
 
@@ -775,7 +767,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // Returns null (not an empty array) with no content loader, matching AS3 - the caller in
     // PetPreviewCatalogWidget iterates the result, so the distinction is preserved rather than
     // smoothed over.
-    getPetColorsByTag(typeId: number, tag: string): PetColorResult[] | null
+    getPetColorsByTag(typeId: number, tag: string): PetColorResult[] | null 
     {
         if(this._contentLoader != null) return this._contentLoader.getPetColorsByTag(typeId, tag);
 
@@ -783,7 +775,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetLayerIdForTag()
-    getPetLayerIdForTag(typeId: number, tag: string): number
+    getPetLayerIdForTag(typeId: number, tag: string): number 
     {
         if(this._contentLoader != null) return this._contentLoader.getPetLayerIdForTag(typeId, tag);
 
@@ -791,7 +783,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetDefaultPalette()
-    getPetDefaultPalette(typeId: number, tag: string): PetColorResult | null
+    getPetDefaultPalette(typeId: number, tag: string): PetColorResult | null 
     {
         if(this._contentLoader != null) return this._contentLoader.getPetDefaultPalette(typeId, tag);
 
@@ -950,7 +942,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const visualization = object.getVisualization();
 
-        if(visualization === null) 
+        if(visualization === null)
         {
             room.disposeObject(objectId, category);
 
@@ -975,7 +967,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         result.id = objectId;
 
-        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null)
+        if(!forceImmediate && !this.isRoomObjectContentAvailable(type) && listener !== null) 
         {
             // AS3 also captures a (necessarily blank, since content isn't loaded yet) image here
             // and stores it on the result - this port never trusts a synchronous ImageResult.data
@@ -1003,12 +995,12 @@ export class RoomEngine extends Component implements IRoomEngine,
             // SelectProduct -> updateImage() -> getPetImage(). With an always-async result that
             // re-enters imageReady() and spins forever, allocating a temporary-room object per
             // iteration. Returning synchronously ends the chain exactly where AS3 ends it.
-            if(canvas !== null)
+            if(canvas !== null) 
             {
                 const offscreen = new OffscreenCanvas(canvas.width, canvas.height);
                 const offscreenCtx = offscreen.getContext('2d');
 
-                if(offscreenCtx !== null)
+                if(offscreenCtx !== null) 
                 {
                     offscreenCtx.drawImage(canvas, 0, 0);
 
@@ -1165,13 +1157,37 @@ export class RoomEngine extends Component implements IRoomEngine,
         map.populate(objects);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetType()
+    // Resolves a pet's content type from its figure — the figure's first space-separated token is
+    // the pet type id, which RoomContentLoader maps to the asset library name. AS3's own fallback
+    // when it has no content loader is the literal 'pet'; kept, even though that type resolves to
+    // nothing, because it is the AS3 behaviour and the loader is never actually null here.
+    private getPetType(figure: string | null): string | null
+    {
+        if(figure !== null)
+        {
+            const parts = figure.split(' ');
+
+            if(parts.length > 1)
+            {
+                const typeId = parseInt(parts[0], 10);
+
+                if(this._contentLoader !== null) return this._contentLoader.getPetType(typeId);
+
+                return RoomObjectUserTypes.PET;
+            }
+        }
+
+        return null;
+    }
+
     addRoomObjectUser(
         roomId: number,
         id: number,
         location: IVector3d,
         direction: IVector3d,
         type: string
-    ): boolean 
+    ): boolean
     {
         const room = this.getRoomInstance(roomId);
         if(!room) 
@@ -1179,24 +1195,20 @@ export class RoomEngine extends Component implements IRoomEngine,
             return false;
         }
 
-        // Determine logic type based on user type
-        let logicType: string = RoomObjectLogicEnum.USER;
-
-        if(type === RoomObjectUserTypes.BOT) 
-        {
-            logicType = RoomObjectLogicEnum.BOT;
-        }
-        else if(type === RoomObjectUserTypes.RENTABLE_BOT) 
-        {
-            logicType = RoomObjectLogicEnum.RENTABLE_BOT;
-        }
-        else if(type === RoomObjectUserTypes.PET) 
-        {
-            logicType = RoomObjectLogicEnum.PET;
-        }
-
-        // Create object via RoomManager (room.createRoomObject delegates to container)
-        const object = room.createRoomObject(id, logicType, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
+        // AS3 (addObjectUser -> createObjectUser) passes the resolved object *type* straight
+        // through; this port used to map it to a RoomObjectLogicEnum value first and pass that
+        // instead. The mapping was a pure identity — RoomObjectLogicEnum and RoomObjectUserTypes
+        // declare the same four strings ('user'/'pet'/'bot'/'rentable_bot') — so it changed nothing
+        // for users and bots, but it also *undid* addObjectUser()'s pet-type resolution: a pet
+        // arriving here as its real content type ('monsterplant', ...) matched none of the cases
+        // and silently fell back to 'user'. Passing `type` is what AS3 does and is identical for
+        // every previously-working case.
+        //
+        // RoomManager.createRoomObject() then derives the logic and visualization from this type
+        // via RoomContentLoader (getLogicType()/getVisualizationType() off the bundle's index), so
+        // a real pet type resolves to PetLogic + AnimatedPetVisualization the same way 'user'
+        // resolves to AvatarLogic + AvatarVisualization.
+        const object = room.createRoomObject(id, type, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
 
         if(!object) 
         {
@@ -1264,7 +1276,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model)
+        if(model) 
         {
             // AS3: _SafeCls_90.as::addObjectFurnitureFromData() - furniture_color was never written
             // here, so FurnitureVisualization::updateObject()'s getNumber('furniture_color') read
@@ -1367,7 +1379,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const model = (object as IRoomObjectController).getModelController();
 
-        if(model)
+        if(model) 
         {
             // AS3: _SafeCls_90.as::addObjectWallItemFromData() - same furniture_color gap as the
             // floor path above. AS3 writes this one non-immutable (unlike the floor path's `true`).
@@ -2503,7 +2515,30 @@ export class RoomEngine extends Component implements IRoomEngine,
                 break;
         }
 
-        if(!this.addRoomObjectUser(roomId, roomIndex, location, direction, type)) 
+        // AS3: addObjectUser() — `if(_loc11_ == "pet") _loc11_ = getPetType(param7);`
+        //
+        // A pet's room object is NOT typed 'pet': that literal is only the user-type name, and no
+        // asset library is called 'pet'. AS3 replaces it with the pet's real content type, resolved
+        // from the first token of its figure. Without this the object was created as type 'pet',
+        // which RoomContentLoader.hasInternalContent() does not recognise (it knows only 'user',
+        // 'game_snowball', 'game_snowsplash'), so RoomManager fell through to resolving logic and
+        // visualization off a non-existent bundle and defaulted to FurnitureLogic +
+        // FurnitureVisualization. FurnitureLogic ignores RoomObjectAvatarFigureUpdateMessage, so
+        // the figure below was dropped on the floor, the model kept no pet_type/pet_palette_index/
+        // pet_color, and every pet in a room rendered as a black box. PetLogic was never attached
+        // to anything — it was dead code.
+        if(type === RoomObjectUserTypes.PET)
+        {
+            const petType = this.getPetType(figure);
+
+            // AS3 lets a null type reach createObjectUser(), which returns null, and addObjectUser()
+            // then returns false. Bailing here is the same outcome, one step earlier.
+            if(petType === null) return false;
+
+            type = petType;
+        }
+
+        if(!this.addRoomObjectUser(roomId, roomIndex, location, direction, type))
         {
             return false;
         }
@@ -2774,11 +2809,15 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this._resizeHandlers.delete(canvas);
             }
 
-            // Remove from PixiJS stage
-            if(this._pixiStage && canvas.container.parent === this._pixiStage) 
-            {
-                this._pixiStage.removeChild(canvas.container);
-            }
+            // Detach from whatever currently holds the container, not just the stage.
+            // createRoomCanvas() parents it onto _pixiStage, but RoomDesktop.createRoomView() then
+            // re-homes it into the room_canvas_wrapper window (AS3: var_174.setDisplayObject()),
+            // so by the time a room is disposed its parent is that window's display object. Testing
+            // for _pixiStage therefore never matched a real room canvas and it was never removed:
+            // every room left its fully-rendered container on screen, and they stacked up as you
+            // moved from room to room. Preview canvases, which keep the stage as parent, are
+            // detached by this exactly as before.
+            canvas.container.parent?.removeChild(canvas.container);
 
             const room = this.getRoomInstance(roomId);
             const renderer = room?.getRenderer() as IRoomRenderer | null;
@@ -2811,9 +2850,19 @@ export class RoomEngine extends Component implements IRoomEngine,
      *
      * @returns The PixiJS Container for the canvas, or null on failure
      */
-    createRoomCanvas(roomId: number, canvasId: number, width: number, height: number, scale: number): Container | null 
+    createRoomCanvas(roomId: number, canvasId: number, width: number, height: number, scale: number): Container | null
     {
         const key = roomId * 1000 + canvasId;
+
+        // Tear down any canvas already registered under this key before replacing it. The set()
+        // below would otherwise just drop the old one from the map while its container stays
+        // parented in the room view, leaving a fully-rendered room on screen that nothing can
+        // reach any more - disposeRenderingCanvas() looks the canvas up by this same key.
+        if(this._renderingCanvases.has(key))
+        {
+            this.disposeRenderingCanvas(roomId, canvasId);
+        }
+
         const room = this.getRoomInstance(roomId);
 
         if(!room) 
@@ -3427,9 +3476,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::validateFurnitureDirection()
     // Used by modifyRoomObject()'s rotate case to check the newly-rotated footprint fits
     // at the object's current location before sending the rotation to the server.
-    // Same reference-height deviation as validateFurnitureLocation() below: AS3 passes the
-    // object's own z explicitly as FurniStackingHeightMap.validateLocation()'s 10th param;
-    // this port lets validateLocation() derive it from the first newly-checked tile instead.
+    // Like validateFurnitureLocation(), AS3 leaves validateLocation()'s 10th (reference-height)
+    // parameter at its -1 default, which makes it derive the reference from the target tile.
     private validateFurnitureDirection(object: IRoomObject, direction: IVector3d, stackingMap: FurniStackingHeightMap | null): boolean 
     {
         const model = object.getModel();
@@ -4335,7 +4383,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const category = this.findObjectCategory(this._activeRoomId, obj);
 
-        if(category !== null) 
+        if(category !== null)
         {
             this.selectRoomObject(this._activeRoomId, objId, category);
         }
@@ -4850,7 +4898,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getFurnitureColorIndex()
-    private getFurnitureColorIndex(typeId: number): number
+    private getFurnitureColorIndex(typeId: number): number 
     {
         if(this._contentLoader != null) return this._contentLoader.getActiveObjectColorIndex(typeId);
 
@@ -4858,7 +4906,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getWallItemColorIndex()
-    private getWallItemColorIndex(typeId: number): number
+    private getWallItemColorIndex(typeId: number): number 
     {
         if(this._contentLoader != null) return this._contentLoader.getWallItemColorIndex(typeId);
 
@@ -4874,7 +4922,7 @@ export class RoomEngine extends Component implements IRoomEngine,
      * @param category The object category (furniture or wall)
      * @returns The className string
      */
-    private getFurnitureClassName(typeId: number, category: number): string
+    private getFurnitureClassName(typeId: number, category: number): string 
     {
         // First try the content loader's typeId→className map
         const className = this._contentLoader.getClassName(typeId, category);

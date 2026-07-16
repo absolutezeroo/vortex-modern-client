@@ -121,9 +121,23 @@ export class RoomSession implements IRoomSession
         return this._connection;
     }
 
+    // AS3: sources/win63_version/habbo/session/RoomSession.as::set connection()
+    // AS3 forwards the connection on to its UserDataManager, which this port did not: RoomSession
+    // builds its own UserDataManager (line ~98) and nothing ever gave it a connection, so every
+    // method on it that sends a composer was silently inert — requestPetInfo() bailed on
+    // `if(petData && this._connection)` and the pet infostand could never be requested. Note this
+    // is a *different* instance from the one SessionDataManager builds, which does get a connection
+    // wired; only that one worked.
+    //
+    // AS3's null-guard is kept: dispose() clears the field directly rather than through here, so
+    // nothing depends on being able to null it via the setter.
     set connection(value: IConnection | null)
     {
+        if(value === null) return;
+
         this._connection = value;
+
+        if(this._userDataManager !== null) this._userDataManager.connection = value;
     }
 
     private _roomId: number = 0;

@@ -518,11 +518,13 @@ import {
 import {
     CompostPlantComposer,
     GetPetCommandsComposer,
+    GetPetInfoMessageComposer,
     GiveSupplementToPetMessageComposer,
     HarvestPetComposer,
     IssuePetCommandMessageComposer,
     MountPetComposer,
     MovePetMessageComposer,
+    PetSelectedMessageComposer,
     PickUpPetComposer,
     RemoveSaddleFromPetComposer,
     TogglePetBreedingPermissionComposer,
@@ -1298,6 +1300,19 @@ export class HabboMessages implements IMessageConfiguration
         // register rentable space (4600/4601) and pet (3072/3073) message IDs"
         this._composers.set(3072, IssuePetCommandMessageComposer);
         this._composers.set(2761, MovePetMessageComposer);
+
+        // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/pets/GetPetInfoMessageComposer.as
+        // Header from the emulator's Revision20260701/Headers.cs, which annotates it
+        // "AS3-verified (old-revision trace): requestPetInfo() still exists in current revision at
+        // 3899". Unlike most of the pet set, this one is fully live server-side: a real
+        // GetPetInfoMessageHandler answers it with PetInfoMessageComposer (3192).
+        this._composers.set(3899, GetPetInfoMessageComposer);
+
+        // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/pets/PetSelectedMessageComposer.as
+        // Header from Revision20260701/Headers.cs, annotated "AS3-verified (old-revision trace):
+        // handleGetPetInfoMessage() still exists in current revision at 2757". Also live
+        // server-side (PetSelectedMessageHandler).
+        this._composers.set(2757, PetSelectedMessageComposer);
         this._composers.set(1996, MountPetComposer); // Also used for dismount — AS3 sends an explicit `mount` boolean, same message ID for both
         this._composers.set(3713, TogglePetRidingPermissionComposer);
         this._composers.set(2884, RemoveSaddleFromPetComposer);

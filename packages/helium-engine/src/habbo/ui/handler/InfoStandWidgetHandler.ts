@@ -16,6 +16,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
+import type {ImageResult} from '@habbo/room/ImageResult';
 import {Logger} from '@core/utils/Logger';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {StuffDataFactory} from '@habbo/room/object/data/StuffDataFactory';
@@ -38,6 +39,9 @@ import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetU
 import {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent';
 import {RoomSessionPetInfoUpdateEvent} from '@habbo/session/events/RoomSessionPetInfoUpdateEvent';
 import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
+import {
+    PetSelectedMessageComposer
+} from '@habbo/communication/messages/outgoing/room/pet/PetSelectedMessageComposer';
 import {RoomWidgetInfostandExtraParamEnum} from '@habbo/ui/widget/enums/RoomWidgetInfostandExtraParamEnum';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
@@ -471,13 +475,20 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetPetInfoMessage()
-    // TODO(AS3): the `petSelect.enabled` branch also sends PetSelectedMessageComposer(petId)
-    // (AS3 outgoing/room/pets/PetSelectedMessageComposer.as — a one-int body). Not ported:
-    // its packet header is unverified and Revision20260701 has no handler for it, so there is
-    // nothing to send it to. requestPetInfo() below is the call that actually fetches the info.
+    // requestPetInfo() is the call that actually fetches the info (GetPetInfoMessageComposer, 3899);
+    // the petSelect branch is a fire-and-forget notification with no reply.
     private handleGetPetInfoMessage(petId: number): void
     {
-        this._container?.roomSession?.userDataManager.requestPetInfo(petId);
+        const container = this._container;
+
+        if(!container) return;
+
+        if(container.config?.getBoolean('petSelect.enabled'))
+        {
+            container.connection?.send(new PetSelectedMessageComposer(petId));
+        }
+
+        container.roomSession?.userDataManager.requestPetInfo(petId);
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::onGroupDetails()
@@ -836,13 +847,19 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             event.isOwner = true;
         }
 
-        this.requestFurniImage(event, roomId);
-
+        // Publish the furni data before asking for its image, not after. imageReady() drops any
+        // image whose pending.furniId does not match the widget's current furniData.id, and the
+        // image request can now come back synchronously (see deliverFurniImage()) - which lands
+        // here, mid-call, while the widget still holds the *previous* furni. AS3 gets away with the
+        // opposite order only because its request is always deferred. Emitting first is safe for the
+        // async path too: the widget is populated by then either way.
         container.desktopEvents.emit(event.type, event);
+
+        this.requestFurniImage(event, roomId);
     }
 
     // imageFailed() below instead, once the scale-64 render actually comes back.
-    private requestFurniImage(event: RoomWidgetFurniInfoUpdateEvent, roomId: number): void 
+    private requestFurniImage(event: RoomWidgetFurniInfoUpdateEvent, roomId: number): void
     {
         const roomEngine = this._container?.roomEngine;
 
@@ -850,10 +867,33 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         const result = roomEngine.getRoomObjectImage(roomId, event.id, event.category, new Vector3d(180), 64, this);
 
-        if(result.id > 0) 
-        {
-            this._pendingImageRequests.set(result.id, {furniId: event.id, category: event.category, roomId, scale: 64});
-        }
+        this.deliverFurniImage(result, {furniId: event.id, category: event.category, roomId, scale: 64});
+    }
+
+    // Deliver an ImageResult on whichever contract it came back on. ImageResult's own header spells
+    // the three out: id > 0 means the content is still loading and imageReady()/imageFailed() will
+    // fire later; id === 0 is AS3's "synchronous hit" - the image is already on result.data and no
+    // callback is ever coming; id < 0 means the request never started.
+    //
+    // Only the id > 0 branch used to be handled, so any furni whose content was already loaded -
+    // that is, every furni actually visible in the room - had its image dropped on the floor and the
+    // infostand stayed permanently blank, with nothing logged. The synchronous contract is not
+    // hypothetical: getGenericRoomObjectImage() takes that branch precisely when the content is
+    // available, which is the normal case here.
+    //
+    // Registering the pending entry before dispatching lets the id === 0 case reuse imageReady()'s
+    // own oversize check, scale-1 retry and delivery rather than duplicating them. The retry cannot
+    // recurse: it re-enters with scale 1, and the retry branch only triggers on scale 64.
+    private deliverFurniImage(
+        result: ImageResult | null,
+        pending: {furniId: number; category: number; roomId: number; scale: number}
+    ): void
+    {
+        if(!result || result.id < 0) return;
+
+        this._pendingImageRequests.set(result.id, pending);
+
+        if(result.id === 0) this.imageReady(result.id, result.data);
     }
 
     // AS3: sources/win63_version/habbo/ui/handler/InfoStandWidgetHandler.as::update()
@@ -868,11 +908,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     }): void 
     {
         const roomEngine = this._container?.roomEngine;
-        const result = roomEngine?.getRoomObjectImage(pending.roomId, pending.furniId, pending.category, new Vector3d(180), 1, this);
 
-        if(result && result.id > 0) 
-        {
-            this._pendingImageRequests.set(result.id, {...pending, scale: 1});
-        }
+        if(!roomEngine) return;
+
+        const result = roomEngine.getRoomObjectImage(pending.roomId, pending.furniId, pending.category, new Vector3d(180), 1, this);
+
+        this.deliverFurniImage(result, {...pending, scale: 1});
     }
 }
