@@ -67,7 +67,7 @@ export class ComponentContext extends Component implements IContext
         // For root context, we are our own context
         if(!parentContext)
         {
-            // @ts-ignore - Accessing private field for root context setup
+            // @ts-expect-error - Accessing private field for root context setup
             this._context = this;
         }
     }
@@ -329,15 +329,21 @@ export class ComponentContext extends Component implements IContext
     }
 
     /**
-	 * Log an error
+	 * Log an error.
+	 *
+	 * @returns whether the error was handled by tearing the context down; always false here, only
+	 * CoreComponentContext can return true.
 	 */
-    error(message: string, fatal: boolean = false, code: number = -1, error?: Error): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/ComponentContext.as::error()
+    error(message: string, fatal: boolean = false, code: number = -1, error?: Error): boolean
     {
         this._lastError = message;
 
         log.error(`Error: ${message}`, error);
 
         this.events.emit(ComponentEvents.ERROR, {message, fatal, code, error});
+
+        return false;
     }
 
     /**

@@ -345,9 +345,9 @@ export class CoreComponentContext extends ComponentContext implements ICore
         // loaded at build time. This method is kept for API compatibility
         // and to support dynamic asset loading if needed.
 
-        const assetLibraries = config['asset-libraries'] as string[] | undefined;
-        const serviceLibraries = config['service-libraries'] as string[] | undefined;
-        const componentLibraries = config['component-libraries'] as string[] | undefined;
+        const assetLibraries = config['asset-libraries'] as string[] | null;
+        const serviceLibraries = config['service-libraries'] as string[] | null;
+        const componentLibraries = config['component-libraries'] as string[] | null;
 
         const allUrls: string[] = [
             ...(assetLibraries ?? []),
@@ -692,7 +692,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
 	 *
 	 * @see CoreComponentContext.as lines 466-479 (onEnterFrame)
 	 */
-    override update(deltaTime: number): void
+    override update(_deltaTime: number): void
     {
         if(this.disposed) return;
 
@@ -719,20 +719,48 @@ export class CoreComponentContext extends ComponentContext implements ICore
 
     /**
 	 * Report an error. Delegates to the error reporter.
-	 * Critical errors (except code 2015) trigger disposal.
 	 *
-	 * @see CoreComponentContext.as lines 247-255
+	 * A fatal error only tears the core down when the host has opted in via
+	 * `error_handling.crash_on_critical_error` and the code is not listed in
+	 * `error_handling.exclude_crashing`. With neither key configured — the default — AS3 never
+	 * disposes, it just logs and carries on.
+	 *
+	 * @returns true when the core was disposed, so callers can stop.
 	 */
-    override error(message: string, fatal: boolean = false, code: number = -1, error?: Error): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/Core.as::error()
+    override error(message: string, fatal: boolean = false, code: number = -1, error?: Error): boolean
     {
         super.error(message, fatal, code, error);
 
         this._errorReporter.logError(message, fatal, code, error);
 
-        if(fatal && code !== 2015)
+        if(fatal && this.isCrashOnCriticalError && !this.isExcludedFromCrash(code))
         {
             this.dispose();
+
+            return true;
         }
+
+        return false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/Core.as::get isCrashOnCriticalError()
+    private get isCrashOnCriticalError(): boolean
+    {
+        return this.getBoolean('error_handling.crash_on_critical_error');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/Core.as::isExcludedFromCrash()
+    private isExcludedFromCrash(code: number): boolean
+    {
+        const excluded = this.getProperty('error_handling.exclude_crashing');
+
+        if(!excluded)
+        {
+            return false;
+        }
+
+        return excluded.split(',').indexOf(code.toString()) !== -1;
     }
 
     /**
@@ -835,14 +863,20 @@ export class CoreComponentContext extends ComponentContext implements ICore
                     }
                     catch (e)
                     {
-                        log.error(`Error in update receiver: ${e}`);
-                        this.error(
-                            `Error in update receiver: ${(e as Error).message}`,
+                        // AS3 only bails out of the loop when error() reports that it tore the core
+                        // down; otherwise the throwing receiver is skipped and the rest still tick.
+                        // (AS3 passes e.errorID here; a JS Error has no equivalent, hence -1.)
+                        log.error((e as Error).stack ?? String(e));
+
+                        if(this.error(
+                            `Error in update receiver "${receiver.constructor.name}": ${(e as Error).message}`,
                             true,
                             -1,
                             e as Error
-                        );
-                        return;
+                        ))
+                        {
+                            return;
+                        }
                     }
                     i++;
                 }
@@ -899,14 +933,20 @@ export class CoreComponentContext extends ComponentContext implements ICore
                         }
                         catch (e)
                         {
-                            log.error(`Error in update receiver: ${e}`);
-                            this.error(
-                                `Error in update receiver: ${(e as Error).message}`,
+                            // As in simpleFrameUpdateHandler, the loop only stops when error()
+                            // reports it tore the core down. AS3 interpolates the whole error here
+                            // where the simple handler uses e.message — kept as-is.
+                            log.error((e as Error).stack ?? String(e));
+
+                            if(this.error(
+                                `Error in update receiver "${receiver.constructor.name}": ${e}`,
                                 true,
                                 -1,
                                 e as Error
-                            );
-                            ok = false;
+                            ))
+                            {
+                                ok = false;
+                            }
                         }
                         i++;
                     }

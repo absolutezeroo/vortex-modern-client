@@ -106,9 +106,13 @@ export interface IContext extends IDisposable
     createLinkEvent(link: string): void;
 
     /**
-	 * Log an error
+	 * Log an error.
+	 *
+	 * @returns whether the error was handled by tearing the context down, so callers can stop
+	 * whatever they were doing.
 	 */
-    error(message: string, fatal?: boolean, code?: number, error?: Error): void;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/IContext.as::error()
+    error(message: string, fatal?: boolean, code?: number, error?: Error): boolean;
 
     /**
 	 * Log a warning
