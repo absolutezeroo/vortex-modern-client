@@ -97,71 +97,73 @@ export class FurniStackingHeightMap
         return this._isRoomTile[y * this._width + x];
     }
 
+    // AS3: sources/win63_version/habbo/room/utils/FurniStackingHeightMap.as::validPosition()
+    private validPosition(x: number, y: number): boolean
+    {
+        return x >= 0 && x < this._width && y >= 0 && y < this._height;
+    }
+
     /**
 	 * Validate whether furniture can be placed at a location.
-	 * Based on AS3 FurniStackingHeightMap.validateLocation()
 	 *
 	 * @param x - Target X position
 	 * @param y - Target Y position
 	 * @param sizeX - Furniture width
 	 * @param sizeY - Furniture depth
-	 * @param limitX - Limit rectangle X (e.g., existing furniture to ignore)
+	 * @param limitX - Limit rectangle X (the object's own current footprint, ignored by the scan)
 	 * @param limitY - Limit rectangle Y
-	 * @param limitWidth - Limit rectangle width
-	 * @param limitHeight - Limit rectangle height
-	 * @param requireRoomTile - If true, requires all tiles are room tiles
-	 * @param maxHeight - Maximum allowed height (-1 for no limit)
+	 * @param limitSizeX - Limit rectangle width
+	 * @param limitSizeY - Limit rectangle height
+	 * @param alwaysStackable - furniture_always_stackable: only require room tiles, skip the
+	 *                          stacking-blocked and height-equality checks
+	 * @param referenceHeight - Height every scanned tile must match (±0.01); -1 derives it from
+	 *                          the target tile
 	 */
+    // AS3: sources/win63_version/habbo/room/utils/FurniStackingHeightMap.as::validateLocation()
     validateLocation(
         x: number, y: number,
         sizeX: number, sizeY: number,
         limitX: number, limitY: number,
-        limitWidth: number, limitHeight: number,
-        requireRoomTile: boolean,
-        maxHeight: number = -1
+        limitSizeX: number, limitSizeY: number,
+        alwaysStackable: boolean,
+        referenceHeight: number = -1
     ): boolean
     {
-        if(x < 0 || x + sizeX > this._width || y < 0 || y + sizeY > this._height)
+        if(!this.validPosition(x, y) || !this.validPosition(x + sizeX - 1, y + sizeY - 1))
         {
             return false;
         }
 
-        let firstHeight = -1;
+        // An out-of-range limit rectangle collapses to the origin rather than carving a hole out
+        // of negative/overflowing coordinates, and is clamped to the map so it can never mask
+        // tiles past the far edge.
+        if(limitX < 0 || limitX >= this._width) limitX = 0;
+        if(limitY < 0 || limitY >= this._height) limitY = 0;
 
-        for(let ix = x; ix < x + sizeX; ix++)
+        limitSizeX = Math.min(limitSizeX, this._width - limitX);
+        limitSizeY = Math.min(limitSizeY, this._height - limitY);
+
+        // The reference is the target tile's own height, not the first tile the scan happens to
+        // reach: those differ whenever the target tile itself falls inside the limit rectangle
+        // (i.e. the object is being nudged onto a spot it already partly occupies), and the scan
+        // skips it. Every scanned tile must sit at that same height for the footprint to be flat.
+        if(referenceHeight === -1) referenceHeight = this.getTileHeight(x, y);
+
+        for(let iy = y; iy < y + sizeY; iy++)
         {
-            for(let iy = y; iy < y + sizeY; iy++)
+            for(let ix = x; ix < x + sizeX; ix++)
             {
-                // Skip tiles inside the limit rectangle (ignore existing furniture)
-                if(ix >= limitX && ix < limitX + limitWidth
-					&& iy >= limitY && iy < limitY + limitHeight)
+                // Tiles inside the limit rectangle are the object's own, so they are not obstacles.
+                if(ix < limitX || ix >= limitX + limitSizeX || iy < limitY || iy >= limitY + limitSizeY)
                 {
-                    continue;
-                }
+                    const idx = iy * this._width + ix;
 
-                const idx = iy * this._width + ix;
-
-                if(requireRoomTile)
-                {
-                    if(!this._isRoomTile[idx]) return false;
-                }
-                else
-                {
-                    if(!this._isRoomTile[idx]) return false;
-                    if(this._isNotStackable[idx]) return false;
-
-                    const tileHeight = this._heightMap[idx];
-
-                    if(firstHeight < 0)
+                    if(alwaysStackable)
                     {
-                        firstHeight = tileHeight;
+                        if(!this._isRoomTile[idx]) return false;
                     }
-                    else if(Math.abs(tileHeight - firstHeight) > 0.01)
-                    {
-                        return false;
-                    }
-
-                    if(maxHeight >= 0 && tileHeight > maxHeight)
+                    else if(this._isNotStackable[idx] || !this._isRoomTile[idx]
+						|| Math.abs(this._heightMap[idx] - referenceHeight) > 0.01)
                     {
                         return false;
                     }

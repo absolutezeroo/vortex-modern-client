@@ -376,9 +376,22 @@ export class FurnitureVisualizationData implements IRoomObjectVisualizationData
     //
     // Iterating the real keys is safe: an unrecognised name falls through the switch and returns
     // true, in this port exactly as in AS3 - neither has a `default: return false`.
+    //
+    // 'layers' must still be processed first, which the old hard-coded list happened to guarantee
+    // and AS3 gets for free: defineDirections() seeds every direction from _defaultDirection, and
+    // only defineLayers() fills that, so a direction parsed first copies an empty base and loses
+    // every layer offset it does not override itself. AS3 reads XML children in document order,
+    // where <layers> always precedes <directions>; JSON object keys carry no such guarantee, so
+    // hoist it explicitly rather than trusting the bundle's key order. The rest keep their natural
+    // order - nothing else here depends on it.
     private processVisualizationElements(sizeData: SizeData, vizDef: Record<string, unknown>): boolean
     {
-        for(const name of Object.keys(vizDef))
+        const elementNames = Object.keys(vizDef);
+        const orderedNames = elementNames.includes('layers')
+            ? ['layers', ...elementNames.filter(name => name !== 'layers')]
+            : elementNames;
+
+        for(const name of orderedNames)
         {
             const elementData = (vizDef[name] ?? null) as Record<string, unknown> | null;
 

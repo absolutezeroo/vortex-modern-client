@@ -819,8 +819,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
             sortable.name = objectId;
             sortable.sprite = sprite;
-            sortable.x = finalX - this._screenOffsetX;
-            sortable.y = finalY - this._screenOffsetY;
+            // AS3 bakes the mirror into the bitmap itself (getBitmapData(asset, name, flipH, flipV,
+            // color)), so a flipped sprite keeps the same top-left origin and occupies the same rect
+            // as an unflipped one. This port mirrors with Pixi's scale.x/y = -1 instead, which
+            // reflects around the anchor at (0,0) and therefore throws the sprite a full width (or
+            // height) off. Move the origin to the mirrored edge so the drawn pixels land exactly
+            // where a baked flip would put them; the offsetX/offsetY above stay the visual top-left,
+            // which is what rectangleVisible() culls against. Same correction the image path already
+            // applies - see RoomObjectSpriteVisualization.createDisplaySprite().
+            sortable.x = finalX - this._screenOffsetX + (sprite.flipH ? spriteWidth : 0);
+            sortable.y = finalY - this._screenOffsetY + (sprite.flipV ? spriteHeight : 0);
             sortable.z = baseZ + sprite.relativeDepth + 3.7e-11 * (startIndex + localCount);
 
             localCount++;
@@ -1295,11 +1303,21 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
                 continue;
             }
 
-            // Hit test in sprite-local coordinates
-            const localX = x - extSprite.x;
-            const localY = y - extSprite.y;
+            // Hit test in sprite-local coordinates.
+            // A mirrored sprite is drawn with a negative scale anchored on its mirrored edge (see
+            // where sortable.x/y are computed), so screen-space deltas run backwards for it and land
+            // in [-size, 0) - which hitTest() rejects outright, making every flipped sprite
+            // unclickable. Fold the delta back into texture space, which is what hitTest() probes:
+            // for width W the visual offset is localX + W, and the mirrored column is
+            // W - 1 - (localX + W) = -localX - 1. AS3 needs none of this because it bakes the flip
+            // into the bitmap, so its draw and its hit test share one orientation.
+            let localX = x - extSprite.x;
+            let localY = y - extSprite.y;
 
-            if(!extSprite.hitTest(localX, localY)) 
+            if(extSprite.scale.x < 0) localX = -localX - 1;
+            if(extSprite.scale.y < 0) localY = -localY - 1;
+
+            if(!extSprite.hitTest(localX, localY))
             {
                 continue;
             }

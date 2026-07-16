@@ -159,11 +159,10 @@ export class SizeData
             {
                 for(const [layerIndex, layerDef] of layers)
                 {
-                    const colorStr = layerDef['color'] as string;
+                    const color = SizeData.getColorValue(layerDef, 'color');
 
-                    if(colorStr)
+                    if(color !== null)
                     {
-                        const color = parseInt(colorStr, 16);
                         colorData.setColor(color, layerIndex);
                     }
                 }
@@ -584,6 +583,35 @@ export class SizeData
         }
 
         return defaultValue;
+    }
+
+    // AS3: sources/win63_version/habbo/room/object/visualization/data/SizeData.as::defineColors()
+    // reads @color off an XML attribute, so it is always a hex string there ("4A90D9") and AS3's
+    // parseInt(x, 16) is right. The JSON bundles carry a colour as an already-decoded RGB integer,
+    // where that same parseInt would re-read the decimal digits as hex and yield garbage
+    // (16777215 -> 0x16777215 -> #777215, an olive green instead of white). A JSON number is the
+    // RGB value as-is; only the string form needs AS3's base-16 parse. Reading it as a number also
+    // keeps a legitimate 0x000000 layer, which the previous truthiness check silently dropped.
+    private static getColorValue(data: Record<string, unknown>, key: string): number | null
+    {
+        const value = data[key];
+
+        if(typeof value === 'number')
+        {
+            return value;
+        }
+
+        if(typeof value === 'string' && value.length > 0)
+        {
+            const parsed = parseInt(value, 16);
+
+            if(!Number.isNaN(parsed))
+            {
+                return parsed;
+            }
+        }
+
+        return null;
     }
 
     private static toBooleanNumber(value: unknown): boolean
