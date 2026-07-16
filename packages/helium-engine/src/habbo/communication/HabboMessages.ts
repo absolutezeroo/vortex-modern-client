@@ -674,6 +674,7 @@ import {
     RemoveItemFromTradeComposer,
     RequestABadgeComposer,
     RequestFurniInventoryComposer,
+    ResetUnseenItemIdsComposer,
     ResetUnseenItemsComposer,
     SetActivatedBadgesComposer,
     UnacceptTradingComposer,
@@ -1446,6 +1447,7 @@ export class HabboMessages implements IMessageConfiguration
         // receives from the real client. Low urgency: its only caller is
         // currently commented out in UnseenItemTracker.ts.
         this._composers.set(699, ResetUnseenItemsComposer);
+        this._composers.set(3771, ResetUnseenItemIdsComposer);
         this._composers.set(3258, RequestABadgeComposer);
 
         // === LANDING VIEW ===

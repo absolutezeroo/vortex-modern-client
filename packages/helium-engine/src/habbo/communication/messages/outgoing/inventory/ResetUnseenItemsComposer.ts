@@ -1,22 +1,26 @@
 import {MessageComposer} from '@core/communication/messages/MessageComposer';
 
 /**
- * Reset unseen items for a category
+ * Reset every unseen item in a category.
  *
- * @see source_as_win63/habbo/communication/messages/outgoing/notifications/ResetUnseenItemsComposer.as
+ * Header 699. The payload is the category alone — AS3 pushes nothing else. The per-item variant is
+ * a separate message, ResetUnseenItemIdsComposer (3771).
+ *
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3364/_SafeCls_3363.as
  */
-export class ResetUnseenItemsComposer extends MessageComposer<ConstructorParameters<typeof ResetUnseenItemsComposer>>
+export class ResetUnseenItemsComposer extends MessageComposer<[number]>
 {
-    private _data: ConstructorParameters<typeof ResetUnseenItemsComposer>;
+    private _data: [number];
 
-    constructor(category: number, ...itemIds: number[])
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3364/_SafeCls_3363.as::_SafeCls_3363()
+    constructor(category: number)
     {
         super();
 
-        this._data = [category, itemIds.length, ...itemIds];
+        this._data = [category];
     }
 
-    getMessageArray()
+    getMessageArray(): [number]
     {
         return this._data;
     }

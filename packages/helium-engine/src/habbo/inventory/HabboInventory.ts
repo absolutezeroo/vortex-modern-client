@@ -652,7 +652,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // (HabboInventory.as:200).
         this.context.addLinkEventTracker(this);
 
-        this._unseenItemTracker = new UnseenItemTracker(this._communication!);
+        this._unseenItemTracker = new UnseenItemTracker(this._communication!, this.events, this);
         this._view = new InventoryMainView(this);
         this.registerFurniMessageEvents();
         log.info('Inventory initialized');

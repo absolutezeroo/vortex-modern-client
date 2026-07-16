@@ -28,6 +28,7 @@ export {AddItemToTradeComposer} from './AddItemToTradeComposer';
 export {RemoveItemFromTradeComposer} from './RemoveItemFromTradeComposer';
 
 // Unseen
+export {ResetUnseenItemIdsComposer} from './ResetUnseenItemIdsComposer';
 export {ResetUnseenItemsComposer} from './ResetUnseenItemsComposer';
 
 // Star Gems
