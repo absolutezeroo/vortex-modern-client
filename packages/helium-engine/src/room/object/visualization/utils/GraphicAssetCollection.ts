@@ -279,10 +279,17 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
 	 * @param assetData Asset definitions from bundle JSON
 	 * @param libraryName The library/collection name used to prefix texture lookups
 	 */
+    // `palettes` is not optional in practice: RoomContentLoader takes this path for every .nitro
+    // bundle and returns before ever reaching define(), which used to be the only place palettes
+    // were parsed. Without them, palette-swapped libraries (pets above all) loaded all their
+    // sprites and none of their colours, and rendered greyscale.
+    //
+    // Palettes are defined before assets, matching define()'s own order.
     defineFromSpritesheet(
         textures: Map<string, Texture>,
         assetData: unknown,
-        libraryName: string = ''
+        libraryName: string = '',
+        palettes: Record<string, Record<string, unknown>> | null = null
     ): void
     {
         this._name = libraryName;
@@ -290,6 +297,11 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         for(const [name, texture] of textures)
         {
             this._textures.set(name, texture);
+        }
+
+        if(palettes)
+        {
+            this.definePalettes(palettes);
         }
 
         if(assetData)
@@ -457,6 +469,15 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
             return value;
         }
 
+        // .nitro bundles encode flags as real JSON booleans (`"usesPalette": true`), where the XML
+        // this originally parsed used "1"/"0". Without this branch such a flag silently falls
+        // through to defaultValue - which for usesPalette meant every palette-swapped sprite
+        // reported "no palette" and getAssetWithPalette() returned it uncolourised.
+        if(typeof value === 'boolean')
+        {
+            return value ? 1 : 0;
+        }
+
         if(typeof value === 'string' && value.length > 0)
         {
             const parsed = Number(value);
@@ -487,13 +508,21 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
                 continue;
             }
 
-            // In Nitro bundles, palette data comes as an array of RGB values
-            const paletteData = (paletteDef['rgb'] ?? null) as number[] | null;
+            // .nitro bundles store `rgb` as an array of [r, g, b] triplets, not a flat byte run.
+            // GraphicAssetPalette walks its input three bytes at a time, so the triplets must be
+            // flattened first: `new Uint8Array([[0,0,0],[209,0,0]])` coerces each sub-array to a
+            // number, yields NaN -> 0, and produces a two-entry all-black palette. Flat input is
+            // still accepted, since nothing guarantees every bundle uses the nested shape.
+            const rawPalette = (paletteDef['rgb'] ?? null) as number[] | number[][] | null;
 
-            if(!paletteData)
+            if(!rawPalette || rawPalette.length === 0)
             {
                 continue;
             }
+
+            const paletteData: number[] = Array.isArray(rawPalette[0])
+                ? (rawPalette as number[][]).flat()
+                : (rawPalette as number[]);
 
             let primaryColor = 0xFFFFFF;
             let secondaryColor = 0xFFFFFF;
@@ -583,12 +612,21 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
                 return null;
             }
 
-            // Draw original texture to canvas
+            // `texture.source.resource` is the whole spritesheet, not this sprite: every asset in a
+            // .nitro library is a frame inside one atlas. Blitting it at 0,0 into a frame-sized
+            // canvas colourised whatever happened to sit in the atlas's top-left corner, which is
+            // why palettised pets came out as scrambled fragments. Copy just this texture's frame.
             const source = texture.source;
 
             if(source && source.resource)
             {
-                ctx.drawImage(source.resource as CanvasImageSource, 0, 0);
+                const frame = texture.frame;
+
+                ctx.drawImage(
+                    source.resource as CanvasImageSource,
+                    frame.x, frame.y, frame.width, frame.height,
+                    0, 0, frame.width, frame.height
+                );
             }
             else
             {

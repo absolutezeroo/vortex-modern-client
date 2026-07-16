@@ -1805,10 +1805,19 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
         if(asset !== null && asset.textures.size > 0 && assetDefinitions !== null && 'defineFromSpritesheet' in collection)
         {
             const libraryName = this.getString(data, 'name') ?? type;
+            // This branch returns without ever calling collection.define(), which is where palettes
+            // are parsed - so they have to be handed over here or a .nitro library ends up with all
+            // of its sprites and none of its palettes (greyscale pets).
+            const palettes = (data['palettes'] ?? data['palette'] ?? null) as Record<string, Record<string, unknown>> | null;
 
             (collection as IGraphicAssetCollection & {
-                defineFromSpritesheet(textures: Map<string, Texture>, assetData: unknown, libraryName: string): void;
-            }).defineFromSpritesheet(asset.textures, assetDefinitions, libraryName);
+                defineFromSpritesheet(
+                    textures: Map<string, Texture>,
+                    assetData: unknown,
+                    libraryName: string,
+                    palettes: Record<string, Record<string, unknown>> | null
+                ): void;
+            }).defineFromSpritesheet(asset.textures, assetDefinitions, libraryName, palettes);
 
             return true;
         }

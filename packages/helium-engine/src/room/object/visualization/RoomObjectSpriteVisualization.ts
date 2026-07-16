@@ -142,6 +142,7 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
     {
         const bounds = this.boundingRectangle;
 
+        // also backs every furniture icon, so an unfiltered log here floods the console.
         if(bounds.width * bounds.height === 0) return null;
 
         const visible: RoomObjectSprite[] = [];
