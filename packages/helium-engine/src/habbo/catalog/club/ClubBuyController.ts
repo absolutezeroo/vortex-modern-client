@@ -145,11 +145,11 @@ export class ClubBuyController
         this._catalog?.getHabboClubOffers(source);
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/club/ClubBuyController.as::showConfirmation()
-    // Real but currently unreachable: neither ClubBuyItem nor VipBuyItem (the only two "buy"
-    // buttons in the live widget flow) call this - both route through the generic
-    // HabboCatalog.showPurchaseConfirmation()/PurchaseConfirmationDialog instead. Confirmed by
-    // grep across the whole club/ + viewer/widgets/ Club/VIP surface - not a porting gap.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/club/ClubBuyController.as::showConfirmation()
+    // Reached from HabboCatalog.showPurchaseConfirmation(), which dispatches here when the offer is
+    // a ClubBuyOfferData (AS3 HabboCatalog.as:1158-1176). ClubBuyItem and VipBuyItem both hold a
+    // ClubBuyOfferData and hand it to showPurchaseConfirmation — they are not meant to call this
+    // directly, which is why grepping the club/ and viewer/widgets/ surface for callers finds none.
     showConfirmation(offer: ClubBuyOfferData, pageId: number): void
     {
         this.closeConfirmation();

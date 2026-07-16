@@ -143,6 +143,7 @@ import {RequestedPage} from './navigation/RequestedPage';
 import {CatalogViewer} from './viewer/CatalogViewer';
 import {PageLocalization} from './viewer/PageLocalization';
 import {Offer} from './viewer/Offer';
+import {ClubBuyOfferData} from './club/ClubBuyOfferData';
 import {Product} from './viewer/Product';
 import {HabboCatalogUtils} from './HabboCatalogUtils';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
@@ -700,12 +701,38 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             return;
         }
 
-        if(this._purchaseConfirmationDialog == null || this._purchaseConfirmationDialog.disposed) 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
+        // AS3 splits here: furniture-shaped offers get the generic dialog, a ClubBuyOfferData goes
+        // to the club buy controller instead. Note a gift always takes the generic path, even for a
+        // club offer — that is why _purchaseWillBeGift is part of the first test, not a separate one.
+        // TODO(AS3): AS3 also admits GameTokensOffer, MintTokenPurchaseOffer and
+        // NftStorePurchaseOffer into the first branch; none of the three is ported yet.
+        if(offer instanceof Offer || this._purchaseWillBeGift)
         {
-            this._purchaseConfirmationDialog = new PurchaseConfirmationDialog(this, this._windowManager!);
-        }
+            if(this._purchaseConfirmationDialog == null || this._purchaseConfirmationDialog.disposed)
+            {
+                this._purchaseConfirmationDialog = new PurchaseConfirmationDialog(this, this._windowManager!);
+            }
 
-        this._purchaseConfirmationDialog.showOffer(offer, pageId, extraParam, quantity, stuffData, this._purchaseWillBeGift);
+            this._purchaseConfirmationDialog.showOffer(offer, pageId, extraParam, quantity, stuffData, this._purchaseWillBeGift);
+        }
+        else if(offer instanceof ClubBuyOfferData)
+        {
+            if(pageId === -1)
+            {
+                const node = this.currentCatalogNavigator?.getNodeByName('hc_membership') ?? null;
+
+                if(node !== null)
+                {
+                    pageId = node.pageId;
+                }
+            }
+
+            if(pageId >= 0)
+            {
+                this.getClubBuyController()?.showConfirmation(offer, pageId);
+            }
+        }
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getSeasonalCurrencyActivityPointType()
