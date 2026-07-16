@@ -88,6 +88,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 	 * initialized" — AS3 sets its counterpart only from onRoomEngineInitialized(), never from
 	 * initComponent().
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as:54
     private _roomEngineInitialized: boolean = false;
 
     /**
