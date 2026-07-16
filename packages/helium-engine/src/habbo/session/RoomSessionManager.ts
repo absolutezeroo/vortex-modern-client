@@ -1,6 +1,7 @@
 import {EventEmitter} from 'eventemitter3';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import type {IHabboCommunicationManager} from '../communication/IHabboCommunicationManager';
@@ -82,7 +83,12 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         return this._sessionStarting;
     }
 
-    private _initialized: boolean = false;
+    /**
+	 * Whether the room engine has reported REE_ENGINE_INITIALIZED. Not "this component is
+	 * initialized" — AS3 sets its counterpart only from onRoomEngineInitialized(), never from
+	 * initComponent().
+	 */
+    private _roomEngineInitialized: boolean = false;
 
     /**
 	 * Whether the manager is fully initialized
@@ -90,7 +96,8 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 	 */
     get initialized(): boolean
     {
-        return this._initialized && this.allRequiredDependenciesInjected;
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::get initialized()
+        return this._roomEngineInitialized && this.allRequiredDependenciesInjected;
     }
 
     protected override get dependencies(): Array<ComponentDependency<any>>
@@ -104,13 +111,14 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
                 },
                 true
             ),
+            // AS3 gates this on `(flags & 3) == 0`, which is true for the default flags = 0.
             new ComponentDependency(
                 IID_HabboTracking,
                 (tracking: IHabboTracking | null) =>
                 {
                     this._habboTracking = tracking;
                 },
-                false
+                true
             ),
             new ComponentDependency(
                 IID_HabboFreeFlowChat,
@@ -120,13 +128,18 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
                 },
                 false
             ),
+            // AS3 declares this with a null setter — it only waits for the manager to exist.
+            new ComponentDependency(IID_HabboConfigurationManager, null, true),
+            // AS3 gates this on `(flags & 4) == 0`, true for the default flags = 0. The cycle with
+            // RoomEngine is broken on the other side: RoomEngine declares IIDHabboRoomSessionManager
+            // optional (_SafeCls_90.as:409), exactly as RoomEngine.ts:353 already does.
             new ComponentDependency(
                 IID_RoomEngine,
                 (engine: IRoomEngine | null) =>
                 {
                     this._roomEngine = engine;
                 },
-                false, // Not required
+                true,
                 [
                     {
                         type: RoomEngineEvent.REE_ENGINE_INITIALIZED,
@@ -134,13 +147,14 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
                     },
                 ]
             ),
+            // AS3 passes no required flag here, so it takes ComponentDependency's default: true.
             new ComponentDependency(
                 IID_AvatarRenderManager,
                 (renderer: IAvatarRenderManager | null) =>
                 {
                     this._avatarRenderer = renderer;
                 },
-                false
+                true
             ),
         ];
     }
@@ -370,11 +384,12 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         log.info('RoomSessionManager disposed');
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::initComponent()
+    // AS3 does not touch the room-engine flag here; it only wires the handlers and drains any
+    // pending request.
     protected override initComponent(): void
     {
         this.createHandlers();
-
-        this._initialized = true;
 
         this.executePendingSessionRequest();
 
@@ -384,9 +399,12 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     /**
 	 * Called when room engine is initialized
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::onRoomEngineInitialized()
     private onRoomEngineInitialized(..._args: unknown[]): void
     {
         log.debug('Room engine initialized');
+
+        this._roomEngineInitialized = true;
 
         // Execute any pending session requests now that engine is ready
         this.executePendingSessionRequest();
