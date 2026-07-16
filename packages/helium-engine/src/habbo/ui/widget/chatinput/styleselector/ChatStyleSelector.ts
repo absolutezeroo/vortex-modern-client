@@ -138,8 +138,12 @@ export class ChatStyleSelector implements IDisposable
         const cellWidth = this._styleTemplateWindow.width;
         const width = columns > 1 ? (columns - 1) * (cellWidth + 1) + cellWidth : cellWidth + 16;
 
-        grid.width = width;
+        // Raise the limit before assigning width - WindowController.setRectangle() clamps
+        // against the *current* limits.maxWidth on every width write, so setting grid.width
+        // first (against the old, smaller default limit) silently truncated the grid to fewer
+        // columns than requested, and updating the limit afterwards was too late to matter.
         grid.limits.maxWidth = width;
+        grid.width = width;
     }
 
     private _selected: ChatStyleGridEntry | null = null;
@@ -184,7 +188,7 @@ export class ChatStyleSelector implements IDisposable
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/widget/chatinput/styleselector/ChatStyleSelector.as::addItem()
-    addItem(styleId: number, preview: ImageBitmap): void 
+    addItem(styleId: number, preview: ImageBitmap): void
     {
         if(!this._gridView?.grid || !this._styleTemplateWindow) return;
 

@@ -1362,11 +1362,17 @@ export class HeliumApp
 
             target.getGlobalPosition(globalPos);
 
+            // Flash's MouseEvent.delta is positive when the wheel scrolls up; the DOM's
+            // WheelEvent.deltaY is positive when it scrolls down - the opposite sign
+            // convention. SmoothScroller.wheelDeltaToScrollDelta() negates this value to
+            // get a scroll offset (faithfully ported from AS3, see its own header comment),
+            // so feeding it deltaY unconverted inverted every scrollable list/grid in the
+            // app relative to normal browser/OS scroll direction.
             const event = WindowMouseEvent.allocateMouse(
                 WindowMouseEvent.WHEEL, target, null,
                 x - globalPos.x, y - globalPos.y, e.clientX, e.clientY,
                 e.altKey, e.ctrlKey, e.shiftKey, false,
-                e.deltaY
+                -e.deltaY
             );
 
             const handled = target.update(target, event);

@@ -132,8 +132,19 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         const config = (assets.getAssetByName(`style_${assetId}_regpoints`)?.content as string | null) ?? '';
         const background = assets.getAssetByName(`style_${assetId}_chat_bubble_base`)?.content as ImageBitmap;
 
-        const sliceXY = this.getConfigPoint(config, '9sliceXY');
-        const sliceWH = this.getConfigPoint(config, '9sliceWH');
+        // AS3's own initializeStyleFromAssets() reads getConfigPoint(config,"9sliceXY"/"9sliceWH")
+        // with no hasConfig() guard, same unguarded-AS3-bug pattern as "pointerY" below - a
+        // style whose regpoints config is entirely empty (no regpoints asset at all, e.g. the
+        // system/notification styles: notification_red/green/wrong/correct_circle/
+        // question_mark/skull, all missing their regpoints file) throws there in AS3 too,
+        // which the surrounding try/catch (constructor in AS3, buildStyle() here) silently
+        // turns into "this style's data is actually style 0's" - including its isSystemStyle
+        // flag, which is how these system styles were leaking into the user-facing chat-style
+        // picker (RoomChatInputView.createOrUpdateChatStylesView()'s `style.isSystemStyle`
+        // filter check was reading style 0's flag instead of the real one). Guarded here to
+        // match the established pointerY precedent instead of reproducing the crash.
+        const sliceXY = this.hasConfig(config, '9sliceXY') ? this.getConfigPoint(config, '9sliceXY') : new Point(0, 0);
+        const sliceWH = this.hasConfig(config, '9sliceWH') ? this.getConfigPoint(config, '9sliceWH') : new Point(0, 0);
         const scale9Grid = new Rectangle(sliceXY.x, sliceXY.y, sliceWH.x, sliceWH.y);
         const faceOffset = this.hasConfig(config, 'faceXY') ? this.getConfigPoint(config, 'faceXY') : null;
 
@@ -177,7 +188,10 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
         const icon = assets.hasAsset(`style_${assetId}_icon`)
             ? ((assets.getAssetByName(`style_${assetId}_icon`)?.content as ImageBitmap | null) ?? null)
             : null;
-        const textFieldMargins = this.getConfigRect(config, 'textFieldMargins');
+        // AS3's own initializeStyleFromAssets() reads getConfigRect(config,"textFieldMargins")
+        // with no hasConfig() guard either - same unguarded-AS3-bug pattern noted above for
+        // 9sliceXY/9sliceWH, guarded here for the same reason.
+        const textFieldMargins = this.hasConfig(config, 'textFieldMargins') ? this.getConfigRect(config, 'textFieldMargins') : new Rectangle(0, 0, 0, 0);
         const selectorPreview = assets.getAssetByName(`style_${assetId}_selector_preview`)?.content as ImageBitmap;
 
         let color: ImageBitmap | null = null;
