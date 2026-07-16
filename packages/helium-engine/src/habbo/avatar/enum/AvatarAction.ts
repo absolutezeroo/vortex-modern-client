@@ -22,6 +22,7 @@ export class AvatarAction
     public static readonly EXPRESSION_RESPECT: string = 'respect';
     public static readonly EXPRESSION_WAVE: string = 'wave';
     public static readonly EXPRESSION_BLOW_A_KISS: string = 'blow';
+    public static readonly EXPRESSION_67: string = '67';
     public static readonly EXPRESSION_LAUGH: string = 'laugh';
     public static readonly EXPRESSION_CRY: string = 'cry';
     public static readonly EXPRESSION_IDLE: string = 'idle';
@@ -73,6 +74,8 @@ export class AvatarAction
                 return 5000;
             case 2:
                 return 1400;
+            case 67:
+                return 990;
             case 3:
                 return 2000;
             case 4:
@@ -102,6 +105,11 @@ export class AvatarAction
 	 */
     public static getExpressionId(expression: string): number
     {
+        if(expression === AvatarAction.EXPRESSION_67)
+        {
+            return 67;
+        }
+
         return AvatarAction.EXPRESSION_MAP.indexOf(expression);
     }
 
@@ -113,6 +121,11 @@ export class AvatarAction
 	 */
     public static getExpression(expressionId: number): string
     {
+        if(expressionId === 67)
+        {
+            return AvatarAction.EXPRESSION_67;
+        }
+
         if(expressionId < AvatarAction.EXPRESSION_MAP.length)
         {
             return AvatarAction.EXPRESSION_MAP[expressionId];

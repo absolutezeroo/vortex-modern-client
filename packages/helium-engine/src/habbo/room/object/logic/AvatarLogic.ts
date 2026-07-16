@@ -20,6 +20,7 @@ import {RoomObjectAvatarTypingUpdateMessage} from '../../messages/RoomObjectAvat
 import {RoomObjectAvatarGestureUpdateMessage} from '../../messages/RoomObjectAvatarGestureUpdateMessage';
 import {RoomObjectAvatarExpressionUpdateMessage} from '../../messages/RoomObjectAvatarExpressionUpdateMessage';
 import {RoomObjectAvatarDanceUpdateMessage} from '../../messages/RoomObjectAvatarDanceUpdateMessage';
+import {AvatarAction} from '@habbo/avatar/enum/AvatarAction';
 import {RoomObjectAvatarSleepUpdateMessage} from '../../messages/RoomObjectAvatarSleepUpdateMessage';
 import {RoomObjectAvatarEffectUpdateMessage} from '../../messages/RoomObjectAvatarEffectUpdateMessage';
 import {RoomObjectAvatarCarryObjectUpdateMessage} from '../../messages/RoomObjectAvatarCarryObjectUpdateMessage';
@@ -192,15 +193,15 @@ export class AvatarLogic extends MovingObjectLogic
         if(message instanceof RoomObjectAvatarExpressionUpdateMessage)
         {
             model.setNumber('figure_expression', message.expressionType);
-            const duration = this.getExpressionTime(message.expressionType);
-            if(duration > -1)
+
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/AvatarLogic.as::processUpdateMessage()
+            this._expressionEndTime = AvatarAction.getExpressionTime(model.getNumber('figure_expression'));
+
+            if(this._expressionEndTime > -1)
             {
-                this._expressionEndTime = Date.now() + duration;
+                this._expressionEndTime += Date.now();
             }
-            else
-            {
-                this._expressionEndTime = 0;
-            }
+
             return;
         }
 
@@ -330,7 +331,7 @@ export class AvatarLogic extends MovingObjectLogic
         ctrlKey?: boolean;
         shiftKey?: boolean;
         buttonDown?: boolean
-    }, geometry: IRoomGeometry | null): void
+    }, _geometry: IRoomGeometry | null): void
     {
         if(this.object === null || event === null)
         {
@@ -598,22 +599,5 @@ export class AvatarLogic extends MovingObjectLogic
     private getBlinkLength(): number
     {
         return 50 + Math.random() * 200;
-    }
-
-    private getExpressionTime(expression: number): number
-    {
-        // Expression durations - some are indefinite (-1)
-        switch(expression)
-        {
-            case 1: // Wave
-            case 2: // Blow kiss
-            case 3: // Laugh
-            case 4: // Cry
-            case 5: // Idle
-            case 6: // Jump
-                return 3000;
-            default:
-                return -1;
-        }
     }
 }

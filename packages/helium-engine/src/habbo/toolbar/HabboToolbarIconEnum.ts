@@ -4,7 +4,7 @@
  * Each constant represents a toolbar icon identifier. The getIconName() method
  * maps icon IDs back to their human-readable names.
  *
- * @see source_as_win63/habbo/toolbar/HabboToolbarIconEnum.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbarIconEnum.as
  */
 export class HabboToolbarIconEnum
 {
@@ -16,7 +16,7 @@ export class HabboToolbarIconEnum
 
     public static readonly INVENTORY: string = 'HTIE_ICON_INVENTORY';
 
-    public static readonly QUESTS: string = 'HTIE_ICON_QUESTS';
+    public static readonly PROGRESSION: string = 'HTIE_ICON_PROGRESSION';
 
     public static readonly ACHIEVEMENTS: string = 'HTIE_ICON_ACHIEVEMENTS';
 
@@ -49,7 +49,7 @@ export class HabboToolbarIconEnum
         ['HTIE_ICON_NAVIGATOR', 'NAVIGATOR'],
         ['HTIE_ICON_CATALOGUE', 'CATALOGUE'],
         ['HTIE_ICON_INVENTORY', 'INVENTORY'],
-        ['HTIE_ICON_QUESTS', 'QUESTS'],
+        ['HTIE_ICON_PROGRESSION', 'PROGRESSION'],
         ['HTIE_ICON_ACHIEVEMENTS', 'ACHIEVEMENTS'],
         ['HTIE_ICON_MEMENU', 'MEMENU'],
         ['HTIE_ICON_GAMES', 'GAMES'],

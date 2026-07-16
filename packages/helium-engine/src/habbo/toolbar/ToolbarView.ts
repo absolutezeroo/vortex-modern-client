@@ -40,7 +40,10 @@ export class ToolbarView
     {
         this._toolbar = toolbar;
 
-        this._iconVisibility.set(HabboToolbarIconEnum.getIconName('HTIE_ICON_QUESTS') ?? '', false);
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ToolbarView.as::ToolbarView()
+        // AS3 resolves this to the name "PROGRESSION", which toolbar_view_xml does not contain (that
+        // layout names the child "QUESTS") — so the hide is a no-op there. Kept faithful on purpose.
+        this._iconVisibility.set(HabboToolbarIconEnum.getIconName('HTIE_ICON_PROGRESSION') ?? '', false);
         this._iconVisibility.set(HabboToolbarIconEnum.getIconName('HTIE_ICON_MEMENU') ?? '', false);
         this._iconVisibility.set(HabboToolbarIconEnum.getIconName('HTIE_ICON_INVENTORY') ?? '', true);
 

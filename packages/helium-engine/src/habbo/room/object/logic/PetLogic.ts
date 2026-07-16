@@ -21,6 +21,7 @@ import {RoomObjectAvatarSelectedMessage} from '../../messages/RoomObjectAvatarSe
 import {RoomObjectAvatarFigureUpdateMessage} from '../../messages/RoomObjectAvatarFigureUpdateMessage';
 import {RoomObjectAvatarPetGestureUpdateMessage} from '../../messages/RoomObjectAvatarPetGestureUpdateMessage';
 import {RoomObjectAvatarExperienceUpdateMessage} from '../../messages/RoomObjectAvatarExperienceUpdateMessage';
+import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
 
 export class PetLogic extends MovingObjectLogic
 {
@@ -196,17 +197,15 @@ export class PetLogic extends MovingObjectLogic
             model.setString('figure', message.figure);
             model.setString('race', message.race);
 
-            // Parse pet figure data
-            const petData = this.parsePetFigure(message.figure);
-            if(petData)
-            {
-                model.setNumber('pet_palette_index', petData.paletteId);
-                model.setNumber('pet_color', petData.color);
-                model.setNumber('pet_type', petData.typeId);
-                model.setNumberArray('pet_custom_layer_ids', petData.customLayerIds);
-                model.setNumberArray('pet_custom_part_ids', petData.customPartIds);
-                model.setNumberArray('pet_custom_palette_ids', petData.customPaletteIds);
-            }
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/PetLogic.as::processUpdateMessage()
+            const petData = new PetFigureData(message.figure);
+
+            model.setNumber('pet_palette_index', petData.paletteId);
+            model.setNumber('pet_color', petData.color);
+            model.setNumber('pet_type', petData.typeId);
+            model.setNumberArray('pet_custom_layer_ids', petData.customLayerIds);
+            model.setNumberArray('pet_custom_part_ids', petData.customPartIds);
+            model.setNumberArray('pet_custom_palette_ids', petData.customPaletteIds);
 
             model.setNumber('pet_is_riding', message.isRiding ? 1 : 0);
             return;
@@ -220,7 +219,7 @@ export class PetLogic extends MovingObjectLogic
         ctrlKey?: boolean;
         shiftKey?: boolean;
         buttonDown?: boolean
-    }, geometry: IRoomGeometry | null): void
+    }, _geometry: IRoomGeometry | null): void
     {
         if(this.object === null || event === null)
         {
@@ -399,48 +398,5 @@ export class PetLogic extends MovingObjectLogic
             const currentDir = this.object?.getDirection().x ?? 0;
             model.setNumber('head_direction', currentDir + this._headDirectionDelta);
         }
-    }
-
-    private parsePetFigure(figure: string): {
-        typeId: number;
-        paletteId: number;
-        color: number;
-        customLayerIds: number[];
-        customPartIds: number[];
-        customPaletteIds: number[];
-    } | null
-    {
-        // Pet figure format: typeId paletteId color customParts...
-        // Example: "17 1 ffffff 2 3 4 5 6 7 8"
-        const parts = figure.split(' ');
-        if(parts.length < 3)
-        {
-            return null;
-        }
-
-        const typeId = parseInt(parts[0]) || 0;
-        const paletteId = parseInt(parts[1]) || 0;
-        const color = parseInt(parts[2], 16) || 0;
-
-        const customLayerIds: number[] = [];
-        const customPartIds: number[] = [];
-        const customPaletteIds: number[] = [];
-
-        // Parse custom parts (triplets: layer, part, palette)
-        for(let i = 3; i + 2 < parts.length; i += 3)
-        {
-            customLayerIds.push(parseInt(parts[i]) || 0);
-            customPartIds.push(parseInt(parts[i + 1]) || 0);
-            customPaletteIds.push(parseInt(parts[i + 2]) || 0);
-        }
-
-        return {
-            typeId,
-            paletteId,
-            color,
-            customLayerIds,
-            customPartIds,
-            customPaletteIds
-        };
     }
 }

@@ -1,12 +1,13 @@
 import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
 import type {IChatLink} from '@habbo/communication/messages/parser/room/chat/ChatMessageEventParser';
 import type {IVector3d} from '@room/utils/IVector3d';
+import {Vector3d} from '@room/utils/Vector3d';
 
 /**
  * Chat message data model. Contains all the data for a single chat message
  * including the user, room, text, style, and optional forced rendering parameters.
  *
- * @see source_as_win63/habbo/freeflowchat/data/ChatItem.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatItem.as
  */
 export class ChatItem
 {
@@ -34,7 +35,14 @@ export class ChatItem
     )
     {
         this._timeStamp = timeStamp;
-        this._userLocation = userLocation;
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatItem.as::ChatItem()
+        // Must copy: RoomObject.getLocation() hands back a single shared _locationCache per object,
+        // reassigned on every call — holding the reference makes every bubble track the live avatar.
+        this._userLocation = userLocation !== null
+            ? new Vector3d(userLocation.x, userLocation.y, userLocation.z)
+            : null;
+
         this._userId = event.userId;
 
         if(event.session)

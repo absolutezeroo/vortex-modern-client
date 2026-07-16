@@ -335,11 +335,7 @@ export class BottomBarLeft
             child.visible = visibilityTag !== null && child.tags.indexOf(visibilityTag) >= 0;
 
             // Apply specific per-icon rules
-            if(child.name === 'QUESTS' && !this._collapsed) 
-            {
-                child.visible = child.visible && !this._toolbar!.getBoolean('toolbar.hide.quests');
-            }
-            else if(child.name === 'STORIES' && !this._collapsed) 
+            if(child.name === 'STORIES' && !this._collapsed)
             {
                 child.visible = child.visible && this._toolbar!.getBoolean('toolbar.stories.enabled');
             }
