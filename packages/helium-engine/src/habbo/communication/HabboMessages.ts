@@ -226,7 +226,7 @@ import {
 } from './messages/incoming/room/furniture';
 
 // Incoming Events - Room Pet
-import {PetVocalMessageEvent} from './messages/incoming/room/pet';
+import {PetInfoMessageEvent, PetVocalMessageEvent} from './messages/incoming/room/pet';
 
 // Incoming Events - User Defined Room Events (Wired)
 import {WiredPermissionsEvent} from './messages/incoming/userdefinedroomevents';
@@ -920,6 +920,7 @@ export class HabboMessages implements IMessageConfiguration
         // Vortex-custom (not in official AS3 dumps): vortex-client commit d6bc0d0 "feat(pets): add
         // pet vocal message, IssuePetCommand compositor and command UI"
         this._events.set(3073, PetVocalMessageEvent);
+        this._events.set(3192, PetInfoMessageEvent);
 
         // === WIRED ===
         // AS3: sources/win63_version/habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredPermissionsEvent.as

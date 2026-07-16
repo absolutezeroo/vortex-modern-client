@@ -23,6 +23,10 @@ import {RoomSessionUserBadgesEvent} from '../events/RoomSessionUserBadgesEvent';
 import type {IUserData} from '@habbo/session';
 import { UserData} from '@habbo/session';
 import type {RoomUserData} from '@habbo/communication';
+import {PetInfoMessageEvent} from '@habbo/communication/messages/incoming/room/pet/PetInfoMessageEvent';
+import type {PetInfoMessageEventParser} from '@habbo/communication/messages/parser/room/pet/PetInfoMessageEventParser';
+import {PetInfo} from '../PetInfo';
+import {RoomSessionPetInfoUpdateEvent} from '../events/RoomSessionPetInfoUpdateEvent';
 
 /**
  * Room users handler
@@ -57,6 +61,8 @@ export class RoomUsersHandler extends BaseHandler
         this.addMessageEvent(connection, new UserRemoveMessageEvent(this.onUserRemove.bind(this)));
         this.addMessageEvent(connection, new HabboUserBadgesMessageEvent(this.onUserBadges.bind(this)));
         this.addMessageEvent(connection, new DoorbellMessageEvent(this.onDoorbell.bind(this)));
+        // AS3: sources/win63_version/habbo/session/handler/RoomUsersHandler.as::registerMessageEvents()
+        this.addMessageEvent(connection, new PetInfoMessageEvent(this.onPetInfo.bind(this)));
         this.addMessageEvent(connection, new BlockUserUpdateMessageEvent(this.onBlockUserUpdate.bind(this)));
 
         // TODO: Register additional message events when implemented
@@ -228,6 +234,60 @@ export class RoomUsersHandler extends BaseHandler
     /**
 	 * Handle doorbell ring
 	 */
+    // AS3: sources/win63_version/habbo/session/handler/RoomUsersHandler.as::onPetInfo()
+    // Note AS3 does not copy the parser's `name` onto PetInfo - PetInfo has no such member, in the
+    // original as here. The infostand reads the pet's name off its room object instead.
+    private onPetInfo(event: IMessageEvent): void
+    {
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const parser = event.parser as PetInfoMessageEventParser | null;
+
+        if(parser === null) return;
+
+        const petInfo = new PetInfo();
+
+        petInfo.petId = parser.petId;
+        petInfo.level = parser.level;
+        petInfo.levelMax = parser.maxLevel;
+        petInfo.experience = parser.experience;
+        petInfo.experienceMax = parser.experienceRequiredToLevel;
+        petInfo.energy = parser.energy;
+        petInfo.energyMax = parser.maxEnergy;
+        petInfo.nutrition = parser.nutrition;
+        petInfo.nutritionMax = parser.maxNutrition;
+        petInfo.ownerId = parser.ownerId;
+        petInfo.ownerName = parser.ownerName;
+        petInfo.respect = parser.respect;
+        petInfo.age = parser.age;
+        petInfo.breedId = parser.breedId;
+        petInfo.hasFreeSaddle = parser.hasFreeSaddle;
+        petInfo.isRiding = parser.isRiding;
+        petInfo.canBreed = parser.canBreed;
+        petInfo.canHarvest = parser.canHarvest;
+        petInfo.rarityLevel = parser.rarityLevel;
+        petInfo.canRevive = parser.canRevive;
+        petInfo.skillTresholds = parser.skillTresholds;
+        petInfo.accessRights = parser.accessRights;
+        petInfo.maxWellBeingSeconds = parser.maxWellBeingSeconds;
+        petInfo.remainingWellBeingSeconds = parser.remainingWellBeingSeconds;
+        petInfo.remainingGrowingSeconds = parser.remainingGrowingSeconds;
+        petInfo.hasBreedingPermission = parser.hasBreedingPermission;
+
+        // AS3 dispatches on `listener.events`; this port routes session events through
+        // `sessionEvents` (see .claude/rules/20-architecture.md #4 - `events` is reserved by the DI
+        // Component base), so the emit below is the local equivalent of AS3's dispatchEvent.
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetInfoUpdateEvent.PET_INFO,
+                new RoomSessionPetInfoUpdateEvent(session, petInfo)
+            );
+        }
+    }
+
     private onDoorbell(event: IMessageEvent): void
     {
         const doorbellEvent = event as DoorbellMessageEvent;
