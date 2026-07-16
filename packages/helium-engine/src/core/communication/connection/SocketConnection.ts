@@ -12,6 +12,7 @@ import type {IMessageConfiguration} from '../messages/IMessageConfiguration';
 import type {IMessageDataWrapper} from '../messages/IMessageDataWrapper';
 import type {IWireFormatter} from '../wireformat/IWireFormatter';
 import {PreEncryptionMessageComposer} from '../messages/PreEncryptionMessageComposer';
+import {PacketLogger} from '../PacketLogger';
 
 const log = Logger.getLogger('Socket');
 
@@ -178,6 +179,8 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
             log.warn(`Unknown composer: ${composer.constructor.name}`);
             return false;
         }
+
+        PacketLogger.outgoing(messageId, composer.constructor.name);
 
         const encoded = this._wireFormatter.encode(messageId, composer.getMessageArray());
 
@@ -504,6 +507,8 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
     {
         const messageId = wrapper.getMessageId();
         const events = this._messageRegistry.getMessageEventsForId(messageId);
+
+        PacketLogger.incoming(messageId, this._messageRegistry.getIncomingMessageName(messageId), events?.length ?? 0);
 
         if(!events || events.length === 0)
         {

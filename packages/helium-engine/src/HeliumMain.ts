@@ -37,6 +37,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IHeliumConfig} from './Helium';
 import {Helium} from './Helium';
 
+import {PacketLogger} from '@core/communication/PacketLogger';
 import {IID_HabboAdManager} from '@iid/IIDHabboAdManager';
 import {IID_HabboCampaigns} from '@iid/IIDHabboCampaigns';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
@@ -434,9 +435,12 @@ export class HeliumMain implements IHeliumMain
      *
      * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
      */
-    async init(application: Application, config?: IHeliumConfig): Promise<void> 
+    async init(application: Application, config?: IHeliumConfig): Promise<void>
     {
         this._application = application;
+
+        // Console-only tracing; records nothing to the log until __packets.on() is called.
+        PacketLogger.install();
 
         await this.prepareCore(config);
 
