@@ -70,6 +70,12 @@ export const RoomObjectVariableEnum = {
     FURNITURE_DATA: 'furniture_data',
     FURNITURE_DATA_FORMAT: 'furniture_data_format',
     FURNITURE_EXTRAS: 'furniture_extras',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVariableEnum.as:132
+    // Distinct from FURNITURE_EXTRAS: AS3 writes both, the string one here and this numeric one.
+    // The identifier is obfuscated in every tree that has it (_SafeStr_11509 here, const_1189 in
+    // win63_version, _SafeStr_10982 in WIN63-202601121721) and the 2016 build predates it, so this
+    // name is derived from the value, not recovered.
+    FURNITURE_EXTRA: 'furniture_extra',
     FURNITURE_ITEMDATA: 'furniture_itemdata',
     FURNITURE_ALPHA_MULTIPLIER: 'furniture_alpha_multiplier',
     FURNITURE_EXPIRY_TIME: 'furniture_expiry_time',

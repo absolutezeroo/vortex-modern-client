@@ -1302,7 +1302,15 @@ export class RoomEngine extends Component implements IRoomEngine,
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            if(extra) 
+            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:3046
+            // AS3 writes only the numeric FURNITURE_EXTRA here (its DTO's `extra` is a Number), not
+            // the string FURNITURE_EXTRAS. This port flattened the DTO into parameters and typed
+            // `extra` as string, then built its own FURNITURE_EXTRAS convention that RoomEngine
+            // reads back at :828 and :3953. Aligning means changing this signature to a number and
+            // following it through IRoomEngine/RoomPreviewer — out of scope here. Currently
+            // harmless: the only AS3 reader of FURNITURE_EXTRA is the custom-stack-height widget
+            // handler (_SafeCls_3852.as:98), which is not ported.
+            if(extra)
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
             }
@@ -1398,7 +1406,15 @@ export class RoomEngine extends Component implements IRoomEngine,
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            if(extra) 
+            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:3046
+            // AS3 writes only the numeric FURNITURE_EXTRA here (its DTO's `extra` is a Number), not
+            // the string FURNITURE_EXTRAS. This port flattened the DTO into parameters and typed
+            // `extra` as string, then built its own FURNITURE_EXTRAS convention that RoomEngine
+            // reads back at :828 and :3953. Aligning means changing this signature to a number and
+            // following it through IRoomEngine/RoomPreviewer — out of scope here. Currently
+            // harmless: the only AS3 reader of FURNITURE_EXTRA is the custom-stack-height widget
+            // handler (_SafeCls_3852.as:98), which is not ported.
+            if(extra)
             {
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
             }

@@ -6,6 +6,7 @@
  * Base logic class for furniture objects.
  */
 import type {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
+import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IVector3d} from '@room/utils/IVector3d';
@@ -561,9 +562,14 @@ export class FurnitureLogic extends MovingObjectLogic
                 message.data.writeRoomObjectModel(model);
             }
 
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/FurnitureLogic.as:327-328
+            // AS3 writes both: the string furniture_extras and the numeric furniture_extra. Only
+            // the first was ported, so the numeric one was never set anywhere — see
+            // RoomObjectVariableEnum.FURNITURE_EXTRA.
             if(!isNaN(message.extra))
             {
-                model.setString('furniture_extras', String(message.extra));
+                model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, String(message.extra));
+                model.setNumber(RoomObjectVariableEnum.FURNITURE_EXTRA, message.extra);
             }
 
             model.setNumber('furniture_state_update_time', this.lastUpdateTime);
