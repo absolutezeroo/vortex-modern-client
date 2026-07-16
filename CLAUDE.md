@@ -23,11 +23,11 @@ Enforcement rules live in `.claude/rules/` and are auto-loaded into every sessio
 
 ## AS3 sources
 
-| Directory                              | Priority    | Package roots                        | Files  |
-|-----------------------------------------|-------------|---------------------------------------|--------|
-| `sources/WIN63-202607011411-782849652/`   | **PRIMARY** | `src/com/sulake/{habbo,room,core,iid}/` | ~3,369 |
-| `sources/win63_version/`                | Secondary   | `habbo/`, `room/`                      | ~4,465 |
-| `sources/PRODUCTION-201601012205-226667486/`                | Tertiary    | `com/sulake/habbo/`                    | ~7,160 |
+| Directory                                    | Priority    | Package roots                           | Files  |
+|----------------------------------------------|-------------|-----------------------------------------|--------|
+| `sources/WIN63-202607011411-782849652/`      | **PRIMARY** | `src/com/sulake/{habbo,room,core,iid}/` | ~3,369 |
+| `sources/win63_version/`                     | Secondary   | `habbo/`, `room/`                       | ~4,465 |
+| `sources/PRODUCTION-201601012205-226667486/` | Tertiary    | `com/sulake/habbo/`                     | ~7,160 |
 
 `WIN63-202607011411-782849652` is a later, obfuscated client build and is the primary day-to-day reference. It mirrors `win63_version` one directory level deeper (`src/com/sulake/<module>/` instead of `<module>/`) and both trees line up 1:1 file-for-file. Where an identifier is obfuscated past readability (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path in `win63_version` to recover the real name — never invent one. Ignore the flat `_SafeCls_N.as` files directly under its `src/` root and everything under `src/unknowns/` (`_SafePkg_N/`) — that is an unrelated, fully-obfuscated module bundled in the same dump, not part of the Habbo client.
 
@@ -37,13 +37,13 @@ Path mapping: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/` �
 
 ## Documentation
 
-| File                                          | Content                                       |
-|-----------------------------------------------|-----------------------------------------------|
-| `.claude/rules/`                               | Auto-loaded enforcement rules for Claude Code |
-| `AGENTS.md`                                   | Universal AI agent instructions (generated from `.claude/rules/`, for non-Claude tools) |
-| `docs/CONTEXT.md`                             | Full architecture and project context         |
-| `docs/PATTERNS.md`                            | Implementation templates with code examples   |
-| `docs/STYLEGUIDE.md`                          | Complete code style reference + performance   |
-| `docs/IMPLEMENTATION_STATUS.md`               | Progress tracking (~35% overall, ~710+ files) |
-| `docs/architectures/`                         | Per-module AS3 architecture deep-dives, created on demand — see `docs/architectures/README.md` |
-| `docs/CLIENT-SERVER-ARCHITECTURE.md`          | Real client↔server protocol, message flows, and known server-side bugs (Arcturus-Community reference) |
+| File                                 | Content                                                                                               |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------|
+| `.claude/rules/`                     | Auto-loaded enforcement rules for Claude Code                                                         |
+| `AGENTS.md`                          | Universal AI agent instructions (generated from `.claude/rules/`, for non-Claude tools)               |
+| `docs/CONTEXT.md`                    | Full architecture and project context                                                                 |
+| `docs/PATTERNS.md`                   | Implementation templates with code examples                                                           |
+| `docs/STYLEGUIDE.md`                 | Complete code style reference + performance                                                           |
+| `docs/IMPLEMENTATION_STATUS.md`      | Progress tracking (~35% overall, ~710+ files)                                                         |
+| `docs/architectures/`                | Per-module AS3 architecture deep-dives, created on demand — see `docs/architectures/README.md`        |
+| `docs/CLIENT-SERVER-ARCHITECTURE.md` | Real client↔server protocol, message flows, and known server-side bugs (Arcturus-Community reference) |
