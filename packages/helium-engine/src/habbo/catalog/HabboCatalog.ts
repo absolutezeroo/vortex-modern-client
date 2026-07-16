@@ -42,6 +42,16 @@ import {ScrSendUserInfoEvent} from '@habbo/communication/messages/incoming/users
 import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
 import type {ScrSendUserInfoMessageParser} from '@habbo/communication/messages/parser/users/ScrSendUserInfoMessageParser';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
+import {OrderedMap} from '@core/utils/OrderedMap';
+import {ApproveNameMessageEvent} from '@habbo/communication/messages/incoming/users/ApproveNameMessageEvent';
+import type {ApproveNameMessageParser} from '@habbo/communication/messages/parser/users/ApproveNameMessageParser';
+import {ApproveNameMessageComposer} from '@habbo/communication/messages/outgoing/users/ApproveNameMessageComposer';
+import {SellablePetPalettesMessageEvent} from '@habbo/communication/messages/incoming/catalog/SellablePetPalettesMessageEvent';
+import type {SellablePetPalette} from '@habbo/communication/messages/parser/catalog/SellablePetPalette';
+import type {SellablePetPalettesMessageEventParser} from '@habbo/communication/messages/parser/catalog/SellablePetPalettesMessageEventParser';
+import {GetSellablePetPalettesComposer} from '@habbo/communication/messages/outgoing/catalog/GetSellablePetPalettesComposer';
+import {CatalogWidgetApproveNameResultEvent} from './viewer/widgets/events/CatalogWidgetApproveNameResultEvent';
+import {CatalogWidgetSellablePetPalettesEvent} from './viewer/widgets/events/CatalogWidgetSellablePetPalettesEvent';
 import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inventory/purse/GetCreditsInfoComposer';
 import {GetCatalogPageComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogPageComposer';
 import {PurchaseFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseFromCatalogComposer';
@@ -163,6 +173,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
     private _initialized: boolean = false;
     private _pendingPageId: number = 0;
     private _messageEvents: IMessageEvent[] = [];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_sellablePetPalettes
+    private _sellablePetPalettes: OrderedMap<string, SellablePetPalette[]> | null = new OrderedMap<string, SellablePetPalette[]>();
     private _purse: Purse = new Purse();
 
     private _clubBuyController: ClubBuyController | null = null;
@@ -515,6 +527,61 @@ export class HabboCatalog extends Component implements IHabboCatalog
         return this.context.configuration?.updateUrlProtocol(url) ?? url;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getSellablePetPalettes()
+    // Returns the cached palettes for a product code, or null after firing the request off - the
+    // response arrives asynchronously via onSellablePetPalettes() and reaches the widget as a
+    // CatalogWidgetSellablePetPalettesEvent. Callers treat null as "not known yet", not "none".
+    getSellablePetPalettes(productCode: string): SellablePetPalette[] | null
+    {
+        const cached = this._sellablePetPalettes?.getValue(productCode) ?? null;
+
+        if(cached != null) return cached.slice();
+
+        this.connection?.send(new GetSellablePetPalettesComposer(productCode));
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::approveName()
+    approveName(name: string, validationType: number): void
+    {
+        this.connection?.send(new ApproveNameMessageComposer(name, validationType));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSellablePalettes()
+    private onSellablePetPalettes(event: IMessageEvent): void
+    {
+        const parser = event.parser as SellablePetPalettesMessageEventParser | null;
+
+        if(parser == null) return;
+
+        const productCode = parser.productCode;
+        const palettes = parser.sellablePalettes;
+
+        this._sellablePetPalettes?.remove(productCode);
+
+        if(palettes == null) return;
+
+        this._sellablePetPalettes?.add(productCode, palettes.slice());
+
+        if(this._catalogViewer != null && this._catalogViewer.currentPage != null)
+        {
+            this._catalogViewer.dispatchWidgetEvent(new CatalogWidgetSellablePetPalettesEvent(productCode, palettes.slice()));
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onApproveNameResult()
+    private onApproveNameResult(event: IMessageEvent): void
+    {
+        if(event == null || this._catalogViewer == null) return;
+
+        const parser = event.parser as ApproveNameMessageParser | null;
+
+        if(parser == null) return;
+
+        this._catalogViewer.dispatchWidgetEvent(new CatalogWidgetApproveNameResultEvent(parser.result, parser.nameValidationInfo));
+    }
+
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseWillBeGift()
     purchaseWillBeGift(isGift: boolean): void
     {
@@ -584,14 +651,23 @@ export class HabboCatalog extends Component implements IHabboCatalog
     // TODO(AS3): this port's PurchaseConfirmationDialog is a minimal confirm/cancel dialog -
     // see its own file header for what AS3 sub-flows (gifting, gift wrapping, spending
     // disclaimer, room-ad extension) are not yet ported.
+    // `showConfirmation` (param7) is declared by AS3 but never read anywhere in its method body -
+    // a dead parameter in the original client, kept here only so the pet widgets' 8-argument call
+    // matches the real signature.
+    // TODO(AS3): `previewImage` (param8) is accepted but not displayed. AS3 forwards it to
+    // PurchaseConfirmationDialog.showOffer()'s last argument; this port's dialog is the documented
+    // minimal stub above and has no preview-image surface to forward it to yet. The pet widgets do
+    // pass a real rendered pet image, so this becomes live as soon as the dialog is ported.
     showPurchaseConfirmation(
         offer: IPurchasableOffer,
         pageId: number,
         extraParam: string = '',
         quantity: number = 1,
         stuffData: IStuffData | null = null,
-        _giftMessage: string | null = null
-    ): void 
+        _giftMessage: string | null = null,
+        _showConfirmation: boolean = true,
+        _previewImage: ImageBitmap | null = null
+    ): void
     {
         if(pageId === -12345678) 
         {
@@ -1210,6 +1286,14 @@ export class HabboCatalog extends Component implements IHabboCatalog
         }
 
         this._messageEvents.length = 0;
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispose()
+        if(this._sellablePetPalettes != null)
+        {
+            this._sellablePetPalettes.dispose();
+            this._sellablePetPalettes = null;
+        }
+
         this._communication = null;
         this._windowManager = null;
         this._localization = null;
@@ -1244,6 +1328,8 @@ export class HabboCatalog extends Component implements IHabboCatalog
         this.addMessageEvent(new RecyclerFinishedMessageEvent(this.onRecyclerFinished.bind(this)));
         this.addMessageEvent(new RecyclerPrizesMessageEvent(this.onRecyclerPrizes.bind(this)));
         this.addMessageEvent(new GuildMembershipsMessageEvent(this.onGuildMemberships.bind(this)));
+        this.addMessageEvent(new SellablePetPalettesMessageEvent(this.onSellablePetPalettes.bind(this)));
+        this.addMessageEvent(new ApproveNameMessageEvent(this.onApproveNameResult.bind(this)));
         this.connection?.send(new GetCreditsInfoComposer());
     }
 

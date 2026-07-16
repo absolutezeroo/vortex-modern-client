@@ -19,3 +19,5 @@ export * from './HabboClubExtendOfferMessageEventParser';
 export * from './RecyclerStatusMessageEventParser';
 export * from './RecyclerFinishedMessageEventParser';
 export * from './RecyclerPrizesMessageEventParser';
+export * from './SellablePetPalette';
+export * from './SellablePetPalettesMessageEventParser';

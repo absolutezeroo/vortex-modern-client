@@ -894,9 +894,35 @@ export class HeliumApp
             const name = key.split('/').pop()!.replace('.png', '');
             const url = this._imageBundle.getUrl(key);
 
-            if(url) 
+            if(url)
             {
                 helium.windowManager.registerAssetUrl(name, url);
+            }
+
+            // registerAssetUrl() only feeds the window manager's *URL* registry, which serves window
+            // skins. Anything that reads a bitmap out of the asset library instead - every
+            // CatalogWidget.getAssetBitmapData() caller, e.g. ColourGridCatalogWidget's swatches and
+            // RecyclerCatalogWidget's slot background - looks the name up in helium.assets and got
+            // null, so those bitmaps rendered blank/white.
+            //
+            // Decode and register the catalog bitmaps into the asset library too, the same way the
+            // chat-style images already are. Scoped to the `ctlg_` prefix rather than the whole
+            // images/ bundle: this eagerly decodes an ImageBitmap per entry, and nothing else needs
+            // library access today.
+            if(name.startsWith('ctlg_'))
+            {
+                const declaration = helium.assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
+                    ?? new AssetTypeDeclaration('application/octet-stream', UnknownAsset);
+
+                void this._imageBundle.getImageBitmap(key).then((bitmap) =>
+                {
+                    if(!bitmap) return;
+
+                    const asset = new UnknownAsset(declaration, name);
+
+                    asset.setUnknownContent(bitmap);
+                    helium.assets.setAsset(name, asset, true);
+                });
             }
         }
     }

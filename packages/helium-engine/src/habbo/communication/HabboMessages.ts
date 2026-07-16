@@ -127,6 +127,7 @@ import {
     RecyclerFinishedMessageEvent,
     RecyclerPrizesMessageEvent,
     RecyclerStatusMessageEvent,
+    SellablePetPalettesMessageEvent,
     VoucherRedeemErrorMessageEvent,
     VoucherRedeemOkMessageEvent,
 } from './messages/incoming/catalog';
@@ -541,6 +542,7 @@ import {
     PurchaseBasicMembershipExtensionComposer,
     PurchaseFromCatalogComposer,
     PurchaseVipMembershipExtensionComposer,
+    GetSellablePetPalettesComposer,
     RecycleItemsMessageComposer,
     RedeemVoucherMessageComposer,
     SelectClubGiftComposer,
@@ -1103,6 +1105,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1919, RecyclerStatusMessageEvent);
         this._events.set(281, RecyclerFinishedMessageEvent);
         this._events.set(3783, RecyclerPrizesMessageEvent);
+        this._events.set(3350, SellablePetPalettesMessageEvent);
 
         // === QUEST ===
         this._events.set(363, CommunityGoalHallOfFameMessageEvent);
@@ -1411,6 +1414,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2441, PurchaseVipMembershipExtensionComposer);
         this._composers.set(3561, PurchaseBasicMembershipExtensionComposer);
         this._composers.set(2087, SelectClubGiftComposer);
+        this._composers.set(3342, GetSellablePetPalettesComposer);
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         this._composers.set(780, GetMarketplaceConfigurationMessageComposer);
         this._composers.set(2731, GetMarketplaceOffersMessageComposer);

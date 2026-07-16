@@ -44,6 +44,9 @@ import {BuyGuildWidget} from './widgets/BuyGuildWidget';
 import {GuildBadgeViewCatalogWidget} from './widgets/GuildBadgeViewCatalogWidget';
 import {GuildSelectorCatalogWidget} from './widgets/GuildSelectorCatalogWidget';
 import {GuildForumSelectorCatalogWidget} from './widgets/GuildForumSelectorCatalogWidget';
+import {PetsCatalogWidget} from './widgets/PetsCatalogWidget';
+import {NewPetsCatalogWidget} from './widgets/NewPetsCatalogWidget';
+import {PetPreviewCatalogWidget} from './widgets/PetPreviewCatalogWidget';
 import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
@@ -460,6 +463,15 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.GUILD_FORUM_SELECTOR:
                 this._widgets.push(new GuildForumSelectorCatalogWidget(window, this._catalog!.getGroupMembershipsController()!));
+                break;
+            case CatalogWidgetName.PETS:
+                this._widgets.push(new PetsCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.NEW_PETS:
+                this._widgets.push(new NewPetsCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.PET_PREVIEW:
+                this._widgets.push(new PetPreviewCatalogWidget(window, this._catalog!));
                 break;
         }
     }

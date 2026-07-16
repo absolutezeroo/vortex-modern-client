@@ -23,3 +23,4 @@ export * from './PrizeLevelMessageData';
 export * from './RecyclerStatusMessageEvent';
 export * from './RecyclerFinishedMessageEvent';
 export * from './RecyclerPrizesMessageEvent';
+export * from './SellablePetPalettesMessageEvent';

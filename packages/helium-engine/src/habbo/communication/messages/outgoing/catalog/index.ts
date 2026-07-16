@@ -15,3 +15,4 @@ export * from './SelectClubGiftComposer';
 export * from './GetRecyclerStatusMessageComposer';
 export * from './GetRecyclerPrizesMessageComposer';
 export * from './RecycleItemsMessageComposer';
+export * from './GetSellablePetPalettesComposer';

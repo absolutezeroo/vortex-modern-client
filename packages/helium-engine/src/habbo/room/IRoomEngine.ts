@@ -13,6 +13,7 @@ import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IStuffData} from './object/data/IStuffData';
+import type {PetColorResult} from './PetColorResult';
 import type {IGetImageListener} from './IGetImageListener';
 import type {ImageResult} from './ImageResult';
 import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
@@ -101,6 +102,18 @@ export interface IRoomEngine extends IDisposable {
         customParts?: { layerId: number; partId: number; paletteId: number }[] | null,
         posture?: string | null
     ): ImageResult;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetColor()
+    getPetColor(typeId: number, colorId: number): PetColorResult | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetColorsByTag()
+    getPetColorsByTag(typeId: number, tag: string): PetColorResult[] | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetLayerIdForTag()
+    getPetLayerIdForTag(typeId: number, tag: string): number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetDefaultPalette()
+    getPetDefaultPalette(typeId: number, tag: string): PetColorResult | null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectImage()
     getRoomObjectImage(
