@@ -136,13 +136,13 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
     /**
 	 * Report a detected chat lag event
 	 *
-	 * @param lagAmount The amount of lag detected
+	 * @param currentTime The current time, used to throttle the warning report
 	 */
-    chatLagDetected(lagAmount: number): void
+    chatLagDetected(currentTime: number): void
     {
         if(this._lagWarningLogger)
         {
-            this._lagWarningLogger.chatLagDetected(lagAmount);
+            this._lagWarningLogger.chatLagDetected(currentTime);
         }
     }
 

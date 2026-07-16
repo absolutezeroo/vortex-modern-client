@@ -42,9 +42,11 @@ export class LagWarningLogger
     /**
 	 * Called when a chat lag event is detected
 	 *
-	 * @param lagAmount The amount of lag detected
+	 * @param currentTime The current time, used to throttle the warning report
 	 */
-    chatLagDetected(lagAmount: number): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/LagWarningLogger.as::chatLagDetected()
+    // The argument is the current time, not the lag: it feeds reportWarningsAsNeeded()'s throttle.
+    chatLagDetected(currentTime: number): void
     {
         if(!this.enabled || this.warningInterval <= 0)
         {
@@ -52,7 +54,7 @@ export class LagWarningLogger
         }
 
         this._warningCount++;
-        this.reportWarningsAsNeeded(lagAmount);
+        this.reportWarningsAsNeeded(currentTime);
     }
 
     /**

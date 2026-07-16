@@ -36,9 +36,9 @@ export interface IHabboTracking
     /**
 	 * Report a detected chat lag event
 	 *
-	 * @param lagAmount The amount of lag detected in milliseconds
+	 * @param currentTime The current time, used to throttle the warning report
 	 */
-    chatLagDetected(lagAmount: number): void;
+    chatLagDetected(currentTime: number): void;
 
     /**
 	 * Track an event log to the server via EventLogMessageComposer

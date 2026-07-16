@@ -121,6 +121,14 @@ export class RoomChatHandler extends BaseHandler
             return;
         }
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomChatHandler.as::onRoomChat()
+        // Closes the loop opened by RoomSession.sendChatMessage(), which records a send time per
+        // tracking id. Without this the entries are never removed and chat-lag is never reported.
+        if(parser.trackingId !== -1)
+        {
+            this.listener?.getSession(this.roomId)?.receivedChatWithTrackingId(parser.trackingId);
+        }
+
         this.dispatchChatEvent(
             parser.userId,
             parser.text,

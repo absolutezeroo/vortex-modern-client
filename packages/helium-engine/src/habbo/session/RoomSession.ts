@@ -504,20 +504,25 @@ export class RoomSession implements IRoomSession
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSession.as::receivedChatWithTrackingId()
     receivedChatWithTrackingId(trackingId: number): void
     {
+        // AS3 uses remove(), which drops the entry whether or not it reports lag.
         const sentTime = this._chatTrackingMap.get(trackingId);
+
+        this._chatTrackingMap.delete(trackingId);
 
         if(sentTime !== undefined)
         {
-            const elapsed = Date.now() - sentTime;
+            const now = Date.now();
 
-            if(elapsed > 2500 && this._habboTracking !== null)
+            if(now - sentTime > 2500 && this._habboTracking !== null)
             {
-                this._habboTracking.chatLagDetected(elapsed);
+                // AS3 hands the *current time* to chatLagDetected, not the elapsed lag:
+                // LagWarningLogger.reportWarningsAsNeeded() compares it against the last report
+                // time and stores it as the new one. Passing the delta would break that throttle.
+                this._habboTracking.chatLagDetected(now);
             }
-
-            this._chatTrackingMap.delete(trackingId);
         }
     }
 
