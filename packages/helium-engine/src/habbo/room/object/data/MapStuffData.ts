@@ -18,6 +18,8 @@ export class MapStuffData extends StuffDataBase implements IStuffData
 
     private static readonly STATE_KEY = 'state';
     private static readonly RARITY_KEY = 'rarity';
+    private static readonly CONTENTS_COUNT_KEY = 'contents_count';
+    private static readonly CHEST_NAME_KEY = 'chest_name';
 
     private _data: Map<string, string> = new Map();
 
@@ -41,6 +43,34 @@ export class MapStuffData extends StuffDataBase implements IStuffData
         }
 
         return -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/MapStuffData.as::get contentsCount()
+    override get contentsCount(): number
+    {
+        const count = this._data.get(MapStuffData.CONTENTS_COUNT_KEY);
+
+        // AS3 tests the string for truthiness, so "" and "0" both fall through to 0.
+        if(count)
+        {
+            return parseInt(count, 10);
+        }
+
+        return 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/MapStuffData.as::get chestName()
+    override get chestName(): string
+    {
+        const name = this._data.get(MapStuffData.CHEST_NAME_KEY);
+
+        // AS3 tests `!= null` here, not truthiness — an explicit "" is returned as "".
+        if(name !== undefined)
+        {
+            return name;
+        }
+
+        return '';
     }
 
     override initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void

@@ -448,8 +448,14 @@ export class FurniModel implements IFurniModel
     {
         let result: { groupItem: GroupItem; isNewGroup: boolean };
 
-        // Non-groupable items get their own group (except MONSTERPLANT_SEED)
-        if(!item.groupable && item.category !== FurnitureCategory.MONSTERPLANT_SEED)
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::addOrUpdateItem()
+        // Non-groupable items get their own group, except monsterplant seeds and the two chest
+        // categories — AS3 sends those down the groupable path even when not groupable, because
+        // addOrUpdateGroupableItem() has a chest-specific matching rule.
+        if(!item.groupable
+            && item.category !== FurnitureCategory.MONSTERPLANT_SEED
+            && item.category !== FurnitureCategory.FURNI_CHEST
+            && item.category !== FurnitureCategory.COINS_CHEST)
         {
             result = this.addOrUpdateNonGroupableItem(item, isInitializing);
         }
@@ -856,6 +862,22 @@ export class FurniModel implements IFurniModel
                         existingGroup = groupItem;
 
                         break;
+                    }
+                }
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::addOrUpdateGroupableItem()
+                // Chests only stack while both are empty and unnamed; anything else keeps its own
+                // group. Without this branch they fell through to the match-by-type default and
+                // every chest of a type collapsed into one pile regardless of contents or name.
+                // AS3 deliberately does not break here — the last matching chest wins.
+                else if(item.category === FurnitureCategory.FURNI_CHEST
+                    || item.category === FurnitureCategory.COINS_CHEST)
+                {
+                    if(groupItem.stuffData?.contentsCount === 0
+                        && item.stuffData?.contentsCount === 0
+                        && groupItem.stuffData?.chestName === ''
+                        && item.stuffData?.chestName === '')
+                    {
+                        existingGroup = groupItem;
                     }
                 }
                 // Must be groupable

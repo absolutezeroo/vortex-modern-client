@@ -16,6 +16,15 @@ export interface IStuffData
     uniqueSeriesSize: number;
     readonly rarityLevel: number;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IStuffData.as::get contentsCount()
+    readonly contentsCount: number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IStuffData.as::get chestName()
+    readonly chestName: string;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IStuffData.as::get state()
+    readonly state: number;
+
     initializeFromIncomingMessage(wrapper: IMessageDataWrapper): void;
 
     initializeFromRoomObjectModel(model: IRoomObjectModel): void;

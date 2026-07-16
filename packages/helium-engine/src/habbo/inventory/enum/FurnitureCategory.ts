@@ -27,6 +27,10 @@ export const FurnitureCategory = {
     MONSTERPLANT_REBREED: 21,
     MONSTERPLANT_FERTILIZE: 22,
     FIGURE_PURCHASABLE_SET: 23,
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/enum/FurnitureCategory.as::FURNI_CHEST
+    FURNI_CHEST: 24,
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/enum/FurnitureCategory.as::COINS_CHEST
+    COINS_CHEST: 25,
 } as const;
 
 export type FurnitureCategoryType = typeof FurnitureCategory[keyof typeof FurnitureCategory];
