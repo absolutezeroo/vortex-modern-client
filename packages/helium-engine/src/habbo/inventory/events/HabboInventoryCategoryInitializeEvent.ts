@@ -14,6 +14,7 @@ export class HabboInventoryCategoryInitializeEvent
         this._category = category;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/events/HabboInventoryCategoryInitializeEvent.as:9
     private _category: string;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/events/HabboInventoryCategoryInitializeEvent.as::get category()
