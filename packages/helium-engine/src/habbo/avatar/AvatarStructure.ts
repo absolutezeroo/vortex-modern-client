@@ -256,7 +256,7 @@ export class AvatarStructure
 
         const bodyPartIds: string[] = [];
         const geometryType = action.definition.geometryType;
-        let animation: Animation | null = null;
+        let animation: Animation | null;
 
         if(action.definition.isAnimation)
         {
@@ -267,6 +267,20 @@ export class AvatarStructure
             if(animation)
             {
                 const animatedIds = animation.getAnimatedBodyPartIds(0, action.overridingAction);
+
+                // AS3 (AvatarStructure.as:298-308): the body parts an effect *removes*
+                // must still be marked active, so setAction() applies the new action to
+                // them. Without this, a removed part keeps its stale action (stays visible
+                // or unrefreshed).
+                for(const removePartId of animation.removeData)
+                {
+                    const removedBodyPart = this._geometry.getBodyPartOfItem(geometryType, removePartId, avatar);
+
+                    if(removedBodyPart !== null && bodyPartIds.indexOf(removedBodyPart.id) === -1)
+                    {
+                        bodyPartIds.push(removedBodyPart.id);
+                    }
+                }
 
                 if(animation.hasAddData())
                 {
@@ -382,7 +396,6 @@ export class AvatarStructure
         if(!action || !this._geometry) return [];
 
         const activeParts = this._partSetsData.getActiveParts(action.definition);
-        const containers: AvatarImagePartContainer[] = [];
         let defaultFrames: number[] = [0];
 
         const animAction = this._animationData.getAction(action.definition);
