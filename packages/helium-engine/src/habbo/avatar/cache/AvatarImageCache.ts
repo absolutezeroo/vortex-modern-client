@@ -206,7 +206,7 @@ export class AvatarImageCache
         {
             if(action.definition.isAnimation)
             {
-                let animDirection = direction;
+                let animDirection: number;
                 const animation = this._structure.getAnimation(
                     action.definition.state + AvatarImageCache.DEF_SEPARATOR + action.actionParameter
                 );
@@ -424,7 +424,7 @@ export class AvatarImageCache
         partList: AvatarImagePartContainer[],
         frameIndex: number,
         action: IActiveActionData,
-        forceUpdate: boolean = false
+        _forceUpdate: boolean = false
     ): AvatarImageBodyPartContainer | null
     {
         if(!partList || partList.length === 0) return null;
@@ -436,7 +436,7 @@ export class AvatarImageCache
             if(!this._canvas) return null;
         }
 
-        let assetDirection = direction;
+        let assetDirection: number;
         const isFlippedDirection = AvatarDirectionAngle.DIRECTION_IS_FLIPPED[direction] || false;
         let assetPartDefinition = action.definition.assetPartDefinition;
         let isCacheable = true;
@@ -483,13 +483,17 @@ export class AvatarImageCache
             if(isFlippedDirection)
             {
                 if(assetPartDefinition === AvatarImageCache.ACTION_WAVE &&
-					(currentPartType === 'lh' || currentPartType === 'ls' || currentPartType === 'lc'))
+					(currentPartType === 'lh' || currentPartType === 'ls' || currentPartType === 'lc' || currentPartType === 'mcl'))
                 {
+                    // AS3 AvatarImageCache.as:474 — the carried "misc" part mcl flips with
+                    // the left hand when waving. Without it mcl fell through to the else,
+                    // remapping the direction and swapping to mcr instead of mirroring.
                     isPartFlipped = true;
                 }
                 else if(assetPartDefinition === AvatarImageCache.ACTION_DRINK &&
-					(currentPartType === 'rh' || currentPartType === 'rs' || currentPartType === 'rc'))
+					(currentPartType === 'rh' || currentPartType === 'rs' || currentPartType === 'rc' || currentPartType === 'mcr'))
                 {
+                    // AS3 AvatarImageCache.as:478 — mcr flips with the right hand when drinking.
                     isPartFlipped = true;
                 }
                 else if(assetPartDefinition === AvatarImageCache.ACTION_BLOW && currentPartType === 'rh')
