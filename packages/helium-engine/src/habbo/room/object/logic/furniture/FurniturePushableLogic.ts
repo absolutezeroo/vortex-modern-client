@@ -23,7 +23,7 @@ export class FurniturePushableLogic extends FurnitureMultiStateLogic
     constructor()
     {
         super();
-        this.moveUpdateInterval = 500;
+        this.setMoveUpdateInterval(500);
     }
 
     override processUpdateMessage(message: RoomObjectUpdateMessage): void
@@ -80,11 +80,11 @@ export class FurniturePushableLogic extends FurnitureMultiStateLogic
 
             if(dataMessage.state > 0)
             {
-                this.moveUpdateInterval = animTime / this.getUpdateIntervalValue(dataMessage.state);
+                this.setMoveUpdateInterval(animTime / this.getUpdateIntervalValue(dataMessage.state));
             }
             else
             {
-                this.moveUpdateInterval = 1;
+                this.setMoveUpdateInterval(1);
             }
 
             this.handlePushableDataUpdate(dataMessage);
