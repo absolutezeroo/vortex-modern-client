@@ -24,17 +24,24 @@ import {
     parseSkinXml,
     parseWindowLayoutXml
 } from './window/WindowXmlAssetParser';
-import {serializeWindowLayoutToXml} from './window/WindowLayoutXmlSerializer';
-import type {IWindowLayoutJson} from './window/WindowLayoutXmlSerializer';
 import './_index.scss';
 
 const log = Logger.getLogger('HeliumApp');
 
 /**
+ * The element description's asset name.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::init()
+ * asks for it by this exact name; build-window-assets.mjs emits it under the same name, so the
+ * bundle key and the AS3 asset name are the one string.
+ */
+const ELEMENT_DESCRIPTION_ASSET = 'habbo_element_description_xml';
+
+/**
  * Atlas spritesheet names that need to be decoded as ImageBitmaps.
  *
  * Every compiled window-skin template references one of these by name (the
- * `templates[].asset` field in `window-skins/*.json`) — this must cover every
+ * `templates[].asset` field in `window-skins/*.xml`) — this must cover every
  * distinct name any compiled skin uses, or that skin's pieces silently never render.
  */
 const ATLAS_NAMES = [
@@ -101,13 +108,6 @@ const EMBEDDED_AVATAR_XML_ASSET_NAMES = [
     'HabboAvatarPartSets',
 ];
 
-function isXmlText(value: string): boolean 
-{
-    const trimmed = value.trim();
-
-    return trimmed.startsWith('<');
-}
-
 function parseJson<T>(value: string): T | null 
 {
     try 
@@ -120,24 +120,14 @@ function parseJson<T>(value: string): T | null
     }
 }
 
-function parseElementDescriptionFromBundle(raw: string, source: string): IElementDescriptionData | null 
+function parseElementDescriptionFromBundle(raw: string, source: string): IElementDescriptionData | null
 {
-    if(isXmlText(raw)) 
-    {
-        return parseElementDescriptionXml(raw, 'habbo_element_description', source);
-    }
-
-    return parseJson<IElementDescriptionData>(raw);
+    return parseElementDescriptionXml(raw, ELEMENT_DESCRIPTION_ASSET, source);
 }
 
-function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkinData | null 
+function parseSkinFromBundle(raw: string, skinId: string, source: string): ISkinData | null
 {
-    if(isXmlText(raw)) 
-    {
-        return parseSkinXml(raw, skinId, source);
-    }
-
-    return parseJson<ISkinData>(raw);
+    return parseSkinXml(raw, skinId, source);
 }
 
 /**
@@ -363,47 +353,9 @@ function readEmbeddedAvatarXmlAsset(bundle: AssetBundle, bundleKeys: string[], a
     return suffixMatch ? bundle.getText(suffixMatch) : null;
 }
 
-function parseLayoutEntries(raw: string, source: string, baseName: string): IWindowLayoutXmlData[] 
+function parseLayoutEntries(raw: string, source: string, baseName: string): IWindowLayoutXmlData[]
 {
-    if(isXmlText(raw)) 
-    {
-        return parseWindowLayoutXml(raw, baseName, source);
-    }
-
-    const parsed = parseJson<IWindowLayoutJson>(raw);
-
-    if(!parsed) 
-    {
-        return [];
-    }
-
-    if(Array.isArray(parsed)) 
-    {
-        const result: IWindowLayoutXmlData[] = [];
-
-        for(const layout of parsed) 
-        {
-            if(!layout || !layout.window) 
-            {
-                continue;
-            }
-
-            const layoutName = layout.name || baseName;
-            const xml = serializeWindowLayoutToXml(layout);
-            result.push(...parseWindowLayoutXml(xml, layoutName, source));
-        }
-
-        return result;
-    }
-
-    if(!parsed.window) 
-    {
-        return [];
-    }
-
-    const layoutName = parsed.name || baseName;
-
-    return parseWindowLayoutXml(serializeWindowLayoutToXml(parsed), layoutName, source);
+    return parseWindowLayoutXml(raw, baseName, source);
 }
 
 declare global 
@@ -555,14 +507,14 @@ export class HeliumApp
         // 2. Load element descriptions + atlas bitmaps from bundle
         try 
         {
-            const elementDescriptionXml = xmlBundle.getText('window-skins/element-description.xml')
-                ?? xmlBundle.getText('window-skins/element-description.json');
+            const elementDescriptionKey = `window-skins/${ELEMENT_DESCRIPTION_ASSET}.xml`;
+            const elementDescriptionXml = xmlBundle.getText(elementDescriptionKey);
 
-            if(elementDescriptionXml) 
+            if(elementDescriptionXml)
             {
                 const elementDescription = parseElementDescriptionFromBundle(
                     elementDescriptionXml,
-                    'window-skins/element-description.xml'
+                    elementDescriptionKey
                 );
 
                 if(elementDescription) 
@@ -588,21 +540,22 @@ export class HeliumApp
             // Load all skin XMLs from bundle
             const skins = new Map<string, ISkinData>();
 
-            for(const key of xmlBundle.listKeys('window-skins/')) 
+            for(const key of xmlBundle.listKeys('window-skins/'))
             {
-                if(key.endsWith('element-description.xml') || key.endsWith('element-description.json')) 
+                if(key === elementDescriptionKey)
                 {
                     continue;
                 }
 
                 const skinXml = xmlBundle.getText(key);
 
-                if(!skinXml) 
+                if(!skinXml)
                 {
                     continue;
                 }
 
-                const skinId = key.split('/').pop()!.replace('.xml', '').replace('.json', '');
+                // The bundle key's basename is the AS3 asset name (build-window-assets.mjs).
+                const skinId = key.split('/').pop()!.replace(/\.xml$/, '');
                 const skin = parseSkinFromBundle(skinXml, skinId, key);
 
                 if(skin) skins.set(skin.id, skin);
@@ -625,7 +578,8 @@ export class HeliumApp
                 continue;
             }
 
-            const layoutBaseName = key.split('/').pop()!.replace('.xml', '').replace('.json', '');
+            // The bundle key's basename is the AS3 asset name (build-window-assets.mjs).
+            const layoutBaseName = key.split('/').pop()!.replace(/\.xml$/, '');
             let layouts: IWindowLayoutXmlData[];
 
             try

@@ -20,5 +20,10 @@ configurations/
 mockup/
 tools/flash2html/output/
 *.png
+# Window layouts/skins extracted from a Habbo dump by tools/build-window-assets.mjs.
+# Derived dump content, like sources/, configurations/ and *.png above: generated per
+# checkout, never committed.
+packages/helium-client/src/assets/window-layouts/
+packages/helium-client/src/assets/window-skins/
 NUL
 tmp/

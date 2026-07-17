@@ -539,12 +539,51 @@ export class InfoStandFurniView
         this._widget.refreshContainer();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::update()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::set spacerColor()
+    private set spacerColor(color: number)
+    {
+        if(!this._infoBorder)
+        {
+            return;
+        }
+
+        const spacers = [
+            this._infoBorder.findChildByName('images_spacer'),
+            this._infoBorder.findChildByName('owner_spacer'),
+            this._infoBorder.findChildByName('group_details_spacer'),
+            this._infoBorder.findChildByName('furni_details_spacer')
+        ];
+
+        for(const spacer of spacers)
+        {
+            if(spacer) spacer.color = color;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniView.as::update()
     public update(event: RoomWidgetFurniInfoUpdateEvent): void
     {
+        // The info_border ships as style 2 ("white borderless" -> border_colorless), a
+        // deliberately untinted skin the view colours per furni provenance. Leaving it unset
+        // renders the panel white, which is what the element description's 0xffffff colour
+        // default gives.
         if(this._infoBorder)
         {
-            this._infoBorder.color = BuilderClubUtils.isBuilderClubId(event.id) ? 14121216 : 16777215;
+            if(BuilderClubUtils.isBuilderClubId(event.id))
+            {
+                this._infoBorder.color = 3349504;
+                this.spacerColor = 4283710744;
+            }
+            else if(BuilderClubUtils.isTempId(event.id))
+            {
+                this._infoBorder.color = 1321796;
+                this.spacerColor = 4281289835;
+            }
+            else
+            {
+                this._infoBorder.color = 4013373;
+                this.spacerColor = 4281545523;
+            }
         }
 
         const roomSession = this.container?.roomSession;
@@ -929,7 +968,7 @@ export class InfoStandFurniView
         if(visible && stuffData)
         {
             const widgetWindow = overlayContainer.findChildByName('unique_item_plaque_widget') as IWidgetWindow | null;
-            const widget = widgetWindow?.widget as ILimitedItemPreviewOverlayWidget | undefined;
+            const widget = widgetWindow?.widget as ILimitedItemPreviewOverlayWidget | null;
 
             if(widget)
             {
@@ -951,7 +990,7 @@ export class InfoStandFurniView
         if(visible && stuffData)
         {
             const widgetWindow = overlayContainer.findChildByName('rarity_item_overlay_widget') as IWidgetWindow | null;
-            const widget = widgetWindow?.widget as IRarityItemPreviewOverlayWidget | undefined;
+            const widget = widgetWindow?.widget as IRarityItemPreviewOverlayWidget | null;
 
             if(widget)
             {
@@ -964,7 +1003,7 @@ export class InfoStandFurniView
     public set groupBadgeId(badgeId: string)
     {
         const widgetWindow = this._infoBorder?.findChildByName('group_badge_image') as IWidgetWindow | null;
-        const widget = widgetWindow?.widget as IBadgeImageWidget | undefined;
+        const widget = widgetWindow?.widget as IBadgeImageWidget | null;
 
         if(widget && widgetWindow)
         {

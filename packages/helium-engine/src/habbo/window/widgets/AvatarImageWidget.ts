@@ -90,7 +90,10 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
         this._onClickBound = this.onClick.bind(this);
         this._onAvatarRendererReadyBound = this.onAvatarRendererReady.bind(this);
 
-        const root = this._windowManager.buildWidgetLayout('avatar_image_xml') as IWindowContainer;
+        // AS3 resolves "avatar_image_xml" against _windowManager.assets, i.e. the
+        // HabboWindowManager component's own library. HabboFriendBar declares a different
+        // asset under the same name, so the component qualifies it here.
+        const root = this._windowManager.buildWidgetLayout('HabboWindowManager_avatar_image_xml') as IWindowContainer;
 
         if(root)
         {

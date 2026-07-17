@@ -1,6 +1,6 @@
 # Helium
 
-Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. pnpm monorepo: `helium-engine` (engine) + `helium-client` (display, UI). The entire Flash client is ported — both logic and display — with original XML layouts converted to JSON.
+Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. pnpm monorepo: `helium-engine` (engine) + `helium-client` (display, UI). The entire Flash client is ported — both logic and display — and the original Flash window layouts/skins ship as XML, verbatim from the dump (see Assets below).
 
 ## Commands
 
@@ -55,8 +55,14 @@ declaration rather than passing it off as recovered.
 from it, e.g. `habbo/inventory/items/FurnitureItem.as` imports `_SafePkg_2405._SafeCls_2649`, the
 interface declaring `get stuffData():IStuffData`. It holds real parser DTOs and composers
 (`_SafePkg_3364` carries the unseen-item reset composers). Treating it as an unrelated module means
-failing to find definitions that exist. The flat `_SafeCls_N.as` files directly under `src/` are a
-different matter and can be ignored.
+failing to find definitions that exist.
+
+**The flat `_SafeCls_N.as` files directly under `src/` are the embedded-asset classes, and they
+carry the name mapping.** Each is a one-line `[Embed(source="/_assets/<seq>__SafeCls_N.<ext>")]`
+wrapper, but the decompiler appends the original identifier as a footer comment —
+`@identifier _SafeCls_894 = "header_png$e4f111fb..."`. That footer is the only thing tying an
+obfuscated ref to its real embed, and `tools/lib/cryptedManifest.mjs` reads all of them. Do not
+skip these files.
 
 **The 2026 decompiler drops the `@` from E4X computed-attribute access.** `_loc3_.@["order-before"]`
 comes back as `_loc3_["order-before"]`, which reads as child-element access and makes live code look
@@ -69,10 +75,21 @@ Path mapping: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/` �
 
 ### Assets
 
-Window layout/skin JSON is compiled from `binaryDataXml_organized/{layouts,skins,non-layouts}`,
-which lives in `sources/WIN63-202607011411-782849652/` (see
-`packages/helium-client/tools/compile-window-*.mjs`). `src/layouts/` and `src/images/` in the same
-dump hold the same raw XML/PNG resources (same `$<hash>` filenames) flat and unsorted.
+Window layouts and skins ship **as XML**, verbatim from the dump, built by
+`packages/helium-client/tools/build-window-assets.mjs` out of `src/layouts/` + `src/_assets/` +
+`src/binaryData/*Com.as`. There is no JSON compile step and no intermediate sorted tree:
+`binaryDataXml_organized/` is a leftover whose filenames come from each XML's internal
+`<layout name="...">` — a Flash-authoring label AS3 never reads — so nothing should be named from
+it. `src/layouts/` and `src/images/` hold the raw XML/PNG resources flat, named by embed
+(`<seq>_<name>_<type>$<hash>` or `<seq>__SafeCls_N`).
+
+**An asset's real name is its `*Com.as` field name**, the exact string passed to
+`assets.getAssetByName()` — e.g. `HabboWindowManagerCom.as` declares
+`public static var habbo_window_layout_bubble_xml:Class = bubble_xml$44e3d739...;`. Asset libraries
+are per-component, so the same field name in two components can mean two different embeds
+(`avatar_image_xml` exists in both HabboFriendBar and HabboWindowManager); join declarations to
+files on the embed's **whole** linkage name, hash included. Collapsing to the short name merges
+distinct assets — that is how a layout once got shipped under an image's name.
 
 Shipped assets are not always current with the primary tree — check before assuming a code gap.
 `packages/helium-client/src/assets/configurations/HabboAvatarGeometry.xml` has 9 bodyparts and no

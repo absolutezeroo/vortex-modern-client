@@ -427,7 +427,7 @@ source_as_win63/habbo/session/
 
 ### Full AS3 port
 
-ALL AS3 files are ported — both logic and display classes. The Flash UI system (windows, dialogs, display components) is faithfully ported using PixiJS. Flash XML layouts are converted to JSON.
+ALL AS3 files are ported — both logic and display classes. The Flash UI system (windows, dialogs, display components) is faithfully ported using PixiJS. Flash XML layouts ship as XML, verbatim from the dump, and are parsed at runtime.
 
 ### AS3 → TypeScript mapping
 

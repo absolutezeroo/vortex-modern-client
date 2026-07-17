@@ -1,8 +1,8 @@
 /**
  * Interfaces for window layout data structures.
  *
- * These describe the JSON format produced by compile-window-layouts.mjs.
- * A layout is a tree of nodes, each representing a window element.
+ * These describe a parsed window-layout XML asset (see the client's
+ * WindowXmlAssetParser). A layout is a tree of nodes, each representing a window element.
  *
  * @see sources/win63_version/habbo/window/HabboWindowManagerComponent.as
  */
@@ -27,6 +27,9 @@ export interface IWindowLayoutAttributes
     background?: string;
     widget?: string;
 
+    // `| undefined`, not the house `| null`: an index signature must be a supertype of every
+    // declared property, and the optional ones above are `string | undefined`.
+    // eslint-disable-next-line no-restricted-syntax
     [key: string]: string | undefined;
 }
 
