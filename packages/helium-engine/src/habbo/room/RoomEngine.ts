@@ -1555,8 +1555,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         canStandUp: boolean,
         baseY: number,
         animationTime: number = NaN,
-        skipPositionUpdate: boolean = false
-    ): boolean 
+        skipPositionUpdate: boolean = false,
+        jumpingPower: number = NaN
+    ): boolean
     {
         const room = this.getRoomInstance(roomId);
 
@@ -1608,7 +1609,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             canStandUp,
             resolvedBaseY,
             animationTime,
-            skipPositionUpdate
+            skipPositionUpdate,
+            jumpingPower
         );
 
         handler.processUpdateMessage(avatarMessage);

@@ -18,13 +18,15 @@ export class RoomObjectAvatarUpdateMessage extends RoomObjectMoveUpdateMessage
         canStandUp: boolean,
         baseY: number,
         animationTime: number = NaN,
-        skipPositionUpdate: boolean = false
+        skipPositionUpdate: boolean = false,
+        jumpingPower: number = NaN
     )
     {
         super(location, targetLocation, direction, animationTime, false, skipPositionUpdate);
         this._dirHead = dirHead;
         this._canStandUp = canStandUp;
         this._baseY = baseY;
+        this._jumpingPower = jumpingPower;
     }
 
     private _dirHead: number;
@@ -46,5 +48,14 @@ export class RoomObjectAvatarUpdateMessage extends RoomObjectMoveUpdateMessage
     get baseY(): number
     {
         return this._baseY;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/messages/RoomObjectAvatarUpdateMessage.as::get jumpingPower()
+    private _jumpingPower: number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/messages/RoomObjectAvatarUpdateMessage.as::get jumpingPower()
+    get jumpingPower(): number
+    {
+        return this._jumpingPower;
     }
 }

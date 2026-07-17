@@ -68,15 +68,19 @@ export class RoomObjectMoveUpdateMessage extends RoomObjectUpdateMessage
         return this._skipPositionUpdate;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::_overshootAnimationTime
     private _overshootAnimationTime: number;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get overshootAnimationTime()
     get overshootAnimationTime(): number
     {
         return this._overshootAnimationTime;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::_curveStrength
     private _curveStrength: number;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/messages/RoomObjectMoveUpdateMessage.as::get curveStrength()
     get curveStrength(): number
     {
         return this._curveStrength;

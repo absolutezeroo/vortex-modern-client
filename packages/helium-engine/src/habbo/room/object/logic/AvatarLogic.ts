@@ -13,6 +13,7 @@ import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 import {MovingObjectLogic} from './MovingObjectLogic';
 import {RoomObjectMoveEvent} from '../../events/RoomObjectMoveEvent';
 import {RoomObjectFurnitureActionEvent} from '../../events/RoomObjectFurnitureActionEvent';
+import type {RoomObjectMoveUpdateMessage} from '../../messages/RoomObjectMoveUpdateMessage';
 import {RoomObjectAvatarUpdateMessage} from '../../messages/RoomObjectAvatarUpdateMessage';
 import {RoomObjectAvatarPostureUpdateMessage} from '../../messages/RoomObjectAvatarPostureUpdateMessage';
 import {RoomObjectAvatarChatUpdateMessage} from '../../messages/RoomObjectAvatarChatUpdateMessage';
@@ -134,6 +135,14 @@ export class AvatarLogic extends MovingObjectLogic
             model.setNumber('head_direction', message.dirHead);
             model.setNumber('figure_can_stand_up', message.canStandUp ? 1 : 0);
             model.setNumber('figure_vertical_offset', message.baseY);
+
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/AvatarLogic.as::processUpdateMessage()
+            // getCurveStrength() reads figure_jumping_power back to arc the jump.
+            if(!isNaN(message.jumpingPower))
+            {
+                model.setNumber('figure_jumping_power', message.jumpingPower);
+            }
+
             return;
         }
 
@@ -425,6 +434,31 @@ export class AvatarLogic extends MovingObjectLogic
                 this.updateActions(time, model);
             }
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/AvatarLogic.as::getCurveStrength()
+    // The avatar jump arc: an avatar update carries jumpingPower directly; otherwise
+    // read it back from the model where processUpdateMessage() stored it.
+    protected override getCurveStrength(message: RoomObjectMoveUpdateMessage): number
+    {
+        if(message === null || this.object === null)
+        {
+            return super.getCurveStrength(message);
+        }
+
+        if(message instanceof RoomObjectAvatarUpdateMessage)
+        {
+            return message.jumpingPower;
+        }
+
+        const model = this.object.getModelController();
+
+        if(model !== null && model.hasNumber('figure_jumping_power'))
+        {
+            return model.getNumber('figure_jumping_power');
+        }
+
+        return super.getCurveStrength(message);
     }
 
     private updateEffect(effect: number, delay: number, model: IRoomObjectModelController): void
