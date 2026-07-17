@@ -718,10 +718,13 @@ export class RoomMessageHandler implements IRoomMessageHandler
             return;
         }
 
+        // AS3 (_SafeCls_1984.as:782,:787) passes refresh=true for a server-driven removal
+        // so the tile map rebuilds; ghost/preview disposals leave it false.
         this._roomCreator.disposeObjectFurniture(
             this._currentRoomId,
             parser.objectId,
-            parser.pickerId
+            parser.pickerId,
+            true
         );
     }
 

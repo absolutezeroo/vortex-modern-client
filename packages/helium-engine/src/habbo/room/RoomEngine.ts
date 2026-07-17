@@ -2455,12 +2455,19 @@ export class RoomEngine extends Component implements IRoomEngine,
         roomId: number,
         id: number,
         _pickerId?: number,
-        _refresh?: boolean
-    ): boolean 
+        refresh: boolean = false
+    ): boolean
     {
         const success = this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
 
-        if(success) this.refreshTileObjectMap(roomId, 'RoomEngine.disposeObjectFurniture()');
+        // AS3 (_SafeCls_90.as:3238-3241) only refreshes the tile map when the caller
+        // asks (param4, default false). The port refreshed unconditionally, which was
+        // harmless until refreshTileObjectMap started re-running recalibrateMovements:
+        // disposing an OBJECT_PLACE ghost from resetSelectedObjectData (which happens
+        // *before* selectedObjectData is cleared) then re-ran handleObjectPlace and
+        // rebuilt the very ghost being disposed. Only the server-driven removal passes
+        // refresh=true (see _SafeCls_1984.as:782/787).
+        if(success && refresh) this.refreshTileObjectMap(roomId, 'RoomEngine.disposeObjectFurniture()');
 
         return success;
     }
