@@ -787,16 +787,34 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._furniModel?.insertFurniture(items);
     };
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFurniListAddOrUpdate()
     private onFurniListAddOrUpdate = (event: IMessageEvent): void =>
     {
         const parser = event.parser as FurniListAddOrUpdateMessageParser | null;
 
         if(!parser || !this._furniModel) return;
 
+        const addedIds: number[] = [];
+
         for(const item of parser.items)
         {
-            this._furniModel.addOrUpdateItem(new FurnitureItem(item.toFurnitureItemData()), false);
+            const furnitureItem = new FurnitureItem(item.toFurnitureItemData());
+
+            this._furniModel.addOrUpdateItem(furnitureItem, false);
+            addedIds.push(furnitureItem.id);
         }
+
+        // AS3 refreshes the view after adding — this was missing, so a picked-up item
+        // only appeared after the inventory was reopened. updateUnseenItems() highlights
+        // the new items and floats them to the top; setViewToState() flips an empty
+        // panel to the list; updateView() redraws the grid.
+        if(addedIds.length > 0)
+        {
+            this._furniModel.updateUnseenItems(addedIds);
+        }
+
+        this._furniModel.setViewToState();
+        this._furniModel.updateView();
     };
 
     private onFurniListRemove = (event: IMessageEvent): void =>
