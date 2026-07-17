@@ -61,6 +61,15 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     constructor(context: IContext)
     {
         super(context);
+
+        // AS3 registers the content-load listeners in its constructor (lines 68-70),
+        // once and for the object's whole life. The old code registered them inside
+        // initialize(), which runs later and again on every call — so events that
+        // fired before the first initialize() were missed, and repeated initialize()
+        // calls stacked duplicate handlers.
+        this.events.on(RoomContentLoadedEvent.CONTENT_LOAD_SUCCESS, this.onContentLoaded, this);
+        this.events.on(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, this.onContentLoaded, this);
+        this.events.on(RoomContentLoadedEvent.CONTENT_LOAD_CANCEL, this.onContentLoaded, this);
     }
 
     private _limitContentProcessing: boolean = true;
@@ -196,10 +205,8 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 
         this._listener = listener;
 
-        // Register content load event listeners
-        this.events.on(RoomContentLoadedEvent.CONTENT_LOAD_SUCCESS, this.onContentLoaded, this);
-        this.events.on(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, this.onContentLoaded, this);
-        this.events.on(RoomContentLoadedEvent.CONTENT_LOAD_CANCEL, this.onContentLoaded, this);
+        // Content-load listeners are registered once in the constructor (AS3 parity),
+        // not here — see the constructor.
 
         // Load placeholder types
         const placeHolderTypes = this._contentLoader.getPlaceHolderTypes();
@@ -608,6 +615,12 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 */
     private onContentLoaded(type: string | null): void
     {
+        // AS3 ignores the event entirely once the content loader is gone.
+        if(this._contentLoader === null)
+        {
+            return;
+        }
+
         if(type === null)
         {
             if(this._listener)
@@ -618,7 +631,12 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
             return;
         }
 
-        this._loadedContentTypes.push(type);
+        // AS3 de-dups (indexOf < 0): a type already queued is not pushed again, so the
+        // same content is not re-processed. The old body pushed unconditionally.
+        if(this._loadedContentTypes.indexOf(type) < 0)
+        {
+            this._loadedContentTypes.push(type);
+        }
     }
 
     /**
