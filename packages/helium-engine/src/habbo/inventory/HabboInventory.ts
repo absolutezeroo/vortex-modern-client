@@ -32,6 +32,9 @@ import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
+import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
+import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
@@ -73,6 +76,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _toolbar: IHabboToolbar | null = null;
     private _roomEngine: IRoomEngine | null = null;
     private _roomSessionManager: IRoomSessionManager | null = null;
+    private _sessionDataManager: ISessionDataManager | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _furniMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
@@ -267,6 +271,18 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 (roomEngine: IRoomEngine | null) =>
                 {
                     this._roomEngine = roomEngine;
+                },
+                true
+            ),
+            // Required, as AS3 declares it (no third argument). HeliumMain attaches
+            // SessionDataManager before HabboInventory, so this neither delays init
+            // nor risks a deadlock. getFurnitureData() still null-guards it, matching
+            // AS3's own defensive guard.
+            new ComponentDependency(
+                IID_SessionDataManager,
+                (manager: ISessionDataManager | null) =>
+                {
+                    this._sessionDataManager = manager;
                 },
                 true
             ),
@@ -664,6 +680,35 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._view = new InventoryMainView(this);
         this.registerFurniMessageEvents();
         log.info('Inventory initialized');
+    }
+
+    /**
+	 * Resolves the furniture data for a class id and type ("s" floor / "i" wall).
+	 *
+	 * GroupItem.furniData calls this to recover an item's className, which every
+	 * NFT check and the furni-line lookups depend on. It null-guards the session
+	 * data manager exactly as AS3 does, so a call before that manager is injected
+	 * returns null rather than throwing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFurnitureData()
+    public getFurnitureData(classId: number, type: string): IFurnitureData | null
+    {
+        if(this._sessionDataManager === null)
+        {
+            return null;
+        }
+
+        if(type === 's')
+        {
+            return this._sessionDataManager.getFloorItemData(classId);
+        }
+
+        if(type === 'i')
+        {
+            return this._sessionDataManager.getWallItemData(classId);
+        }
+
+        return null;
     }
 
     // --- ILinkEventTracker ---

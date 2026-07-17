@@ -1,4 +1,5 @@
 import type {IFurnitureItem} from './IFurnitureItem';
+import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {FurniModel} from '../furni/FurniModel';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -183,14 +184,14 @@ export class GroupItem implements IGetImageListener
 
     private _hasUnseenItems: boolean = false;
 
-    get hasUnseenItems(): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get hasUnseenItems()
+    get hasUnseenItems(): boolean
     {
         return this._hasUnseenItems;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/items/GroupItem.as::isNft()
-
-    set hasUnseenItems(value: boolean) 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::set hasUnseenItems()
+    set hasUnseenItems(value: boolean)
     {
         if(this._hasUnseenItems !== value) 
         {
@@ -338,10 +339,10 @@ export class GroupItem implements IGetImageListener
         }
     }
 
-    // TODO(AS3): needs HabboInventory.getFurnitureData() (not wired yet).
-    isNft(): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::isNft()
+    isNft(): boolean
     {
-        return false;
+        return this.className.indexOf('nft_') === 0;
     }
 
     /**
@@ -403,9 +404,10 @@ export class GroupItem implements IGetImageListener
     /**
      * Get the last item without removing it
      */
-    peek(): FurnitureItem | null 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::peek()
+    peek(): FurnitureItem | null
     {
-        if(this._items.size === 0) 
+        if(this._items.size === 0)
         {
             return null;
         }
@@ -413,6 +415,42 @@ export class GroupItem implements IGetImageListener
         const items = Array.from(this._items.values());
 
         return items[items.length - 1];
+    }
+
+    private _furniDataCache: IFurnitureData | null = null;
+
+    /**
+	 * The furniture data for this group, resolved once and cached.
+	 *
+	 * Every item in a group shares a type, so the lookup is stable for the group's
+	 * lifetime — AS3 never invalidates the cache either.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get furniData()
+    get furniData(): IFurnitureData | null
+    {
+        if(this._furniDataCache !== null)
+        {
+            return this._furniDataCache;
+        }
+
+        const item = this.peek();
+
+        if(item === null)
+        {
+            return null;
+        }
+
+        const type = item.isWallItem ? 'i' : 's';
+
+        this._furniDataCache = this._model.controller.getFurnitureData(item.type, type);
+
+        return this._furniDataCache;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::get className()
+    get className(): string
+    {
+        return this.furniData?.className ?? '';
     }
 
     /**

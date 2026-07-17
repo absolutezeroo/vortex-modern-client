@@ -8,6 +8,7 @@ import type {IPurse} from './purse/IPurse';
 import type {UnseenItemTracker} from './UnseenItemTracker';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {InventoryMainView} from './InventoryMainView';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
@@ -93,6 +94,9 @@ export interface IHabboInventory
 	 * Switch to a category
 	 */
     switchCategory(category: InventoryCategoryType): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::getFurnitureData()
+    getFurnitureData(classId: number, type: string): IFurnitureData | null;
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::getSubCategoryViewId()
     getSubCategoryViewId(): string | null;
