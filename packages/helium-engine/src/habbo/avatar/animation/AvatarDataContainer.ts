@@ -108,14 +108,22 @@ export class AvatarDataContainer implements IAvatarDataContainer
         alphas: number[]
     }
     {
+        // AS3 (AvatarDataContainer.as:99-133) extracts an alpha channel too (>> 24) and
+        // walks an alpha accumulator alongside r/g/b, packing it into bits 24-31. The port
+        // dropped it, so every palette entry had alpha 0. For 6-hex effect colours the
+        // alpha stays 0 either way (getImage keeps the source alpha), but 8-hex colours
+        // (ARGB) now carry their gradient alpha as AS3 intends.
+        const bgA = (bgColor >> 24) & 0xFF;
         const bgR = (bgColor >> 16) & 0xFF;
         const bgG = (bgColor >> 8) & 0xFF;
         const bgB = bgColor & 0xFF;
 
+        const fgA = (fgColor >> 24) & 0xFF;
         const fgR = (fgColor >> 16) & 0xFF;
         const fgG = (fgColor >> 8) & 0xFF;
         const fgB = fgColor & 0xFF;
 
+        const aStep = (fgA - bgA) / 255;
         const rStep = (fgR - bgR) / 255;
         const gStep = (fgG - bgG) / 255;
         const bStep = (fgB - bgB) / 255;
@@ -125,17 +133,22 @@ export class AvatarDataContainer implements IAvatarDataContainer
         const blues: number[] = [];
         const alphas: number[] = [];
 
+        let curA = bgA;
         let curR = bgR;
         let curG = bgG;
         let curB = bgB;
 
         for(let i = 0; i < 256; i++)
         {
+            // AS3 resets the accumulator to 0 on the first step (while cur still equals bg).
+            if(curR === bgR && curG === bgG && curB === bgB) curA = 0;
+
+            curA += aStep;
             curR += rStep;
             curG += gStep;
             curB += bStep;
 
-            const value = ((curR & 0xFF) << 16) | ((curG & 0xFF) << 8) | (curB & 0xFF);
+            const value = ((curA & 0xFF) << 24) | ((curR & 0xFF) << 16) | ((curG & 0xFF) << 8) | (curB & 0xFF);
 
             reds.push(value);
             greens.push(value);

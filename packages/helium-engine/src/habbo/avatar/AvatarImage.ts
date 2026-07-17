@@ -707,6 +707,45 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             }
         }
 
+        // AS3 (AvatarImage.as:429-443): after compositing, an active palette effect
+        // recolours the whole image. Grayscale palette -> luminance-map each pixel
+        // (0.33 R/G/B, like AS3's ColorMatrixFilter) and look the grayscale value up in
+        // the effect's `reds` gradient, keeping the source alpha (AS3 passes a null alpha
+        // array to paletteMap). ink 37 (non-grayscale) copies green into alpha
+        // (AS3 copyChannel(2, 8)). Without this, palette effects (ghost, etc.) rendered
+        // in normal colours.
+        const dataContainer = this._avatarDataContainer;
+
+        if(dataContainer !== null)
+        {
+            const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+            const px = imageData.data;
+
+            if(dataContainer.paletteIsGrayscale)
+            {
+                const reds = dataContainer.reds;
+
+                for(let i = 0; i < px.length; i += 4)
+                {
+                    const gray = Math.round(0.33 * px[i] + 0.33 * px[i + 1] + 0.33 * px[i + 2]) & 0xFF;
+                    const mapped = reds[gray];
+
+                    px[i] = (mapped >> 16) & 0xFF;
+                    px[i + 1] = (mapped >> 8) & 0xFF;
+                    px[i + 2] = mapped & 0xFF;
+                }
+            }
+            else
+            {
+                for(let i = 0; i < px.length; i += 4)
+                {
+                    px[i + 3] = px[i + 1];
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        }
+
         // Convert to PixiJS Texture
         if(!this._fullImageFromCache && this._image)
         {
