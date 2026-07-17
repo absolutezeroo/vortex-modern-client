@@ -248,6 +248,132 @@ export class LegacyWallGeometry
 			&& this._heightMap[y]?.[x] >= 0;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getLocationOldFormat()
+    // Positions an old-format wall item (which carries y/z instead of wallX/wallY/localX/localY):
+    // scans columns for the first non-wall tile at the item's row to find the wall tile, then
+    // hands off to getLocation(). AS3 truncates the local offsets to int (see the int locals).
+    getLocationOldFormat(y: number, z: number, dir: string): IVector3d
+    {
+        let wallY = Math.ceil(y);
+        const frac = wallY - y;
+        let wallX = 0;
+        let tileY = 0;
+        let localOffset = 0;
+        let side = dir;
+        let ix = 0;
+
+        while(ix < this._width)
+        {
+            if(wallY >= 0 && wallY < this._height)
+            {
+                if(this.getTileHeight(ix, wallY) <= this._floorHeight)
+                {
+                    wallX = Math.trunc(ix - 1);
+                    tileY = wallY;
+                    localOffset = ix;
+                    side = 'l';
+
+                    break;
+                }
+
+                if(this.getTileHeight(ix, wallY + 1) <= this._floorHeight)
+                {
+                    wallX = ix;
+                    tileY = wallY;
+                    localOffset = tileY - y;
+                    side = 'r';
+
+                    break;
+                }
+            }
+
+            wallY++;
+            ix++;
+        }
+
+        const localX = Math.trunc(this._scale / 2 * frac);
+        let offset = -localOffset * this._scale / 2;
+        offset += -z * 18 / 32 * this._scale / 2;
+
+        const tileHeight = this.getTileHeight(wallX, tileY);
+        let localY = Math.trunc(tileHeight * this._scale / 2 + offset);
+
+        if(side === 'r')
+        {
+            localY = Math.trunc(localY + frac * this._scale / 4);
+        }
+        else
+        {
+            localY = Math.trunc(localY + (1 - frac) * this._scale / 4);
+        }
+
+        return this.getLocation(wallX, tileY, localX, localY, side);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getOldLocation()
+    // Inverse of getLocation: from a world position + wall direction, recover the
+    // [wallX, wallY, localX, localY, side] the server's old wall format expects.
+    getOldLocation(location: IVector3d | null, direction: number): [number, number, number, number, string] | null
+    {
+        if(location === null)
+        {
+            return null;
+        }
+
+        let wallX: number;
+        let wallY: number;
+        let localX: number;
+        let localY: number;
+        let side: string;
+        let tileHeight: number;
+
+        if(direction === 90)
+        {
+            wallX = Math.floor(location.x - 0.5);
+            wallY = Math.floor(location.y + 0.5);
+            tileHeight = this.getTileHeight(wallX, wallY);
+            localX = this._scale / 2 - (location.y - wallY + 0.5) * (this._scale / 2);
+            localY = (tileHeight - location.z) * (this._scale / 2) + (this._scale / 2 - localX) / 2;
+            side = 'l';
+        }
+        else if(direction === 180)
+        {
+            wallX = Math.floor(location.x + 0.5);
+            wallY = Math.floor(location.y - 0.5);
+            tileHeight = this.getTileHeight(wallX, wallY);
+            localX = (location.x + 0.5 - wallX) * (this._scale / 2);
+            localY = (tileHeight - location.z) * (this._scale / 2) + localX / 2;
+            side = 'r';
+        }
+        else
+        {
+            return null;
+        }
+
+        return [wallX, wallY, localX, localY, side];
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1855.as::getOldLocationString()
+    // Serialises a wall position to the ":w=wallX,wallY l=localX,localY side" string the
+    // server expects when placing a wall item. AS3 truncates every field to int.
+    getOldLocationString(location: IVector3d | null, direction: number): string | null
+    {
+        const parts = this.getOldLocation(location, direction);
+
+        if(parts === null)
+        {
+            return null;
+        }
+
+        const wallX = Math.trunc(parts[0]);
+        const wallY = Math.trunc(parts[1]);
+        const localX = Math.trunc(parts[2]);
+        const localY = Math.trunc(parts[3]);
+        const side = parts[4];
+
+        return ':w=' + wallX + ',' + wallY + ' l=' + localX + ',' + localY + ' ' + side;
+    }
+
     dispose(): void
     {
         this.reset();

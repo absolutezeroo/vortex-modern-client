@@ -1190,10 +1190,13 @@ export class RoomMessageHandler implements IRoomMessageHandler
             return;
         }
 
-        // Convert wall coordinates to 3D world position using LegacyWallGeometry
-        const location = this._legacyWallGeometry.getLocation(
-            data.wallX, data.wallY, data.localX, data.localY, data.dir
-        );
+        // Convert wall coordinates to 3D world position using LegacyWallGeometry.
+        // AS3 (_SafeCls_1984.as) branches on the wire format: the new format carries
+        // wallX/wallY/localX/localY, the old one only y/z. The port always took the new
+        // path, so old-format wall items were positioned with the wrong calculation.
+        const location = data.isOldFormat
+            ? this._legacyWallGeometry.getLocationOldFormat(data.y, data.z, data.dir)
+            : this._legacyWallGeometry.getLocation(data.wallX, data.wallY, data.localX, data.localY, data.dir);
         const direction: IVector3d = new Vector3d(
             this._legacyWallGeometry.getDirection(data.dir)
         );
