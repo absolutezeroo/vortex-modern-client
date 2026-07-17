@@ -84,10 +84,16 @@ export class ProductDataParser
             {
                 this.parseXmlFormat(trimmed);
             }
-            else if(trimmed.charAt(0) === '{' || trimmed.charAt(0) === '[')
+            else if(trimmed.charAt(0) === '{')
             {
                 // Port-specific: AS3 has no JSON branch, but this client has shipped
                 // JSON productdata, so both have to keep working.
+                //
+                // '{' only, never '['. The Lingo format is `[["code","name",""],...]`,
+                // which is itself valid JSON — so treating '[' as JSON parses it
+                // successfully, finds no `productdata.product` in an array, and reports
+                // zero products having understood nothing. AS3 tests for '<' and sends
+                // everything else to Lingo; the narrower this branch, the better.
                 this.parseJsonFormat(JSON.parse(body) as Record<string, unknown>);
             }
             else
@@ -95,7 +101,19 @@ export class ProductDataParser
                 this.parseLingoFormat(body);
             }
 
-            log.info(`Parsed ${this._products.size} products`);
+            // "Parsed 0 products" on its own is unactionable: it cannot distinguish a
+            // format nobody handles from a URL serving something else entirely. Say
+            // what actually arrived when nothing came of it.
+            if(this._products.size === 0)
+            {
+                log.error(`Parsed 0 products from ${url} — ${body.length} bytes, `
+                    + `starts with: ${JSON.stringify(trimmed.slice(0, 120))}`);
+            }
+            else
+            {
+                log.info(`Parsed ${this._products.size} products`);
+            }
+
             this._events.emit('PDP_product_data_ready');
         }
         catch (error)
