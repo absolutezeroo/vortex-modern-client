@@ -177,7 +177,10 @@ verification, and acting on one would have broken the client:
 
 ### Criticals fixed
 
-All 25 real criticals, on `fix/as3-parity-criticals` (typecheck clean after each). Highlights:
+26 were filed. One (*etching never drawn*) was refuted outright, leaving **25 real**; of those,
+**24 are fixed** on `fix/as3-parity-criticals` (both packages typecheck clean after each) and one —
+*RoomManager's DI dependencies* — is real but deliberately not acted on, because acting on it breaks
+the client. See "Findings that did not survive" above. Highlights:
 
 | Fix | Effect |
 |---|---|
@@ -207,31 +210,53 @@ Diagnosing it needed a client-side packet tracer, which did not exist —
 `core/communication/PacketLogger.ts`, console-driven (`__packets.on()`, `.unhandled()`). Server logs
 cannot distinguish "packet arrived and nobody handled it" from "packet never arrived".
 
+### The window system
+
+`core/window/graphics/renderer/` now ports **all 22 AS3 renderer classes, one for one**, and
+`WindowRendererItem` drives them through `SkinContainer.getSkinRendererByTypeAndStyle()` exactly as
+AS3 does. `WindowComposite` draws no window content at all: 470 lines, down from 1673, keeping only
+what Flash's display list gave for free — walk the tree, blit each buffer, apply blend and the
+dynamic-style transform, hit-test.
+
+This document previously argued *against* the split ("splitting risks the documented pixel-work cache
+for no visible gain"). Wrong on both halves. The cache moved with the code and still skips identical
+work. And the gain was not cosmetic: the split is what surfaced `LabelRenderer` having been **dropped
+rather than merged** — `vertical` was parsed, stored, used by `TextLabelController` to swap its box's
+width and height, and never applied to the glyphs.
+
+Three things worth keeping, because each was a deduction that turned out wrong until checked:
+
+- **The port cannot be line-for-line, and that is structural.** AS3 does no text layout in these
+  renderers — Flash's `TextField` has already measured, wrapped and rendered the glyphs before
+  `draw()` runs, so `TextSkinRenderer.draw()` is two `BitmapData.draw()` calls blitting it (once
+  through a flattening `ColorTransform` for the etch, once for the text). Canvas2D has no TextField,
+  so measure/wrap/stroke lives in the TS class with nothing to trace to. What *is* traceable: the
+  order, the offsets, the alpha gate, `isStateDrawable()`.
+- **Wiring step was one switch.** `loadElementDescription()` already read `element.renderer` and fed
+  `createRendererForType()`; the game's own element description already declared `renderer="text"`
+  for text/formatted_text/password/link, `"label"` for label, `"bitmap"` for bitmap/static_bitmap.
+  The five names AS3's table carries (bitmap, text, label, unknown, null) were the whole job. The
+  type→renderer mapping was never a guess — it is read off the game's data.
+- **The three feared risks were all phantoms, and the reasons are instructive.** `isStateDrawable()
+  === (state === 0)` looked like it would blank text in hover states; it cannot, because
+  `getTheActualState()` only returns a priority bit the renderer accepts, so a text renderer collapses
+  every state to 0 — which is *why* AS3 writes `param1 == 0`. `WindowRendererItem`'s
+  `fillRect(window.color)` looked like it would box every label; `_fillColor` defaults to `0xFFFFFF`
+  in both trees, whose alpha byte is zero, so the fill is transparent. And coordinates needed no
+  rebasing because `draw()` already takes its origin from the rect it is handed.
+
+`isStateDrawable()` itself carried the same hoisting pattern one level down: `SkinRenderer`'s base
+implementation was `BitmapSkinRenderer`'s (AS3's base returns `false`; its `BitmapSkinRenderer`
+overrides with its own template table), and `FillSkinRenderer` had drifted to `return true` where AS3
+does not override at all. All 11 renderers now match AS3.
+
 ### Not yet done
 
-- **The branch is untested beyond chat.** 31 commits; only the chat path has been exercised live.
+- **The branch is lightly tested.** 35 commits; chat and the window system have been exercised live,
+  the rest has not.
 - 94 majors + 68 minors, each needing the same per-finding verification.
-- **`core/window/graphics/renderer/` is now complete** — all 22 AS3 renderer classes ported
-  one-for-one. `WindowComposite` had absorbed the three that were missing; it is now 551 lines
-  (from 1673) and keeps only what has no AS3 counterpart: compositing and hit-testing, the Canvas2D
-  stand-in for the display list Flash gave us free.
-
-  This document previously argued *against* the split ("splitting risks the documented pixel-work
-  cache for no visible gain"). That was wrong on both halves: the cache moved with the code and
-  still skips identical work, and the gain was not cosmetic — it is what surfaced the lost
-  `LabelRenderer` above. The port is behavioural, not line-for-line, and cannot be otherwise: AS3
-  does **no text layout** in these renderers, because Flash's `TextField` has already measured,
-  wrapped and rendered the glyphs before `draw()` runs. `TextSkinRenderer.draw()` is two
-  `BitmapData.draw()` calls blitting that TextField — once through a flattening `ColorTransform` for
-  the etch, once for the text. Canvas2D has no TextField, so measure/wrap/stroke lives in the TS
-  class with nothing to trace to; what *is* traceable is the order, the offsets, the alpha gate and
-  `isStateDrawable()`.
-
-  Still on `WindowComposite`, not on `WindowRendererItem`: AS3 reaches these three through
-  `getSkinRendererByTypeAndStyle()`, this port calls them directly. Closing that needs the buffer
-  coordinates rebased to window-local and the `isStateDrawable(state) === (state === 0)` gate
-  resolved for non-zero window states — judgeable only with a running client. The type→renderer
-  mapping is already AS3's, read off the game's own element description rather than guessed.
+- ~~`WindowComposite` merges AS3's three renderers into one class~~ — **done**, and this document was
+  wrong to argue against it (see "The window system" below).
 - `HabboAvatarGeometry.xml` ships an older revision: 9 bodyparts, no `order-*`, where the dump has
   11 and 8. The two extra are `petl`/`petr` — the only bodyparts `order-before` applies to, so the
   mechanism ported this session is latent until the asset is refreshed.
