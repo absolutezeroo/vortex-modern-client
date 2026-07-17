@@ -383,25 +383,20 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::contentLoaded()
 
-    getRoomObjectCategory(type: string): number 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomObjectCategory()
+    // AS3 delegates to the content loader (getObjectCategory), returning -2 with no
+    // loader. The old hardcoded switch defaulted every unrecognised type to FURNITURE —
+    // so a wall item (window_basic, poster, …) resolved to 10 (FURNITURE) instead of 20
+    // (WALL), and an unknown type to 10 instead of -2. The loader's getObjectCategory is
+    // faithfully ported and checks the real floor/wall/pet registries.
+    getRoomObjectCategory(type: string): number
     {
-        switch(type) 
+        if(this._contentLoader !== null)
         {
-            case 'room':
-                return RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM;
-            case 'tile_cursor':
-            case 'selection_arrow':
-                return RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR;
-            case 'user':
-            case 'bot':
-            case 'rentable_bot':
-            case 'pet':
-                return RoomObjectCategoryEnum.OBJECT_CATEGORY_USER;
-            case 'wall':
-                return RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL;
-            default:
-                return RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
+            return this._contentLoader.getObjectCategory(type);
         }
+
+        return -2;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::isRoomObjectContentAvailable()
@@ -2763,8 +2758,19 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this.disposeRoomObject(roomId, roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
     }
 
-    setOwnUserId(roomId: number, roomIndex: number): void 
+    setOwnUserId(roomId: number, roomIndex: number): void
     {
+        // AS3 (_SafeCls_90.as:1998-2004) records the own-user object id on the room
+        // session before the camera follows it. The port set the camera target (via
+        // setRoomObjectUserOwnUser -> setRoomOwnObjectId) but never the session field,
+        // so RoomSession.ownUserRoomId stayed -1 for the session's whole life.
+        const session = this._roomSessionManager?.getSession(roomId) ?? null;
+
+        if(session !== null)
+        {
+            session.ownUserRoomId = roomIndex;
+        }
+
         this.setRoomObjectUserOwnUser(roomId, roomIndex);
     }
 
