@@ -1,22 +1,33 @@
 # Helium - Implementation Status
 
-> **Last updated**: 2026-07-16
+> **Last updated**: 2026-07-17
 > **Method**: filesystem snapshot plus targeted AS3/TS directory counts.
 > **Important**: this is **not** a member-level AS3 parity certification. A TS count greater than an AS3 count only means files exist; completion still requires reading the AS3 source and auditing public API, lifecycle, parser/composer behavior, and dispose paths.
+>
+> The 2026-07-17 cross-module parity audit put a number on that caveat: 188 divergences across every
+> system except `communication/`, in code that already existed and typechecked clean. File counts
+> say nothing about whether the code runs. See "Cross-module parity audit" below.
 
 ---
 
 ## Snapshot
 
-| Metric                           | Current value |
-|----------------------------------|---------------|
-| Primary WIN63 AS3 source files   | 4,783 `.as`   |
-| Secondary Flash AS3 source files | 7,159 `.as`   |
-| Engine TypeScript files          | 2,815 `.ts`   |
-| Client TypeScript files          | 22 `.ts`      |
-| Converted window layouts         | 1,045 `.json` |
-| Converted window skins           | 97 `.json`    |
-| Engine `AS3:` trace comments     | 3,451         |
+| Metric                                                        | Current value |
+|---------------------------------------------------------------|---------------|
+| Primary AS3 — `WIN63-…-782849652/src/com/sulake/`              | 3,345 `.as`   |
+| Primary AS3 — `WIN63-…-782849652/src/unknowns/` (also client)  | 1,839 `.as`   |
+| Secondary AS3 — `win63_version/`                               | 4,783 `.as`   |
+| Tertiary AS3 — `PRODUCTION-…/src/com/sulake/`                  | 4,029 `.as`   |
+| Engine TypeScript files                                        | 2,857 `.ts`   |
+| Client TypeScript files                                        | 22 `.ts`      |
+| Converted window layouts                                       | 857 `.json`   |
+| Converted window skins                                         | 133 `.json`   |
+| Engine `AS3:` trace comments                                   | 4,666         |
+| Engine `TODO(AS3)` markers                                     | 265           |
+
+The first two rows used to read "Primary WIN63 = 4,783", which is `win63_version`'s count — the
+secondary tree. `src/unknowns/` is counted because 556 files under `src/com/sulake/` import from it
+(parser DTOs, composers); it is client code, not a bundled stranger. See CLAUDE.md.
 
 There is no reliable single global percentage right now. Raw file counts undercount converted JSON layouts, overcount `index.ts`/support files, and do not prove AS3 API parity. Use the module snapshot below as the working status.
 
@@ -36,8 +47,8 @@ There is no reliable single global percentage right now. Raw file counts underco
 | `habbo/window`             | 106       | 89       | Advanced and active. Widgets/dialogs/resource management exist; do not describe this as unstarted.                                   |
 | `habbo/ui`                 | 375       | 65       | Mostly missing. Room desktop/widget shell exists; infostand (furni + user/bot identity, Phase 1), room-tools, chat-input, and the chat-style selector popup (`widget/chatinput/styleselector/`) are ported — see notes below. Chat *display* is now live via `habbo/freeflowchat` (`RWE_CHAT_WIDGET`/`RoomChatWidget` is deliberately disabled — primary/2026 source drops it entirely, see the `habbo/freeflowchat` row); the friend bar list is the next major gap. |
 | `habbo/avatar`             | 138       | 85       | Partial/advanced. Rendering data and manager work exists; editor/display coverage is still incomplete.                               |
-| `habbo/inventory`          | 57        | 53       | Advanced logic. Display/user workflows still need parity checks.                                                                     |
-| `habbo/toolbar`            | 41        | 45       | Advanced. Purse/bottom-bar work exists, all 8 toolbar extensions now wired (previously 6 were dead code — see note below). Several icon clicks (Catalogue/Quests/Achievements/Help/Camera/Wired Menu) still have no subscriber since those feature modules are themselves partial/missing; tagged `TODO(AS3)` in `HabboToolbar.ts::toggleWindowVisibility()`. |
+| `habbo/inventory`          | 57        | 53       | Advanced logic. Display/user workflows still need parity checks. The 2026-07-17 audit found and fixed four criticals here: an invented duplicate `IStuffData` tree (12 files, deleted — AS3 has one interface, `com.sulake.habbo.room.IStuffData`) that made clicking an area-hide/room-background furni throw; `setInventoryCategoryInit()` with no caller, so the whole furni list was re-requested on every tab switch; `UnseenItemTracker` subscribing to nothing and dispatching nothing; and the missing chest categories 24/25, which collapsed every chest of a type into one pile. |
+| `habbo/toolbar`            | 41        | 45       | Advanced. Purse/bottom-bar work exists, all 8 toolbar extensions now wired (previously 6 were dead code — see note below). The Progression icon was dead for a different reason: the enum said `QUESTS`/`HTIE_ICON_QUESTS` where AS3 says `PROGRESSION`/`HTIE_ICON_PROGRESSION`, so the reverse lookup on the layout's child name resolved to `undefined` and no consumer case matched (2026-07-17 audit). Catalogue/Achievements/Help/Camera/Wired Menu still have no subscriber since those feature modules are partial/missing; tagged `TODO(AS3)` in `HabboToolbar.ts::toggleWindowVisibility()`. |
 | `habbo/communication`      | 1,913     | 1,127    | Partial. Large message backlog remains; see message section. Marketplace wire protocol (9 composers/8 events/8 parsers, Phase 3), Recycler wire protocol (3 composers/3 events/3 parsers + 3 prize-table data classes, Phase 4), and the sellable-pet-palettes protocol (1 composer/1 event/1 parser + 1 palette DTO, Phase 7) now ported.                                                                         |
 | `habbo/catalog`            | 239       | 154      | Partial. Browse→select→buy-one-item flow works end-to-end; ClubCenter (`clubcenter/`, status display only), Club/VIP purchase (`club/`, Phase 2), Marketplace (`marketplace/`, Phase 3), Recycler (`recycler/` + `CatalogObjectMover`, Phase 4), the guild catalog cluster (`guilds/GuildMembershipsController` + 4 widgets, Phase 6), and the pet catalog widgets (Phase 7) fully ported. 39/~45 `viewer/widgets/` cases wired in `CatalogPage.createWidget()` (see `CatalogWidgetName.ts`). The 7-phase roadmap is now complete; the ~6 remaining widget cases are the out-of-scope ones (Trax/song disks, classic trading, room ads, builder add-ons, user badge selector) — see "Recent Work Recorded".                                     |
 | `habbo/help`               | 34        | 27       | Partial/advanced. No longer zero; managers, CFH registry, and many help messages exist.                                              |
@@ -105,6 +116,97 @@ Notable corrections from stale docs:
 3. **Do not label modules complete from file count alone**: mark complete only after AS3 member-level API/lifecycle/dispose parity is checked.
 4. **Continue core/window + habbo/window parity**: this area is active and advanced, but still needs targeted AS3 audits for remaining widgets and edge cases.
 5. **Catalog, sound, game, roomevents, and full `habbo/ui` remain major product gaps**.
+
+---
+
+## Cross-module parity audit (2026-07-17)
+
+A member-level AS3↔TS comparison across every system except `communication/`, run by 11 parallel
+agents against `WIN63-202607011411-782849652`. **188 divergences**, in code that already existed and
+that `tsc --noEmit` reports clean — the compiler cannot see any of this.
+
+Severity: 26 critical, 94 major, 68 minor. 178 confirmed by reading both sources, 10 plausible.
+Browsable report: <https://claude.ai/code/artifact/a9ff8084-3d42-45e0-abfa-30ba08c4eaad>
+
+**The 188 are not independent bugs — seven mechanisms repeat:**
+
+1. **Comments assert things that are false.** Six cases, found by four agents that never spoke to
+   each other. The worst cited its own grep: `ClubBuyController.showConfirmation()` was labelled
+   "not a porting gap … confirmed by grep across the whole club/ + viewer/widgets/ surface". The
+   grep was right; the conclusion was backwards — nothing calls it *directly* because
+   `HabboCatalog.showPurchaseConfirmation()` is supposed to dispatch to it. Absence of callers was
+   the bug's signature, read as proof of its absence. **This is the most expensive pattern: it
+   closes the investigation at the exact moment it should have opened.**
+2. **The correct code exists; the caller bypasses it.** `AvatarLogic` reimplemented
+   `getExpressionTime()` wrongly while `AvatarAction.ts` held a faithful port; `PetLogic`
+   reimplemented figure parsing off-by-one next to a faithful `PetFigureData`; `RoomManager` never
+   called its own ported `hasVisualizationXML()`.
+3. **A `default:` swallows the failure.** `RoomObjectFactory` covered 18 of AS3's 76 cases and
+   defaulted to `FurnitureLogic`, so ~50 written-and-unused logic classes were unreachable.
+4. **Data plumbed end to end, never consumed at the last step.** `furniture_selection_disable`
+   written and never read; `_avatarDataContainer` filled and never used; `session.ownUserRoomId`'s
+   setter wired to nothing.
+5. **Type escape hatches hide bugs exactly where they matter.** `stuffData?: unknown` hid the
+   IStuffData crash; `getAsset(): any` hides a `string` returned where a `BitmapDataAsset` is
+   expected.
+6. **A step skipped systematically.** `ILinkEventTracker` missing on both `HabboCatalog` and
+   `HabboInventory`; `attachComponent(x, [])` on four components.
+7. **Defaults inverted.** `purchaseOfferId` 0 instead of -1; `EmptyStuffData.compare()` returning
+   true where AS3 returns false; `verifyClubLevel()` hardcoded to `return true`.
+
+**Audit findings are leads, not verdicts.** Three of the 26 "criticals" did not survive
+verification, and acting on one would have broken the client:
+
+- *etching never drawn* and *greyscale never applied* — **false**. Both are implemented in
+  `WindowComposite` (`drawEtching()` with all 8 AS3 offsets and 4 call sites; the exact AS3
+  luminance matrix). The agent grepped `TextController`/`SkinRenderer`, found nothing, and
+  concluded absence — the behaviour lives in a class with no AS3 name.
+- *RoomManager's DI dependencies missing* — **real divergence, wrong severity**. Adding them would
+  block on IIDs nothing announces (AS3 provides them via a SWF component library this port doesn't
+  have) and RoomManager would never initialize. The setter path is correct; see the comment there.
+
+### Criticals fixed
+
+All 25 real criticals, on `fix/as3-parity-criticals` (typecheck clean after each). Highlights:
+
+| Fix | Effect |
+|---|---|
+| `RoomObjectFactory` switch: 18 → 74 of 76 AS3 types | ~50 logic classes reachable; widgets open on click again |
+| `Core.error()` + both frame-update loops | one `throw` in any room object no longer destroys the client |
+| `IStuffData` unified on AS3's single interface | crash on inventory click is now structurally impossible; 12 invented files deleted |
+| `RoomSessionManager` gate + required deps | `gotoRoom()` parked again instead of racing the engine |
+| `announceInterfaceAvailability()` | stops stranding receivers; a required dep can resolve |
+| `HabboFreeFlowChat` requires the session manager | chat renders (see below) |
+| `clubLevel` normalisation + `hasVip` + `verifyClubLevel()` | HC members reach VIP layouts; non-HC get the HC centre |
+| `QUESTS` → `PROGRESSION` | the progression icon responds to clicks |
+| `UnseenItemTracker` wired | "new items" badges work; also fixed a wire bug (see below) |
+
+**Two bugs the audit missed, found while fixing:** `ResetUnseenItemsComposer` carried the payload of
+a *different* AS3 message at header 699 (an extra int on the wire; dormant only because nothing sent
+it) — 699 and 3771 are now two composers, as AS3 has. And `furniture_extra` was declared in AS3 and
+written nowhere in the port.
+
+**One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
+dependencies made it announce later, which pushed its announcement past
+`HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind
+`if(roomSessionManager)` — AS3 has no such guard, because AS3 declares that dependency required. The
+guard turned "throws loudly at startup" into "chat silently never renders". **Making a dependency
+faithful to AS3 collapses the workarounds living in its shadow.** Expect more.
+
+Diagnosing it needed a client-side packet tracer, which did not exist —
+`core/communication/PacketLogger.ts`, console-driven (`__packets.on()`, `.unhandled()`). Server logs
+cannot distinguish "packet arrived and nobody handled it" from "packet never arrived".
+
+### Not yet done
+
+- **The branch is untested beyond chat.** 30 commits; only the chat path has been exercised live.
+- 94 majors + 68 minors, each needing the same per-finding verification.
+- `WindowComposite` merges AS3's `TextSkinRenderer`/`LabelRenderer`/`BitmapDataRenderer` into one
+  class (contra rule #2). Behaviour is correct and only 7 of 331 skin descriptors route to
+  `NullSkinRenderer`; splitting risks the documented pixel-work cache for no visible gain.
+- `HabboAvatarGeometry.xml` ships an older revision: 9 bodyparts, no `order-*`, where the dump has
+  11 and 8. The two extra are `petl`/`petr` — the only bodyparts `order-before` applies to, so the
+  mechanism ported this session is latent until the asset is refreshed.
 
 ---
 
