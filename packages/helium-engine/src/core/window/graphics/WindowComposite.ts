@@ -2,8 +2,12 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
 import {WindowType} from '../enum/WindowType';
+import {WindowParam} from '../enum/WindowParam';
 
 type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
+
+/** An absolute-coordinate clip rectangle threaded down the composite walk. */
+type ClipRect = { left: number; top: number; right: number; bottom: number };
 
 /**
  * Canvas composition and hit-test adapter for the web runtime.
@@ -88,7 +92,7 @@ export class WindowComposite
 
                 if(child)
                 {
-                    this.compositeWindow(ctx, child, 0, 0);
+                    this.compositeWindow(ctx, child, 0, 0, null);
                 }
             }
         }
@@ -166,7 +170,7 @@ export class WindowComposite
                 ctx.filter = WindowComposite.MODAL_DARKEN_FILTER;
             }
 
-            this.compositeWindow(ctx, window, 0, 0);
+            this.compositeWindow(ctx, window, 0, 0, null);
         }
 
         return canvas;
@@ -210,7 +214,8 @@ export class WindowComposite
         ctx: OffscreenCanvasRenderingContext2D,
         window: IWindow,
         offsetX: number,
-        offsetY: number
+        offsetY: number,
+        inheritedClip: ClipRect | null
     ): void
     {
         if(!window.visible) return;
@@ -222,13 +227,46 @@ export class WindowComposite
 
         if(w <= 0 || h <= 0) return;
 
-        ctx.save();
+        // Resolve the clip this window imposes on itself and its children.
+        //
+        // AS3 does not clip a window against every ancestor: WindowRenderer's
+        // childRectToClippedDrawRegion() walks up only through windows that share
+        // their parent's graphic context (USE_PARENT_GRAPHIC_CONTEXT, param 0x10) and
+        // stops at the first window that owns its own context — that window's buffer
+        // is a fresh clip origin, and its ancestors clip the buffer as a whole, not
+        // its individual descendants (and only when FORCE_CLIPPING is set). A cascaded
+        // ctx.clip() at every clipping ancestor is therefore too aggressive: it was
+        // cutting the 1px bottom border off buttons that sit flush against an
+        // own-context list's edge, because outer panels (furni/contentArea) clipped a
+        // pixel their own-context descendant list did not.
+        //
+        // So an own-context window (no 0x10) without FORCE_CLIPPING resets the base to
+        // null, discarding ancestor clips; everything else keeps intersecting.
+        const usesParentContext = window.testParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT);
+        const forceClipping = window.testParamFlag(WindowParam.FORCE_CLIPPING);
+        const base: ClipRect | null = (!usesParentContext && !forceClipping) ? null : inheritedClip;
 
-        // Clip to window bounds
+        let effectiveClip: ClipRect | null = base;
+
         if(window.clipping)
         {
+            const bounds: ClipRect = {left: absX, top: absY, right: absX + w, bottom: absY + h};
+
+            effectiveClip = base ? this.intersectClip(base, bounds) : bounds;
+        }
+
+        // A collapsed clip means neither this window nor its children can draw.
+        if(effectiveClip && (effectiveClip.right <= effectiveClip.left || effectiveClip.bottom <= effectiveClip.top))
+        {
+            return;
+        }
+
+        ctx.save();
+
+        if(effectiveClip)
+        {
             ctx.beginPath();
-            ctx.rect(absX, absY, w, h);
+            ctx.rect(effectiveClip.left, effectiveClip.top, effectiveClip.right - effectiveClip.left, effectiveClip.bottom - effectiveClip.top);
             ctx.clip();
         }
 
@@ -313,25 +351,16 @@ export class WindowComposite
             ctx.drawImage(buffer, absX, absY);
         }
 
-        // Reset filter before recursing into children so children apply their own
-        if(ctFilter)
-        {
-            ctx.filter = 'none';
-        }
+        // Tear down this window's clip, blend and filter before descending. AS3 treats
+        // both blend and the colour transform as per-window, not cascading — WindowUtils.
+        // disableSection() dims a section by walking every child explicitly rather than
+        // relying on a parent alpha, so nothing set here may leak onto a child (this is
+        // the fix for chat-style previews rendering dark under a translucent ancestor).
+        // The clip is not inherited through the context either; it is threaded to
+        // children as `effectiveClip`, so each re-applies it from a clean context and an
+        // own-context child can legitimately widen it past its ancestors.
+        ctx.restore();
 
-        // Reset blend before recursing into children so children apply their own -
-        // `blend` is a per-window property (see WindowUtils.disableSection(), which
-        // dims a whole section by explicitly walking every child rather than relying
-        // on a single ancestor's alpha to cascade), not an inherited display-list alpha.
-        // Unconditional on purpose: a child with its own blend===1 must still get
-        // globalAlpha reset to 1 even though it never sets it itself - otherwise a
-        // translucent ancestor (e.g. styleselector_menu_new_xml's background border,
-        // blend=0.8) leaks its globalAlpha onto every descendant drawn before
-        // ctx.restore(), washing out unrelated child content (bug report: chat-style
-        // picker previews rendering dark/muddy instead of their own colors).
-        ctx.globalAlpha = 1;
-
-        // Recurse into children
         const container = window as unknown as IWindowContainer;
 
         if(typeof container.numChildren === 'number')
@@ -342,12 +371,21 @@ export class WindowComposite
 
                 if(child)
                 {
-                    this.compositeWindow(ctx, child, absX, absY);
+                    this.compositeWindow(ctx, child, absX, absY, effectiveClip);
                 }
             }
         }
+    }
 
-        ctx.restore();
+    /** Intersection of two absolute-coordinate clip rectangles. */
+    private intersectClip(a: ClipRect, b: ClipRect): ClipRect
+    {
+        return {
+            left: Math.max(a.left, b.left),
+            top: Math.max(a.top, b.top),
+            right: Math.min(a.right, b.right),
+            bottom: Math.min(a.bottom, b.bottom)
+        };
     }
 
     /**
