@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Extracts the freeflowchat chat-style catalog (chatstyles_xml + 89 styles' regpoints/
-// bitmap assets, declared in sources/win63_2026_crypted_version/src/binaryData/
+// bitmap assets, declared in sources/WIN63-202607011411-782849652/src/binaryData/
 // HabboFreeFlowChatCom.as) into packages/helium-client/src/assets, so
 // ChatStyleLibrary.ts (which already reads these exact asset names - see its own
 // TODO(AS3) header comment) has real data to load instead of an empty catalog.
@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652');
 const DEFAULT_CONFIG_OUT = path.resolve(__dirname, '../src/assets/configurations');
 const DEFAULT_IMAGES_OUT = path.resolve(__dirname, '../src/assets/images');
 

@@ -23,17 +23,61 @@ Enforcement rules live in `.claude/rules/` and are auto-loaded into every sessio
 
 ## AS3 sources
 
-| Directory                                    | Priority    | Package roots                           | Files  |
-|----------------------------------------------|-------------|-----------------------------------------|--------|
-| `sources/WIN63-202607011411-782849652/`      | **PRIMARY** | `src/com/sulake/{habbo,room,core,iid}/` | ~3,369 |
-| `sources/win63_version/`                     | Secondary   | `habbo/`, `room/`                       | ~4,465 |
-| `sources/PRODUCTION-201601012205-226667486/` | Tertiary    | `com/sulake/habbo/`                     | ~7,160 |
+| Directory                                    | Priority    | Package roots                           | Files | Obfuscated |
+|----------------------------------------------|-------------|-----------------------------------------|-------|------------|
+| `sources/WIN63-202607011411-782849652/`      | **PRIMARY** | `src/com/sulake/{habbo,room,core,iid}/` | 3,305 | 25%        |
+| `sources/win63_version/`                     | Secondary   | `habbo/`, `room/`, `core/`              | 4,694 | 18%        |
+| `sources/PRODUCTION-201601012205-226667486/` | Tertiary    | `src/com/sulake/habbo/`                 | 3,526 | 0%         |
 
-`WIN63-202607011411-782849652` is a later, obfuscated client build and is the primary day-to-day reference. It mirrors `win63_version` one directory level deeper (`src/com/sulake/<module>/` instead of `<module>/`) and both trees line up 1:1 file-for-file. Where an identifier is obfuscated past readability (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path in `win63_version` to recover the real name — never invent one. Ignore the flat `_SafeCls_N.as` files directly under its `src/` root and everything under `src/unknowns/` (`_SafePkg_N/`) — that is an unrelated, fully-obfuscated module bundled in the same dump, not part of the Habbo client.
+`WIN63-202607011411-782849652` is a later, partly-obfuscated client build and is the primary
+day-to-day reference.
 
-`sources/win63_2023_version/` is not a code source — it is where the checked-in `binaryDataXml_organized/{layouts,skins}` window JSON assets are compiled from (see `packages/helium-client/tools/compile-window-*.mjs`). `sources/WIN63-202607011411-782849652/src/layouts/` and `src/_assets/` hold the same raw XML/PNG resources (same `$<hash>` filenames), but flat/unsorted — the compile scripts still default to `win63_2023_version` since it already has them split into `layouts/`/`skins/`/`non-layouts/`.
+**Class names are obfuscated; member names are not.** In an obfuscated file the class is
+`_SafeCls_N` and some *types* it references are too, but its methods, getters and constants keep
+their real names. `habbo/room/_SafeCls_90.as` declares
+`public class _SafeCls_90 extends _SafeCls_50 implements IRoomEngine, ...` and all 255 of its
+methods are readable — that file is RoomEngine. **Interfaces are never obfuscated**, so the
+reliable way to identify an obfuscated class is the interface it implements
+(`implements IRoomEngine` → RoomEngine), not a name lookup elsewhere.
 
-Path mapping: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/` ↔ `sources/win63_version/<module>/` ↔ `sources/PRODUCTION-201601012205-226667486/com/sulake/habbo/<module>/`
+**Do not expect `win63_version` to recover names.** It is obfuscated too — 868 `class_N.as` files —
+just with a different scheme, so the same class has a different meaningless name in each tree and
+the two do **not** line up file-for-file (in `habbo/room`, 9 of 20 filenames match). RoomEngine is
+`_SafeCls_90.as` here, `class_34.as` there, and `RoomEngine.as` only in
+`PRODUCTION-201601012205-226667486`, the one tree with no obfuscation at all. Use PRODUCTION to
+*identify* a class or recover a member name — never as a behaviour reference: it is a 2016 build and
+the API has moved. Some identifiers are obfuscated in every available tree (e.g.
+`RoomObjectVariableEnum`'s `furniture_extra`, `RoomObjectLogicEnum`'s `furniture_nft_reward_box`,
+which postdate the 2016 build); when a name has to be derived from its value, say so at the
+declaration rather than passing it off as recovered.
+
+**`src/unknowns/` (`_SafePkg_N/`) is part of the client** — 556 files under `src/com/sulake/` import
+from it, e.g. `habbo/inventory/items/FurnitureItem.as` imports `_SafePkg_2405._SafeCls_2649`, the
+interface declaring `get stuffData():IStuffData`. It holds real parser DTOs and composers
+(`_SafePkg_3364` carries the unseen-item reset composers). Treating it as an unrelated module means
+failing to find definitions that exist. The flat `_SafeCls_N.as` files directly under `src/` are a
+different matter and can be ignored.
+
+**The 2026 decompiler drops the `@` from E4X computed-attribute access.** `_loc3_.@["order-before"]`
+comes back as `_loc3_["order-before"]`, which reads as child-element access and makes live code look
+dead — `.@id` in the same method keeps its `@`, so the inconsistency is the tell. Check the XML: if
+the name is an attribute there, the source had `.@[...]`. This is how the `order-before` bodypart
+ordering was missed (`AvatarModelGeometry.as`).
+
+Path mapping: `sources/WIN63-202607011411-782849652/src/com/sulake/<module>/` ↔
+`sources/win63_version/<module>/` ↔ `sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/<module>/`
+
+### Assets
+
+Window layout/skin JSON is compiled from `binaryDataXml_organized/{layouts,skins,non-layouts}`,
+which lives in `sources/WIN63-202607011411-782849652/` (see
+`packages/helium-client/tools/compile-window-*.mjs`). `src/layouts/` and `src/images/` in the same
+dump hold the same raw XML/PNG resources (same `$<hash>` filenames) flat and unsorted.
+
+Shipped assets are not always current with the primary tree — check before assuming a code gap.
+`packages/helium-client/src/assets/configurations/HabboAvatarGeometry.xml` has 9 bodyparts and no
+`order-*` attributes, where the WIN63 dump's has 11 and 8; the two extra are `petl`/`petr`, the only
+bodyparts `order-before` applies to.
 
 ## Documentation
 

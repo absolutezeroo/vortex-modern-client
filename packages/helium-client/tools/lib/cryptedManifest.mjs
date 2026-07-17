@@ -1,6 +1,6 @@
 // Shared name-resolution core for the `import-crypted-*.mjs` tools.
 //
-// sources/win63_2026_crypted_version's *Com.as manifests (src/binaryData/*Com.as) are the
+// sources/WIN63-202607011411-782849652's *Com.as manifests (src/binaryData/*Com.as) are the
 // only authoritative source for the true (runtime) name of every embedded asset - the
 // field identifier itself, used verbatim by assets.getAssetByName(...). Neither the
 // win63_2023 XML's own internal <layout name="...">/<skin name="..."> label nor the
@@ -129,7 +129,7 @@ export function buildEmbedToFieldNames(comFiles, obfuscatedNameMap)
 /**
  * Computes the full crypted-tree name-resolution manifest once.
  *
- * @param {string} cryptedRoot - absolute path to sources/win63_2026_crypted_version
+ * @param {string} cryptedRoot - absolute path to sources/WIN63-202607011411-782849652
  * @returns {{obfuscatedNameMap: Map<string,string>, embedToFieldNames: Map<string,Set<string>>}}
  */
 export function loadCryptedManifest(cryptedRoot)

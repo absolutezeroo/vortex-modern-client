@@ -9,10 +9,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const DEFAULT_INPUT = path.resolve(repoRoot, 'sources', 'win63_2023_version', 'binaryDataXml');
-const DEFAULT_LAYOUT_OUTPUT = path.resolve(repoRoot, 'sources', 'win63_2023_version', 'binaryDataXml_organized', 'layouts');
-const DEFAULT_SKIN_OUTPUT = path.resolve(repoRoot, 'sources', 'win63_2023_version', 'binaryDataXml_organized', 'skins');
-const DEFAULT_BAD_OUTPUT = path.resolve(repoRoot, 'sources', 'win63_2023_version', 'binaryDataXml_organized', 'non-layouts');
+const DEFAULT_INPUT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652', 'binaryDataXml');
+const DEFAULT_LAYOUT_OUTPUT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652', 'binaryDataXml_organized', 'layouts');
+const DEFAULT_SKIN_OUTPUT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652', 'binaryDataXml_organized', 'skins');
+const DEFAULT_BAD_OUTPUT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652', 'binaryDataXml_organized', 'non-layouts');
 
 function readArgs()
 {

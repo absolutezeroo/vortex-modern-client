@@ -15,7 +15,7 @@ const CLIENT_DIR = path.resolve(TOOLS_DIR, '..');
 const REPO_ROOT = path.resolve(CLIENT_DIR, '..', '..');
 
 const SRC_ASSETS = path.join(CLIENT_DIR, 'src', 'assets');
-const WIN63_2026_CRYPTED_ROOT = path.join(REPO_ROOT, 'sources', 'win63_2026_crypted_version');
+const WIN63_2026_CRYPTED_ROOT = path.join(REPO_ROOT, 'sources', 'WIN63-202607011411-782849652');
 
 export interface FlagOption {
     readonly key: string;
@@ -240,7 +240,7 @@ export const INSTALL_STEPS: readonly InstallStep[] = [
         id: 'source',
         kind: 'source-folder',
         title: 'Dossier source Habbo',
-        description: 'Ce depot ne contient aucun fichier Habbo (sources/ est ignore par git). Recupere toi-meme un dump XML/images d\'un client Habbo (type win63_2026_crypted_version) et choisis ici le dossier racine ou tu l\'as place.'
+        description: 'Ce depot ne contient aucun fichier Habbo (sources/ est ignore par git). Recupere toi-meme un dump XML/images d\'un client Habbo (type WIN63-202607011411-782849652) et choisis ici le dossier racine ou tu l\'as place.'
     },
     {
         id: 'sort',

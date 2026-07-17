@@ -2,17 +2,21 @@
 // Stage 2 of the asset pipeline (see this file's header + the other two
 // `import-crypted-*.mjs` tools):
 //
-//   Stage 1 (win63_2023_version, wired via `build:window-data`/`build:bundle`): bulk
-//   extraction/compilation of every XML/PNG asset. Names are best-effort guesses (the
-//   XML's own internal name label, or the embed's own Flex-generated linkage name) and
-//   are frequently wrong - see lib/cryptedManifest.mjs's doc comment for why.
+//   Stage 1 (wired via `build:window-data`/`build:bundle`): bulk extraction/compilation
+//   of every XML/PNG asset. Names are best-effort guesses (the XML's own internal name
+//   label, or the embed's own Flex-generated linkage name) and are frequently wrong -
+//   see lib/cryptedManifest.mjs's doc comment for why.
 //
-//   Stage 2 (win63_2026_crypted_version, this tool + import-crypted-layouts.mjs +
-//   import-crypted-skins.mjs): fills in assets under their true name, resolved from the
-//   game's own *Com.as manifests via lib/cryptedManifest.mjs. Additive only - run after
-//   stage 1, never overwrites an existing compiled/copied file.
+//   Stage 2 (this tool + import-crypted-layouts.mjs + import-crypted-skins.mjs): fills in
+//   assets under their true name, resolved from the game's own *Com.as manifests via
+//   lib/cryptedManifest.mjs. Additive only - run after stage 1, never overwrites an
+//   existing compiled/copied file.
 //
-// This tool does two passes over sources/win63_2026_crypted_version/src/images (a raw
+// Both stages read the same dump today. They used to name two separate ones
+// (win63_2023_version and win63_2026_crypted_version), neither of which is in sources/
+// any more; the stage split is about how names are resolved, not about which tree.
+//
+// This tool does two passes over sources/WIN63-202607011411-782849652/src/images (a raw
 // PNG dump of the SWF library, hash/obfuscated-named):
 //   1) Base population: copies every embed under its own short linkage name (e.g.
 //      "ae_tabs_effects.png") if src/assets/images/ doesn't have it yet. Most of the
@@ -34,7 +38,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652');
 const DEFAULT_LAYOUTS_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
 const DEFAULT_SKINS_DIR = path.resolve(__dirname, '../src/assets/window-skins');
 const DEFAULT_IMAGES_DIR = path.resolve(__dirname, '../src/assets/images');

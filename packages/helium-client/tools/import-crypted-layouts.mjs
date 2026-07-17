@@ -3,7 +3,7 @@
 // two-stage explanation. This tool handles window LAYOUTS specifically.
 //
 // Compiles missing window-layout JSON straight from
-// sources/win63_2026_crypted_version/src/layouts (a raw XML dump of the SWF library,
+// sources/WIN63-202607011411-782849652/src/layouts (a raw XML dump of the SWF library,
 // hash/obfuscated-named - mixed with <skin>-rooted XML for import-crypted-skins.mjs and
 // unrelated config blobs, both skipped here) into src/assets/window-layouts, naming
 // each output after its true *Com.as field name(s) - resolved via lib/cryptedManifest.mjs
@@ -45,7 +45,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652');
 const DEFAULT_LAYOUTS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-layouts');
 const ELEMENT_DESCRIPTION_PATH = path.resolve(__dirname, '../src/assets/window-skins/element-description.json');
 

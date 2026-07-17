@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const DEFAULT_INPUT = path.resolve(repoRoot, 'sources', 'win63_2023_version', 'binaryDataXml_organized', 'skins');
+const DEFAULT_INPUT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652', 'binaryDataXml_organized', 'skins');
 const DEFAULT_OUTPUT = path.resolve(__dirname, '../src/assets/window-skins');
 
 const SCALE_TYPE =

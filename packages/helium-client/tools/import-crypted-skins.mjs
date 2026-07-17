@@ -2,7 +2,7 @@
 // Stage 2 of the asset pipeline - see import-crypted-images.mjs's header for the full
 // two-stage explanation. This tool handles window SKINS specifically.
 //
-// sources/win63_2026_crypted_version/src/layouts (despite the name - it's a mixed dump,
+// sources/WIN63-202607011411-782849652/src/layouts (despite the name - it's a mixed dump,
 // see import-crypted-layouts.mjs) also contains 130+ <skin>-rooted XML files with no
 // existing importer. Compiles the missing ones into src/assets/window-skins, reusing
 // compile-window-skins.mjs's own XML parsing helpers (copied here, consistent with how
@@ -31,7 +31,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'win63_2026_crypted_version');
+const DEFAULT_CRYPTED_ROOT = path.resolve(repoRoot, 'sources', 'WIN63-202607011411-782849652');
 const DEFAULT_SKINS_OUT_DIR = path.resolve(__dirname, '../src/assets/window-skins');
 
 const SCALE_TYPE = {fixed: 0, move: 1, strech: 2, stretch: 2, tiled: 4, center: 8};
