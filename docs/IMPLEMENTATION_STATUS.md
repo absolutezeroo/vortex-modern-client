@@ -250,7 +250,27 @@ implementation was `BitmapSkinRenderer`'s (AS3's base returns `false`; its `Bitm
 overrides with its own template table), and `FillSkinRenderer` had drifted to `return true` where AS3
 does not override at all. All 11 renderers now match AS3.
 
+**The clip model was the next thing the flattening got wrong.** `WindowComposite` applied a
+`ctx.clip()` at every clipping window while walking the tree, i.e. the intersection of *all*
+ancestors. That cut the 1px bottom border off buttons sitting flush against the bottom of a list that
+owns its graphic context (the disabled "Place in room", the green HC buttons): the skin buffer held a
+full symmetric border, but `furni`/`contentArea` clipped at `y=481` while the button's last row *was*
+481. AS3 never cascades like that — `WindowRenderer.childRectToClippedDrawRegion()` walks up only
+through windows that share their parent's graphic context (`USE_PARENT_GRAPHIC_CONTEXT`, `0x10`) and
+**stops at the first window that owns its own context**, whose `BitmapData` is a fresh clip origin.
+The fix threads the clip explicitly and resets it at own-context boundaries (an own-context window
+without `FORCE_CLIPPING` discards the inherited clip); the shared-context cascade is unchanged, so no
+other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapData` clip origin.
+
 ### Not yet done
+
+- **`WindowComposite` is a one-pass bridge, not AS3's per-`BitmapData` tree.** The clip fix above
+  reproduces AS3's *clip* result without allocating a surface per graphic-context-owning window. The
+  fully structural port — an `OffscreenCanvas` per own-context window, mirroring AS3's `BitmapData`
+  tree — is deferred. It is the only thing that would also make a per-context `colorTransform` tint a
+  whole rendered subtree (today the CSS-filter approximation applies only to a window's own buffer,
+  not its children). It is a full render-path rewrite with per-frame allocation/caching and broad
+  regression surface, so it is its own deliberate task, not a rider on a bug fix.
 
 - **The branch is lightly tested.** 35 commits; chat and the window system have been exercised live,
   the rest has not.
