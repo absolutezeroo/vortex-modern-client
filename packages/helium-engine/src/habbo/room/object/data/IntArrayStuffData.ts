@@ -85,6 +85,7 @@ export class IntArrayStuffData extends StuffDataBase implements IStuffData
         return true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::getValue()
     getValue(index: number): number
     {
         if(index >= 0 && index < this._data.length)
@@ -92,6 +93,14 @@ export class IntArrayStuffData extends StuffDataBase implements IStuffData
             return this._data[index];
         }
 
-        return 0;
+        // AS3 returns -1 out of bounds, not 0: 0 is a legitimate stored value, so a
+        // caller could no longer tell "absent" from "zero".
+        return -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::setArray()
+    setArray(data: number[]): void
+    {
+        this._data = data;
     }
 }

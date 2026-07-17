@@ -379,6 +379,24 @@ export class AvatarLogic extends MovingObjectLogic
                     this.eventDispatcher.emit(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW, new RoomObjectFurnitureActionEvent(RoomObjectFurnitureActionEvent.ROFCAE_MOUSE_ARROW, this.object));
                 }
                 break;
+
+            // AS3 AvatarLogic.as:435-441 — only a rentable bot reacts to mouse-down, with
+            // its own ROE_MOUSE_DOWN (not routed through the shared eventType dispatch below).
+            case 'mouseDown':
+                if(this.object.getType() === 'rentable_bot' && this.eventDispatcher !== null)
+                {
+                    const downEvent = new RoomObjectMouseEvent(
+                        RoomObjectMouseEvent.ROE_MOUSE_DOWN,
+                        this.object,
+                        event.eventId ?? '',
+                        event.altKey ?? false,
+                        event.ctrlKey ?? false,
+                        event.shiftKey ?? false,
+                        event.buttonDown ?? false
+                    );
+                    this.eventDispatcher.emit(downEvent.type, downEvent);
+                }
+                break;
         }
 
         if(eventType !== null && this.eventDispatcher !== null)
