@@ -8,6 +8,9 @@
  */
 import type {IRoomObject} from '@room/object/IRoomObject';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
+import {Logger} from '@core';
+
+const log = Logger.getLogger('TileObjectMap');
 
 export class TileObjectMap
 {
@@ -40,6 +43,20 @@ export class TileObjectMap
 	 */
     setObjectInTile(x: number, y: number, object: IRoomObject | null): void
     {
+        // AS3 refuses (and logs) an object that isn't initialised: its getLocation()
+        // is already valid, so it would win the hit-test and mask a real object.
+        if(object === null)
+        {
+            return;
+        }
+
+        if(!object.isInitialized())
+        {
+            log.warn('Assigning non initialized object to tile object map!');
+
+            return;
+        }
+
         if(x < 0 || x >= this._width || y < 0 || y >= this._height)
         {
             return;
@@ -54,18 +71,38 @@ export class TileObjectMap
 	 */
     addRoomObject(object: IRoomObject): void
     {
-        const location = object.getLocation();
-        const direction = object.getDirection();
+        // AS3 bails on a null/model-less/uninitialised object (the null check is dead
+        // here since the type is non-null, but the model and isInitialized guards are
+        // not: an uninitialised object has a valid location and would mask a real one).
         const model = object.getModel();
 
-        if(!location || !model) return;
+        if(model === null || !object.isInitialized())
+        {
+            return;
+        }
 
-        let sizeX = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_X) || 1;
-        let sizeY = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Y) || 1;
-        const sizeZ = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Z) || 0;
+        const location = object.getLocation();
 
-        // Rotate dimensions based on direction
-        const dir = direction ? Math.round(direction.x / 90) % 4 : 0;
+        if(location === null)
+        {
+            return;
+        }
+
+        const direction = object.getDirection();
+
+        if(direction === null)
+        {
+            return;
+        }
+
+        let sizeX = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_X);
+        let sizeY = model.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Y);
+
+        if(sizeX < 1) sizeX = 1;
+        if(sizeY < 1) sizeY = 1;
+
+        // AS3: (int(direction.x + 45)) % 360 / 90 -> {0,1,2,3}
+        const dir = Math.trunc((Math.trunc(direction.x + 45) % 360) / 90);
 
         if(dir === 1 || dir === 3)
         {
@@ -74,36 +111,20 @@ export class TileObjectMap
             sizeY = temp;
         }
 
-        const baseX = Math.floor(location.x);
-        const baseY = Math.floor(location.y);
-        const objectHeight = location.z + sizeZ;
-
-        // Place object in all tiles it occupies
-        for(let ix = baseX; ix < baseX + sizeX; ix++)
+        // AS3 compares raw z only — furniture_size_z is not involved: overwrite when
+        // the tile is empty, or the occupant is a *different* object whose z is <= this
+        // object's z. At equal z the last-added object wins (the port previously added
+        // size_z on both sides and flipped <= to >, so the tallest won instead — the
+        // wrong object came back from the tile hit-test on click).
+        for(let iy = Math.trunc(location.y); iy < location.y + sizeY; iy++)
         {
-            for(let iy = baseY; iy < baseY + sizeY; iy++)
+            for(let ix = Math.trunc(location.x); ix < location.x + sizeX; ix++)
             {
-                if(ix >= 0 && ix < this._width && iy >= 0 && iy < this._height)
+                const occupant = this.getObjectInTile(ix, iy);
+
+                if(occupant === null || (occupant !== object && (occupant.getLocation()?.z ?? 0) <= location.z))
                 {
-                    const existing = this._map[iy * this._width + ix];
-
-                    // Only place if tile empty or existing object is lower
-                    if(existing === null)
-                    {
-                        this._map[iy * this._width + ix] = object;
-                    }
-                    else
-                    {
-                        const existingLoc = existing.getLocation();
-                        const existingModel = existing.getModel();
-                        const existingZ = existingLoc ? existingLoc.z : 0;
-                        const existingSizeZ = existingModel ? (existingModel.getNumber(RoomObjectVariableEnum.FURNITURE_SIZE_Z) || 0) : 0;
-
-                        if(objectHeight > existingZ + existingSizeZ)
-                        {
-                            this._map[iy * this._width + ix] = object;
-                        }
-                    }
+                    this.setObjectInTile(ix, iy, object);
                 }
             }
         }
@@ -130,6 +151,11 @@ export class TileObjectMap
 
     dispose(): void
     {
+        // AS3 also zeroes the dimensions: leaving them set while _map is empty keeps
+        // getObjectInTile()'s bounds check passing, so it reads undefined out of an
+        // empty array instead of returning null.
         this._map = [];
+        this._width = 0;
+        this._height = 0;
     }
 }

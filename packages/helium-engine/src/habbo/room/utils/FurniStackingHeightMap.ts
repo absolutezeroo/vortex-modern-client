@@ -176,8 +176,13 @@ export class FurniStackingHeightMap
 
     dispose(): void
     {
+        // AS3 also zeroes the dimensions: leaving them set while the arrays are empty
+        // keeps validPosition() passing, so getTileHeight() reads undefined out of an
+        // empty array (→ NaN downstream) instead of returning 0.
         this._heightMap = [];
         this._isNotStackable = [];
         this._isRoomTile = [];
+        this._width = 0;
+        this._height = 0;
     }
 }
