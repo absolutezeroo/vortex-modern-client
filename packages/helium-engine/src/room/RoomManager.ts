@@ -665,24 +665,28 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
         {
             const type = this._loadedContentTypes.shift()!;
 
-            // AS3 reports failure and stops the loop when the loaded type has no
-            // visualization XML or no graphic asset collection. The old body skipped
-            // both guards and always called contentLoaded(type, true), so a failed
-            // content load surfaced as a success — and because onContentLoaded is also
-            // wired to the failure event, a real load error reached the listener as
-            // "loaded".
-            const loader = this._contentLoader;
-
-            if(loader && !loader.hasVisualizationXML(type))
+            // AS3 (RoomManager.as:443-458) guards on both the visualization XML and the
+            // graphic asset collection, reporting contentLoaded(type, false) and
+            // returning from the whole method on either miss. The "room" bundle passes
+            // both once RoomContentLoader.hasVisualizationData() recognises the Nitro
+            // `roomVisualization` key; all six placeholder types were verified to report
+            // hasVisualizationXML=true and a non-null collection here.
+            if(this._contentLoader !== null && !this._contentLoader.hasVisualizationXML(type))
             {
-                this._listener?.contentLoaded(type, false);
+                if(this._listener)
+                {
+                    this._listener.contentLoaded(type, false);
+                }
 
                 return;
             }
 
-            if(loader && loader.getGraphicAssetCollection(type) === null)
+            if(this._contentLoader !== null && this._contentLoader.getGraphicAssetCollection(type) == null)
             {
-                this._listener?.contentLoaded(type, false);
+                if(this._listener)
+                {
+                    this._listener.contentLoaded(type, false);
+                }
 
                 return;
             }
@@ -696,8 +700,13 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
                 this._listener.contentLoaded(type, true);
             }
 
-            // Check if still waiting for placeholder content
-            this.processInitialContentLoad(type);
+            // Check if still waiting for placeholder content. AS3 only calls this while
+            // types are still pending (RoomManager.as:465); once _pendingTypes empties
+            // (initialization complete) later content loads must not re-enter it.
+            if(this._pendingTypes.size > 0)
+            {
+                this.processInitialContentLoad(type);
+            }
 
             // Throttle: defer to next frame if over budget
             if(this._limitContentProcessing && (performance.now() - startTime) >= CONTENT_PROCESSING_TIME_LIMIT)
@@ -716,11 +725,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 */
     private processInitialContentLoad(type: string): void
     {
-        // AS3 guards on the ERROR state, not "already initialised"; clears the pending
-        // type only when its assets are actually ready; and takes an else branch to
-        // ERROR + roomManagerInitialized(false) when they are not. The old body deleted
-        // the type unconditionally with no failure path, so a placeholder that never
-        // loaded still reported the room manager as successfully initialised.
+        // AS3 RoomManager.as:368-404.
         if(this._state === RoomManagerState.ERROR)
         {
             return;
@@ -733,20 +738,28 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
             return;
         }
 
-        if(this._contentLoader.getGraphicAssetCollection(type) !== null)
+        if(this._contentLoader.getGraphicAssetCollection(type) != null)
         {
             this._pendingTypes.delete(type);
 
             if(this._pendingTypes.size === 0)
             {
                 this._state = RoomManagerState.INITIALIZED;
-                this._listener?.roomManagerInitialized(true);
+
+                if(this._listener)
+                {
+                    this._listener.roomManagerInitialized(true);
+                }
             }
         }
         else
         {
             this._state = RoomManagerState.ERROR;
-            this._listener?.roomManagerInitialized(false);
+
+            if(this._listener)
+            {
+                this._listener.roomManagerInitialized(false);
+            }
         }
     }
 

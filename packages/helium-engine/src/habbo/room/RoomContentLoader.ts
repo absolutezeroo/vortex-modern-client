@@ -1848,7 +1848,14 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 
     private hasVisualizationData(data: RoomContentData): boolean
     {
-        return data['visualizations'] !== undefined || data['visualization'] !== undefined || data['graphics'] !== undefined;
+        // `roomVisualization` is the room bundle's (HabboRoomContent.nitro) key — the
+        // Nitro equivalent of AS3's room_visualization XML. Without it here,
+        // hasVisualizationXML("room") returned false even though the room's
+        // visualization data is present, which broke RoomManager's content guards.
+        return data['visualizations'] !== undefined
+            || data['visualization'] !== undefined
+            || data['graphics'] !== undefined
+            || data['roomVisualization'] !== undefined;
     }
 
     private hasAssetData(data: RoomContentData): boolean
