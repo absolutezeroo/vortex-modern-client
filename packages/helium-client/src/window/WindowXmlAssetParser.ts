@@ -1,15 +1,13 @@
 import type {ISkinData} from '@core/window/graphics/renderer/BitmapSkinParser';
 import type {IElementDescriptionData} from '@habbo/window/IElementDescriptor';
 
-export interface IWindowLayoutXmlData
-{
+export interface IWindowLayoutXmlData {
     name: string;
     source: string;
     xml: string;
 }
 
-interface IScaleType
-{
+interface IScaleType {
     fixed: number;
     move: number;
     strech: number;
@@ -199,18 +197,18 @@ export function parseElementDescriptionXml(
     xml: string,
     assetId: string,
     source: string
-): IElementDescriptionData
+): IElementDescriptionData 
 {
     const doc = parseXmlDocument(xml, source);
     const windows = Array.from(doc.getElementsByTagName('window'));
 
-    const elements = windows.map((windowNode) =>
+    const elements = windows.map((windowNode) => 
     {
         const attrs = readAttributes(windowNode);
         const typeName = attrs.type ?? '';
         const typeId = TYPE_MAP[typeName] ?? -1;
         const statesNode = getChildElements(windowNode, 'states')[0] ?? null;
-        const states = getChildElements(statesNode, 'state').map((stateNode) =>
+        const states = getChildElements(statesNode, 'state').map((stateNode) => 
         {
             const stateAttrs = readAttributes(stateNode);
 
@@ -227,20 +225,20 @@ export function parseElementDescriptionXml(
             intent: attrs.intent ?? '',
             style: parseNumber(attrs.style, 0),
             renderer: attrs.renderer ?? '',
-            asset: normalizeAssetName(attrs.asset ?? ''),
-            layout: normalizeAssetName(attrs.layout ?? ''),
-            windowLayout: normalizeAssetName(attrs.window_layout ?? ''),
+            asset: attrs.asset ?? '',
+            layout: attrs.layout ?? '',
+            windowLayout: attrs.window_layout ?? '',
             defaults:
-					{
-					    threshold: parseNumber(attrs.treshold, 10),
-					    background: attrs.background === 'true',
-					    blend: parseNumber(attrs.blend, 1),
-					    color: parseNumber(attrs.color, 0xffffff),
-					    widthMin: parseNumber(attrs.width_min, -2147483648),
-					    widthMax: parseNumber(attrs.width_max, 2147483647),
-					    heightMin: parseNumber(attrs.height_min, -2147483648),
-					    heightMax: parseNumber(attrs.height_max, 2147483647)
-					},
+                {
+                    threshold: parseNumber(attrs.treshold, 10),
+                    background: attrs.background === 'true',
+                    blend: parseNumber(attrs.blend, 1),
+                    color: parseNumber(attrs.color, 0xffffff),
+                    widthMin: parseNumber(attrs.width_min, -2147483648),
+                    widthMax: parseNumber(attrs.width_max, 2147483647),
+                    heightMin: parseNumber(attrs.height_min, -2147483648),
+                    heightMax: parseNumber(attrs.height_max, 2147483647)
+                },
             states
         };
     });
@@ -259,12 +257,12 @@ export function parseSkinXml(
     xml: string,
     assetId: string,
     source: string
-): ISkinData | null
+): ISkinData | null 
 {
     const doc = parseXmlDocument(xml, source);
     const skinNode = doc.getElementsByTagName('skin')[0] ?? null;
 
-    if(!skinNode)
+    if(!skinNode) 
     {
         return null;
     }
@@ -287,11 +285,11 @@ export function parseWindowLayoutXml(
     xml: string,
     layoutName: string,
     source: string
-): IWindowLayoutXmlData[]
+): IWindowLayoutXmlData[] 
 {
     const doc = parseXmlDocument(xml, source);
 
-    if(!doc.documentElement)
+    if(!doc.documentElement) 
     {
         return [];
     }
@@ -302,7 +300,7 @@ export function parseWindowLayoutXml(
         ? getChildElements(layoutRoot, 'window')
         : (layoutRoot.nodeName === 'window' ? [layoutRoot] : getChildElements(layoutRoot, 'window'));
 
-    if(windows.length === 0)
+    if(windows.length === 0) 
     {
         return [];
     }
@@ -310,30 +308,30 @@ export function parseWindowLayoutXml(
     const serializer = new XMLSerializer();
     const result: IWindowLayoutXmlData[] = [];
 
-    for(let i = 0; i < windows.length; i++)
+    for(let i = 0; i < windows.length; i++) 
     {
         const currentWindow = windows[i];
         const name = windows.length > 1 ? `${layoutName}#${i}` : layoutName;
-        let xmlSource = '';
+        let xmlSource: string;
 
         if(isLayoutRoot)
         {
             const tempDoc = document.implementation.createDocument('', 'layout', null);
             const tempRoot = tempDoc.documentElement;
 
-            for(let a = 0; a < layoutRoot.attributes.length; a++)
+            for(let a = 0; a < layoutRoot.attributes.length; a++) 
             {
                 const attr = layoutRoot.attributes.item(a);
 
-                if(attr)
+                if(attr) 
                 {
                     tempRoot.setAttribute(attr.name, attr.value);
                 }
             }
 
-            for(const child of getChildElements(layoutRoot))
+            for(const child of getChildElements(layoutRoot)) 
             {
-                if(child.nodeName === 'window')
+                if(child.nodeName === 'window') 
                 {
                     continue;
                 }
@@ -344,7 +342,7 @@ export function parseWindowLayoutXml(
             tempRoot.appendChild(tempDoc.importNode(currentWindow, true));
             xmlSource = serializer.serializeToString(tempRoot);
         }
-        else
+        else 
         {
             xmlSource = serializer.serializeToString(currentWindow);
         }
@@ -359,9 +357,9 @@ export function parseWindowLayoutXml(
     return result;
 }
 
-function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument
+function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument 
 {
-    let normalized = normalizeXmlContent(xml);
+    const normalized = normalizeXmlContent(xml);
     let doc = new DOMParser().parseFromString(normalized, 'text/xml');
     let parserError = getParserError(doc);
 
@@ -375,11 +373,10 @@ function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument
         {
             doc = new DOMParser().parseFromString(repaired, 'text/xml');
             parserError = getParserError(doc);
-            normalized = repaired;
         }
     }
 
-    if(parserError)
+    if(parserError) 
     {
         throw new Error(`[WindowXmlAssetParser] Failed to parse ${source}: ${parserError.textContent ?? 'Unknown XML parse error'}`);
     }
@@ -387,26 +384,29 @@ function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument
     return doc;
 }
 
-function normalizeXmlContent(xml: string): string
+function normalizeXmlContent(xml: string): string 
 {
     return xml
         .replace(/^\uFEFF/, '')
+        // Matching control characters is the point: the extracted assets contain them and
+        // XML 1.0 forbids them, so DOMParser would reject a document over one stray byte.
+        // eslint-disable-next-line no-control-regex
         .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
         .trim();
 }
 
-function getParserError(doc: XMLDocument): Element | null
+function getParserError(doc: XMLDocument): Element | null 
 {
     const root = doc.documentElement;
 
-    if(root && root.nodeName === 'parsererror')
+    if(root && root.nodeName === 'parsererror') 
     {
         return root;
     }
 
     const errors = doc.getElementsByTagName('parsererror');
 
-    if(errors.length > 0)
+    if(errors.length > 0) 
     {
         return errors[0];
     }
@@ -414,26 +414,26 @@ function getParserError(doc: XMLDocument): Element | null
     return null;
 }
 
-function repairMalformedAttributeSpacing(xml: string): string
+function repairMalformedAttributeSpacing(xml: string): string 
 {
     // Fix tokens like: name="value"id="0" -> name="value" id="0"
     return xml.replace(/<[^>]+>/g, (tag) => tag.replace(/"(?=[A-Za-z_][\w:.-]*=)/g, '" '));
 }
 
-function readAttributes(element: Element | null): Record<string, string>
+function readAttributes(element: Element | null): Record<string, string> 
 {
     const attrs: Record<string, string> = {};
 
-    if(!element)
+    if(!element) 
     {
         return attrs;
     }
 
-    for(let i = 0; i < element.attributes.length; i++)
+    for(let i = 0; i < element.attributes.length; i++) 
     {
         const attr = element.attributes.item(i);
 
-        if(attr)
+        if(attr) 
         {
             attrs[attr.name] = attr.value;
         }
@@ -442,27 +442,27 @@ function readAttributes(element: Element | null): Record<string, string>
     return attrs;
 }
 
-function getChildElements(node: Element | null, name?: string): Element[]
+function getChildElements(node: Element | null, name?: string): Element[] 
 {
-    if(!node)
+    if(!node) 
     {
         return [];
     }
 
     const elements: Element[] = [];
 
-    for(let i = 0; i < node.childNodes.length; i++)
+    for(let i = 0; i < node.childNodes.length; i++) 
     {
         const child = node.childNodes.item(i);
 
-        if(!child || child.nodeType !== Node.ELEMENT_NODE)
+        if(!child || child.nodeType !== Node.ELEMENT_NODE) 
         {
             continue;
         }
 
         const element = child as Element;
 
-        if(!name || element.nodeName === name)
+        if(!name || element.nodeName === name) 
         {
             elements.push(element);
         }
@@ -471,16 +471,16 @@ function getChildElements(node: Element | null, name?: string): Element[]
     return elements;
 }
 
-function parseNumber(value: string | number | undefined | null, fallback: number): number
+function parseNumber(value: string | number | null, fallback: number): number
 {
-    if(value === undefined || value === null || value === '')
+    if(value === undefined || value === null || value === '') 
     {
         return fallback;
     }
 
     const str = String(value);
 
-    if(str.startsWith('0x') || str.startsWith('0X'))
+    if(str.startsWith('0x') || str.startsWith('0X')) 
     {
         const parsedHex = Number.parseInt(str, 16);
 
@@ -492,9 +492,9 @@ function parseNumber(value: string | number | undefined | null, fallback: number
     return Number.isNaN(parsed) ? fallback : parsed;
 }
 
-function normalizeAssetName(assetKey: string): string
+function normalizeAssetName(assetKey: string): string 
 {
-    if(!assetKey)
+    if(!assetKey) 
     {
         return '';
     }
@@ -502,14 +502,14 @@ function normalizeAssetName(assetKey: string): string
     return assetKey.replace(/_(png|jpg|jpeg|gif|swf|xml)$/i, '');
 }
 
-function resolveVar(value: string | undefined, vars: Record<string, string>): string
+function resolveVar(value: string | null, vars: Record<string, string>): string
 {
-    if(!value)
+    if(!value) 
     {
         return '';
     }
 
-    if(value.startsWith('$'))
+    if(value.startsWith('$')) 
     {
         const key = value.slice(1);
 
@@ -519,9 +519,9 @@ function resolveVar(value: string | undefined, vars: Record<string, string>): st
     return value;
 }
 
-function parseScaleValue(value: string): number
+function parseScaleValue(value: string): number 
 {
-    if(!value)
+    if(!value) 
     {
         return SCALE_TYPE.fixed;
     }
@@ -531,11 +531,16 @@ function parseScaleValue(value: string): number
     return SCALE_TYPE[lowered as keyof IScaleType] ?? SCALE_TYPE.fixed;
 }
 
-function parseRectangle(regionNode: Element | null, vars: Record<string, string>): { x: number; y: number; width: number; height: number }
+function parseRectangle(regionNode: Element | null, vars: Record<string, string>): {
+    x: number;
+    y: number;
+    width: number;
+    height: number
+} 
 {
     const rectNode = getChildElements(regionNode, 'Rectangle')[0] ?? null;
 
-    if(!rectNode)
+    if(!rectNode) 
     {
         return {x: 0, y: 0, width: 0, height: 0};
     }
@@ -550,28 +555,28 @@ function parseRectangle(regionNode: Element | null, vars: Record<string, string>
     };
 }
 
-function parseSkinVariables(skinNode: Element): Record<string, string>
+function parseSkinVariables(skinNode: Element): Record<string, string> 
 {
     const vars: Record<string, string> = {};
     const variablesNode = getChildElements(skinNode, 'variables')[0] ?? null;
 
-    if(!variablesNode)
+    if(!variablesNode) 
     {
         return vars;
     }
 
-    for(const variable of getChildElements(variablesNode, 'variable'))
+    for(const variable of getChildElements(variablesNode, 'variable')) 
     {
         const attrs = readAttributes(variable);
         const key = attrs.key ?? attrs.name;
         let value = attrs.value ?? '';
 
-        if(key === 'asset')
+        if(key === 'asset') 
         {
             value = normalizeAssetName(value);
         }
 
-        if(key)
+        if(key) 
         {
             vars[key] = value;
         }
@@ -580,20 +585,20 @@ function parseSkinVariables(skinNode: Element): Record<string, string>
     return vars;
 }
 
-function parseSkinTemplates(skinNode: Element, vars: Record<string, string>): ISkinData['templates']
+function parseSkinTemplates(skinNode: Element, vars: Record<string, string>): ISkinData['templates'] 
 {
     const templatesNode = getChildElements(skinNode, 'templates')[0] ?? null;
 
-    if(!templatesNode)
+    if(!templatesNode) 
     {
         return [];
     }
 
-    return getChildElements(templatesNode, 'template').map((templateNode) =>
+    return getChildElements(templatesNode, 'template').map((templateNode) => 
     {
         const attrs = readAttributes(templateNode);
         const entitiesNode = getChildElements(templateNode, 'entities')[0] ?? null;
-        const entities = getChildElements(entitiesNode, 'entity').map((entityNode) =>
+        const entities = getChildElements(entitiesNode, 'entity').map((entityNode) => 
         {
             const entityAttrs = readAttributes(entityNode);
             const regionNode = getChildElements(entityNode, 'region')[0] ?? null;
@@ -614,20 +619,20 @@ function parseSkinTemplates(skinNode: Element, vars: Record<string, string>): IS
     });
 }
 
-function parseSkinLayouts(skinNode: Element, vars: Record<string, string>): ISkinData['layouts']
+function parseSkinLayouts(skinNode: Element, vars: Record<string, string>): ISkinData['layouts'] 
 {
     const layoutsNode = getChildElements(skinNode, 'layouts')[0] ?? null;
 
-    if(!layoutsNode)
+    if(!layoutsNode) 
     {
         return [];
     }
 
-    return getChildElements(layoutsNode, 'layout').map((layoutNode) =>
+    return getChildElements(layoutsNode, 'layout').map((layoutNode) => 
     {
         const attrs = readAttributes(layoutNode);
         const entitiesNode = getChildElements(layoutNode, 'entities')[0] ?? null;
-        const entities = getChildElements(entitiesNode, 'entity').map((entityNode) =>
+        const entities = getChildElements(entitiesNode, 'entity').map((entityNode) => 
         {
             const entityAttrs = readAttributes(entityNode);
             const colorNode = getChildElements(entityNode, 'color')[0] ?? null;
@@ -660,16 +665,16 @@ function parseSkinLayouts(skinNode: Element, vars: Record<string, string>): ISki
     });
 }
 
-function parseSkinStates(skinNode: Element, vars: Record<string, string>): ISkinData['states']
+function parseSkinStates(skinNode: Element, vars: Record<string, string>): ISkinData['states'] 
 {
     const statesNode = getChildElements(skinNode, 'states')[0] ?? null;
 
-    if(!statesNode)
+    if(!statesNode) 
     {
         return [];
     }
 
-    return getChildElements(statesNode, 'state').map((stateNode) =>
+    return getChildElements(statesNode, 'state').map((stateNode) => 
     {
         const attrs = readAttributes(stateNode);
 

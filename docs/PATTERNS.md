@@ -467,7 +467,7 @@ this.registerComposer(OpenFlatConnectionMessageComposer, OutgoingHeader.OPEN_FLA
 
 ## UI Window (ported from Flash)
 
-The Flash window/UI system is fully ported. UI windows are TypeScript classes using PixiJS for rendering, with JSON layouts (converted from Flash XML).
+The Flash window/UI system is fully ported. UI windows are TypeScript classes using PixiJS for rendering, built from the Flash XML layouts, which ship verbatim from the dump.
 
 ### Approach
 
@@ -487,8 +487,8 @@ export class NavigatorSearchResultsView
     {
         this._navigator = navigator;
 
-        // Load JSON layout (converted from original Flash XML)
-        this._window = windowManager.createWindow('navigator_search', layoutJson);
+        // Build from the registered Flash XML layout, keyed by its AS3 asset name
+        this._window = windowManager.buildWidgetLayout('navigator_search');
 
         // Listen to engine events
         this._navigator.on('searchResults', this.onSearchResults.bind(this));
@@ -517,7 +517,7 @@ export class NavigatorSearchResultsView
 ### Rules
 
 - Port the AS3 UI class hierarchy faithfully (IWindow, IFrameWindow, etc.)
-- Flash XML layouts are converted to JSON and loaded at runtime
+- Flash XML layouts ship as XML and are parsed at runtime (`WindowXmlAssetParser`)
 - UI classes listen to engine events via EventEmitter3
 - UI classes have `dispose()` that cleans up listeners and display objects
 - The engine NEVER knows about UI classes (strict separation)

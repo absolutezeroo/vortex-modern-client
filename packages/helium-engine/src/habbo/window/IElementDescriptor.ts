@@ -1,9 +1,9 @@
 /**
  * Interfaces for element descriptor data structures.
  *
- * These describe the JSON format produced by compile-window-skins.mjs.
- * Each descriptor defines the defaults, states, and rendering info for
- * a particular element type + style combination.
+ * These describe the parsed element-description XML asset (see the client's
+ * WindowXmlAssetParser). Each descriptor defines the defaults, states, and rendering info
+ * for a particular element type + style combination.
  *
  * @see sources/PRODUCTION-201601012205-226667486/com/sulake/core/window/graphics/SkinContainer.as
  */
