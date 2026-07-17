@@ -28,10 +28,26 @@ export class CatalogViewer implements ICatalogViewer
 
     private _previousPageId: number = 0;
 
-    constructor(catalog: HabboCatalog, container: IWindowContainer)
+    private _catalogType: string | null = null;
+
+    constructor(catalog: HabboCatalog, container: IWindowContainer, catalogType: string)
     {
         this._catalog = catalog;
         this._container = container;
+        this._catalogType = catalogType;
+    }
+
+    /**
+	 * The catalog type this viewer belongs to.
+	 *
+	 * Read by CatalogPage to decide whether it is a Builders Club page, to pick
+	 * the widgets it builds, and by LocalizationCatalogWidget to find the right
+	 * navigator.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get catalogType()
+    get catalogType(): string | null
+    {
+        return this._catalogType;
     }
 
     get roomEngine(): IRoomEngine

@@ -145,6 +145,7 @@ import {PageLocalization} from './viewer/PageLocalization';
 import {Offer} from './viewer/Offer';
 import {ClubBuyOfferData} from './club/ClubBuyOfferData';
 import {Product} from './viewer/Product';
+import {CatalogWindowState} from './CatalogWindowState';
 import {HabboCatalogUtils} from './HabboCatalogUtils';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
 import {CatalogEvent} from './event/CatalogEvent';
@@ -170,6 +171,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
     private _tracking: IHabboTracking | null = null;
     private _mainWindow: IWindowContainer | null = null;
+    // Per-catalog-type state. _mainWindow/_catalogViewer above are re-pointed at the
+    // active entry by setActiveCatalogState(); AS3 keeps exactly this shape.
+    private _catalogStates: Map<string, CatalogWindowState> | null = null;
     private _catalogNavigators: Map<string, CatalogNavigator> | null = null;
     private _catalogViewer: CatalogViewer | null = null;
     private _requestedPage: RequestedPage = new RequestedPage();
@@ -829,20 +833,35 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             catalogType = 'NORMAL';
         }
 
-        const catalogTypeChanged = catalogType !== this._catalogType;
-
-        this._catalogType = catalogType;
         // TODO(AS3): cancelFurniInMover() - needs an owned CatalogObjectMover instance to cancel,
         // see requestSelectedItemToMover()'s note above.
 
-        if(this._mainWindow == null) 
+        // AS3 gates on the states, not on a window: init() is what builds them.
+        if(this._catalogStates == null)
         {
-            if(!this.init()) return;
+            if(!this.init(catalogType)) return;
         }
 
-        if(this.currentCatalogNavigator == null || !this.currentCatalogNavigator.initialized) 
+        // Read the outgoing state before switching, so a type change can be detected
+        // by identity and the window being left behind can be hidden.
+        const previousState = this.getCatalogState(this._catalogType);
+        const state = this.setActiveCatalogState(catalogType);
+        const catalogTypeChanged = previousState != null && previousState !== state;
+
+        if(state.catalogNavigator == null || !state.catalogNavigator.initialized)
         {
-            this.refreshCatalogIndex(this._catalogType);
+            this.refreshCatalogIndex(catalogType);
+        }
+
+        // Each type owns its window, so switching leaves the other one on the desktop
+        // unless it is taken down explicitly. AS3 does this as hideMainWindow(old, false)
+        // — the `false` being why the viewer is not told the catalog closed: it did not,
+        // it moved.
+        if(catalogTypeChanged && previousState?.mainContainer != null && previousState.mainContainer.parent != null)
+        {
+            const desktop = this._windowManager?.getDesktop(1) as unknown as IWindowContainer | null;
+
+            desktop?.removeChild(previousState.mainContainer);
         }
 
         if(!this.mainWindowVisible() || forceOpen || catalogTypeChanged) 
@@ -1442,7 +1461,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 	 * Whether the given catalog type uses the tab-less catalog window.
 	 *
 	 * The Builders Club catalog always does, whatever the config says — it has no
-	 * tabs to show.
+	 * tabs to show. Honouring that needs one window per type, which is why this
+	 * parameter and CatalogWindowState arrived together: with a shared window, the
+	 * BUILDERS_CLUB navigator's constructor hid `tab_context` in the window NORMAL
+	 * was also using, and NORMAL lost its tabs for good.
 	 *
 	 * @param catalogType - The catalog type ("NORMAL", "BUILDERS_CLUB", ...)
 	 */
@@ -1513,6 +1535,23 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             this._sellablePetPalettes = null;
         }
 
+        // Drop the flat references before the states that own the objects behind them,
+        // then let each state take down its own window, navigator and viewer.
+        this._catalogViewer = null;
+        this._mainWindow = null;
+
+        if(this._catalogStates != null)
+        {
+            for(const state of this._catalogStates.values())
+            {
+                state.dispose();
+            }
+
+            this._catalogStates = null;
+        }
+
+        this._catalogNavigators = null;
+
         this._communication = null;
         this._windowManager = null;
         this._localization = null;
@@ -1570,13 +1609,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // viewer setup is real.
-    private init(): boolean 
+    /**
+	 * @param catalogType - The catalog type to activate once the states exist
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::init()
+    private init(catalogType: string): boolean
     {
         if(this._initialized) return false;
 
-        this.createMainWindow(this._catalogType);
-        this.createCatalogNavigators();
-        this.createCatalogViewer();
+        this.createCatalogWindowStates();
+        this.setActiveCatalogState(catalogType);
         this.updatePurse();
         this.createClubGiftController();
         this.createClubBuyController();
@@ -1592,48 +1634,128 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     /**
+	 * Builds the main window for one catalog type and returns it.
+	 *
 	 * buildWidgetLayout() doc: "AS3: buildFromXML(assets.getAssetByName(name).content as XML)".
 	 *
-	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createMainWindow()
-	 * AS3 builds and keeps one main window *per catalog type*, on CatalogWindowState;
-	 * this port has a single shared `_mainWindow` built once, so the asset chosen here
-	 * is whichever type opened the catalog first and switching type never rebuilds it
-	 * (`toggleCatalog()` only recolours). Passing the type through is therefore correct
-	 * but currently inert for BUILDERS_CLUB — it takes effect once CatalogWindowState
-	 * is ported.
-	 *
-	 * @param catalogType - The catalog type this window is being built for
+	 * @param catalogType - The catalog type this window is for
 	 */
-    private createMainWindow(catalogType: string): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createMainWindow()
+    private createMainWindow(catalogType: string): IWindowContainer
     {
         const assetName = this.useNonTabbedCatalog(catalogType) ? 'catalog_ubuntu' : 'catalog_ubuntu_with_tabs';
 
-        this._mainWindow = this._windowManager!.buildWidgetLayout(assetName, 1) as unknown as IWindowContainer;
-        this._mainWindow.tags.push('habbo_catalog');
-        this._mainWindow.position = {x: 100, y: 5};
-        this.hideMainWindow();
+        const window = this._windowManager!.buildWidgetLayout(assetName, 1) as unknown as IWindowContainer;
 
-        const closeButton = this._mainWindow.findChildByName('titlebar_close_button') ?? this._mainWindow.findChildByTag('close');
+        window.tags.push('habbo_catalog');
+        window.position = {x: 100, y: 5};
+        window.visible = false;
 
-        if(closeButton) 
+        const closeButton = window.findChildByName('titlebar_close_button') ?? window.findChildByTag('close');
+
+        if(closeButton)
         {
             closeButton.addEventListener('WME_CLICK', this.onWindowClose);
         }
 
-        const searchInput = this._mainWindow.findChildByName('search.input') as unknown as ITextFieldWindow | null;
+        const searchInput = window.findChildByName('search.input') as unknown as ITextFieldWindow | null;
 
-        if(searchInput) 
+        if(searchInput)
         {
             searchInput.setSelection(0, searchInput.text.length);
             searchInput.focus();
         }
+
+        return window;
     }
 
-    private createCatalogNavigators(): void 
+    /**
+	 * Builds both catalog types' state up front, as AS3 does — the Builders Club
+	 * window exists from init(), it is not made on first use.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createCatalogWindowStates()
+    private createCatalogWindowStates(): void
     {
+        this._catalogStates = new Map();
         this._catalogNavigators = new Map();
-        this._catalogNavigators.set('NORMAL', new CatalogNavigator(this, this._mainWindow!, 'NORMAL'));
-        this._catalogNavigators.set('BUILDERS_CLUB', new CatalogNavigator(this, this._mainWindow!, 'BUILDERS_CLUB'));
+        this.createCatalogWindowState('NORMAL');
+        this.createCatalogWindowState('BUILDERS_CLUB');
+    }
+
+    /**
+	 * Builds one catalog type's window, navigator and viewer, and files them.
+	 *
+	 * Each type gets its *own* main window. That is what lets the navigator
+	 * constructor hide `tab_context` for BUILDERS_CLUB without taking NORMAL's
+	 * tabs with it — sharing one window between both is what made the per-type
+	 * answer unusable before.
+	 *
+	 * @param catalogType - The catalog type to build
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createCatalogWindowState()
+    private createCatalogWindowState(catalogType: string): CatalogWindowState
+    {
+        const existing = this._catalogStates?.get(catalogType) ?? null;
+
+        if(existing != null) return existing;
+
+        const state = new CatalogWindowState(catalogType);
+
+        state.mainContainer = this.createMainWindow(catalogType);
+
+        if(catalogType === 'BUILDERS_CLUB')
+        {
+            state.mainContainer.height += 15;
+        }
+
+        state.catalogNavigator = new CatalogNavigator(this, state.mainContainer, catalogType);
+        state.catalogViewer = new CatalogViewer(
+            this,
+            state.mainContainer.findChildByName('layoutContainer') as unknown as IWindowContainer,
+            catalogType
+        );
+
+        this._catalogStates!.set(catalogType, state);
+        this._catalogNavigators!.set(catalogType, state.catalogNavigator as CatalogNavigator);
+
+        return state;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getCatalogState()
+    private getCatalogState(catalogType: string): CatalogWindowState | null
+    {
+        return this._catalogStates?.get(catalogType) ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::ensureCatalogState()
+    private ensureCatalogState(catalogType: string): CatalogWindowState
+    {
+        if(this._catalogStates == null) this._catalogStates = new Map();
+        if(this._catalogNavigators == null) this._catalogNavigators = new Map();
+
+        return this.getCatalogState(catalogType) ?? this.createCatalogWindowState(catalogType);
+    }
+
+    /**
+	 * Makes `catalogType` the active one and re-points the flat fields at its state.
+	 *
+	 * The flat `_mainWindow`/`_catalogViewer` are AS3's own design, not a
+	 * simplification: it keeps the same two fields and re-points them here, so the
+	 * ~40 call sites that read them need no notion of catalog type.
+	 *
+	 * @param catalogType - The catalog type to activate
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::setActiveCatalogState()
+    private setActiveCatalogState(catalogType: string): CatalogWindowState
+    {
+        this._catalogType = catalogType;
+
+        const state = this.ensureCatalogState(catalogType);
+
+        this._mainWindow = state.mainContainer;
+        this._catalogViewer = state.catalogViewer;
+
+        return state;
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::updatePurse()
@@ -1690,14 +1812,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
-    private createCatalogViewer(): void 
-    {
-        const layoutContainer = this._mainWindow!.findChildByName('layoutContainer') as unknown as IWindowContainer;
-
-        this._catalogViewer = new CatalogViewer(this, layoutContainer);
-    }
-
-    private showMainWindow(): void 
+    private showMainWindow(): void
     {
         if(this._windowManager != null && this._mainWindow != null && this._mainWindow.parent == null) 
         {
@@ -2098,7 +2213,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // a genuine inconsistency in the primary source between these two otherwise-similar handlers.
     private onHabboClubExtendOffer(event: IMessageEvent): void
     {
-        if(!this._initialized) this.init();
+        // Not a user-driven open: this arrives on a server message, so it initialises
+        // against whichever type is already current rather than switching to one.
+        if(!this._initialized) this.init(this._catalogType);
 
         if(this._clubExtendController) this._clubExtendController.onOffer(event);
     }
