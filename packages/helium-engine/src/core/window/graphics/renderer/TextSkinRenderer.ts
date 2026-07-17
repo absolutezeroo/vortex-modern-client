@@ -274,7 +274,7 @@ export class TextSkinRenderer extends SkinRenderer
 
         for(const line of lines)
         {
-            if(currentY + lineHeight > y + maxHeight)
+            if(this.isLineBelowBox(currentY, y, maxHeight))
             {
                 break;
             }
@@ -283,7 +283,7 @@ export class TextSkinRenderer extends SkinRenderer
             {
                 for(const wrappedLine of this.wrapLine(ctx, line, maxWidth, spacing))
                 {
-                    if(currentY + lineHeight > y + maxHeight)
+                    if(this.isLineBelowBox(currentY, y, maxHeight))
                     {
                         break;
                     }
@@ -314,6 +314,35 @@ export class TextSkinRenderer extends SkinRenderer
                 currentY += lineHeight;
             }
         }
+    }
+
+    /**
+	 * Whether a line starts past the bottom of the text box, and so is not drawn.
+	 *
+	 * TS-only, like compositeTextMultiline() above: AS3 has no line loop to bound,
+	 * because Flash's TextField has already laid the text out by the time draw()
+	 * blits it.
+	 *
+	 * Flash never drops a line for being too tall: the TextField renders its text
+	 * and clips whatever runs past its bounds, and AS3's draw() blits that bitmap
+	 * whole with no height test of its own. So the only thing worth skipping here
+	 * is a line that begins below the box; a line that merely fails to fit gets
+	 * drawn and clipped by the buffer, exactly as Flash does.
+	 *
+	 * This used to require a whole `lineHeight` to fit (`currentY + lineHeight >
+	 * y + maxHeight`), which no single-line autoSize field could ever satisfy:
+	 * TextController sizes such a field to exactly `lines.length *
+	 * getLineHeight()` and makes no allowance for the top gutter, while this
+	 * renderer starts at `marginTop + gutter` *and* subtracts the gutter from the
+	 * height it measures against — leaving it about 2px short of its own
+	 * requirement, every time. The line was dropped, the buffer stayed empty, and
+	 * the field rendered nothing at all while reporting correct text, geometry and
+	 * colour. That is why furniture names were blank in the inventory: the name
+	 * reached furni_name intact and was thrown away here.
+	 */
+    protected isLineBelowBox(currentY: number, boxY: number, maxHeight: number): boolean
+    {
+        return currentY >= boxY + maxHeight;
     }
 
     /**
