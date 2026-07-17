@@ -641,13 +641,27 @@ export class GroupItem implements IGetImageListener
     /**
      * Update locks based on reference IDs (items in trade)
      */
-    updateLocks(lockedRefIds: number[]): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::updateLocks()
+    updateLocks(lockedRefIds: number[]): void
     {
-        for(const item of this._items.values()) 
+        let changed = false;
+
+        for(const item of this._items.values())
         {
             const shouldBeLocked = lockedRefIds.includes(item.ref);
 
-            item.locked = shouldBeLocked;
+            if(item.locked !== shouldBeLocked)
+            {
+                item.locked = shouldBeLocked;
+                changed = true;
+            }
+        }
+
+        // AS3 redraws the count/lock overlay only when a lock actually flipped. Without
+        // this the visual kept showing the old locked/unlocked state after a trade.
+        if(changed)
+        {
+            this.updateItemCountVisual();
         }
     }
 

@@ -355,9 +355,14 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // HabboInventory.roomSession (recomputed from roomSessionManager.getSession() on every
     // access) could still be null/stale if the inventory was opened mid room-entry, and nothing
     // ever re-ran updateActionButtons() afterwards.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::roomSessionEventHandler()
     private onRoomSessionEvent = (event: RoomSessionEvent): void =>
     {
-        if(!this.isVisible) return;
+        // AS3 gates on isInitialized (_SafeStr_4755), not isVisible: on RSE_STARTED it
+        // refreshes the furni view whether or not the panel is open, so it is current
+        // the moment it is shown. Gating on isVisible skipped that refresh while the
+        // inventory was closed.
+        if(!this.isInitialized) return;
 
         if(event.type === RoomSessionEvent.RSE_STARTED)
         {

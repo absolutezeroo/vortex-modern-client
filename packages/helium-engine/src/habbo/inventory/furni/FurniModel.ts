@@ -736,9 +736,19 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::resetUnseenItems()
     resetUnseenItems(): number[]
     {
         const resetIds: number[] = [];
+
+        // AS3 resets the tracker category first — rentables → 2, otherwise → 1 — which
+        // sends the server reset and clears the count, then updateUnseenItemCounts()
+        // redraws the tab badges. The old body only cleared the per-group highlight
+        // flags and returned ids no caller consumed, so the badge never cleared after a
+        // category was viewed.
+        const category = this._showingRentedFurni ? 2 : 1;
+
+        this._habboInventory.unseenItemTracker.resetCategory(category);
 
         for(const groupItem of this._furniData)
         {
@@ -748,6 +758,8 @@ export class FurniModel implements IFurniModel
                 resetIds.push(...groupItem.getFurniIds());
             }
         }
+
+        this._habboInventory.updateUnseenItemCounts();
 
         return resetIds;
     }
