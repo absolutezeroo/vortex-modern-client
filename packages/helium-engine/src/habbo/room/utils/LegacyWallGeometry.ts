@@ -215,19 +215,24 @@ export class LegacyWallGeometry
 	 */
     getFloorAltitude(x: number, y: number): number
     {
-        const h = this.getTileHeight(x, y);
+        // AS3 truncates every height to int before comparing (`var _loc4_:int = ...`,
+        // `int(getTileHeight(...))`). Comparing raw floats means a fractional tile
+        // height never equals h+1, so the +0.5 step bonus vanishes and the returned
+        // altitude keeps its fractional part — wall items and floor altitude drift
+        // near height changes.
+        const h = Math.trunc(this.getTileHeight(x, y));
         const hPlus = h + 1;
 
         // Check if any adjacent tile is exactly 1 higher
         const hasHigherNeighbor =
-            this.getTileHeight(x - 1, y - 1) === hPlus
-			|| this.getTileHeight(x, y - 1) === hPlus
-			|| this.getTileHeight(x + 1, y - 1) === hPlus
-			|| this.getTileHeight(x - 1, y) === hPlus
-			|| this.getTileHeight(x + 1, y) === hPlus
-			|| this.getTileHeight(x - 1, y + 1) === hPlus
-			|| this.getTileHeight(x, y + 1) === hPlus
-			|| this.getTileHeight(x + 1, y + 1) === hPlus;
+            Math.trunc(this.getTileHeight(x - 1, y - 1)) === hPlus
+			|| Math.trunc(this.getTileHeight(x, y - 1)) === hPlus
+			|| Math.trunc(this.getTileHeight(x + 1, y - 1)) === hPlus
+			|| Math.trunc(this.getTileHeight(x - 1, y)) === hPlus
+			|| Math.trunc(this.getTileHeight(x + 1, y)) === hPlus
+			|| Math.trunc(this.getTileHeight(x - 1, y + 1)) === hPlus
+			|| Math.trunc(this.getTileHeight(x, y + 1)) === hPlus
+			|| Math.trunc(this.getTileHeight(x + 1, y + 1)) === hPlus;
 
         return h + (hasHigherNeighbor ? 0.5 : 0);
     }
