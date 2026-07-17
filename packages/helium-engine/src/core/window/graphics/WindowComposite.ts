@@ -2,9 +2,6 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
 import {WindowType} from '../enum/WindowType';
-import {BitmapDataRenderer} from './renderer/BitmapDataRenderer';
-import {LabelRenderer} from './renderer/LabelRenderer';
-import {TextSkinRenderer} from './renderer/TextSkinRenderer';
 
 type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
 
@@ -14,17 +11,13 @@ type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
  * This class is not part of AS3 WindowRenderer itself; it contains the
  * bridge logic needed by the DOM canvas shell.
  *
- * Rendering here happens in two stages. `WindowRendererItem` drives the
- * `ISkinRenderer` for a window's *background* into a per-window buffer, which
- * this class then blits; content renderers that AS3 registers for the text,
- * label and bitmap window types are instead invoked directly from
- * `compositeWindow()` below, because `createRendererForType()` does not map
- * those types yet (they fall through to `NullSkinRenderer`). The renderer
- * classes themselves are faithful — see `BitmapDataRenderer` — but the caller
- * is not AS3's. Wiring them through `WindowRendererItem` needs the buffer
- * coordinates rebased to window-local and the `isStateDrawable(state) ===
- * (state === 0)` gate resolved for non-zero window states; until then these
- * two stages stay separate.
+ * This class draws no window content. Every renderer AS3 declares — skin,
+ * bitmap, text, label — runs in the render stage, where `WindowRendererItem`
+ * resolves it through `SkinContainer.getSkinRendererByTypeAndStyle()` and hands
+ * it the window's own buffer, exactly as AS3 does. What is left here is what
+ * Flash got from its display list for free and Canvas2D does not: walking the
+ * tree, blitting each buffer at its absolute position, applying per-window blend
+ * and the dynamic-style colour transform, and hit-testing.
  */
 export class WindowComposite
 {
@@ -48,14 +41,6 @@ export class WindowComposite
 
     private _compositeBuffer: OffscreenCanvas | null = null;
     private _compositeCtx: OffscreenCanvasRenderingContext2D | null = null;
-    // AS3 registers one BitmapDataRenderer per skin in the SkinContainer; this
-    // port reaches the same drawing from compositeWindow() instead (see the
-    // class note), so it holds a single stateless instance. The renderer keys
-    // its own per-window pixel cache off window identity, so sharing it across
-    // every bitmap-wrapper window is safe.
-    private _bitmapDataRenderer: BitmapDataRenderer = new BitmapDataRenderer('bitmap');
-    private _textSkinRenderer: TextSkinRenderer = new TextSkinRenderer('text');
-    private _labelRenderer: LabelRenderer = new LabelRenderer('label');
     private _drawBufferResolver: DrawBufferResolver;
 
     constructor(drawBufferResolver: DrawBufferResolver)
@@ -154,11 +139,6 @@ export class WindowComposite
     {
         this._compositeBuffer = null;
         this._compositeCtx = null;
-        // Releases the renderer's per-window pixel cache — see
-        // BitmapDataRenderer.dispose().
-        this._bitmapDataRenderer.dispose();
-        this._textSkinRenderer.dispose();
-        this._labelRenderer.dispose();
     }
 
     /**
@@ -299,6 +279,10 @@ export class WindowComposite
         // Apply dynamic style color transform as a CSS brightness/opacity filter.
         // In AS3 this was BitmapData.colorTransform() applied to each window's buffer.
         // Canvas 2D has no direct colorTransform API so we approximate with filters.
+        //
+        // Bitmap wrappers are excluded because BitmapDataRenderer already applied
+        // the exact transform, per-pixel, when it filled the buffer this is about
+        // to blit — running the approximation over it would apply it twice.
         const ctFilter = isBitmapWrapper ? '' : this.buildColorTransformFilter(window.dynamicStyleColor);
 
         if(ctFilter)
@@ -319,38 +303,14 @@ export class WindowComposite
             ctx.fillRect(absX, absY, w, h);
         }
 
-        // Draw the skin buffer (skip for bitmap wrappers — their content is drawn via bitmapData below)
-        if(!isBitmapWrapper)
+        // Draw the window's own content. Every renderer AS3 declares now runs in
+        // the render stage, into this buffer — skin, bitmap, text and label alike
+        // (see the class note). Compositing it is all that is left to do here.
+        const buffer = this.getDrawBufferForRenderable(window);
+
+        if(buffer && buffer.width > 0 && buffer.height > 0)
         {
-            const buffer = this.getDrawBufferForRenderable(window);
-
-            if(buffer && buffer.width > 0 && buffer.height > 0)
-            {
-                ctx.drawImage(buffer, absX, absY);
-            }
-        }
-
-        // Draw bitmapData content (zoom/flip, pivot, stretch, wrap/tiling, rotation,
-        // etching silhouette, greyscale, color-multiply). The renderer reads
-        // window.blend itself, so the globalAlpha set above is redundant for this
-        // branch but harmless — it save()/restore()s around its own blit.
-        if(isBitmapWrapper)
-        {
-            this._bitmapDataRenderer.draw(
-                window,
-                ctx,
-                {x: absX, y: absY, width: w, height: h},
-                window.state,
-                false
-            );
-        }
-
-        // Draw text content for text-type windows
-        const textRenderer = this.resolveTextRenderer(window.type);
-
-        if(textRenderer)
-        {
-            textRenderer.draw(window, ctx, {x: absX, y: absY, width: w, height: h}, window.state, false);
+            ctx.drawImage(buffer, absX, absY);
         }
 
         // Reset filter before recursing into children so children apply their own
@@ -437,46 +397,6 @@ export class WindowComposite
         }
 
         return parts.join(' ');
-    }
-
-    /**
-	 * Returns the renderer that draws a window type's text content, or null if
-	 * the type has none.
-	 *
-	 * Stands in for AS3's SkinContainer lookup. There, the skin descriptor names
-	 * a renderer per window type and `getSkinRendererByTypeAndStyle()` resolves
-	 * it; the mapping this reproduces is the one the game's own element
-	 * description declares:
-	 *
-	 *     <window type="text"           renderer="text"  .../>
-	 *     <window type="formatted_text" renderer="text"  .../>
-	 *     <window type="password"       renderer="text"  .../>
-	 *     <window type="link"           renderer="text"  .../>
-	 *     <window type="label"          renderer="label" .../>
-	 *
-	 * TODO(AS3): TEXTFIELD and HTML are drawn here as text, but the element
-	 * description maps neither to a text renderer — those two types have no
-	 * entry at all, and AS3 relies on Flash compositing their TextField as a
-	 * live child DisplayObject instead of blitting it through a skin renderer.
-	 * Dropping them would stop their text rendering outright, so they keep the
-	 * TextSkinRenderer path until that display path is ported.
-	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
-    // (_SafeCls_1859 is SkinParserUtil — it implements no interface, so the name
-    // comes from PRODUCTION-201601012205-226667486, which carries the same class
-    // at the same path unobfuscated. `parse()` builds the renderer-name table.)
-    private resolveTextRenderer(type: number): TextSkinRenderer | null
-    {
-        if(type === WindowType.LABEL) return this._labelRenderer;
-
-        if(type === WindowType.TEXT || type === WindowType.LINK
-			|| type === WindowType.FORMATTED_TEXT || type === WindowType.PASSWORD
-			|| type === WindowType.TEXTFIELD || type === WindowType.HTML)
-        {
-            return this._textSkinRenderer;
-        }
-
-        return null;
     }
 
     /**

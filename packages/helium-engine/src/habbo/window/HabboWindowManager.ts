@@ -24,8 +24,12 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {SkinContainer} from '@core/window/graphics/SkinContainer';
 import {WindowComposite} from '@core/window/graphics/WindowComposite';
 import {WindowRenderer} from '@core/window/graphics/WindowRenderer';
+import {BitmapDataRenderer} from '@core/window/graphics/renderer/BitmapDataRenderer';
 import {FillSkinRenderer} from '@core/window/graphics/renderer/FillSkinRenderer';
+import {LabelRenderer} from '@core/window/graphics/renderer/LabelRenderer';
 import {NullSkinRenderer} from '@core/window/graphics/renderer/NullSkinRenderer';
+import {SkinRenderer} from '@core/window/graphics/renderer/SkinRenderer';
+import {TextSkinRenderer} from '@core/window/graphics/renderer/TextSkinRenderer';
 import {ShapeSkinRenderer} from '@core/window/graphics/renderer/ShapeSkinRenderer';
 import {GradientSkinRenderer} from '@core/window/graphics/renderer/GradientSkinRenderer';
 import {StrokeSkinRenderer} from '@core/window/graphics/renderer/StrokeSkinRenderer';
@@ -327,9 +331,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
      * AS3: sources/win63_2026_crypted_version/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
      * (renderer name → class Dictionary)
      */
-    private static createRendererForType(rendererType: string, rendererName: string): ISkinRenderer 
+    private static createRendererForType(rendererType: string, rendererName: string): ISkinRenderer
     {
-        switch(rendererType) 
+        switch(rendererType)
         {
             case 'fill':
                 return new FillSkinRenderer(rendererName);
@@ -341,6 +345,22 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
                 return new StrokeSkinRenderer(rendererName);
             case 'bitmap_fill':
                 return new BitmapFillSkinRenderer(rendererName);
+            case 'bitmap':
+                return new BitmapDataRenderer(rendererName);
+            case 'text':
+                return new TextSkinRenderer(rendererName);
+            case 'label':
+                return new LabelRenderer(rendererName);
+            // AS3 maps "unknown" to the SkinRenderer base itself, whose draw() is a
+            // no-op and whose isStateDrawable() is `false` — i.e. a descriptor that
+            // names no renderer still gets an object, it just never draws.
+            case 'unknown':
+                return new SkinRenderer(rendererName);
+            case 'null':
+                return new NullSkinRenderer(rendererName);
+            // "skin" is deliberately absent: BitmapSkinRenderer needs the atlas and
+            // template data that only arrive later, so loadSkinAssets() replaces this
+            // placeholder once they do.
             default:
                 return new NullSkinRenderer(rendererName);
         }
