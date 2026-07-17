@@ -14,6 +14,7 @@ import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
@@ -1651,6 +1652,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         window.position = {x: 100, y: 5};
         window.visible = false;
 
+        // buildWidgetLayout() leaves the window parented, and both mainWindowVisible()
+        // and showMainWindow() judge by `parent` — a window still attached here reads as
+        // already open, so showMainWindow() skips it and it never appears. AS3 detaches
+        // it the same way and for the same reason (`_loc3_ = _loc2_.parent; if(_loc3_ !=
+        // null) _loc3_.removeChild(_loc2_)`). Before CatalogWindowState this was done by
+        // calling hideMainWindow() from here, which no longer fits: it hides whichever
+        // window is *active*, and during construction that is not this one.
+        const parent = window.parent as unknown as IWindowContainer | null;
+
+        parent?.removeChild(window as unknown as IWindow);
+
         const closeButton = window.findChildByName('titlebar_close_button') ?? window.findChildByTag('close');
 
         if(closeButton)
@@ -1812,11 +1824,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showMainWindow()
     private showMainWindow(): void
     {
-        if(this._windowManager != null && this._mainWindow != null && this._mainWindow.parent == null) 
+        if(this._windowManager != null && this._mainWindow != null && this._mainWindow.parent == null)
         {
             const desktop = this._windowManager.getDesktop(1) as unknown as IWindowContainer | null;
+
+            // AS3 sets visible before attaching. Nothing else ever sets it back to true,
+            // so a window built hidden — as AS3 builds them — depends on this line.
+            this._mainWindow.visible = true;
 
             desktop?.addChild(this._mainWindow);
         }
