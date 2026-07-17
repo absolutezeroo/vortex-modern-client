@@ -684,17 +684,33 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         log.debug(`buy: ${[quantity, offer.offerId, extraParam]}`);
 
-        const priceInCredits = offer.priceInCredits;
-        const priceInActivityPoints = offer.priceInActivityPoints;
+        // The balance is tested against what the user is about to spend, not the
+        // unit price: buying 10 of a 5-credit offer costs 50. AS3 recomputes both
+        // prices through calculateBundlePrice() before the two tests below, and
+        // only when multiple purchase is enabled — otherwise quantity is always 1
+        // and the unit price already is the total.
+        let priceInCredits = offer.priceInCredits;
+        let priceInActivityPoints = offer.priceInActivityPoints;
 
-        if(priceInCredits > 0 && priceInCredits > this._purse.credits) 
+        if(this.multiplePurchaseEnabled)
+        {
+            priceInCredits = this._utils.calculateBundlePrice(true, offer.priceInCredits, quantity);
+            priceInActivityPoints = this._utils.calculateBundlePrice(true, offer.priceInActivityPoints, quantity);
+        }
+
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
+        // AS3 exempts GameTokensOffer from both balance tests (`_loc10_ = param1 is
+        // GameTokensOffer`, ANDed as `&& !_loc10_` into each). GameTokensOffer is not
+        // ported yet (see the TODO on the dialog branch below), so there is nothing to
+        // test against; restore the exemption with the class.
+        if(priceInCredits > 0 && priceInCredits > this._purse.credits)
         {
             this.showNotEnoughCreditsAlert();
 
             return;
         }
 
-        if(priceInActivityPoints > 0 && priceInActivityPoints > this._purse.getActivityPointsForType(offer.activityPointType)) 
+        if(priceInActivityPoints > 0 && priceInActivityPoints > this._purse.getActivityPointsForType(offer.activityPointType))
         {
             this.showNotEnoughActivityPointsAlert(offer.activityPointType);
 
@@ -1003,7 +1019,27 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::getFurnitureData()
     // The decompiled source computes the result into a local but always `return null`s
 
-    public getPixelEffectIcon(_effectId: number): ImageBitmap | null 
+    /**
+	 * Overrides the product count the server sent, for two bundles it gets wrong.
+	 *
+	 * Hardcoded in AS3 exactly as it is here — the two `wf_storage_*_bd` bundles
+	 * ship five items but arrive with a different count, and the client patches
+	 * it on the way in. Every other offer keeps the server's number.
+	 *
+	 * @param localizationId - The offer's localization id
+	 * @param furnitureData - The product's furniture data, or null
+	 * @param productCount - The count the server sent
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getProductCountOverride()
+    private getProductCountOverride(localizationId: string, furnitureData: IFurnitureData | null, productCount: number): number
+    {
+        if(localizationId === 'wf_storage_furni_bd' && furnitureData?.className === 'wf_storage_furni1') return 5;
+        if(localizationId === 'wf_storage_coins_bd' && furnitureData?.className === 'wf_storage_coins2') return 5;
+
+        return productCount;
+    }
+
+    public getPixelEffectIcon(_effectId: number): ImageBitmap | null
     {
         return null;
     }
@@ -1402,9 +1438,19 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._catalogNavigators?.get(catalogType) ?? null;
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::useNonTabbedCatalog()
-    public useNonTabbedCatalog(): boolean 
+    /**
+	 * Whether the given catalog type uses the tab-less catalog window.
+	 *
+	 * The Builders Club catalog always does, whatever the config says — it has no
+	 * tabs to show.
+	 *
+	 * @param catalogType - The catalog type ("NORMAL", "BUILDERS_CLUB", ...)
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::useNonTabbedCatalog()
+    public useNonTabbedCatalog(catalogType: string): boolean
     {
+        if(catalogType === 'BUILDERS_CLUB') return true;
+
         return this.getBoolean('client.desktop.use.non.tabbed.catalog');
     }
 
@@ -1528,7 +1574,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         if(this._initialized) return false;
 
-        this.createMainWindow();
+        this.createMainWindow(this._catalogType);
         this.createCatalogNavigators();
         this.createCatalogViewer();
         this.updatePurse();
@@ -1545,10 +1591,22 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return true;
     }
 
-    // buildWidgetLayout() doc: "AS3: buildFromXML(assets.getAssetByName(name).content as XML)").
-    private createMainWindow(): void 
+    /**
+	 * buildWidgetLayout() doc: "AS3: buildFromXML(assets.getAssetByName(name).content as XML)".
+	 *
+	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createMainWindow()
+	 * AS3 builds and keeps one main window *per catalog type*, on CatalogWindowState;
+	 * this port has a single shared `_mainWindow` built once, so the asset chosen here
+	 * is whichever type opened the catalog first and switching type never rebuilds it
+	 * (`toggleCatalog()` only recolours). Passing the type through is therefore correct
+	 * but currently inert for BUILDERS_CLUB — it takes effect once CatalogWindowState
+	 * is ported.
+	 *
+	 * @param catalogType - The catalog type this window is being built for
+	 */
+    private createMainWindow(catalogType: string): void
     {
-        const assetName = this.useNonTabbedCatalog() ? 'catalog_ubuntu' : 'catalog_ubuntu_with_tabs';
+        const assetName = this.useNonTabbedCatalog(catalogType) ? 'catalog_ubuntu' : 'catalog_ubuntu_with_tabs';
 
         this._mainWindow = this._windowManager!.buildWidgetLayout(assetName, 1) as unknown as IWindowContainer;
         this._mainWindow.tags.push('habbo_catalog');
@@ -1772,18 +1830,25 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         for(const offerData of parser.offers) 
         {
-            const products = offerData.products.map((productData) => new Product(
-                productData.productType,
-                productData.furniClassId,
-                productData.extraParam,
-                productData.productCount,
-                this.getProductData(offerData.localizationId),
-                this.getFurnitureData(productData.furniClassId, productData.productType),
-                this,
-                productData.uniqueLimitedItem,
-                productData.uniqueLimitedItemSeriesSize,
-                productData.uniqueLimitedItemsLeft
-            ));
+            const products = offerData.products.map((productData) =>
+            {
+                // AS3 resolves the furniture data once and hands it to both the count
+                // override and the Product (_loc8_).
+                const furnitureData = this.getFurnitureData(productData.furniClassId, productData.productType);
+
+                return new Product(
+                    productData.productType,
+                    productData.furniClassId,
+                    productData.extraParam,
+                    this.getProductCountOverride(offerData.localizationId, furnitureData, productData.productCount),
+                    this.getProductData(offerData.localizationId),
+                    furnitureData,
+                    this,
+                    productData.uniqueLimitedItem,
+                    productData.uniqueLimitedItemSeriesSize,
+                    productData.uniqueLimitedItemsLeft
+                );
+            });
 
             if(products.length === 0 && !HabboCatalogUtils.buildersClub(offerData.localizationId)) continue;
 

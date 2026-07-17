@@ -69,7 +69,7 @@ export class CatalogNavigator implements ICatalogNavigator
 
         if(this._tabs != null)
         {
-            if(this._catalog.useNonTabbedCatalog())
+            if(this._catalog.useNonTabbedCatalog(catalogType))
             {
                 this._tabs.visible = false;
             }
@@ -162,7 +162,7 @@ export class CatalogNavigator implements ICatalogNavigator
         {
             if(child.visible)
             {
-                if(this._catalog!.useNonTabbedCatalog())
+                if(this._catalog!.useNonTabbedCatalog(this._catalogType))
                 {
                     (child as CatalogNodeRenderable).addToList(this._list);
                 }
@@ -477,7 +477,7 @@ export class CatalogNavigator implements ICatalogNavigator
         {
             current.open();
 
-            if(this._catalog!.useNonTabbedCatalog())
+            if(this._catalog!.useNonTabbedCatalog(this._catalogType))
             {
                 this._currentNodes.push(current);
             }
@@ -485,7 +485,7 @@ export class CatalogNavigator implements ICatalogNavigator
             current = current.parent;
         }
 
-        if(!this._catalog!.useNonTabbedCatalog())
+        if(!this._catalog!.useNonTabbedCatalog(this._catalogType))
         {
             this.openCategoryForNode(node);
         }
