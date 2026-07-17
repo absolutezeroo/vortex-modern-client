@@ -199,7 +199,7 @@ cannot distinguish "packet arrived and nobody handled it" from "packet never arr
 
 ### Not yet done
 
-- **The branch is untested beyond chat.** 30 commits; only the chat path has been exercised live.
+- **The branch is untested beyond chat.** 27 commits; only the chat path has been exercised live.
 - 94 majors + 68 minors, each needing the same per-finding verification.
 - `WindowComposite` merges AS3's `TextSkinRenderer`/`LabelRenderer`/`BitmapDataRenderer` into one
   class (contra rule #2). Behaviour is correct and only 7 of 331 skin descriptors route to
