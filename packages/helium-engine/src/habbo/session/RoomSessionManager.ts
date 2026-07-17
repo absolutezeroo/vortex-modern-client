@@ -507,8 +507,16 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         }
     }
 
-    private getRoomIdentifier(roomId: number): string
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::getRoomIdentifier()
+    // AS3 returns the constant "hard_coded_room_id" — every session shares one key,
+    // so at most one room session exists at a time. That is what makes createSession()
+    // dispose the previous room: it finds the old session under the shared key and
+    // ends it (RSE_ENDED → RoomUI disposes its desktop/view) before storing the new one.
+    // The old `room_${roomId}` scheme gave each room a distinct key, so entering room B
+    // never found room A's session, room A was never disposed, and its RoomView/chat
+    // bubbles stayed rendered on top of the new room (the "ghost room" on screen).
+    private getRoomIdentifier(_roomId: number): string
     {
-        return `room_${roomId}`;
+        return 'hard_coded_room_id';
     }
 }
