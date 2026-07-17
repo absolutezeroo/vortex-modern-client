@@ -157,10 +157,20 @@ Browsable report: <https://claude.ai/code/artifact/a9ff8084-3d42-45e0-abfa-30ba0
 **Audit findings are leads, not verdicts.** Three of the 26 "criticals" did not survive
 verification, and acting on one would have broken the client:
 
-- *etching never drawn* and *greyscale never applied* — **false**. Both are implemented in
+- *etching never drawn* and *greyscale never applied* — **false**. Both were implemented in
   `WindowComposite` (`drawEtching()` with all 8 AS3 offsets and 4 call sites; the exact AS3
-  luminance matrix). The agent grepped `TextController`/`SkinRenderer`, found nothing, and
-  concluded absence — the behaviour lives in a class with no AS3 name.
+  luminance matrix; `static_bitmap` is type 23 → `STATIC_BITMAP_WRAPPER` → `applyGreyscale()`).
+  The agent grepped `TextController`/`SkinRenderer`/`BitmapSkinRenderer`, found nothing, and
+  concluded absence — the behaviour lived in a class with no AS3 name. Four of its `core/window`
+  findings share that single flawed premise, including *createRendererForType: 5 cases missing*,
+  where the missing cases are real but the stated impact ("the root cause of the etching and
+  greyscale") is not.
+
+  **The agent was wrong about the pixels and right about the structure**, and the structural
+  complaint hid a real bug none of the four stated: `LabelRenderer` had not been merged into
+  `WindowComposite`, it had been *dropped*. Only `TextSkinRenderer`'s behaviour survived, so
+  `vertical` was parsed, stored, and used by `TextLabelController` to swap its box's width and
+  height — while nothing ever rotated the glyphs. Fixed by the split below.
 - *RoomManager's DI dependencies missing* — **real divergence, wrong severity**. Adding them would
   block on IIDs nothing announces (AS3 provides them via a SWF component library this port doesn't
   have) and RoomManager would never initialize. The setter path is correct; see the comment there.
@@ -199,11 +209,29 @@ cannot distinguish "packet arrived and nobody handled it" from "packet never arr
 
 ### Not yet done
 
-- **The branch is untested beyond chat.** 27 commits; only the chat path has been exercised live.
+- **The branch is untested beyond chat.** 31 commits; only the chat path has been exercised live.
 - 94 majors + 68 minors, each needing the same per-finding verification.
-- `WindowComposite` merges AS3's `TextSkinRenderer`/`LabelRenderer`/`BitmapDataRenderer` into one
-  class (contra rule #2). Behaviour is correct and only 7 of 331 skin descriptors route to
-  `NullSkinRenderer`; splitting risks the documented pixel-work cache for no visible gain.
+- **`core/window/graphics/renderer/` is now complete** — all 22 AS3 renderer classes ported
+  one-for-one. `WindowComposite` had absorbed the three that were missing; it is now 551 lines
+  (from 1673) and keeps only what has no AS3 counterpart: compositing and hit-testing, the Canvas2D
+  stand-in for the display list Flash gave us free.
+
+  This document previously argued *against* the split ("splitting risks the documented pixel-work
+  cache for no visible gain"). That was wrong on both halves: the cache moved with the code and
+  still skips identical work, and the gain was not cosmetic — it is what surfaced the lost
+  `LabelRenderer` above. The port is behavioural, not line-for-line, and cannot be otherwise: AS3
+  does **no text layout** in these renderers, because Flash's `TextField` has already measured,
+  wrapped and rendered the glyphs before `draw()` runs. `TextSkinRenderer.draw()` is two
+  `BitmapData.draw()` calls blitting that TextField — once through a flattening `ColorTransform` for
+  the etch, once for the text. Canvas2D has no TextField, so measure/wrap/stroke lives in the TS
+  class with nothing to trace to; what *is* traceable is the order, the offsets, the alpha gate and
+  `isStateDrawable()`.
+
+  Still on `WindowComposite`, not on `WindowRendererItem`: AS3 reaches these three through
+  `getSkinRendererByTypeAndStyle()`, this port calls them directly. Closing that needs the buffer
+  coordinates rebased to window-local and the `isStateDrawable(state) === (state === 0)` gate
+  resolved for non-zero window states — judgeable only with a running client. The type→renderer
+  mapping is already AS3's, read off the game's own element description rather than guessed.
 - `HabboAvatarGeometry.xml` ships an older revision: 9 bodyparts, no `order-*`, where the dump has
   11 and 8. The two extra are `petl`/`petr` — the only bodyparts `order-before` applies to, so the
   mechanism ported this session is latent until the asset is refreshed.
