@@ -36,9 +36,21 @@ day-to-day reference.
 `_SafeCls_N` and some *types* it references are too, but its methods, getters and constants keep
 their real names. `habbo/room/_SafeCls_90.as` declares
 `public class _SafeCls_90 extends _SafeCls_50 implements IRoomEngine, ...` and all 255 of its
-methods are readable — that file is RoomEngine. **Interfaces are never obfuscated**, so the
-reliable way to identify an obfuscated class is the interface it implements
-(`implements IRoomEngine` → RoomEngine), not a name lookup elsewhere.
+methods are readable — that file is RoomEngine. The best way to identify an obfuscated class is
+therefore the interface it implements (`implements IRoomEngine` → RoomEngine), not a name lookup
+elsewhere.
+
+**But do not expect an interface to be readable either.** 222 of the 848 obfuscated files
+*are* interfaces (`public interface _SafeCls_N`) — against 329 named `I*.as`, so roughly 40% of
+all interfaces are obfuscated too. `implements IRoomEngine` identifies a class; `implements
+_SafeCls_1783` identifies nothing until you resolve that interface in turn. It is the same
+problem one level down, and it has no general answer: match the members against a named
+interface in `PRODUCTION-201601012205-226667486` (only for classes that existed in 2016), or
+against this port's own `I*.ts` — `_SafeCls_1783` is `ICatalogNavigator`, recoverable because
+`CatalogNavigator.as` is unobfuscated and takes it.
+
+When a name exists in no tree at all, **derive it and say so at the declaration** — never pass a
+derived name off as recovered (see `CatalogWindowState.requestedPage`).
 
 **Do not expect `win63_version` to recover names.** It is obfuscated too — 868 `class_N.as` files —
 just with a different scheme, so the same class has a different meaningless name in each tree and
