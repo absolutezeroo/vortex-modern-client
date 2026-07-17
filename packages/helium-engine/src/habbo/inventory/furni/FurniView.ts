@@ -18,6 +18,7 @@ import type {IRoomPreviewerWidget} from '@habbo/window/widgets/IRoomPreviewerWid
 import type {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
 import {Vector3d} from '@room/utils/Vector3d';
 import {FurniGridView} from './FurniGridView';
+import {MapStuffData} from '@habbo/room/object/data/MapStuffData';
 
 const STATE_NULL = 0;
 const STATE_INITIALIZING = 1;
@@ -391,7 +392,71 @@ export class FurniView
             if(descText) descText.text = '';
         }
 
+        this.updateExtraText(item);
+
         this.updateRentedItem();
+    }
+
+    /**
+	 * Fills furni_extra with the item's rarity or chest name, and hides it when it
+	 * has neither.
+	 *
+	 * The hide is the load-bearing half: without it the field keeps the caption the
+	 * layout ships it with — the literal "extra" — on every piece of furniture.
+	 *
+	 * AS3 does nothing at all when rarityLevel is set but the stuff data carries no
+	 * "rarity" value: no text, no visibility change, the field keeps whatever it
+	 * last had. Ported as-is rather than folded into the else.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::updateActionView()
+    private updateExtraText(item: FurnitureItem | null): void
+    {
+        const extraText = (this._window?.findChildByName('furni_extra') ?? null) as ITextWindow | null;
+
+        if(extraText === null) return;
+
+        const stuffData = item?.stuffData ?? null;
+
+        if(stuffData === null)
+        {
+            extraText.text = '';
+            extraText.visible = false;
+
+            return;
+        }
+
+        if(stuffData.rarityLevel >= 0)
+        {
+            // AS3 casts with `as`, which is itself a runtime check, so mirror it with
+            // instanceof rather than a TS cast that only holds at compile time — the
+            // stuff data here is not always a MapStuffData.
+            const mapData = stuffData instanceof MapStuffData ? stuffData : null;
+            const rarity = mapData?.getValue('rarity') ?? null;
+
+            if(rarity !== null)
+            {
+                this._model.windowManager.registerLocalizationParameter(
+                    'inventory.rarity', 'rarity', String(stuffData.rarityLevel)
+                );
+                extraText.text = this._model.localization.getLocalization('inventory.rarity');
+                extraText.visible = true;
+            }
+
+            return;
+        }
+
+        if(stuffData.chestName !== '')
+        {
+            extraText.text = this._model.localization.getLocalizationWithParams(
+                'inventory.chest_name', '', 'chest_name', stuffData.chestName
+            );
+            extraText.visible = true;
+
+            return;
+        }
+
+        extraText.text = '';
+        extraText.visible = false;
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniView.as::init()
