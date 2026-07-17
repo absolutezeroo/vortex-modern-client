@@ -179,7 +179,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _catalogViewer: CatalogViewer | null = null;
     private _requestedPage: RequestedPage = new RequestedPage();
     private _initialized: boolean = false;
-    private _pendingPageId: number = 0;
     private _messageEvents: IMessageEvent[] = [];
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_sellablePetPalettes
     private _sellablePetPalettes: OrderedMap<string, SellablePetPalette[]> | null = new OrderedMap<string, SellablePetPalette[]>();
@@ -791,11 +790,44 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new RedeemVoucherMessageComposer(voucher));
     }
 
-    // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::loadCatalogPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::loadCatalogPage()
     public loadCatalogPage(pageId: number, offerId: number, catalogType: string): void
     {
-        this._pendingPageId = pageId;
+        this.setCatalogBusy(catalogType, true);
+
+        const state = this.getCatalogState(catalogType);
+
+        if(state != null) state.lastPageRequestId = pageId;
+
         this.connection?.send(new GetCatalogPageComposer(pageId, offerId, catalogType));
+    }
+
+    /**
+	 * Puts one catalog type's window into (or out of) its loading state.
+	 *
+	 * @param catalogType - The catalog type whose window to mark
+	 * @param busy - Whether a page request is in flight
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::setCatalogBusy()
+    private setCatalogBusy(catalogType: string, busy: boolean): void
+    {
+        const state = this.getCatalogState(catalogType);
+
+        if(state == null || state.mainContainer == null) return;
+
+        state.mainContainer.caption = busy
+            ? '${generic.loading}'
+            : (catalogType === 'NORMAL' ? '${catalog.title}' : '${builder.catalog.title}');
+
+        const mask = state.mainContainer.findChildByName('search_waiting_for_results_mask');
+
+        if(mask != null) mask.visible = busy;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::set isBusy()
+    public set isBusy(value: boolean)
+    {
+        this.setCatalogBusy(this._catalogType, value);
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::sendGetProductOffer()
@@ -1951,7 +1983,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         const parser = event.parser as CatalogPageMessageEventParser | null;
 
-        if(!parser || parser.catalogType !== this._catalogType) return;
+        if(!parser) return;
+
+        // Resolve the state the *response* belongs to, not the active one. A page for
+        // the type the user is no longer looking at still renders into its own viewer;
+        // dropping it (`parser.catalogType !== this._catalogType`) meant switching to
+        // Builders Club showed whatever NORMAL had left behind, because the page that
+        // was in flight when the switch happened was thrown away.
+        const state = this.getCatalogState(parser.catalogType);
+
+        if(state == null || state.catalogViewer == null) return;
 
         const localization = new PageLocalization(
             [...(parser.localization?.images ?? [])],
@@ -2014,9 +2055,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             this._frontPageItems = parser.frontPageItems;
         }
 
-        if(this._catalogViewer != null && this._pendingPageId === parser.pageId)
+        // lastPageRequestId is a race guard: only render the page this state actually
+        // asked for last. A reply for a page the user has already navigated away from
+        // arrives anyway, and must not overwrite what replaced it.
+        if(state.lastPageRequestId === parser.pageId)
         {
-            this._catalogViewer.showCatalogPage(
+            state.catalogViewer.showCatalogPage(
                 parser.pageId,
                 parser.layoutCode,
                 localization,
@@ -2025,6 +2069,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 parser.acceptSeasonCurrencyAsCredits
             );
         }
+
+        this.setCatalogBusy(parser.catalogType, false);
     }
 
     private isOfferCompatibleWithCurrentMode(offer: IPurchasableOffer): boolean 
