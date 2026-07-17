@@ -159,9 +159,16 @@ export class RoomUsersHandler extends BaseHandler
             {
                 const userData = RoomUsersHandler.createUserDataFromRoomUser(roomUserData);
 
-                session.userDataManager.setUserData(userData);
+                // AS3 reports a user as "added" only when its room index is not already
+                // present — a repeated Users packet for an existing occupant is an update,
+                // not a join. Check before the set. The old body pushed every user, so
+                // consumers saw updates as fresh arrivals.
+                if(session.userDataManager.getUserDataByIndex(roomUserData.roomIndex) === null)
+                {
+                    addedUsers.push(userData);
+                }
 
-                addedUsers.push(userData);
+                session.userDataManager.setUserData(userData);
             }
         }
 

@@ -385,7 +385,10 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._isAmbassador;
     }
 
-    private _noobnessLevel: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::_noobnessLevel
+    // AS3 initialises this to -1, not 0, so isNoob() reads true until the server says
+    // otherwise (see get isNoob()).
+    private _noobnessLevel: number = -1;
 
     get noobnessLevel(): number
     {
@@ -609,9 +612,12 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return clubLevelHasClub(this._clubLevel);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::get isNoob()
     get isNoob(): boolean
     {
-        return this._noobnessLevel > 0;
+        // AS3 tests `!= 0`, not `> 0`: the -1 default and any negative level both count
+        // as a noob until the server sends 0.
+        return this._noobnessLevel !== 0;
     }
 
     get isRealNoob(): boolean
@@ -1600,6 +1606,13 @@ export class SessionDataManager extends Component implements ISessionDataManager
         if(!parser) return;
 
         this._noobnessLevel = parser.noobnessLevel;
+
+        // AS3 sets the new.identity config flag whenever the level is non-zero; this
+        // was missing, so nothing downstream that reads new.identity ever saw it.
+        if(this._noobnessLevel !== 0)
+        {
+            this._configurationManager?.setProperty('new.identity', '1');
+        }
 
         log.debug(`Noobness level: ${this._noobnessLevel}`);
     }
