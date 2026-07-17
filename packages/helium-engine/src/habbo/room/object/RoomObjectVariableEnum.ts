@@ -69,6 +69,11 @@ export const RoomObjectVariableEnum = {
     FURNITURE_ALLOWED_DIRECTIONS: 'furniture_allowed_directions',
     FURNITURE_DATA: 'furniture_data',
     FURNITURE_DATA_FORMAT: 'furniture_data_format',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/CrackableStuffData.as
+    // (INTERNAL_STATE_KEY / INTERNAL_HIT_KEY / INTERNAL_TARGET_KEY) — real constants, not derived.
+    FURNITURE_CRACKABLE_STATE: 'furniture_crackable_state',
+    FURNITURE_CRACKABLE_HITS: 'furniture_crackable_hits',
+    FURNITURE_CRACKABLE_TARGET: 'furniture_crackable_target',
     FURNITURE_EXTRAS: 'furniture_extras',
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVariableEnum.as:132
     // Distinct from FURNITURE_EXTRAS: AS3 writes both, the string one here and this numeric one.

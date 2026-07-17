@@ -62,9 +62,27 @@ export class StringArrayStuffData extends StuffDataBase implements IStuffData
         return '';
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/StringArrayStuffData.as::compare()
     override compare(data: IStuffData): boolean
     {
-        return this.getLegacyString() === data.getLegacyString();
+        // AS3 casts to the same type (else false), then compares every element
+        // *except* index 0 (`if(_loc3_ != 0)`). The old body did the exact opposite —
+        // it compared only index 0 via getLegacyString() — so inventory stacks grouped
+        // on the wrong field.
+        if(!(data instanceof StringArrayStuffData))
+        {
+            return false;
+        }
+
+        for(let index = 0; index < this._data.length; index++)
+        {
+            if(index !== 0 && this._data[index] !== data.getValue(index))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     getValue(index: number): string

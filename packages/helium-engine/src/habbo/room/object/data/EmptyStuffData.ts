@@ -17,8 +17,12 @@ export class EmptyStuffData extends StuffDataBase implements IStuffData
         return '';
     }
 
-    override compare(_data: IStuffData): boolean
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/EmptyStuffData.as::compare()
+    override compare(data: IStuffData): boolean
     {
-        return true;
+        // AS3 returns `super.compare()`, and the base returns false — so two
+        // empty-stuffdata items never compare equal. The old `return true` merged
+        // every empty-data item into a single inventory stack.
+        return super.compare(data);
     }
 }

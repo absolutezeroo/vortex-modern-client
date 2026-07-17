@@ -68,14 +68,19 @@ export class HighScoreStuffData extends StuffDataBase implements IStuffData
             this._entries.push({users, score});
         }
 
-        super.initializeFromIncomingMessage(wrapper);
+        // AS3 is the one StuffData override that deliberately does NOT call
+        // super.initializeFromIncomingMessage(). The base reads the unique-serial
+        // trailer (serial + edition) when the 0x0100 flag is set; a HighScore item
+        // never carries it here, so calling super consumed two ints that were not on
+        // the wire and desynced the rest of the packet.
     }
 
     override initializeFromRoomObjectModel(model: IRoomObjectModel): void
     {
         super.initializeFromRoomObjectModel(model);
 
-        this._state = model.getString(RoomObjectVariableEnum.FURNITURE_DATA);
+        // AS3 does not read/write FURNITURE_DATA (the state string) in the model
+        // methods — the state lives only on the field set from the incoming message.
         this._scoreType = model.getNumber(RoomObjectVariableEnum.FURNITURE_HIGHSCORE_SCORE_TYPE);
         this._clearType = model.getNumber(RoomObjectVariableEnum.FURNITURE_HIGHSCORE_CLEAR_TYPE);
 
@@ -97,7 +102,6 @@ export class HighScoreStuffData extends StuffDataBase implements IStuffData
         super.writeRoomObjectModel(model);
 
         model.setNumber(RoomObjectVariableEnum.FURNITURE_DATA_FORMAT, HighScoreStuffData.FORMAT_KEY);
-        model.setString(RoomObjectVariableEnum.FURNITURE_DATA, this._state);
         model.setNumber(RoomObjectVariableEnum.FURNITURE_HIGHSCORE_SCORE_TYPE, this._scoreType);
         model.setNumber(RoomObjectVariableEnum.FURNITURE_HIGHSCORE_CLEAR_TYPE, this._clearType);
         model.setNumber(RoomObjectVariableEnum.FURNITURE_HIGHSCORE_DATA_ENTRY_COUNT, this._entries.length);
