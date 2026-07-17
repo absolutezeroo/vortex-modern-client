@@ -404,9 +404,53 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         }
 
         // Create ThemeManager now that SkinContainer is populated
+        this.registerTextRenderersMissingFromElementDescription();
+
         this._themeManager = new ThemeManager(this._skinContainer);
 
         log.info(`Element registry loaded: ${data.elements.length} descriptors, ThemeManager initialized`);
+    }
+
+    /**
+	 * Registers a text renderer for the two text-bearing window types the element
+	 * description does not declare one for.
+	 *
+	 * **DO NOT REMOVE** without giving textfield/html another way to draw, and do
+	 * not "restore fidelity" by deleting it: the element description is right, and
+	 * this port still needs the entry. Why the two disagree:
+	 *
+	 * Flash's TextField was one object that both captured input and displayed it,
+	 * and AS3 simply adds it to the display list as a child — which is why the
+	 * descriptor names a renderer for text/formatted_text/password/label/link and
+	 * nothing at all for `textfield` or `html`. There is no TextField to port: it
+	 * is a Flash runtime primitive, not Habbo code. So this port splits its two
+	 * jobs — TextFieldController.createInputElement() overlays a hidden
+	 * `<input>` (opacity 0, pointer-events none) to capture keys, IME, paste and
+	 * mobile keyboards, none of which are worth reimplementing; and the glyphs are
+	 * drawn on the canvas, because they have to sit inside window compositing at
+	 * the right z-order with the right font and etching. The input displays
+	 * nothing. Without a renderer here, so does the canvas — every field in the
+	 * client goes blank while still accepting what you type.
+	 *
+	 * Learned by deleting it. These types used to be dispatched from
+	 * WindowComposite; when that dispatch moved into createRendererForType() they
+	 * had no descriptor entry to move to, and every input went blank.
+	 */
+    private registerTextRenderersMissingFromElementDescription(): void
+    {
+        for(const type of [WindowType.TEXTFIELD, WindowType.HTML])
+        {
+            if(this._skinContainer.getSkinRendererByTypeAndStyle(type, 0) != null) continue;
+
+            this._skinContainer.addSkinRenderer(
+                type,
+                0,
+                'default',
+                new TextSkinRenderer(`${type}_0`),
+                null,
+                new DefaultAttStruct()
+            );
+        }
     }
 
     /**
