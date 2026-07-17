@@ -29,6 +29,8 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
     private _objectUpdateCounter: number = -1;
     private _geometryDirection: number = NaN;
     private _selectedColor: number = -1;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::_invisibleLayer
+    private _invisibleLayer: boolean = false;
     private _adClickUrl: string | null = null;
     private _clickHandling: boolean = false;
     private _assetNames: (string | null)[] = [];
@@ -293,6 +295,21 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
                 sprite.offsetY = asset.offsetY + this.getSpriteYOffset(scale, this._direction, layerIndex);
                 sprite.alphaTolerance = this.getSpriteMouseCapture(scale, this._direction, layerIndex) ? 128 : 256;
                 sprite.blendMode = this.getBlendMode(this.getSpriteInk(scale, this._direction, layerIndex));
+
+                // AS3 FurnitureVisualization.as:319-322 — optional per-sprite horizontal flip.
+                if(this.getSpriteFlipH(scale, this._direction, layerIndex))
+                {
+                    sprite.flipH = !sprite.flipH;
+                }
+
+                // AS3 FurnitureVisualization.as:323-327 — hide the "invisible"-tagged
+                // sprite of a furni whose furniture_invisible_layer is set.
+                if(this._invisibleLayer && sprite.tag === 'invisible')
+                {
+                    sprite.alpha = 0;
+                    sprite.alphaTolerance = 256;
+                }
+
                 zOffset = this.getSpriteZOffset(scale, this._direction, layerIndex);
                 zOffset -= layerIndex * 0.001;
             }
@@ -319,15 +336,90 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
             sprite.assetPosture = this.getPostureForAssetFile(scale, asset.libraryAssetName);
             sprite.clickHandling = this._clickHandling;
 
-            if(sprite.blendMode !== 'add') 
-            {
-                sprite.filters = this._filters;
-            }
+            this.updateSpriteFilters(scale, sprite, layerIndex);
         }
-        else 
+        else
         {
             this.resetSprite(sprite, layerIndex);
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateSpriteFilters()
+    // In "add" blend the port previously left the sprite's old filters attached; AS3
+    // clears them. Off "add", it merges the visualization's own _filters with the
+    // per-sprite getSpriteFilters() hook, short-circuiting when the concat is unchanged.
+    private updateSpriteFilters(scale: number, sprite: IRoomObjectSprite, layerIndex: number): void
+    {
+        if(sprite.blendMode !== 'add')
+        {
+            const filters = this.getSpriteFilters(scale, this._direction, layerIndex);
+
+            if(filters === null)
+            {
+                sprite.filters = this._filters;
+            }
+            else if(this._filters === null)
+            {
+                sprite.filters = filters;
+            }
+            else
+            {
+                if(FurnitureVisualization.concatListWillEqual(this._filters, filters, sprite.filters))
+                {
+                    return;
+                }
+
+                sprite.filters = this._filters.concat(filters);
+            }
+        }
+        else if(sprite.filters !== null)
+        {
+            sprite.filters = null;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteFilters()
+    protected getSpriteFilters(_scale: number, _direction: number, _layerIndex: number): unknown[] | null
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::getSpriteFlipH()
+    protected getSpriteFlipH(_scale: number, _direction: number, _layerIndex: number): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::concatListWillEqual()
+    private static concatListWillEqual(a: unknown[], b: unknown[], current: unknown[] | null): boolean
+    {
+        if(current === null)
+        {
+            return false;
+        }
+
+        if(a.length + b.length !== current.length)
+        {
+            return false;
+        }
+
+        for(let i = 0; i < a.length; i++)
+        {
+            if(a[i] !== current[i])
+            {
+                return false;
+            }
+        }
+
+        for(let i = 0; i < b.length; i++)
+        {
+            if(b[i] !== current[a.length + i])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected getLibraryAssetNameForSprite(asset: IGraphicAsset, _sprite: IRoomObjectSprite): string 
@@ -414,9 +506,19 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
                 alphaMultiplier = 1;
             }
 
-            if(alphaMultiplier !== this._alphaMultiplier) 
+            if(alphaMultiplier !== this._alphaMultiplier)
             {
                 this._alphaMultiplier = alphaMultiplier;
+                this._alphaChanged = true;
+            }
+
+            // AS3 FurnitureVisualization.as:501-506 — furniture_invisible_layer > 0
+            // marks a furni whose "invisible"-tagged sprites must be hidden.
+            const invisibleLayer = model.getNumber('furniture_invisible_layer') > 0;
+
+            if(invisibleLayer !== this._invisibleLayer)
+            {
+                this._invisibleLayer = invisibleLayer;
                 this._alphaChanged = true;
             }
 

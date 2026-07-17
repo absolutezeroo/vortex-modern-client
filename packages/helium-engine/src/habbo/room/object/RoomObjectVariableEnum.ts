@@ -83,6 +83,8 @@ export const RoomObjectVariableEnum = {
     FURNITURE_EXTRA: 'furniture_extra',
     FURNITURE_ITEMDATA: 'furniture_itemdata',
     FURNITURE_ALPHA_MULTIPLIER: 'furniture_alpha_multiplier',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVariableEnum.as::FURNITURE_INVISIBLE_LAYER
+    FURNITURE_INVISIBLE_LAYER: 'furniture_invisible_layer',
     FURNITURE_EXPIRY_TIME: 'furniture_expiry_time',
     FURNITURE_EXPIRY_TIMESTAMP: 'furniture_expirty_timestamp',
     FURNITURE_STATE_UPDATE_TIME: 'furniture_state_update_time',
