@@ -1,6 +1,8 @@
 // Exports
 export {BitmapDataRenderer} from './BitmapDataRenderer';
 export {BitmapFillSkinRenderer} from './BitmapFillSkinRenderer';
+export {LabelRenderer} from './LabelRenderer';
+export {TextSkinRenderer} from './TextSkinRenderer';
 export {BitmapSkinParser} from './BitmapSkinParser';
 export {BitmapSkinRenderer} from './BitmapSkinRenderer';
 export {FillSkinRenderer} from './FillSkinRenderer';
