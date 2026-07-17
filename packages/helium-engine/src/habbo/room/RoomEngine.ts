@@ -3030,8 +3030,21 @@ export class RoomEngine extends Component implements IRoomEngine,
         const key = this._activeRoomId * 1000 + canvasId;
         const canvas = this._renderingCanvases.get(key);
 
-        if(canvas) 
+        if(canvas)
         {
+            // AS3 (_SafeCls_90.as:2367-2372): ctrl+alt+click zooms the room at the cursor.
+            // shift halves the scale; otherwise it doubles, clamping a sub-1 scale up to 1
+            // first. The port received the modifier keys here but only handleRoomDragging
+            // consumed them, so the zoom shortcut did nothing.
+            if(type === 'click' && ctrlKey && altKey)
+            {
+                const scale = shiftKey ? canvas.scale >> 1 : (canvas.scale < 1 ? 1 : canvas.scale << 1);
+
+                this.setRoomCanvasScale(this._activeRoomId, canvasId, scale, {x, y});
+
+                return;
+            }
+
             // AS3: _SafeCls_1821.as::handleRoomCanvasMouseEvent() repositions the overlay
             // icon sprite unconditionally on every mouse event, at the raw mouse position —
             // visibility is controlled entirely by setObjectMoverIconSpriteVisible()

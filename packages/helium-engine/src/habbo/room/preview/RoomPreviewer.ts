@@ -12,6 +12,7 @@ import type {ImageResult} from '@habbo/room/ImageResult';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
+import type {IRoomObject} from '@room/object/IRoomObject';
 
 interface IPoint
 {
@@ -270,11 +271,38 @@ export class RoomPreviewer
                 this._previousAutomaticStateChangeTime = RoomPreviewer.getTimer();
                 this._automaticStateChange = true;
 
+                // AS3 marks the preview wall item's invisible layer so its "invisible"
+                // sprite is hidden (see FurnitureVisualization furniture_invisible_layer).
+                const object = this._roomEngine!.getRoomObject(this._previewRoomId, RoomPreviewer.PREVIEW_OBJECT_ID, this._currentPreviewObjectCategory);
+
+                if(object !== null)
+                {
+                    this.applyInvisibleLayerState(object);
+                }
+
                 return 1;
             }
         }
 
         return -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::applyInvisibleLayerState()
+    private applyInvisibleLayerState(object: IRoomObject | null): void
+    {
+        if(object === null || this._roomEngine === null)
+        {
+            return;
+        }
+
+        const model = object.getModel() as IRoomObjectModelController | null;
+
+        if(model === null)
+        {
+            return;
+        }
+
+        model.setNumber('furniture_invisible_layer', 1);
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/preview/RoomPreviewer.as::canRotatePreviewFurniture()
