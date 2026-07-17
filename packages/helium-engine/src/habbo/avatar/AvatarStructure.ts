@@ -435,6 +435,13 @@ export class AvatarStructure
         // Build containers from figure parts
         const figureContainers: { partType: string; container: AvatarImagePartContainer }[] = [];
 
+        // AS3 (AvatarStructure.as:407) declares this at method scope, so it *leaks*
+        // across parts: a part whose colorLayerIndex exceeds the figure's colour count
+        // keeps the previous part's colour instead of resetting to null. Verified against
+        // both the 2026 (:407) and 2016 decompiles — neither resets per iteration — so the
+        // leak is real in the compiled client. Following the source (per the fidelity rule).
+        let color: IPartColor | null = null;
+
         for(const partType of figurePartTypes)
         {
             if(effectParts && effectParts.has(partType)) continue;
@@ -481,8 +488,6 @@ export class AvatarStructure
                     let flippedType = partDef ? partDef.flippedSetType : part.type;
 
                     if(!flippedType) flippedType = part.type;
-
-                    let color: IPartColor | null = null;
 
                     if(colorIds && colorIds.length > part.colorLayerIndex - 1)
                     {

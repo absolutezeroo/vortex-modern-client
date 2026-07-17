@@ -2,7 +2,7 @@ import {Texture} from 'pixi.js';
 import type {AvatarStructure} from './AvatarStructure';
 import type {AssetAliasCollection} from './alias/AssetAliasCollection';
 import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
-import type {AvatarFigureContainer} from './AvatarFigureContainer';
+import {AvatarFigureContainer} from './AvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IAvatarEffectListener} from './IAvatarEffectListener';
@@ -97,9 +97,13 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             this._scale = AvatarScaleType.SMALL;
         }
 
+        // AS3 (AvatarImage.as:143-147) creates a default figure when none is given,
+        // rather than leaving _figure null — getFigure()/getParts() would otherwise
+        // dereference null.
         if(figure == null)
         {
-            // Fallback handled by caller; keep reference as-is
+            figure = new AvatarFigureContainer('hr-893-45.hd-180-2.ch-210-66.lg-270-82.sh-300-91.wa-2007-.ri-1-');
+            log.debug('Using default avatar figure');
         }
 
         this._figure = figure;
