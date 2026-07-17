@@ -1562,11 +1562,54 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispose()
         this.context.removeLinkEventTracker(this);
 
+        if(this._purchaseConfirmationDialog != null)
+        {
+            this._purchaseConfirmationDialog.dispose();
+            this._purchaseConfirmationDialog = null;
+        }
+
+        if(this._clubBuyController != null)
+        {
+            this._clubBuyController.dispose();
+            this._clubBuyController = null;
+        }
+
+        if(this._clubExtendController != null)
+        {
+            this._clubExtendController.dispose();
+            this._clubExtendController = null;
+        }
+
+        if(this._groupMembershipsController != null)
+        {
+            this._groupMembershipsController.dispose();
+            this._groupMembershipsController = null;
+        }
+
+        if(this._roomPreviewer != null)
+        {
+            this._roomPreviewer.dispose();
+            this._roomPreviewer = null;
+        }
+
+        // Dropped, not disposed — AS3 only nulls this one (`_SafeStr_4730 = null`), and
+        // the asymmetry is deliberate enough to keep: MarketPlaceLogic is reachable from
+        // elsewhere, so disposing it here would take it out from under another owner.
+        this._marketPlace = null;
+
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispose()
+        // AS3 never releases its ClubGiftController (_SafeStr_7444) or its recycler — neither
+        // appears anywhere in dispose(). Left leaking to match, rather than "fixing" AS3 on a
+        // guess: both hold windows, and taking them down here may be exactly what AS3 avoids.
+        // Decide with a leak trace, not by reading.
+
         if(this._sellablePetPalettes != null)
         {
             this._sellablePetPalettes.dispose();
             this._sellablePetPalettes = null;
         }
+
+        this._utils.dispose();
 
         // Drop the flat references before the states that own the objects behind them,
         // then let each state take down its own window, navigator and viewer.
