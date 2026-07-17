@@ -478,6 +478,32 @@ export class CatalogPage implements ICatalogPage
 
     private initializeWidgets(): void
     {
+        // The 3x3 colour-grouping layout is the one page shape whose colour grid is
+        // not declared in the layout XML: the window exists but ships hidden and
+        // unsized, and the page positions it under the item grid and adds its widget
+        // here. Every number below is AS3's, including the item grid's flat height of
+        // 64 - 3 — it is not derived from anything.
+        if(this._layoutCode === 'default_3x3_color_grouping' && this._window)
+        {
+            const itemGrid = this._window.findChildByName('itemGridWidget') as unknown as IWindowContainer | null;
+            const colourGrid = this._window.findChildByName('colourGridWidget') as unknown as IWindowContainer | null;
+
+            if(itemGrid && colourGrid)
+            {
+                const spacing = 3;
+
+                itemGrid.height = 64 - spacing;
+
+                colourGrid.visible = true;
+                colourGrid.width = 360;
+                colourGrid.x = itemGrid.x;
+                colourGrid.y = itemGrid.y + itemGrid.height + spacing;
+                colourGrid.height = 91;
+
+                this._widgets.push(new ColourGridCatalogWidget(colourGrid));
+            }
+        }
+
         const failed: ICatalogWidget[] = [];
 
         for(const widget of this._widgets)
