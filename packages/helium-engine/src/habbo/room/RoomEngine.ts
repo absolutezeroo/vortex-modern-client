@@ -2774,7 +2774,76 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.setRoomObjectUserOwnUser(roomId, roomIndex);
     }
 
-    addObjectUpdateCategory(category: number): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setChooserDisabled()
+    setChooserDisabled(roomId: number, disabled: boolean): void
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room !== null)
+        {
+            room.setNumber(RoomVariableEnum.CHOOSER_DISABLED, disabled ? 1 : 0);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setFreeFurniMovementsMode()
+    setFreeFurniMovementsMode(roomId: number, enabled: boolean): void
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room !== null)
+        {
+            room.setNumber(RoomVariableEnum.FREE_FURNI_MOVEMENTS_MODE, enabled ? 1 : 0);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setInvisibleFurni()
+    setInvisibleFurni(roomId: number, invisible: boolean): void
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room !== null)
+        {
+            room.setNumber(RoomVariableEnum.INVISIBLE_FURNI, invisible ? 1 : 0);
+            this.updateInvisibleFurniForRoom(roomId, invisible);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateInvisibleFurniForRoom()
+    private updateInvisibleFurniForRoom(roomId: number, invisible: boolean): void
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room === null)
+        {
+            return;
+        }
+
+        this.updateInvisibleFurniForObjects(room.getObjects(RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE), invisible);
+        this.updateInvisibleFurniForObjects(room.getObjects(RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL), invisible);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateInvisibleFurniForObjects()
+    private updateInvisibleFurniForObjects(objects: IRoomObject[] | null, invisible: boolean): void
+    {
+        if(objects === null)
+        {
+            return;
+        }
+
+        const value = invisible ? 1 : 0;
+
+        for(const object of objects)
+        {
+            const model = (object as IRoomObjectController).getModelController();
+
+            if(model !== null)
+            {
+                model.setNumber(RoomObjectVariableEnum.FURNITURE_INVISIBLE_LAYER, value);
+            }
+        }
+    }
+
+    addObjectUpdateCategory(category: number): void
     {
         if(this._roomManager) 
         {
