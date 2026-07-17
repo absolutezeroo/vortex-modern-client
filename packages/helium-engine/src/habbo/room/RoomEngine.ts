@@ -4595,9 +4595,19 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(!Number.isFinite(minX) ||
             !Number.isFinite(minY) ||
             !Number.isFinite(maxX) ||
-            !Number.isFinite(maxY) ||
-            activeRoomBounds === null) 
+            !Number.isFinite(maxY))
         {
+            return;
+        }
+
+        if(activeRoomBounds === null)
+        {
+            // AS3 (_SafeCls_90.as:1155-1158): with no active bounds yet, nudge the
+            // geometry toward the origin and bail. A bare return leaves the camera
+            // wherever it was, so the first framing inherits the previous room's
+            // residual position instead of a defined origin.
+            geometry.adjustLocation(new Vector3d(0, 0), 25);
+
             return;
         }
 
@@ -4619,7 +4629,10 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const maxScreenX = screenWidth / 2 / xScale - 1;
         const maxScreenY = screenHeight / 2 / yScale - 1;
-        const centerScreen = geometry.getScreenPoint(new Vector3d(centerX, centerY, cameraZ));
+        // AS3 (_SafeCls_90.as:1134,1148): the room-centre screen anchor uses the
+        // constant z = 2 (_loc19_), NOT the target's floor(z)+1 (_loc46_ / cameraZ,
+        // which is reserved for the target location below). The port had fused the two.
+        const centerScreen = geometry.getScreenPoint(new Vector3d(centerX, centerY, 2));
 
         if(centerScreen === null) 
         {
@@ -4761,7 +4774,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         const viewTop = topMargin + bottomMargin > 0 ? -viewHeight * (bottomMargin / (topMargin + bottomMargin)) : -viewHeight / 2;
         const viewRight = viewLeft + viewWidth;
         const viewBottom = viewTop + viewHeight;
-        const targetScreen = geometry.getScreenPoint(target);
+        // AS3 (_SafeCls_90.as:1266,1273): the target's screen point is taken with the
+        // raw z (_loc6_.z is still param3.z here); _loc6_.z is only overwritten with
+        // floor(z)+1 afterwards. target.z already holds floor(z)+1, so pass the raw z.
+        const targetScreen = geometry.getScreenPoint(new Vector3d(target.x, target.y, targetLocation.z));
 
         if(targetScreen === null) 
         {
@@ -4771,11 +4787,15 @@ export class RoomEngine extends Component implements IRoomEngine,
         targetScreen.x += canvas.screenOffsetX;
         targetScreen.y += canvas.screenOffsetY;
 
-        if(camera.location === null) 
+        if(camera.location === null)
         {
-            geometry.adjustLocation(desiredLocation, 25);
+            // AS3 (_SafeCls_90.as:1278): the first framing snaps the geometry straight
+            // to desiredLocation (`location = _loc6_`), no z-offset. adjustLocation(…, 0)
+            // sets it directly (offset = -0 * unitZ = 0); the previous `, 25` shifted the
+            // start point 25 along z, so the camera visibly travelled in on every entry.
+            geometry.adjustLocation(desiredLocation, 0);
 
-            if(this.useOffsetScrolling) 
+            if(this.useOffsetScrolling)
             {
                 camera.initializeLocation(new Vector3d(0, 0, 0));
             }
