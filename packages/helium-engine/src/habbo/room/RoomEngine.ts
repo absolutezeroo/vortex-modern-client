@@ -193,6 +193,10 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _imageIdCounter: number = 0;
     private _ticker: Ticker | null = null;
     private _canvasSyncCallbacks: Set<() => void> = new Set();
+    // AS3 _SafeCls_1821.as::_moveMouseEventCache — the last mouse-move over a tile, replayed
+    // by recalibrateMovements() so an in-progress drag/place ghost re-snaps after the tile
+    // map rebuilds. The port caches the tile coords (all handleObjectMove/Place need).
+    private _moveMouseEventCache: Vector3d | null = null;
     private _selectedObject: { roomId: number; id: number; category: number } | null = null;
 
     constructor(context: IContext, assetLibrary: IAssetLibrary | null = null) 
@@ -1146,15 +1150,58 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::refreshTileObjectMap()
-    refreshTileObjectMap(roomId: number, _reason: string): void 
+    refreshTileObjectMap(roomId: number, _reason: string): void
     {
         const map = this.getTileObjectMap(roomId);
 
-        if(map === null) return;
+        // AS3 populates the map only when it exists, but recalibrateMovements() runs
+        // unconditionally afterwards (_SafeCls_90.as:4660-4664).
+        if(map !== null)
+        {
+            const objects = this.getRoomInstance(roomId)?.getObjects(RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) ?? [];
 
-        const objects = this.getRoomInstance(roomId)?.getObjects(RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) ?? [];
+            map.populate(objects);
+        }
 
-        map.populate(objects);
+        this.recalibrateMovements(roomId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::recalibrateMovements()
+    // After the tile map rebuilds, replay the cached mouse-move so an in-progress
+    // OBJECT_MOVE/OBJECT_PLACE drag ghost re-snaps to the new stacking height instead
+    // of keeping the stale one until the next real mouse-move.
+    private recalibrateMovements(roomId: number): void
+    {
+        const selectedObjectData = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
+
+        if(selectedObjectData === null)
+        {
+            return;
+        }
+
+        const operation = selectedObjectData.operation;
+
+        if(operation !== 'OBJECT_MOVE' && operation !== 'OBJECT_PLACE')
+        {
+            return;
+        }
+
+        if(this._moveMouseEventCache === null || selectedObjectData.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        {
+            return;
+        }
+
+        const tileX = this._moveMouseEventCache.x;
+        const tileY = this._moveMouseEventCache.y;
+
+        if(operation === 'OBJECT_PLACE')
+        {
+            this.handleObjectPlace(roomId, tileX, tileY);
+        }
+        else
+        {
+            this.handleObjectMove(roomId, tileX, tileY);
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetType()
@@ -3093,10 +3140,23 @@ export class RoomEngine extends Component implements IRoomEngine,
     /**
      * Dispose the room engine
      */
-    override dispose(): void 
+    override dispose(): void
     {
+        // AS3 makes dispose() idempotent with an early `if(disposed) return` (_SafeCls_90.as:497).
+        if(this.disposed)
+        {
+            return;
+        }
+
         // Unregister from update loop
         this.removeUpdateReceiver(this);
+
+        // AS3's removeUpdateReceiver stops its per-frame tick; here the canvas-sync tick
+        // rides the PixiJS Ticker that setTicker() attached, so it must be detached too —
+        // otherwise onTickerUpdate keeps firing against a disposed engine whose canvases
+        // are already gone.
+        this._ticker?.remove(this.onTickerUpdate);
+        this._ticker = null;
 
         // Dispose all rendering canvases
         for(const [, canvas] of this._renderingCanvases) 
@@ -3130,6 +3190,20 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         // Clear stage reference
         this._pixiStage = null;
+
+        // AS3 disposes every RoomInstanceData it still holds (_SafeCls_90.as:549-560).
+        // The port only did so per-room in removeRoomInstanceData(), so any room still
+        // registered at teardown leaked its RoomCamera / FurniStackingHeightMap /
+        // TileObjectMap / selection data.
+        for(const instanceData of this._roomInstanceData.values())
+        {
+            instanceData.roomCamera.dispose();
+            instanceData.furniStackingHeightMap?.dispose();
+            instanceData.tileObjectMap?.dispose();
+            instanceData.selectedObjectData?.dispose();
+        }
+
+        this._roomInstanceData.clear();
 
         super.dispose();
     }
@@ -4316,8 +4390,11 @@ export class RoomEngine extends Component implements IRoomEngine,
         const tileY = event.tileYAsInt;
         const tileZ = event.tileZAsInt;
 
-        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE) 
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
         {
+            // Cache the tile for recalibrateMovements() (AS3 _moveMouseEventCache).
+            this._moveMouseEventCache = new Vector3d(tileX, tileY, tileZ);
+
             const tileCursor = this.getTileCursor(this._activeRoomId);
 
             if(tileCursor && tileCursor.getEventHandler()) 
