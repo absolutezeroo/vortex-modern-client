@@ -343,7 +343,7 @@ export class FurnitureDataParser
                 let canStandOn = false;
                 let canSitOn = false;
                 let canLayOn = false;
-                let excludedFromDynamic = false;
+                let excludedFromDynamic: boolean;
 
                 if(isWallItem)
                 {
@@ -439,11 +439,28 @@ export class FurnitureDataParser
         ids[item.colourIndex] = item.id;
     }
 
-    // AS3: sources/win63_version/habbo/session/furniture/FurnitureDataParser.as::registerFurnitureLocalization()
+    /**
+	 * Publishes one item's name and description as localization keys.
+	 *
+	 * This is where every `roomItem.name.<id>` / `wallItem.name.<id>` in the client
+	 * comes from — they exist in no text file, not even Habbo's. GroupItem and Offer
+	 * read them back to name furniture in the inventory and the catalog; the
+	 * infostand skips them and reads furnitureData.localizedName directly, which is
+	 * why it kept working while both of the others showed nothing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::registerFurnitureLocalization()
     private registerFurnitureLocalization(item: FurnitureData): void
     {
+        // AS3 guards identically (`if(_localization != null)`), so the guard itself is
+        // faithful — but it is silent in both, and silence is what makes a missing
+        // manager cost hours instead of seconds. Logging is the deviation, deliberately:
+        // if this ever fires, the symptom is every furniture name in the client going
+        // blank, and that should not have to be diagnosed from scratch again.
         if(this._localization === null)
         {
+            log.error('No localization manager: furniture names will be empty everywhere. '
+                + 'SessionDataManager must inject it before furnidata parses.');
+
             return;
         }
 

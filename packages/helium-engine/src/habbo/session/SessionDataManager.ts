@@ -697,13 +697,19 @@ export class SessionDataManager extends Component implements ISessionDataManager
                 },
                 false
             ),
+            // Required, as AS3 declares it — it omits the third argument here while
+            // passing an explicit `false` on the very next dependency, so the
+            // distinction is deliberate. It has to be: the furnidata parser is what
+            // creates every `roomItem.name.<id>` key (from each item's localizedName),
+            // and it skips that silently when localization has not arrived. Optional
+            // here meant every furniture name in the catalog and the inventory was
+            // empty.
             new ComponentDependency(
                 IID_HabboLocalizationManager,
                 (manager: IHabboLocalizationManager | null) =>
                 {
                     this._localization = manager;
-                },
-                false
+                }
             ),
             new ComponentDependency(
                 IID_RoomSessionManager,
