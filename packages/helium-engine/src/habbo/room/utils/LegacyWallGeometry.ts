@@ -120,60 +120,12 @@ export class LegacyWallGeometry
 	 */
     getLocation(wallX: number, wallY: number, localX: number, localY: number, dir: string): IVector3d
     {
-        // Auto-detect wall position when wallX=0 and wallY=0 (AS3 lines 126-179)
-        if(wallX === 0 && wallY === 0)
-        {
-            wallX = this._width;
-            wallY = this._height;
-            const localRound = Math.round(this._scale / 10);
-
-            if(dir === LegacyWallGeometry.R)
-            {
-                // Scan right-facing walls from right edge
-                for(let ix = this._width - 1; ix >= 0; ix--)
-                {
-                    for(let iy = 1; iy < this._height; iy++)
-                    {
-                        if(this.getTileHeight(ix, iy) <= this._floorHeight)
-                        {
-                            if((iy - 1) < wallY)
-                            {
-                                wallX = ix;
-                                wallY = iy - 1;
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                localY = localY + ((this._scale / 4) - (localRound / 2));
-                localX = localX + (this._scale / 2);
-            }
-            else
-            {
-                // Scan left-facing walls from bottom edge
-                for(let iy = this._height - 1; iy >= 0; iy--)
-                {
-                    for(let ix = 1; ix < this._width; ix++)
-                    {
-                        if(this.getTileHeight(ix, iy) <= this._floorHeight)
-                        {
-                            if((ix - 1) < wallX)
-                            {
-                                wallX = ix - 1;
-                                wallY = iy;
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                localY = localY + ((this._scale / 4) - (localRound / 2));
-                localX = localX - localRound;
-            }
-        }
-
-        // Convert to world coordinates (AS3 lines 180-196)
+        // WIN63's getLocation (_SafeCls_1855.as:129-148) is the 15-line world conversion
+        // below — nothing else. The port previously carried a ~50-line wall-scan block
+        // that rewrote wallX/wallY/localX/localY when both were 0; that block only exists
+        // in the 2016 PRODUCTION build and was removed in WIN63. It recalculated by
+        // heuristic any wall item legitimately placed on tile (0,0), shifting it on screen.
+        // Following the primary source, it is removed.
         let worldX = wallX;
         let worldY = wallY;
         let worldZ = this.getTileHeight(wallX, wallY);
