@@ -249,13 +249,18 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 },
                 true
             ),
+            // Required, as AS3 declares it — it omits the third argument here and
+            // passes an explicit `false` for IIDHabboFriendList further down, so the
+            // distinction is deliberate. init() hands this straight to FurniModel as
+            // `this._catalog!`, so optional meant the model could be built around a
+            // null catalog.
             new ComponentDependency(
                 IID_HabboCatalog,
                 (catalog: IHabboCatalog | null) =>
                 {
                     this._catalog = catalog;
                 },
-                false
+                true
             ),
             new ComponentDependency(
                 IID_RoomEngine,
@@ -283,13 +288,16 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 },
                 false
             ),
+            // Required, as AS3 declares it — same reasoning as IID_HabboCatalog above.
+            // init() passes this to FurniModel as `this._localization!`, and every
+            // furniture name in the inventory is read back through it.
             new ComponentDependency(
                 IID_HabboLocalizationManager,
                 (localization: IHabboLocalizationManager | null) =>
                 {
                     this._localization = localization;
                 },
-                false
+                true
             ),
             new ComponentDependency(
                 IID_HabboToolbar,
