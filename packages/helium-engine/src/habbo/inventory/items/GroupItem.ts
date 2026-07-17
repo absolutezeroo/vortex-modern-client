@@ -11,6 +11,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {ILimitedItemGridOverlayWidget} from '@habbo/window/widgets/ILimitedItemGridOverlayWidget';
 import type {IRarityItemGridOverlayWidget} from '@habbo/window/widgets/IRarityItemGridOverlayWidget';
+import type {IChestItemGridOverlayWidget} from '@habbo/window/widgets/IChestItemGridOverlayWidget';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {ImageResult} from '@habbo/room/ImageResult';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
@@ -984,40 +985,76 @@ export class GroupItem implements IGetImageListener
     {
         if(!this._window) return;
 
-        if(this._stuffData && this._stuffData.uniqueSerialNumber > 0) 
+        if(this._stuffData && this._stuffData.uniqueSerialNumber > 0)
         {
             const container = this._window.findChildByName('unique_item_overlay_container') as IWidgetWindow | null;
 
-            if(container) 
+            if(container)
             {
                 const widget = container.widget as ILimitedItemGridOverlayWidget | null;
 
-                if(widget) 
+                if(widget)
                 {
                     widget.serialNumber = this._stuffData.uniqueSerialNumber;
                     widget.animated = true;
                 }
+
+                // AS3 makes the overlay container visible; without it the limited-item
+                // plaque stayed hidden even when its widget was configured.
+                container.visible = true;
             }
 
             const background = this._window.findChildByName('unique_item_background_bitmap');
 
-            if(background) 
+            if(background)
             {
                 background.visible = true;
             }
         }
-        else if(this._stuffData && this._stuffData.rarityLevel >= 0) 
+        else if(this._stuffData && this._stuffData.rarityLevel >= 0)
         {
             const container = this._window.findChildByName('rarity_item_overlay_container') as IWidgetWindow | null;
 
-            if(container) 
+            if(container)
             {
                 const widget = container.widget as IRarityItemGridOverlayWidget | null;
 
-                if(widget) 
+                if(widget)
                 {
                     widget.rarityLevel = this._stuffData.rarityLevel;
                 }
+
+                // AS3 makes the overlay container visible; without it the rarity plaque
+                // stayed hidden.
+                container.visible = true;
+            }
+        }
+        else if(this._category === FurnitureCategory.COINS_CHEST || this._category === FurnitureCategory.FURNI_CHEST)
+        {
+            // AS3 has a whole chest branch this port was missing: a coloured plaque
+            // (gold for coins chests, brown for furni chests) with the contents count.
+            const container = this._window.findChildByName('chest_overlay_container') as IWidgetWindow | null;
+            const color = this._category === FurnitureCategory.COINS_CHEST ? 'gold' : 'brown';
+
+            if(container)
+            {
+                const widget = container.widget as IChestItemGridOverlayWidget | null;
+
+                if(widget)
+                {
+                    widget.contentsCount = this._stuffData?.contentsCount ?? 0;
+                    widget.color = color;
+                }
+
+                container.visible = true;
+            }
+
+            const background = this._window.findChildByName('chest_background_bitmap') as IStaticBitmapWrapperWindow | null;
+
+            if(background)
+            {
+                background.assetUri = `chest_overlay_${color}_background`;
+                background.visible = true;
             }
         }
 

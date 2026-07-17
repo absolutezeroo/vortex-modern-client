@@ -221,21 +221,46 @@ export class FurniModel implements IFurniModel
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToMover()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::requestSelectedFurniToMover()
     private requestSelectedFurniToMover(item: FurnitureItem): void
     {
         const category = item.isWallItem ? RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL : RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE;
 
-        const success = this._roomEngine.initializeRoomObjectInsert(
-            'inventory', item.id, category, item.type, item.extra.toString(), item.stuffData
-        );
+        // AS3 places posters and external-image items with the stuff-data legacy string
+        // as the "extra" argument and no stuff-data object; everything else passes the
+        // item's own extra and its stuff data. The old body always took the second path,
+        // so a poster went to the mover with the wrong placement payload.
+        let success: boolean;
+
+        if(item.category === FurnitureCategory.POSTER || this.isExternalImageItem(item))
+        {
+            success = this._roomEngine.initializeRoomObjectInsert(
+                'inventory', item.id, category, item.type, item.stuffData?.getLegacyString() ?? '', null
+            );
+        }
+        else
+        {
+            success = this._roomEngine.initializeRoomObjectInsert(
+                'inventory', item.id, category, item.type, item.extra.toString(), item.stuffData
+            );
+        }
 
         if(success)
         {
             this._pendingPlacementRef = item.ref;
             this._isPlacing = true;
+            // AS3 guards this on !recyclerModel.running; the recycler is not ported, so
+            // the close always runs here (the non-recycling branch).
             this._habboInventory.closeView();
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::isExternalImageItem()
+    private isExternalImageItem(item: FurnitureItem): boolean
+    {
+        const furniData = this._habboInventory.getFurnitureData(item.type, 'i');
+
+        return furniData !== null && furniData.isExternalImageType;
     }
 
     // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::onObjectPlaced()

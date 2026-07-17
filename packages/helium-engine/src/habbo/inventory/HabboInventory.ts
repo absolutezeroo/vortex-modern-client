@@ -506,15 +506,24 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::toggleInventorySubPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::toggleInventorySubPage()
     toggleInventorySubPage(category: string): void
     {
-        this._view.toggleSubCategoryView(category, false);
-
-        if(category === 'trading')
+        // AS3 switches the furni category *before* the sub-category, and does it for
+        // both "trading" and "wired_trading". The old body inverted the order and
+        // missed wired_trading, so opening a wired-trade sub-page left the wrong
+        // category showing.
+        if(category === 'trading' || category === 'wired_trading')
         {
             this._view.toggleCategoryView('furni', false);
         }
+
+        this._view.toggleSubCategoryView(category, false);
+
+        // AS3 then loops every inventory model calling subCategorySwitch(category);
+        // only FurniModel implements it in this port (empty → removeAllLocks, then
+        // updateActionView). The other models have no override to call.
+        this._furniModel.subCategorySwitch(category);
     }
 
     // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::updateSubView()
