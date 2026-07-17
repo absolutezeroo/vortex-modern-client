@@ -82,7 +82,6 @@ export class RoomSession implements IRoomSession
 {
     private _chatTrackingId: number = 0;
     private _chatTrackingMap: Map<number, number> = new Map();
-    private _eventLogTracked: Map<string, boolean> = new Map();
     private _habboTracking: IHabboTracking | null = null;
 
     get habboTracking(): IHabboTracking | null
@@ -448,7 +447,6 @@ export class RoomSession implements IRoomSession
         this._openConnectionComposer = null;
         this._state = RoomSessionState.ENDED;
         this._chatTrackingMap.clear();
-        this._eventLogTracked.clear();
         this._userDataManager.dispose();
     }
 
@@ -811,17 +809,13 @@ export class RoomSession implements IRoomSession
         this._connection.send(new NewUserExperienceScriptProceedComposer());
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSession.as::trackEventLogOncePerSession()
     trackEventLogOncePerSession(category: string, type: string, action: string): void
     {
-        const key = `${category}_${type}_${action}`;
-
-        if(this._eventLogTracked.has(key))
-        {
-            return;
-        }
-
-        this._eventLogTracked.set(key, true);
-
-        this.sendConversionPoint(category, type, action);
+        // AS3 delegates to HabboTracking, whose once-per-session dedup lives on the
+        // tracker and so persists across room sessions. The old body deduped in a
+        // RoomSession-local map that was cleared when the room ended, so the same event
+        // re-logged on every room entry — per-room, not per-client-session.
+        this._habboTracking?.trackEventLogOncePerSession(category, type, action);
     }
 }
