@@ -88,12 +88,18 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         this._needsUpdate = true;
         this._fullImageCache = new Map();
 
+        // AS3 (AvatarImage.as:133-142): the "h_50" scale means "render at large scale,
+        // downsample to small" — the cache keeps the flag and looks up large ("h") assets.
+        // The port mapped h_50 -> sh but dropped the flag, so it fetched raw sh_* assets.
+        let largeScaledSmall = false;
+
         if(this._scale == null)
         {
             this._scale = AvatarScaleType.LARGE;
         }
         else if(this._scale === AvatarScaleType.LARGE_TO_SMALL)
         {
+            largeScaledSmall = true;
             this._scale = AvatarScaleType.SMALL;
         }
 
@@ -108,7 +114,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 
         this._figure = figure;
 
-        this._cache = new AvatarImageCache(this._structure, this, this._assets, this._scale);
+        this._cache = new AvatarImageCache(this._structure, this, this._assets, this._scale, largeScaledSmall);
 
         this.setDirection(AvatarImage.DEFAULT_AVATAR_SET, AvatarImage.DEFAULT_DIR);
 

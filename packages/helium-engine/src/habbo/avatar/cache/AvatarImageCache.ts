@@ -51,18 +51,22 @@ export class AvatarImageCache
     private _defaultActionAssetPartDefinition: string;
     private _unionImages: ImageData[];
     private _serverRenderData: any[];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::_largeScaledSmall
+    private _largeScaledSmall: boolean;
 
     constructor(
         structure: AvatarStructure,
         avatar: IAvatarImage,
         assets: AssetAliasCollection,
-        scale: string
+        scale: string,
+        largeScaledSmall: boolean = false
     )
     {
         this._structure = structure;
         this._avatar = avatar;
         this._assets = assets;
         this._scale = scale;
+        this._largeScaledSmall = largeScaledSmall;
         this._cache = new Map();
         this._canvas = null;
         this._disposed = false;
@@ -670,7 +674,9 @@ export class AvatarImageCache
         frame: number
     ): string
     {
-        return this._scale
+        // AS3 AvatarImageCache.as:527 — in largeScaledSmall mode the asset name uses the
+        // large scale "h" (downsampled at render) rather than the raw scale ("sh").
+        return (this._largeScaledSmall ? 'h' : this._scale)
 			+ AvatarImageCache.UNDERSCORE + assetPartDefinition
 			+ AvatarImageCache.UNDERSCORE + partType
 			+ AvatarImageCache.UNDERSCORE + partId
