@@ -89,7 +89,11 @@ export class CatalogNavigator implements ICatalogNavigator
                 let matched = false;
                 let haystack = [node.pageName, node.localization].join(' ').toLowerCase();
 
-                haystack = haystack.replace(/ /gi, '');
+                // Strip every separator, not just spaces: page names are underscore- and
+                // hyphen-joined (`wf_storage_furni_bd`), so leaving those in means a search
+                // for "wf storage" — which collapses to "wfstorage" — never matches.
+                // AS3: `_loc5_.replace(/[\s_\-]+/gi, "")`.
+                haystack = haystack.replace(/[\s_-]+/gi, '');
 
                 if(haystack.indexOf(query) > -1)
                 {
