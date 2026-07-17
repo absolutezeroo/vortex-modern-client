@@ -582,9 +582,9 @@ export class InventoryMainView
     private extractWindow(name: string): void 
     {
         const container = this.mainContainer;
-        const child = container?.getChildByName(name) as IWindowContainer | null | undefined;
+        const child = (container?.getChildByName(name) ?? null) as IWindowContainer | null;
 
-        if(child && container) 
+        if(child && container)
         {
             container.removeChild(child);
             this._extractedWindows.set(name, child);
@@ -773,11 +773,22 @@ export class InventoryMainView
 
         const tabContainer = this._window.findChildByName(name) as IWindowContainer | null;
 
-        if(tabContainer) 
+        if(tabContainer)
         {
-            tabContainer.addChild(counter);
+            // Position before adding, unlike AS3 (which does addChild then set x/y).
+            // The counter root is a border whose "999" placeholder reflows it under
+            // ON_RESIZE_ALIGN_RIGHT to a transient negative x during buildWidgetLayout.
+            // The tab has RESIZE_TO_ACCOMMODATE_CHILDREN, so adding the counter while it
+            // sits at that negative x makes scaleToAccommodateChildren() take minX<0 and
+            // shove every sibling — including the tab's title label — right by |minX|,
+            // knocking the label off-centre. AS3 avoids this only because its font
+            // renders "999" inside the authored box so the border never reflows negative;
+            // this port's metrics can't guarantee that. Placing the counter at its final
+            // (positive) corner first keeps the tab's faithful accommodate from ever
+            // seeing the transient negative x.
             counter.x = tabContainer.width - counter.width - COUNTER_MARGIN;
             counter.y = COUNTER_MARGIN;
+            tabContainer.addChild(counter);
         }
 
         return counter;
