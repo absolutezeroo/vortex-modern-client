@@ -74,8 +74,11 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     private _widgetFactory: IRoomWidgetFactory | null = null;
     // Widget management
     private _widgets: Map<string, unknown> = new Map();
-    private _widgetMessageHandlers: Map<string, IRoomWidgetHandler> = new Map();
-    private _widgetEventHandlers: Map<string, IRoomWidgetHandler> = new Map();
+    // AS3 keys these on an array of handlers per type, not one handler: every handler
+    // registers for RETWE_OPEN_WIDGET/RETWE_CLOSE_WIDGET, so a single-handler map let
+    // only the last-registered widget ever receive an open/close.
+    private _widgetMessageHandlers: Map<string, IRoomWidgetHandler[]> = new Map();
+    private _widgetEventHandlers: Map<string, IRoomWidgetHandler[]> = new Map();
     private _updateListeners: IRoomWidgetHandler[] = [];
     // Canvas state
     private _canvasIds: number[] = [];
@@ -394,29 +397,55 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         if(!eventType) return;
 
-        if(eventType === 'RWZTM_ZOOM_TOGGLE') 
+        if(eventType === 'RWZTM_ZOOM_TOGGLE')
         {
             this.toggleZoom();
         }
 
-        const handler = this._widgetEventHandlers.get(eventType);
+        const handlers = this._widgetEventHandlers.get(eventType);
 
-        if(handler) 
+        if(!handlers) return;
+
+        const isOpenClose = eventType === 'RETWE_OPEN_WIDGET' || eventType === 'RETWE_CLOSE_WIDGET';
+        const targetWidget = isOpenClose ? ((event as { widget?: string | null }).widget ?? null) : null;
+
+        for(const handler of handlers)
         {
+            // AS3: an open/close-widget event is delivered only to the handler whose type
+            // matches the event's target widget; every other event goes to all handlers.
+            if(isOpenClose && handler.type !== targetWidget)
+            {
+                continue;
+            }
+
             handler.processEvent(event);
         }
     }
 
-    // AS3: sources/win63_version/habbo/ui/RoomDesktop.as::processWidgetMessage()
-    public processWidgetMessage(message: unknown): unknown 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::processWidgetMessage()
+    public processWidgetMessage(message: unknown): unknown
     {
         const messageType = (message as { type?: string } | null)?.type;
 
         if(!messageType) return null;
 
-        const handler = this._widgetMessageHandlers.get(messageType);
+        const handlers = this._widgetMessageHandlers.get(messageType);
 
-        return handler ? handler.processWidgetMessage(message) : null;
+        if(!handlers) return null;
+
+        // AS3 returns the first non-null result across the handlers registered for this
+        // message type.
+        for(const handler of handlers)
+        {
+            const result = handler.processWidgetMessage(message);
+
+            if(result !== null && result !== undefined)
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
@@ -620,14 +649,30 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         handler.container = this;
 
-        for(const messageType of handler.getWidgetMessages()) 
+        for(const messageType of handler.getWidgetMessages())
         {
-            this._widgetMessageHandlers.set(messageType, handler);
+            let list = this._widgetMessageHandlers.get(messageType);
+
+            if(!list)
+            {
+                list = [];
+                this._widgetMessageHandlers.set(messageType, list);
+            }
+
+            list.push(handler);
         }
 
-        for(const eventType of [...handler.getProcessedEvents(), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET']) 
+        for(const eventType of [...handler.getProcessedEvents(), 'RETWE_OPEN_WIDGET', 'RETWE_CLOSE_WIDGET'])
         {
-            this._widgetEventHandlers.set(eventType, handler);
+            let list = this._widgetEventHandlers.get(eventType);
+
+            if(!list)
+            {
+                list = [];
+                this._widgetEventHandlers.set(eventType, list);
+            }
+
+            list.push(handler);
         }
 
         const widget = (this._widgetFactory?.createWidget(type, handler) ?? null) as IRoomWidget | null;
@@ -798,11 +843,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             return;
         }
 
-        const handler = this._widgetEventHandlers.get(event.type);
+        const handlers = this._widgetEventHandlers.get(event.type);
 
-        if(handler) 
+        if(handlers)
         {
-            handler.processEvent(event);
+            for(const handler of handlers)
+            {
+                handler.processEvent(event);
+            }
         }
     }
 

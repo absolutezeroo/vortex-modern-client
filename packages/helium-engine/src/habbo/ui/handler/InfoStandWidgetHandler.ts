@@ -59,7 +59,12 @@ const UNIMPLEMENTED_WIDGET_MESSAGES = new Set<string>([
     'RWUAM_BAN_USER_PERM', 'RWUAM_MUTE_USER_2MIN', 'RWUAM_MUTE_USER_5MIN', 'RWUAM_MUTE_USER_10MIN',
     'RWUAM_GIVE_RIGHTS', 'RWUAM_TAKE_RIGHTS', 'RWUAM_START_TRADING', 'RWUAM_OPEN_HOME_PAGE',
     'RWUAM_PASS_CARRY_ITEM', 'RWUAM_GIVE_CARRY_ITEM_TO_PET', 'RWUAM_DROP_CARRY_ITEM',
-    'RWUAM_WIRED_INSPECT_BOT', 'RWUAM_WIRED_INSPECT_PET', 'RWRTSM_ROOM_TAG_SEARCH',
+    // AS3 handles all three wired-inspect variants together via
+    // roomEngine.context.createLinkEvent("wiredmenu/open/inspection/..."), which this
+    // port cannot reach yet (IRoomEngine exposes no link-event/context accessor). The
+    // base RWUAM_WIRED_INSPECT was declared in getWidgetMessages() but missing here, so
+    // it fell through silently while its BOT/PET siblings logged a TODO.
+    'RWUAM_WIRED_INSPECT', 'RWUAM_WIRED_INSPECT_BOT', 'RWUAM_WIRED_INSPECT_PET', 'RWRTSM_ROOM_TAG_SEARCH',
     'RWGOI_MESSAGE_GET_BADGE_IMAGE', 'RWUAM_REPORT', 'RWUAM_PICKUP_PET', 'RWUAM_MOUNT_PET',
     'RWUAM_TOGGLE_PET_RIDING_PERMISSION', 'RWUAM_TOGGLE_PET_BREEDING_PERMISSION', 'RWUAM_DISMOUNT_PET',
     'RWUAM_SADDLE_OFF', 'RWUAM_TRAIN_PET', 'RWPCM_PET_COMMAND', 'RWPCM_REQUEST_PET_COMMANDS',

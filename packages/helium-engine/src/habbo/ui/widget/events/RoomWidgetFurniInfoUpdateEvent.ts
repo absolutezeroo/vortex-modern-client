@@ -23,7 +23,9 @@ export class RoomWidgetFurniInfoUpdateEvent extends RoomWidgetUpdateEvent
     public roomControllerLevel: number = 0;
     public isAnyRoomController: boolean = false;
     public expiration: number = 0;
-    public purchaseOfferId: number = 0;
+    // AS3 (_SafeStr_9402) initialises this to -1, not 0: 0 reads as "offer id 0 exists"
+    // and shows a phantom purchase button; -1 means no offer.
+    public purchaseOfferId: number = -1;
     public bcOfferId: number = -1;
     public extraParam: string = '';
     public isOwner: boolean = false;
