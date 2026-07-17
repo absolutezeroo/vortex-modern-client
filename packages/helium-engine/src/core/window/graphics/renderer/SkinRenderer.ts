@@ -297,14 +297,20 @@ export class SkinRenderer implements ISkinRenderer
     }
 
     /**
-     * Tests whether a state has both a template and layout mapped.
+     * Tests whether a state has drawable content.
      *
-     * @param state - The window state flag
-     * @returns True if the state is drawable
+     * The base renderer draws nothing, so no state is drawable — subclasses
+     * that do draw say so themselves. This is what makes `renderer="unknown"`
+     * (which AS3 maps to this class directly) a descriptor that resolves to a
+     * real object and still never renders.
+     *
+     * @returns Always false
+     * @param _state
      */
-    public isStateDrawable(state: number): boolean
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::isStateDrawable()
+    public isStateDrawable(_state: number): boolean
     {
-        return this._templatesByState.has(state) && this._layoutsByState.has(state);
+        return false;
     }
 
     /**

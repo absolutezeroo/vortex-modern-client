@@ -45,6 +45,22 @@ export class BitmapSkinRenderer extends SkinRenderer
      * @param state - The resolved window state
      * @param _colorize - Colorization flag (unused, window.color is checked directly)
      */
+    /**
+     * A state is drawable exactly when a template is registered for it.
+     *
+     * Note this asks about the template only, not the layout — matching AS3,
+     * which reads the inherited templates-by-state dictionary directly. It also
+     * matches what `draw()` needs: a missing layout falls back to state 0's
+     * (see below), a missing template is what makes the state undrawable.
+     *
+     * @param state - The window state flag
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::isStateDrawable()
+    public override isStateDrawable(state: number): boolean
+    {
+        return this.getTemplateByState(state) !== null;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapSkinRenderer.as::draw()
     public override draw(
         window: IWindow,

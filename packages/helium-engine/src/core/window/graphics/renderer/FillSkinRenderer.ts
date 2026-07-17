@@ -44,15 +44,4 @@ export class FillSkinRenderer extends SkinRenderer
         ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
         ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
     }
-
-    /**
-	 * FillSkinRenderer can draw any state — it just fills with color.
-	 *
-	 * @param _state - The window state (unused)
-	 * @returns Always true
-	 */
-    public override isStateDrawable(_state: number): boolean
-    {
-        return true;
-    }
 }
