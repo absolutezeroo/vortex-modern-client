@@ -647,6 +647,28 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
         {
             const type = this._loadedContentTypes.shift()!;
 
+            // AS3 reports failure and stops the loop when the loaded type has no
+            // visualization XML or no graphic asset collection. The old body skipped
+            // both guards and always called contentLoaded(type, true), so a failed
+            // content load surfaced as a success — and because onContentLoaded is also
+            // wired to the failure event, a real load error reached the listener as
+            // "loaded".
+            const loader = this._contentLoader;
+
+            if(loader && !loader.hasVisualizationXML(type))
+            {
+                this._listener?.contentLoaded(type, false);
+
+                return;
+            }
+
+            if(loader && loader.getGraphicAssetCollection(type) === null)
+            {
+                this._listener?.contentLoaded(type, false);
+
+                return;
+            }
+
             // Re-initialize existing objects of this type
             this.updateObjectContents(type);
 
@@ -676,21 +698,37 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
 	 */
     private processInitialContentLoad(type: string): void
     {
-        if(this._state >= RoomManagerState.INITIALIZED)
+        // AS3 guards on the ERROR state, not "already initialised"; clears the pending
+        // type only when its assets are actually ready; and takes an else branch to
+        // ERROR + roomManagerInitialized(false) when they are not. The old body deleted
+        // the type unconditionally with no failure path, so a placeholder that never
+        // loaded still reported the room manager as successfully initialised.
+        if(this._state === RoomManagerState.ERROR)
         {
             return;
         }
 
-        this._pendingTypes.delete(type);
-
-        if(this._pendingTypes.size === 0)
+        if(this._contentLoader === null)
         {
-            this._state = RoomManagerState.INITIALIZED;
+            this._state = RoomManagerState.ERROR;
 
-            if(this._listener)
+            return;
+        }
+
+        if(this._contentLoader.getGraphicAssetCollection(type) !== null)
+        {
+            this._pendingTypes.delete(type);
+
+            if(this._pendingTypes.size === 0)
             {
-                this._listener.roomManagerInitialized(true);
+                this._state = RoomManagerState.INITIALIZED;
+                this._listener?.roomManagerInitialized(true);
             }
+        }
+        else
+        {
+            this._state = RoomManagerState.ERROR;
+            this._listener?.roomManagerInitialized(false);
         }
     }
 
@@ -715,6 +753,9 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
             const roomInstance = room as RoomInstance;
             const managerIds = roomInstance.getObjectManagerIds();
             let allInitialized = true;
+            // AS3's _loc10_: at least one object was actually initialised this pass.
+            // Without it, objectsInitialized fires even when nothing changed.
+            let anyInitialized = false;
 
             for(const categoryId of managerIds)
             {
@@ -776,6 +817,7 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
                     if(this._listener)
                     {
                         this._listener.objectInitialized(room.id, object.getId(), categoryId);
+                        anyInitialized = true;
                     }
                 }
 
@@ -793,9 +835,13 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
                 }
             }
 
-            if(allInitialized && this._listener)
+            // AS3 passes the room id (via _rooms.getKey), not the content type, and only
+            // fires when at least one object was initialised this pass. The old body
+            // handed objectsInitialized the content type ("pet3"), so any listener
+            // expecting a room id got a string it could not resolve.
+            if(allInitialized && anyInitialized && this._listener)
             {
-                this._listener.objectsInitialized(contentType);
+                this._listener.objectsInitialized(room.id);
             }
         }
     }

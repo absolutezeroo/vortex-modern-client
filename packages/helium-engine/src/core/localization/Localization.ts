@@ -124,7 +124,13 @@ export class Localization implements ILocalization
                 if(lowerResult.indexOf(pluralPattern) >= 0)
                 {
                     let pluralIndex: number;
-                    const numValue = parseInt(paramData.value, 10);
+                    // AS3 uses int(value): a full Number() parse truncated toward zero,
+                    // and 0 for a non-numeric or empty value. parseInt() diverges — it
+                    // reads only leading digits ("12px" -> 12) and yields NaN for "" or
+                    // "abc", which falls through to the default plural form instead of
+                    // AS3's zero form.
+                    const parsedValue = Number(paramData.value);
+                    const numValue = Number.isFinite(parsedValue) ? Math.trunc(parsedValue) : 0;
 
                     switch(numValue)
                     {
