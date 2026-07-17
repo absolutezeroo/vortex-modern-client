@@ -47,16 +47,37 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         }
     }
 
-    public activateLocalizationDefinition(id: string): boolean 
+    /**
+	 * Activates a registered localization and loads its texts.
+	 *
+	 * A definition's `url` is the **hashes index**, not the texts themselves —
+	 * `localization.N.url` points at `gamedata/hashes`, whose `external_texts`
+	 * entry names the real, content-hashed file
+	 * (`gamedata/external_flash_texts/<hash>`). So this hands the URL to
+	 * loadLocalizationFromURL(), which resolves the index and then fetches what it
+	 * points to, exactly as AS3 does.
+	 *
+	 * It used to call loadExternalTexts(definition.url) directly, feeding the
+	 * hashes index to the texts parser. Nothing threw: the parse simply produced no
+	 * entries, so every key resolved to getLocalization()'s empty-string default.
+	 * That is why furniture names were blank in the catalog and the inventory while
+	 * the infostand showed them — the infostand reads furnitureData.localizedName
+	 * from furnidata and never touches localization at all.
+	 *
+	 * @param id - The registered definition's name
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/CoreLocalizationManager.as::activateLocalizationDefinition()
+    public activateLocalizationDefinition(id: string): boolean
     {
         const definition = this._definitions.get(id);
 
-        if(definition) 
+        if(definition)
         {
             this._activeDefinitionId = id;
-            this._activeEnvironmentId = definition.languageCode;
 
-            this.loadExternalTexts(definition.url);
+            // No _activeEnvironmentId assignment here: loadLocalizationFromURL() sets it
+            // from the argument, which is what AS3 passes languageCode along for.
+            this.loadLocalizationFromURL(definition.url, definition.languageCode);
 
             return true;
         }
