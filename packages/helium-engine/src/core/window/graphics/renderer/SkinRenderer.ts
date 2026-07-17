@@ -4,15 +4,45 @@ import type {SkinLayout} from './SkinLayout';
 import type {SkinTemplate} from './SkinTemplate';
 
 /**
+ * A single etching offset, in pixels, from `SkinRenderer.ETCHING_POSITION`.
+ */
+export interface IEtchingOffset
+{
+    x: number;
+    y: number;
+}
+
+/**
  * Base skin renderer with template and layout storage.
  *
  * Manages named templates and layouts, and their mapping to window states.
  * Subclasses implement the actual draw() method.
  *
- * @see sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as
  */
 export class SkinRenderer implements ISkinRenderer
 {
+    /**
+	 * Pixel offset of the etched (embossed) copy of a window's content, by
+	 * etching-position name.
+	 *
+	 * Lives on the base class in AS3 too — `TextSkinRenderer` and
+	 * `LabelRenderer` both read it via inheritance, which is why it is
+	 * `protected static` rather than private to either.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::ETCHING_POSITION
+    protected static readonly ETCHING_POSITION: Readonly<Record<string, IEtchingOffset>> =
+        {
+            'top-left': {x: -1, y: -1},
+            'top': {x: 0, y: -1},
+            'top-right': {x: 1, y: -1},
+            'left': {x: -1, y: 0},
+            'right': {x: 1, y: 0},
+            'bottom-left': {x: -1, y: 1},
+            'bottom': {x: 0, y: 1},
+            'bottom-right': {x: 1, y: 1}
+        };
+
     /** Templates by name. */
     protected _templatesByName: Map<string, SkinTemplate> = new Map();
     /** Templates by window state flag. */
@@ -48,7 +78,7 @@ export class SkinRenderer implements ISkinRenderer
      * skin XML to JSON ahead of time (see BitmapSkinParser.parse()), so this
      * base implementation is a no-op, matching AS3's own empty base method.
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::parse()
     public parse(): void
     {
         // Override in subclasses; base AS3 implementation is also empty.
@@ -59,7 +89,7 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param template - The template to register
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::addTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::addTemplate()
     public addTemplate(template: SkinTemplate): SkinTemplate
     {
         this._templatesByName.set(template.name, template);
@@ -73,7 +103,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param name - The template name
      * @returns The template, or null
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getTemplateByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getTemplateByName()
     public getTemplateByName(name: string): SkinTemplate | null
     {
         return this._templatesByName.get(name) ?? null;
@@ -86,7 +116,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param template - The template to remove
      * @returns The removed template, or null if it wasn't registered
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeTemplate()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeTemplate()
     public removeTemplate(template: SkinTemplate): SkinTemplate | null
     {
         const resolved = this._templatesByName.get(template.name);
@@ -113,7 +143,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param templateName - The template name
      * @throws If no template with that name is registered
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::registerTemplateForRenderState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::registerTemplateForRenderState()
     public registerTemplateForRenderState(state: number, templateName: string): void
     {
         const template = this._templatesByName.get(templateName);
@@ -131,7 +161,7 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param state - The window state flag
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeTemplateFromRenderState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeTemplateFromRenderState()
     public removeTemplateFromRenderState(state: number): void
     {
         this._templatesByState.delete(state);
@@ -143,7 +173,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param state - The window state flag
      * @returns The template, or null
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getTemplateByState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getTemplateByState()
     public getTemplateByState(state: number): SkinTemplate | null
     {
         return this._templatesByState.get(state) ?? null;
@@ -154,7 +184,7 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param state - The window state flag
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::hasTemplateForState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::hasTemplateForState()
     public hasTemplateForState(state: number): boolean
     {
         return this._templatesByState.has(state);
@@ -165,7 +195,7 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param layout - The layout to register
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::addLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::addLayout()
     public addLayout(layout: SkinLayout): SkinLayout
     {
         this._layoutsByName.set(layout.name, layout);
@@ -179,7 +209,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param name - The layout name
      * @returns The layout, or null
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getLayoutByName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getLayoutByName()
     public getLayoutByName(name: string): SkinLayout | null
     {
         return this._layoutsByName.get(name) ?? null;
@@ -192,7 +222,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param layout - The layout to remove
      * @returns The removed layout, or null if it wasn't registered
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeLayout()
     public removeLayout(layout: SkinLayout): SkinLayout | null
     {
         const resolved = this._layoutsByName.get(layout.name);
@@ -219,7 +249,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param layoutName - The layout name
      * @throws If no layout with that name is registered
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::registerLayoutForRenderState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::registerLayoutForRenderState()
     public registerLayoutForRenderState(state: number, layoutName: string): void
     {
         const layout = this._layoutsByName.get(layoutName);
@@ -237,7 +267,7 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param state - The window state flag
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeLayoutFromRenderState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::removeLayoutFromRenderState()
     public removeLayoutFromRenderState(state: number): void
     {
         this._layoutsByState.delete(state);
@@ -249,7 +279,7 @@ export class SkinRenderer implements ISkinRenderer
      * @param state - The window state flag
      * @returns The layout, or null
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getLayoutByState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::getLayoutByState()
     public getLayoutByState(state: number): SkinLayout | null
     {
         return this._layoutsByState.get(state) ?? null;
@@ -260,7 +290,7 @@ export class SkinRenderer implements ISkinRenderer
      *
      * @param state - The window state flag
      */
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::hasLayoutForState()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/SkinRenderer.as::hasLayoutForState()
     public hasLayoutForState(state: number): boolean
     {
         return this._layoutsByState.has(state);

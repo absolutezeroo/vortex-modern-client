@@ -1,4 +1,5 @@
 // Exports
+export {BitmapDataRenderer} from './BitmapDataRenderer';
 export {BitmapFillSkinRenderer} from './BitmapFillSkinRenderer';
 export {BitmapSkinParser} from './BitmapSkinParser';
 export {BitmapSkinRenderer} from './BitmapSkinRenderer';
@@ -26,3 +27,4 @@ export type {
 } from './BitmapSkinParser';
 export type {ISkinRenderer} from './ISkinRenderer';
 export type {IColorTransform} from './HsvLayerColor';
+export type {IEtchingOffset} from './SkinRenderer';

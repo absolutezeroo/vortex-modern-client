@@ -93,9 +93,12 @@ export class FakeContext implements IContext
         // No-op
     }
 
-    error(_message: string, _fatal?: boolean, _code?: number, _error?: Error): void 
+    // Returns false: this fake never disposes itself, so a caller must never
+    // treat an error here as "the context tore itself down, stop what you were
+    // doing" (see IContext.error()).
+    error(_message: string, _fatal?: boolean, _code?: number, _error?: Error): boolean
     {
-        // No-op
+        return false;
     }
 
     warning(_message: string): void 
