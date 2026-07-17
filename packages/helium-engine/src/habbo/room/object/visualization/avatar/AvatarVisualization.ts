@@ -212,7 +212,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param update - Whether a full update is requested
      * @param skipUpdate - Whether to skip the update
      */
-    override update(geometry: IRoomGeometry, time: number, update: boolean, skipUpdate: boolean): void 
+    override update(geometry: IRoomGeometry, time: number, update: boolean, _skipUpdate: boolean): void 
     {
         const roomObject = this.object;
 
@@ -236,7 +236,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         const scale = geometry.scale;
         let needsNewImage = false;
         let scaleChanged = false;
-        let objectUpdated = false;
+        let objectUpdated: boolean;
         const previousEffectType = this._effectType;
         let effectChanged = false;
         const modelChanged = this.updateModel(model, scale, update);
@@ -368,7 +368,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param figureString - The figure string that is ready
      */
-    avatarImageReady(figureString: string): void 
+    avatarImageReady(_figureString: string): void 
     {
         this._forceUpdate = true;
     }
@@ -378,7 +378,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param effectId - The effect ID that is ready
      */
-    avatarEffectReady(effectId: number): void 
+    avatarEffectReady(_effectId: number): void 
     {
         this._forceUpdate = true;
     }
@@ -475,9 +475,9 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private updateModel(model: IRoomObjectModel, scale: number, isFullUpdate: boolean): boolean 
     {
         let changed = false;
-        let boolValue = false;
-        let numValue = 0;
-        let strValue = '';
+        let boolValue: boolean;
+        let numValue: number;
+        let strValue: string;
 
         if(model.getUpdateID() !== this._updateModelCounter) 
         {
@@ -943,7 +943,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private getAvatarImageForScale(scale: number, effectType: number): IAvatarImage | null 
     {
         let key = `avatarImage${scale}`;
-        let image: IAvatarImage | null = null;
+        let image: IAvatarImage | null;
 
         if(effectType === 0) 
         {
@@ -1100,8 +1100,8 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         {
             shadowSprite.visible = true;
 
-            let offsetX = 0;
-            let offsetY = 0;
+            let offsetX: number;
+            let offsetY: number;
 
             if(scale < 48) 
             {
@@ -1251,7 +1251,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param offsets - The canvas offset array [x, y, z]
      * @param fullUpdate - Whether this is a full sprite update
      */
-    private updateMainSprite(model: IRoomObjectModel, geometry: IRoomGeometry, offsets: number[], fullUpdate: boolean): void 
+    private updateMainSprite(model: IRoomObjectModel, geometry: IRoomGeometry, offsets: number[], _fullUpdate: boolean): void 
     {
         const mainSprite = this.getSprite(0);
 
@@ -1324,7 +1324,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      *
      * @param offsets - The canvas offset array [x, y, z]
      */
-    private updateExtraSprites(offsets: number[]): void 
+    private updateExtraSprites(_offsets: number[]): void 
     {
         if(!this._activeAvatarImage) return;
 
@@ -1417,16 +1417,13 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
                     sprite.assetName = assetName;
 
-                    if(asset.offset) 
-                    {
-                        sprite.offsetX = (-asset.offset.x - (scale / 2)) + dx;
-                        sprite.offsetY = -asset.offset.y + dy;
-                    }
-                    else 
-                    {
-                        sprite.offsetX = dx;
-                        sprite.offsetY = dy;
-                    }
+                    // AS3 (AvatarVisualization.as:294-298) applies the asset's own offset
+                    // unconditionally when the asset exists — there is no "no offset" branch.
+                    // GraphicAsset.offsetX/offsetY are the port's equivalent of BitmapDataAsset
+                    // offset.x/offset.y. (Previously getAsset() returned a string, so asset.offset
+                    // was undefined and this always fell to the invented else, dropping the offset.)
+                    sprite.offsetX = (-asset.offsetX - (scale / 2)) + dx;
+                    sprite.offsetY = -asset.offsetY + dy;
 
                     if(spriteData.hasStaticY) 
                     {

@@ -1,6 +1,7 @@
 import {Texture} from 'pixi.js';
 import type {AvatarStructure} from './AvatarStructure';
 import type {AssetAliasCollection} from './alias/AssetAliasCollection';
+import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 import type {AvatarFigureContainer} from './AvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
@@ -319,9 +320,15 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 	 * @param name - The asset name to look up
 	 * @returns The asset, or null if not found
 	 */
-    public getAsset(name: string): any
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getAsset()
+    // AS3 returns the resolved BitmapDataAsset (getAssetByName). The port returned
+    // getAssetName() — a *string* — which typechecked only because IAvatarImage.getAsset
+    // was `any`; AvatarVisualization then read `.offset` off a string (undefined) and lost
+    // every avatar sprite's per-asset offset. AssetAliasCollection.getAsset resolves the
+    // alias and fetches the asset.
+    public getAsset(name: string): IGraphicAsset | null
     {
-        return this._assets.getAssetName(name);
+        return this._assets.getAsset(name);
     }
 
     /**

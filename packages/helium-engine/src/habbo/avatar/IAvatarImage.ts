@@ -3,6 +3,7 @@ import type {IAnimationLayerData} from './animation/IAnimationLayerData';
 import type {ISpriteDataContainer} from './animation/ISpriteDataContainer';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IPartColor} from './structure/figure/IPartColor';
+import type {IGraphicAsset} from '@room/object/visualization/utils/IGraphicAsset';
 
 /**
  * Interface for avatar images that can be rendered.
@@ -34,7 +35,7 @@ export interface IAvatarImage
 
     getLayerData(sprite: ISpriteDataContainer): IAnimationLayerData | null;
 
-    getAsset(name: string): any;
+    getAsset(name: string): IGraphicAsset | null;
 
     getDirection(): number;
 
