@@ -76,6 +76,13 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         return this._communicationManager;
     }
 
+    // The controllers build their panel windows through this (AS3's controllers hold a
+    // windowManager reference directly).
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
     private _questController: QuestController | null = null;
 
     /**
@@ -349,9 +356,9 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 */
     showAchievements(): void
     {
-        // Emit event for UI to handle
-        this.events.emit('showAchievements');
-        log.debug('Show achievements requested');
+        // AS3 (HabboQuestEngine.as:514) calls achievementController.show(). The old
+        // emit('showAchievements') targeted a SolidJS UI that no longer exists.
+        this._achievementController?.show();
     }
 
     /**

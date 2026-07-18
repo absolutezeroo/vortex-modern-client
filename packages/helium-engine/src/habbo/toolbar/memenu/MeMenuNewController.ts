@@ -170,7 +170,7 @@ export class MeMenuNewController
                 // Settings sub-menu
                 break;
             case 'achievements':
-                // In AS3: toolbar.questEngine.showAchievements()
+                this._toolbar?.questEngine?.showAchievements();
                 break;
             case 'guide':
                 this._toolbar.toggleWindowVisibility('GUIDE');
@@ -193,7 +193,7 @@ export class MeMenuNewController
 	 * @param iconId Icon identifier
 	 * @returns Rectangle or null
 	 */
-    public getIconPosition(iconId: string): { x: number; y: number; width: number; height: number } | null
+    public getIconPosition(_iconId: string): { x: number; y: number; width: number; height: number } | null
     {
         // In Helium, icon positions are managed by the UI layer
 

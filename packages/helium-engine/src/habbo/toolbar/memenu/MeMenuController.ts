@@ -167,7 +167,7 @@ export class MeMenuController
                 // Open settings sub-menu
                 break;
             case 'achievements':
-                // In AS3: toolbar.questEngine.showAchievements()
+                this._toolbar?.questEngine?.showAchievements();
                 break;
             case 'guide':
                 this._toolbar.toggleWindowVisibility('GUIDE');

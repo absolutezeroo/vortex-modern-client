@@ -7,6 +7,7 @@ import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import type {IHabboToolbar} from './IHabboToolbar';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IExtensionView} from './IExtensionView';
@@ -17,6 +18,7 @@ import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {IHabboInventory} from '../inventory/IHabboInventory';
 import type {IHabboLocalizationManager} from '../localization/IHabboLocalizationManager';
 import type {IHabboCatalog} from '../catalog/IHabboCatalog';
+import type {IHabboQuestEngine} from '../quest/IHabboQuestEngine';
 import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {BottomBarLeft} from './BottomBarLeft';
@@ -75,6 +77,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     private _extensionsInitialized: boolean = false;
     private _inventory: IHabboInventory | null = null;
     private _catalog: IHabboCatalog | null = null;
+    private _questEngine: IHabboQuestEngine | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
     private _extensionView: ExtensionView | null = null;
@@ -200,6 +203,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._catalog;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get questEngine()
+    get questEngine(): IHabboQuestEngine | null
+    {
+        return this._questEngine;
+    }
+
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
@@ -291,6 +300,17 @@ export class HabboToolbar extends Component implements IHabboToolbar
                     this._catalog = manager;
                 },
                 true
+            ),
+            // Optional: the quest engine is attached after the toolbar, so a required
+            // dependency would block the toolbar's own init. AS3's toolbar exposes
+            // questEngine the same way (get questEngine).
+            new ComponentDependency(
+                IID_HabboQuestEngine,
+                (engine: IHabboQuestEngine | null) =>
+                {
+                    this._questEngine = engine;
+                },
+                false
             ),
             new ComponentDependency(
                 IID_SessionDataManager,
