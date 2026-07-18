@@ -20,6 +20,7 @@ import {HabboTracking} from '@habbo/tracking/HabboTracking';
 import {HabboGroupsManager} from '@habbo/groups/HabboGroupsManager';
 import {HabboNotifications} from '@habbo/notifications/HabboNotifications';
 import {HabboToolbar} from '@habbo/toolbar/HabboToolbar';
+import {HabboQuestEngine} from '@habbo/quest/HabboQuestEngine';
 import {HabboFreeFlowChat} from '@habbo/freeflowchat/HabboFreeFlowChat';
 import {AvatarRenderManager} from '@habbo/avatar/AvatarRenderManager';
 import {HabboWindowManager} from '@habbo/window/HabboWindowManager';
@@ -69,6 +70,7 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboClubCenter} from '@habbo/catalog/clubcenter/IHabboClubCenter';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
@@ -240,6 +242,7 @@ export class HeliumMain implements IHeliumMain
     }
 
     private _toolbar: HabboToolbar | null = null;
+    private _questEngine: HabboQuestEngine | null = null;
 
     get toolbar(): IHabboToolbar 
     {
@@ -689,6 +692,14 @@ export class HeliumMain implements IHeliumMain
         // 12h. Toolbar
         this._toolbar = new HabboToolbar(ctx);
         ctx.attachComponent(this._toolbar, [IID_HabboToolbar]);
+
+        // 12h-bis. Quest engine (achievements / quests). AS3 registers this via the
+        // HabboQuestEngineCom SWF library; the port never instantiated it, so the whole
+        // quest/achievement system (and consumers like HabboLandingView's optional
+        // IID_HabboQuestEngine) stayed dormant. Attached after the toolbar so its optional
+        // IID_HabboToolbar dependency resolves.
+        this._questEngine = new HabboQuestEngine(ctx);
+        ctx.attachComponent(this._questEngine, [IID_HabboQuestEngine]);
 
         // 12i. FreeFlowChat
         this._freeFlowChat = new HabboFreeFlowChat(ctx, 0, this._assets);
