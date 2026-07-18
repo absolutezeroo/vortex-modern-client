@@ -1,5 +1,6 @@
 import type {IExtensionView} from './IExtensionView';
 import type {HabboToolbar} from './HabboToolbar';
+import {ToolbarDisplayExtensionIds} from './ToolbarDisplayExtensionIds';
 import type {IWindow} from '@core/window/IWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
@@ -159,7 +160,7 @@ export class ExtensionView implements IExtensionView
         {
             const key = this.getKeyForWindow(window);
 
-            if(key.indexOf('new_feature') === 0) 
+            if(key.indexOf(ToolbarDisplayExtensionIds.NEW_FEATURE) === 0) 
             {
                 this._var104.addListItem(window);
                 continue;
@@ -180,7 +181,7 @@ export class ExtensionView implements IExtensionView
                 case 'phone_number':
                 case 'verification_code':
                 case 'return_gift':
-                case 'new_feature':
+                case ToolbarDisplayExtensionIds.NEW_FEATURE:
                 case 'targeted_offer':
                     this._var104.addListItem(window);
                     break;

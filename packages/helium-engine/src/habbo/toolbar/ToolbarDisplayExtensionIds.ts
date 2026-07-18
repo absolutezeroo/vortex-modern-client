@@ -45,4 +45,7 @@ export class ToolbarDisplayExtensionIds
     public static readonly RETURN_GIFT: string = 'return_gift';
 
     public static readonly TARGETED_OFFER: string = 'targeted_offer';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ToolbarDisplayExtensionIds.as:44
+    public static readonly NEW_FEATURE: string = 'new_feature';
 }
