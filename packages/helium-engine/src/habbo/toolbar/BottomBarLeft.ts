@@ -1,5 +1,6 @@
 import type {HabboToolbar} from './HabboToolbar';
 import {MeMenuNewController} from './memenu/MeMenuNewController';
+import {ProgMenuController} from './progmenu/ProgMenuController';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -56,6 +57,7 @@ export class BottomBarLeft
     private _newItemsLabelVisible: boolean = false;
     private _lastState: string = '';
     private _meMenuController: MeMenuNewController | null = null;
+    private _progMenuController: ProgMenuController | null = null;
     private _meMenuIcon: IBitmapWrapperWindow | null = null;
 
     /**
@@ -71,6 +73,7 @@ export class BottomBarLeft
         this._toolbar = toolbar;
         this._windowManager = windowManager;
         this._meMenuController = new MeMenuNewController(toolbar, this);
+        this._progMenuController = new ProgMenuController(toolbar, this);
 
         // Build the toolbar window from registered layout
         const built = windowManager.buildWidgetLayout('bottom_bar_left_xml');
@@ -239,9 +242,17 @@ export class BottomBarLeft
     /**
      * Get the me menu controller
      */
-    get memenu(): MeMenuNewController | null 
+    get memenu(): MeMenuNewController | null
     {
         return this._meMenuController;
+    }
+
+    /**
+     * Get the progression menu controller
+     */
+    get progmenu(): ProgMenuController | null
+    {
+        return this._progMenuController;
     }
 
     /**
@@ -677,13 +688,19 @@ export class BottomBarLeft
     {
         if(this._disposed) return;
 
-        if(this._meMenuController) 
+        if(this._meMenuController)
         {
             this._meMenuController.dispose();
             this._meMenuController = null;
         }
 
-        if(this._window) 
+        if(this._progMenuController)
+        {
+            this._progMenuController.dispose();
+            this._progMenuController = null;
+        }
+
+        if(this._window)
         {
             this._window.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this.onParentResized);
             this._window.dispose();
@@ -756,9 +773,14 @@ export class BottomBarLeft
         this._window.width = BottomBarLeft.ICON_REGION_WIDTH * this.calculateNewWidth()
             + BottomBarLeft.WINDOW_RIGHT_PADDING + 150;
 
-        if(!this._collapsed && this._meMenuController) 
+        if(!this._collapsed && this._meMenuController)
         {
             this._meMenuController.reposition();
+        }
+
+        if(!this._collapsed && this._progMenuController)
+        {
+            this._progMenuController.reposition();
         }
 
         this._window.invalidate();

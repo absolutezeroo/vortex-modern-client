@@ -24,6 +24,8 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import type {AchievementCategory} from './AchievementCategory';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
+import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboNewNavigator} from '@habbo/navigator/IHabboNewNavigator';
@@ -65,6 +67,17 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     private _sessionDataManager: ISessionDataManager | null = null;
     private _roomEngine: IRoomEngine | null = null;
     private _tracking: IHabboTracking | null = null;
+
+    // AS3: HabboQuestEngine.as::onHabboToolbarEvent() — the achievements bottom-bar icon
+    // dispatches HTE_TOOLBAR_CLICK directly (independent of any me-menu popup); this is
+    // the toolbar's primary path into the achievements panel.
+    private readonly onHabboToolbarEvent = (event: HabboToolbarEvent): void =>
+    {
+        if(event.iconId === HabboToolbarIconEnum.ACHIEVEMENTS)
+        {
+            this._achievementController?.onToolbarClick();
+        }
+    };
 
     constructor(context: IContext)
     {
@@ -212,6 +225,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
                 (toolbar: IHabboToolbar | null) =>
                 {
                     this._toolbar = toolbar;
+                    this._toolbar?.toolbarEvents.on(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
                 },
                 false
             ),
@@ -522,6 +536,8 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     override dispose(): void
     {
         if(this.disposed) return;
+
+        this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
 
         // Remove link event tracker
         this.context.removeLinkEventTracker(this);
