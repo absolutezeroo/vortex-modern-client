@@ -113,6 +113,7 @@ import {MysteryBoxKeysMessageEvent,} from './messages/incoming/mysterybox';
 import {
     BonusRareInfoMessageEvent,
     BuildersClubSubscriptionStatusMessageEvent,
+    BuildersClubFurniCountMessageEvent,
     CatalogIndexMessageEvent,
     CatalogPageMessageEvent,
     CatalogPageWithEarliestExpiryMessageEvent,
@@ -155,19 +156,16 @@ import {
     CommunityGoalHallOfFameMessageEvent,
     CommunityGoalProgressMessageEvent,
     ConcurrentUsersGoalProgressMessageEvent,
+    QuestCancelledMessageEvent,
+    QuestCompletedMessageEvent,
     QuestDailyMessageEvent,
     QuestMessageEvent,
     QuestsMessageEvent,
     SeasonalQuestsMessageEvent,
-    QuestCompletedMessageEvent,
-    QuestCancelledMessageEvent,
 } from './messages/incoming/quest';
 
 // Incoming Events - Achievements
-import {
-    AchievementsMessageEvent,
-    AchievementMessageEvent,
-} from './messages/incoming/inventory/achievements';
+import {AchievementMessageEvent, AchievementsMessageEvent,} from './messages/incoming/inventory/achievements';
 
 // Incoming Events - Room Session
 import {
@@ -238,15 +236,15 @@ import {
 
 // Incoming Events - Room Pet
 import {
-    PetInfoMessageEvent,
-    PetVocalMessageEvent,
+    PetBreedingResultEvent,
     PetCommandsMessageEvent,
-    PetStatusUpdateEvent,
-    PetLevelUpdateEvent,
-    PetFigureUpdateEvent,
     PetExperienceEvent,
+    PetFigureUpdateEvent,
+    PetInfoMessageEvent,
+    PetLevelUpdateEvent,
     PetPlacingErrorEvent,
-    PetBreedingResultEvent
+    PetStatusUpdateEvent,
+    PetVocalMessageEvent
 } from './messages/incoming/room/pet';
 
 // Incoming Events - User Defined Room Events (Wired)
@@ -562,10 +560,10 @@ import {
     GetProductOfferComposer,
     GetRecyclerPrizesMessageComposer,
     GetRecyclerStatusMessageComposer,
+    GetSellablePetPalettesComposer,
     PurchaseBasicMembershipExtensionComposer,
     PurchaseFromCatalogComposer,
     PurchaseVipMembershipExtensionComposer,
-    GetSellablePetPalettesComposer,
     RecycleItemsMessageComposer,
     RedeemVoucherMessageComposer,
     SelectClubGiftComposer,
@@ -839,6 +837,7 @@ export class HabboMessages implements IMessageConfiguration
 
         // === CATALOG ===
         this._events.set(1893, BuildersClubSubscriptionStatusMessageEvent);
+        this._events.set(2378, BuildersClubFurniCountMessageEvent);
 
         // === HANDSHAKE (continued) ===
         this._events.set(2313, IsFirstLoginOfDayMessageEvent);

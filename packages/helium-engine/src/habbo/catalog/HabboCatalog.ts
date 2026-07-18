@@ -70,6 +70,16 @@ import type {
 } from '@habbo/communication/messages/parser/catalog/CatalogPageMessageEventParser';
 import {GetCatalogIndexComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogIndexComposer';
 import {BuildersClubQueryFurniCountMessageComposer} from '@habbo/communication/messages/outgoing/catalog/BuildersClubQueryFurniCountMessageComposer';
+import {BuildersClubFurniCountMessageEvent} from '@habbo/communication/messages/incoming/catalog/BuildersClubFurniCountMessageEvent';
+import type {
+    BuildersClubFurniCountMessageParser
+} from '@habbo/communication/messages/parser/catalog/BuildersClubFurniCountMessageParser';
+import {
+    BuildersClubSubscriptionStatusMessageEvent
+} from '@habbo/communication/messages/incoming/catalog/BuildersClubSubscriptionStatusMessageEvent';
+import type {
+    BuildersClubSubscriptionStatusMessageParser
+} from '@habbo/communication/messages/parser/catalog/BuildersClubSubscriptionStatusMessageParser';
 import {PurchaseOKMessageEvent} from '@habbo/communication/messages/incoming/catalog/PurchaseOKMessageEvent';
 import type {PurchaseOKMessageEventParser} from '@habbo/communication/messages/parser/catalog/PurchaseOKMessageEventParser';
 import {PurchaseErrorMessageEvent} from '@habbo/communication/messages/incoming/catalog/PurchaseErrorMessageEvent';
@@ -1116,13 +1126,64 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // status (getBuilderFurniPlaceableStatusForOffer(), itself dependent on room-session
     // furniture counts) - none of that catalog/room-session cross-wiring exists yet.
 
+    // AS3: HabboCatalog.as::_builderFurniLimit / get builderFurniLimit()
+    private _builderFurniLimit: number = 0;
+    // AS3: HabboCatalog.as::_builderMaxFurniLimit / get builderMaxFurniLimit()
+    private _builderMaxFurniLimit: number = 0;
+    // AS3: HabboCatalog.as::_SafeStr_8644 / get builderFurniCount()
+    private _builderFurniCount: number = -1;
+
+    get builderFurniLimit(): number
+    {
+        return this._builderFurniLimit;
+    }
+
+    get builderMaxFurniLimit(): number
+    {
+        return this._builderMaxFurniLimit;
+    }
+
+    get builderFurniCount(): number
+    {
+        return this._builderFurniCount;
+    }
+
+    // AS3: HabboCatalog.as::onBuildersClubSubscriptionStatus()
+    private onBuildersClubSubscriptionStatus(event: IMessageEvent): void
+    {
+        const parser = event.parser as BuildersClubSubscriptionStatusMessageParser | null;
+
+        if(!parser) return;
+
+        this._builderFurniLimit = parser.furniLimit;
+        this._builderMaxFurniLimit = parser.maxFurniLimit;
+
+        // TODO(AS3): AS3 also tracks secondsLeft/secondsLeftWithGrace for the membership
+        // countdown display and calls refreshBuilderStatus() (builds the "member/grace/trial"
+        // header text + dispatches CATALOG_BUILDER_MEMBERSHIP_IN_GRACE/EXPIRED) - that whole
+        // membership-status UI cluster isn't ported yet, only the furni count/limit fields
+        // getBuilderFurniPlaceableStatusForOffer() needs.
+    }
+
+    // AS3: HabboCatalog.as::onBuildersClubFurniCount()
+    private onBuildersClubFurniCount(event: IMessageEvent): void
+    {
+        const parser = event.parser as BuildersClubFurniCountMessageParser | null;
+
+        if(!parser) return;
+
+        this._builderFurniCount = parser.furniCount;
+    }
+
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
-    // TODO(AS3): real logic needs builderFurniCount/builderFurniLimit and roomSession
-    // (isRoomOwner/isGuildRoom/roomControllerLevel/userDataManager, none of which are wired on
-    // this port yet) via the further getBuilderFurniPlaceableStatus() - always returning 0
-    // ("placeable") is the safe default: BuilderCatalogWidget's place buttons stay enabled and
-    // show no false error, and the actual placement action (requestSelectedItemToMover()) is
-    // itself still a CatalogObjectMover-blocked stub, so nothing is placed either way yet.
+    // TODO(AS3): builderFurniCount/builderFurniLimit are now tracked for real (see
+    // onBuildersClubFurniCount/onBuildersClubSubscriptionStatus above), but the further
+    // getBuilderFurniPlaceableStatus() also needs roomSession state
+    // (isRoomOwner/isGuildRoom/roomControllerLevel/userDataManager, none of which are wired
+    // into HabboCatalog yet) - always returning 0 ("placeable") is still the safe default:
+    // BuilderCatalogWidget's place buttons stay enabled and show no false error, and the
+    // actual placement action (requestSelectedItemToMover()) is itself still a
+    // CatalogObjectMover-blocked stub, so nothing is placed either way yet.
     public getBuilderFurniPlaceableStatusForOffer(_offer: IPurchasableOffer | null): number
     {
         if(_offer == null) return 1;
@@ -1643,6 +1704,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new ActivityPointsMessageEvent(this.onActivityPoints.bind(this)));
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
+        this.addMessageEvent(new BuildersClubSubscriptionStatusMessageEvent(this.onBuildersClubSubscriptionStatus.bind(this)));
+        this.addMessageEvent(new BuildersClubFurniCountMessageEvent(this.onBuildersClubFurniCount.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
         this.addMessageEvent(new PurchaseOKMessageEvent(this.onPurchaseOK.bind(this)));
         this.addMessageEvent(new PurchaseErrorMessageEvent(this.onPurchaseError.bind(this)));

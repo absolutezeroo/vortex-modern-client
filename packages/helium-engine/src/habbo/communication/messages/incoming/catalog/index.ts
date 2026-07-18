@@ -1,5 +1,6 @@
 export * from './BonusRareInfoMessageEvent';
 export * from './BuildersClubSubscriptionStatusMessageEvent';
+export * from './BuildersClubFurniCountMessageEvent';
 export * from './ClubGiftInfoEvent';
 export * from './NodeData';
 export * from './CatalogLocalizationData';
