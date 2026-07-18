@@ -18,6 +18,11 @@ import {GetSeasonalQuestsOnlyMessageComposer} from '@habbo/communication/message
 import {ActivateQuestMessageComposer} from '@habbo/communication/messages/outgoing/quest/ActivateQuestMessageComposer';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
+import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
+import type {AchievementCategory} from './AchievementCategory';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
@@ -51,7 +56,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     private _messageHandler: QuestMessageHandler | null = null;
     private _windowManager: IHabboWindowManager | null = null;
     private _localization: IHabboLocalizationManager | null = null;
-    private _configuration: unknown | null = null;
+    private _configuration: IHabboConfigurationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
     private _catalog: unknown | null = null;
     private _notifications: IHabboNotifications | null = null;
@@ -81,6 +86,24 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    // AS3: HabboQuestEngine.as::localization
+    get localization(): IHabboLocalizationManager | null
+    {
+        return this._localization;
+    }
+
+    // AS3: HabboQuestEngine.as::configuration
+    get configuration(): IHabboConfigurationManager | null
+    {
+        return this._configuration;
+    }
+
+    // AS3: HabboQuestEngine.as::getProperty()
+    getProperty(key: string): string
+    {
+        return this._configuration?.getProperty(key) ?? '';
     }
 
     private _questController: QuestController | null = null;
@@ -179,7 +202,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
             ),
             new ComponentDependency(
                 IID_HabboConfigurationManager,
-                (config: unknown | null) =>
+                (config: IHabboConfigurationManager | null) =>
                 {
                     this._configuration = config;
                 }
@@ -405,6 +428,92 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     {
         this.context.createLinkEvent('navigator/goto/quest_rooms');
         log.debug('Going to quest rooms');
+    }
+
+    /**
+	 * Localized display name for an achievement category code.
+	 */
+    // AS3: HabboQuestEngine.as::getAchievementCategoryName()
+    getAchievementCategoryName(code: string): string
+    {
+        const key = `quests.${code}.name`;
+
+        return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    /**
+	 * Set a category's `category_pic_bitmap` child to its category image
+	 * ("ach_category_<code>" when big/selected, "achicon_<code>" for the small grid icon).
+	 */
+    // AS3: HabboQuestEngine.as::setupAchievementCategoryImage()
+    setupAchievementCategoryImage(container: IWindowContainer, category: AchievementCategory, big: boolean): void
+    {
+        const bitmap = container.findChildByName('category_pic_bitmap') as unknown as
+            IStaticBitmapWrapperWindow | null;
+
+        if(bitmap === null) return;
+
+        bitmap.assetUri = '';
+        bitmap.assetUri = '${image.library.questing.url}' + (big ? `ach_category_${category.code}` : `achicon_${category.code}`) + '.png';
+    }
+
+    /**
+	 * Show/hide + populate an achievement's reward caption/amount/currency-icon row.
+	 */
+    // AS3: HabboQuestEngine.as::refreshReward()
+    refreshReward(visible: boolean, container: IWindowContainer, pointType: number, points: number): void
+    {
+        const shown = pointType < 0 || points < 1 ? false : visible;
+
+        const caption = container.findChildByName('reward_caption_txt');
+        const amount = container.findChildByName('reward_amount_txt');
+        const icon = container.findChildByName('currency_icon');
+
+        if(caption === null || amount === null || icon === null) return;
+
+        amount.visible = shown;
+        caption.visible = shown;
+        icon.visible = shown;
+
+        if(!shown) return;
+
+        amount.caption = String(points);
+        HabboQuestEngine.moveChildrenToRow(container, ['reward_caption_txt', 'reward_amount_txt', 'currency_icon'], caption.x, 3);
+        this.setupRewardImage(container, pointType);
+    }
+
+    /**
+	 * Lay out a row of named children left-to-right starting at `startX`, skipping
+	 * hidden ones, with `spacing` between each.
+	 */
+    // AS3: HabboQuestEngine.as::moveChildrenToRow()
+    static moveChildrenToRow(container: IWindowContainer, names: string[], startX: number, spacing: number): void
+    {
+        let x = startX;
+
+        for(const name of names)
+        {
+            const child = container.getChildByName(name);
+
+            if(child !== null && child.visible)
+            {
+                child.x = x;
+                x += child.width + spacing;
+            }
+        }
+    }
+
+    /**
+	 * Style the `currency_icon` child for the given activity point type.
+	 */
+    // AS3: HabboQuestEngine.as::setupRewardImage()
+    setupRewardImage(container: IWindowContainer, pointType: number): void
+    {
+        const icon = container.findChildByName('currency_icon');
+
+        if(icon === null || this._configuration === null) return;
+
+        icon.style = ActivityPointTypeEnum.getIconStyleFor(pointType, this._configuration, true);
     }
 
     /**

@@ -52,4 +52,12 @@ export interface IStaticBitmapWrapperWindow extends IWindow
 	 * RecyclerEngineAnimator needs to spin the recycler's pointer arrow.
 	 */
     rotation: number;
+
+    /**
+	 * Whether the bitmap renders in greyscale (a tinted luminance pass, applied by the
+	 * renderer). Already implemented on the concrete BitmapDataController - exposed here
+	 * because BadgeImageWidget forwards its own `greyscale` to the underlying bitmap,
+	 * matching AS3's BadgeImageWidget.as (get/set greyscale -> _bitmap.greyscale).
+	 */
+    greyscale: boolean;
 }

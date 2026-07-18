@@ -24,4 +24,9 @@ export interface IBadgeImageWidget extends IWidget
 	 * The group ID for group-type badges. Set to 0 to disable.
 	 */
     groupId: number;
+
+    /**
+	 * Whether the badge renders in greyscale (used for not-yet-achieved levels).
+	 */
+    greyscale: boolean;
 }

@@ -54,7 +54,7 @@ export class BadgeImageWidget implements IBadgeImageWidget
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::var_1600
     private _groupBadgesEvent: IMessageEvent | null = null;
     // TS-only: bound event handler ref for removeEventListener
-    private _onClickBound: Function;
+    private _onClickBound: (event: WindowMouseEvent) => void;
 
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::BadgeImageWidget()
     constructor(window: IWidgetWindow, windowManager: IHabboWindowManager) 
@@ -115,10 +115,30 @@ export class BadgeImageWidget implements IBadgeImageWidget
         return this._badgeId;
     }
 
-    // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::set badgeId()
-    public set badgeId(value: string) 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::set badgeId()
+    public set badgeId(value: string)
     {
+        // TODO(AS3): AS3 also clears glow state here (clearGlow(); _glowColor = -1) when the
+        // badge id actually changes. Glow (playGlow/clearGlow/glowColor) is not ported.
         this._badgeId = value;
+        this.refresh();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get greyscale()
+    public get greyscale(): boolean
+    {
+        return (this._bitmap as unknown as IStaticBitmapWrapperWindow | null)?.greyscale ?? false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::set greyscale()
+    public set greyscale(value: boolean)
+    {
+        const bitmap = this._bitmap as unknown as IStaticBitmapWrapperWindow | null;
+
+        if(!bitmap) return;
+
+        bitmap.greyscale = value;
+        bitmap.invalidate();
     }
 
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::_groupId

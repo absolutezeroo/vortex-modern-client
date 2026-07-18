@@ -90,4 +90,14 @@ export class AchievementCategory
 
         return maxProgress;
     }
+
+    /**
+	 * Whether this category should appear in the categories grid.
+	 * The "new" and "wired_games" categories are picked via other UI paths.
+	 */
+    // AS3: AchievementCategory.as::visibleInList()
+    visibleInList(): boolean
+    {
+        return this._code !== 'new' && this._code !== 'wired_games';
+    }
 }
