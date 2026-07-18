@@ -8,6 +8,18 @@
  */
 export class GuildSettingsData
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/GuildSettingsData.as::GuildSettingsData()
+    // Seeds the initial values directly (not through the setters), so isModified stays
+    // false. Without it the fields defaulted to 0/0 and any load through the setters
+    // flagged the group-management window as modified the moment it opened.
+    constructor(data?: {guildType: number; guildRightsLevel: number} | null)
+    {
+        if(!data) return;
+
+        this._guildType = data.guildType;
+        this._rightsLevel = data.guildRightsLevel;
+    }
+
     private _guildType: number = 0;
 
     get guildType(): number

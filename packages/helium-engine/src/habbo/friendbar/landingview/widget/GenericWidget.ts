@@ -207,9 +207,7 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
             const type = parts[0];
             const handler = ElementHandlerFactory.createHandler(type);
 
-            if(!handler) continue;
-
-            const layoutName = hasLayoutName(handler) ? handler.layoutName : `element_${type}`;
+            const layoutName = handler && hasLayoutName(handler) ? handler.layoutName : `element_${type}`;
 
             let elementWindow: IWindow | null;
 
@@ -224,10 +222,16 @@ export class GenericWidget implements ILandingViewWidget, ISlotAwareWidget, ISet
 
             if(!elementWindow) return;
 
-            handler.initialize(this._landingView, elementWindow, parts, this);
-            this._elements.set(type, handler);
+            // AS3 (GenericWidget.as:181-197) only initialises a handler when one exists,
+            // but always adds the window — an unknown element type still shows its raw
+            // `element_<type>` layout instead of being dropped by a `continue`.
+            if(handler)
+            {
+                handler.initialize(this._landingView, elementWindow, parts, this);
+                this._elements.set(type, handler);
+            }
 
-            const isFloating = isFloatableElementHandler(handler) && handler.isFloating(GenericWidget.isWideSlot(this._slot));
+            const isFloating = handler !== null && isFloatableElementHandler(handler) && handler.isFloating(GenericWidget.isWideSlot(this._slot));
 
             if(isFloating)
             {
