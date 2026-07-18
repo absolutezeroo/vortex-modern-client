@@ -18,11 +18,19 @@ export class RoomWidgetUserInfoUpdateEvent extends RoomWidgetUpdateEvent
     public name: string = '';
     public motto: string = '';
     public achievementScore: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::badgesRank
+    public badgesRank: number = -1;
     public webID: number = 0;
     public xp: number = 0;
     public userType: number = 0;
     public figure: string = '';
     public badges: string[] = [];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent.as::selectedBadges
+    // TODO(AS3): no producer sets this yet - AS3 populates it from
+    // requestUserSelectedBadges()'s async response (getBadgeCodesFromSelectedBadges()),
+    // deferred with the same Phase 1 display-polish scope cut noted in
+    // InfoStandUserData.ts's own selectedBadges/badgesRank TODO.
+    public selectedBadges: string[] = [];
     public groupId: number = 0;
     public groupName: string = '';
     public groupBadgeId: string = '';

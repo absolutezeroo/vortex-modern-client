@@ -371,7 +371,19 @@ export class InfoStandWidget extends RoomWidgetBase
     // that isn't wired to call it yet. User/bot views are real now (see
     // InfoStandUserView.ts/InfoStandBotView.ts), so this will work correctly
     // once something calls it.
-    public updateUserData(userId: number, figure: string, achievementScore: number, motto: string, mottoEnabled: boolean): void
+    // TODO(AS3): AS3 also sets userData.badgesRank = badgesRank unconditionally and
+    // this._userView.badgesRank = badgesRank in the non-bot branch - InfoStandUserData/
+    // InfoStandUserView have no badgesRank field yet (same badge glow/preserve-tracking
+    // display-polish scope cut as InfoStandUserData.ts's own selectedBadges/badgesRank
+    // TODO), so the parameter is accepted for signature parity but not yet applied.
+    public updateUserData(
+        userId: number,
+        figure: string,
+        achievementScore: number,
+        motto: string,
+        mottoEnabled: boolean,
+        _badgesRank: number = -1
+    ): void
     {
         if(userId !== this._userData.userId) return;
 

@@ -262,6 +262,22 @@ threads a per-Component asset library through constructors instead; the DI bridg
 code with two real consumers (`HeliumMain.ts`, `AvatarRenderManager.ts`), so only the misleading trace
 comment was fixed, now documented as a TS-only bridge with its rationale.
 
+**Majors: habbo/ui cluster (2 filed, 2 fixed).** `ChatInputWidgetHandler` sent a chat message's raw
+`styleId` straight to `sendChatMessage()`/`sendWhisperMessage()`/`sendShoutMessage()`; AS3 first
+resolves it against `freeFlowChat.preferedChatStyle` (updating the stored preference on a real style
+change, substituting the preference back in when the message's `styleId` is the `-1` sentinel) —
+nothing was blocked by an unported module, `preferedChatStyle` and `container.freeFlowChat` already
+existed on both interfaces, the resolution step was just missing. `RoomWidgetUserInfoUpdateEvent` had
+neither `badgesRank` nor `selectedBadges`, which 30-as3-traceability.md treats as a violation on its
+own (stub + TODO required, not silent omission) even though `selectedBadges`'s absence elsewhere was
+already flagged; added both (`selectedBadges` stays an unproduced TODO stub, same Phase-1 scope cut as
+`InfoStandUserData.ts`'s own note). `InfoStandWidgetHandler.handleGetUserInfoMessage()` now sets
+`event.badgesRank` from `IUserData.badgesRank` (added earlier this session in the session cluster) —
+unconditionally, unlike `achievementScore`'s `isActivityDisplayEnabled` gate. `InfoStandWidget.updateUserData()`
+gained AS3's 6th `badgesRank` parameter (zero current callers, so zero risk); actually applying it to
+`InfoStandUserData`/`InfoStandUserView` is left as a TODO alongside the same already-deferred
+badge-display polish, rather than adding two more fields as a side quest.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

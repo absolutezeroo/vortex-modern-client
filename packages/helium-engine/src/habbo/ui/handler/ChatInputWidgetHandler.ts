@@ -91,16 +91,34 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 if(!chatMessage.text) return null;
 
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
+                // Resolve against the stored chat-style preference: a style change gets
+                // remembered (unless the message asks for -1, the "use my preference"
+                // sentinel), then the styleId actually sent is re-read from the
+                // preference, not the raw message value.
+                let styleId = chatMessage.styleId;
+                const freeFlowChat = this._container.freeFlowChat;
+
+                if(freeFlowChat)
+                {
+                    if(freeFlowChat.preferedChatStyle !== chatMessage.styleId && chatMessage.styleId !== -1)
+                    {
+                        freeFlowChat.preferedChatStyle = chatMessage.styleId;
+                    }
+
+                    styleId = freeFlowChat.preferedChatStyle;
+                }
+
                 switch(chatMessage.chatType)
                 {
                     case RoomWidgetChatMessage.CHAT_TYPE_WHISPER:
-                        this._container.roomSession.sendWhisperMessage(chatMessage.recipientName, chatMessage.text, chatMessage.styleId);
+                        this._container.roomSession.sendWhisperMessage(chatMessage.recipientName, chatMessage.text, styleId);
                         break;
                     case RoomWidgetChatMessage.CHAT_TYPE_SHOUT:
-                        this._container.roomSession.sendShoutMessage(chatMessage.text, chatMessage.styleId);
+                        this._container.roomSession.sendShoutMessage(chatMessage.text, styleId);
                         break;
                     default:
-                        this._container.roomSession.sendChatMessage(chatMessage.text, chatMessage.styleId);
+                        this._container.roomSession.sendChatMessage(chatMessage.text, styleId);
                         break;
                 }
 

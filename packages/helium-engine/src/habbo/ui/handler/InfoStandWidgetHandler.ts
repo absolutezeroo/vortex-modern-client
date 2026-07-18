@@ -669,10 +669,14 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         event.name = userData.name;
         event.motto = userData.custom;
 
-        if(this.isActivityDisplayEnabled) 
+        if(this.isActivityDisplayEnabled)
         {
             event.achievementScore = userData.achievementScore;
         }
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::handleGetUserInfoMessage()
+        // Unlike achievementScore, badgesRank is not gated by isActivityDisplayEnabled.
+        event.badgesRank = userData.badgesRank;
 
         event.webID = userData.webID;
         event.userRoomId = roomIndex;
