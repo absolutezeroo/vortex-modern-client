@@ -310,7 +310,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         return this._gameDataResources;
     }
 
-    public interpolate(value: string): string 
+    public override interpolate(value: string): string
     {
         if(!value) 
         {
@@ -351,7 +351,12 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
             regex.lastIndex = 0;
         }
 
-        return result;
+        // AS3 falls through here (loop exhausted or broke out with unresolved ${...}
+        // tokens the localization dictionary didn't have) to the configuration's own
+        // interpolate() for one more pass - e.g. config-only tokens. The no-match early
+        // return above stays as-is (AS3 returns the string as-is there too, never
+        // reaching super.interpolate()).
+        return super.interpolate(result);
     }
 
     protected override initComponent(): void 
@@ -534,11 +539,24 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         }
 
         // Check if we received HTML instead of localization data
-        if(data.indexOf('<!DOCTYPE html') !== -1) 
+        if(data.indexOf('<!DOCTYPE html') !== -1)
         {
             return false;
         }
 
         return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/localization/CoreLocalizationManager.as::dispose()
+    public override dispose(): void
+    {
+        if(this.disposed) return;
+
+        this._localizations.clear();
+        this._definitions.clear();
+        this._nonExistingKeys = [];
+        this._acceptEmptyMap.clear();
+
+        super.dispose();
     }
 }

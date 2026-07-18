@@ -437,6 +437,24 @@ export class Component implements IDisposable
     }
 
     /**
+	 * Interpolate ${...} configuration references in a string
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::interpolate()
+    interpolate(value: string): string
+    {
+        return this._context.configuration?.interpolate(value) ?? '';
+    }
+
+    /**
+	 * Rewrite a URL's protocol via the configuration manager
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::updateUrlProtocol()
+    updateUrlProtocol(url: string): string
+    {
+        return this._context.configuration?.updateUrlProtocol(url) ?? '';
+    }
+
+    /**
 	 * Register this component to receive updates
 	 */
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void
@@ -597,9 +615,9 @@ export class Component implements IDisposable
 
     /**
 	 * Called when all dependencies have been queued or when a required dependency resolves
-	 * @param resolvedIidName Name of the resolved dependency (for debugging)
+	 * @param _resolvedIidName Name of the resolved dependency (for debugging) - currently unused
 	 */
-    private onAllDependenciesQueued(resolvedIidName: string = ''): void
+    private onAllDependenciesQueued(_resolvedIidName: string = ''): void
     {
         this._requiredDependenciesCount--;
 

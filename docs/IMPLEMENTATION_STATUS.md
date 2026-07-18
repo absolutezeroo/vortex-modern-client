@@ -244,6 +244,24 @@ unregistered (`UserChangeMessageEventParser` stopped after `achievementScore`, s
 unused string, a count-prefixed int-triplet list, and `badgesRank` off the wire — all now read to
 match AS3's `_SafeCls_2646.parse()`; `RoomSessionUserFigureUpdateEvent` gained the matching field).
 
+**Majors: core cluster (5 filed, 1 already-fixed, 4 fixed).**
+`ComponentContext.announceInterfaceAvailability()` was flagged for fatal-severity/callback-clearing
+bugs that turned out to already match AS3 exactly (fatal=true, no early queue-clear, calls receivers
+with null) — verified against `_SafeCls_56.as` directly rather than acted on. `Component` was missing
+`interpolate()`/`updateUrlProtocol()` (2 of 7 `ICoreConfiguration` delegation methods) — added, which
+in turn let `CoreLocalizationManager.interpolate()` fall through to `super.interpolate()` when its own
+localization-dictionary pass leaves unresolved `${...}` tokens, instead of returning them unexpanded
+forever (AS3 `CoreLocalizationManager.as:449`). `CoreLocalizationManager` also had no `dispose()`
+override at all — added, clearing `_localizations`/`_definitions`/`_nonExistingKeys`/`_acceptEmptyMap`
+before `super.dispose()`. `AssetLibrary.ts` registered audio under `"audio/mpeg"` where AS3 (and every
+caller) uses the literal `"sound/mp3"` as an internal type tag, so any `loadAssetFromFile(name, url,
+"sound/mp3")` threw "Asset type declaration ... not found"; also added the missing `image/tiff`
+declaration (`BitmapDataAsset`+`BitmapFileLoader`, both already ported). `IIDAssetLibrary.ts` claimed
+"Based on AS3: com.sulake.iid.IIDAssetLibrary" — no such IID exists in any of the 3 source trees, AS3
+threads a per-Component asset library through constructors instead; the DI bridge itself is working
+code with two real consumers (`HeliumMain.ts`, `AvatarRenderManager.ts`), so only the misleading trace
+comment was fixed, now documented as a TS-only bridge with its rationale.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

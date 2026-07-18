@@ -648,10 +648,19 @@ export class AssetLibrary extends Component implements IAssetLibrary
             new AssetTypeDeclaration('image/gif', BitmapDataAsset as AssetClass, BitmapFileLoader as unknown as AssetLoaderClass, 'gif'),
             true
         );
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/assets/AssetLibrary.as:111
+        this.registerAssetTypeDeclaration(
+            new AssetTypeDeclaration('image/tiff', BitmapDataAsset as AssetClass, BitmapFileLoader as unknown as AssetLoaderClass, 'tif', 'tiff'),
+            true
+        );
 
         // Audio
+        // AS3 registers this under the literal "sound/mp3" (an internal type tag, not
+        // a real HTTP MIME type) - callers pass that same literal to loadAssetFromFile(),
+        // so registering under "audio/mpeg" made any such call throw "Asset type
+        // declaration for MIME type sound/mp3 not found".
         this.registerAssetTypeDeclaration(
-            new AssetTypeDeclaration('audio/mpeg', SoundAsset as AssetClass, SoundFileLoader as unknown as AssetLoaderClass, 'mp3'),
+            new AssetTypeDeclaration('sound/mp3', SoundAsset as AssetClass, SoundFileLoader as unknown as AssetLoaderClass, 'mp3'),
             true
         );
 
