@@ -278,6 +278,17 @@ gained AS3's 6th `badgesRank` parameter (zero current callers, so zero risk); ac
 `InfoStandUserData`/`InfoStandUserView` is left as a TODO alongside the same already-deferred
 badge-display polish, rather than adding two more fields as a side quest.
 
+**Majors: habbo/room cluster (1 filed, already-fixed — but a deeper related gap found and
+documented).** `LegacyWallGeometry.getLocationOldFormat()`/`getOldLocation()`/`getOldLocationString()`
+and `RoomMessageHandler.addWallItem()`'s `isOldFormat` branch — the finding's exact citations — all
+already existed, correctly implemented, when read. What's still genuinely missing is one level up:
+neither `RoomEngine.placeObject()` nor `confirmObjectMove()` branch on `category === OBJECT_CATEGORY_WALL`
+to build a wall-location string and send it — `PlaceObjectMessageComposer.ts` already carried its own
+TODO for this; `confirmObjectMove()` did not, so a matching one was added there (and a pointer added
+in `placeObject()` itself) rather than rushing a multi-composer wall-placement wire implementation
+sight-unseen. Placing/moving a wall item from the client still doesn't reach the server; receiving
+one from the server already works correctly.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

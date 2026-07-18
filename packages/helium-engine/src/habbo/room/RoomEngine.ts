@@ -3909,7 +3909,11 @@ export class RoomEngine extends Component implements IRoomEngine,
             z = location.z;
             rotation = (Math.round(direction.x / 45) % 8 + 8) % 8;
 
-            if(this._connection !== null && this._objectPlacementSource === 'inventory') 
+            // TODO(AS3): AS3's placeObject() (_SafeCls_1821.as:2444-2530) branches on
+            // data.category to pick a different composer (group-item types 2/4, stickie
+            // notes, and category===OBJECT_CATEGORY_WALL's wall-location-string variant) -
+            // see PlaceObjectMessageComposer.ts's own TODO for the wall case specifically.
+            if(this._connection !== null && this._objectPlacementSource === 'inventory')
             {
                 this._connection.send(new PlaceObjectMessageComposer(data.id, x, y, rotation));
             }
@@ -4090,13 +4094,22 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.setObjectAlphaMultiplier(object, 1);
         this.removeObjectMoverIconSprite();
 
-        if(this._connection !== null && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
+        if(this._connection !== null && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
         {
             const direction = ((Math.trunc(object.getDirection().x) % 360) + 360) % 360;
             const location = object.getLocation();
 
             this._connection.send(new MoveObjectMessageComposer(data.id, Math.trunc(location.x), Math.trunc(location.y), direction / 45));
         }
+
+        // TODO(AS3): AS3's modifyRoomObject() "OBJECT_MOVE_TO" case (_SafeCls_1821.as:2399-2416)
+        // has a third branch for data.category === OBJECT_CATEGORY_WALL (20): it fetches the
+        // room's LegacyWallGeometry (roomEngine.getLegacyGeometry(), not yet exposed by this
+        // port's IRoomEngine) and sends getOldLocationString(object.getLocation(), direction)
+        // through a dedicated wall-move composer (_SafeCls_2682: objectId, category,
+        // locationString) - neither the composer nor getLegacyGeometry() exist in this port yet,
+        // so moving an already-placed wall item never reaches the server. Mirrors
+        // PlaceObjectMessageComposer.ts's own documented wall-placement gap on the place side.
     }
 
     // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
