@@ -2,6 +2,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import type {IScrollableListWindow} from '@core/window/components/IScrollableListWindow';
 import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
 import type {ITabButtonWindow} from '@core/window/components/ITabButtonWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
@@ -156,6 +157,8 @@ export class NavigatorView implements IUpdateReceiver
             {
                 this.createMainWindow();
 
+                this._navigator.registerUpdateReceiver(this, 1000);
+
                 if(this._quickLinksView) 
                 {
                     this._quickLinksView.setQuickLinks(this._navigator.contextContainer.savedSearches);
@@ -197,14 +200,25 @@ export class NavigatorView implements IUpdateReceiver
      *
      * @see sources/win63_version/habbo/navigator/view/NavigatorView.as get isRoomInfoBubbleVisible()
      */
-    get isRoomInfoBubbleVisible(): boolean 
+    get isRoomInfoBubbleVisible(): boolean
     {
-        if(this._roomInfoPopup) 
+        if(this._roomInfoPopup)
         {
             return this._roomInfoPopup.visible;
         }
 
         return false;
+    }
+
+    /**
+     * Refreshes the room info popup's home-room icon after fresh navigator
+     * settings (home room id) arrive from the server.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::refreshRoomInfoBubbleHomeState()
+     */
+    refreshRoomInfoBubbleHomeState(): void
+    {
+        this._roomInfoPopup?.refreshHomeState();
     }
 
     /**
@@ -218,10 +232,25 @@ export class NavigatorView implements IUpdateReceiver
 
         const leftPane = this._window.findChildByName('left_pane');
 
-        if(leftPane && this._lastLeftPaneHidden !== leftPane.visible) return true;
-        if(this._lastWindowX !== this._window.x) return true;
-        if(this._lastWindowY !== this._window.y) return true;
-        if(this._lastWindowHeight !== this._window.height) return true;
+        if(leftPane && this._lastLeftPaneHidden !== leftPane.visible) 
+        {
+            return true;
+        }
+
+        if(this._lastWindowX !== this._window.x) 
+        {
+            return true;
+        }
+
+        if(this._lastWindowY !== this._window.y) 
+        {
+            return true;
+        }
+        
+        if(this._lastWindowHeight !== this._window.height) 
+        {
+            return true;
+        }
 
         return false;
     }
@@ -641,7 +670,13 @@ export class NavigatorView implements IUpdateReceiver
 
         const windowContainer = built as IWindowContainer;
 
-        // --- Clone templates from the built tree ---
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::createMainWindow()
+        const blockResultsList = windowContainer.findChildByName('block_results') as unknown as IScrollableListWindow | null;
+
+        if(blockResultsList)
+        {
+            blockResultsList.autoHideScrollBar = false;
+        }
 
         // Row entry template
         const rowEntryContainer = windowContainer.findChildByName('navigator_entry_row_container') as IWindowContainer | null;
@@ -699,8 +734,6 @@ export class NavigatorView implements IUpdateReceiver
             this._categoryElementFactory.noResultsTemplate = cloneNextBlockResultTemplate();
         }
 
-        // --- Wire sub-views to their containers ---
-
         // Block results list
         if(this._blockResultsView && blockResults) 
         {
@@ -756,11 +789,6 @@ export class NavigatorView implements IUpdateReceiver
 
             if(tabContext) 
             {
-                // Flash lets the top tab bleed from y=-1 in navigator_frame_2; canvas clipping cuts it.
-                tabContext.y = 0;
-                tabContext.height = Math.max(tabContext.height, 32);
-                tabContext.clipping = false;
-
                 const firstTab = tabContext.getTabItemAt(0);
 
                 if(firstTab) 
@@ -774,8 +802,6 @@ export class NavigatorView implements IUpdateReceiver
                 this._topViewSelector.refresh();
             }
         }
-
-        // --- Wire button procedures ---
 
         // Store left pane margin
         const leftPaneEl = windowContainer.findChildByName('left_pane');
@@ -822,8 +848,13 @@ export class NavigatorView implements IUpdateReceiver
         // Store window reference
         this._window = windowContainer;
 
-        // Register update receiver for periodic preference saving and popup auto-hide
-        this._navigator.registerUpdateReceiver(this, 1000);
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/NavigatorView.as::createMainWindow()
+        // registerUpdateReceiver() is NOT called here - AS3's set visible() (line 117)
+        // is the sole call site, right after createMainWindow() returns (see this
+        // class's own set visible() above, which already does the same). Calling it
+        // again here was redundant (CoreComponentContext.registerUpdateReceiver()
+        // removes any existing registration before re-adding, so it wasn't causing
+        // double ticks) but not what AS3 does.
         this._lastPreferencesSaveTime = performance.now();
 
         // Start with left pane hidden

@@ -192,17 +192,31 @@ export class BitmapDataRenderer extends SkinRenderer
             const srcW = bmp.width;
             const srcH = bmp.height;
 
+            // AS3 l.73-118 read param1.width/param1.height (the WINDOW's own logical
+            // size) for every stretch/tile/pivot computation below - never param3 (the
+            // Rectangle this method receives, which it doesn't use at all). w/h here
+            // are renderingWidth/renderingHeight (rect, from WindowRendererItem), which
+            // include the etching-point margin (defaults to 1px when no etching is
+            // configured - see BitmapDataController.etchingPoint) - stretching to that
+            // instead of the window's true size drew every unetched bitmap 1px taller/
+            // wider than intended, e.g. squashing ProgressBar's bar_c 1px short at the
+            // bottom. w/h stay correct for the canvas allocation and greyscale filter
+            // area below, which DO need the etching-inclusive buffer size (matching
+            // AS3's param2 BitmapData, sized by the caller to fit an etching shadow).
+            const logicalW = window.width;
+            const logicalH = window.height;
+
             // Unsigned tile size (AS3 l.67-68 take Math.abs of the zoom-scaled size);
             // direction is applied separately via isFlippedX/isFlippedY below, since
             // flip is (zoom sign XOR flipX), not the zoom sign alone.
-            const drawW = (stretchedX ? w : srcW) * Math.abs(zoomX);
-            const drawH = (stretchedY ? h : srcH) * Math.abs(zoomY);
+            const drawW = (stretchedX ? logicalW : srcW) * Math.abs(zoomX);
+            const drawH = (stretchedY ? logicalH : srcH) * Math.abs(zoomY);
 
             if(drawW !== 0 && drawH !== 0)
             {
                 // Tile counts (AS3 l.69-70).
-                const tilesX = !wrapX ? 1 : Math.floor(w / drawW) + 2;
-                const tilesY = !wrapY ? 1 : Math.floor(h / drawH) + 2;
+                const tilesX = !wrapX ? 1 : Math.floor(logicalW / drawW) + 2;
+                const tilesY = !wrapY ? 1 : Math.floor(logicalH / drawH) + 2;
 
                 // Base position from pivot (AS3 l.73-116).
                 let baseTx: number;
@@ -212,15 +226,21 @@ export class BitmapDataRenderer extends SkinRenderer
                     case PivotPoint.TOP_CENTER:
                     case PivotPoint.CENTER:
                     case PivotPoint.BOTTOM_CENTER:
-                        baseTx = Math.trunc((w - drawW) / 2);
+                        baseTx = Math.trunc((logicalW - drawW) / 2);
                         break;
                     case PivotPoint.TOP_RIGHT:
                     case PivotPoint.CENTER_RIGHT:
                     case PivotPoint.BOTTOM_RIGHT:
-                        baseTx = isFlippedX ? w : w - drawW;
+                        baseTx = isFlippedX ? logicalW : logicalW - drawW;
                         break;
+                    // AS3 l.83-87 (case 0/3/6, the left-column pivots): tx = flipped
+                    // ? drawW : 0 - a POSITIVE drawW. This was negated here, which for
+                    // a flipped (negative zoom) bitmap at a left pivot pushed the whole
+                    // draw origin off-canvas (e.g. arrow_expand's zoom_x=-1 at the
+                    // default TOP_LEFT pivot rendered nothing - the transform placed
+                    // every source pixel at a negative destination x).
                     default:
-                        baseTx = isFlippedX ? -drawW : 0;
+                        baseTx = isFlippedX ? drawW : 0;
                         break;
                 }
 
@@ -231,15 +251,17 @@ export class BitmapDataRenderer extends SkinRenderer
                     case PivotPoint.CENTER_LEFT:
                     case PivotPoint.CENTER:
                     case PivotPoint.CENTER_RIGHT:
-                        baseTy = Math.trunc((h - drawH) / 2);
+                        baseTy = Math.trunc((logicalH - drawH) / 2);
                         break;
                     case PivotPoint.BOTTOM_LEFT:
                     case PivotPoint.BOTTOM_CENTER:
                     case PivotPoint.BOTTOM_RIGHT:
-                        baseTy = isFlippedY ? h : h - drawH;
+                        baseTy = isFlippedY ? logicalH : logicalH - drawH;
                         break;
+                    // AS3 l.105-109 (case 0/1/2, the top-row pivots): ty = flipped ?
+                    // drawH : 0 - same positive-on-flip fix as baseTx above.
                     default:
-                        baseTy = isFlippedY ? -drawH : 0;
+                        baseTy = isFlippedY ? drawH : 0;
                         break;
                 }
 

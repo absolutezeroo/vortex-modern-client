@@ -485,7 +485,59 @@ class WindowDebuggerPanel
         });
         toolbar.appendChild(copyBtn);
 
-        if(overlaps === null) 
+        const pixelBtn = document.createElement('button');
+
+        pixelBtn.className = 'hwd-copy-btn';
+        pixelBtn.textContent = 'Copy selected node pixels';
+        pixelBtn.title = 'Reads the real on-screen canvas at the selected node\'s global rect (top/last row + full-row summary)';
+        pixelBtn.addEventListener('click', () =>
+        {
+            const target = this._selectedNodeWindow ?? this._selectedWindow;
+
+            if(!target)
+            {
+                pixelBtn.textContent = 'No node selected';
+                setTimeout(() =>
+                {
+                    pixelBtn.textContent = 'Copy selected node pixels';
+                }, 1200);
+
+                return;
+            }
+
+            let report: string;
+
+            try
+            {
+                report = dumpWindowPixels(target, this._canvas);
+            }
+            catch (error)
+            {
+                log.warn('Failed to dump pixels', error);
+                pixelBtn.textContent = 'Dump failed';
+                setTimeout(() =>
+                {
+                    pixelBtn.textContent = 'Copy selected node pixels';
+                }, 1200);
+
+                return;
+            }
+
+            navigator.clipboard.writeText(report).then(() =>
+            {
+                pixelBtn.textContent = 'Copied!';
+                setTimeout(() =>
+                {
+                    pixelBtn.textContent = 'Copy selected node pixels';
+                }, 1200);
+            }).catch(() =>
+            {
+                pixelBtn.textContent = 'Copy failed';
+            });
+        });
+        toolbar.appendChild(pixelBtn);
+
+        if(overlaps === null)
         {
             const notice = document.createElement('span');
 
@@ -1119,9 +1171,39 @@ function formatNodeText(node: IWindowDebugNode, depth: number, overlaps: IOverla
     const marker = isInvolved ? '  [OVERLAP]' : '';
     const r = node.rect;
     const g = node.globalRect;
+    const bmpSize = node.bitmapSize ? ` bitmapSize=${node.bitmapSize.width}x${node.bitmapSize.height}` : '';
+    const bmpParams = node.bitmapParams
+        ? ` [stretchedX=${node.bitmapParams.stretchedX} stretchedY=${node.bitmapParams.stretchedY}`
+        + ` zoomX=${node.bitmapParams.zoomX} zoomY=${node.bitmapParams.zoomY}`
+        + ` pivotPoint=${node.bitmapParams.pivotPoint} flipX=${node.bitmapParams.flipX} flipY=${node.bitmapParams.flipY}]`
+        : '';
+    const assetInfo = node.assetUri !== null
+        ? ` assetUri="${node.assetUri}" bitmapLoaded=${node.bitmapLoaded}${bmpSize}${bmpParams}`
+        : '';
+
+    // Mirrors WindowRendererItem.render()'s own dispatch check: a window whose
+    // (type, style) has no registered skin renderer - or whose renderer can't
+    // draw the window's current state - silently renders nothing at all, no
+    // matter how correct its own bitmap/position data is.
+    const rendererInfo = ((): string =>
+    {
+        try
+        {
+            const renderer = Helium.instance.windowManager.getRendererByTypeAndStyle(node.type, node.style);
+
+            return renderer
+                ? ` renderer=${renderer.constructor.name} drawableAtState=${renderer.isStateDrawable(node.state)}`
+                : ' renderer=NONE';
+        }
+        catch
+        {
+            return ' renderer=<error>';
+        }
+    })();
+
     let text = `${indent}${node.typeName} "${node.name}" rect=(${r.x},${r.y},${r.width}x${r.height}) `
         + `global=(${g.x},${g.y},${g.width}x${g.height}) style=${node.style} state=${node.state} `
-        + `param=${node.param} visible=${node.visible}${marker}\n`;
+        + `param=${node.param} visible=${node.visible}${assetInfo}${rendererInfo}${marker}\n`;
 
     for(const child of node.children) 
     {
@@ -1165,7 +1247,122 @@ function buildTreeReport(root: IWindowDebugNode): string
     return text;
 }
 
-function injectStyles(): void 
+/**
+ * Reads the REAL on-screen pixels for a window's global rect directly off the
+ * live game canvas (not a re-render/reconstruction) - so it reflects whatever
+ * clipping/compositing/caching actually happened this frame, including bugs
+ * that only manifest in the full desktop composite and don't reproduce in an
+ * isolated re-render. No AS3 equivalent - debug-only.
+ */
+/**
+ * Walks the ancestor chain accumulating offsetX/offsetY + x/y at every level,
+ * exactly like WindowComposite.compositeWindow()'s `absX = offsetX + window.x
+ * + window.offsetX` recursion does. getGlobalRectangle() (IWindow's own public
+ * API) only accumulates x/y - it never adds offsetX/offsetY at any level - so
+ * the two can disagree whenever something (e.g. a dynamic style's per-state
+ * offsetX/offsetY, see WindowController.applyDynamicStyleByState()) sets a
+ * non-zero offset anywhere in the chain. No AS3 equivalent - debug-only.
+ */
+function computeTrueCompositePosition(window: IWindow): {x: number; y: number}
+{
+    let x = 0;
+    let y = 0;
+    let current: IWindow | null = window;
+
+    while(current)
+    {
+        x += current.x + current.offsetX;
+        y += current.y + current.offsetY;
+        current = current.parent;
+    }
+
+    return {x, y};
+}
+
+function dumpWindowPixels(window: IWindow, canvas: HTMLCanvasElement): string
+{
+    const rect = {x: 0, y: 0, width: 0, height: 0};
+
+    window.getGlobalRectangle(rect);
+
+    const truePos = computeTrueCompositePosition(window);
+    const positionMismatch = truePos.x !== rect.x || truePos.y !== rect.y;
+
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
+    const x = positionMismatch ? Math.round(truePos.x) : Math.round(rect.x);
+    const y = positionMismatch ? Math.round(truePos.y) : Math.round(rect.y);
+
+    function dumpCanvasRegion(source: CanvasImageSource, sx: number, sy: number, label: string): string
+    {
+        const crop = new OffscreenCanvas(w, h);
+        const cctx = crop.getContext('2d');
+
+        if(!cctx) throw new Error('Could not get 2D context for pixel crop');
+
+        cctx.imageSmoothingEnabled = false;
+        cctx.drawImage(source, sx, sy, w, h, 0, 0, w, h);
+
+        const data = cctx.getImageData(0, 0, w, h).data;
+
+        function rowText(row: number): string
+        {
+            const parts: string[] = [];
+
+            for(let px = 0; px < w; px++)
+            {
+                const i = (row * w + px) * 4;
+
+                parts.push(`${data[i]},${data[i + 1]},${data[i + 2]},${data[i + 3]}`);
+            }
+
+            return parts.join(' | ');
+        }
+
+        let out = `${label} (${sx},${sy},${w}x${h}):\n`;
+
+        for(let row = 0; row < h; row++)
+        {
+            out += `y${row}: ${rowText(row)}\n`;
+        }
+
+        return out;
+    }
+
+    let text = positionMismatch
+        ? `getGlobalRectangle()=(${rect.x},${rect.y}) vs true composite position=(${truePos.x},${truePos.y}) - MISMATCH, using the latter for this dump\n\n`
+        : '';
+
+    text += dumpCanvasRegion(canvas, x, y, 'composited canvas pixel dump for global rect');
+
+    // Also dump the window's OWN render buffer (pre-compositing) at its local
+    // origin, so a blank composite can be told apart from "BitmapDataRenderer
+    // never drew anything into this window's buffer in the first place" vs
+    // "it drew fine, but compositing never blitted/positioned it onto the
+    // screen". No AS3 equivalent - debug-only.
+    try
+    {
+        const renderer = Helium.instance.windowManager.getWindowRenderer();
+        const buffer = (renderer?.getDrawBufferForRenderable(window) ?? null) as OffscreenCanvas | null;
+
+        if(buffer)
+        {
+            text += '\n' + dumpCanvasRegion(buffer, 0, 0, 'own render buffer pixel dump (pre-composite)');
+        }
+        else
+        {
+            text += '\nown render buffer: null/none\n';
+        }
+    }
+    catch (error)
+    {
+        text += `\nown render buffer: <error: ${(error as Error).message}>\n`;
+    }
+
+    return text;
+}
+
+function injectStyles(): void
 {
     if(stylesInjected) return;
 

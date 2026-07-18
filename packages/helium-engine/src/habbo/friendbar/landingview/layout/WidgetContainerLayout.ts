@@ -476,8 +476,15 @@ export class WidgetContainerLayout implements IUpdateReceiver
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::registerPlaceholderAnchoredWidget()
     private registerPlaceholderAnchoredWidget(type: string): void
     {
-        if(!this._landingView || !this._settings) return;
+        if(!this._landingView) return;
 
+        // AS3 pushes unconditionally, even though `_settings` (here `this._settings`) is still
+        // null at this point - registerFixedWidgets() runs before `_settings` is assigned in the
+        // constructor, in both AS3 and here. That's harmless there (WidgetContainer accepts a null
+        // settings, and none of the 15 fixed widget types implement ISettingsAwareWidget), but an
+        // added `!this._settings` guard here made this a silent no-op for every fixed-placeholder
+        // widget - avatarimage/dailyquest/catalogpromo/etc. never got created, so their
+        // `widget_placeholder_*` XML placeholders were never swapped for the real widget.
         const widget = LandingViewWidgetType.getWidgetForType(type, this._landingView);
 
         if(!widget) return;

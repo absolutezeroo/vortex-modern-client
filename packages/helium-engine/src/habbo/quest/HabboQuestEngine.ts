@@ -14,7 +14,9 @@ import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {GetQuestsMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetQuestsMessageComposer';
-import {GetSeasonalQuestsOnlyMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetSeasonalQuestsOnlyMessageComposer';
+import {
+    GetSeasonalQuestsOnlyMessageComposer
+} from '@habbo/communication/messages/outgoing/quest/GetSeasonalQuestsOnlyMessageComposer';
 import {ActivateQuestMessageComposer} from '@habbo/communication/messages/outgoing/quest/ActivateQuestMessageComposer';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -457,9 +459,17 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
     /**
 	 * Set a category's `category_pic_bitmap` child to its category image
-	 * ("ach_category_<code>" when big/selected, "achicon_<code>" for the small grid icon).
+	 * ("achcategory_<code>_active"/"_inactive" for the big grid-cell picture, depending on
+	 * whether the category has any progress; "achicon_<code>" for the small header icon).
+	 *
+	 * Both crypted trees (WIN63-202607011411 and win63_version) decompile the `big` branch
+	 * as a flat "ach_category_" + code literal with no active/inactive ternary — the same
+	 * class of literal corruption already documented in BadgeImageWidget.ts's .gif/.png
+	 * fix. The unobfuscated 2016 PRODUCTION tree preserves the real literal and ternary;
+	 * ported from there since a decompiler string-literal bug doesn't get "fixed" by a
+	 * decade of subsequent client changes the way behavior can.
 	 */
-    // AS3: HabboQuestEngine.as::setupAchievementCategoryImage()
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_Str_21694()
     setupAchievementCategoryImage(container: IWindowContainer, category: AchievementCategory, big: boolean): void
     {
         const bitmap = container.findChildByName('category_pic_bitmap') as unknown as
@@ -467,8 +477,12 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
         if(bitmap === null) return;
 
+        const name = big
+            ? `ach_category_${category.code}_${category.getProgress() > 0 ? 'active' : 'inactive'}`
+            : `achicon_${category.code}`;
+
         bitmap.assetUri = '';
-        bitmap.assetUri = '${image.library.questing.url}' + (big ? `ach_category_${category.code}` : `achicon_${category.code}`) + '.png';
+        bitmap.assetUri = '${image.library.questing.url}' + name + '.png';
     }
 
     /**

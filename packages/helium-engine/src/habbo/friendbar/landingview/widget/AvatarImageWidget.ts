@@ -71,7 +71,14 @@ export class AvatarImageWidget implements ILandingViewWidget
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::initialize()
     initialize(): void
     {
-        this._container = this._landingView!.getXmlWindow('avatar_image') as IWidgetWindow | null;
+        // AS3 resolves "avatar_image_xml" against the friendbar component's own asset
+        // library. HabboWindowManager declares a different embed under the same name
+        // (see habbo/window/widgets/AvatarImageWidget.ts), so the qualified, disambiguated
+        // asset name has to be used directly here - HabboLandingView.getXmlWindow()'s bare
+        // "avatar_image" resolves to the unqualified "avatar_image_xml" key, which no longer
+        // exists once the two same-named embeds were split apart, and the widget placeholder
+        // (widget_placeholder_avatarimage) never gets replaced.
+        this._container = (this._landingView!.windowManager?.buildWidgetLayout('HabboFriendBar_avatar_image_xml') ?? null) as IWidgetWindow | null;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::refresh()

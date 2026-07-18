@@ -157,6 +157,28 @@ export class RoomInfoPopup
         this._roomData = null;
     }
 
+    /**
+	 * Clears the local roomIsHome override and re-syncs the home icon from
+	 * legacyNavigator's authoritative state. Called when fresh navigator
+	 * settings (home room id) arrive from the server.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/RoomInfoPopup.as::refreshHomeState()
+	 */
+    refreshHomeState(): void
+    {
+        this._homeOverridden = false;
+
+        if(this._window && this._window.visible && this._roomData)
+        {
+            const homeIcon = this._window.findChildByName('home_icon') as unknown as IStaticBitmapWrapperWindow | null;
+
+            if(homeIcon)
+            {
+                homeIcon.assetUri = 'newnavigator_icon_home_' + (this.roomIsHome ? 'yes' : 'no');
+            }
+        }
+    }
+
     private get roomIsHome(): boolean
     {
         if(this._homeOverridden)
