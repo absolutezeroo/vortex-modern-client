@@ -8,7 +8,9 @@ const log = Logger.getLogger('QuestController');
  * Quest lifecycle controller
  *
  * Manages quest trackers (per campaign chain), handles quest lifecycle events,
- * and coordinates quest-related state. VIEW logic is handled by SolidJS.
+ * and coordinates quest-related state. VIEW logic (QuestsList window, per-campaign
+ * QuestTracker popups, QuestDetails) is not ported yet - see update() and the class's
+ * other TODO(AS3) notes.
  *
  * @see source_as_win63/habbo/quest/QuestController.as
  */
@@ -130,6 +132,18 @@ export class QuestController implements IDisposable
         const campaign = this._engine.getProperty('questing.defaultCampaign');
 
         return campaign ?? '';
+    }
+
+    /**
+	 * Per-frame tick, forwarded from HabboQuestEngine.update().
+	 */
+    // AS3: QuestController.as::update()
+    // TODO(AS3): AS3 drives QuestsList, every open QuestTracker popup, and QuestDetails
+    // from here (each animates its own ProgressBar/timers) plus cleanTrackers(false) -
+    // none of those view classes are ported yet (see docs/IMPLEMENTATION_STATUS.md), so
+    // there is nothing real to forward to.
+    update(_deltaTime: number): void
+    {
     }
 
     /**

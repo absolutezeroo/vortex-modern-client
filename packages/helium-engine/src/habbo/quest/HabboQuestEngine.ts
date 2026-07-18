@@ -1,4 +1,4 @@
-import type {ILinkEventTracker} from '@core/runtime';
+import type {ILinkEventTracker, IUpdateReceiver} from '@core/runtime';
 import {Component, ComponentDependency, type IContext,} from '@core/runtime';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -51,7 +51,7 @@ const log = Logger.getLogger('HabboQuestEngine');
  *
  * @see source_as_win63/habbo/quest/HabboQuestEngine.as
  */
-export class HabboQuestEngine extends Component implements IHabboQuestEngine, ILinkEventTracker
+export class HabboQuestEngine extends Component implements IHabboQuestEngine, ILinkEventTracker, IUpdateReceiver
 {
     private _resolutionController: AchievementsResolutionController | null = null;
     private _competitionController: RoomCompetitionController | null = null;
@@ -539,6 +539,8 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
         this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this.onHabboToolbarEvent);
 
+        this.removeUpdateReceiver(this);
+
         // Remove link event tracker
         this.context.removeLinkEventTracker(this);
 
@@ -597,6 +599,23 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         // Register link event tracker
         this.context.addLinkEventTracker(this);
 
+        // AS3's engine-wide per-frame ticker calls HabboQuestEngine.update() directly;
+        // this port has no equivalent global hook, so register through the same
+        // IUpdateReceiver mechanism other per-frame-animated managers use instead.
+        this.registerUpdateReceiver(this, 10);
+
         log.info('HabboQuestEngine initialized');
+    }
+
+    /**
+	 * Per-frame tick. Forwards to the sub-controllers AS3 drives from here.
+	 */
+    // AS3: HabboQuestEngine.as::update()
+    // TODO(AS3): AS3 also forwards to a DailyTasksController and a RewardTrackController,
+    // neither of which exist in this port yet.
+    update(deltaTime: number): void
+    {
+        this._questController?.update(deltaTime);
+        this._achievementController?.update(deltaTime);
     }
 }

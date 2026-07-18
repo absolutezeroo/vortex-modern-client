@@ -376,6 +376,17 @@ export class AchievementController implements IDisposable
         this.close();
     }
 
+    /**
+	 * Per-frame tick, forwarded from HabboQuestEngine.update(). Drives both progress
+	 * bars' eased-fill animation.
+	 */
+    // AS3: AchievementController.as::update()
+    update(deltaTime: number): void
+    {
+        this._inLevelProgressBar?.updateView(deltaTime);
+        this._totalProgressBar?.updateView(deltaTime);
+    }
+
     // AS3: AchievementController.as::isSkippedForUnseenBroadcast()
     private isSkippedForUnseenBroadcast(badgeId: string): boolean
     {

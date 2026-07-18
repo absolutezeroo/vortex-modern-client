@@ -58,22 +58,30 @@ export class BitmapDataController extends WindowController
         this._bitmapData = value;
     }
 
-    private _stretchedX: boolean = false;
+    // AS3: ThemeManager.as's base property-defaults map (every theme clones it, and
+    // none override this back) sets stretched_x=true universally - not a hardcoded
+    // false as this port previously had it. BitmapDataController.as reads its actual
+    // default per-window from getThemeManager().getPropertyDefaults(style), a
+    // per-style theme lookup this port doesn't implement; but since AS3 itself never
+    // varies this specific property across any real theme/style, hardcoding the same
+    // universal value here is faithful, not a simplification.
+    private _stretchedX: boolean = true;
 
     /**
      * Whether the bitmap is stretched horizontally.
      */
-    public get stretchedX(): boolean 
+    public get stretchedX(): boolean
     {
         return this._stretchedX;
     }
 
-    public set stretchedX(value: boolean) 
+    public set stretchedX(value: boolean)
     {
         this._stretchedX = value;
     }
 
-    private _stretchedY: boolean = false;
+    // AS3: same ThemeManager.as universal default as stretchedX (stretched_y=true).
+    private _stretchedY: boolean = true;
 
     /**
      * Whether the bitmap is stretched vertically.

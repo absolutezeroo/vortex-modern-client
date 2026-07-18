@@ -1,23 +1,20 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {HabboQuestEngine} from './HabboQuestEngine';
 
 /**
  * A skinned, animated progress bar built from the "ProgressBar" widget layout.
  *
  * Used both in-frame (achievements' in-level / total-category bars) and standalone
- * (quest tracker). The bar's fill width eases toward its target rather than jumping,
- * driven by a self-contained ticker (AS3 drives this from HabboQuestEngine.update(),
- * called every engine frame; the port has no equivalent frame-wide tick hook yet, so
- * this class runs its own interval instead — same visual result, no new engine wiring).
+ * (quest tracker). The bar's fill width eases toward its target rather than jumping.
+ * `updateView(elapsedMs)` is driven from the same single engine-wide frame tick AS3
+ * uses: HabboQuestEngine.update() (registered once as an IUpdateReceiver) forwards to
+ * AchievementController.update(), which calls each of its two ProgressBar instances'
+ * updateView() every frame - not a per-instance timer.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/ProgressBar.as
  */
 export class ProgressBar
 {
-    // AS3: ProgressBar.as::CONTAINER_SPACING (declared but unused by AS3 itself)
-    private static readonly TICK_INTERVAL_MS: number = 33;
-
     private _engine: HabboQuestEngine | null;
     private _window: IWindowContainer;
     private _progressBarWidth: number;
@@ -32,8 +29,6 @@ export class ProgressBar
     private _startProgressWidth: number = 0;
     private _currentProgressWidth: number = 0;
     private _isUpdating: boolean = false;
-
-    private _tickTimer: ReturnType<typeof setInterval> | null = null;
 
     // AS3: ProgressBar.as::ProgressBar()
     constructor(
@@ -67,26 +62,6 @@ export class ProgressBar
                 bar.width = this._progressBarWidth + 10;
             }
         }
-
-        if(bar !== null)
-        {
-            // Neither this bitmap's own XML declaration nor AS3's raw layout XML sets
-            // stretched_x - AS3 relies on the window theme's per-style property defaults
-            // (BitmapDataController.as reads them from getThemeManager().getPropertyDefaults()),
-            // which this port's BitmapDataController does not consult (hardcodes false). Without
-            // this, updateView()'s width changes to bar_c/bar_a_c are logical-only: the renderer
-            // draws the source bitmap at its native (tiny) size instead of the assigned width,
-            // so neither the track (bar_c) nor the cyan fill (bar_a_c) ever visually stretch -
-            // only the plain-color bar_a_bkg fill (which needs no stretch flag) shows, making
-            // the whole bar look like a solid block instead of a proportional fill on a track.
-            const frameCenter = bar.findChildByName('bar_c') as IStaticBitmapWrapperWindow | null;
-            const fillCenter = bar.findChildByName('bar_a_c') as IStaticBitmapWrapperWindow | null;
-
-            if(frameCenter !== null) frameCenter.stretchedX = true;
-            if(fillCenter !== null) fillCenter.stretchedX = true;
-        }
-
-        this._tickTimer = setInterval(() => this.updateView(ProgressBar.TICK_INTERVAL_MS), ProgressBar.TICK_INTERVAL_MS);
     }
 
     // AS3: ProgressBar.as::refresh()
@@ -220,12 +195,6 @@ export class ProgressBar
     // AS3: ProgressBar.as::dispose()
     dispose(): void
     {
-        if(this._tickTimer !== null)
-        {
-            clearInterval(this._tickTimer);
-            this._tickTimer = null;
-        }
-
         this._engine = null;
     }
 
