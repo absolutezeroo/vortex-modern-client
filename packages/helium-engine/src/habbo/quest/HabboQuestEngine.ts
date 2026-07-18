@@ -382,12 +382,19 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
     /**
 	 * Show the quests panel
+	 *
+	 * TODO(AS3): AS3 (HabboQuestEngine.as:522) calls
+	 * `if(questController != null && !questController.questsList.isVisible())
+	 * questController.onToolbarClick();` - QuestController.ts documents that its
+	 * QuestsList window/view is not ported yet (see that class's own notes), so
+	 * there is no `questsList`/`onToolbarClick()` to call into. The old
+	 * `events.emit('showQuests')` had no listener anywhere in the client either
+	 * (same "invented event, no handler" shape as the old goToQuestRooms()), so
+	 * it is left out rather than kept as a misleading no-op.
 	 */
     showQuests(): void
     {
-        // Emit event for UI to handle
-        this.events.emit('showQuests');
-        log.debug('Show quests requested');
+        log.debug('Show quests requested (QuestsList window is not ported yet)');
     }
 
     /**
@@ -438,12 +445,48 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     }
 
     /**
-	 * Navigate to a random quest room via link event
+	 * Whether the current seasonal campaign has any quest room IDs configured.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::hasQuestRoomsIds()
+	 */
+    hasQuestRoomsIds(): boolean
+    {
+        const ids = this.getQuestRoomIds();
+
+        return ids !== null && ids !== '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getQuestRoomIds()
+    private getQuestRoomIds(): string
+    {
+        return this._localization?.getLocalization(`quests.${this.getSeasonalCampaignCodePrefix()}.roomids`) ?? '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getSeasonalCampaignCodePrefix()
+    getSeasonalCampaignCodePrefix(): string
+    {
+        return this.getProperty('seasonalQuestCalendar.campaignPrefix');
+    }
+
+    /**
+	 * Navigate to a random quest room from the current seasonal campaign's
+	 * comma-separated room-id list.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::goToQuestRooms()
 	 */
     goToQuestRooms(): void
     {
-        this.context.createLinkEvent('navigator/goto/quest_rooms');
-        log.debug('Going to quest rooms');
+        if(!this.hasQuestRoomsIds()) return;
+
+        const ids = this.getQuestRoomIds().split(',');
+
+        if(ids.length === 0) return;
+
+        const index = Math.max(0, Math.min(ids.length - 1, Math.floor(Math.random() * ids.length)));
+        const roomId = parseInt(ids[index], 10);
+
+        log.debug(`Forwarding to a guest room: ${roomId}`);
+        this._navigator?.goToRoom(roomId);
     }
 
     /**

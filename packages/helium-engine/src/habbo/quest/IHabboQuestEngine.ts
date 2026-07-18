@@ -56,6 +56,11 @@ export interface IHabboQuestEngine extends ILinkEventTracker
     goToQuestRooms(): void;
 
     /**
+	 * Whether the current seasonal campaign has any quest room IDs configured
+	 */
+    hasQuestRoomsIds(): boolean;
+
+    /**
 	 * Clear the "don't show again" flag on the room-competition submission window
 	 */
     reenableRoomCompetitionWindow(): void;

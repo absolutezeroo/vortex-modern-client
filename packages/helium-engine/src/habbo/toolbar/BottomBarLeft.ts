@@ -364,9 +364,16 @@ export class BottomBarLeft
                 const cameraAllowed = this._toolbar!.sessionDataManager?.isPerkAllowed?.('CAMERA') ?? false;
                 child.visible = isRoomState && cameraPosition === 'bottom-icons' && cameraAllowed;
             }
-            else if(child.name === 'WIRED_MENU') 
+            else if(child.name === 'WIRED_MENU')
             {
-                child.visible = false;
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::setToolbarState()
+                // `_loc2_.visible &&= _loc4_ && _toolbar.roomEvents != null && _toolbar.roomEvents.showToolbarMenuButton();`
+                // roomEvents is currently always null (IHabboUserDefinedRoomEvents has no
+                // concrete implementation yet - see IHabboUserDefinedRoomEvents.ts), so this
+                // stays dormant (matches AS3's own `!= null` guard) rather than force-visible.
+                const roomEvents = this._toolbar!.roomEvents;
+
+                child.visible = child.visible && isRoomState && roomEvents != null && roomEvents.showToolbarMenuButton();
             }
         }
 
@@ -456,21 +463,133 @@ export class BottomBarLeft
     /**
      * Set the unseen item count for a toolbar icon
      *
+     * Finds (or lazily creates via windowManager.createUnseenItemCounter()) the
+     * counter window, attaches it to the icon, positions it flush to the icon's
+     * right edge, and sets its visibility/caption.
+     *
      * @param iconId Icon identifier
      * @param count The count to display
-     * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as setUnseenItemCount()
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::setUnseenItemCount()
      */
-    public setUnseenItemCount(iconId: string, count: number): void 
+    public setUnseenItemCount(iconId: string, count: number): void
+    {
+        const counter = this.getUnseenItemCounter(iconId);
+
+        if(!counter) return;
+
+        if(count < 0)
+        {
+            counter.visible = true;
+            (counter.findChildByName('count') as IWindow | null)!.caption = ' ';
+        }
+        else if(count > 0)
+        {
+            counter.visible = true;
+            (counter.findChildByName('count') as IWindow | null)!.caption = count.toString();
+        }
+        else
+        {
+            counter.visible = false;
+        }
+    }
+
+    /**
+     * Get (creating on first use) the unseen-item counter window for an icon.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getUnseenItemCounter()
+     */
+    public getUnseenItemCounter(iconId: string): IWindowContainer | null
     {
         const iconName = HabboToolbarIconEnum.getIconName(iconId);
 
-        if(!iconName) 
+        if(!iconName)
         {
             log.warn(`[Toolbar] Unknown icon type for unseen item counter for iconId: ${iconId}`);
-            return;
         }
 
-        this._unseenItemCounters.set(iconId, count);
+        let counter = (this._unseenItemCounters.get(iconId) ?? null) as IWindowContainer | null;
+
+        if(!counter && iconName && this._window && this._windowManager)
+        {
+            const created = this._windowManager.createUnseenItemCounter();
+
+            if(created && iconName)
+            {
+                const iconWindow = (this._window as IWindowContainer).findChildByName(iconName) as IWindowContainer | null;
+
+                if(iconWindow)
+                {
+                    if(iconId === 'HTIE_ICON_MEMENU')
+                    {
+                        created.setParamFlag(16, false);
+                    }
+
+                    iconWindow.addChild(created as unknown as IWindow);
+                    (created as unknown as IWindow).x = iconWindow.width - (created as unknown as IWindow).width - BottomBarLeft.COUNTER_MARGIN;
+                    (created as unknown as IWindow).y = 0;
+                    this._unseenItemCounters.set(iconId, created);
+                    counter = created;
+                }
+            }
+        }
+
+        return counter ?? null;
+    }
+
+    /**
+     * Get the toolbar state most recently applied by setToolbarState()
+     * (HTE_STATE_COLLAPSED does not overwrite it - see setToolbarState()).
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getToolbarState()
+     */
+    public getToolbarState(): string
+    {
+        return this._lastState;
+    }
+
+    /**
+     * Get the toolbar icon window for an icon identifier.
+     *
+     * AS3's own name for this method ("geIcon", not "getIcon") is kept in the
+     * trace comment only - the TS method is spelled correctly.
+     *
+     * TODO(AS3): AS3 falls back to memenu.getIcon()/progmenu.getIcon() when the
+     * direct window lookup misses - MeMenuNewController/ProgMenuController have
+     * no getIcon() in this port yet, so that inner fallback is not reproduced.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::geIcon()
+     */
+    public getIcon(iconId: string): IWindow | null
+    {
+        const iconName = this.getIconChildName(iconId);
+
+        if(!iconName || !this._window) return null;
+
+        return (this._window as IWindowContainer).findChildByName(iconName);
+    }
+
+    /**
+     * React to a wired-menu preference change: shows/hides the WIRED_MENU
+     * toolbar icon based on the room-events module's current permission.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onWiredMenuEvent()
+     */
+    public onWiredMenuEvent(eventType: string): void
+    {
+        if(eventType === 'WIRED_MENU_BUTTON_PREFERENCE_CHANGED' && this._window)
+        {
+            const iconName = HabboToolbarIconEnum.getIconName('HTIE_ICON_WIRED_MENU');
+            const icon = iconName ? (this._window as IWindowContainer).findChildByName(iconName) : null;
+
+            if(icon)
+            {
+                const roomEvents = this._toolbar!.roomEvents;
+
+                icon.visible = roomEvents != null && roomEvents.showToolbarMenuButton();
+            }
+        }
+
+        this.checkSize();
     }
 
     /**
@@ -825,7 +944,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as onIconHoverMouseEvent()
      */
-    private onIconHoverMouseEvent = (event: WindowEvent): void => 
+    private onIconHoverMouseEvent = (event: WindowEvent): void =>
     {
         const target = event.window as unknown as IWindowContainer;
 
@@ -834,18 +953,59 @@ export class BottomBarLeft
         const iconBorder = target.findChildByTag?.('ICON_BORDER') as IWindowContainer | null;
         const iconBmp = target.findChildByTag?.('ICON_BMP') ?? null;
 
-        switch(event.type) 
+        switch(event.type)
         {
             case WindowMouseEvent.OVER:
                 this.setIconHoverState(iconBmp, BottomBarLeft.ICON_MOUSE_OVER);
                 this.setIconBgHoverState(iconBorder, BottomBarLeft.ICON_MOUSE_OVER);
+
+                if((event.window as unknown as IWindow)?.name === 'NAVIGATOR')
+                {
+                    this.onNaviHover(event);
+                }
                 break;
             case WindowMouseEvent.OUT:
                 this.setIconHoverState(iconBmp, BottomBarLeft.ICON_MOUSE_OUT);
                 this.setIconBgHoverState(iconBorder, BottomBarLeft.ICON_MOUSE_OUT);
+
+                if((event.window as unknown as IWindow)?.name === 'NAVIGATOR')
+                {
+                    this.onNaviHover(event);
+                }
                 break;
         }
     };
+
+    /**
+     * Show/hide the navigator's toolbar hover preview when the NAVIGATOR icon
+     * is hovered.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onNaviHover()
+     */
+    private onNaviHover(event: WindowEvent): void
+    {
+        const navigator = this._toolbar!.newNavigator;
+
+        if(!navigator) return;
+
+        switch(event.type)
+        {
+            case WindowMouseEvent.OVER:
+            {
+                const rect = this.getIconLocation('HTIE_ICON_NAVIGATOR');
+
+                if(rect)
+                {
+                    navigator.showToolbarHover({x: rect.x + rect.width + 15, y: rect.y});
+                }
+
+                break;
+            }
+            case WindowMouseEvent.OUT:
+                navigator.hideToolbarHover(true);
+                break;
+        }
+    }
 
     /**
      * Swap the icon bitmap asset between _normal and _hover.

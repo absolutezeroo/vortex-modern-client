@@ -2,6 +2,7 @@ import type {EventEmitter} from 'eventemitter3';
 import type {Motion} from '@core/window/motion/Motion';
 import type {IExtensionView} from './IExtensionView';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
+import type {IWindow} from '@core/window/IWindow';
 
 /**
  * Interface for the Habbo toolbar component
@@ -98,4 +99,18 @@ export interface IHabboToolbar
 	 * @see sources/win63_version/habbo/toolbar/IHabboToolbar.as createTransitionToIcon()
 	 */
     createTransitionToIcon(iconId: string, bitmap: ImageBitmap | null, startX: number, startY: number): Motion | null;
+
+    /**
+	 * Get the toolbar icon window for an icon identifier
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/IHabboToolbar.as::getIcon()
+	 */
+    getIcon(iconId: string): IWindow | null;
+
+    /**
+	 * Refresh the purse area's indicators (currency/club icons)
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/IHabboToolbar.as::refreshPurseAreaIndicators()
+	 */
+    refreshPurseAreaIndicators(): void;
 }

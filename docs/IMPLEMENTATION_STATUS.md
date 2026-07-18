@@ -199,6 +199,29 @@ a *different* AS3 message at header 699 (an extra int on the wire; dormant only 
 it) — 699 and 3771 are now two composers, as AS3 has. And `furniture_extra` was declared in AS3 and
 written nowhere in the port.
 
+**Majors: toolbar/quest cluster (8 filed, 6 fixed, 2 already-fixed-by-the-time-they-were-read).**
+`HabboToolbar.ts` was missing 12 of its 14 AS3 public members (`navigator`/`questEngine` already
+existed) — added `getIcon()`, `refreshPurseAreaIndicators()`, `getToolbarState()`,
+`setUnseenItemCount()`, `onClubChanged()`, `createAndAttachDimmerWindow()`/`removeDimmer()`, and
+`get soundManager/connection/freeFlowChat/messenger/roomEvents`, plus the dependency wiring each
+needs. `soundManager`/`messenger`/`roomEvents` stay dormant (no `HabboSoundManager`/`HabboMessenger`/
+wired-events module is attached against those IIDs yet — `IHabboUserDefinedRoomEvents.ts` already
+documented this), matching this doc's own `RoomManager`-DI precedent: the correct member exists,
+its producer doesn't yet. `BottomBarLeft.ts`'s `setToolbarState()` had `WIRED_MENU`'s visibility
+hardcoded to `false`; now reads `toolbar.roomEvents?.showToolbarMenuButton()` like AS3 (currently
+always `null`, for the same reason). `onNaviHover()` was entirely absent — added, routed through a
+new `HabboToolbar.newNavigator` bridge getter, because this port wires the legacy `navigator` getter
+directly off `IID_HabboNavigator` where AS3's returns `_newNavigator.legacyNavigator` (the object
+that actually implements `showToolbarHover()`/`hideToolbarHover()`). `setUnseenItemCount()` wrote into
+a `Map` nobody read; now creates/positions/shows the real counter window via the already-existing
+`windowManager.createUnseenItemCounter()`. Two filed findings (`onNaviHover`'s toolbar listener and
+`showAchievements()`→`achievementController.show()`) were already fixed by the time they were read —
+confirms the mandate's "verify against source" rule again. `HabboQuestEngine.goToQuestRooms()` fired
+`"navigator/goto/quest_rooms"` with no handler anywhere; now reads `quests.<prefix>.roomids`, picks a
+room at random, and calls the real `navigator.goToRoom()`. `showQuests()` is left as a documented gap
+(`emit('showQuests')` had no listener either, and `QuestController`'s `QuestsList` window — its
+target — isn't ported, per that class's own notes) rather than papered over.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

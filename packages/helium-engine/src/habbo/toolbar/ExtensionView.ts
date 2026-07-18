@@ -214,18 +214,29 @@ export class ExtensionView implements IExtensionView
         this.queueResizeEvent();
     }
 
-    public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null 
+    public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null
     {
-        if(iconId === 'HTIE_EXT_GROUP') 
+        if(iconId === 'HTIE_EXT_GROUP')
         {
             const window = this._items.get('room_group_info') ?? null;
 
-            if(window !== null && window.visible) 
+            if(window !== null && window.visible)
             {
                 const rect = {x: 0, y: 0, width: 0, height: 0};
                 window.getGlobalRectangle(rect);
                 return rect;
             }
+        }
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::getIcon()
+    public getIcon(iconId: string): IWindow | null
+    {
+        if(iconId === 'HTIE_EXT_GROUP')
+        {
+            return this._items.get('room_group_info') ?? null;
         }
 
         return null;

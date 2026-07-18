@@ -9,9 +9,15 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
+import {IID_HabboNewNavigator} from '@iid/IIDHabboNewNavigator';
+import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
+import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
+import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
+import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
 import type {IHabboToolbar} from './IHabboToolbar';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IExtensionView} from './IExtensionView';
+import type {IWindow} from '@core/window/IWindow';
 import type {IHabboCommunicationManager} from '../communication/IHabboCommunicationManager';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
@@ -21,8 +27,13 @@ import type {IHabboLocalizationManager} from '../localization/IHabboLocalization
 import type {IHabboCatalog} from '../catalog/IHabboCatalog';
 import type {IHabboQuestEngine} from '../quest/IHabboQuestEngine';
 import type {IHabboNavigator} from '../navigator/IHabboNavigator';
+import type {IHabboNewNavigator} from '../navigator/IHabboNewNavigator';
+import type {IHabboFreeFlowChat} from '../freeflowchat/IHabboFreeFlowChat';
+import type {IHabboMessenger} from '../messenger/IHabboMessenger';
+import type {IHabboUserDefinedRoomEvents} from '../roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import type {IConnection} from '@core/communication/connection/IConnection';
 import {BottomBarLeft} from './BottomBarLeft';
 import {BottomBackgroundBorder} from './BottomBackgroundBorder';
 import {ExtensionView} from './ExtensionView';
@@ -39,6 +50,7 @@ import {VideoOfferExtension} from './extensions/VideoOfferExtension';
 import {OfferExtension} from './offers/OfferExtension';
 import {EventLogMessageComposer} from '../communication/messages/outgoing/tracking/EventLogMessageComposer';
 import {PurseEvent} from '../catalog/purse/PurseEvent';
+import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import type {Motion} from '@core/window/motion/Motion';
 import {Logger} from '@core/utils/Logger';
 import {IID_HabboConfigurationManager} from "@iid/IIDHabboConfigurationManager";
@@ -82,6 +94,27 @@ export class HabboToolbar extends Component implements IHabboToolbar
     private _questEngine: IHabboQuestEngine | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_navigator
     private _navigator: IHabboNavigator | null = null;
+    // TS-only bridge: AS3's `get navigator()` returns `_newNavigator.legacyNavigator` -
+    // the same underlying object that implements showToolbarHover()/hideToolbarHover().
+    // This port wires `_navigator` directly off IID_HabboNavigator (the legacy
+    // interface, which has no hover methods) instead of through that indirection, so
+    // BottomBarLeft.onNaviHover() needs a separate route to the object that actually
+    // has them - see IHabboNewNavigator.
+    private _newNavigator: IHabboNewNavigator | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_soundManager
+    // No concrete HabboSoundManager exists in this port yet (no habbo/sound module) -
+    // this stays null until one is attached against IID_HabboSoundManager.
+    private _soundManager: unknown | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_freeFlowChat
+    private _freeFlowChat: IHabboFreeFlowChat | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_messenger
+    // No concrete HabboMessenger is attached against IID_HabboMessenger in this port
+    // yet (only the interface is ported) - stays null until one is.
+    private _messenger: IHabboMessenger | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_roomEvents
+    // IHabboUserDefinedRoomEvents itself documents that no concrete implementation
+    // exists yet (the wired/competition-scripting module isn't ported) - stays null.
+    private _roomEvents: IHabboUserDefinedRoomEvents | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
     private _extensionView: ExtensionView | null = null;
@@ -97,6 +130,17 @@ export class HabboToolbar extends Component implements IHabboToolbar
     // AS3: sources/win63_version/habbo/toolbar/HabboToolbar.as::roomUI
     private _roomUI: IRoomUI | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::HabboToolbar()
+    // AS3's constructor attaches 3 components here: HabboPhoneNumber/IIDHabboPhoneNumber,
+    // HabboNuxDialogs/IIDHabboNuxDialogs, HabboCampaigns/IIDHabboCampaigns.
+    // - HabboCampaigns IS attached (against the correct IID) - see HeliumMain.ts
+    //   "12b. Campaign Calendar", which documents this exact AS3 call site and moves it
+    //   to the bootstrap sequence instead, since HabboCampaigns' own dependencies need
+    //   to resolve independent of the toolbar's lazy BottomBarLeft construction.
+    // - HabboNuxDialogs and HabboPhoneNumber have no concrete implementation in this
+    //   port (only their IIDs and empty placeholder directories exist under
+    //   habbo/nux and habbo/phonenumber) - attaching stub instances here would be
+    //   inventing modules that don't exist, so there is nothing to attach yet.
     constructor(context: IContext)
     {
         super(context);
@@ -219,6 +263,43 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._navigator;
     }
 
+    // TS-only: see the `_newNavigator` field comment - bridges BottomBarLeft.onNaviHover()
+    // to the object that implements showToolbarHover()/hideToolbarHover() in this port.
+    get newNavigator(): IHabboNewNavigator | null
+    {
+        return this._newNavigator;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get soundManager()
+    get soundManager(): unknown | null
+    {
+        return this._soundManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get connection()
+    get connection(): IConnection | null
+    {
+        return this._communication?.connection ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get freeFlowChat()
+    get freeFlowChat(): IHabboFreeFlowChat | null
+    {
+        return this._freeFlowChat;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get messenger()
+    get messenger(): IHabboMessenger | null
+    {
+        return this._messenger;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get roomEvents()
+    get roomEvents(): IHabboUserDefinedRoomEvents | null
+    {
+        return this._roomEvents;
+    }
+
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
@@ -293,7 +374,16 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 {
                     this._inventory = manager;
                 },
-                true
+                true,
+                [{
+                    // AS3: HIHCE_HABBO_CLUB_CHANGED - dispatched by the club-status
+                    // message handler after HabboInventory.setClubStatus(). That
+                    // handler is not ported yet (communication/ scope), so this
+                    // listener is currently dormant, matching this port's own
+                    // documented precedent for other not-yet-wired producers.
+                    type: 'HIHCE_HABBO_CLUB_CHANGED',
+                    callback: this.onClubChanged.bind(this)
+                }]
             ),
             new ComponentDependency(
                 IID_HabboLocalizationManager,
@@ -365,6 +455,60 @@ export class HabboToolbar extends Component implements IHabboToolbar
                     this._avatarRenderManager = manager;
                 },
                 false
+            ),
+            // TS-only: see the `_newNavigator` field comment - not an AS3 dependency
+            // entry of its own (AS3 wires IIDHabboNewNavigator the same way, but this
+            // port's own IID_HabboNavigator dependency above already covers the
+            // AS3-declared `_navigator` field).
+            new ComponentDependency(
+                IID_HabboNewNavigator,
+                (navigator: IHabboNewNavigator | null) =>
+                {
+                    this._newNavigator = navigator;
+                },
+                false
+            ),
+            // AS3: no concrete HabboSoundManager module exists in this port yet -
+            // optional and dormant until one is attached against this IID.
+            new ComponentDependency(
+                IID_HabboSoundManager,
+                (manager: unknown | null) =>
+                {
+                    this._soundManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboFreeFlowChat,
+                (freeFlowChat: IHabboFreeFlowChat | null) =>
+                {
+                    this._freeFlowChat = freeFlowChat;
+                },
+                false
+            ),
+            // AS3: no concrete HabboMessenger is attached against this IID yet -
+            // optional and dormant (see the `_messenger` field comment).
+            new ComponentDependency(
+                IID_HabboMessenger,
+                (messenger: IHabboMessenger | null) =>
+                {
+                    this._messenger = messenger;
+                },
+                false
+            ),
+            // AS3: no concrete IHabboUserDefinedRoomEvents implementation exists yet -
+            // optional and dormant (see the `_roomEvents` field comment).
+            new ComponentDependency(
+                IID_HabboUserDefinedRoomEvents,
+                (roomEvents: IHabboUserDefinedRoomEvents | null) =>
+                {
+                    this._roomEvents = roomEvents;
+                },
+                false,
+                [{
+                    type: 'WIRED_MENU_BUTTON_PREFERENCE_CHANGED',
+                    callback: this.onWiredMenuEvent.bind(this)
+                }]
             ),
         ];
     }
@@ -566,6 +710,167 @@ export class HabboToolbar extends Component implements IHabboToolbar
         }
 
         return null;
+    }
+
+    /**
+	 * Get the toolbar icon window for an icon identifier.
+	 *
+	 * AS3 checks HTIE_EXT_GROUP against the extension view first, then
+	 * BottomBarLeft (unwrapping a static-bitmap icon to its parent region),
+	 * then falls back to the purse area extension.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::getIcon()
+	 */
+    getIcon(iconId: string): IWindow | null
+    {
+        let icon: IWindow | null = null;
+
+        if(iconId === 'HTIE_EXT_GROUP')
+        {
+            icon = this._extensionView?.getIcon(iconId) ?? null;
+        }
+        else if(this._bottomBarLeft)
+        {
+            icon = this._bottomBarLeft.getIcon(iconId);
+
+            if(icon && (icon as unknown as {assetUri?: unknown}).assetUri !== undefined)
+            {
+                icon = icon.parent;
+            }
+        }
+
+        if(!icon && this._purseAreaExtension)
+        {
+            icon = this._purseAreaExtension.getIcon(iconId);
+        }
+
+        return icon;
+    }
+
+    /**
+	 * Refresh the purse area's indicators (currency/club icons)
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::refreshPurseAreaIndicators()
+	 */
+    refreshPurseAreaIndicators(): void
+    {
+        this._purseAreaExtension?.refreshIndicators();
+    }
+
+    /**
+	 * Get the current toolbar state as last applied by setToolbarState()
+	 * (HTE_STATE_COLLAPSED does not overwrite it - see BottomBarLeft.setToolbarState()).
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::getToolbarState()
+	 */
+    getToolbarState(): string
+    {
+        return this.bottomBarLeft?.getToolbarState() ?? '';
+    }
+
+    /**
+	 * Set the unseen item count for a toolbar icon
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::setUnseenItemCount()
+	 */
+    setUnseenItemCount(iconId: string, count: number): void
+    {
+        this.bottomBarLeft?.setUnseenItemCount(iconId, count);
+    }
+
+    /**
+	 * Create and attach a semi-transparent dimmer window over the given
+	 * window while the new-user room-enter effect is running.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::createAndAttachDimmerWindow()
+	 */
+    createAndAttachDimmerWindow(window: IWindow | null): void
+    {
+        if(!RoomEnterEffect.isRunning() || !window || !this._windowManager) return;
+
+        const dimmer = this._windowManager.createWindow(
+            'toolbar_dimmer',
+            '',
+            30,
+            1,
+            0x80 | 0x0800 | 1,
+            {x: 0, y: 0, width: window.width, height: window.height},
+            null,
+            0
+        );
+
+        dimmer.color = 0;
+        dimmer.blend = 0.3;
+        (window as unknown as {addChild: (child: IWindow) => IWindow}).addChild(dimmer);
+        window.invalidate();
+    }
+
+    /**
+	 * Remove the dimmer window previously attached by createAndAttachDimmerWindow().
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::removeDimmer()
+	 */
+    removeDimmer(window: IWindow | null): void
+    {
+        if(!window) return;
+
+        const container = window as unknown as {
+            findChildByName: (name: string) => IWindow | null;
+            removeChild: (child: IWindow) => IWindow | null;
+        };
+        const dimmer = container.findChildByName('toolbar_dimmer');
+
+        if(dimmer)
+        {
+            container.removeChild(dimmer);
+            window.invalidate();
+            this._windowManager?.destroy(dimmer);
+        }
+    }
+
+    /**
+	 * React to the Habbo Club status changing: forwards to every extension
+	 * that displays club-dependent UI. The event itself carries no data (AS3:
+	 * `new HabboInventoryHabboClubEvent()`), so the current values are read
+	 * from the inventory's purse state at call time.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onClubChanged()
+	 */
+    onClubChanged(): void
+    {
+        const purse = this._inventory?.purse;
+
+        this._purseAreaExtension?.getClubArea()?.onClubChanged();
+        this._citizenshipVipDiscountPromoExtension?.onClubChanged(
+            purse?.citizenshipVipIsExpiring ?? false,
+            purse?.minutesUntilExpiration ?? 0
+        );
+
+        if(this._inventory)
+        {
+            this._videoOfferExtension?.onClubChanged();
+            this._clubDiscountPromoExtension?.onClubChanged(
+                purse?.clubIsExpiring ?? false,
+                purse?.minutesUntilExpiration ?? 0,
+                this._inventory.clubLevel
+            );
+        }
+    }
+
+    /**
+	 * Forward a wired-menu preference change to BottomBarLeft.
+	 *
+	 * This dependency listener is only ever invoked for
+	 * WIRED_MENU_BUTTON_PREFERENCE_CHANGED (see the dependencies getter above),
+	 * so the type is passed through as a literal rather than read off the args
+	 * (the DI dispatch here doesn't carry a typed event payload - see
+	 * RoomSessionManager.onRoomEngineInitialized() for the same convention).
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onWiredMenuEvent()
+	 */
+    private onWiredMenuEvent(..._args: unknown[]): void
+    {
+        this._bottomBarLeft?.onWiredMenuEvent('WIRED_MENU_BUTTON_PREFERENCE_CHANGED');
     }
 
     /**
