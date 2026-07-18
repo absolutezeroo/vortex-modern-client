@@ -129,7 +129,11 @@ export class FurnitureBadgeDisplayVisualization extends AnimatedFurnitureVisuali
     {
         if(sprite.tag === FurnitureBadgeDisplayVisualization.BADGE_SPRITE_TAG)
         {
-            return '%image.library.url%album1584/' + sprite.assetName.replace('badge_', '') + '.png';
+            // AS3's crypted tree says ".png" here, but PRODUCTION (2016, unobfuscated) says
+            // ".gif", and real badge assets are gifs (confirmed empirically) - the crypted
+            // decompiler corrupted this literal (same bug in BadgeImageWidget,
+            // ConcurrentUsersInfoElementHandler, RewardBadgeElementHandler).
+            return '%image.library.url%album1584/' + sprite.assetName.replace('badge_', '') + '.gif';
         }
 
         return super.getLibraryAssetNameForSprite(asset, sprite);

@@ -178,14 +178,18 @@ export class BadgeImageWidget implements IBadgeImageWidget
     }
 
     // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
-    public get assetUri(): string 
+    public get assetUri(): string
     {
         if(!this._badgeId || this._badgeId.length === 0) return '';
 
-        switch(this._type) 
+        switch(this._type)
         {
             case 'normal':
-                return '${image.library.url}album1584/' + this._badgeId + '.png';
+                // Both crypted trees (WIN63-202607011411 and win63_version) say ".png" here,
+                // but the unobfuscated 2016 PRODUCTION tree says ".gif", and real badge
+                // assets are gifs (confirmed empirically) - the crypted decompiler corrupted
+                // this literal in both trees. Using the real extension, not the crypted one.
+                return '${image.library.url}album1584/' + this._badgeId + '.gif';
             case 'group': {
                 // AS3: sources/win63_version/habbo/window/widgets/BadgeImageWidget.as::get assetUri()
                 // AS3: _windowManager.getProperty("group.badge.url").replace("%imagerdata%", _badgeId)

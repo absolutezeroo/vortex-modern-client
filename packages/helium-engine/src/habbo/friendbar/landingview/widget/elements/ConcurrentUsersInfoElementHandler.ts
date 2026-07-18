@@ -88,7 +88,11 @@ export class ConcurrentUsersInfoElementHandler implements IElementHandler, IDisp
 
         if(badgeImage)
         {
-            badgeImage.assetUri = '${image.library.url}album1584/' + badgeName + '.png';
+            // AS3's crypted tree says ".png" here, but the unobfuscated 2016 PRODUCTION
+            // tree says ".gif", and real badge assets are gifs (confirmed empirically) -
+            // the crypted decompiler corrupted this literal (same bug in BadgeImageWidget,
+            // RewardBadgeElementHandler, FurnitureBadgeDisplayVisualization).
+            badgeImage.assetUri = '${image.library.url}album1584/' + badgeName + '.gif';
         }
 
         this.updateLocalization();

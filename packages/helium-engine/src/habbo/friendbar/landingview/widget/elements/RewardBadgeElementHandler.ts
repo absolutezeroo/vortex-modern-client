@@ -27,7 +27,11 @@ export class RewardBadgeElementHandler implements IElementHandler
         }
 
         const badgeImage = container.findChildByName('badge_image') as IStaticBitmapWrapperWindow | null;
-        const assetUri = '${image.library.url}album1584/' + params[1] + '.png';
+        // AS3's crypted tree says ".png" here, but PRODUCTION (2016, unobfuscated) says
+        // ".gif", and real badge assets are gifs (confirmed empirically) - the crypted
+        // decompiler corrupted this literal (same bug in BadgeImageWidget,
+        // ConcurrentUsersInfoElementHandler, FurnitureBadgeDisplayVisualization).
+        const assetUri = '${image.library.url}album1584/' + params[1] + '.gif';
 
         log.debug('IMAGE: ' + assetUri);
 
