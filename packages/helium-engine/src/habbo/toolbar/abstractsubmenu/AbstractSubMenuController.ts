@@ -29,13 +29,18 @@ export class AbstractSubMenuController implements IDisposable
     private static readonly OUT_TEXT_COLOR: number = 16777215;
     private static readonly UNSEEN_COUNTER_MARGIN: number = 5;
 
+    // AS3: AbstractSubMenuController.as::_toolbar
     private _toolbar: HabboToolbar | null;
+    // AS3: AbstractSubMenuController.as::_SafeStr_4650
     private _toolbarView: BottomBarLeft | null;
+    // AS3: AbstractSubMenuController.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: AbstractSubMenuController.as::_unseenItemCounters
     private _unseenItemCounters: Map<string, IWindowContainer> = new Map();
+    // AS3: AbstractSubMenuController.as::_SafeStr_8544
     private readonly _iconId: string;
-    // Bound once so the same reference can be used for both `.on()` and `.off()` while
-    // still dispatching through the prototype chain (so subclass overrides fire).
+    // TS-only: bound once so the same reference can be used for both `.on()` and `.off()`
+    // while still dispatching through the prototype chain (so subclass overrides fire).
     private readonly _onToolbarClickBound = this.onToolbarClick.bind(this);
 
     // AS3: AbstractSubMenuController.as::AbstractSubMenuController()
@@ -59,28 +64,34 @@ export class AbstractSubMenuController implements IDisposable
         this._window.procedure = this.windowProcedure.bind(this);
     }
 
+    // AS3: AbstractSubMenuController.as::_disposed
     private _disposed: boolean = false;
 
+    // AS3: AbstractSubMenuController.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
     }
 
+    // AS3: AbstractSubMenuController.as::get toolbar()
     protected get toolbar(): HabboToolbar | null
     {
         return this._toolbar;
     }
 
+    // AS3: AbstractSubMenuController.as::get toolbarView()
     protected get toolbarView(): BottomBarLeft | null
     {
         return this._toolbarView;
     }
 
+    // AS3: AbstractSubMenuController.as::get window()
     protected get window(): IFrameWindow | null
     {
         return this._window;
     }
 
+    // AS3: AbstractSubMenuController.as::get unseenItemCounters()
     protected get unseenItemCounters(): Map<string, IWindowContainer>
     {
         return this._unseenItemCounters;
