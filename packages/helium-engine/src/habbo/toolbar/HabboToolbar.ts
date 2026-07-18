@@ -721,6 +721,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::getIcon()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::getIcon()
     getIcon(iconId: string): IWindow | null
     {
         let icon: IWindow | null = null;
@@ -752,6 +753,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::refreshPurseAreaIndicators()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::refreshPurseAreaIndicators()
     refreshPurseAreaIndicators(): void
     {
         this._purseAreaExtension?.refreshIndicators();
@@ -763,6 +765,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::getToolbarState()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::getToolbarState()
     getToolbarState(): string
     {
         return this.bottomBarLeft?.getToolbarState() ?? '';
@@ -773,6 +776,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::setUnseenItemCount()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::setUnseenItemCount()
     setUnseenItemCount(iconId: string, count: number): void
     {
         this.bottomBarLeft?.setUnseenItemCount(iconId, count);
@@ -784,6 +788,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::createAndAttachDimmerWindow()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::createAndAttachDimmerWindow()
     createAndAttachDimmerWindow(window: IWindow | null): void
     {
         if(!RoomEnterEffect.isRunning() || !window || !this._windowManager) return;
@@ -810,6 +815,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::removeDimmer()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::removeDimmer()
     removeDimmer(window: IWindow | null): void
     {
         if(!window) return;
@@ -836,6 +842,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onClubChanged()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onClubChanged()
     onClubChanged(): void
     {
         const purse = this._inventory?.purse;
@@ -868,6 +875,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onWiredMenuEvent()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onWiredMenuEvent()
     private onWiredMenuEvent(..._args: unknown[]): void
     {
         this._bottomBarLeft?.onWiredMenuEvent('WIRED_MENU_BUTTON_PREFERENCE_CHANGED');

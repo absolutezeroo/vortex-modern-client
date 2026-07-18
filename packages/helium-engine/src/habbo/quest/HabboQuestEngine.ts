@@ -449,6 +449,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::hasQuestRoomsIds()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::hasQuestRoomsIds()
     hasQuestRoomsIds(): boolean
     {
         const ids = this.getQuestRoomIds();

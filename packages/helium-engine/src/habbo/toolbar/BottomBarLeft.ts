@@ -471,6 +471,7 @@ export class BottomBarLeft
      * @param count The count to display
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::setUnseenItemCount()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::setUnseenItemCount()
     public setUnseenItemCount(iconId: string, count: number): void
     {
         const counter = this.getUnseenItemCounter(iconId);
@@ -498,6 +499,7 @@ export class BottomBarLeft
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getUnseenItemCounter()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getUnseenItemCounter()
     public getUnseenItemCounter(iconId: string): IWindowContainer | null
     {
         const iconName = HabboToolbarIconEnum.getIconName(iconId);
@@ -542,6 +544,7 @@ export class BottomBarLeft
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getToolbarState()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getToolbarState()
     public getToolbarState(): string
     {
         return this._lastState;
@@ -559,6 +562,7 @@ export class BottomBarLeft
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::geIcon()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::geIcon()
     public getIcon(iconId: string): IWindow | null
     {
         const iconName = this.getIconChildName(iconId);
@@ -574,6 +578,7 @@ export class BottomBarLeft
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onWiredMenuEvent()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onWiredMenuEvent()
     public onWiredMenuEvent(eventType: string): void
     {
         if(eventType === 'WIRED_MENU_BUTTON_PREFERENCE_CHANGED' && this._window)
@@ -944,6 +949,7 @@ export class BottomBarLeft
      *
      * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as onIconHoverMouseEvent()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onIconHoverMouseEvent()
     private onIconHoverMouseEvent = (event: WindowEvent): void =>
     {
         const target = event.window as unknown as IWindowContainer;
@@ -982,6 +988,7 @@ export class BottomBarLeft
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onNaviHover()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onNaviHover()
     private onNaviHover(event: WindowEvent): void
     {
         const navigator = this._toolbar!.newNavigator;

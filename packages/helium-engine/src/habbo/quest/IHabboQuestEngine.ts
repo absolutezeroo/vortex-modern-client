@@ -58,6 +58,7 @@ export interface IHabboQuestEngine extends ILinkEventTracker
     /**
 	 * Whether the current seasonal campaign has any quest room IDs configured
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::hasQuestRoomsIds()
     hasQuestRoomsIds(): boolean;
 
     /**

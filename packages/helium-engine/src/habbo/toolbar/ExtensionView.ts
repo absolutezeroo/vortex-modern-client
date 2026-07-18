@@ -214,6 +214,7 @@ export class ExtensionView implements IExtensionView
         this.queueResizeEvent();
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::getIconLocation()
     public getIconLocation(iconId: string): { x: number; y: number; width: number; height: number } | null
     {
         if(iconId === 'HTIE_EXT_GROUP')

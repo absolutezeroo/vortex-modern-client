@@ -105,6 +105,7 @@ export interface IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/IHabboToolbar.as::getIcon()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/IHabboToolbar.as::getIcon()
     getIcon(iconId: string): IWindow | null;
 
     /**
@@ -112,5 +113,6 @@ export interface IHabboToolbar
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/IHabboToolbar.as::refreshPurseAreaIndicators()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/IHabboToolbar.as::refreshPurseAreaIndicators()
     refreshPurseAreaIndicators(): void;
 }
