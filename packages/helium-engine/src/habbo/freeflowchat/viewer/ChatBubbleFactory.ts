@@ -102,7 +102,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
         this.applySpecialChatContent(item, name);
 
         const style: IChatStyleInternal = this._chatStyleLibrary?.getStyle(item.style) ?? new BlankStyle();
-        const {face, color} = this.resolveFaceAndColor(item, style, userData);
+        const {face, color} = this.resolveFaceAndColor(item, style, userData, false);
 
         let bubble = this._pool.pop();
 
@@ -188,7 +188,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
             canIgnore = false;
         }
 
-        const {face, color} = this.resolveFaceAndColor(item, style, userData);
+        const {face, color} = this.resolveFaceAndColor(item, style, userData, true);
         const chatBubble = new ChatBubble(item, style, face, name, item.forcedColor ? (item.forcedColor >>> 0) : color, this._chatFlow, 1);
         const bitmap = await chatBubble.toImageBitmap();
 
@@ -198,9 +198,11 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getNewChatBubble()
-    // and ::getHistoryLineEntry() share this exact face/color resolution inline in AS3
-    // (duplicated in both methods there); factored out here since it's identical logic.
-    private resolveFaceAndColor(item: ChatItem, style: IChatStyleInternal, userData: IUserData | null): {face: ImageBitmap | null; color: number}
+    // and ::getHistoryLineEntry() resolve the face/color with *different* switches, not
+    // identical logic: getNewChatBubble (history=false) images only users (type 1) and
+    // pets (type 2, pet flag true); getHistoryLineEntry (history=true) also gives bots and
+    // rentable bots (types 3/4) getUserImage, and builds pets with the pet flag false.
+    private resolveFaceAndColor(item: ChatItem, style: IChatStyleInternal, userData: IUserData | null, history: boolean): {face: ImageBitmap | null; color: number}
     {
         let face: ImageBitmap | null = style instanceof ChatStyle ? style.iconImage : null;
         let color = 0;
@@ -227,9 +229,15 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
                         const roomObject = this._chatFlow?.roomEngine?.getRoomObject(item.roomId, userData.roomObjectId, 100) ?? null;
                         const posture = roomObject?.getModel().getString('figure_posture') ?? null;
 
-                        face = this.getPetImage(figure, 2, true, 32, posture);
+                        // AS3 pet flag: true in getNewChatBubble, false in getHistoryLineEntry.
+                        face = this.getPetImage(figure, 2, !history, 32, posture);
                         break;
                     }
+                    case 2:
+                    case 3:
+                        // AS3 gives bots / rentable bots a user image only in the history switch.
+                        if(history) face = this.getUserImage(figure);
+                        break;
                 }
             }
         }
