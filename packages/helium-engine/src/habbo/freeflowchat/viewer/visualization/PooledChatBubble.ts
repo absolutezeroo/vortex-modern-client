@@ -245,7 +245,10 @@ export class PooledChatBubble extends Container
 
             if(style.isNotification)
             {
-                this._faceSprite.y = Math.max(1, contentHeight / 2 - faceBitmap.height / 2);
+                // AS3 (PooledChatBubble.as:257-265) centres on the full measured bubble
+                // height (this.height), not the content box, and nudges x back half a pixel.
+                this._faceSprite.y = Math.max(1, this.height / 2 - faceBitmap.height / 2);
+                this._faceSprite.x -= 0.5;
 
                 if(!style.isAnonymous) this._faceSprite.y -= this._pointer.texture.height / 2 - 1;
             }

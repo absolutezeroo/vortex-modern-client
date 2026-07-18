@@ -327,7 +327,22 @@ export class ChatStyleLibrary implements IChatStyleLibrary, IDisposable
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyleIds()
     getStyleIds(): number[]
     {
-        return Array.from(this._styleAttributes.keys());
+        // AS3 builds every style eagerly at init inside a try/catch and adds only the
+        // ones that succeed, so getStyleIds() returns buildable styles only. The lazy
+        // port listed every catalog attribute key, including styles whose buildStyle()
+        // throws — the style selector then showed empty previews. Build each here
+        // (results are cached in _styles) and keep only the ones that construct.
+        const ids: number[] = [];
+
+        for(const id of this._styleAttributes.keys())
+        {
+            if(this.buildStyle(id) !== null)
+            {
+                ids.push(id);
+            }
+        }
+
+        return ids;
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/style/ChatStyleLibrary.as::getStyle()
