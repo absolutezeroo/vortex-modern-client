@@ -8,6 +8,7 @@ import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
+import {IID_HabboNavigator} from '@iid/IIDHabboNavigator';
 import type {IHabboToolbar} from './IHabboToolbar';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IExtensionView} from './IExtensionView';
@@ -19,6 +20,7 @@ import type {IHabboInventory} from '../inventory/IHabboInventory';
 import type {IHabboLocalizationManager} from '../localization/IHabboLocalizationManager';
 import type {IHabboCatalog} from '../catalog/IHabboCatalog';
 import type {IHabboQuestEngine} from '../quest/IHabboQuestEngine';
+import type {IHabboNavigator} from '../navigator/IHabboNavigator';
 import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {BottomBarLeft} from './BottomBarLeft';
@@ -78,6 +80,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     private _inventory: IHabboInventory | null = null;
     private _catalog: IHabboCatalog | null = null;
     private _questEngine: IHabboQuestEngine | null = null;
+    private _navigator: IHabboNavigator | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
     private _extensionView: ExtensionView | null = null;
@@ -209,6 +212,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
         return this._questEngine;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::get navigator()
+    get navigator(): IHabboNavigator | null
+    {
+        return this._navigator;
+    }
+
     get localization(): IHabboLocalizationManager | null
     {
         return this._localization;
@@ -298,6 +307,14 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 (manager: IHabboCatalog | null) =>
                 {
                     this._catalog = manager;
+                },
+                true
+            ),
+            new ComponentDependency(
+                IID_HabboNavigator,
+                (navigator: IHabboNavigator | null) =>
+                {
+                    this._navigator = navigator;
                 },
                 true
             ),
