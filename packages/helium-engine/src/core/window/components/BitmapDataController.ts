@@ -70,11 +70,13 @@ export class BitmapDataController extends WindowController
     /**
      * Whether the bitmap is stretched horizontally.
      */
+    // AS3: BitmapDataController.as::get stretchedX()
     public get stretchedX(): boolean
     {
         return this._stretchedX;
     }
 
+    // AS3: BitmapDataController.as::set stretchedX()
     public set stretchedX(value: boolean)
     {
         this._stretchedX = value;
