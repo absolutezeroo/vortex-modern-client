@@ -13,6 +13,9 @@ import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
+import {GetQuestsMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetQuestsMessageComposer';
+import {GetSeasonalQuestsOnlyMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetSeasonalQuestsOnlyMessageComposer';
+import {ActivateQuestMessageComposer} from '@habbo/communication/messages/outgoing/quest/ActivateQuestMessageComposer';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
@@ -309,9 +312,8 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 */
     requestQuests(): void
     {
-        // send(new GetQuestsMessageComposer());
-        // Composer will be imported once available
-        log.debug('Requesting quests');
+        // The composer exists; the "once available" comment was stale, so this sent nothing.
+        this.send(new GetQuestsMessageComposer());
     }
 
     /**
@@ -319,9 +321,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 */
     requestSeasonalQuests(): void
     {
-        // send(new GetSeasonalQuestsOnlyMessageComposer());
-        // Composer will be imported once available
-        log.debug('Requesting seasonal quests');
+        this.send(new GetSeasonalQuestsOnlyMessageComposer());
     }
 
     /**
@@ -331,9 +331,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 	 */
     activateQuest(questId: number): void
     {
-        // send(new ActivateQuestMessageComposer(questId));
-        // Composer will be imported once available
-        log.debug(`Activating quest: ${questId}`);
+        this.send(new ActivateQuestMessageComposer(questId));
     }
 
     /**
