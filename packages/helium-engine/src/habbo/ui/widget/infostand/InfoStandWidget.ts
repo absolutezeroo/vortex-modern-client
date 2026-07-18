@@ -376,14 +376,7 @@ export class InfoStandWidget extends RoomWidgetBase
     // InfoStandUserView have no badgesRank field yet (same badge glow/preserve-tracking
     // display-polish scope cut as InfoStandUserData.ts's own selectedBadges/badgesRank
     // TODO), so the parameter is accepted for signature parity but not yet applied.
-    public updateUserData(
-        userId: number,
-        figure: string,
-        achievementScore: number,
-        motto: string,
-        mottoEnabled: boolean,
-        _badgesRank: number = -1
-    ): void
+    public updateUserData(userId: number, figure: string, achievementScore: number, motto: string, mottoEnabled: boolean, _badgesRank: number = -1): void
     {
         if(userId !== this._userData.userId) return;
 
