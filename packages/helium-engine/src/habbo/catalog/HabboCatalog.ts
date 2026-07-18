@@ -19,6 +19,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -176,6 +177,8 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // active entry by setActiveCatalogState(); AS3 keeps exactly this shape.
     private _catalogStates: Map<string, CatalogWindowState> | null = null;
     private _catalogNavigators: Map<string, CatalogNavigator> | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_searchTimer
+    private _searchTimer: ReturnType<typeof setTimeout> | null = null;
     private _catalogViewer: CatalogViewer | null = null;
     private _requestedPage: RequestedPage = new RequestedPage();
     private _initialized: boolean = false;
@@ -1751,10 +1754,97 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         {
             searchInput.setSelection(0, searchInput.text.length);
             searchInput.focus();
+
+            // AS3 (HabboCatalog.as:1804-1812) wires the search field and clear button.
+            // The port had never attached them, so typing in the catalog search did
+            // nothing (user-reported). The node search backend (CatalogNavigator.filter)
+            // already exists; this just drives it.
+            searchInput.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchInputEvent);
+            searchInput.addEventListener(WindowKeyboardEvent.KEY_UP, this.onSearchInputEvent);
+
+            const clearButton = window.findChildByName('clear_search_button');
+
+            if(clearButton)
+            {
+                clearButton.addEventListener('WME_CLICK', this.onClearSearch);
+            }
         }
 
         return window;
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onSearchInputEvent()
+    // KEY_DOWN stops the debounce; KEY_UP re-arms it (>= 3 chars), searches immediately on
+    // Enter, and clears when the field empties.
+    private onSearchInputEvent = (event: WindowEvent): void =>
+    {
+        const searchInput = event.target as unknown as ITextFieldWindow | null;
+
+        if(searchInput === null) return;
+
+        if(event.type === WindowKeyboardEvent.KEY_DOWN)
+        {
+            if(this._searchTimer !== null)
+            {
+                clearTimeout(this._searchTimer);
+                this._searchTimer = null;
+            }
+
+            return;
+        }
+
+        const caption = searchInput.text ?? '';
+        const keyCode = (event as WindowKeyboardEvent).keyCode;
+
+        if(caption.length === 0)
+        {
+            this.onClearSearch();
+        }
+        else if(keyCode === 13)
+        {
+            this.performSearch(caption);
+        }
+        else if(caption.length >= 3)
+        {
+            if(this._searchTimer !== null) clearTimeout(this._searchTimer);
+
+            this._searchTimer = setTimeout(() => this.performSearch(caption), 50);
+        }
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::performSearch()
+    private performSearch(query: string): void
+    {
+        if(this._searchTimer !== null)
+        {
+            clearTimeout(this._searchTimer);
+            this._searchTimer = null;
+        }
+
+        if(query.length === 0) return;
+
+        // CatalogNavigator.searchNodesWith matches against a lowercased haystack.
+        this.currentCatalogNavigator?.filter(query.trim().toLowerCase(), []);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onClearSearch()
+    private onClearSearch = (): void =>
+    {
+        if(this._searchTimer !== null)
+        {
+            clearTimeout(this._searchTimer);
+            this._searchTimer = null;
+        }
+
+        const searchInput = this._mainWindow?.findChildByName('search.input') as unknown as ITextFieldWindow | null;
+
+        if(searchInput)
+        {
+            searchInput.text = '';
+        }
+
+        this.currentCatalogNavigator?.showIndex();
+    };
 
     /**
 	 * Builds both catalog types' state up front, as AS3 does — the Builders Club
