@@ -302,16 +302,28 @@ export class PooledChatBubble extends Container
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::moveTo()
     moveTo(x: number, y: number): void
     {
-        this._moveOriginX = this._proxyX;
-        this._moveOriginY = this.y;
-        this._moveTargetX = x;
-        this._moveTargetY = y;
-        this._moveBeginMs = this._timeMs;
+        // AS3 (PooledChatBubble.as:359) only restarts the tween when the target actually
+        // changes. ChatFlowStage.update() calls syncToVisualization() -> moveTo() every
+        // frame with the same target, so without this guard _moveBeginMs was reset to now
+        // each frame, elapsed never grew past a frame delta, and the bubble crept toward
+        // its target geometrically instead of the intended 150 ms linear tween.
+        if(this._moveTargetX !== x || this._moveTargetY !== y)
+        {
+            this._moveOriginX = this._proxyX;
+            this._moveOriginY = this.y;
+            this._moveTargetX = x;
+            this._moveTargetY = y;
+            this._moveBeginMs = this._timeMs;
+        }
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::warpTo()
     warpTo(x: number, y: number): void
     {
+        // AS3 (PooledChatBubble.as:371) also sets the tween target, so a following
+        // moveTo() to the same spot is a no-op (its guard skips) rather than a dead tween.
+        this._moveTargetX = x;
+        this._moveTargetY = y;
         this._moveBeginMs = -1;
         this.proxyX = x;
         this.y = y;
