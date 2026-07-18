@@ -581,6 +581,17 @@ export class AchievementController implements IDisposable
             nameText.caption = this._engine.getAchievementCategoryName(this._selectedCategory.code);
         }
 
+        const progressText = this._achievementsHeaderContainer.findChildByName('category_progress_txt');
+
+        if(progressText !== null)
+        {
+            progressText.caption = this._engine.localization?.getLocalizationWithParams(
+                'achievements.details.categoryprogress', 'achievements.details.categoryprogress',
+                'progress', this._selectedCategory.getProgress().toString(),
+                'limit', this._selectedCategory.getMaxProgress().toString()
+            ) ?? '';
+        }
+
         this._engine.setupAchievementCategoryImage(this._achievementsHeaderContainer, this._selectedCategory, false);
     }
 
