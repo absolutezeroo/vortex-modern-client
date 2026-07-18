@@ -48,6 +48,7 @@ export class UserChangeMessageEventParser implements IMessageParser
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2646.as::badgesRank
     private _badgesRank: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2646.as::get badgesRank()
     get badgesRank(): number
     {
         return this._badgesRank;

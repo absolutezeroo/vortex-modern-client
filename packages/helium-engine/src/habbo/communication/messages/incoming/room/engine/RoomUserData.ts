@@ -199,11 +199,13 @@ export class RoomUserData
     // per-user UserChangeMessageEventParser does).
     private _badgesRank: number = -1;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2262.as::get badgesRank()
     get badgesRank(): number
     {
         return this._badgesRank;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2262.as::set badgesRank()
     set badgesRank(value: number)
     {
         if(!this._readOnly) this._badgesRank = value;
