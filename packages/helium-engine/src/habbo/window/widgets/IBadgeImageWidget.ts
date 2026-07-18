@@ -28,5 +28,6 @@ export interface IBadgeImageWidget extends IWidget
     /**
 	 * Whether the badge renders in greyscale (used for not-yet-achieved levels).
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::get/set greyscale()
     greyscale: boolean;
 }
