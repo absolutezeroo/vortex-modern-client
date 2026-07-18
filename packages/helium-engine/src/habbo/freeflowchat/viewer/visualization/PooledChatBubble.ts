@@ -12,6 +12,9 @@ const LINEAR_INTERPOLATION_MS = 150;
 const MAX_TEXT_HEIGHT_BASE = 108;
 const DESKTOP_MARGIN_LEFT = 85;
 const DESKTOP_MARGIN_RIGHT = 190;
+// AS3: PooledChatBubble.as:23 — the hard content-width cap and the fallback when there
+// are no room chat settings. Distinct from ChatBubbleWidth.NORMAL (350).
+const MAX_WIDTH_DEFAULT = 300;
 
 function clamp(value: number, min: number, max: number): number
 {
@@ -130,6 +133,11 @@ export class PooledChatBubble extends Container
 
         this._minHeight = minHeight;
 
+        // AS3 (PooledChatBubble.as:127) stores the borderLimited flag as _useDesktopMargins;
+        // ChatBubbleFactory passes it true. The port never assigned it, so the proxyX
+        // desktop-margin clamp never ran and _hasHitDesktopMargin stayed false forever.
+        this._useDesktopMargins = borderLimited;
+
         // 1. Background
         if(this._background)
         {
@@ -151,14 +159,16 @@ export class PooledChatBubble extends Container
         const italic = !isSpeak && !isShout && !style.isAnonymous;
 
         const maxHeight = MAX_TEXT_HEIGHT_BASE * chatFlow.chatFontSizeScale;
-        let maxWidth = ChatBubbleWidth.NORMAL;
+        // AS3 (PooledChatBubble.as:129) picks the text-field wrap width from the room chat
+        // settings only (borderLimited plays no part here), falling back to MAX_WIDTH_DEFAULT.
+        // The port gated on borderLimited, fell back to NORMAL (350), then subtracted an
+        // invented 15 — all wrong.
+        let maxWidth = MAX_WIDTH_DEFAULT;
 
-        if(borderLimited && chatFlow.roomChatSettings)
+        if(chatFlow.roomChatSettings)
         {
             maxWidth = ChatBubbleWidth.accordingToRoomChatSetting(chatFlow.roomChatSettings.bubbleWidth);
         }
-
-        maxWidth -= 15;
 
         const margins = style.textFieldMargins;
         const fontFace = style.textFormat.fontFace;
@@ -173,8 +183,10 @@ export class PooledChatBubble extends Container
         const layout = layoutChatText(measureCtx, runs, fontFace, fontSize, innerWidth);
         const multiline = layout.lines.length > 1;
 
-        // 4. Content box
-        let contentWidth = Math.min(maxWidth, layout.width + margins.x + margins.width);
+        // 4. Content box — AS3 (PooledChatBubble.as:182) hard-caps the background at
+        // MAX_WIDTH_DEFAULT (300), independent of the wrap width above; the port capped at
+        // maxWidth, so a WIDE (2000) setting let the bubble grow to ~1985px.
+        let contentWidth = Math.min(MAX_WIDTH_DEFAULT, layout.width + margins.x + margins.width);
         let contentHeight = layout.height + margins.y + margins.height;
 
         if(!style.isSystemStyle) contentHeight = Math.min(maxHeight, contentHeight);
@@ -372,12 +384,11 @@ export class PooledChatBubble extends Container
         return this._proxyX;
     }
 
-    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/ChatBubble.as::set proxyX()
-    // useDesktopMargins is never set true by any Plan-1 call site (ChatBubbleFactory
-    // never passes it) - the clamp branch is ported for fidelity but untested/unused
-    // until a desktop-chat-window caller exists. window.innerWidth stands in for
-    // AS3's stage.stageWidth (this port renders one full-window canvas, not a
-    // multi-DisplayObject Flash stage).
+    // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set proxyX()
+    // recreate() now sets _useDesktopMargins from the borderLimited flag ChatBubbleFactory
+    // passes, so this clamp runs. Both branches offset by _roomPanOffsetX (AS3 clamps
+    // proxyX + roomPanOffsetX, not proxyX). window.innerWidth stands in for AS3's
+    // stage.stageWidth (this port renders one full-window canvas, not a Flash stage).
     set proxyX(value: number)
     {
         this._proxyX = value;
@@ -385,10 +396,24 @@ export class PooledChatBubble extends Container
         if(this._useDesktopMargins)
         {
             const stageWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
-            const clamped = clamp(value, DESKTOP_MARGIN_LEFT, Math.max(DESKTOP_MARGIN_LEFT, stageWidth - DESKTOP_MARGIN_RIGHT - this.width));
+            let target = value + this._roomPanOffsetX;
+            const max = stageWidth - DESKTOP_MARGIN_RIGHT - this.width;
 
-            this.x = clamped;
-            this._hasHitDesktopMargin = clamped !== value;
+            this._hasHitDesktopMargin = false;
+
+            if(target > max)
+            {
+                target = max;
+                this._hasHitDesktopMargin = true;
+            }
+
+            if(target < DESKTOP_MARGIN_LEFT)
+            {
+                target = DESKTOP_MARGIN_LEFT;
+                this._hasHitDesktopMargin = true;
+            }
+
+            this.x = target;
         }
         else
         {
