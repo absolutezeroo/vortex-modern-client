@@ -80,6 +80,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
     private _inventory: IHabboInventory | null = null;
     private _catalog: IHabboCatalog | null = null;
     private _questEngine: IHabboQuestEngine | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::_navigator
     private _navigator: IHabboNavigator | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
