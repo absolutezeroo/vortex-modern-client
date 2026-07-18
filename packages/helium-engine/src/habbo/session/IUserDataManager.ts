@@ -41,9 +41,16 @@ export interface IUserDataManager extends IDisposable
     getRentableBotUserData(webId: number): IUserData | null;
 
     /**
-	 * Get user badges (requests from server if needed)
+	 * Pure cache read of a user's selected badges - no network request.
 	 */
-    getUserBadges(userId: number): string[];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::getUserSelectedBadges()
+    getUserSelectedBadges(userId: number): string[];
+
+    /**
+	 * Request a user's selected badges from the server.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/UserDataManager.as::requestUserSelectedBadges()
+    requestUserSelectedBadges(userId: number): void;
 
     /**
 	 * Set user data
@@ -84,6 +91,12 @@ export interface IUserDataManager extends IDisposable
 	 * Update achievement score
 	 */
     updateAchievementScore(roomIndex: number, score: number): void;
+
+    /**
+	 * Update badges rank
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/_SafeCls_2765.as::updateBadgesRank()
+    updateBadgesRank(roomIndex: number, badgesRank: number): void;
 
     /**
 	 * Update name by room index

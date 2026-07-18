@@ -2112,9 +2112,15 @@ export class RoomEngine extends Component implements IRoomEngine,
         camera.activateFollowing(this.cameraFollowDuration);
     }
 
-    disposeRoom(roomId: number): void 
+    disposeRoom(roomId: number): void
     {
         this.disposeRoomInstance(roomId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::purgeRoomContent()
+    purgeRoomContent(): void
+    {
+        this._contentLoader?.purge();
     }
 
     setWorldType(roomId: number, worldType: string): void 

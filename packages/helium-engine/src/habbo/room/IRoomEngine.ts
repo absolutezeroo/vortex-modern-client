@@ -207,6 +207,9 @@ export interface IRoomEngine extends IDisposable {
 
     disposeRoomInstance(roomId: number): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::purgeRoomContent()
+    purgeRoomContent(): void;
+
     getRoomInstance(roomId: number): IRoomInstance | null;
 
     setActiveRoom(roomId: number): void;

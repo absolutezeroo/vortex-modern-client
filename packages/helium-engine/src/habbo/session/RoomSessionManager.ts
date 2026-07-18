@@ -236,7 +236,10 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 
     /**
 	 * Dispose a session
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::disposeSession()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::disposeSession()
     disposeSession(roomId: number, disposeEngine: boolean = true): void
     {
         const key = this.getRoomIdentifier(roomId);
@@ -245,15 +248,18 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
         if(session)
         {
             this._sessions.delete(key);
-            this._sessionEvents.emit(RoomSessionEvent.RSE_ENDED, new RoomSessionEvent(RoomSessionEvent.RSE_ENDED, session), disposeEngine);
+            // disposeEngine goes INTO the event (RoomUI.ts checks event.openLandingPage to
+            // decide whether to reopen the hotel-view toolbar/landing page) - it does not
+            // gate whether the engine gets purged below, which AS3 always does.
+            this._sessionEvents.emit(RoomSessionEvent.RSE_ENDED, new RoomSessionEvent(RoomSessionEvent.RSE_ENDED, session, disposeEngine));
 
             session.dispose();
 
-            // Dispose room engine content if requested
-            if(disposeEngine && this._roomEngine)
-            {
-                this._roomEngine.disposeRoomInstance(roomId);
-            }
+            // AS3 purges the room-content loader unconditionally, regardless of disposeEngine.
+            this._roomEngine?.purgeRoomContent();
+
+            // AS3 also calls System.pauseForGCIfCollectionImminent(0.26) here - a Flash-only
+            // GC hint with no browser/JS equivalent, so there is nothing to port it to.
 
             log.info(`Room session disposed: ${roomId}`);
         }
@@ -328,32 +334,48 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 
     /**
 	 * Called by handlers when session needs reinitialization
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::sessionReinitialize()
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::sessionReinitialize()
     sessionReinitialize(oldRoomId: number, newRoomId: number): void
     {
         const oldKey = this.getRoomIdentifier(oldRoomId);
-        const session = this._sessions.get(oldKey);
+        let session = this._sessions.get(oldKey) ?? null;
 
         if(session)
         {
             this._sessions.delete(oldKey);
+        }
+        else
+        {
+            // AS3 does not bail out here - it builds a session (skipOpc=true, as for a
+            // reconnect/forward with no prior session) and continues unconditionally below,
+            // even though createSession() may only queue it as pending if the manager isn't
+            // `initialized` yet.
+            session = new RoomSession();
+            session.roomId = oldRoomId;
+            session.skipOpc = true;
 
-            session.reset(newRoomId);
-
-            const newKey = this.getRoomIdentifier(newRoomId);
-
-            // Remove any existing session at new key
-            const existingSession = this._sessions.get(newKey);
-
-            if(existingSession)
+            if(this._habboTracking)
             {
-                existingSession.dispose();
+                session.habboTracking = this._habboTracking;
             }
 
-            this._sessions.set(newKey, session);
-
-            this.updateHandlers(session);
+            this.createSession(session);
         }
+
+        session.reset(newRoomId);
+
+        const newKey = this.getRoomIdentifier(newRoomId);
+
+        // AS3 removes whatever is at the new key but never disposes it here (an empty
+        // if-block in the source) - with getRoomIdentifier() returning one shared constant
+        // key, this is a no-op in practice, not a leak to fix.
+        this._sessions.delete(newKey);
+        this._sessions.set(newKey, session);
+
+        this.updateHandlers(session);
 
         log.debug(`Session reinitialize: ${oldRoomId} -> ${newRoomId}`);
     }

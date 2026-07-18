@@ -645,9 +645,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
      * IRoomSession.roomModerationSettings), canTrade/canTradeReason (trade
      * eligibility), groupId/groupBadgeId/groupName, respectLeft/
      * respectReplenishesLeft, isIgnored, targetRoomControllerLevel (from the
-     * room object's figure_flat_control model number). Badges use the existing
-     * synchronous userDataManager.getUserBadges() instead of AS3's separate
-     * requestUserSelectedBadges()/getUserSelectedBadges() network round-trip.
+     * room object's figure_flat_control model number). Badges read whatever is
+     * already cached via getUserSelectedBadges() and fire requestUserSelectedBadges()
+     * alongside it (AS3's own two methods), rather than awaiting the server's
+     * response before emitting this event - a full request/response round-trip
+     * for this one field is deferred with the group/respect fields below.
      * habboGroupsManager.updateVisibleExtendedProfile() and the trailing
      * composer send are deferred with the group/respect fields.
      */
@@ -709,7 +711,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             }
         }
 
-        event.badges = container.roomSession.userDataManager.getUserBadges(userData.webID);
+        // getUserSelectedBadges() is a pure cache read; requestUserSelectedBadges() is the
+        // one that sends the composer - kept as two calls (matching AS3's own split) instead
+        // of the old fused getUserBadges(), which fired a request on every read.
+        event.badges = container.roomSession.userDataManager.getUserSelectedBadges(userData.webID);
+        container.roomSession.userDataManager.requestUserSelectedBadges(userData.webID);
         event.figure = userData.figure;
 
         container.desktopEvents.emit(event.type, event);

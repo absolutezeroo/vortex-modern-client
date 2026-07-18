@@ -9,17 +9,22 @@ import {UserRemoveMessageEvent} from '../../communication/messages/incoming/room
 import {DoorbellMessageEvent} from '../../communication/messages/incoming/navigator/DoorbellMessageEvent';
 import {BlockUserUpdateMessageEvent} from '../../communication/messages/incoming/users/BlockUserUpdateMessageEvent';
 import {HabboUserBadgesMessageEvent} from '../../communication/messages/incoming/users/HabboUserBadgesMessageEvent';
+import {UserChangeMessageEvent} from '@habbo/communication/messages/incoming/room/action/UserChangeMessageEvent';
 
 // Parsers
 import type {UsersMessageParser} from '../../communication/messages/parser/room/engine/UsersMessageParser';
 import type {UserRemoveMessageParser} from '../../communication/messages/parser/room/engine/UserRemoveMessageParser';
 import type {DoorbellMessageParser} from '../../communication/messages/parser/navigator/DoorbellMessageParser';
 import type {HabboUserBadgesMessageParser} from '../../communication/messages/parser/users/HabboUserBadgesMessageParser';
+import type {
+    UserChangeMessageEventParser
+} from '@habbo/communication/messages/parser/room/action/UserChangeMessageEventParser';
 
 // Events
 import {RoomSessionUserDataUpdateEvent} from '../events/RoomSessionUserDataUpdateEvent';
 import {RoomSessionDoorbellEvent} from '../events/RoomSessionDoorbellEvent';
 import {RoomSessionUserBadgesEvent} from '../events/RoomSessionUserBadgesEvent';
+import {RoomSessionUserFigureUpdateEvent} from '../events/RoomSessionUserFigureUpdateEvent';
 import type {IUserData} from '@habbo/session';
 import { UserData} from '@habbo/session';
 import type {RoomUserData} from '@habbo/communication';
@@ -65,8 +70,9 @@ export class RoomUsersHandler extends BaseHandler
         this.addMessageEvent(connection, new PetInfoMessageEvent(this.onPetInfo.bind(this)));
         this.addMessageEvent(connection, new BlockUserUpdateMessageEvent(this.onBlockUserUpdate.bind(this)));
 
+        this.addMessageEvent(connection, new UserChangeMessageEvent(this.onUserChange.bind(this)));
+
         // TODO: Register additional message events when implemented
-        // this.addMessageEvent(connection, new UserChangeMessageEvent(this.onUserChange.bind(this)));
         // this.addMessageEvent(connection, new DanceMessageEvent(this.onDance.bind(this)));
     }
 
@@ -84,6 +90,7 @@ export class RoomUsersHandler extends BaseHandler
         userData.sex = roomUser.sex;
         userData.custom = roomUser.custom;
         userData.achievementScore = roomUser.achievementScore;
+        userData.badgesRank = roomUser.badgesRank;
         userData.groupID = roomUser.groupID;
         userData.groupName = roomUser.groupName;
         userData.groupStatus = roomUser.groupStatus;
@@ -323,6 +330,54 @@ export class RoomUsersHandler extends BaseHandler
             this.listener.sessionEvents.emit(
                 RoomSessionDoorbellEvent.RSDE_DOORBELL,
                 new RoomSessionDoorbellEvent(RoomSessionDoorbellEvent.RSDE_DOORBELL, session, userName)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUserChange()
+    private onUserChange(event: IMessageEvent): void
+    {
+        const changeEvent = event as UserChangeMessageEvent;
+
+        if(changeEvent === null)
+        {
+            return;
+        }
+
+        const parser = changeEvent.parser as UserChangeMessageEventParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null || session.userDataManager === null)
+        {
+            return;
+        }
+
+        if(parser.id < 0) return;
+
+        session.userDataManager.updateFigure(parser.id, parser.figure, parser.sex, false, false);
+        session.userDataManager.updateCustom(parser.id, parser.customInfo);
+        session.userDataManager.updateAchievementScore(parser.id, parser.achievementScore);
+        session.userDataManager.updateBadgesRank(parser.id, parser.badgesRank);
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE,
+                new RoomSessionUserFigureUpdateEvent(
+                    session,
+                    parser.id,
+                    parser.figure,
+                    parser.sex,
+                    parser.customInfo,
+                    parser.achievementScore,
+                    parser.badgesRank
+                )
             );
         }
     }

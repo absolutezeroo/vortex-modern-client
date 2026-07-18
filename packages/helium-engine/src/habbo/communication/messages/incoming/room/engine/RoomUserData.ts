@@ -193,6 +193,22 @@ export class RoomUserData
         if(!this._readOnly) this._achievementScore = value;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2262.as::badgesRank
+    // Defaults to -1 and is never read from the wire by this DTO's own parse() in AS3
+    // either - the initial room-users list simply doesn't carry it (only the
+    // per-user UserChangeMessageEventParser does).
+    private _badgesRank: number = -1;
+
+    get badgesRank(): number
+    {
+        return this._badgesRank;
+    }
+
+    set badgesRank(value: number)
+    {
+        if(!this._readOnly) this._badgesRank = value;
+    }
+
     private _isModerator: boolean = false;
 
     get isModerator(): boolean

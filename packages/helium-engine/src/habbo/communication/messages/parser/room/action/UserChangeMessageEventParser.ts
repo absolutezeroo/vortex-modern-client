@@ -45,6 +45,14 @@ export class UserChangeMessageEventParser implements IMessageParser
         return this._achievementScore;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2646.as::badgesRank
+    private _badgesRank: number = 0;
+
+    get badgesRank(): number
+    {
+        return this._badgesRank;
+    }
+
     flush(): boolean
     {
         this._id = 0;
@@ -52,6 +60,7 @@ export class UserChangeMessageEventParser implements IMessageParser
         this._sex = '';
         this._customInfo = '';
         this._achievementScore = 0;
+        this._badgesRank = 0;
         return true;
     }
 
@@ -67,6 +76,20 @@ export class UserChangeMessageEventParser implements IMessageParser
         this._sex = wrapper.readString();
         this._customInfo = wrapper.readString();
         this._achievementScore = wrapper.readInt();
+        // AS3 reads an unused string here, then a count-prefixed list of unused
+        // int triplets (_SafePkg_2184/_SafeCls_2646.as::parse()) before badgesRank.
+        wrapper.readString();
+
+        const skippedCount = wrapper.readInt();
+
+        for(let i = 0; i < skippedCount; i++)
+        {
+            wrapper.readInt();
+            wrapper.readInt();
+            wrapper.readInt();
+        }
+
+        this._badgesRank = wrapper.readInt();
 
         if(this._sex)
         {

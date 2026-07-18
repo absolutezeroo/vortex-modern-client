@@ -222,6 +222,28 @@ room at random, and calls the real `navigator.goToRoom()`. `showQuests()` is lef
 (`emit('showQuests')` had no listener either, and `QuestController`'s `QuestsList` window — its
 target — isn't ported, per that class's own notes) rather than papered over.
 
+**Majors: session cluster (5 filed, 5 fixed).** `RoomSessionManager.disposeSession()` passed
+`disposeEngine` as a 3rd `.emit()` argument instead of into the `RoomSessionEvent` constructor, so
+`event.openLandingPage` (which `RoomUI.ts` checks to decide whether to reopen the hotel-view toolbar)
+always read its default `true` — the landing page reopened on every `disposeSession(roomId, false)`
+(room re-entry, `disposeGameSession()`) where AS3 suppresses it. The same method also called the
+wrong engine method under the wrong gate (`disposeRoomInstance()`, only if `disposeEngine`) instead
+of AS3's unconditional `purgeRoomContent()` (added to `IRoomEngine`/`RoomEngine.ts`, thin wrapper over
+the already-ported `RoomContentLoader.purge()`) — room content leaked between two room entries.
+`sessionReinitialize()` wrapped its whole body in `if(session)`, silently doing nothing when no
+session existed at the old key; AS3 builds one (`skipOpc=true`) and continues regardless, which
+`RoomSessionHandler.onRoomReady()`'s reconnect/forward path relies on. `UserDataManager.getUserBadges()`
+fused a cache read with sending `GetSelectedBadgesMessageComposer`, so every badge read (infostand
+refresh, list render) fired a network request; split into `getUserSelectedBadges()` (pure read) and
+`requestUserSelectedBadges()` (the only one that sends), matching AS3's own separation. `badgesRank`
+was missing end to end — added to `UserData`/`IUserData` (default `-1`, `-1` while blocked, mirroring
+`achievementScore`), `UserDataManager.updateBadgesRank()`, and wired through both producers:
+`RoomUsersHandler`'s initial user-list construction (`RoomUserData.badgesRank`, itself never wire-read
+in AS3's own per-user DTO — stays `-1` there too) and its `onUserChange()` handler, which was entirely
+unregistered (`UserChangeMessageEventParser` stopped after `achievementScore`, silently dropping an
+unused string, a count-prefixed int-triplet list, and `badgesRank` off the wire — all now read to
+match AS3's `_SafeCls_2646.parse()`; `RoomSessionUserFigureUpdateEvent` gained the matching field).
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

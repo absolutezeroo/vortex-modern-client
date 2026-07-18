@@ -15,6 +15,8 @@ export interface IUserData
     sex: string;
     custom: string;
     achievementScore: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/_SafeCls_1826.as::badgesRank
+    badgesRank: number;
 
     // Group information
     groupID: string;

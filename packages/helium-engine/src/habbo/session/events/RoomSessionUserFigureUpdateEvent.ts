@@ -16,7 +16,8 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
         figure: string,
         sex: string,
         customInfo: string,
-        achievementScore: number
+        achievementScore: number,
+        badgesRank: number
     )
     {
         super(RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE, session);
@@ -25,6 +26,7 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
         this._sex = sex;
         this._customInfo = customInfo;
         this._achievementScore = achievementScore;
+        this._badgesRank = badgesRank;
     }
 
     private _roomIndex: number;
@@ -60,5 +62,12 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
     get achievementScore(): number
     {
         return this._achievementScore;
+    }
+
+    private _badgesRank: number;
+
+    get badgesRank(): number
+    {
+        return this._badgesRank;
     }
 }
