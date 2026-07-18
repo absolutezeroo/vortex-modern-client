@@ -156,7 +156,18 @@ import {
     CommunityGoalProgressMessageEvent,
     ConcurrentUsersGoalProgressMessageEvent,
     QuestDailyMessageEvent,
+    QuestMessageEvent,
+    QuestsMessageEvent,
+    SeasonalQuestsMessageEvent,
+    QuestCompletedMessageEvent,
+    QuestCancelledMessageEvent,
 } from './messages/incoming/quest';
+
+// Incoming Events - Achievements
+import {
+    AchievementsMessageEvent,
+    AchievementMessageEvent,
+} from './messages/incoming/inventory/achievements';
 
 // Incoming Events - Room Session
 import {
@@ -582,7 +593,12 @@ import {
     GetConcurrentUsersGoalProgressMessageComposer,
     GetConcurrentUsersRewardMessageComposer,
     GetDailyQuestMessageComposer,
+    GetQuestsMessageComposer,
+    GetSeasonalQuestsOnlyMessageComposer,
 } from './messages/outgoing/quest';
+
+// Outgoing Composers - Achievements
+import {GetAchievementsComposer} from './messages/outgoing/inventory/achievements';
 
 // Outgoing Composers - Talent
 import {GetTalentTrackMessageComposer} from './messages/outgoing/talent';
@@ -1153,6 +1169,17 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1417, QuestDailyMessageEvent);
         this._events.set(283, CommunityGoalProgressMessageEvent);
         this._events.set(1003, ConcurrentUsersGoalProgressMessageEvent);
+        // AS3: WIN63-202607011411 registry _SafeCls_2046.as — _SafeStr_4546[id] = event class
+        // (the obfuscated class each maps to is named by its QuestMessageHandler callback).
+        this._events.set(54, QuestMessageEvent);            // _SafeCls_2832 → onQuest
+        this._events.set(3398, QuestsMessageEvent);         // _SafeCls_3591 → onQuests
+        this._events.set(1390, SeasonalQuestsMessageEvent); // _SafeCls_2664 → onSeasonalQuests
+        this._events.set(1272, QuestCompletedMessageEvent); // _SafeCls_3714 → onQuestCompleted
+        this._events.set(1425, QuestCancelledMessageEvent); // _SafeCls_3681 → onQuestCancelled
+
+        // === ACHIEVEMENTS ===
+        this._events.set(1969, AchievementsMessageEvent);   // _SafeCls_2687 → onAchievements
+        this._events.set(3981, AchievementMessageEvent);    // _SafeCls_2786 → onAchievement
 
         // === ROOM SETTINGS ===
         this._events.set(791, RoomSettingsDataEvent);
@@ -1492,6 +1519,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1815, GetCommunityGoalProgressMessageComposer);
         this._composers.set(2167, GetConcurrentUsersGoalProgressMessageComposer);
         this._composers.set(2451, GetConcurrentUsersRewardMessageComposer);
+        // AS3: WIN63-202607011411 registry _SafeCls_2046.as — _composers[id] = composer class.
+        this._composers.set(2895, GetQuestsMessageComposer);            // _SafeCls_1837 (requestQuests)
+        this._composers.set(1236, GetSeasonalQuestsOnlyMessageComposer); // _SafeCls_1847 (requestSeasonalQuests)
+
+        // === ACHIEVEMENTS ===
+        this._composers.set(2435, GetAchievementsComposer);            // _SafeCls_3287 (AchievementController.show)
 
         // === TALENT ===
         this._composers.set(3757, GetTalentTrackMessageComposer);

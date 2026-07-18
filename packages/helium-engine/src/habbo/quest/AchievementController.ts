@@ -16,13 +16,12 @@ const log = Logger.getLogger('AchievementController');
  * this.show(). show() requests the achievement list; the window is built and shown
  * only once the server answers (onAchievements), matching AS3 exactly.
  *
- * Two things gate the window actually appearing, both external to this class:
- *  - the GetAchievements outgoing header is not registered in HabboMessages (unknown
- *    in every source tree — see GetAchievementsComposer), so the request is dropped; and
- *  - the reference server implements achievements as an empty stub
- *    (docs/CLIENT-SERVER-ARCHITECTURE.md §20), so no response arrives regardless.
- * The control flow here is the faithful AS3 port; it is correct-by-construction for the
- * day both are in place. Window-cell population (refresh's sub-passes) is still a TODO.
+ * The request/response wire path is now registered (GetAchievements out = 2435,
+ * Achievements in = 1969; see HabboMessages), so the panel populates against any server
+ * that implements achievements. The reference Arcturus-Community server does not — it
+ * ships an empty stub (docs/CLIENT-SERVER-ARCHITECTURE.md §20) — so no response arrives
+ * there and the window stays hidden, which is correct client behaviour. Window-cell
+ * population (refresh's sub-passes) is still a TODO pending IWindow child-lookup.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/AchievementController.as
  */
