@@ -913,9 +913,13 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 
                 if(container && container.image)
                 {
+                    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getCroppedImage()
+                    // Uses the part's regPoint alone here - unlike getImage(), which additionally
+                    // combines the canvas's own offset/regPoint (that combined form belongs to a
+                    // different method, not this one).
                     const regPoint = container.regPoint;
-                    const destX = regPoint.x + canvas.offset.x + canvas.regPoint.x;
-                    const destY = regPoint.y + canvas.offset.y + canvas.regPoint.y;
+                    const destX = regPoint.x;
+                    const destY = regPoint.y;
 
                     const source = container.image.source?.resource;
 
@@ -1420,7 +1424,12 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
             return null;
         }
 
-        if(this._sortedActions && this._sortedActions.length === 1)
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getFullImageCacheKey()
+        // AS3 only caches the single-action case when mainDirection === headDirection - there is
+        // no composite-key fallback for the mismatched-direction case here (that shape only exists
+        // in the 2-action fx branch below). A mismatch falls through to the length===2 check, which
+        // also fails (length is 1), ending in the final `return null`.
+        if(this._sortedActions && this._sortedActions.length === 1 && this._mainDirection === this._headDirection)
         {
             const frame = (this._currentActionsString === AvatarAction.POSTURE_STAND ||
 				this._currentActionsString === AvatarAction.POSTURE_LAY ||
@@ -1428,12 +1437,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
                 ? this._frameCounter % 8
                 : this._frameCounter % 4;
 
-            if(this._mainDirection === this._headDirection)
-            {
-                return this._mainDirection + this._currentActionsString + frame;
-            }
-
-            return this._mainDirection + '_' + this._headDirection + this._currentActionsString + frame;
+            return this._mainDirection + this._currentActionsString + frame;
         }
 
         if(this._sortedActions && this._sortedActions.length === 2)

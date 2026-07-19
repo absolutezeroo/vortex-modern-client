@@ -19,6 +19,15 @@ export class AvatarFigurePartType
     public static readonly HEAD_ACCESSORY_EXTRA: string = 'he';
     public static readonly COAT_CHEST: string = 'cc';
     public static readonly CHEST_PRINT: string = 'cp';
+    public static readonly MISC: string = 'mc';
+    public static readonly MISC_RIGHT: string = 'mcr';
+    // AS3 name unrecoverable (obfuscated in every tree, _SafeStr_11626) - derived from pairing
+    // with MISC_RIGHT ("mcr"), matching the LEFT_HAND/RIGHT_HAND, LEFT_SLEEVE/RIGHT_SLEEVE naming
+    // pattern used throughout this enum.
+    public static readonly MISC_LEFT: string = 'mcl';
+    public static readonly PET: string = 'pt';
+    public static readonly PET_RIGHT: string = 'ptr';
+    public static readonly PET_LEFT: string = 'ptl';
     public static readonly LEFT_HAND_ITEM: string = 'li';
     public static readonly LEFT_HAND: string = 'lh';
     public static readonly LEFT_SLEEVE: string = 'ls';
@@ -44,6 +53,8 @@ export class AvatarFigurePartType
         AvatarFigurePartType.HEAD_ACCESSORY,
         AvatarFigurePartType.HEAD_ACCESSORY_EXTRA,
         AvatarFigurePartType.COAT_CHEST,
-        AvatarFigurePartType.CHEST_PRINT
+        AvatarFigurePartType.CHEST_PRINT,
+        AvatarFigurePartType.PET,
+        AvatarFigurePartType.MISC
     ];
 }

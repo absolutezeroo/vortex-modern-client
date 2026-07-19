@@ -24,7 +24,8 @@ import {getXmlAttribute, getXmlChildElements, getXmlRoot} from './structure/Avat
  */
 export class EffectAssetDownloadManager extends EventEmitter 
 {
-    public static readonly LIBRARY_LOADED: string = 'EADM_LIBRARY_LOADED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/EffectAssetDownloadManager.as::LIBRARY_LOADED
+    public static readonly LIBRARY_LOADED: string = 'LIBRARY_LOADED';
 
     private static readonly MAX_SIMULTANEOUS_DOWNLOADS: number = 2;
     private static readonly MANDATORY_EFFECT_IDS: string[] = ['dance.1', 'dance.2', 'dance.3', 'dance.4'];

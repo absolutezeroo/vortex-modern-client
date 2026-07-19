@@ -172,6 +172,30 @@ export class AvatarStructure
         return this._actionManager.getActionDefinition(id);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::getDefaultActionDefinition()
+    public getDefaultActionDefinition(): ActionDefinition | null
+    {
+        return this._defaultAction;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::getDefaultLayActionDefinition()
+    public getDefaultLayActionDefinition(): ActionDefinition | null
+    {
+        return this._defaultLayAction;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::getItemIds()
+    public getItemIds(): string[]
+    {
+        if(!this._actionManager) return [];
+
+        const carryItem = this._actionManager.getActionDefinition('CarryItem');
+
+        if(!carryItem) return [];
+
+        return [...carryItem.params.keys()];
+    }
+
     public getActionDefinitionWithState(state: string): ActionDefinition | null
     {
         if(!this._actionManager) return null;
@@ -391,9 +415,13 @@ export class AvatarStructure
         hiddenLayers: string[],
         avatar: IAvatarImage,
         effectParts: Map<string, string> | null = null
-    ): AvatarImagePartContainer[]
+    ): AvatarImagePartContainer[] | null
     {
-        if(!action || !this._geometry) return [];
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::getParts()
+        // AS3 returns null here, not an empty array - AvatarImageCache.ts's `if(!partList) return
+        // null` guard relied on that: an empty array is truthy in JS/TS, so it never tripped while
+        // this returned [].
+        if(!action || !this._geometry) return null;
 
         const activeParts = this._partSetsData.getActiveParts(action.definition);
         let defaultFrames: number[] = [0];

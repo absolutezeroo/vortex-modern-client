@@ -27,7 +27,12 @@ export class AvatarAssetDownloadManager extends EventEmitter
 {
     public static readonly LIBRARY_LOADED: string = 'LIBRARY_LOADED';
 
-    private static readonly MAX_SIMULTANEOUS_DOWNLOADS: number = 4;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarAssetDownloadManager.as::_SafeStr_9372
+    // AS3's default is 6, not a named constant like this - `4` here was invented. AS3 also bumps
+    // it to 16 in the constructor when the figure-map URL host is "//rumba.sulake.com" (a specific
+    // legacy CDN); that bump is a dead branch in this port (no such host exists), so only the
+    // default is restored.
+    private static readonly MAX_SIMULTANEOUS_DOWNLOADS: number = 6;
     private static readonly LIB_BODY: string = 'hh_human_body';
     private static readonly LIB_ITEMS: string = 'hh_human_item';
 
