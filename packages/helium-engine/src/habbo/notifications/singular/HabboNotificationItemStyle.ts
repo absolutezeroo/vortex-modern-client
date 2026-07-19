@@ -7,14 +7,23 @@
  */
 export class HabboNotificationItemStyle
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::icon
     private _icon: ImageBitmap | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::_SafeStr_8057
     private _ownsIcon: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::iconSrc
     private _iconSrc: string | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::internalLink
     private _internalLink: string | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::iconAssetUri
     private _iconAssetUri: string | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::customLayout
     private _customLayout: string | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::customView
     private _customView: string | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::extraData
     private _extraData: Record<string, unknown> | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::styleName
     private _styleName: string | null = null;
 
     /**
@@ -30,11 +39,15 @@ export class HabboNotificationItemStyle
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle()
     constructor(
         styleMap: Record<string, unknown> | null,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle() param2
         iconBitmap: ImageBitmap | null,
         iconAssetUri: string | null,
         ownsIcon: boolean,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle() param5
         iconSrc: string | null,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle() param6
         extraData: Record<string, unknown> | null,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle() param7
         styleName: string | null
     )
     {

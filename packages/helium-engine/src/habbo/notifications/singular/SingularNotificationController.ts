@@ -28,6 +28,7 @@ export class SingularNotificationController implements IUpdateReceiver
     private _notifications: HabboNotifications | null;
     private _queue: HabboNotificationItem[] = [];
     private _moderationDisclaimerShown: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::_SafeStr_5464
     private _moderationDisclaimerTimer: ReturnType<typeof setTimeout> | null = null;
 
     constructor(notifications: HabboNotifications)
@@ -100,10 +101,14 @@ export class SingularNotificationController implements IUpdateReceiver
     addItem(
         content: string,
         type: string,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::addItem() param3
         iconBitmap: ImageBitmap | null = null,
         iconAssetUri: string | null = null,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::addItem() param5
         iconSrc: string | null = null,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::addItem() param6
         internalLink: string | null = null,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/SingularNotificationController.as::addItem() param7
         extraData: Record<string, unknown> | null = null
     ): number
     {
