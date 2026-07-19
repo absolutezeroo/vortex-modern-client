@@ -162,10 +162,10 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         return 'RWE_INFOSTAND';
     }
 
-    // (dead code path while the user view is a stub).
-    public get isActivityDisplayEnabled(): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::get isActivityDisplayEnabled()
+    public get isActivityDisplayEnabled(): boolean
     {
-        return false;
+        return this._container?.config?.getBoolean('activity.point.display.enabled') ?? false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::dispose()
