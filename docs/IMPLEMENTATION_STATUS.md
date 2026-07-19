@@ -289,6 +289,25 @@ in `placeObject()` itself) rather than rushing a multi-composer wall-placement w
 sight-unseen. Placing/moving a wall item from the client still doesn't reach the server; receiving
 one from the server already works correctly.
 
+**Majors: habbo/inventory cluster (4 filed, 4 fixed).** `TradingModel.close()` only zeroed local
+fields — no `TradeCancel` (`CloseTradingComposer`, header 3639, already registered) was ever sent and
+`dispose()` incorrectly called `close()` (AS3's `dispose()` never does; it just tears down views and
+nulls refs). Fixed both, and gave `TradingModel` a constructor-injected `IConnection` since it
+previously had no way to send anything — `close()` has zero current callers (matches AS3's own
+not-yet-ported Trading UI being the only caller), so this is correct-and-ready rather than reachable
+today. `canAddMoreItems()` only checked the 9-group cap; past it, AS3 still allows stacking onto an
+existing group via a category-specific key (`POSTER` uses the legacy string, `GUILD_FURNI` uses the
+now-ported `getGuildFurniType()` reading a `StringArrayStuffData`, everything else is an `"I"/"S"`-
+prefixed class id) — the signature changed to take the item's category/stuffData/stackable flag since
+nothing called it yet either. `HabboInventory.setClubStatus()` had no HC-expiration timer at all; added
+a `setInterval`-based one resending `ScrGetUserInfoMessageComposer('habbo_club')` (header 1071, already
+registered) every minute while `0 < minutesUntilExpiration < 86400000`, torn down in `dispose()`.
+`FurniModel.addOrUpdateItem()`/`removeFurni()` never told the catalog an item entered/left the
+inventory; wired `catalog.itemAddedToInventory()` (a genuine call site now, though the receiving
+method's own body — auto-placing a buy-and-place purchase — is a separate, newly-TODO'd gap) and
+`updateActionView()`; `collectorHub.itemAddedToInventory()`/`itemRemovedFromInventory()` stay TODO'd
+since `collectorHub` is a documented always-null stub with nothing to call into.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

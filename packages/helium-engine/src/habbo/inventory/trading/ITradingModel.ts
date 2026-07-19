@@ -2,6 +2,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {TradingStateType} from './TradingState';
 import type {ITradingUser} from './TradingUser';
 import type {GroupItem} from '../items/GroupItem';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 
 /**
  * Interface for TradingModel
@@ -65,8 +66,13 @@ export interface ITradingModel extends IDisposable
 
     /**
 	 * Check if can add more items to trade
+	 *
+	 * Past MAX_ITEMS_TO_TRADE groups, an item can still be added if it stacks onto an
+	 * existing group of the same category-specific key (see TradingModel's own trace
+	 * comments for the exact key rules).
 	 */
-    canAddMoreItems(): boolean;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/trading/TradingModel.as::canAddItemToTrade()
+    canAddMoreItems(isWallItem: boolean, classId: number, category: number, stackable: boolean, stuffData: IStuffData | null): boolean;
 
     /**
 	 * Check if item type already exists in own items

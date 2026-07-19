@@ -1587,7 +1587,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // createMarketPlace(), createRecycler(), and createGroupMembershipsController() are now real -
     // see below. The core main-window/navigator/
 
-    public itemAddedToInventory(_classId: number, _itemId: number, _category: number): void 
+    // TODO(AS3): AS3 (HabboCatalog.as:3210+) checks a stored "pending placement" object
+    // (set when the user buys-and-places directly from the catalog) against classId/
+    // activeRoomId, and if it matches, auto-places the purchased item at the remembered
+    // category-specific x/y/direction/wallLocation - not ported (FurniModel.ts now calls
+    // this on every add, so the call site is real; this method's own body is the gap).
+    public itemAddedToInventory(_classId: number, _itemId: number, _category: number): void
     {
     }
 

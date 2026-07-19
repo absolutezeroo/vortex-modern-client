@@ -495,6 +495,16 @@ export class FurniModel implements IFurniModel
             result.groupItem.hasUnseenItems = true;
         }
 
+        if(result.groupItem.isSelected)
+        {
+            this._view.updateActionView();
+        }
+
+        this._catalog.itemAddedToInventory(item.type, item.id, item.category);
+        // TODO(AS3): catalog.collectorHub is a documented stub (always null - see
+        // HabboCatalog.ts::get collectorHub()), so collectorHub.itemAddedToInventory()
+        // has nothing to call into yet.
+
         return result;
     }
 
@@ -527,6 +537,10 @@ export class FurniModel implements IFurniModel
                 }
 
                 this._view.setViewToState();
+
+                // TODO(AS3): catalog.collectorHub is a documented stub (always null - see
+                // HabboCatalog.ts::get collectorHub()), so collectorHub.itemRemovedFromInventory()
+                // has nothing to call into yet.
 
                 return groupItem;
             }

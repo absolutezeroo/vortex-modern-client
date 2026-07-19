@@ -45,6 +45,7 @@ import {
     GetPetInventoryComposer,
     RequestFurniInventoryComposer,
 } from '../communication/messages/outgoing/inventory';
+import {ScrGetUserInfoMessageComposer} from '../communication/messages/outgoing/users/ScrGetUserInfoMessageComposer';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {FurniListMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListMessageEvent';
 import {FurniListAddOrUpdateMessageEvent} from '../communication/messages/incoming/inventory/furni/FurniListAddOrUpdateMessageEvent';
@@ -81,6 +82,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _furniMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
     private _initializedCategories: Set<string> = new Set();
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
+    private _purseTimer: ReturnType<typeof setInterval> | null = null;
     private _view!: InventoryMainView;
 
     constructor(context: IContext)
@@ -378,6 +381,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::dispose()
+        if(this._purseTimer !== null)
+        {
+            clearInterval(this._purseTimer);
+            this._purseTimer = null;
+        }
+
         for(const event of this._furniMessageEvents)
         {
             this._communication?.removeMessageEvent(event);
@@ -415,7 +425,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._effectsModel = new EffectsModel();
         this._petsModel = new PetsModel();
         this._botsModel = new BotsModel();
-        this._tradingModel = new TradingModel();
+        this._tradingModel = new TradingModel(this._communication?.connection ?? null);
 
         this._isInitialized = true;
     }
@@ -658,6 +668,28 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._purse.citizenshipVipIsExpiring = citizenshipVipIsExpiring;
         this._purse.minutesUntilExpiration = minutesUntilExpiration;
         this._purse.minutesSinceLastModified = minutesSinceLastModified;
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::setClubStatus()
+        // Keeps the HC status fresh while it's genuinely about to expire, by resending the
+        // same "habbo_club" info request every minute; stops (and is torn down) once it isn't.
+        if(minutesUntilExpiration > 0 && minutesUntilExpiration < 86400000)
+        {
+            if(this._purseTimer === null)
+            {
+                this._purseTimer = setInterval(() => this.onPurseTimer(), 60000);
+            }
+        }
+        else if(this._purseTimer !== null)
+        {
+            clearInterval(this._purseTimer);
+            this._purseTimer = null;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::onPurseTimer()
+    private onPurseTimer(): void
+    {
+        this._communication?.connection?.send(new ScrGetUserInfoMessageComposer('habbo_club'));
     }
 
     requestFurni(): void
