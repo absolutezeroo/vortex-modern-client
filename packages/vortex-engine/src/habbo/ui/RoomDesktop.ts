@@ -36,6 +36,7 @@ import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IRoomObject} from '@room/object/IRoomObject';
+import type {IUserData} from '@habbo/session/IUserData';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
@@ -448,12 +449,28 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return null;
     }
 
-    // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
-    public isOwnerOfFurniture(object: IRoomObject): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::isOwnerOfFurniture()
+    public isOwnerOfFurniture(object: IRoomObject): boolean
     {
         const ownerId = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID);
 
-        return ownerId > 0 && ownerId === this._sessionDataManager?.userId;
+        return ownerId === this._sessionDataManager?.userId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::getFurnitureOwnerId()
+    public getFurnitureOwnerId(object: IRoomObject): number
+    {
+        const ownerId = object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_OWNER_ID);
+
+        return !isNaN(ownerId) ? ownerId : -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::isOwnerOfPet()
+    public isOwnerOfPet(pet: IUserData | null): boolean
+    {
+        if(pet === null) return false;
+
+        return pet.ownerId === this._sessionDataManager?.userId;
     }
 
     public addUpdateListener(handler: IRoomWidgetHandler): void 

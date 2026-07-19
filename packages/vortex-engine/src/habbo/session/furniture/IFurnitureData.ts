@@ -37,6 +37,8 @@ export interface IFurnitureData
     readonly purchaseOfferId: number;
     // AS3: sources/win63_version/habbo/session/furniture/class_1800.as::get bcOfferId()
     readonly bcOfferId: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/_SafeCls_2302.as::get tradeable()
+    readonly tradeable: boolean;
     // AS3: sources/win63_version/habbo/session/furniture/class_1800.as::get rentOfferId()
     readonly rentOfferId: number;
     // AS3: sources/win63_version/habbo/session/furniture/class_1800.as::get customParams()

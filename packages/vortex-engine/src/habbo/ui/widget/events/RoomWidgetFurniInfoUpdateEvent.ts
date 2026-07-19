@@ -22,13 +22,20 @@ export class RoomWidgetFurniInfoUpdateEvent extends RoomWidgetUpdateEvent
     public isRoomOwner: boolean = false;
     public roomControllerLevel: number = 0;
     public isAnyRoomController: boolean = false;
-    public expiration: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::_SafeStr_9024
+    // AS3 initialises this to -1, not 0 - matches the `event.expiration >= 0` gate on
+    // InfoStandFurniView.ts:608, though handleGetFurniInfoMessage() always assigns a real value
+    // before emitting, so the default itself is never observed today.
+    public expiration: number = -1;
     // AS3 (_SafeStr_9402) initialises this to -1, not 0: 0 reads as "offer id 0 exists"
     // and shows a phantom purchase button; -1 means no offer.
     public purchaseOfferId: number = -1;
     public bcOfferId: number = -1;
     public extraParam: string = '';
     public isOwner: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/events/RoomWidgetFurniInfoUpdateEvent.as::get/set tradeable()
+    // Write-only in AS3 too - InfoStandWidgetHandler writes it, nothing in ui/ ever reads it back.
+    public tradeable: boolean = false;
     public stuffData: IStuffData | null = null;
     public groupId: number = 0;
     public ownerId: number = 0;

@@ -171,7 +171,8 @@ export class FurnitureDataParser
             this.getChildString(item, 'canlayon') === '1',
             this.getChildString(item, 'excludeddynamic') === '1',
             this.getChildString(item, 'furniline'),
-            this.getChildNumber(item, 'bcofferid', 0)
+            this.getChildNumber(item, 'bcofferid', 0),
+            this.getChildString(item, 'tradeable') === '1'
         );
     }
 
@@ -208,7 +209,8 @@ export class FurnitureDataParser
             false,
             this.getChildString(item, 'excludeddynamic') === '1',
             this.getChildString(item, 'furniline'),
-            this.getChildNumber(item, 'bcofferid', 0)
+            this.getChildNumber(item, 'bcofferid', 0),
+            this.getChildString(item, 'tradeable') === '1'
         );
     }
 
@@ -267,7 +269,8 @@ export class FurnitureDataParser
             this.getRawBoolean(item, 'canlayon'),
             this.getRawBoolean(item, 'excludeddynamic'),
             this.getRawString(item, 'furniline'),
-            this.getRawNumber(item, 0, 'bcofferid')
+            this.getRawNumber(item, 0, 'bcofferid'),
+            this.getRawBoolean(item, 'tradeable')
         );
     }
 
@@ -302,7 +305,8 @@ export class FurnitureDataParser
             false,
             this.getRawBoolean(item, 'excludeddynamic'),
             this.getRawString(item, 'furniline'),
-            this.getRawNumber(item, 0, 'bcofferid')
+            this.getRawNumber(item, 0, 'bcofferid'),
+            this.getRawBoolean(item, 'tradeable')
         );
     }
 
@@ -384,7 +388,10 @@ export class FurnitureDataParser
                     canLayOn,
                     excludedFromDynamic,
                     '',
-                    -1
+                    -1,
+                    // The legacy Lingo format predates furniLine/bcOfferId/tradeable - none of the
+                    // three are encoded in it, same reasoning as the -1 bcOfferId above.
+                    false
                 );
 
                 this.storeItem(furnitureData);

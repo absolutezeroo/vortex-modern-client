@@ -19,6 +19,7 @@ import {GetGuestRoomResultMessageEvent} from '@habbo/communication/messages/inco
 import type {GetGuestRoomResultMessageParser} from '@habbo/communication/messages/parser/navigator/GetGuestRoomResultMessageParser';
 import {RateFlatMessageComposer} from '@habbo/communication/messages/outgoing/navigator/RateFlatMessageComposer';
 import type {RoomToolsWidget} from '@habbo/ui/widget/roomtools/RoomToolsWidget';
+import {SessionDataPreferencesEvent} from '@habbo/session/events/SessionDataPreferencesEvent';
 
 export class RoomToolsWidgetHandler implements IRoomWidgetHandler
 {
@@ -76,10 +77,20 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
         return 'RWE_ROOM_TOOLS';
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/RoomToolsWidgetHandler.as::onSessionDataPreferences()
+    // Empty in AS3 too - no fidelity gap in leaving it a no-op, only in the listener wiring itself.
+    private onSessionDataPreferences = (_event: unknown): void =>
+    {
+    };
+
     // AS3: sources/win63_version/habbo/ui/handler/RoomToolsWidgetHandler.as::set container() / get container()
     public set container(value: IRoomWidgetHandlerContainer | null)
     {
+        this._container?.sessionDataManager?.events.off(SessionDataPreferencesEvent.PREFERENCES_UPDATED, this.onSessionDataPreferences);
+
         this._container = value;
+
+        this._container?.sessionDataManager?.events.on(SessionDataPreferencesEvent.PREFERENCES_UPDATED, this.onSessionDataPreferences);
     }
 
     public get container(): IRoomWidgetHandlerContainer | null
@@ -130,6 +141,8 @@ export class RoomToolsWidgetHandler implements IRoomWidgetHandler
             this._communicationManagerMessageEvents = [];
             this._communicationManager = null;
         }
+
+        this._container?.sessionDataManager?.events.off(SessionDataPreferencesEvent.PREFERENCES_UPDATED, this.onSessionDataPreferences);
 
         this._navigatorRef = null;
         this._widget = null;

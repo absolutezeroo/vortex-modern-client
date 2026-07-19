@@ -825,6 +825,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 event.description = furnitureData.description;
                 event.purchaseOfferId = furnitureData.purchaseOfferId;
                 event.bcOfferId = furnitureData.bcOfferId;
+                event.tradeable = furnitureData.tradeable;
                 event.purchaseCouldBeUsedForBuyout = furnitureData.purchaseCouldBeUsedForBuyout;
                 event.rentOfferId = furnitureData.rentOfferId;
                 event.rentCouldBeUsedForBuyout = furnitureData.rentCouldBeUsedForBuyout;

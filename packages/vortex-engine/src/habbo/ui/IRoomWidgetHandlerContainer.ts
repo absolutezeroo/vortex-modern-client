@@ -25,6 +25,8 @@ import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
 import type {RoomDesktopLayoutManager} from './RoomDesktopLayoutManager';
+import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
+import type {IUserData} from '@habbo/session/IUserData';
 
 export interface IRoomWidgetHandlerContainer
 {
@@ -65,4 +67,10 @@ export interface IRoomWidgetHandlerContainer
     removeUpdateListener(handler: IRoomWidgetHandler): void;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfFurniture()
     isOwnerOfFurniture(object: IRoomObject): boolean;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::getFurnitureOwnerId()
+    getFurnitureOwnerId(object: IRoomObject): number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::isOwnerOfPet()
+    isOwnerOfPet(pet: IUserData | null): boolean;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get navigator()
+    readonly navigator: IHabboNavigator | null;
 }
