@@ -37,6 +37,7 @@ export class FurnitureData implements IFurnitureData
     private _excludedFromDynamic: boolean;
     private _furniLine: string;
     private _bcOfferId: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::get tradeable()
     private _tradeable: boolean;
 
     // AS3: sources/win63_version/habbo/session/furniture/FurnitureData.as::FurnitureData()
@@ -67,7 +68,9 @@ export class FurnitureData implements IFurnitureData
         canLayOn: boolean,
         excludedFromDynamic: boolean,
         furniLine: string,
+        // AS3: sources/win63_version/habbo/session/furniture/FurnitureData.as::bcOfferId
         bcOfferId: number,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::tradeable
         tradeable: boolean = false
     )
     {
