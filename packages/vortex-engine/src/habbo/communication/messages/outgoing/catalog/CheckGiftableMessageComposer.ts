@@ -6,6 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class CheckGiftableMessageComposer extends MessageComposer<ConstructorParameters<typeof CheckGiftableMessageComposer>>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::checkGiftable()
     private _data: ConstructorParameters<typeof CheckGiftableMessageComposer>;
 
     constructor(offerId: number)
@@ -14,6 +15,7 @@ export class CheckGiftableMessageComposer extends MessageComposer<ConstructorPar
         this._data = [offerId];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::checkGiftable()
     getMessageArray()
     {
         return this._data;

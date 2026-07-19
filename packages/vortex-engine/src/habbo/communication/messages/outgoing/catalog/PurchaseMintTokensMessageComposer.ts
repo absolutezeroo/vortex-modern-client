@@ -6,6 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PurchaseMintTokensMessageComposer extends MessageComposer<ConstructorParameters<typeof PurchaseMintTokensMessageComposer>>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseMintTokens()
     private _data: ConstructorParameters<typeof PurchaseMintTokensMessageComposer>;
 
     constructor(amount: number, currency: string)
@@ -14,6 +15,7 @@ export class PurchaseMintTokensMessageComposer extends MessageComposer<Construct
         this._data = [amount, currency];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseMintTokens()
     getMessageArray()
     {
         return this._data;

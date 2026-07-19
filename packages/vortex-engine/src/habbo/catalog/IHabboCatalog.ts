@@ -39,10 +39,15 @@ export interface IHabboCatalog
     readonly utils: HabboCatalogUtils;
     readonly currentCatalogNavigator: ICatalogNavigator | null;
     readonly frontPageItems: FrontPageItem[] | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get specialItemsController()
     readonly specialItemsController: unknown;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get avatarEditor()
     readonly avatarEditor: unknown;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get notifications()
     readonly notifications: IHabboNotifications | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get builderSecondsLeft()
     readonly builderSecondsLeft: number;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get builderSecondsLeftWithGrace()
     readonly builderSecondsLeftWithGrace: number;
 
     getSeasonalCurrencyActivityPointType(): number;

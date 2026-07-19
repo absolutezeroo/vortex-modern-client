@@ -6,6 +6,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PurchaseNftOfferMessageComposer extends MessageComposer<ConstructorParameters<typeof PurchaseNftOfferMessageComposer>>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseNftOffer()
     private _data: ConstructorParameters<typeof PurchaseNftOfferMessageComposer>;
 
     constructor(offerId: string, extraParam: string)
@@ -14,6 +15,7 @@ export class PurchaseNftOfferMessageComposer extends MessageComposer<Constructor
         this._data = [offerId, extraParam];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseNftOffer()
     getMessageArray()
     {
         return this._data;

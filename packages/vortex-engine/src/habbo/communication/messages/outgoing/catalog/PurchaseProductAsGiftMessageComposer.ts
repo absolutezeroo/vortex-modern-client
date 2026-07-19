@@ -10,24 +10,16 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PurchaseProductAsGiftMessageComposer extends MessageComposer<ConstructorParameters<typeof PurchaseProductAsGiftMessageComposer>>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProductAsGift()
     private _data: ConstructorParameters<typeof PurchaseProductAsGiftMessageComposer>;
 
-    constructor(
-        pageId: number,
-        offerId: number,
-        extraParam: string,
-        receiverName: string,
-        giftMessage: string | null,
-        giftBoxProductId: number,
-        boxType: number,
-        ribbonType: number,
-        showPurchaserName: boolean = false
-    )
+    constructor(pageId: number, offerId: number, extraParam: string, receiverName: string, giftMessage: string | null, giftBoxProductId: number, boxType: number, ribbonType: number, showPurchaserName: boolean = false)
     {
         super();
         this._data = [pageId, offerId, extraParam, receiverName, giftMessage, giftBoxProductId, boxType, ribbonType, showPurchaserName];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProductAsGift()
     getMessageArray()
     {
         return this._data;

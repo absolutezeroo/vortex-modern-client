@@ -19,6 +19,7 @@ export interface IHabboCatalogPurse
 
     readonly hasClubLeft: boolean;
     readonly activityPoints: Map<number, number>;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purse/Purse.as::get lastUpdated()
     readonly lastUpdated: number;
 
     getActivityPointsForType(type: number): number;

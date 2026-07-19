@@ -773,17 +773,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // "confirm and buy" path, not the gift-wrapping flow (box/ribbon selectors, receiver name) -
     // same category as purchaseVipMembershipExtension()/purchaseBasicMembershipExtension() above,
     // which are also real composer-senders reachable only once their calling UI is wired.
-    purchaseProductAsGift(
-        pageId: number,
-        offerId: number,
-        extraParam: string,
-        receiverName: string,
-        giftMessage: string | null,
-        giftBoxProductId: number,
-        boxType: number,
-        ribbonType: number,
-        showPurchaserName: boolean = false
-    ): void
+    purchaseProductAsGift(pageId: number, offerId: number, extraParam: string, receiverName: string, giftMessage: string | null, giftBoxProductId: number, boxType: number, ribbonType: number, showPurchaserName: boolean = false): void
     {
         this.connection?.send(new PurchaseProductAsGiftMessageComposer(
             pageId, offerId, extraParam, receiverName, giftMessage, giftBoxProductId, boxType, ribbonType, showPurchaserName
@@ -1273,11 +1263,15 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return productCount;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getPixelEffectIcon()
+    // TODO(AS3): see getMintTokenProductIcon()'s note below - same Texture-vs-ImageBitmap mismatch.
     public getPixelEffectIcon(_effectId: number): ImageBitmap | null
     {
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getSubscriptionProductIcon()
+    // TODO(AS3): see getMintTokenProductIcon()'s note below - same Texture-vs-ImageBitmap mismatch.
     public getSubscriptionProductIcon(_productId: number): ImageBitmap | null
     {
         return null;
@@ -1346,7 +1340,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._builderSecondsLeftWithGrace - (HabboCatalog.getTimer() - this._builderMembershipUpdateTime) / 1000;
     }
 
-    // AS3 counterpart: flash.utils.getTimer()
+    // AS3: flash.utils.getTimer() - TS-only helper, no HabboCatalog.as member of this name; used by
+    // builderSecondsLeft/builderSecondsLeftWithGrace exactly like SSOTicketMessageComposer.ts's own
+    // getTimer() helper.
     private static getTimer(): number
     {
         if(typeof performance !== 'undefined')
@@ -1798,6 +1794,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getInteger('new.identity', 0) > 0;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::buySnowWarTokensOffer()
+    // TODO(AS3): real body shows a purchase-confirmation dialog for one of three cached
+    // GameTokensOffer-typed fields (keyed by localizationId), or else requests a fresh offer via
+    // GetSnowWarGameTokensOfferComposer - same GameTokensOffer/SnowWarGameTokensMessageEvent gap
+    // documented on purchaseGameTokensOffer() below (a distinct AS3 method, not a duplicate).
     public buySnowWarTokensOffer(_localizationId: string): void
     {
     }
@@ -1817,8 +1818,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showVipBenefits()
+    // AS3 also lazily calls init() first if _utils is still null - this port's _utils is always
+    // constructed eagerly in the field initializer, so that guard has nothing to do here.
     public showVipBenefits(): void
     {
+        if(!this.getCatalogNavigator('NORMAL')?.initialized)
+        {
+            this.refreshCatalogIndex('NORMAL');
+        }
+
+        this._utils.showVipBenefits();
     }
 
     public displayProductIcon(productType: string, classId: number, target: unknown): void 
