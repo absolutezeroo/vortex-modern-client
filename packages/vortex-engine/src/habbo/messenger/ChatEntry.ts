@@ -52,9 +52,23 @@ export class ChatEntry
         return this._chatId;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as::message
+    // TODO(AS3): AS3's message is a typed _SafeCls_2676 (type 0 = plain text, other values =
+    // structured content like room invites) with a static _SafeCls_2676.text() factory - this port
+    // simplifies it to a plain string, so there is no type discriminator to gate on. ChatEntry has
+    // zero constructors/callers anywhere in this port today, so this is undocumented rather than
+    // observably wrong; a real fix needs the typed wrapper, not a guess at its shape.
     private _message: string;
 
     get message(): string
+    {
+        return this._message;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as::get messageText()
+    // AS3 returns "" for a non-text message (type != 0); this port's message is always plain text
+    // under the current simplification (see the TODO on `message` above), so it's returned as-is.
+    get messageText(): string
     {
         return this._message;
     }
@@ -117,6 +131,10 @@ export class ChatEntry
 	 *
 	 * @param prefix - The prefix to prepend
 	 */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as::prefixMessageWith()
+    // AS3 only prefixes when message.type === 0 (plain text) - a room-invite or other structured
+    // message is left alone. Same simplified-message gap as `message`/`messageText` above; always
+    // prefixing is the current (undocumented-until-now) behavior.
     prefixMessageWith(prefix: string): void
     {
         this._message = prefix + '\n' + this._message;

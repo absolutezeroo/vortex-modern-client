@@ -227,6 +227,14 @@ export class HabboFriendList extends Component implements IHabboFriendList
         return this._friends.has(userId);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendlist/HabboFriendList.as::canBeAskedForAFriend()
+    // TODO(AS3): AS3 also excludes a user already sent a pending request
+    // (`!searchResults.isFriendRequestSent(userId)`) and compares against a separate request quota
+    // (`friendRequests.limit`), not the overall friend limit compared here. This port's friendlist
+    // is a flat-Map re-architecture (no AvatarSearchResults/FriendCategories, and no askForAFriend()
+    // to record a sent request against), so there is no existing state to check the first condition
+    // against, and no confirmed equivalent for the second - inventing either would be a guess, not
+    // a port.
     canBeAskedForAFriend(userId: number): boolean
     {
         if(!this._initialized)
