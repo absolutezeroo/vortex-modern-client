@@ -8,12 +8,7 @@ import type {Texture} from 'pixi.js';
  */
 export class AvatarImageBodyPartContainer
 {
-    constructor(
-        image: Texture | null,
-        regPoint: { x: number; y: number },
-        isCacheable: boolean,
-        faceOffset: { x: number; y: number } | null = null
-    )
+    constructor(image: Texture | null, regPoint: { x: number; y: number }, isCacheable: boolean, faceOffset: { x: number; y: number } | null = null)
     {
         this._offset = {x: 0, y: 0};
         this._image = image;
