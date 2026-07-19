@@ -77,6 +77,14 @@ export class Classes
 
         Classes._registry = new Map();
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/Classes.as::init()
+        // AS3 registers NULL(0) to the plain WindowController base as a safety net: an unresolved
+        // tag falls back to typeId 0 (WindowParser.ts's `resolvedType !== undefined ? resolvedType
+        // : WindowType.NULL`), and without an entry here getWindowClassByType(0) returns null,
+        // create() calls handleError() and the whole subtree under that tag is dropped. Latent
+        // today (no shipped layout uses an unresolved tag), but the safety net itself was missing.
+        Classes.register(WindowType.NULL, WindowController as any);
+
         Classes.register(WindowType.ICON, IconController as any);
         Classes.register(WindowType.BACKGROUND, BackgroundController as any);
         Classes.register(WindowType.CONTAINER, ContainerController as any);

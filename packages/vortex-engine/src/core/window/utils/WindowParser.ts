@@ -134,8 +134,19 @@ export class WindowParser implements IWindowParser
         return this.parseSingleWindowEntity(root, parent, sharedVars, namedWindows);
     }
 
-    public windowToXMLString(window: IWindow): string 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::windowToXMLString()
+    public windowToXMLString(window: IWindow): string
     {
+        if(window.dynamicStyle.length < 3)
+        {
+            window.dynamicStyle = '';
+        }
+
+        if(window.dynamicStyle !== '')
+        {
+            window.setParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT, false);
+        }
+
         const typeName = TYPE_CODE_TO_NAME[window.type] ?? 'null';
         let xml = '';
 
@@ -243,9 +254,33 @@ export class WindowParser implements IWindowParser
 
         const childrenXml = this.serializeChildren(window);
 
-        if(childrenXml.length > 0) 
+        if(childrenXml.length > 0)
         {
             xml += `\t<children>\r${childrenXml}\t</children>\r`;
+        }
+
+        const properties = window.properties as PropertyStruct[] | null;
+
+        if(properties && properties.length > 0)
+        {
+            let variablesXml = '\t<variables>\r';
+            let hasValid = false;
+
+            for(const property of properties)
+            {
+                if(property.valid)
+                {
+                    variablesXml += `\t\t${property.toXMLString()}\r`;
+                    hasValid = true;
+                }
+            }
+
+            variablesXml += '\t</variables>\r';
+
+            if(hasValid)
+            {
+                xml += variablesXml;
+            }
         }
 
         return `${xml}</${typeName}>\r`;
@@ -557,28 +592,32 @@ export class WindowParser implements IWindowParser
         }
 
         const childrenNode = getDirectChildByName(node, 'children');
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::parseAndConstruct()
+        // setAutoRearrange(false) is only useful while children are being added, but the final
+        // setAutoRearrange(true) is unconditional in AS3 - it runs on every BoxSizer, not just ones
+        // with a <children> node.
+        const boxSizer = window as unknown as BoxSizerController;
+        const isBoxSizer = typeof boxSizer.setAutoRearrange === 'function';
 
-        if(childrenNode) 
+        if(childrenNode)
         {
             const childNodes = getDirectChildElements(childrenNode);
             const target = window.getLayoutChildTarget();
-            const boxSizer = window as unknown as BoxSizerController;
-            const isBoxSizer = typeof boxSizer.setAutoRearrange === 'function';
 
-            if(isBoxSizer) 
+            if(isBoxSizer)
             {
                 boxSizer.setAutoRearrange(false);
             }
 
-            for(const childNode of childNodes) 
+            for(const childNode of childNodes)
             {
                 this.parseSingleWindowEntity(childNode, target, sharedVars, namedWindows);
             }
+        }
 
-            if(isBoxSizer) 
-            {
-                boxSizer.setAutoRearrange(true);
-            }
+        if(isBoxSizer)
+        {
+            boxSizer.setAutoRearrange(true);
         }
 
         return window;

@@ -120,4 +120,72 @@ export class PropertyStruct
                 return String(this._value);
         }
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/PropertyStruct.as::toXMLString()
+    // Debug-only XML dump of a single property; has no current caller (reached only through
+    // WindowParser.windowToXMLString()'s own <variables> block, itself uncalled).
+    public toXMLString(): string
+    {
+        switch(this._type)
+        {
+            case PropertyStruct.MAP:
+            {
+                const map = this._value as { length: number; getKey(i: number): unknown; getWithIndex(i: number): unknown } | null;
+                let xml = `<var key="${this._key}">\r<value>\r<${this._type}>\r`;
+
+                if(map)
+                {
+                    for(let i = 0; i < map.length; i++)
+                    {
+                        const entryValue = map.getWithIndex(i);
+
+                        xml += `<var key="${map.getKey(i)}" value="${entryValue}" type="${typeof entryValue}" />\r`;
+                    }
+                }
+
+                return xml + `</${this._type}>\r</value>\r</var>`;
+            }
+
+            case PropertyStruct.ARRAY:
+            {
+                const arr = (this._value as unknown[] | null) ?? [];
+                let xml = `<var key="${this._key}">\r<value>\r<${this._type}>\r`;
+
+                for(let i = 0; i < arr.length; i++)
+                {
+                    xml += `<var key="${i}" value="${arr[i]}" type="${typeof arr[i]}" />\r`;
+                }
+
+                return xml + `</${this._type}>\r</value>\r</var>`;
+            }
+
+            case PropertyStruct.POINT:
+            {
+                const point = this._value as { x: number; y: number };
+
+                return `<var key="${this._key}">\r<value>\r<${this._type}>\r` +
+                    `<var key="x" value="${point.x}" type="int" />\r` +
+                    `<var key="y" value="${point.y}" type="int" />\r` +
+                    `</${this._type}>\r</value>\r</var>`;
+            }
+
+            case PropertyStruct.RECTANGLE:
+            {
+                const rect = this._value as { x: number; y: number; width: number; height: number };
+
+                return `<var key="${this._key}">\r<value>\r<${this._type}>\r` +
+                    `<var key="x" value="${rect.x}" type="int" />\r` +
+                    `<var key="y" value="${rect.y}" type="int" />\r` +
+                    `<var key="width" value="${rect.width}" type="int" />\r` +
+                    `<var key="height" value="${rect.height}" type="int" />\r` +
+                    `</${this._type}>\r</value>\r</var>`;
+            }
+
+            case PropertyStruct.HEX:
+                return `<var key="${this._key}" value="0x${((this._value as number) >>> 0).toString(16)}" type="${this._type}" />`;
+
+            default:
+                return `<var key="${this._key}" value="${this._value}" type="${this._type}" />`;
+        }
+    }
 }

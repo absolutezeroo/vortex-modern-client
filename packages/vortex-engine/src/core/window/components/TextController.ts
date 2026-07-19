@@ -1328,6 +1328,16 @@ export class TextController extends WindowController implements ITextWindow
                 ctrl._condenseWhite = !!v;
                 ctrl.refreshTextImage();
             },
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setDefaultTextFormat()
+            // TODO(AS3): AS3 assigns a whole flash.text.TextFormat object (`_field.defaultTextFormat
+            // = value`) in one shot. This port has no TextFormat-equivalent bulk type - formatting
+            // is split into the granular properties already handled elsewhere in this table
+            // (bold/font_face/font_size/italic/etc.), so there is nothing to assign wholesale here.
+            // No shipped layout emits this key, so it is currently unreachable either way.
+            'default_text_format': (ctrl) =>
+            {
+                ctrl.refreshTextImage();
+            },
             'etching_color': (ctrl, v) =>
             {
                 ctrl._etchingColor = Number(v);
