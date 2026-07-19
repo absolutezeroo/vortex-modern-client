@@ -35,6 +35,14 @@ export class BadgesModel implements IBadgesModel
         this._disposed = true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::initBadges()
+    // AS3's badgeId int field feeds ONLY the code->id map the unseen-tracker joins against
+    // (isUnseen(4, badgeId)) - it never marks a badge as worn. A badge starts inactive here in
+    // every case; "active" only ever comes later from updateBadge()/updateBadgeData(), which
+    // route through startWearingBadge()/stopWearingBadge() (the Set-synced path). Pushing directly
+    // into _activeBadges here, bypassing _activeBadgeSet, was invented and desynced the two - a
+    // later stopWearingBadge() would find nothing to delete from the Set and never remove the
+    // badge from the array, then a later startWearingBadge() would push a duplicate.
     initBadges(
         badges: IBadgeData[],
         getName: (id: string) => string,
@@ -56,13 +64,6 @@ export class BadgesModel implements IBadgesModel
             const desc = getDesc(data.badgeId);
             const badge = new Badge(data.badgeId, name, desc, isUnseen);
 
-            // Add to active if has slot
-            if(data.slotId > 0)
-            {
-                badge.isInUse = true;
-                this._activeBadges.push(badge);
-            }
-
             if(isUnseen)
             {
                 this._allBadges.unshift(badge);
@@ -74,6 +75,11 @@ export class BadgesModel implements IBadgesModel
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::updateBadge()
+    // TODO(AS3): AS3 also takes ownerCount/badgeRarityId and calls badge.updateMetadata(ownerCount,
+    // badgeRarityId) on the existing-badge path, then refreshes a rarity-group flag
+    // (refreshAvailableRareBadgeRarityIds()) - Badge.ts/IBadgeData have no rarity/ownerCount fields
+    // at all yet (a separate, unported badge-rarity feature), so there is nothing to update.
     updateBadge(
         badgeId: string,
         isInUse: boolean,
@@ -151,24 +157,25 @@ export class BadgesModel implements IBadgesModel
         return false;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/BadgesModel.as::toggleBadgeWearing()
+    // TODO(AS3): AS3 also calls saveBadgeSelection() here, sending a SetActivatedBadgesComposer
+    // with every active badge's id - BadgesModel has no connection reference to send through
+    // (this whole model is currently unreachable from any live handler), so it's left uncalled
+    // rather than invented against a composer/connection wiring that doesn't exist yet.
     toggleBadgeWearing(badgeId: string): Badge | null
     {
         const badge = this.getBadge(badgeId);
 
         if(!badge) return null;
 
+        // AS3 has no MAX_ACTIVE_BADGE_COUNT cap here at all - toggleBadgeWearing() is a pure
+        // toggle; the invented guard below silently blocked legitimate activations.
         if(badge.isInUse)
         {
             this.stopWearingBadge(badge);
         }
         else
         {
-            // Check if we can add more active badges
-            if(this._activeBadges.length >= BadgesModel.MAX_ACTIVE_BADGE_COUNT)
-            {
-                return null;
-            }
-
             this.startWearingBadge(badge);
         }
 

@@ -28,27 +28,32 @@ export class Util
     // project currently has.
     static disableSection(window: IWindow, disabled: boolean = true): void
     {
-        if(window.tags.indexOf('DO_NOT_DISABLE') === -1)
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/Util.as::disableSection()
+        // A total return, not just a skip of the blend/recurse block below - a DO_NOT_DISABLE
+        // window is left exactly as it was, never disable()/enable()d either.
+        if(window.tags.indexOf('DO_NOT_DISABLE') !== -1)
         {
-            const blend = disabled ? 0.5 : 1;
-            const container = window as unknown as IWindowContainer;
+            return;
+        }
 
-            if(typeof container.numChildren === 'number' && typeof container.getChildAt === 'function')
+        const blend = disabled ? 0.5 : 1;
+        const container = window as unknown as IWindowContainer;
+
+        if(typeof container.numChildren === 'number' && typeof container.getChildAt === 'function')
+        {
+            for(let i = 0; i < container.numChildren; i++)
             {
-                for(let i = 0; i < container.numChildren; i++)
-                {
-                    const child = container.getChildAt(i);
+                const child = container.getChildAt(i);
 
-                    if(child)
-                    {
-                        Util.disableSection(child, disabled);
-                    }
+                if(child)
+                {
+                    Util.disableSection(child, disabled);
                 }
             }
-            else
-            {
-                window.blend = blend;
-            }
+        }
+        else
+        {
+            window.blend = blend;
         }
 
         if(disabled)

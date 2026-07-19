@@ -544,15 +544,19 @@ export class GroupItem implements IGetImageListener
     }
 
     /**
-     * Get count of tradeable items (unlocked and tradeable)
+     * Get count of tradeable items (unlocked and tradeable by default)
      */
-    getTradeableCount(): number 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/GroupItem.as::getTradeableCount()
+    // AS3's param name isn't recoverable (obfuscated locals); named for what it does, matching
+    // `!param1 || !locked` exactly - true (the default) excludes locked items, false counts every
+    // tradeable item regardless of lock state.
+    getTradeableCount(excludeLocked: boolean = true): number
     {
         let count = 0;
 
-        for(const item of this._items.values()) 
+        for(const item of this._items.values())
         {
-            if(!item.locked && item.tradeable) 
+            if(item.tradeable && (!excludeLocked || !item.locked))
             {
                 count++;
             }

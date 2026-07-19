@@ -149,6 +149,12 @@ export class FurnitureItem implements IFurnitureItem
         return this._secondsToExpiration;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/FurnitureItem.as::get expirationTimeStamp()
+    get expirationTimeStamp(): number
+    {
+        return this._expirationTimeStamp;
+    }
+
     private _hasRentPeriodStarted: boolean;
 
     get hasRentPeriodStarted(): boolean

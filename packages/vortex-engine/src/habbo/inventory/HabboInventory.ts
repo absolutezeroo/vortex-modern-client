@@ -1,5 +1,6 @@
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
+import {isRoomViewerMode} from '@habbo/configuration/enum/HabboComponentFlags';
 import type {IHabboInventory, InventoryCategoryType} from './IHabboInventory';
 import type {IFurniModel} from './furni/IFurniModel';
 import type {IBadgesModel} from './badges/IBadgesModel';
@@ -496,9 +497,14 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.events.emit('HABBO_INVENTORY_TRACKING_EVENT_CLOSED');
     }
 
-    // AS3: sources/win63_version/habbo/inventory/HabboInventory.as::toggleInventoryPage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::toggleInventoryPage()
+    // AS3 sets _currentCategory unconditionally here, before the toggle even runs - not only on
+    // the `opened` branch below (inventoryViewOpened() also sets it, but only reaches that when
+    // the toggle actually opens the view).
     toggleInventoryPage(category: string, itemId: string | null = null, forceSwitch: boolean = false): void
     {
+        this._currentCategory = category as InventoryCategoryType;
+
         const opened = this._view.toggleCategoryView(category, false, forceSwitch);
 
         if(opened)
@@ -718,6 +724,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // exist before any toolbar click can reach it.
     protected override initComponent(): void
     {
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::initComponent()
+        if(isRoomViewerMode(this.flags))
+        {
+            return;
+        }
+
         // AS3 registers the tracker here, before building the unseen tracker and the view
         // (HabboInventory.as:200).
         this.context.addLinkEventTracker(this);

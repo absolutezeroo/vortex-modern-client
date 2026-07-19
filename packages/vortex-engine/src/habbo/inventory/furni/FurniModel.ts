@@ -12,7 +12,7 @@ import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObj
 import {GroupItem} from '../items/GroupItem';
 import {HabboInventoryCategoryInitializeEvent} from '../events/HabboInventoryCategoryInitializeEvent';
 import {FurnitureItem} from '../items/FurnitureItem';
-import {FurnitureCategory} from '../enum';
+import {FurnitureCategory, UnseenItemCategory} from '../enum';
 import {FurniView} from './FurniView';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 
@@ -565,6 +565,7 @@ export class FurniModel implements IFurniModel
         return removedAny;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::clearFurniList()
     clearFurniList(): void
     {
         for(const group of this._furniData)
@@ -575,6 +576,7 @@ export class FurniModel implements IFurniModel
         this._furniData.length = 0;
         this._furniDataSet.clear();
         this._isListInitialized = false;
+        this._view.clearViews();
     }
 
     getSelectedItem(): GroupItem | null
@@ -598,6 +600,11 @@ export class FurniModel implements IFurniModel
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::selectFirstItem()
+    // AS3 does not write _categorySelections here - only selectItem() (the user-driven path)
+    // does. Writing it here too meant the per-category saved selection was never null again once
+    // a category had been opened once, so updateCategorySelection() could never fall back to
+    // selectFirstItem() a second time.
     selectFirstItem(): GroupItem | null
     {
         this.removeSelections();
@@ -609,7 +616,6 @@ export class FurniModel implements IFurniModel
             {
                 groupItem.isSelected = true;
                 groupItem.selectedItemIndex = -1;
-                this._categorySelections.set(this._currentCategory, groupItem);
 
                 return groupItem;
             }
@@ -730,11 +736,19 @@ export class FurniModel implements IFurniModel
         this._habboInventory.requestFurni();
     }
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
-    // TODO(AS3): trading subcategory NFT-tab toggle depends on web3tradeEnabled flow.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
+    // TODO(AS3): trading/empty subcategory NFT-tab toggle (_showingNfts flip + updateGridFilters())
+    // depends on the web3tradeEnabled flow, not ported here yet.
+    // TODO(AS3): the wired_trading branch also calls view.resetFilterOption() (resets the
+    // filter.options dropdown to "all" and repopulates its type list) - FurniView.ts has no
+    // populateTypeFilterOptions()/resetFilterOption() of its own yet.
     subCategorySwitch(category: string): void
     {
-        if(category === 'empty')
+        if(category === 'wired_trading' || category === 'trading')
+        {
+            this.cancelFurniInMover();
+        }
+        else if(category === 'empty')
         {
             this.removeAllLocks();
         }
@@ -803,25 +817,55 @@ export class FurniModel implements IFurniModel
         return resetIds;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateUnseenItemsThumbs()
     updateUnseenItems(unseenIds: number[]): void
     {
         if(unseenIds.length === 0) return;
 
         const unseenSet = new Set(unseenIds);
+        const tracker = this._habboInventory.unseenItemTracker;
 
         for(const groupItem of this._furniData)
         {
             const furniIds = groupItem.getFurniIds();
+            const movedOwned: number[] = [];
+            const movedRented: number[] = [];
+            let hasUnseen = false;
+            let needsMove = false;
 
             for(const id of furniIds)
             {
                 if(unseenSet.has(id))
                 {
-                    groupItem.hasUnseenItems = true;
-                    this.moveItemToTop(groupItem);
+                    hasUnseen = true;
+
+                    if(!tracker.isUnseenItemMovedToTop(UnseenItemCategory.OWNED_FURNI, id))
+                    {
+                        needsMove = true;
+                        movedOwned.push(id);
+                    }
+
+                    if(!tracker.isUnseenItemMovedToTop(UnseenItemCategory.RENTED_FURNI, id))
+                    {
+                        needsMove = true;
+                        movedRented.push(id);
+                    }
 
                     break;
                 }
+            }
+
+            // AS3: `if(!(!hasUnseen || groupItem.hasUnseenItems && !needsMove))` - skip a group that
+            // has no unseen item at all, or one that's already flagged and has nothing new to move.
+            if(!hasUnseen || (groupItem.hasUnseenItems && !needsMove)) continue;
+
+            groupItem.hasUnseenItems = true;
+
+            if(needsMove)
+            {
+                this.moveItemToTop(groupItem);
+                tracker.setUnseenItemMovedToTop(UnseenItemCategory.OWNED_FURNI, movedOwned);
+                tracker.setUnseenItemMovedToTop(UnseenItemCategory.RENTED_FURNI, movedRented);
             }
         }
     }

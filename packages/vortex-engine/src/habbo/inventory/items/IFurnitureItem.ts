@@ -72,6 +72,9 @@ export interface IFurnitureItem
 	 */
     readonly secondsToExpiration: number;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/items/FurnitureItem.as::get expirationTimeStamp()
+    readonly expirationTimeStamp: number;
+
     /**
 	 * Whether the rent period has started
 	 */
