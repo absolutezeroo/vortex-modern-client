@@ -51,6 +51,10 @@ export default tseslint.config(
             ],
 
             '@typescript-eslint/no-explicit-any': 'warn',
+            // AS3 itself declares empty marker interfaces (e.g. `INotifyWindow extends
+            // _SafeCls_1828 {}`, no members) purely for nominal identity - TS's structural typing
+            // can't express that distinction, but the interface is still a faithful 1:1 port.
+            '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'with-single-extends' }],
             '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'separate-type-imports' }],
             // AS3-ported stub parameters (TODO(AS3) signatures kept for API-shape fidelity) and
             // caught-but-unhandled errors are conventionally prefixed `_` throughout this codebase
@@ -101,9 +105,29 @@ export default tseslint.config(
                         match: false
                     }
                 },
+                // `_SafeStr_N`/`_SafeCls_N` are obfuscated AS3 identifiers the decompiler couldn't
+                // recover a name for (see CLAUDE.md "AS3 sources") - inventing a camelCase name for
+                // them would violate the traceability mandate, so they keep the placeholder verbatim.
+                {
+                    selector: 'classProperty', modifiers: ['private'], format: null,
+                    filter: { regex: '^_(SafeStr|SafeCls)_\\d+$', match: true }
+                },
                 { selector: 'classProperty', modifiers: ['private'], format: ['camelCase'], leadingUnderscore: 'require' },
                 { selector: 'classProperty', modifiers: ['protected'], format: ['camelCase'], leadingUnderscore: 'require' },
+                // `width_min`/`width_max`/`height_min`/`height_max` (DefaultAttStruct) are the AS3
+                // source's own field names verbatim, not an invented snake_case slip.
+                {
+                    selector: 'classProperty', modifiers: ['public'], format: null,
+                    filter: { regex: '^(width_min|width_max|height_min|height_max)$', match: true }
+                },
                 { selector: 'classProperty', modifiers: ['public'], format: ['camelCase'], leadingUnderscore: 'forbid' },
+                // Bound event-handler methods are frequently written as arrow-function class fields
+                // (`private _onClick = (e: Event): void => {...}`) and this codebase carries over
+                // the AS3 handler's own leading underscore when the original Flash source had one -
+                // it does not do so uniformly (259 private handlers without vs. 90 with), so
+                // underscore is optional here, unlike the mandatory prefix on plain private fields.
+                { selector: 'method', modifiers: ['private'], format: ['camelCase'], leadingUnderscore: 'allow' },
+                { selector: 'method', modifiers: ['protected'], format: ['camelCase'], leadingUnderscore: 'allow' },
                 { selector: 'method', format: ['camelCase'] }
             ]
         }

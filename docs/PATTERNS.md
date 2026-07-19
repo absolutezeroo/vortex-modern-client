@@ -1,4 +1,4 @@
-# Helium Implementation Patterns
+# Vortex Implementation Patterns
 
 Detailed templates for each class type. Always use these patterns as a base during implementation.
 
@@ -287,7 +287,7 @@ export class RoomManager extends Component implements IRoomManager
 - **NEVER override `get events()`** — use a different name for custom events
 - `dispose()` is ALWAYS the last method, calls `super.dispose()`
 - `dispose()` checks `_disposed` to avoid double calls (inherited from `Component`)
-- IIDs are registered in `packages/helium-engine/src/iid/index.ts`
+- IIDs are registered in `packages/vortex-engine/src/iid/index.ts`
 
 ---
 
@@ -604,7 +604,7 @@ Every injectable service has a unique Interface Identifier (`IID<T>`) for type-s
 
 ### IID declaration
 
-One file per IID in `packages/helium-engine/src/iid/`:
+One file per IID in `packages/vortex-engine/src/iid/`:
 
 ```typescript
 // IIDRoomEngine.ts
@@ -614,7 +614,7 @@ import type { IRoomEngine } from '@habbo/room/IRoomEngine';
 export const IID_RoomEngine = createIID<IRoomEngine>('IRoomEngine');
 ```
 
-### Registration (in HeliumMain)
+### Registration (in VortexMain)
 
 ```typescript
 // Create the component
@@ -645,7 +645,7 @@ protected get dependencies(): ComponentDependency[]
 - `createIID<T>(name)` uses `Symbol.for('IID:' + name)` — globally unique
 - One IID per interface, one file per IID
 - Naming: `IID_` + interface name without `I` prefix → `IID_RoomEngine` for `IRoomEngine`
-- Registration order in `HeliumMain.initHabboManagers()` matters — dependencies must be registered before consumers
+- Registration order in `VortexMain.initHabboManagers()` matters — dependencies must be registered before consumers
 
 ---
 
@@ -713,15 +713,15 @@ Used for the application shell and global utilities.
 ### Template
 
 ```typescript
-export class Helium
+export class Vortex
 {
-    private static _instance: Helium;
+    private static _instance: Vortex;
 
-    public static get instance(): Helium
+    public static get instance(): Vortex
     {
         if(!this._instance)
         {
-            this._instance = new Helium();
+            this._instance = new Vortex();
         }
 
         return this._instance;
@@ -733,7 +733,7 @@ export class Helium
 
 - `private static _instance` + `static get instance()`
 - Lazy creation on first access
-- Used only for true application globals (`Helium`, `Logger`)
+- Used only for true application globals (`Vortex`, `Logger`)
 - Managers and services use Component DI instead — **never** make a manager a singleton
 
 ---
@@ -791,7 +791,7 @@ dispose(): void
 
 ## Guarded Getter (throw-if-null)
 
-Used in orchestrator classes (`HeliumMain`, `Helium`) where fields are `null` before initialization.
+Used in orchestrator classes (`VortexMain`, `Vortex`) where fields are `null` before initialization.
 
 ### Template
 

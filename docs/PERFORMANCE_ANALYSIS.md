@@ -1,6 +1,6 @@
 # Performance Analysis Report
 
-Analysis of the Helium codebase for performance anti-patterns, inefficient algorithms,
+Analysis of the Vortex codebase for performance anti-patterns, inefficient algorithms,
 unnecessary re-renders, and resource management issues.
 
 ---
@@ -9,7 +9,7 @@ unnecessary re-renders, and resource management issues.
 
 ### 1. Texture Recreation on Every Avatar Frame
 
-**File:** `packages/helium-engine/src/habbo/avatar/AvatarImage.ts:640-704`
+**File:** `packages/vortex-engine/src/habbo/avatar/AvatarImage.ts:640-704`
 
 Every call to `getImage()` creates a new `OffscreenCanvas`, composites all body parts onto
 it, then converts it to a `Texture.from()`. This happens on every animation frame advance,
@@ -39,7 +39,7 @@ are 4-8 frames that repeat — cache them all and cycle through cached textures.
 
 ### 2. Array Sort + Slice Every Render Frame
 
-**File:** `packages/helium-engine/src/habbo/room/renderer/RoomRenderingCanvas.ts:283-292`
+**File:** `packages/vortex-engine/src/habbo/room/renderer/RoomRenderingCanvas.ts:283-292`
 
 The render loop creates a new array slice and sorts it **every frame**:
 
@@ -65,7 +65,7 @@ Sort in-place to avoid the slice/copy-back.
 
 ### 3. No Viewport Culling for Room Objects
 
-**File:** `packages/helium-engine/src/habbo/room/renderer/RoomRenderingCanvas.ts:277-280`
+**File:** `packages/vortex-engine/src/habbo/room/renderer/RoomRenderingCanvas.ts:277-280`
 
 Every visualization is updated every frame regardless of visibility:
 
@@ -88,7 +88,7 @@ wasted work.
 
 ### 4. CPU Pixel Manipulation for Color Transforms
 
-**File:** `packages/helium-engine/src/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.ts:158-172`
+**File:** `packages/vortex-engine/src/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.ts:158-172`
 
 Floor/wall color tinting uses `getImageData`/`putImageData` with a per-pixel loop:
 
@@ -119,7 +119,7 @@ with a solid color overlay. Both operate on the GPU.
 
 ### 5. Offscreen Avatars Continue Animating
 
-**File:** `packages/helium-engine/src/habbo/room/object/visualization/avatar/AvatarVisualization.ts:308-316`
+**File:** `packages/vortex-engine/src/habbo/room/object/visualization/avatar/AvatarVisualization.ts:308-316`
 
 ```typescript
 if (needsSpriteUpdate || shouldAnimate) {
@@ -151,7 +151,7 @@ freeze their animation and resume when scrolled back into view.
 
 Multiple locations use `Array.includes()` or `Array.indexOf()` where `Set` would give O(1):
 
-**`packages/helium-engine/src/habbo/session/IgnoredUsersManager.ts:60,115`**
+**`packages/vortex-engine/src/habbo/session/IgnoredUsersManager.ts:60,115`**
 ```typescript
 isIgnored(userId: number): boolean {
     return this._ignoredUserIds.includes(userId);  // O(n) — called per chat message
@@ -165,14 +165,14 @@ private addUserToIgnoreList(userId: number): void {
 ```
 Called for every incoming chat message to filter ignored users.
 
-**`packages/helium-engine/src/habbo/room/renderer/RoomRenderingCanvas.ts:775`**
+**`packages/vortex-engine/src/habbo/room/renderer/RoomRenderingCanvas.ts:775`**
 ```typescript
 for (const [objectId, data] of this._mouseActiveObjects) {
     if (!hitObjectIds.includes(objectId)) {  // O(n) per active object, per mouse move
 ```
 Called on every mouse move event against all active mouse objects.
 
-**`packages/helium-engine/src/room/RoomManager.ts:96-100`**
+**`packages/vortex-engine/src/room/RoomManager.ts:96-100`**
 ```typescript
 if (!this._pendingTypes.includes(type)) {  // O(n) per furniture type
     this._contentLoader.loadObjectContent(type, this.events);
@@ -180,7 +180,7 @@ if (!this._pendingTypes.includes(type)) {  // O(n) per furniture type
 }
 ```
 
-**`packages/helium-engine/src/habbo/session/SessionDataManager.ts:888,909`**
+**`packages/vortex-engine/src/habbo/session/SessionDataManager.ts:888,909`**
 ```typescript
 if (listener && this._productDataListeners.indexOf(listener) === -1)  // O(n)
 if (this._furniDataListeners.indexOf(listener) === -1)                // O(n)
@@ -192,7 +192,7 @@ if (this._furniDataListeners.indexOf(listener) === -1)                // O(n)
 
 ### 7. String Concatenation in Loop
 
-**File:** `packages/helium-engine/src/habbo/avatar/AvatarImage.ts:924-926`
+**File:** `packages/vortex-engine/src/habbo/avatar/AvatarImage.ts:924-926`
 
 ```typescript
 for (const action of this._sortedActions) {
@@ -209,7 +209,7 @@ every action update for every avatar.
 
 ### 8. Array.concat() Creates New Arrays in Animation Loop
 
-**File:** `packages/helium-engine/src/habbo/avatar/AvatarImage.ts:1043`
+**File:** `packages/vortex-engine/src/habbo/avatar/AvatarImage.ts:1043`
 
 ```typescript
 this._animationSpriteData = this._animationSpriteData.concat(spriteData);
@@ -224,7 +224,7 @@ animated avatars.
 
 ### 9. Unbounded Avatar Image Cache
 
-**File:** `packages/helium-engine/src/habbo/avatar/AvatarImage.ts:801-812`
+**File:** `packages/vortex-engine/src/habbo/avatar/AvatarImage.ts:801-812`
 
 ```typescript
 protected cacheFullImage(key: string, image: Texture): void {
@@ -246,7 +246,7 @@ accumulating GPU textures indefinitely.
 
 ### 10. Canvas Element Recreation Instead of Reuse
 
-**File:** `packages/helium-engine/src/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.ts:118-145`
+**File:** `packages/vortex-engine/src/habbo/room/object/visualization/room/rasterizer/basic/PlaneVisualizationLayer.ts:118-145`
 
 ```typescript
 if (this._cachedBitmap === null) {
@@ -273,7 +273,7 @@ survive dimension changes — just set `.width` and `.height`.
 
 ### 11. ByteArray Allocation Per Message in WireFormatter
 
-**File:** `packages/helium-engine/src/core/communication/wireformat/WireFormatter.ts`
+**File:** `packages/vortex-engine/src/core/communication/wireformat/WireFormatter.ts`
 
 Each incoming WebSocket message creates 1-3 `ByteArray` objects during splitting. With
 encryption enabled, creates a temporary `ByteArray` for the length bytes, another for the
@@ -288,7 +288,7 @@ processing.
 
 Multiple parsers replace array references in both `flush()` and `parse()`:
 
-**`packages/helium-engine/src/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.ts`**
+**`packages/vortex-engine/src/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.ts`**
 ```typescript
 flush(): boolean {
     this._objects = [];   // replaces reference
@@ -308,7 +308,7 @@ old array reference.
 
 ### 13. Temporary Map Allocation Per Room Load
 
-**File:** `packages/helium-engine/src/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.ts`
+**File:** `packages/vortex-engine/src/habbo/communication/messages/parser/room/engine/ObjectsMessageParser.ts`
 
 Creates a temporary `Map<number, string>` in every `parse()` call for owner ID-to-name
 mapping:
@@ -325,7 +325,7 @@ This map is used once and immediately abandoned to GC.
 
 ### 14. Juggler Uses Array.indexOf for Add/Remove
 
-**File:** `packages/helium-engine/src/habbo/utils/animation/Juggler.ts:36`
+**File:** `packages/vortex-engine/src/habbo/utils/animation/Juggler.ts:36`
 
 ```typescript
 if (animatable && this._animatables.indexOf(animatable) === -1) {  // O(n)
@@ -343,7 +343,7 @@ a `Set` if iteration order doesn't matter.
 
 ### 15. Resize Listener Leak in RoomEngine
 
-**File:** `packages/helium-engine/src/habbo/room/RoomEngine.ts`
+**File:** `packages/vortex-engine/src/habbo/room/RoomEngine.ts`
 
 `window.addEventListener('resize', onResize)` is registered inside `getRenderingCanvas()`
 with a closure that captures the canvas reference. If the canvas is recreated, the old
@@ -355,7 +355,7 @@ listener remains attached, preventing GC of the old canvas.
 
 ### 16. Map-to-Array Conversion for Index Access
 
-**File:** `packages/helium-engine/src/room/RoomManager.ts:207`
+**File:** `packages/vortex-engine/src/room/RoomManager.ts:207`
 
 ```typescript
 getRoomWithIndex(index: number): IRoomInstance | null {

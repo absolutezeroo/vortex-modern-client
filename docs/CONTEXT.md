@@ -1,10 +1,10 @@
-# Helium Project Context
+# Vortex Project Context
 
 This document provides the architecture and project context. Read it before implementation work, then use `docs/IMPLEMENTATION_STATUS.md` for the current project state.
 
 ## Overview
 
-**Helium** is an in-progress full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client, organized as a pnpm monorepo. The target is a lighter client than Nitro while staying faithful to the original AS3 architecture.
+**Vortex** is an in-progress full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client, organized as a pnpm monorepo. The target is a lighter client than Nitro while staying faithful to the original AS3 architecture.
 
 The port must reuse the lifecycle system and display/window architecture from the original AS3 source: class hierarchy, dispose patterns, flush/parse cycles, object management, message wiring, and UI window behavior should match AS3 unless a JS-specific performance divergence is explicitly documented.
 
@@ -21,10 +21,10 @@ The port must reuse the lifecycle system and display/window architecture from th
 ### Monorepo
 
 ```
-helium/
+vortex/
 ├── packages/
-│   ├── helium-engine/     Engine, protocol, room engine, Habbo logic, ported Flash window/UI framework
-│   └── helium-client/     Vite shell, login/bootstrap, asset bundling, converted layout/skin assets
+│   ├── vortex-engine/     Engine, protocol, room engine, Habbo logic, ported Flash window/UI framework
+│   └── vortex-client/     Vite shell, login/bootstrap, asset bundling, converted layout/skin assets
 ├── sources/
 │   ├── WIN63-202607011411-782849652/  Primary AS3 source (obfuscated 2026 build), ~3,369 .as files under src/com/sulake/
 │   ├── win63_version/               Secondary AS3 source / name-recovery reference, 4,783 .as files
@@ -54,18 +54,18 @@ Raw file counts are useful for orientation, but they do not prove AS3 parity. A 
 ## Engine Architecture
 
 ```
-packages/helium-engine/src/
+packages/vortex-engine/src/
 ├── core/          Low-level runtime, assets, communication, localization, window framework
 ├── habbo/         Habbo managers, session, navigator, inventory, toolbar, window/UI, messages
 ├── room/          Low-level room manager/renderer/object support
 ├── iid/           Dependency injection symbols
-├── Helium.ts      Application-level engine shell
-└── HeliumMain.ts  Engine manager registration/orchestration
+├── Vortex.ts      Application-level engine shell
+└── VortexMain.ts  Engine manager registration/orchestration
 ```
 
 ### Layer boundaries
 
-- `helium-engine` must not import from `helium-client`.
+- `vortex-engine` must not import from `vortex-client`.
 - The client may import from the engine.
 - UI/display state should flow from engine events into client/window classes, not from engine code reaching into client-specific UI.
 
@@ -102,20 +102,20 @@ SocketConnection
 
 | Alias     | Engine resolves to | Client resolves to            |
 |-----------|--------------------|-------------------------------|
-| `@core/`  | `src/core/`        | `../helium-engine/src/core/`  |
-| `@habbo/` | `src/habbo/`       | `../helium-engine/src/habbo/` |
-| `@room/`  | `src/room/`        | `../helium-engine/src/room/`  |
-| `@iid/`   | `src/iid/`         | `../helium-engine/src/iid/`   |
+| `@core/`  | `src/core/`        | `../vortex-engine/src/core/`  |
+| `@habbo/` | `src/habbo/`       | `../vortex-engine/src/habbo/` |
+| `@room/`  | `src/room/`        | `../vortex-engine/src/room/`  |
+| `@iid/`   | `src/iid/`         | `../vortex-engine/src/iid/`   |
 | `@/`      | N/A                | `src/`                        |
 
 ## Client Architecture
 
 ```
-packages/helium-client/src/
+packages/vortex-client/src/
 ├── App.ts                         Browser/Pixi app shell
 ├── index.ts                       Client entry
 ├── AssetBundle.ts                 Bundled asset access
-├── HeliumLoadingScreen.ts         Loading screen implementation
+├── VortexLoadingScreen.ts         Loading screen implementation
 ├── login/                         Login flow and SSO views
 ├── window/WindowXmlAssetParser.ts Converted window layout parser bridge
 └── assets/
@@ -125,7 +125,7 @@ packages/helium-client/src/
     └── webfonts/
 ```
 
-Most ported Flash window/controller code currently lives in `packages/helium-engine/src/core/window`, `packages/helium-engine/src/habbo/window`, and `packages/helium-engine/src/habbo/ui`. The client package is mainly the browser shell plus converted assets.
+Most ported Flash window/controller code currently lives in `packages/vortex-engine/src/core/window`, `packages/vortex-engine/src/habbo/window`, and `packages/vortex-engine/src/habbo/ui`. The client package is mainly the browser shell plus converted assets.
 
 ## AS3 Sources
 
@@ -167,13 +167,13 @@ For implementation tasks:
 
 | File                                                                          | Role                        |
 |-------------------------------------------------------------------------------|-----------------------------|
-| `packages/helium-client/index.html`                                           | Browser entry HTML          |
-| `packages/helium-client/src/index.ts`                                         | Client bootstrap            |
-| `packages/helium-client/src/App.ts`                                           | Browser/Pixi app shell      |
-| `packages/helium-engine/src/Helium.ts`                                        | Engine application shell    |
-| `packages/helium-engine/src/HeliumMain.ts`                                    | Engine manager registration |
-| `packages/helium-engine/src/habbo/communication/HabboMessages.ts`             | Message registry            |
-| `packages/helium-engine/src/habbo/communication/HabboCommunicationManager.ts` | Habbo protocol layer        |
-| `packages/helium-engine/src/habbo/room/RoomEngine.ts`                         | Habbo room engine facade    |
-| `packages/helium-engine/src/room/RoomManager.ts`                              | Low-level room manager      |
-| `packages/helium-engine/src/iid/index.ts`                                     | DI symbol exports           |
+| `packages/vortex-client/index.html`                                           | Browser entry HTML          |
+| `packages/vortex-client/src/index.ts`                                         | Client bootstrap            |
+| `packages/vortex-client/src/App.ts`                                           | Browser/Pixi app shell      |
+| `packages/vortex-engine/src/Vortex.ts`                                        | Engine application shell    |
+| `packages/vortex-engine/src/VortexMain.ts`                                    | Engine manager registration |
+| `packages/vortex-engine/src/habbo/communication/HabboMessages.ts`             | Message registry            |
+| `packages/vortex-engine/src/habbo/communication/HabboCommunicationManager.ts` | Habbo protocol layer        |
+| `packages/vortex-engine/src/habbo/room/RoomEngine.ts`                         | Habbo room engine facade    |
+| `packages/vortex-engine/src/room/RoomManager.ts`                              | Low-level room manager      |
+| `packages/vortex-engine/src/iid/index.ts`                                     | DI symbol exports           |

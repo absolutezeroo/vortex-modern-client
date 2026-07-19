@@ -1,7 +1,7 @@
 # Audit de Conformité AS3 ↔ TypeScript — Rapport Final
 
 **Date:** 2026-02-18
-**Scope:** Tous les fichiers TypeScript du projet Helium (hors `outgoing/`, `incoming/`, `parsers/`)
+**Scope:** Tous les fichiers TypeScript du projet Vortex (hors `outgoing/`, `incoming/`, `parsers/`)
 **Référence:** `sources/win63_version/` (AS3 primaire)
 
 ---
@@ -66,7 +66,7 @@
 
 ### ~~1. IID Symbols — 27/48 manquants (44% couverture)~~ **CORRIGÉ**
 
-**50/50 symbols** créés et exportés dans `packages/helium-engine/src/iid/index.ts`.
+**50/50 symbols** créés et exportés dans `packages/vortex-engine/src/iid/index.ts`.
 
 29 fichiers IID ajoutés, `IIDRoomUI.ts` refactoré vers `createIID()`, tous typés avec leurs interfaces quand disponibles.
 

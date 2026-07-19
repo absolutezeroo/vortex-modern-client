@@ -1,4 +1,4 @@
-# AGENTS.md — Helium
+# AGENTS.md — Vortex
 
 Universal instructions for all AI assistants (Cursor, Windsurf, Codex, Copilot, Claude, etc.)
 
@@ -6,7 +6,7 @@ Universal instructions for all AI assistants (Cursor, Windsurf, Codex, Copilot, 
 
 ## Project
 
-Helium: Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. pnpm monorepo with `helium-engine` (engine) and `helium-client` (display, UI). The entire Flash client is ported — both logic and display — and the original Flash window layouts/skins ship as XML, verbatim from the dump.
+Vortex: Full TypeScript/PixiJS v8 port of the Habbo Hotel Flash client. pnpm monorepo with `vortex-engine` (engine) and `vortex-client` (display, UI). The entire Flash client is ported — both logic and display — and the original Flash window layouts/skins ship as XML, verbatim from the dump.
 
 ```bash
 pnpm install && pnpm dev    # Dev server
@@ -56,8 +56,8 @@ Until this phase is complete, writing code is FORBIDDEN.
 
 - [ ] Follow conventions from `docs/STYLEGUIDE.md` (Allman, naming, etc.)
 - [ ] Follow templates from `docs/PATTERNS.md` for Composers/Parsers/Events/Managers
-- [ ] Engine code → `packages/helium-engine/src/`
-- [ ] Client code → `packages/helium-client/src/`
+- [ ] Engine code → `packages/vortex-engine/src/`
+- [ ] Client code → `packages/vortex-client/src/`
 - [ ] Preserve AS3 class names, method names, interfaces, and inheritance chains
 - [ ] Preserve the complete AS3 public API: every public method, accessor, interface member, implemented interface, constructor contract, and dispose contract must exist in TypeScript
 - [ ] Every TypeScript class, method, accessor, property, interface member, handler, parser, composer, or event ported from AS3 MUST include an `AS3:` source trace comment immediately above the declaration (see AS3 traceability section below)
@@ -145,14 +145,14 @@ Full reference: `docs/STYLEGUIDE.md`
 
 ## Path aliases
 
-**Engine** (`helium-engine`): `@core/` → `src/core/` | `@habbo/` → `src/habbo/` | `@room/` → `src/room/` | `@iid/` → `src/iid/`
+**Engine** (`vortex-engine`): `@core/` → `src/core/` | `@habbo/` → `src/habbo/` | `@room/` → `src/room/` | `@iid/` → `src/iid/`
 
-**Client** (`helium-client`): `@core/` `@habbo/` `@room/` `@iid/` → engine src | `@ui/` `@/` → `src/`
+**Client** (`vortex-client`): `@core/` `@habbo/` `@room/` `@iid/` → engine src | `@ui/` `@/` → `src/`
 
 ## Architecture and critical rules
 
 ```
-helium-engine                                   helium-client (depends on engine)
+vortex-engine                                   vortex-client (depends on engine)
 ├── core/    Low-level, communication          ├── ui/          Flash UI classes (ported)
 ├── habbo/   Game logic                        ├── window/      Window system (from Flash)
 ├── room/    Room engine                       ├── display/     Display components (PixiJS)
@@ -165,7 +165,7 @@ Data flow: `Engine emits event → Client display class listens and updates`
 
 1. **AS3 is the source of truth** — Never invent code. Read `sources/WIN63-202607011411-782849652/` first, cross-referencing `sources/win63_version/` when identifiers there are obfuscated
 2. **Never simplify AS3 architecture** — If AS3 has handlers/interfaces/delegation, implement them exactly
-3. **Engine must NEVER import from client** — `helium-engine` has zero UI knowledge
+3. **Engine must NEVER import from client** — `vortex-engine` has zero UI knowledge
 4. **Never override `get events()`** in Component subclasses — breaks the DI event system; use a different property name (e.g. `sessionEvents`)
 5. **Use `createObjectInternal()`** not `createRoomObject()` from container (infinite recursion)
 6. **Update `docs/IMPLEMENTATION_STATUS.md`** after every significant implementation
@@ -222,7 +222,7 @@ You are editing the ported Flash UI/window system (`core/window/`, `habbo/window
 
 1. See `docs/PATTERNS.md` → "UI Window (ported from Flash)" and "Component Lifecycle" for the expected class shape. Quick shape reminder: UI Windows are ported from the AS3 `IWindow`/`IFrameWindow` hierarchy using PixiJS + the XML layouts described in rule 3.
 2. Never override `get events()` in a Component subclass — it breaks the DI event system. Use a differently named property (e.g. `sessionEvents`).
-3. Flash XML layouts and skins ship **as XML**, verbatim from the AS3 asset library (`helium-client/src/assets/window-layouts`, `window-skins`), and are parsed at runtime by `WindowXmlAssetParser` — do not reintroduce a JSON compile step. `tools/build-window-assets.mjs` is the only tool that writes those two directories; it names every file after the `*Com.as` field that declares it, which is the exact string AS3 passes to `assets.getAssetByName()`. Never name an asset after the XML's own `<layout name="...">`: that is a Flash-authoring label AS3 never reads.
+3. Flash XML layouts and skins ship **as XML**, verbatim from the AS3 asset library (`vortex-client/src/assets/window-layouts`, `window-skins`), and are parsed at runtime by `WindowXmlAssetParser` — do not reintroduce a JSON compile step. `tools/build-window-assets.mjs` is the only tool that writes those two directories; it names every file after the `*Com.as` field that declares it, which is the exact string AS3 passes to `assets.getAssetByName()`. Never name an asset after the XML's own `<layout name="...">`: that is a Flash-authoring label AS3 never reads.
 4. Flash UI windows/dialogs (`IWindow`, `IFrameWindow`, etc.) are ported as TypeScript classes using PixiJS; Flash display components (buttons, text fields, scrollbars, etc.) are ported as PixiJS display objects. Preserve the original AS3 class hierarchy for UI — do not collapse it into a simplified component model.
 
 ## Room engine rules (`room/`, `habbo/room/`)

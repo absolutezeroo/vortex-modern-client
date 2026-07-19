@@ -1,0 +1,30 @@
+{
+  "name": "vortex-client",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "prebuild": "node ./tools/bundle-assets.mjs",
+    "predev": "node ./tools/bundle-assets.mjs",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "build:window-data": "node ./tools/build-window-assets.mjs",
+    "build:bundle": "node ./tools/bundle-assets.mjs",
+    "import:crypted-images": "node ./tools/import-crypted-images.mjs --write",
+    "import:chatstyles": "node ./tools/import-chatstyles.mjs --write",
+    "tools": "node ./tools/dashboard/server.ts"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "vortex-engine": "workspace:*",
+    "pixi.js": "^8.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@xmldom/xmldom": "^0.9.7",
+    "sass-embedded": "^1.97.3",
+    "sharp": "^0.34.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0"
+  }
+}

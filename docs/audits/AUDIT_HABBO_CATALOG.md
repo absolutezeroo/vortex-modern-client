@@ -2,7 +2,7 @@
 
 > **Contexte :** ce dossier est aussi couvert par `docs/IMPLEMENTATION_STATUS.md` (ligne `habbo/catalog` : *"Early partial. Purse/catalog shell exists, but catalog logic, UI, and most messages are missing"* — 239 fichiers AS3 contre 18 TS). Ce rapport ne redit pas ce constat de portée — il vérifie spécifiquement que la partie qui existe (le chemin d'achat, §2) est correcte, ce que le comptage de fichiers ne peut pas dire. Voir `AUDIT_WINDOW_SYSTEM.md` §13-14 pour le contexte complet.
 
-**Périmètre :** `packages/helium-engine/src/habbo/catalog/**` (~11 070 lignes). Catalogue d'achat, page produit, confirmation d'achat, club/VIP.
+**Périmètre :** `packages/vortex-engine/src/habbo/catalog/**` (~11 070 lignes). Catalogue d'achat, page produit, confirmation d'achat, club/VIP.
 **Méthode :** lecture directe, vérification ciblée sur le chemin d'achat (le plus sensible : argent réel/virtuel en jeu) + réutilisation du scan de champs morts déjà passé sur tout le repo.
 
 ## 1. Constat général : module honnêtement auto-documenté, pas de bug silencieux trouvé

@@ -34,14 +34,14 @@ importers:
         specifier: ^8.62.1
         version: 8.62.1(eslint@10.6.0)(typescript@5.9.3)
 
-  packages/helium-client:
+  packages/vortex-client:
     dependencies:
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.4
-      helium-engine:
+      vortex-engine:
         specifier: workspace:*
-        version: link:../helium-engine
+        version: link:../vortex-engine
       pixi.js:
         specifier: ^8.6.6
         version: 8.16.0
@@ -65,7 +65,7 @@ importers:
         specifier: ^6.0.0
         version: 6.4.1(@types/node@22.19.10)(sass-embedded@1.97.3)(sass@1.97.3)(tsx@4.23.0)(yaml@2.9.0)
 
-  packages/helium-engine:
+  packages/vortex-engine:
     dependencies:
       eventemitter3:
         specifier: ^5.0.1

@@ -1,12 +1,12 @@
 {
-  "name": "helium",
+  "name": "vortex",
   "version": "0.1.0",
   "private": true,
   "description": "Modern Habbo client renderer - Lighter than Nitro",
   "scripts": {
-    "dev": "pnpm --filter helium-client dev",
-    "build": "pnpm --filter helium-client build",
-    "preview": "pnpm --filter helium-client preview",
+    "dev": "pnpm --filter vortex-client dev",
+    "build": "pnpm --filter vortex-client build",
+    "preview": "pnpm --filter vortex-client preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "sync:agents": "node scripts/sync-agent-docs.mjs --write",

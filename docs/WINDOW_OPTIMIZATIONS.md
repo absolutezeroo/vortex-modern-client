@@ -71,7 +71,7 @@ Ces optimisations sont implementees et ne doivent pas etre retirees :
 - **Preload des essentiels** — Charger les layouts les plus utilises (frame, button, dialog) au demarrage plutot qu'a la demande
 - **Inline les layouts critiques** — Les layouts utilises au boot (login, loading) directement dans le bundle JS
 
-**Fichier :** `packages/helium-client/src/api/windowLayouts.ts`
+**Fichier :** `packages/vortex-client/src/api/windowLayouts.ts`
 
 **Impact :** Bas a moyen — depend du bundler (Vite chunk splitting peut deja grouper), mais reduit la latence au premier affichage de chaque fenetre.
 

@@ -1,7 +1,7 @@
 # Architecture and critical rules
 
 ```
-helium-engine                                   helium-client (depends on engine)
+vortex-engine                                   vortex-client (depends on engine)
 ├── core/    Low-level, communication          ├── ui/          Flash UI classes (ported)
 ├── habbo/   Game logic                        ├── window/      Window system (from Flash)
 ├── room/    Room engine                       ├── display/     Display components (PixiJS)
@@ -14,7 +14,7 @@ Data flow: `Engine emits event → Client display class listens and updates`
 
 1. **AS3 is the source of truth** — Never invent code. Read `sources/WIN63-202607011411-782849652/` first, cross-referencing `sources/win63_version/` when identifiers there are obfuscated
 2. **Never simplify AS3 architecture** — If AS3 has handlers/interfaces/delegation, implement them exactly
-3. **Engine must NEVER import from client** — `helium-engine` has zero UI knowledge
+3. **Engine must NEVER import from client** — `vortex-engine` has zero UI knowledge
 4. **Never override `get events()`** in Component subclasses — breaks the DI event system; use a different property name (e.g. `sessionEvents`)
 5. **Use `createObjectInternal()`** not `createRoomObject()` from container (infinite recursion)
 6. **Update `docs/IMPLEMENTATION_STATUS.md`** after every significant implementation

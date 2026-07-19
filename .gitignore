@@ -9,8 +9,8 @@ node_modules/
 sources/
 dist/
 tools/
-!packages/helium-client/tools/
-!packages/helium-client/tools/*.mjs
+!packages/vortex-client/tools/
+!packages/vortex-client/tools/*.mjs
 *.bundle
 *.log
 .DS_Store
@@ -23,7 +23,7 @@ tools/flash2html/output/
 # Window layouts/skins extracted from a Habbo dump by tools/build-window-assets.mjs.
 # Derived dump content, like sources/, configurations/ and *.png above: generated per
 # checkout, never committed.
-packages/helium-client/src/assets/window-layouts/
-packages/helium-client/src/assets/window-skins/
+packages/vortex-client/src/assets/window-layouts/
+packages/vortex-client/src/assets/window-skins/
 NUL
 tmp/

@@ -99,7 +99,7 @@ Pour chaque message :
 - Lire l'AS3 source avant d'écrire le TS.
 - Porter le triplet complet quand il existe : event, parser, composer.
 - Exporter dans le `index.ts` du dossier.
-- Enregistrer dans `packages/helium-engine/src/habbo/communication/HabboMessages.ts`.
+- Enregistrer dans `packages/vortex-engine/src/habbo/communication/HabboMessages.ts`.
 - Brancher le handler/manager consommateur.
 - Ajouter les commentaires `AS3:` requis au-dessus des déclarations portées.
 - Valider avec `pnpm build` quand le batch touche du code.

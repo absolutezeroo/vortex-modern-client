@@ -1,4 +1,4 @@
-# Helium Style Guide
+# Vortex Style Guide
 
 This document defines all code conventions for the project. These rules are mandatory and without exception.
 
@@ -405,7 +405,7 @@ source_as_win63/habbo/session/
     ├── RoomDataHandler.as
     └── RoomChatHandler.as
 
-→ packages/helium-engine/src/habbo/session/
+→ packages/vortex-engine/src/habbo/session/
   ├── RoomSessionManager.ts
   ├── IRoomSessionManager.ts
   ├── RoomSession.ts

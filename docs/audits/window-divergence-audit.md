@@ -1,7 +1,7 @@
 # Audit de divergences — `core/window` & `habbo/window` (AS3 win63 ↔ TypeScript)
 
 > Comparaison entre `sources/win63_version/{core,habbo}/window/` et
-> `packages/helium-engine/src/{core,habbo}/window/`.
+> `packages/vortex-engine/src/{core,habbo}/window/`.
 > Méthodologie : identification des classes obfusquées (`class_XXXX`), comparaison
 > exhaustive des listes de fichiers (fiable à 100 %), puis vérification ciblée de la
 > logique sur les fichiers centraux et les controllers/widgets complexes.

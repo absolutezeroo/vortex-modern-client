@@ -53,7 +53,7 @@ function getAddedLineNumbersBatch(wantedFiles)
     }
 
     const diff = git(['diff', '--cached', '-U0', '--diff-filter=ACMR']);
-    let currentFile = null;
+    let currentFile;
     let currentSet = null;
 
     for(const line of diff.split('\n'))
