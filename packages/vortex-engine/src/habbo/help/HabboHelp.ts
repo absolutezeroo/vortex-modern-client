@@ -154,6 +154,67 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         return this._communication;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get localization()
+    get localization(): IHabboLocalizationManager | null
+    {
+        return this._localizationManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get windowManager()
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get toolbar()
+    get toolbar(): IHabboToolbar | null
+    {
+        return this._toolbar;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get roomSessionManager()
+    get roomSessionManager(): IRoomSessionManager | null
+    {
+        return this._roomSessionManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get sessionDataManager()
+    get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get navigator()
+    get navigator(): IHabboNavigator | null
+    {
+        return this._navigator;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get tracking()
+    get tracking(): IHabboTracking | null
+    {
+        return this._tracking;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::get friendList()
+    get friendList(): IHabboFriendList | null
+    {
+        return this._friendList;
+    }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as
+    // ~16 further public members confirmed absent (soundManager/freeFlowChat getters - neither
+    // has a DI dependency wired here yet, unlike the getters above; newUserTourEnabled/newIdentity/
+    // citizenshipEnabled/safetyQuizDisabled/guardiansEnabled/callForHelpCategories/reportedUserId/
+    // reportedUserName/reportedUserRoomId/reportedUserExtraDataId/reportedUserRoomObjectId;
+    // startEmergencyRequest()/closeHabboWay()/closeSafetyBooklet()/showHabboWayQuiz()/
+    // showSafetyQuiz()/getXmlWindow()/getModalXmlWindow()/trackGoogle()/setReportMessage()/
+    // queryForPendingCallsForHelp()/queryForGuideReportingStatus()/ignoreAndUnfriendReportedUser()/
+    // toggleNewHelpWindow()/requestSanctionInfo()/requestReportsStatus()/openCfhFaq()). Confirmed
+    // zero current runtime impact: no ported help/** subview requests any of them (0 grep hits) -
+    // a wall for a future view, not a live bug. Left as one documented gap rather than 16
+    // speculative stubs for views that don't exist yet.
+
     /**
 	 * The own user name (from name change controller)
 	 */
@@ -280,6 +341,45 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
 	 * @param roomId The room ID where the incident occurred
 	 * @param userName The user name
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::startPhotoReportingInNewCfhFlow()
+    // TODO(AS3): AS3 also calls windowManager.openReportingContentReasonCategory(9) to open the CFH
+    // UI for the new flow - that UI router isn't ported (same simplification as reportUser()/
+    // reportRoom() etc. below, which all substitute a log.debug for it).
+    startPhotoReportingInNewCfhFlow(userId: number, userName: string, extraDataId: string, roomObjectId: number): void
+    {
+        if(this._cfhManager)
+        {
+            this._cfhManager.reportedRoomId = this._currentRoomId;
+            this._cfhManager.reportedUserId = userId;
+            this._cfhManager.reportedUserName = userName;
+            this._cfhManager.reportedRoomObjectId = roomObjectId;
+            this._cfhManager.reportedExtraDataId = extraDataId;
+            log.debug('Start photo reporting - userId:', userId);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::reportUserName()
+    reportUserName(userId: number, userName: string): void
+    {
+        if(this._cfhManager)
+        {
+            this._cfhManager.reportedUserId = userId;
+            this._cfhManager.reportedUserName = userName;
+            this._cfhManager.reportedRoomId = -1;
+            log.debug('Report user name - userId:', userId);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/HabboHelp.as::reportUserFromIM()
+    reportUserFromIM(userId: number): void
+    {
+        if(this._cfhManager)
+        {
+            this._cfhManager.reportedUserId = userId;
+            log.debug('Report user from IM - userId:', userId);
+        }
+    }
+
     reportUser(userId: number, roomId: number, _userName: string): void
     {
         if(this._cfhManager)

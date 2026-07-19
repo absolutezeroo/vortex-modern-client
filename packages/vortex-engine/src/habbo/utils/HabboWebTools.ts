@@ -13,6 +13,10 @@ export interface IHabboWebToolsEvents
     'disconnect': (reason: number, message: string) => void;
     'figureUpdated': (figure: string) => void;
     'subscriptionUpdated': (isActive: boolean) => void;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::closeWebPageAndRestoreClient()
+    'closeWebPageAndRestoreClient': () => void;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::openExternalLinkWarning()
+    'openExternalLink': (url: string) => void;
 }
 
 /**
@@ -28,16 +32,39 @@ export interface IHabboWebToolsEvents
 export class HabboWebTools
 {
     public static readonly ADVERTISEMENT: string = 'advertisement';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::_SafeStr_11147
+    // AS3 name unrecoverable (obfuscated in WIN63 and win63_version, absent entirely from
+    // PRODUCTION which predates it) - derived from its value. Unused anywhere in the AS3 tree
+    // (dead field, same as ADVERTISEMENT above); kept for interface completeness.
+    public static readonly TARGET_SELF: string = '_self';
     public static readonly WINDOW_HABBO_MAIN: string = 'habboMain';
     public static readonly OPEN_INTERNAL_LINK_FROM_WEB_CALLBACK: string = 'openlink';
     public static readonly GOTO_ROOM_FROM_WEB_CALLBACK: string = 'openroom';
     public static readonly HABBLET_AVATARS: string = 'avatars';
+    public static readonly HABBLET_PRIVACY: string = 'privacy';
     public static readonly HABBLET_MINI_MAIL: string = 'minimail';
     public static readonly HABBLET_ROOM_ENTER_AD: string = 'roomenterad';
     public static readonly HABBLET_NEWS: string = 'news';
     private static readonly _toolEvents = new EventEmitter<IHabboWebToolsEvents>();
 
     private static _baseUrl: string = '';
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::_SafeStr_5915
+    private static _isSpaWeb: boolean = false;
+
+    /**
+	 * Marks whether the hosting page is a SPA-style web habblet host.
+	 *
+	 * AS3 only reads this flag inside `if(ExternalInterface.available)` branches; this port has no
+	 * Flash ExternalInterface, so every one of those branches is already dead here (every other
+	 * method in this class ports the "ExternalInterface not available" fallback instead). The
+	 * setter is kept for API completeness in case a future host bridge wires it up.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::set isSpaWeb()
+    static set isSpaWeb(value: boolean)
+    {
+        HabboWebTools._isSpaWeb = value;
+    }
 
     static get baseUrl(): string
     {
@@ -122,19 +149,40 @@ export class HabboWebTools
             return;
         }
 
-        window.open(url, target ?? '_self');
+        window.open(url, target ?? HabboWebTools.TARGET_SELF);
     }
 
     /**
-	 * Open an external link with a warning dialog
+	 * Notify the host page that an external link was requested, so it can show its own
+	 * confirmation warning before navigating.
+	 *
+	 * AS3's primary path is `ExternalInterface.call("FlashExternalInterface.openExternalLink", ...)`,
+	 * letting the hosting page own the warning UI; `navigateToURL()` is only its
+	 * ExternalInterface-unavailable fallback. This port has no host page listening yet, so this
+	 * mirrors the other host-notification methods below (roomVisited, logout, etc.) by emitting on
+	 * `toolEvents` rather than navigating directly.
 	 *
 	 * @param url The external URL to open
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::openExternalLinkWarning()
     static openExternalLinkWarning(url: string): void
     {
         if(!url) return;
 
-        window.open(url, HabboWebTools.WINDOW_HABBO_MAIN);
+        HabboWebTools._toolEvents.emit('openExternalLink', url);
+
+        log.debug('Open external link warning: ' + url);
+    }
+
+    /**
+	 * Notify the host page to close the web page it opened and restore the client view
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::closeWebPageAndRestoreClient()
+    static closeWebPageAndRestoreClient(): void
+    {
+        HabboWebTools._toolEvents.emit('closeWebPageAndRestoreClient');
+
+        log.debug('Close web page and restore client');
     }
 
     /**
@@ -269,6 +317,15 @@ export class HabboWebTools
     static openAvatars(): void
     {
         HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_AVATARS);
+    }
+
+    /**
+	 * Open the privacy settings habblet
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::openPrivacy()
+    static openPrivacy(): void
+    {
+        HabboWebTools.openWebHabblet(HabboWebTools.HABBLET_PRIVACY);
     }
 
     /**

@@ -10,7 +10,16 @@ export interface IHabboHelp
 {
     reportBully(userId: number): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/IHabboHelp.as::startPhotoReportingInNewCfhFlow()
+    startPhotoReportingInNewCfhFlow(userId: number, userName: string, extraDataId: string, roomObjectId: number): void;
+
     reportUser(userId: number, roomId: number, userName: string): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/IHabboHelp.as::reportUserName()
+    reportUserName(userId: number, userName: string): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/IHabboHelp.as::reportUserFromIM()
+    reportUserFromIM(userId: number): void;
 
     reportRoom(roomId: number, roomName: string, roomDescription: string): void;
 

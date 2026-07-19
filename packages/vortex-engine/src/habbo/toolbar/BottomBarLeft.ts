@@ -358,11 +358,17 @@ export class BottomBarLeft
             {
                 child.visible = child.visible && this._toolbar!.getBoolean('games_icon_enabled');
             }
-            else if(child.name === 'CAMERA') 
+            else if(child.name === 'CAMERA')
             {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::setToolbarState()
+                // `_loc2_.visible &&= _loc4_ && _loc5_ == "bottom-icons" && _loc6_` - a compound AND,
+                // preserving the by-tag visibility set above. A plain `=` overwrites it instead,
+                // which happens to coincide with AS3 for every current tag on CAMERA
+                // (TOGGLE/VISIBLE_ROOM/VISIBLE_COLLAPSED/VISIBLE_NOOB) but would diverge the moment
+                // a tag changes.
                 const cameraPosition = this._toolbar!.getProperty('camera.launch.ui.position');
                 const cameraAllowed = this._toolbar!.sessionDataManager?.isPerkAllowed?.('CAMERA') ?? false;
-                child.visible = isRoomState && cameraPosition === 'bottom-icons' && cameraAllowed;
+                child.visible = child.visible && isRoomState && cameraPosition === 'bottom-icons' && cameraAllowed;
             }
             else if(child.name === 'WIRED_MENU')
             {
@@ -848,19 +854,31 @@ export class BottomBarLeft
         this._disposed = true;
     }
 
-    /**
-     * Map an icon ID to its child window name in the toolbar layout
-     *
-     * Delegates to HabboToolbarIconEnum.getIconName() which returns
-     * the TOGGLE region name (CATALOGUE, NAVIGATOR, etc.).
-     *
-     * @param iconId The icon identifier
-     * @returns The child window name, or null
-     * @see sources/win63_version/habbo/toolbar/BottomBarLeft.as getIconName()
-     */
-    private getIconChildName(iconId: string): string | null 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::getIconName()
+    // This is BottomBarLeft's own private bitmap-child-name switch, distinct from
+    // HabboToolbarIconEnum.getIconName() (which returns short labels like "CATALOGUE" for a
+    // different purpose). Delegating to the enum's version here returned the wrong string:
+    // findChildByName() still resolved *something* (the layout ships both name families), but to
+    // the icon's clickable container, not the icon bitmap itself - shifting the rect
+    // getIconLocation() returns (used by createTransitionToIcon()'s fly-to-toolbar animation and
+    // the welcome screen) off the actual icon.
+    private getIconChildName(iconId: string): string | null
     {
-        return HabboToolbarIconEnum.getIconName(iconId) ?? null;
+        switch(iconId)
+        {
+            case 'HTIE_ICON_CATALOGUE': return 'icons_toolbar_catalogue';
+            case 'HTIE_ICON_INVENTORY': return 'icons_toolbar_inventory';
+            case 'HTIE_ICON_MEMENU': return 'MEMENU';
+            case 'HTIE_ICON_NAVIGATOR': return 'icons_toolbar_navigator';
+            case 'HTIE_ICON_PROGRESSION': return 'icons_toolbar_progression';
+            case 'HTIE_ICON_GAMES': return 'icons_toolbar_games';
+            case 'HTIE_ICON_STORIES': return 'icons_toolbar_stories';
+            case 'HTIE_ICON_RECEPTION': return 'icons_toolbar_reception';
+            case 'HTIE_ICON_BUILDER': return 'icons_toolbar_builder';
+            case 'HTIE_ICON_CAMERA': return 'icons_toolbar_camera';
+            case 'HTIE_ICON_WIRED_MENU': return 'icons_toolbar_wired_menu';
+            default: return null;
+        }
     }
 
     /**
