@@ -986,6 +986,18 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._wallItems.get(itemId) ?? null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getAllFloorItemDatas()
+    getAllFloorItemDatas(): IFurnitureData[]
+    {
+        return Array.from(this._floorItems.values());
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getAllWallItemDatas()
+    getAllWallItemDatas(): IFurnitureData[]
+    {
+        return Array.from(this._wallItems.values());
+    }
+
     /**
 	 * Get floor item data by class name with color variant support
 	 * @see source_as_win63/habbo/session/SessionDataManager.as line 851

@@ -397,7 +397,11 @@ export class RoomSession implements IRoomSession
         {
             if(this._openConnectionComposer !== null)
             {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSession.as::sendPredefinedOpenConnection()
+                // Consumed once - a later start() on the same instance must fall through to the
+                // default OpenFlatConnectionMessageComposer, not resend the predefined one.
                 this._connection.send(this._openConnectionComposer);
+                this._openConnectionComposer = null;
             }
             else
             {
@@ -444,7 +448,13 @@ export class RoomSession implements IRoomSession
     {
         this._connection = null;
         this._habboTracking = null;
-        this._openConnectionComposer = null;
+
+        if(this._openConnectionComposer !== null)
+        {
+            this._openConnectionComposer.dispose();
+            this._openConnectionComposer = null;
+        }
+
         this._state = RoomSessionState.ENDED;
         this._chatTrackingMap.clear();
         this._userDataManager.dispose();
@@ -460,6 +470,9 @@ export class RoomSession implements IRoomSession
 
             return;
         }
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSession.as::sendChatMessage()
+        message = message.replace(/&#[0-9]+;/g, '');
 
         this._chatTrackingMap.set(this._chatTrackingId, Date.now());
         this._connection.send(new ChatMessageComposer(message, styleId, this._chatTrackingId));

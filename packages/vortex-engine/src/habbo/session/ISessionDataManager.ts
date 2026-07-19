@@ -196,6 +196,12 @@ export interface ISessionDataManager extends IDisposable
 
     getWallItemData(itemId: number): IFurnitureData | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getAllFloorItemDatas()
+    getAllFloorItemDatas(): IFurnitureData[];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getAllWallItemDatas()
+    getAllWallItemDatas(): IFurnitureData[];
+
     getFloorItemDataByName(name: string, index?: number): IFurnitureData | null;
 
     getWallItemDataByName(name: string, index?: number): IFurnitureData | null;

@@ -179,6 +179,13 @@ export class RoomUsersHandler extends BaseHandler
             }
         }
 
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUsers()
+        // AS3 flags the loop above when any user has userType === 4, ownerId === -1 and
+        // name === 'Macklebee' (an easter-egg bot), then calls RoomShakingEffect.init(250, 5000) +
+        // RoomShakingEffect.turnVisualizationOn() once the loop finishes. RoomShakingEffect isn't
+        // ported (an unrelated room-canvas visual effect, not a session concern), so the room-shake
+        // never fires here.
+
         // Dispatch user data update event
         if(this.listener.sessionEvents)
         {
