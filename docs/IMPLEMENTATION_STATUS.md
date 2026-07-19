@@ -378,6 +378,94 @@ Diagnosing it needed a client-side packet tracer, which did not exist —
 `core/communication/PacketLogger.ts`, console-driven (`__packets.on()`, `.unhandled()`). Server logs
 cannot distinguish "packet arrived and nobody handled it" from "packet never arrived".
 
+### Minors (11 clusters, 48 addressed)
+
+Same audit, its 68 total minors — 48 were still open when this pass started (20 already closed
+incidentally by the majors sweep above). Same rigor as majors: full AS3 read before each change,
+never invent behavior, and verify every finding against current source before acting — three more
+false positives surfaced this way (the `RETWE_OPEN_WIDGET`/`CLOSE_WIDGET` widget-target filter in
+habbo/ui, the `hide.quests` rule and `navigateToURL()` in transverses — all already correct). Where a
+finding depended on a genuinely unported subsystem (`HabbiconController`, `SpecialItemsController`,
+`RoomShakingEffect`, badge-rarity fields, a re-architected friendlist/navigator), the fix is a
+documented `TODO(AS3)`, not an invented stand-in. Two confirmed real AS3 bugs were ported faithfully,
+bugs included, because both are provably dead in every caller in both trees:
+`PollHandler.onPollOfferEvent()`'s `summary = headline` immediately overwritten by `summary = summary`,
+and `NavigatorData.getEventCategoryById()`'s comparison against a property `FlatCategory` doesn't
+have (kept the working lookup, documented the divergence instead of reintroducing the always-null
+bug).
+
+- **core** (10): `AssetLibrary.registerAssetTypeDeclaration()` now throws on a duplicate MIME type
+  instead of silently overwriting; `ComponentEvents` split `UNLOCKED` into the public broadcast and
+  AS3's separate `INTERNAL_UNLOCKED`; `CoreLocalizationManager` emits the real
+  `LOCALIZATION_FAILED`/`LOCALIZATION_LOADED` constants instead of bare `'failed'`/`'loaded'` strings
+  nothing was listening for; `RoomInstance.hasValueForName()` added (checks both split
+  number/string maps this port uses in place of AS3's single map); `RoomObjectModel.getNumberArray()`/
+  `getStringArray()` now return copies, not internal references. `Component`'s remaining findings
+  (frame-update profiler wiring, `getInterfaceStructList`/`toXMLString`/`requiredDependencyIids`,
+  `_context` surviving past `dispose()`) are documented `TODO(AS3)`s, each blocked on a structural
+  difference from AS3 (no `Profiler`/`ProfilerViewer`, a different interface-management design in
+  `ComponentContext`, a readonly field) rather than silently missing.
+- **core/window** (4): a `WindowType.NULL` → `WindowController` safety net so an unresolved tag no
+  longer drops its whole subtree; `WindowParser.windowToXMLString()` gained the dynamicStyle
+  trim/flag-reset and a `<variables>` block (backed by a new `PropertyStruct.toXMLString()`,
+  debug-only, zero current callers); `boxSizer.setAutoRearrange(true)` now runs unconditionally,
+  matching AS3, instead of only inside the children branch; `TextController` gained a
+  `default_text_format` setter stub (AS3 assigns a whole `TextFormat`; this port's formatting is
+  already split into granular properties, so the stub just triggers a re-render).
+- **habbo/ui** (7): `IRoomWidgetHandlerContainer` gained `getFurnitureOwnerId()`/`isOwnerOfPet()`/
+  `navigator`; `isOwnerOfFurniture()` lost an invented `ownerId > 0 &&` guard AS3 doesn't have;
+  `RoomWidgetFurniInfoUpdateEvent` gained `tradeable` and fixed `expiration`'s default (`-1`, not
+  `0`); `tradeable` threaded end-to-end through `FurnitureData`/`FurnitureDataParser`/
+  `InfoStandWidgetHandler`; `RoomToolsWidgetHandler` now subscribes/unsubscribes
+  `PREFERENCES_UPDATED`; `RoomWidgetZoomToggleMessage` gained its real `ZOOM_TOGGLE` constant.
+- **habbo/session** (4): `sendChatMessage()` now strips numeric HTML entities before sending like
+  AS3; `start()`/`dispose()` now null and dispose `_openConnectionComposer` correctly instead of
+  leaking the reference; `SessionDataManager` gained `getAllFloorItemDatas()`/`getAllWallItemDatas()`.
+  The AS3 "Macklebee" easter egg in `RoomUsersHandler.onUsers()` (a bot triggering
+  `RoomShakingEffect`) is a documented `TODO(AS3)` — that effect class doesn't exist in this port.
+- **habbo/catalog** (3): `RoomPreviewer` gained `centerWallItems` and the matching
+  `getCanvasOffset()` branch AS3 uses for wall-item preview centering; `PurchaseCatalogWidget`/
+  `HabboCatalog` gained the habbicon-already-owned purchase guard and a `canPurchaseSelectedOffer`
+  gate six button-enable call sites now use instead of the looser `extraParamRequirementsMet`.
+- **habbo/inventory** (5): `BadgesModel` lost two invented behaviors (marking a badge active from
+  load data, and a nonexistent active-badge cap); `Util.disableSection()`'s `DO_NOT_DISABLE` tag
+  check is now a real early return; `HabboInventory` respects room-viewer mode on init and sets
+  `_currentCategory` unconditionally on toggle; `GroupItem.getTradeableCount()` regained its
+  `excludeLocked` param; `FurniModel` fixed `subCategorySwitch()`'s trading cases, stopped writing
+  `_categorySelections` from non-user-driven selection, and reworked unseen-item promotion to check
+  the tracker first. `updateBadge()`'s missing ownerCount/rarity and `saveBadgeSelection()`'s missing
+  connection are documented gaps (a separate unported rarity feature; no connection reference on
+  this model).
+- **habbo/avatar** (3): `AvatarImage.getFullImageCacheKey()` lost an invented composite-key
+  fallback for mismatched main/head direction; `getCroppedImage()` fixed to use the regPoint alone
+  instead of combining it with an unrelated method's offset math; added the derived `MISC`/`PET`
+  figure-part-type constants; fixed `EffectAssetDownloadManager.LIBRARY_LOADED`'s value and
+  `AvatarAssetDownloadManager.MAX_SIMULTANEOUS_DOWNLOADS` (6, not an invented 4);
+  `AvatarStructure.getParts()` now returns `null` (not a truthy empty array) so callers' `!partList`
+  guards actually trip, and gained `getDefaultActionDefinition()`/`getDefaultLayActionDefinition()`/
+  `getItemIds()`.
+- **habbo/chat** (3): `NotificationType` gained 7 missing constants (dead in this class — zero AS3
+  occurrences); `ChatEntry` gained `messageText` with a documented gap for AS3's typed message
+  wrapper; `HabboFriendList.canBeAskedForAFriend()`'s missing sent-request dedup is a documented gap
+  (this port's flat-Map friendlist re-architecture has no equivalent state to check).
+- **habbo/room + habbo/navigator** (3): `RoomEngineObjectEvent`'s constants renamed to match AS3
+  exactly (no invented `_OBJECT_` infix) plus 5 new ones added, with 4 consumer files updated;
+  `PollHandler` now ports AS3's real copy-paste bug faithfully instead of the "fixed" version;
+  `NavigatorData.getEventCategoryById()`'s divergence documented rather than reintroducing AS3's
+  always-null comparison.
+- **transverses** (6): `BottomBarLeft.getIconChildName()` now ports AS3's own private icon-name
+  switch instead of delegating to the wrong (short-label) enum method; its `CAMERA` visibility rule
+  now compounds onto prior per-tag visibility (`&&=`) instead of overwriting it; `HabboHelp`/
+  `IHabboHelp` gained 8 getters and 3 CFH-flow methods, with ~16 further confirmed-absent members
+  documented as zero current impact; `HabboWebTools` gained `HABBLET_PRIVACY`/`openPrivacy()`, a
+  derived `TARGET_SELF` constant, an `isSpaWeb` setter (dead here — every AS3 use site is gated
+  behind `ExternalInterface.available`), and `closeWebPageAndRestoreClient()`, and its
+  `openExternalLinkWarning()` now emits on the existing `toolEvents` EventEmitter instead of calling
+  `window.open()` directly.
+
+This closes the 2026-07-17 parity audit entirely: 25/26 real criticals fixed (one deliberately not
+acted on), 94/94 majors (3 false positives), and 48/48 open minors addressed.
+
 ### The window system
 
 `core/window/graphics/renderer/` now ports **all 22 AS3 renderer classes, one for one**, and
