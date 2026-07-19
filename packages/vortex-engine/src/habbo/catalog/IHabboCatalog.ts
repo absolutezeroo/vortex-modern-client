@@ -13,6 +13,7 @@ import type {ICatalogNavigator} from './navigation/ICatalogNavigator';
 import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
 import type {IMarketPlace} from './marketplace/IMarketPlace';
 import type {IRecycler} from './recycler/IRecycler';
+import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 
 /**
  * Interface for the Habbo catalog.
@@ -38,6 +39,11 @@ export interface IHabboCatalog
     readonly utils: HabboCatalogUtils;
     readonly currentCatalogNavigator: ICatalogNavigator | null;
     readonly frontPageItems: FrontPageItem[] | null;
+    readonly specialItemsController: unknown;
+    readonly avatarEditor: unknown;
+    readonly notifications: IHabboNotifications | null;
+    readonly builderSecondsLeft: number;
+    readonly builderSecondsLeftWithGrace: number;
 
     getSeasonalCurrencyActivityPointType(): number;
 

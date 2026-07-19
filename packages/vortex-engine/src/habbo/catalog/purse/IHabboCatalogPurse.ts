@@ -19,6 +19,7 @@ export interface IHabboCatalogPurse
 
     readonly hasClubLeft: boolean;
     readonly activityPoints: Map<number, number>;
+    readonly lastUpdated: number;
 
     getActivityPointsForType(type: number): number;
     setActivityPoints(points: Map<number, number>): void;

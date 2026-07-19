@@ -27,6 +27,9 @@ export class CatalogNodeRenderable extends CatalogNode
 
     private _itemSelectedEtchingColor: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::_renderDepth
+    private _renderDepth: number = -1;
+
     constructor(navigator: ICatalogNavigator, data: NodeData, depth: number, parent: ICatalogNode | null)
     {
         super(navigator, data, depth, parent);
@@ -60,11 +63,14 @@ export class CatalogNodeRenderable extends CatalogNode
         super.dispose();
     }
 
-    addToList(list: IItemListWindow): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::addToList()
+    // AS3's 2nd parameter (`param2:Boolean = true`) is never read anywhere in its body - kept here,
+    // unused, for signature fidelity only.
+    addToList(list: IItemListWindow, _activate: boolean = true): void
     {
-        if(this._window == null)
+        if(this._window == null || this._renderDepth !== this.depth)
         {
-            this.createWindow();
+            this.createWindow(this.depth);
             this.setInactiveLook();
         }
 
@@ -81,6 +87,19 @@ export class CatalogNodeRenderable extends CatalogNode
             this.refreshChildren();
         }
 
+        list.arrangeListItems();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::addSearchResultToList()
+    addSearchResultToList(list: IItemListWindow, depth: number): void
+    {
+        if(this._window == null || this._renderDepth !== depth)
+        {
+            this.createWindow(depth);
+            this.setInactiveLook();
+        }
+
+        list.addListItem(this._window!);
         list.arrangeListItems();
     }
 
@@ -200,9 +219,17 @@ export class CatalogNodeRenderable extends CatalogNode
         this.removeChildren();
     }
 
-    private createWindow(): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNodeRenderable.as::createWindow()
+    private createWindow(depth: number): void
     {
-        this._window = this.navigator!.getItemTemplate(this.depth).clone() as IWindowContainer;
+        if(this._window != null)
+        {
+            this._window.dispose();
+            this._window = null;
+        }
+
+        this._renderDepth = depth;
+        this._window = this.navigator!.getItemTemplate(depth).clone() as IWindowContainer;
 
         const title = this._window.findChildByTag('ITEM_TITLE') as ITextWindow | null;
         const downButton = this._window.findChildByTag('DOWNBTN');
@@ -231,17 +258,17 @@ export class CatalogNodeRenderable extends CatalogNode
 
         if(this.navigator!.isDeepHierarchy)
         {
-            if(this.depth === 1)
+            if(depth === 1)
             {
                 this._window.findChildByName('icon')!.visible = false;
                 this._window.findChildByTag('ITEM_TITLE')!.x = 0;
             }
 
-            if(this.depth > 3)
+            if(depth > 3)
             {
                 this._window.findChildByName('icon')!.visible = true;
-                this._window.findChildByName('icon')!.x = 15 + 6 * (this.depth - 3);
-                this._window.findChildByTag('ITEM_TITLE')!.x = 42 + 6 * (this.depth - 3);
+                this._window.findChildByName('icon')!.x = 15 + 6 * (depth - 3);
+                this._window.findChildByTag('ITEM_TITLE')!.x = 42 + 6 * (depth - 3);
             }
         }
 

@@ -567,6 +567,11 @@ import {
     RecycleItemsMessageComposer,
     RedeemVoucherMessageComposer,
     SelectClubGiftComposer,
+    PurchaseNftOfferMessageComposer,
+    PurchaseMintTokensMessageComposer,
+    CheckGiftableMessageComposer,
+    GetRoomAdsPurchaseInfoMessageComposer,
+    PurchaseProductAsGiftMessageComposer,
 } from './messages/outgoing/catalog';
 
 // Outgoing Composers - Marketplace
@@ -1496,6 +1501,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3561, PurchaseBasicMembershipExtensionComposer);
         this._composers.set(2087, SelectClubGiftComposer);
         this._composers.set(3342, GetSellablePetPalettesComposer);
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        this._composers.set(3196, PurchaseNftOfferMessageComposer);
+        this._composers.set(67, PurchaseMintTokensMessageComposer);
+        this._composers.set(2564, CheckGiftableMessageComposer);
+        this._composers.set(366, GetRoomAdsPurchaseInfoMessageComposer);
+        this._composers.set(2909, PurchaseProductAsGiftMessageComposer);
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         this._composers.set(780, GetMarketplaceConfigurationMessageComposer);
         this._composers.set(2731, GetMarketplaceOffersMessageComposer);

@@ -21,6 +21,9 @@ export class Purse implements IHabboCatalogPurse
     private _emeraldBalance: number = 0;
     private _silverBalance: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purse/Purse.as::get lastUpdated()
+    get lastUpdated(): number { return this._lastUpdated; }
+
     get credits(): number { return this._credits; }
 
     set credits(value: number)

@@ -341,6 +341,32 @@ is entirely empty placeholder directories, so there is no `GameManager`/`GameCha
 `CHAT_STYLE_SNOWWAR_RED`/`_BLUE` stay declared-but-dead until that module exists, now with that reason
 on record instead of silence.
 
+**Majors: habbo/catalog cluster (2 filed, 2 fixed).** `CatalogNodeRenderable` was missing
+`addSearchResultToList()` entirely — added alongside a `_renderDepth` field so `createWindow()` can be
+called with an explicit render depth (search results) as well as the node's own tree depth (normal
+list rendering), disposing the previous window first like AS3 does and never did here.
+`HabboCatalog`'s ~24-missing-member finding turned out to be 3 false positives on re-verification
+(`setCatalogBusy()`/`isBusy`, `linkPattern`/`linkReceived`, and the three `builderFurni*` getters were
+all already ported) plus 21 real gaps: `purchaseOffer()`, `isNewIdentity()`,
+`showHabbiconAlreadyOwnedAlert()`, `furniDataReady()`/`productDataReady()` (both wired as real
+`IFurniDataListener`/`IProductDataListener` registrations, previously never called from
+`initComponent()`), `notifications`/`avatarEditor` getters (DI-wired, the latter copying
+`HabboLandingView`'s placeholder-manager pattern verbatim), `builderSecondsLeft`/
+`builderSecondsLeftWithGrace` (data the parser already had, just discarded), `Purse.lastUpdated`, and
+five new composers with real header IDs recovered from `_SafeCls_2046.as` (`purchaseNftOffer`,
+`purchaseMintTokens`, `checkGiftable`, `getRoomAdsPurchaseInfo`, `purchaseProductAsGift` — the last
+one's 9-param shape recovered from its only AS3 caller, `PurchaseConfirmationDialog.giveGift()`, since
+neither the composer class name nor most of its param names exist in any tree). `roomSession` tracking
+(`IID_RoomSessionManager` + `RSE_STARTED`/`RSE_ENDED`) didn't exist on this class at all — wiring it for
+`getBuilderFurniPlaceableStatus()` also fixed `privateRoomSessionActive`, previously hardcoded `false`,
+as the same AS3 handler sets both. `isHabbiconOfferOwned`/`isHabbiconOwned`/`specialItemsController`
+stay `false`/`null` TODOs (`HabbiconController`/`SpecialItemsController` are both full unported
+Components); `purchaseGameTokensOffer()` stays a TODO stub distinct from the already-stubbed
+`buySnowWarTokensOffer()` (confirmed two separate real AS3 methods, not a naming collision) since its
+`GameTokensOffer`/`SnowWarGameTokensMessageEvent` dependencies don't exist; `getMintTokenProductIcon()`
+matches its two null-returning siblings for the same `Texture`-vs-`ImageBitmap` reason. This was the
+last cluster in the 2026-07-17 parity-audit majors sweep.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

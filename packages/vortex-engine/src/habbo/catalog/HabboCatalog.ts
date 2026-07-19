@@ -11,6 +11,8 @@ import {HabboClubLevelEnum} from '@habbo/session/enum/HabboClubLevelEnum';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IProductData} from '@habbo/session/product/IProductData';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
+import type {IFurniDataListener} from '@habbo/session/furniture/IFurniDataListener';
+import type {IProductDataListener} from '@habbo/session/product/IProductDataListener';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
@@ -28,8 +30,15 @@ import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
+import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
+import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
+import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
+import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
+import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
+import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarIconEnum} from '@habbo/toolbar/HabboToolbarIconEnum';
 import {CreditBalanceEvent} from '@habbo/communication/messages/incoming/inventory/purse/CreditBalanceEvent';
@@ -60,6 +69,11 @@ import {GetCreditsInfoComposer} from '@habbo/communication/messages/outgoing/inv
 import {GetCatalogPageComposer} from '@habbo/communication/messages/outgoing/catalog/GetCatalogPageComposer';
 import {PurchaseFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseFromCatalogComposer';
 import {GetProductOfferComposer} from '@habbo/communication/messages/outgoing/catalog/GetProductOfferComposer';
+import {PurchaseNftOfferMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseNftOfferMessageComposer';
+import {PurchaseMintTokensMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseMintTokensMessageComposer';
+import {CheckGiftableMessageComposer} from '@habbo/communication/messages/outgoing/catalog/CheckGiftableMessageComposer';
+import {GetRoomAdsPurchaseInfoMessageComposer} from '@habbo/communication/messages/outgoing/catalog/GetRoomAdsPurchaseInfoMessageComposer';
+import {PurchaseProductAsGiftMessageComposer} from '@habbo/communication/messages/outgoing/catalog/PurchaseProductAsGiftMessageComposer';
 import {CatalogIndexMessageEvent} from '@habbo/communication/messages/incoming/catalog/CatalogIndexMessageEvent';
 import type {
     CatalogIndexMessageEventParser
@@ -176,12 +190,20 @@ const log = Logger.getLogger('HabboCatalog');
  *
  * @see sources/win63_version/habbo/catalog/HabboCatalog.as
  */
-export class HabboCatalog extends Component implements IHabboCatalog, ILinkEventTracker
+export class HabboCatalog extends Component implements IHabboCatalog, ILinkEventTracker, IFurniDataListener, IProductDataListener
 {
     private _communication: IHabboCommunicationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
 
     private _tracking: IHabboTracking | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_notifications
+    private _notifications: IHabboNotifications | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_avatarEditor
+    private _avatarEditor: unknown = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_roomSessionManager
+    private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::roomSession (_SafeStr_5616)
+    private _roomSession: IRoomSession | null = null;
     private _mainWindow: IWindowContainer | null = null;
     // Per-catalog-type state. _mainWindow/_catalogViewer above are re-pointed at the
     // active entry by setActiveCatalogState(); AS3 keeps exactly this shape.
@@ -189,6 +211,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _catalogNavigators: Map<string, CatalogNavigator> | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_searchTimer
     private _searchTimer: ReturnType<typeof setTimeout> | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_5194 (furniture data cache)
+    private _furnitureDataCache: IFurnitureData[] | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6916 (search-index stale flag)
+    private _searchIndexStale: boolean = true;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_pagesVisibleInBuilderMode
+    private _pagesVisibleInBuilderMode: Map<string, boolean> | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_7748 (product data ready flag)
+    private _productDataReady: boolean = false;
     private _catalogViewer: CatalogViewer | null = null;
     private _requestedPage: RequestedPage = new RequestedPage();
     private _initialized: boolean = false;
@@ -269,6 +299,28 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
     private _newNavigator: IHabboNewNavigator | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get notifications()
+    get notifications(): IHabboNotifications | null
+    {
+        return this._notifications;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get avatarEditor()
+    get avatarEditor(): unknown
+    {
+        return this._avatarEditor;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get specialItemsController()
+    // TODO(AS3): SpecialItemsController (habbo/catalog/special_items_display/SpecialItemsController.as)
+    // has no port anywhere in the engine - it's a full separate Component (own DI,
+    // ILinkEventTracker, message events, makeClaimable()/makeClaim()/claimState/items/view, etc.).
+    // Porting it is out of scope for this single-getter fix; always null until it exists.
+    get specialItemsController(): unknown
+    {
+        return null;
+    }
+
     private _groupMembershipsController: GuildMembershipsController | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get navigator()
@@ -334,9 +386,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._communication?.connection ?? null;
     }
 
-    get privateRoomSessionActive(): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRoomSessionEvent()
+    // (privateRoomSessionActive is _SafeStr_7595, set alongside roomSession in that same handler)
+    get privateRoomSessionActive(): boolean
     {
-        return false;
+        return this._roomSession?.isPrivateRoom ?? false;
     }
 
     get tradingActive(): boolean 
@@ -515,6 +569,41 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                     }
                 ]
             ),
+            new ComponentDependency(
+                IID_HabboNotifications,
+                (notifications: IHabboNotifications | null) =>
+                {
+                    this._notifications = notifications;
+                },
+                false
+            ),
+            // TODO(AS3): HabboAvatarEditor has no ported manager/interface yet (IID_HabboAvatarEditor
+            // is typed `unknown`) - field kept for interface parity with
+            // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get avatarEditor(),
+            // always null until that manager is implemented. Same placeholder pattern already used
+            // by HabboLandingView.ts.
+            new ComponentDependency(
+                IID_HabboAvatarEditor,
+                (avatarEditor: unknown) =>
+                {
+                    this._avatarEditor = avatarEditor;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_RoomSessionManager,
+                (manager: IRoomSessionManager | null) =>
+                {
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+
+                    this._roomSessionManager = manager;
+
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+                },
+                false
+            ),
         ];
     }
 
@@ -528,6 +617,26 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         if(productType === 'i') return this._sessionDataManager.getWallItemDataByName(name);
 
         return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::furniDataReady()
+    furniDataReady(): void
+    {
+        this._furnitureDataCache = this._sessionDataManager?.getFurniData(this) ?? null;
+        this._searchIndexStale = true;
+        this._pagesVisibleInBuilderMode = null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::productDataReady()
+    // TODO(AS3): AS3 also resumes a deferred toggleCatalog() call here when init() previously
+    // failed and stashed pending args (_SafeStr_6471/_SafeStr_10150/_SafeStr_9864) - this port's
+    // toggleCatalog() hard-bails on init() failure instead of stashing args to retry, so there is
+    // nothing to resume yet; fixing that is a separate change to toggleCatalog() itself.
+    productDataReady(): void
+    {
+        this._productDataReady = true;
+        this._searchIndexStale = true;
+        this.events.emit(CatalogEvent.CATALOG_INITIALIZED, new CatalogEvent(CatalogEvent.CATALOG_INITIALIZED));
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::get roomAdPurchaseData()
@@ -618,6 +727,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.connection?.send(new PurchaseFromCatalogComposer(pageId, offerId, extraParam, quantity));
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseOffer()
+    purchaseOffer(offerId: number, extraParam: string = '', quantity: number = 1): void
+    {
+        const nodes = this.getCatalogNavigator('NORMAL')?.getNodesByOfferId(offerId, true);
+
+        if(nodes != null && nodes.length > 0)
+        {
+            this.purchaseProduct(nodes[0].pageId, offerId, extraParam, quantity);
+        }
+    }
+
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::purchaseVipMembershipExtension()
     purchaseVipMembershipExtension(offerId: number): void
     {
@@ -628,6 +748,46 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     purchaseBasicMembershipExtension(offerId: number): void
     {
         this.connection?.send(new PurchaseBasicMembershipExtensionComposer(offerId));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseNftOffer()
+    purchaseNftOffer(offerId: string, extraParam: string): void
+    {
+        this.connection?.send(new PurchaseNftOfferMessageComposer(offerId, extraParam));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseMintTokens()
+    purchaseMintTokens(amount: number, currency: string): void
+    {
+        this.connection?.send(new PurchaseMintTokensMessageComposer(amount, currency));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::checkGiftable()
+    checkGiftable(offer: IPurchasableOffer): void
+    {
+        this.connection?.send(new CheckGiftableMessageComposer(offer.offerId));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseProductAsGift()
+    // No current caller: PurchaseConfirmationDialog.ts documents implementing only the base
+    // "confirm and buy" path, not the gift-wrapping flow (box/ribbon selectors, receiver name) -
+    // same category as purchaseVipMembershipExtension()/purchaseBasicMembershipExtension() above,
+    // which are also real composer-senders reachable only once their calling UI is wired.
+    purchaseProductAsGift(
+        pageId: number,
+        offerId: number,
+        extraParam: string,
+        receiverName: string,
+        giftMessage: string | null,
+        giftBoxProductId: number,
+        boxType: number,
+        ribbonType: number,
+        showPurchaserName: boolean = false
+    ): void
+    {
+        this.connection?.send(new PurchaseProductAsGiftMessageComposer(
+            pageId, offerId, extraParam, receiverName, giftMessage, giftBoxProductId, boxType, ribbonType, showPurchaserName
+        ));
     }
 
     // TODO(AS3): sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::doNotCloseAfterVipPurchase()
@@ -648,8 +808,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // "ROOM_INITIATE_PURCHASE"-tagged purchase widget layout, which the ported catalog pages
 
     // don't use yet.
-    sendRoomAdPurchaseInitiatedEvent(): void 
+    sendRoomAdPurchaseInitiatedEvent(): void
     {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getRoomAdsPurchaseInfo()
+    // TODO(AS3): the response isn't parsed/stored yet - matches the pre-existing roomAdPurchaseData
+    // always-null stub above. Sending the request is still correct and real, just currently
+    // unconsumed.
+    getRoomAdsPurchaseInfo(): void
+    {
+        this.connection?.send(new GetRoomAdsPurchaseInfoMessageComposer());
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::rememberPageDuringVipPurchase()
@@ -1109,7 +1278,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return null;
     }
 
-    public getSubscriptionProductIcon(_productId: number): ImageBitmap | null 
+    public getSubscriptionProductIcon(_productId: number): ImageBitmap | null
+    {
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getMintTokenProductIcon()
+    // TODO(AS3): AS3 looks up the "minting_token_large" asset and clones its BitmapData, falling
+    // back to a blank bitmap when missing. findAssetByName() would return a PixiJS Texture here,
+    // not an ImageBitmap - the same type mismatch already affects the two sibling methods above
+    // (getPixelEffectIcon/getSubscriptionProductIcon), so simplified to null for consistency rather
+    // than fixing one of the three one-off.
+    public getMintTokenProductIcon(): ImageBitmap | null
     {
         return null;
     }
@@ -1121,10 +1301,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // TODO(AS3): sources/win63_version/habbo/catalog/HabboCatalog.as::isDraggable()
-    // Real logic needs room-session state (isRoomOwner/isGuildRoom/roomControllerLevel),
-    // the active navigator page's allowDragging, and Builders Club furniture-placement
-    // status (getBuilderFurniPlaceableStatusForOffer(), itself dependent on room-session
-    // furniture counts) - none of that catalog/room-session cross-wiring exists yet.
+    // Real logic needs room-session state (isRoomOwner/isGuildRoom/roomControllerLevel - now
+    // tracked for real, see _roomSession below), the active navigator page's allowDragging (not
+    // wired), and Builders Club furniture-placement status (getBuilderFurniPlaceableStatusForOffer(),
+    // also now real) - only the navigator-page allowDragging piece is still missing.
 
     // AS3: HabboCatalog.as::_builderFurniLimit / get builderFurniLimit()
     private _builderFurniLimit: number = 0;
@@ -1132,6 +1312,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _builderMaxFurniLimit: number = 0;
     // AS3: HabboCatalog.as::_SafeStr_8644 / get builderFurniCount()
     private _builderFurniCount: number = -1;
+    // AS3: HabboCatalog.as::_SafeStr_7775 / get builderSecondsLeft()
+    private _builderSecondsLeft: number = 0;
+    // AS3: HabboCatalog.as::_SafeStr_8610 / get builderSecondsLeftWithGrace()
+    private _builderSecondsLeftWithGrace: number = 0;
+    // AS3: HabboCatalog.as::_builderMembershipUpdateTime
+    private _builderMembershipUpdateTime: number = 0;
 
     get builderFurniLimit(): number
     {
@@ -1148,6 +1334,29 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._builderFurniCount;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get builderSecondsLeft()
+    get builderSecondsLeft(): number
+    {
+        return this._builderSecondsLeft - (HabboCatalog.getTimer() - this._builderMembershipUpdateTime) / 1000;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get builderSecondsLeftWithGrace()
+    get builderSecondsLeftWithGrace(): number
+    {
+        return this._builderSecondsLeftWithGrace - (HabboCatalog.getTimer() - this._builderMembershipUpdateTime) / 1000;
+    }
+
+    // AS3 counterpart: flash.utils.getTimer()
+    private static getTimer(): number
+    {
+        if(typeof performance !== 'undefined')
+        {
+            return Math.floor(performance.now());
+        }
+
+        return Date.now();
+    }
+
     // AS3: HabboCatalog.as::onBuildersClubSubscriptionStatus()
     private onBuildersClubSubscriptionStatus(event: IMessageEvent): void
     {
@@ -1157,12 +1366,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         this._builderFurniLimit = parser.furniLimit;
         this._builderMaxFurniLimit = parser.maxFurniLimit;
+        this._builderSecondsLeft = parser.secondsLeft;
+        this._builderMembershipUpdateTime = HabboCatalog.getTimer();
+        this._builderSecondsLeftWithGrace = parser.secondsLeftWithGrace;
 
-        // TODO(AS3): AS3 also tracks secondsLeft/secondsLeftWithGrace for the membership
-        // countdown display and calls refreshBuilderStatus() (builds the "member/grace/trial"
-        // header text + dispatches CATALOG_BUILDER_MEMBERSHIP_IN_GRACE/EXPIRED) - that whole
-        // membership-status UI cluster isn't ported yet, only the furni count/limit fields
-        // getBuilderFurniPlaceableStatusForOffer() needs.
+        // TODO(AS3): AS3 also calls refreshBuilderStatus() (builds the "member/grace/trial" header
+        // text + dispatches CATALOG_BUILDER_MEMBERSHIP_IN_GRACE/EXPIRED) - that membership-status UI
+        // cluster isn't ported yet, only the furni count/limit/seconds-left fields
+        // getBuilderFurniPlaceableStatus() needs.
     }
 
     // AS3: HabboCatalog.as::onBuildersClubFurniCount()
@@ -1176,20 +1387,52 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
-    // TODO(AS3): builderFurniCount/builderFurniLimit are now tracked for real (see
-    // onBuildersClubFurniCount/onBuildersClubSubscriptionStatus above), but the further
-    // getBuilderFurniPlaceableStatus() also needs roomSession state
-    // (isRoomOwner/isGuildRoom/roomControllerLevel/userDataManager, none of which are wired
-    // into HabboCatalog yet) - always returning 0 ("placeable") is still the safe default:
-    // BuilderCatalogWidget's place buttons stay enabled and show no false error, and the
-    // actual placement action (requestSelectedItemToMover()) is itself still a
-    // CatalogObjectMover-blocked stub, so nothing is placed either way yet.
     public getBuilderFurniPlaceableStatusForOffer(_offer: IPurchasableOffer | null): number
     {
         if(_offer == null) return 1;
 
+        if(this._builderFurniCount < 0 || this._builderFurniCount >= this._builderFurniLimit) return 2;
+
+        if(this._roomSession == null) return 3;
+
+        return this.getBuilderFurniPlaceableStatus();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatus()
+    // TODO(AS3): AS3's final branch (builderSecondsLeft <= 0) loops the room's users via
+    // roomEngine.getRoomObjectCount()/getRoomObjectWithIndex() to block placement when a
+    // non-moderator, non-owner user is present - neither method exists on IRoomEngine in this port,
+    // so that check is skipped and defaults to "no blocking user found" (matching the safe-default
+    // philosophy already used by getBuilderFurniPlaceableStatusForOffer() above).
+    public getBuilderFurniPlaceableStatus(): number
+    {
+        if(this._roomSession == null) return 3;
+
+        if(!this._roomSession.isRoomOwner && this._roomSession.isGuildRoom &&
+            !this.getBoolean('builders.club.furniture.placement.group.room.enabled'))
+        {
+            return 5;
+        }
+
+        if(this._roomSession.roomControllerLevel < 3) return 4;
+
         return 0;
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRoomSessionEvent()
+    private onRoomSessionEvent = (event: RoomSessionEvent): void =>
+    {
+        switch(event.type)
+        {
+            case RoomSessionEvent.RSE_STARTED:
+                this._roomSession = event.session;
+                break;
+
+            case RoomSessionEvent.RSE_ENDED:
+                this._roomSession = null;
+                break;
+        }
+    };
 
     // path isn't wired up yet. The synchronous cache-hit path is implemented for real.
     public setImageFromAsset(target: unknown, assetName: string | null, _onAssetReady?: ((event: unknown) => void) | null): void 
@@ -1370,6 +1613,35 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         );
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showHabbiconAlreadyOwnedAlert()
+    public showHabbiconAlreadyOwnedAlert(): void
+    {
+        this._windowManager?.alert(
+            '${catalog.alert.purchaseerror.title}',
+            '${habbicon.catalog.already_owned}',
+            0,
+            this.alertDialogEventProcessor
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isHabbiconOfferOwned()
+    // TODO(AS3): needs _habbiconController (habbo/catalog/habbicons/HabbiconController.as) - a full
+    // unported Component subsystem (own DI, message events, buyHabbicon()/claimHabbicon()/
+    // tryGetOwnedHabbicon(), etc). AS3 itself returns false here whenever habbicons.enabled is off,
+    // which matches this port's current always-off state, so false is not a guess - it's what AS3
+    // would return too.
+    public isHabbiconOfferOwned(_offer: IPurchasableOffer | null): boolean
+    {
+        return false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isHabbiconOwned()
+    // TODO(AS3): same _habbiconController gap as isHabbiconOfferOwned() above.
+    public isHabbiconOwned(_id: number): boolean
+    {
+        return false;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showNotEnoughActivityPointsAlert()
     public showNotEnoughActivityPointsAlert(activityPointType: number): void
     {
@@ -1520,11 +1792,32 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return false;
     }
 
-    public buySnowWarTokensOffer(_localizationId: string): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isNewIdentity()
+    public isNewIdentity(): boolean
+    {
+        return this.getInteger('new.identity', 0) > 0;
+    }
+
+    public buySnowWarTokensOffer(_localizationId: string): void
     {
     }
 
-    public showVipBenefits(): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::purchaseGameTokensOffer()
+    // TODO(AS3): sends PurchaseSnowWarGameTokensOfferComposer (header 3243, resolved from
+    // habbo/communication/_SafeCls_2046.as) using one of three cached GameTokensOffer-typed fields
+    // keyed by localizationId (GET_SNOWWAR_TOKENS/2/3). Those fields are populated by
+    // onSnowWarGameTokenOffer() from a SnowWarGameTokensMessageEvent/Parser response to
+    // GetSnowWarGameTokensOfferComposer (sent from buySnowWarTokensOffer()'s else-branch in AS3) -
+    // none of GameTokensOffer, the event/parser, or that request flow are ported yet (a distinct,
+    // small subsystem from the already-ported catalog composers), so there is nothing to send a
+    // real offerId for. This is a different AS3 method from the buySnowWarTokensOffer() stub above
+    // (same GET_SNOWWAR_TOKENS* string switch, but that one shows a purchase-confirmation dialog or
+    // requests a fresh offer - this one sends the purchase itself).
+    public purchaseGameTokensOffer(_localizationId: string): void
+    {
+    }
+
+    public showVipBenefits(): void
     {
     }
 
@@ -1697,6 +1990,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         this._catalogNavigators = null;
 
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.onRoomSessionEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.onRoomSessionEvent);
+        this._roomSessionManager = null;
+        this._roomSession = null;
+        this._sessionDataManager?.removeFurniDataListener(this);
+        this._notifications = null;
+        this._avatarEditor = null;
+
         this._communication = null;
         this._windowManager = null;
         this._localization = null;
@@ -1740,6 +2041,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.context.addLinkEventTracker(this);
 
         this.connection?.send(new GetCreditsInfoComposer());
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initComponent()
+        this._sessionDataManager?.loadProductData(this);
+        this._furnitureDataCache = this._sessionDataManager?.getFurniData(this) ?? null;
     }
 
     // AS3: sources/win63_version/habbo/catalog/HabboCatalog.as::initializeRoomPreviewer()
@@ -2619,6 +2924,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // above) - nothing sets that state today, so this is currently a faithful no-op rather than
     // a shortcut.
     public resetPlacedOfferData(_placingItem: boolean = false): void
+    {
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::syncPlacedOfferWithPurchase()
+    // TODO(AS3): compares a tracked placed-offer's offerId against the purchased offer and calls
+    // resetPlacedOfferData() if they differ - the tracked state (PlacedObjectPurchaseData) doesn't
+    // exist yet, same gap documented on resetPlacedOfferData() above. Left as a faithful no-op
+    // rather than calling resetPlacedOfferData() unconditionally, which would misrepresent AS3's
+    // guard even though it currently has no observable effect either way.
+    public syncPlacedOfferWithPurchase(_offer: IPurchasableOffer): void
     {
     }
 }
