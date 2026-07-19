@@ -41,6 +41,7 @@ export class HabboWebTools
     public static readonly OPEN_INTERNAL_LINK_FROM_WEB_CALLBACK: string = 'openlink';
     public static readonly GOTO_ROOM_FROM_WEB_CALLBACK: string = 'openroom';
     public static readonly HABBLET_AVATARS: string = 'avatars';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/HabboWebTools.as::HABBLET_PRIVACY
     public static readonly HABBLET_PRIVACY: string = 'privacy';
     public static readonly HABBLET_MINI_MAIL: string = 'minimail';
     public static readonly HABBLET_ROOM_ENTER_AD: string = 'roomenterad';
