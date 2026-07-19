@@ -151,6 +151,15 @@ export class CoreComponentContext extends ComponentContext implements ICore
                 log.debug('Core: using complex frame update handler');
                 this._frameUpdateHandler = this.complexFrameUpdateHandler.bind(this);
                 break;
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_58.as::<init>
+            // TODO(AS3): AS3 also constructs a Profiler component (attachComponent + IIDProfiler)
+            // and adds a ProfilerViewer overlay to the stage here - neither class is ported (a
+            // Flash-native dev profiling UI; this port's target platform has browser devtools
+            // instead). Falls back to the simple handler, same as the unhandled-mode default below.
+            case CoreSetup.FRAME_UPDATE_PROFILER:
+                log.debug('Core: using profiler frame update handler (Profiler/ProfilerViewer not ported, falling back to simple)');
+                this._frameUpdateHandler = this.simpleFrameUpdateHandler.bind(this);
+                break;
             case CoreSetup.FRAME_UPDATE_EXPERIMENT:
                 log.debug('Core: using experimental frame update handler');
                 this._frameUpdateHandler = this.experimentalFrameUpdateHandler.bind(this);

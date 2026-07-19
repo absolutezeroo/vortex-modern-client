@@ -181,7 +181,7 @@ export class ComponentContext extends Component implements IContext
                 this.onComponentUnlocked(component, interfaces);
             };
             this._unlockHandlers.set(component, unlockHandler);
-            component.events.once(ComponentEvents.UNLOCKED, unlockHandler);
+            component.events.once(ComponentEvents.INTERNAL_UNLOCKED, unlockHandler);
         }
         else
         {
@@ -211,7 +211,7 @@ export class ComponentContext extends Component implements IContext
 
             if(unlockHandler)
             {
-                component.events.off(ComponentEvents.UNLOCKED, unlockHandler);
+                component.events.off(ComponentEvents.INTERNAL_UNLOCKED, unlockHandler);
                 this._unlockHandlers.delete(component);
             }
         }
@@ -454,7 +454,9 @@ export class ComponentContext extends Component implements IContext
             }
         }
 
-        // Notify root context
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_56.as::unlockEventHandler()
+        // Notify root context - the public COMPONENT_EVENT_UNLOCKED, distinct from the
+        // per-component INTERNAL_UNLOCKED signal this handler was itself invoked by.
         this.root.events.emit(ComponentEvents.UNLOCKED, component);
     }
 

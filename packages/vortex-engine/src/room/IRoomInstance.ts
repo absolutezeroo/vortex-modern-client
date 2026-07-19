@@ -14,6 +14,8 @@ export interface IRoomInstance
 {
     readonly id: string;
 
+    hasValueForName(key: string): boolean;
+
     getNumber(key: string): number;
 
     setNumber(key: string, value: number, immutable?: boolean): void;

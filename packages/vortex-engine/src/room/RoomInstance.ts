@@ -39,6 +39,14 @@ export class RoomInstance implements IRoomInstance
         return this._id;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomInstance.as::hasValueForName()
+    // AS3 backs getNumber/setNumber/getString/setString with a single map; this port splits it into
+    // _numbers/_strings, so a name registered under either counts.
+    hasValueForName(key: string): boolean
+    {
+        return this._numbers.has(key) || this._strings.has(key);
+    }
+
     getNumber(key: string): number
     {
         return this._numbers.get(key) ?? NaN;

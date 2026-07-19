@@ -34,10 +34,24 @@ function hasRelease(obj: unknown): obj is { release: (iid: IID) => void }
 export const ComponentEvents = {
     RUNNING: 'component:running',
     DISPOSING: 'component:disposing',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_UNLOCKED
+    // Public: re-dispatched on the root context (see ComponentContext.onComponentUnlocked()) when
+    // ANY attached component unlocks - distinct from the per-component internal signal below.
     UNLOCKED: 'component:unlocked',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::INTERNAL_EVENT_UNLOCKED
+    // Protected: fired by unlock() on the component's own emitter only, consumed solely by the
+    // context that attached it (ComponentContext.attachComponent()'s per-component listener). Kept
+    // distinct from UNLOCKED above so a Component that is itself a nested Context does not
+    // conflate "my parent unlocked me" with "one of my own children unlocked" on the same emitter.
+    INTERNAL_UNLOCKED: 'component:internal-unlocked',
     ERROR: 'component:error',
     WARNING: 'component:warning',
     DEBUG: 'component:debug',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_REBOOT
+    // Only ever dispatched by the root context (CoreComponentContext) in AS3, though declared here
+    // for API completeness. CoreComponentContext.ts uses its own locally-typed
+    // CoreComponentContextEvents.REBOOT for the actual dispatch, not this constant.
+    REBOOT: 'component:reboot',
 } as const;
 
 /**
@@ -114,12 +128,34 @@ export class Component implements IDisposable
     private _requiredDependenciesCount: number = 1; // Start at 1, decremented after all deps queued
     private _pendingDependencies: Set<string> = new Set();
     private _constructionComplete: boolean = false;
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getInterfaceStructList()/toXMLString()/get requiredDependencyIids()
+    // Three AS3 members absent here:
+    // - `static getInterfaceStructList(component)` returns the component's InterfaceStructList -
+    //   not a debug accessor, ComponentContext.as itself calls it repeatedly (insert/find/
+    //   mapStructsByImplementor) as the REAL storage for interface registration. This port's
+    //   ComponentContext.ts manages interfaces through its own `_interfaceQueues` structure
+    //   instead of reaching into each component's private list via a static accessor - porting
+    //   this for real means re-architecting that mechanism to match AS3's, not adding one method.
+    // - `toXMLString(indent)` (a debug XML dump of a component's registered interfaces) and
+    //   `get requiredDependencyIids()` (built from `dependencies` during `queueDependencies()`, the
+    //   simple qualified class name of every dependency marked `isRequired`) both depend on the
+    //   same InterfaceStructList/dependency-processing internals above.
+    // `_pendingDependencies` (just above) is this port's nearest equivalent to tracking
+    // dependencies, but it depletes as each resolves rather than staying the fixed list AS3's
+    // getter returns - not a drop-in accessor for requiredDependencyIids either.
 
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
         this._context = context;
         this._flags = flags;
         this._events = new EventEmitter();
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::_SafeCls_50()
+        // TODO(AS3): AS3 defaults to `param3 ?? new AssetLibrary('_internal_asset_library')`, so
+        // `assets` is never null there. This port cannot default the same way: AssetLibrary extends
+        // Component here (AS3's extends EventDispatcherWrapper directly, no such cycle), so
+        // constructing one here would itself construct another for ITS OWN `_assets` field,
+        // recursing forever. Left nullable deliberately; findAssetByName()/hasAsset()/
+        // loadAssetFromFile() below already degrade to null/false rather than throw.
         this._assets = assetLibrary;
 
         // Allow null context for ComponentContext (CONTEXT flag), which sets itself as context after super()
@@ -299,6 +335,12 @@ export class Component implements IDisposable
         }
 
         this._disposed = true;
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::dispose()
+        // AS3 also sets `_context = null` here. This port's `_context` field is `readonly`, and
+        // widening it to `IContext | null` would ripple through every call site that reads
+        // `this._context.x` without a null-check (the overwhelming majority) - a change out of
+        // proportion to a GC-hygiene detail, especially since every such call site already gates on
+        // `disposed` rather than on `_context == null`. Left as a documented deviation.
     }
 
     /**
@@ -431,9 +473,13 @@ export class Component implements IDisposable
     /**
 	 * Get an integer configuration property
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::getInteger()
+    // AS3's fallback when configuration is absent is the fixed 0, not the caller's defaultValue
+    // (same fixed-fallback shape as getBoolean()/getProperty() above) - defaultValue only applies
+    // once configuration exists but the key itself is missing, inside getInteger() below.
     getInteger(key: string, defaultValue: number): number
     {
-        return this._context.configuration?.getInteger(key, defaultValue) ?? defaultValue;
+        return this._context.configuration?.getInteger(key, defaultValue) ?? 0;
     }
 
     /**
@@ -513,7 +559,7 @@ export class Component implements IDisposable
         {
             this._locked = false;
 
-            this._events.emit(ComponentEvents.UNLOCKED, this);
+            this._events.emit(ComponentEvents.INTERNAL_UNLOCKED, this);
         }
     }
 

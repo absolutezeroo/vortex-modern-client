@@ -272,10 +272,15 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 *
 	 * @see AS3 class_3447 lines 183-186
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_2253.as::createCanvasInstance()
+    // TODO(AS3): AS3's base class is concrete here - it returns a real canvas instance
+    // (`_SafeCls_3074`), not an abstract hook. There is no engine-layer (non-Habbo) canvas
+    // implementation to construct in this port's architecture (`room/` never imports from
+    // `habbo/room/`, where the only concrete canvas - RoomRenderingCanvas - lives), so a throw
+    // stands in for AS3's concrete default. Harmless today: HabboRoomRenderer always overrides
+    // this, the same way AS3's own callers only ever use the Habbo-specific renderer subclass.
     protected createCanvasInstance(_id: number, _width: number, _height: number, _scale: number): IRoomRenderingCanvas
     {
-        // Base implementation returns null — subclasses or external code must provide canvas creation.
-        // In practice, HabboRoomRenderer overrides this to create RoomRenderingCanvas instances.
         throw new Error('[RoomRenderer] createCanvasInstance must be overridden');
     }
 }

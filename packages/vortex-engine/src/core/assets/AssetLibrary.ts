@@ -492,14 +492,14 @@ export class AssetLibrary extends Component implements IAssetLibrary
     /**
      * Register an asset type declaration
      */
-    registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared: boolean = true): boolean 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/assets/AssetLibrary.as::registerAssetTypeDeclaration()
+    registerAssetTypeDeclaration(declaration: AssetTypeDeclaration, isShared: boolean = true): boolean
     {
         const registry = isShared ? AssetLibrary._sharedTypesByMime : this._localTypesByMime;
 
-        if(registry.has(declaration.mimeType)) 
+        if(registry.has(declaration.mimeType))
         {
-            // Allow re-registration (update)
-            Logger.getLogger('AssetLibrary').warn(`Updating type declaration for ${declaration.mimeType}`);
+            throw new Error(`Asset type ${declaration.mimeType} already registered!`);
         }
 
         registry.set(declaration.mimeType, declaration);

@@ -72,14 +72,22 @@ export class RoomObjectModel implements IRoomObjectModelController
         return this._strings.get(key) ?? '';
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/RoomObjectModel.as::getNumberArray()
+    // AS3 slices before returning - `readonly` here is compile-time only and a cast bypasses it,
+    // so return a copy to actually prevent external mutation of the stored array.
     getNumberArray(key: string): readonly number[] | null
     {
-        return this._numberArrays.get(key) ?? null;
+        const value = this._numberArrays.get(key);
+
+        return value !== undefined ? value.slice() : null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/RoomObjectModel.as::getStringArray()
     getStringArray(key: string): readonly string[] | null
     {
-        return this._stringArrays.get(key) ?? null;
+        const value = this._stringArrays.get(key);
+
+        return value !== undefined ? value.slice() : null;
     }
 
     getStringToStringMap(key: string): Map<string, string>

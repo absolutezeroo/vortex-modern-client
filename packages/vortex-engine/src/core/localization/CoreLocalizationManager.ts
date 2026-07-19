@@ -8,6 +8,7 @@ import type {IGameDataResources} from './IGameDataResources';
 import {Localization} from './Localization';
 import {LocalizationDefinition} from './LocalizationDefinition';
 import {GameDataResources} from './GameDataResources';
+import {LocalizationEvent} from './LocalizationEvent';
 
 const log = Logger.getLogger('Localization');
 
@@ -116,7 +117,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
         {
             log.warn('Localization hashes URL was null or empty!');
 
-            this.events.emit('failed');
+            this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
 
             return;
         }
@@ -143,7 +144,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                     {
                         log.error('Hashes file incomplete');
 
-                        this.events.emit('failed');
+                        this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
 
                         return;
                     }
@@ -158,7 +159,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                     {
                         log.error('No external_texts entry in hashes file');
 
-                        this.events.emit('failed');
+                        this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
 
                         return;
                     }
@@ -169,14 +170,14 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                 {
                     log.error(`Failed parsing hashes: ${error}`);
 
-                    this.events.emit('failed');
+                    this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
                 }
             })
             .catch((error) => 
             {
                 log.error(`Failed to load hashes: ${error.message}`);
 
-                this.events.emit('failed');
+                this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
             });
     }
 
@@ -397,7 +398,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
     {
         if(urls.length === 0) 
         {
-            this.events.emit('failed');
+            this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
             return;
         }
 
@@ -425,7 +426,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                     {
                         log.error('Invalid localization data received');
 
-                        this.events.emit('failed');
+                        this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
 
                         return;
                     }
@@ -433,7 +434,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
                     this.parseLocalizationData(text);
                 }
 
-                this.events.emit('loaded');
+                this.events.emit(LocalizationEvent.LOCALIZATION_LOADED);
             })
             .catch((error) => 
             {
@@ -441,7 +442,7 @@ export class CoreLocalizationManager extends Component implements ICoreLocalizat
 
                 log.error(`Failed to load localization: ${err.message}`);
 
-                this.events.emit('failed');
+                this.events.emit(LocalizationEvent.LOCALIZATION_FAILED);
             });
     }
 
