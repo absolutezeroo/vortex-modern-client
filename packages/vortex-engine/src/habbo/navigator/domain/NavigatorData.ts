@@ -500,6 +500,13 @@ export class NavigatorData
         return this._categoryByNodeId.get(nodeId) ?? null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/domain/NavigatorData.as::getEventCategoryById()
+    // Deliberate divergence, not an oversight: AS3's real body iterates _allCategories (room
+    // categories, FlatCategory - which carries nodeId, not categoryId) and compares against
+    // .categoryId, a property that doesn't exist on that type - so it always returns null. AS3 also
+    // has zero callers for this method anywhere in the client, same as this port, so there is no
+    // observable behavior to be bug-compatible with; this queries the correctly-separated
+    // _eventCategoryById map instead of reproducing the dead, self-evidently broken lookup.
     getEventCategoryById(categoryId: number): EventCategory | null
     {
         return this._eventCategoryById.get(categoryId) ?? null;

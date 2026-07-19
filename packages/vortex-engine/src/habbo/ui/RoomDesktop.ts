@@ -828,7 +828,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         switch(event.type) 
         {
-            case RoomEngineObjectEvent.REOE_OBJECT_SELECTED:
+            case RoomEngineObjectEvent.REOE_SELECTED:
                 // AS3 only builds the update event when selection is allowed; when it is disabled
                 // the local stays null and nothing is dispatched.
                 if(!this.isFurnitureSelectionDisabled(event)) 
@@ -836,15 +836,15 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                     translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
                 }
                 break;
-            case RoomEngineObjectEvent.REOE_OBJECT_DESELECTED:
+            case RoomEngineObjectEvent.REOE_DESELECTED:
                 translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
                 break;
-            case RoomEngineObjectEvent.REOE_OBJECT_ADDED:
+            case RoomEngineObjectEvent.REOE_ADDED:
                 translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
                     ? RoomWidgetRoomObjectUpdateEvent.USER_ADDED
                     : RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED;
                 break;
-            case RoomEngineObjectEvent.REOE_OBJECT_REMOVED:
+            case RoomEngineObjectEvent.REOE_REMOVED:
                 translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
                     ? RoomWidgetRoomObjectUpdateEvent.USER_REMOVED
                     : RoomWidgetRoomObjectUpdateEvent.FURNI_REMOVED;

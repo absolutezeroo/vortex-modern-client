@@ -212,10 +212,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on('RERCE_ROOM_COLOR', this.roomEventHandler, this);
                         engine.events.on('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
                         engine.events.on('REE_ROOM_ZOOM', this.roomEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_SELECTED, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_DESELECTED, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_OBJECT_REMOVED, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineObjectEvent.REOE_SELECTED, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineObjectEvent.REOE_DESELECTED, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineObjectEvent.REOE_ADDED, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineObjectEvent.REOE_REMOVED, this.roomObjectEventHandler, this);
                     }
                 },
                 true

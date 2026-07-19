@@ -9,18 +9,32 @@ import {RoomEngineEvent} from './RoomEngineEvent';
 
 export class RoomEngineObjectEvent extends RoomEngineEvent
 {
-    public static readonly REOE_OBJECT_ADDED = 'REOE_OBJECT_ADDED';
-    public static readonly REOE_OBJECT_REMOVED = 'REOE_OBJECT_REMOVED';
-    public static readonly REOE_OBJECT_SELECTED = 'REOE_OBJECT_SELECTED';
-    public static readonly REOE_OBJECT_DESELECTED = 'REOE_OBJECT_DESELECTED';
-    public static readonly REOE_OBJECT_PLACED = 'REOE_OBJECT_PLACED';
-    public static readonly REOE_OBJECT_REQUEST_MOVE = 'REOE_OBJECT_REQUEST_MOVE';
-    public static readonly REOE_OBJECT_REQUEST_ROTATE = 'REOE_OBJECT_REQUEST_ROTATE';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::_SafeStr_10429
+    // AS3 name unrecoverable (obfuscated in every tree) - derived from its value. No "_OBJECT_"
+    // infix in any of these: that was an invented naming variant, previously diverging from the
+    // real wire/event values (harmless internally since every emitter/listener pair agreed with
+    // itself, but a trap for literal-string comparisons or a network dump).
+    public static readonly REOE_SELECTED = 'REOE_SELECTED';
+    public static readonly REOE_DESELECTED = 'REOE_DESELECTED';
+    public static readonly REOE_ADDED = 'REOE_ADDED';
+    public static readonly REOE_REMOVED = 'REOE_REMOVED';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::_SafeStr_10306
-    // (recovered name/value from win63_version cross-reference: real AS3 string is "REOE_UPDATED",
-    // unlike this port's other REOE_OBJECT_* constants which use an "_OBJECT_" naming variant)
     public static readonly REOE_UPDATED = 'REOE_UPDATED';
+    public static readonly REOE_PLACED = 'REOE_PLACED';
+    public static readonly REOE_PLACED_ON_USER = 'REOE_PLACED_ON_USER';
+    public static readonly REOE_CONTENT_UPDATED = 'REOE_CONTENT_UPDATED';
+    public static readonly REOE_REQUEST_MOVE = 'REOE_REQUEST_MOVE';
+    public static readonly REOE_REQUEST_ROTATE = 'REOE_REQUEST_ROTATE';
+    // TODO(AS3): no current emitter for the furni-pickup request flow - added for interface
+    // completeness (see RoomEngine.ts's own TODOs around furni pickup).
+    public static readonly REOE_REQUEST_PICKUP = 'REOE_REQUEST_PICKUP';
+    public static readonly REOE_MOUSE_ENTER = 'REOE_MOUSE_ENTER';
+    public static readonly REOE_MOUSE_LEAVE = 'REOE_MOUSE_LEAVE';
 
+    // TODO(AS3): AS3's constructor also takes bubbles/cancelable (forwarded to the Flash Event
+    // base class) - this port's event system is a plain EventEmitter with no DOM-style bubbling/
+    // cancellation semantics, so there is nothing for those two params to control here; every
+    // other RoomEngineEvent subclass has the same simplification.
     constructor(type: string, roomId: number, objectId: number, category: number)
     {
         super(type, roomId);

@@ -1261,8 +1261,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         (object as IRoomObjectController).setDirection(direction);
 
         this.events.emit(
-            RoomEngineObjectEvent.REOE_OBJECT_ADDED,
-            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+            RoomEngineObjectEvent.REOE_ADDED,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
         );
 
         return true;
@@ -1376,8 +1376,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.loadFurnitureContent(roomId, id, className, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
 
         this.events.emit(
-            RoomEngineObjectEvent.REOE_OBJECT_ADDED,
-            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+            RoomEngineObjectEvent.REOE_ADDED,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
         );
 
         return true;
@@ -1493,8 +1493,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(success) 
         {
             this.events.emit(
-                RoomEngineObjectEvent.REOE_OBJECT_REMOVED,
-                new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_REMOVED, roomId, objectId, category)
+                RoomEngineObjectEvent.REOE_REMOVED,
+                new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_REMOVED, roomId, objectId, category)
             );
         }
 
@@ -2374,8 +2374,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         this.events.emit(
-            RoomEngineObjectEvent.REOE_OBJECT_ADDED,
-            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+            RoomEngineObjectEvent.REOE_ADDED,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_ADDED, roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
         );
 
         return true;
@@ -4624,7 +4624,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
-     * Selects a room object and dispatches REOE_OBJECT_SELECTED, deselecting
+     * Selects a room object and dispatches REOE_SELECTED, deselecting
      * whatever was previously selected in that room first.
      *
      * AS3: sources/win63_version/habbo/ui/RoomDesktop.as::roomObjectEventHandler()
@@ -4640,14 +4640,14 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._selectedObject = {roomId, id, category};
 
         this.events.emit(
-            RoomEngineObjectEvent.REOE_OBJECT_SELECTED,
-            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_SELECTED, roomId, id, category)
+            RoomEngineObjectEvent.REOE_SELECTED,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_SELECTED, roomId, id, category)
         );
     }
 
     /**
      * Deselects the currently selected room object (if any) and dispatches
-     * REOE_OBJECT_DESELECTED.
+     * REOE_DESELECTED.
      */
     private deselectRoomObject(): void 
     {
@@ -4658,8 +4658,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._selectedObject = null;
 
         this.events.emit(
-            RoomEngineObjectEvent.REOE_OBJECT_DESELECTED,
-            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_OBJECT_DESELECTED, roomId, id, category)
+            RoomEngineObjectEvent.REOE_DESELECTED,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_DESELECTED, roomId, id, category)
         );
     }
 

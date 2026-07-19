@@ -69,8 +69,13 @@ export class PollHandler extends BaseHandler
 
         const parser = (event as PollOfferEvent).parser as PollOfferEventParser;
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/PollHandler.as::onPollOfferEvent()
+        // AS3 has a genuine copy-paste bug here: it assigns `summary = headline` then immediately
+        // overwrites it with `summary = summary` - headline is parsed off the wire but never
+        // actually applied to the event. Ported faithfully rather than "fixed": the official client
+        // shows an empty headline on a poll offer, and this is confirmed to have no other caller
+        // that would depend on it being populated.
         const pollEvent = new RoomSessionPollEvent(RoomSessionPollEvent.OFFER, session, parser.id);
-        pollEvent.headline = parser.headline;
         pollEvent.summary = parser.summary;
 
         this.listener.sessionEvents.emit(RoomSessionPollEvent.OFFER, pollEvent);

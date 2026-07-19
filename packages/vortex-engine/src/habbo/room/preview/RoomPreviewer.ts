@@ -124,8 +124,8 @@ export class RoomPreviewer
         if(this._roomEngine)
         {
             // AS3 listens to "REOE_ADDED"/"REOE_CONTENT_UPDATED"; the ported engine
-            // surfaces object placement through REOE_OBJECT_ADDED.
-            this._roomEngine.events.on(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this.onRoomObjectAddedBound);
+            // surfaces object placement through REOE_ADDED.
+            this._roomEngine.events.on(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAddedBound);
             this._roomEngine.events.on(RoomEngineEvent.REE_INITIALIZED, this.onRoomInitializedBound);
 
             // TS deviation (see class doc comment): re-run the framing math every
@@ -1022,7 +1022,7 @@ export class RoomPreviewer
 
         if(this._roomEngine)
         {
-            this._roomEngine.events.off(RoomEngineObjectEvent.REOE_OBJECT_ADDED, this.onRoomObjectAddedBound);
+            this._roomEngine.events.off(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAddedBound);
             this._roomEngine.events.off(RoomEngineEvent.REE_INITIALIZED, this.onRoomInitializedBound);
             this._roomEngine.unregisterCanvasSyncCallback(this.updatePreviewRoomViewBound);
         }
