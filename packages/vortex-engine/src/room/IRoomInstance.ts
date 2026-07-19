@@ -14,6 +14,7 @@ export interface IRoomInstance
 {
     readonly id: string;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomInstance.as::hasValueForName()
     hasValueForName(key: string): boolean;
 
     getNumber(key: string): number;
