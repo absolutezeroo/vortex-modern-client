@@ -323,6 +323,24 @@ ported; their own caller, `AvatarRenderManager.resetAllCaches()` iterating track
 doesn't exist in this port either (no image-tracking list at all), so that wiring is a documented TODO
 rather than an invented tracking mechanism.
 
+**Majors: habbo/chat cluster (3 filed, 3 fixed).** `HabboNotificationItemStyle`'s constructor took 4
+params where AS3 takes 7 — rewritten to extract `icon`/`internalLink`/`customLayout`/`customView` from
+a style-map entry, let an explicit icon bitmap override it, and force `ownsIcon` false without one
+(matching `dispose()`'s `_ownsIcon && _icon != null` gate); gained the 5 missing getters plus
+`HabboNotificationItem.notificationId` (a computed `style.extraData['id']` read). `SingularNotificationController.addItem()`
+gained the matching 7-param signature and a real `hasNotificationById()`-based dedup — both call sites
+in `HabboNotifications.ts` updated for the new `iconBitmap` slot. `removeNotificationById()`/
+`hasNotificationById()` (queue-only; the never-ported `HabboNotificationViewManager` half is TODO'd)
+and `showModerationDisclaimer()`'s `RoomEnterEffect`-gated retry timer (making `MODERATION_DISCLAIMER_DELAY_MS`
+finally used) are now real. AS3's per-type style-config-XML lookup that would *reject* an unknown
+notification type has no config-loading system anywhere in this port to resolve against, so `addItem()`
+never rejects — documented, not silently dropped. `maybeShowNewFeatureNotification()`/`onBadgeImage()`
+stay stubs: their AS3 bodies need `NewFeatureNotification`/`HabboNotificationViewManager`, neither
+ported. `ChatEventHandler.gameEventHandler()` (snowwar team chat) stays a class-level TODO — `habbo/game`
+is entirely empty placeholder directories, so there is no `GameManager`/`GameChatEvent` to wire against;
+`CHAT_STYLE_SNOWWAR_RED`/`_BLUE` stay declared-but-dead until that module exists, now with that reason
+on record instead of silence.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

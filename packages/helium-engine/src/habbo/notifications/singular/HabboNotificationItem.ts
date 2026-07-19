@@ -36,6 +36,17 @@ export class HabboNotificationItem
         return this._content;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::get notificationId()
+    get notificationId(): string | null
+    {
+        if(this._style == null || this._style.extraData == null)
+        {
+            return null;
+        }
+
+        return (this._style.extraData['id'] as string | null) ?? null;
+    }
+
     /**
 	 * Execute internal link associated with this notification
 	 */

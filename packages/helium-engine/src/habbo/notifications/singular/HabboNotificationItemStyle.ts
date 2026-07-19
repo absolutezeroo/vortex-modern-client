@@ -1,76 +1,129 @@
 /**
  * Data model for notification item styling.
- * Holds icon asset URI, internal link, and icon source.
+ * Holds icon, links, and layout/view/extra-data hints resolved from a style
+ * config entry or an explicitly-provided bitmap.
  *
- * @see source_as_win63/habbo/notifications/singular/HabboNotificationItemStyle.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as
  */
 export class HabboNotificationItemStyle
 {
+    private _icon: ImageBitmap | null = null;
     private _ownsIcon: boolean = false;
+    private _iconSrc: string | null = null;
+    private _internalLink: string | null = null;
+    private _iconAssetUri: string | null = null;
+    private _customLayout: string | null = null;
+    private _customView: string | null = null;
+    private _extraData: Record<string, unknown> | null = null;
+    private _styleName: string | null = null;
 
     /**
-	 * @param styleMap Optional style map containing icon and internallink keys
+	 * @param styleMap Style config entry (from the "styles" map), used when iconAssetUri is null
+	 * @param iconBitmap Explicit icon bitmap - overrides any icon resolved from styleMap
 	 * @param iconAssetUri Optional icon asset URI string
-	 * @param ownsIcon Whether this style owns its icon and should dispose it
+	 * @param ownsIcon Whether this style owns iconBitmap and should dispose it - forced
+	 * false when no iconBitmap is given, even if styleMap resolved one
 	 * @param iconSrc Optional icon source string
+	 * @param extraData Arbitrary per-notification data (e.g. an "id" for dedup)
+	 * @param styleName The style's config key
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::HabboNotificationItemStyle()
     constructor(
         styleMap: Record<string, unknown> | null,
+        iconBitmap: ImageBitmap | null,
         iconAssetUri: string | null,
         ownsIcon: boolean,
-        iconSrc: string | null
+        iconSrc: string | null,
+        extraData: Record<string, unknown> | null,
+        styleName: string | null
     )
     {
         this._iconAssetUri = iconAssetUri;
 
         if(styleMap != null && iconAssetUri == null)
         {
-            this._iconData = styleMap;
-            this._internalLink = (styleMap['internallink'] as string) ?? null;
+            this._icon = (styleMap['icon'] as ImageBitmap | null) ?? null;
+            this._internalLink = (styleMap['internallink'] as string | null) ?? null;
+            this._customLayout = (styleMap['customlayout'] as string | null) ?? null;
+            this._customView = (styleMap['customview'] as string | null) ?? null;
         }
 
-        this._ownsIcon = ownsIcon;
+        if(iconBitmap != null)
+        {
+            this._icon = iconBitmap;
+            this._ownsIcon = ownsIcon;
+        }
+        else
+        {
+            this._ownsIcon = false;
+        }
+
         this._iconSrc = iconSrc;
+        this._extraData = extraData;
+        this._styleName = styleName;
     }
 
-    private _iconAssetUri: string | null = null;
-
-    get iconAssetUri(): string | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get icon()
+    get icon(): ImageBitmap | null
     {
-        return this._iconAssetUri;
+        return this._icon;
     }
 
-    private _internalLink: string | null = null;
-
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get internalLink()
     get internalLink(): string | null
     {
         return this._internalLink;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::set internalLink()
     set internalLink(value: string | null)
     {
         this._internalLink = value;
     }
 
-    private _iconSrc: string | null = null;
-
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get iconSrc()
     get iconSrc(): string | null
     {
         return this._iconSrc;
     }
 
-    private _iconData: Record<string, unknown> | null = null;
-
-    get iconData(): Record<string, unknown> | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get iconAssetUri()
+    get iconAssetUri(): string | null
     {
-        return this._iconData;
+        return this._iconAssetUri;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get customLayout()
+    get customLayout(): string | null
+    {
+        return this._customLayout;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get customView()
+    get customView(): string | null
+    {
+        return this._customView;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get extraData()
+    get extraData(): Record<string, unknown> | null
+    {
+        return this._extraData;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::get styleName()
+    get styleName(): string | null
+    {
+        return this._styleName;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemStyle.as::dispose()
     dispose(): void
     {
-        this._iconData = null;
-        this._iconAssetUri = null;
-        this._internalLink = null;
-        this._iconSrc = null;
+        if(this._ownsIcon && this._icon != null)
+        {
+            this._icon.close();
+            this._icon = null;
+        }
     }
 }

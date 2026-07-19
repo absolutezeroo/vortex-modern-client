@@ -259,7 +259,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 	 */
     addItem(content: string, type: string, iconAssetName?: string | null): void
     {
-        this._singularController?.addItem(content, type, iconAssetName ?? null);
+        this._singularController?.addItem(content, type, null, iconAssetName ?? null);
     }
 
     /**
@@ -312,6 +312,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
             this._singularController?.addItem(
                 message ?? '',
                 'info',
+                null,
                 imageUrl,
                 null,
                 internalLink ?? linkUrl

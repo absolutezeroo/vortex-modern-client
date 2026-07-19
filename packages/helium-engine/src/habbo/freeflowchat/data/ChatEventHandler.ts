@@ -12,6 +12,15 @@ import {ChatItem} from './ChatItem';
  *
  * @see source_as_win63/habbo/freeflowchat/data/ChatEventHandler.as
  */
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::gameEventHandler()
+// AS3's constructor also does, when `freeFlowChat.gameManager` is set:
+// `gameManager.events.addEventListener("gce_game_chat", gameEventHandler)`, where
+// gameEventHandler() builds a RoomSessionChatEvent with style CHAT_STYLE_SNOWWAR_RED/
+// _BLUE (team-based) and forwards it to insertChat() with a forced locX/color/figure/
+// name (the game event carries its own display identity, not a real room user's).
+// habbo/game (GameChatEvent, GameManager, snowwar/*) is entirely unported - only
+// empty placeholder directories exist - so this is a stub, not a silent omission:
+// CHAT_STYLE_SNOWWAR_RED/BLUE stay declared and dead until that module exists.
 export class ChatEventHandler
 {
     public static readonly CHAT_STYLE_SNOWWAR_RED: number = 120;
