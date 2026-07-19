@@ -15,20 +15,31 @@ export class RoomEngineObjectEvent extends RoomEngineEvent
     // real wire/event values (harmless internally since every emitter/listener pair agreed with
     // itself, but a trap for literal-string comparisons or a network dump).
     public static readonly REOE_SELECTED = 'REOE_SELECTED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::DESELECTED
     public static readonly REOE_DESELECTED = 'REOE_DESELECTED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::ADDED
     public static readonly REOE_ADDED = 'REOE_ADDED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::REMOVED
     public static readonly REOE_REMOVED = 'REOE_REMOVED';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::_SafeStr_10306
     public static readonly REOE_UPDATED = 'REOE_UPDATED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::PLACED
     public static readonly REOE_PLACED = 'REOE_PLACED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::PLACED_ON_USER
     public static readonly REOE_PLACED_ON_USER = 'REOE_PLACED_ON_USER';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::CONTENT_UPDATED
     public static readonly REOE_CONTENT_UPDATED = 'REOE_CONTENT_UPDATED';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::REQUEST_MOVE
     public static readonly REOE_REQUEST_MOVE = 'REOE_REQUEST_MOVE';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::REQUEST_ROTATE
     public static readonly REOE_REQUEST_ROTATE = 'REOE_REQUEST_ROTATE';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::REQUEST_PICKUP
     // TODO(AS3): no current emitter for the furni-pickup request flow - added for interface
     // completeness (see RoomEngine.ts's own TODOs around furni pickup).
     public static readonly REOE_REQUEST_PICKUP = 'REOE_REQUEST_PICKUP';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::MOUSE_ENTER
     public static readonly REOE_MOUSE_ENTER = 'REOE_MOUSE_ENTER';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/events/RoomEngineObjectEvent.as::MOUSE_LEAVE
     public static readonly REOE_MOUSE_LEAVE = 'REOE_MOUSE_LEAVE';
 
     // TODO(AS3): AS3's constructor also takes bubbles/cancelable (forwarded to the Flash Event
