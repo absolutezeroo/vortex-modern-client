@@ -305,24 +305,29 @@ export class RoomEngine extends Component implements IRoomEngine,
             ),
             new ComponentDependency(
                 IID_HabboConfigurationManager,
-                (config: IHabboConfigurationManager | null) => 
+                (config: IHabboConfigurationManager | null) =>
                 {
                     this._configurationManager = config;
 
-                    // AS3: configuration availability initializes RoomContentLoader; content URLs are resolved there.
-                    if(config) 
+                    // AS3's real dependency setter is `null` here - it does nothing synchronously
+                    // at resolution time, relying entirely on the 'complete' listener below to call
+                    // onConfigurationComplete() once configuration has actually finished loading
+                    // (sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:389-392).
+                    // This port's VortexMain.ts::prepareCore() awaits HabboConfigurationManager's
+                    // async download before constructing RoomEngine, so by the time this dependency
+                    // resolves 'complete' has already fired to nobody and never fires again - the
+                    // same race already fixed once in AvatarRenderManager.tryOnConfigurationComplete()
+                    // and SessionDataManager's own IID_HabboConfigurationManager dependency. Catch up
+                    // directly, deferred a microtask so the IID_SessionDataManager dependency listed
+                    // below (which onConfigurationComplete() reads) finishes resolving first, matching
+                    // the order a genuinely-late 'complete' would arrive in.
+                    if(config?.isInitialized())
                     {
-                        this._roomDraggingAlwaysCenters = config.getBoolean('room.dragging.always_center');
-
-                        for(const data of this._roomInstanceData.values()) 
-                        {
-                            data.roomCamera.activateFollowing(this.cameraFollowDuration);
-                        }
-
-                        this.initializeContentLoader();
+                        queueMicrotask(() => this.onConfigurationComplete());
                     }
                 },
-                false // Optional - room can render with flat colors without textures
+                false, // Optional - room can render with flat colors without textures
+                [{type: 'complete', callback: this.onConfigurationComplete.bind(this)}]
             ),
             new ComponentDependency(
                 IID_SessionDataManager,
@@ -5074,13 +5079,17 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
-     * Initialize the content loader and set up room manager.
+     * Configuration has finished loading - set up the content loader and room manager,
+     * then re-derive everything else that reads configuration.
      *
-     * @see AS3 RoomEngine.onConfigurationComplete() lines 3554-3578
+     * AS3's own dependency setter for IID_HabboConfigurationManager is `null` (does nothing
+     * synchronously at resolution time); this whole method is what its 'complete' listener calls.
+     *
+     * @see AS3 sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::onConfigurationComplete() lines 458-485
      */
-    private initializeContentLoader(): void 
+    private onConfigurationComplete(): void
     {
-        if(!this.assets || !this._configurationManager) 
+        if(!this.assets || !this._configurationManager)
         {
             return;
         }
@@ -5095,13 +5104,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         // AS3: var_1634.initialize(events, this)
         this._contentLoader.initialize(this.events, this.assets, this._configurationManager);
 
-        if(this._sessionDataManager) 
+        if(this._sessionDataManager)
         {
             this._contentLoader.sessionDataManager = this._sessionDataManager;
         }
 
         // AS3: _roomManager categories and content loader are set here; initialize() waits for RCL_LOADER_READY.
-        if(this._roomManager) 
+        if(this._roomManager)
         {
             this._roomManager.addObjectUpdateCategory(10);
             this._roomManager.addObjectUpdateCategory(20);
@@ -5113,6 +5122,21 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         this.events.off(RoomContentLoader.CONTENT_LOADER_READY, this._boundOnContentLoaderReady);
         this.events.on(RoomContentLoader.CONTENT_LOADER_READY, this._boundOnContentLoaderReady);
+
+        // AS3: _roomDraggingAlwaysCenters = getBoolean("room.dragging.always_center");
+        this._roomDraggingAlwaysCenters = this._configurationManager.getBoolean('room.dragging.always_center');
+
+        // TS-only: not part of AS3's onConfigurationComplete() (its two real AS3 call sites are
+        // onToolbarClicked()'s MEMENU case and setOwnUserId(), both unrelated to configuration).
+        // cameraFollowDuration itself reads config ("room.camera.follow_user"), so any room camera
+        // created via getRoomInstanceData() before configuration finished loading would have locked
+        // in the wrong (default) follow duration - this retroactively re-applies the real value to
+        // every room created so far, a gap that can't exist in AS3 since configuration is always
+        // already available before any room is created there.
+        for(const data of this._roomInstanceData.values())
+        {
+            data.roomCamera.activateFollowing(this.cameraFollowDuration);
+        }
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::onContentLoaderReady()
