@@ -81,6 +81,14 @@ export class RoomPreviewer
     private _addViewOffset: IPoint = {x: 0, y: 0};
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::_disableUpdate
     private _disableUpdate: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::_centerWallItems
+    private _centerWallItems: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/preview/RoomPreviewer.as::set centerWallItems()
+    set centerWallItems(value: boolean)
+    {
+        this._centerWallItems = value;
+    }
 
     // TS-only: AS3 renders this preview onto the same unified Flash display
     // list as the surrounding window chrome, so wherever the room scene has
@@ -763,12 +771,29 @@ export class RoomPreviewer
     {
         const rectangle = this._currentPreviewRectangle;
 
-        if(rectangle === null || rectangle.width < 1 || rectangle.height < 1)
+        if(rectangle === null)
         {
             return point;
         }
 
-        let x = -(rectangle.left + rectangle.right) >> 1;
+        const isCenteredWallItem = this._centerWallItems && this._currentPreviewObjectCategory === 20;
+
+        if(isCenteredWallItem && (rectangle.width < 1 || rectangle.height < 1))
+        {
+            if(this._addViewOffset.x !== point.x)
+            {
+                return {x: this._addViewOffset.x, y: point.y};
+            }
+
+            return null;
+        }
+
+        if(rectangle.width < 1 || rectangle.height < 1)
+        {
+            return point;
+        }
+
+        let x = isCenteredWallItem ? this._addViewOffset.x : -(rectangle.left + rectangle.right) >> 1;
         let y = -(rectangle.top + rectangle.bottom) >> 1;
         const verticalMargin = this._currentPreviewCanvasHeight - rectangle.height >> 1;
 
@@ -786,7 +811,11 @@ export class RoomPreviewer
         }
 
         y += this._addViewOffset.y;
-        x += this._addViewOffset.x;
+
+        if(!isCenteredWallItem)
+        {
+            x += this._addViewOffset.x;
+        }
 
         const deltaX = (x - point.x) | 0;
         const deltaY = (y - point.y) | 0;

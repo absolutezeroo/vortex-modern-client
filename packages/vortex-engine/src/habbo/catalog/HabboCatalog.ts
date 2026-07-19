@@ -860,6 +860,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         log.debug(`buy: ${[quantity, offer.offerId, extraParam]}`);
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
+        if(this.isHabbiconOfferOwned(offer))
+        {
+            this.showHabbiconAlreadyOwnedAlert();
+
+            return;
+        }
+
         // The balance is tested against what the user is about to spend, not the
         // unit price: buying 10 of a 5-credit offer costs 50. AS3 recomputes both
         // prices through calculateBundlePrice() before the two tests below, and
@@ -924,6 +932,17 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             {
                 this.getClubBuyController()?.showConfirmation(offer, pageId);
             }
+        }
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
+        // TODO(AS3): AS3 also calls _purchaseConfirmationDialog.turnIntoGifting() here - the
+        // minimal dialog this port has doesn't support the gift flow yet (see this method's
+        // header TODO), so only the flag reset is restored. Without it, _purchaseWillBeGift stays
+        // true forever after the first gift purchase and every later purchase on this instance
+        // would be misread as a gift too, once the gift flow exists to observe it.
+        if(this._purchaseWillBeGift)
+        {
+            this._purchaseWillBeGift = false;
         }
     }
 
@@ -2062,9 +2081,10 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         if(this._roomEngine != null && this.getBoolean('catalog.furniture.animation')) 
         {
-            if(this._roomPreviewer == null) 
+            if(this._roomPreviewer == null)
             {
                 this._roomPreviewer = new RoomPreviewer(this._roomEngine);
+                this._roomPreviewer.centerWallItems = true;
                 this._roomPreviewer.createRoomForPreviews();
             }
         }

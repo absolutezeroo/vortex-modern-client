@@ -138,6 +138,29 @@ export class PurchaseCatalogWidget extends CatalogWidget
         return !(this._extraParamRequired && this._additionalParameters === '');
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::get canPurchaseSelectedOffer()
+    private get canPurchaseSelectedOffer(): boolean
+    {
+        return this.extraParamRequirementsMet && !this._catalog!.isHabbiconOfferOwned(this._offer);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::updatePurchaseLabel()
+    private updatePurchaseLabel(): void
+    {
+        const label = this.window.findChildByName('purchase_label');
+
+        if(label == null) return;
+
+        if(this._catalog!.isHabbiconOfferOwned(this._offer))
+        {
+            label.caption = '${generic.owned}';
+        }
+        else
+        {
+            RentUtils.updateBuyCaption(this._offer, label);
+        }
+    }
+
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onSelectProduct()
     private onSelectProduct = (event: SelectProductEvent): void =>
     {
@@ -147,9 +170,9 @@ export class PurchaseCatalogWidget extends CatalogWidget
         this.window.findChildByName('default_buttons')!.visible = true;
         this._catalog!.purchaseWillBeGift(false);
 
-        this.enableBuyButton(this.extraParamRequirementsMet);
-        this.enableGiftButton(this.extraParamRequirementsMet);
-        RentUtils.updateBuyCaption(this._offer, this.window.findChildByName('purchase_label'));
+        this.enableBuyButton(this.canPurchaseSelectedOffer);
+        this.enableGiftButton(this.canPurchaseSelectedOffer);
+        this.updatePurchaseLabel();
 
         const giftButton = this.window.findChildByName('gift_button');
 
@@ -225,14 +248,22 @@ export class PurchaseCatalogWidget extends CatalogWidget
     private onSetParameter = (event: SetExtraPurchaseParameterEvent): void =>
     {
         this._additionalParameters = event.parameter;
-        this.enableBuyButton(this.extraParamRequirementsMet);
-        this.enableGiftButton(this._offer != null && this._offer.giftable && this.extraParamRequirementsMet && this._quantity === 1);
+        this.enableBuyButton(this.canPurchaseSelectedOffer);
+        this.enableGiftButton(this._offer != null && this._offer.giftable && this.canPurchaseSelectedOffer && this._quantity === 1);
     };
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onPurchase()
     private onPurchase = (event: WindowMouseEvent, isGift: boolean = false): void =>
     {
         if(this._offer == null) return;
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onPurchase()
+        if(this._catalog!.isHabbiconOfferOwned(this._offer))
+        {
+            this._catalog!.showHabbiconAlreadyOwnedAlert();
+
+            return;
+        }
 
         if(!this._catalog!.verifyClubLevel(this._offer.clubLevel))
         {
@@ -290,6 +321,14 @@ export class PurchaseCatalogWidget extends CatalogWidget
     {
         if(this._offer != null)
         {
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::initPurchase()
+            if(this._catalog!.isHabbiconOfferOwned(this._offer))
+            {
+                this._catalog!.showHabbiconAlreadyOwnedAlert();
+
+                return;
+            }
+
             this._catalog!.showPurchaseConfirmation(this._offer, this.page.pageId, this._additionalParameters, this._quantity, this._previewStuffData, null);
         }
     };
@@ -318,14 +357,14 @@ export class PurchaseCatalogWidget extends CatalogWidget
         }
         else if(this._offer != null && this.extraParamRequirementsMet)
         {
-            this.enableGiftButton(this._offer.giftable);
+            this.enableGiftButton(this._offer.giftable && this.canPurchaseSelectedOffer);
         }
     };
 
     private onExtraParamRequired = (_event: CatalogWidgetEvent): void =>
     {
         this._extraParamRequired = true;
-        this.enableBuyButton(this.extraParamRequirementsMet);
-        this.enableGiftButton(this._offer != null && this.extraParamRequirementsMet && this._quantity === 1);
+        this.enableBuyButton(this.canPurchaseSelectedOffer);
+        this.enableGiftButton(this._offer != null && this.canPurchaseSelectedOffer && this._quantity === 1);
     };
 }
