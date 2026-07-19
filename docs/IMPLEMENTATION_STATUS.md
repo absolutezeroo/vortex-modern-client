@@ -308,6 +308,21 @@ method's own body — auto-placing a buy-and-place purchase — is a separate, n
 `updateActionView()`; `collectorHub.itemAddedToInventory()`/`itemRemovedFromInventory()` stay TODO'd
 since `collectorHub` is a documented always-null stub with nothing to call into.
 
+**Majors: habbo/avatar cluster (3 filed, 1 verified already-fixed, 2 fixed).** `getServerRenderData()`
+returning an empty array was re-checked directly against source: neither AS3 consumer class
+(`AvatarVisualization.ts`, `FurnitureMannequinVisualization.ts`) references it anywhere in this port,
+matching this doc's own earlier note — left alone rather than building an unverifiable producer.
+`AvatarImageBodyPartContainer`'s constructor took 3 params where AS3 takes 4 (the 4th, `faceOffset`, a
+`Point`); its one call site (`AvatarImageCache.renderBodyPart()`) now remembers the face part's own
+offset while iterating and passes it through, and `AvatarImage` gained `getFaceOffset()`/
+`getHeadRegPoints()`/`isBlocked()` (the last is `return false` in AS3 too) — all three exist on the
+interface but have no caller yet (`ChatBubble`/`PooledChatBubble` already consume a *different*
+`style.faceOffset`, from `ChatStyle`, confirmed unrelated). `AvatarImageCache.reset()` and
+`AvatarImage.resetCache()` — both entirely absent, no purge on a structure/figuredata reload — are now
+ported; their own caller, `AvatarRenderManager.resetAllCaches()` iterating tracked `_activeImages`,
+doesn't exist in this port either (no image-tracking list at all), so that wiring is a documented TODO
+rather than an invented tracking mechanism.
+
 **One fix broke chat, and the lesson generalises.** Restoring `RoomSessionManager`'s AS3-required
 dependencies made it announce later, which pushed its announcement past
 `HabboFreeFlowChat.initComponent()`. `ChatEventHandler` subscribes in its constructor behind

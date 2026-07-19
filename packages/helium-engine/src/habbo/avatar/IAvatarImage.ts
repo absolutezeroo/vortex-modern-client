@@ -23,6 +23,21 @@ export interface IAvatarImage
 
     getServerRenderData(): any[];
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_1793.as::getHeadRegPoints()
+    getHeadRegPoints(scale: string): { x: number; y: number };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_1793.as::getFaceOffset()
+    getFaceOffset(scale: string): { x: number; y: number };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/_SafeCls_1793.as::isBlocked()
+    isBlocked(): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::resetCache()
+    // Not part of AS3's own IAvatarImage-equivalent (_SafeCls_1793.as) - AS3's caller
+    // (AvatarRenderManager.resetAllCaches()) holds concrete AvatarImage references, not
+    // the interface. Added here because this port stores AvatarImage as IAvatarImage.
+    resetCache(): void;
+
     setDirection(setType: string, direction: number): void;
 
     setDirectionAngle(setType: string, angle: number): void;

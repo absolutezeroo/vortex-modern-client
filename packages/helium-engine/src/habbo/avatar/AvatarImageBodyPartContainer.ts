@@ -11,13 +11,15 @@ export class AvatarImageBodyPartContainer
     constructor(
         image: Texture | null,
         regPoint: { x: number; y: number },
-        isCacheable: boolean
+        isCacheable: boolean,
+        faceOffset: { x: number; y: number } | null = null
     )
     {
         this._offset = {x: 0, y: 0};
         this._image = image;
         this._regPoint = {x: regPoint.x, y: regPoint.y};
         this._isCacheable = isCacheable;
+        this._faceOffset = faceOffset;
         this.cleanPoints();
     }
 
@@ -76,6 +78,19 @@ export class AvatarImageBodyPartContainer
     public get isCacheable(): boolean
     {
         return this._isCacheable;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::faceOffset
+    private _faceOffset: { x: number; y: number } | null;
+
+    /**
+	 * The face part's own offset (only set on the "head" container's face part), used
+	 * for chat-bubble placement.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImageBodyPartContainer.as::get faceOffset()
+    public get faceOffset(): { x: number; y: number } | null
+    {
+        return this._faceOffset;
     }
 
     /**

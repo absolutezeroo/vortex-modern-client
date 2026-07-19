@@ -527,6 +527,43 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
     }
 
     /**
+	 * Always false in AS3 (AvatarImage.as::isBlocked()) - kept for interface parity.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::isBlocked()
+    public isBlocked(): boolean
+    {
+        return false;
+    }
+
+    /**
+	 * The head part's registration point, for chat-bubble/name placement above the head.
+	 * `scale` is unused, matching AS3 (which reads it too, but never consumes it here).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getHeadRegPoints()
+    public getHeadRegPoints(_scale: string): { x: number; y: number }
+    {
+        const container = this._cache?.getImageContainer('head', this._frameCounter) ?? null;
+
+        if(!container) return {x: 0, y: 0};
+
+        return {x: container.regPoint.x, y: container.regPoint.y};
+    }
+
+    /**
+	 * The face part's own offset within the head container, for chat-bubble face
+	 * placement (ChatBubble/PooledChatBubble consume this).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::getFaceOffset()
+    public getFaceOffset(_scale: string): { x: number; y: number }
+    {
+        const container = this._cache?.getImageContainer('head', this._frameCounter) ?? null;
+
+        if(!container || !container.faceOffset) return {x: 0, y: 0};
+
+        return {x: container.faceOffset.x, y: container.faceOffset.y};
+    }
+
+    /**
 	 * Forces the action state to be recalculated on the next render.
 	 */
     public forceActionUpdate(): void
@@ -935,6 +972,38 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         const bottom = Math.max(a.y + a.height, b.y + b.height);
 
         return {x, y, width: right - x, height: bottom - y};
+    }
+
+    /**
+	 * Purges every cached sprite/texture and cached body-part/action state, without
+	 * disposing this AvatarImage itself - called on a structure/figuredata reload
+	 * (AS3: AvatarRenderManager.resetAllCaches(), not yet wired in this port - see that
+	 * class's own TODO).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarImage.as::resetCache()
+    public resetCache(): void
+    {
+        this._cache?.reset();
+
+        if(this._fullImageCache)
+        {
+            for(const texture of this._fullImageCache.values())
+            {
+                texture.destroy();
+            }
+
+            this._fullImageCache.clear();
+        }
+
+        this._actions = [];
+        this._cachedBodyPartsDirection = -1;
+        this._cachedBodyPartsGeometry = null;
+        this._cachedBodyPartsSetType = null;
+        this._lastActionsString = '';
+        this._actionsSorted = false;
+        this._needsUpdate = true;
+        this._useFullImageCache = false;
+        this._frameCounter = 0;
     }
 
     /**

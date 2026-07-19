@@ -108,6 +108,11 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         ];
     }
 
+    // TODO(AS3): AS3 (_SafeCls_582.as:589-606) tracks every created AvatarImage in
+    // _activeImages and exposes resetAssetManager()/resetAllCaches(), the latter calling
+    // .resetCache() (now ported - see AvatarImage.ts) on each still-live instance. This
+    // port doesn't track created images, so there is no equivalent call site yet -
+    // AvatarImage.resetCache()/AvatarImageCache.reset() are correct and ready for one.
     public createAvatarImage(
         figureString: string,
         scale: string,

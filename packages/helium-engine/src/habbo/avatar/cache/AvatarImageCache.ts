@@ -412,6 +412,28 @@ export class AvatarImageCache
     }
 
     /**
+	 * Disposes every per-direction body-part cache and clears the canvas/default-action
+	 * state, without disposing this AvatarImageCache itself - unlike dispose(), the cache
+	 * stays usable afterward (called on a structure/figuredata reload).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageCache.as::reset()
+    public reset(): void
+    {
+        if(this._cache)
+        {
+            for(const cache of this._cache.values())
+            {
+                if(cache) cache.dispose();
+            }
+
+            this._cache.clear();
+        }
+
+        this._canvas = null;
+        this._defaultActionAssetPartDefinition = AvatarImageCache.BASE_ACTION;
+    }
+
+    /**
 	 * Renders a body part by compositing all its individual part sprites
 	 * into a single container, handling direction flipping, color transforms,
 	 * and animation frames.
@@ -445,6 +467,10 @@ export class AvatarImageCache
         let assetPartDefinition = action.definition.assetPartDefinition;
         let isCacheable = true;
         const partCount = partList.length;
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/AvatarImageCache.as:607-609
+        // Remembers the face part's own (pre-union) offset, passed through as the resulting
+        // container's faceOffset - consumed by AvatarImage.getFaceOffset() for chat-bubble placement.
+        let faceOffset: {x: number; y: number} | null = null;
 
         for(let i = partCount - 1; i >= 0; i--)
         {
@@ -584,6 +610,11 @@ export class AvatarImageCache
                     offset.x += this._scale === AvatarScaleType.LARGE ? 65 : 31;
                 }
 
+                if(currentPartType === AvatarImageCache.PART_FACE)
+                {
+                    faceOffset = offset;
+                }
+
                 const colorTransform: IColorTransformData | null = hasColorTransform ? colorMult : null;
 
                 // Combine asset-level flip with alias flip for draw-time flipping
@@ -634,7 +665,7 @@ export class AvatarImageCache
             if(img) img.dispose();
         }
 
-        return new AvatarImageBodyPartContainer(unionImage.texture, containerRegPoint, isCacheable);
+        return new AvatarImageBodyPartContainer(unionImage.texture, containerRegPoint, isCacheable, faceOffset);
     }
 
     private tryResolveAsset(
