@@ -248,7 +248,15 @@ import {
 } from './messages/incoming/room/pet';
 
 // Incoming Events - User Defined Room Events (Wired)
-import {WiredPermissionsEvent} from './messages/incoming/userdefinedroomevents';
+import {
+    WiredPermissionsEvent,
+    WiredRewardResultMessageEvent,
+    WiredEnvironmentEvent,
+    WiredClickSettingsEvent,
+    WiredClickUserResponseEvent
+} from './messages/incoming/userdefinedroomevents';
+// Outgoing Composers - User Defined Room Events (Wired)
+import {WiredClickUserMessageComposer} from './messages/outgoing/userdefinedroomevents';
 
 // Incoming Events - Poll
 import {
@@ -505,6 +513,7 @@ import {RespectPetMessageComposer, RespectUserMessageComposer,} from './messages
 
 // Outgoing Composers - Preferences
 import {
+    SetChatStylePreferenceComposer,
     SetNewNavigatorWindowPreferencesMessageComposer,
     SetUIFlagsMessageComposer,
 } from './messages/outgoing/preferences';
@@ -993,6 +1002,15 @@ export class HabboMessages implements IMessageConfiguration
         // parser is the real, non-obfuscated com/sulake/habbo/communication/messages/parser/
         // userdefinedroomevents/wiredmenu/_SafeCls_2783.as - exact field match: canModify/canRead).
         this._events.set(3483, WiredPermissionsEvent);
+        // IDs read directly from WIN63's own message registry
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // (`_SafeStr_4546[id] = _SafeCls_N`, the incoming-events map):
+        //   2827 -> _SafeCls_3319 (WiredEnvironment), 3931 -> _SafeCls_3436 (WiredClickSettings),
+        //   309 -> _SafeCls_3728 (WiredClickUserResponse), 2997 -> _SafeCls_3832 (WiredRewardResult).
+        this._events.set(2827, WiredEnvironmentEvent);
+        this._events.set(3931, WiredClickSettingsEvent);
+        this._events.set(309, WiredClickUserResponseEvent);
+        this._events.set(2997, WiredRewardResultMessageEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -1209,8 +1227,14 @@ export class HabboMessages implements IMessageConfiguration
     /**
      * Register outgoing message composers (Client -> Server)
      */
-    private registerComposers(): void 
+    private registerComposers(): void
     {
+        // === WIRED ===
+        // ID read directly from WIN63's registry
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // (`_composers[1953] = _SafeCls_2111`, the WiredClickUser composer).
+        this._composers.set(1953, WiredClickUserMessageComposer);
+
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
         this._composers.set(2022, InitDiffieHandshakeMessageComposer);
@@ -1435,6 +1459,7 @@ export class HabboMessages implements IMessageConfiguration
         // === PREFERENCES ===
         this._composers.set(3653, SetUIFlagsMessageComposer);
         this._composers.set(1276, SetNewNavigatorWindowPreferencesMessageComposer);
+        this._composers.set(2634, SetChatStylePreferenceComposer);
 
         // === ROOM ENGINE ===
         this._composers.set(1901, GetFurnitureAliasesMessageComposer);
