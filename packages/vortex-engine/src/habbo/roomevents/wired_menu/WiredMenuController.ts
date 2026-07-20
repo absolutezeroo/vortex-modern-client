@@ -18,10 +18,13 @@ import type {HabboUserDefinedRoomEvents} from '../HabboUserDefinedRoomEvents';
  */
 export class WiredMenuController extends Component
 {
+    // AS3: WiredMenuController.as::_roomEvents (parent wired component)
     private _roomEvents: HabboUserDefinedRoomEvents;
 
+    // AS3: WiredMenuController.as::wiredWhisperDisabled (backing field)
     private _wiredWhisperDisabled: boolean = false;
 
+    // AS3: WiredMenuController.as::playTestMode (backing field)
     private _playTestMode: boolean = false;
 
     // AS3: WiredMenuController.as::WiredMenuController()

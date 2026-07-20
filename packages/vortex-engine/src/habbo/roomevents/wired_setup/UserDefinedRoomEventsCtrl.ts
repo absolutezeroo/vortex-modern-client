@@ -20,8 +20,10 @@ const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
  */
 export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 {
+    // AS3: UserDefinedRoomEventsCtrl.as::_roomEvents (parent wired component)
     private _roomEvents: HabboUserDefinedRoomEvents;
 
+    // AS3: UserDefinedRoomEventsCtrl.as::activeFurniPicks (backing field)
     private _activeFurniPicks: number = 0;
 
     // AS3: UserDefinedRoomEventsCtrl.as::UserDefinedRoomEventsCtrl()

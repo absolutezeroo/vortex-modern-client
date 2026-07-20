@@ -84,6 +84,14 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get dependencies()
+    // TODO(AS3): the dependency-eventListener mechanism (base Component) attaches to the resolved
+    // instance's `events` emitter. In this port RoomSessionManager emits RSE_* on a dedicated
+    // `sessionEvents` emitter (not `events`, per rule "never override get events()"), and
+    // RoomEngine/HabboToolbar likewise may route REOE_ADDED / HTE_TOOLBAR_CLICK elsewhere. So the
+    // REOE_ADDED / RSE_* / HTE_TOOLBAR_CLICK listeners below are the faithful AS3 shape but may not
+    // fire until re-pointed to the correct emitters. No live regression today: every one of these
+    // handlers currently drives a stub/deferred controller (wiredCtrl.stuffAdded, wiredMenu.toggleView,
+    // wiredEnvironment.leaveRoom). Re-point when Bloc C makes them load-bearing.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- variance: typed ComponentDependency<T> is contravariant in T
     protected override get dependencies(): Array<ComponentDependency<any>>
     {

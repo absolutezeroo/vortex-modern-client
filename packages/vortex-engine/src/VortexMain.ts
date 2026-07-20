@@ -8,6 +8,7 @@ import {HabboNewNavigator} from '@habbo/navigator/HabboNewNavigator';
 import {HabboInventory} from '@habbo/inventory/HabboInventory';
 import {HabboCatalog} from '@habbo/catalog/HabboCatalog';
 import {HabboClubCenter} from '@habbo/catalog/clubcenter/HabboClubCenter';
+import {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 import {RoomEngine, RoomMessageHandler} from '@habbo/room';
 import {HabboRoomRendererFactory} from '@habbo/room/renderer/HabboRoomRendererFactory';
 import {RoomManager} from '@room/RoomManager';
@@ -72,6 +73,7 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
+import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
@@ -228,6 +230,8 @@ export class VortexMain implements IVortexMain
 
         return this._clubCenter;
     }
+
+    private _userDefinedRoomEvents: HabboUserDefinedRoomEvents | null = null;
 
     private _roomUI: RoomUI | null = null;
 
@@ -488,6 +492,7 @@ export class VortexMain implements IVortexMain
 
         // Nullify Habbo manager refs (inverse init order)
         this._clubCenter = null;
+        this._userDefinedRoomEvents = null;
         this._friendBar = null;
         this._roomUI = null;
         this._windowManager = null;
@@ -716,6 +721,15 @@ export class VortexMain implements IVortexMain
         // 12l. Habbo Club Center
         this._clubCenter = new HabboClubCenter(ctx);
         ctx.attachComponent(this._clubCenter, [IID_HabboClubCenter]);
+
+        // 12m. User-Defined Room Events (Wired)
+        // AS3 registers this via a *Com SWF library; this port constructs it directly. Attached
+        // after all of its required DI dependencies (communication, localization, roomEngine,
+        // roomSessionManager, sessionDataManager, notifications, toolbar, windowManager, roomUI).
+        // Consumer waiting on the IID: RoomDesktop.userDefinedRoomEvents (still hard-null there
+        // until the RoomUI->RoomDesktop plumbing is added — Bloc C).
+        this._userDefinedRoomEvents = new HabboUserDefinedRoomEvents(ctx);
+        ctx.attachComponent(this._userDefinedRoomEvents, [IID_HabboUserDefinedRoomEvents]);
 
         // Set PixiJS stage on room engine for rendering
         this._roomEngine.setStage(this._application!.stage);
