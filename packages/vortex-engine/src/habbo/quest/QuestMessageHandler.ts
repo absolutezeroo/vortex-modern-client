@@ -201,7 +201,8 @@ export class QuestMessageHandler implements IDisposable
         if(!parser) return;
 
         log.debug('Quest received');
-        this._engine.questController?.onQuest(parser.quest);
+
+        if(parser.quest) this._engine.questController?.onQuest(parser.quest);
     }
 
     /**
@@ -252,11 +253,12 @@ export class QuestMessageHandler implements IDisposable
         if(!parser) return;
 
         log.info(`Quest completed: ${parser.questData?.campaignCode} quest: ${parser.questData?.id}`);
-        this._engine.questController?.onQuestCompleted(parser.questData, parser.showDialog);
 
         // Dispatch seasonal quest completed event if applicable
         if(parser.questData)
         {
+            this._engine.questController?.onQuestCompleted(parser.questData, parser.showDialog);
+
             this._engine.events.emit(
                 QuestCompletedEvent.QUEST_SEASONAL,
                 new QuestCompletedEvent(QuestCompletedEvent.QUEST_SEASONAL, parser.questData)

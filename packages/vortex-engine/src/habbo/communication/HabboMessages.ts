@@ -589,6 +589,7 @@ import {
 
 // Outgoing Composers - Quest
 import {
+    AcceptQuestMessageComposer,
     ActivateQuestMessageComposer,
     CancelQuestMessageComposer,
     GetCommunityGoalHallOfFameMessageComposer,
@@ -598,6 +599,9 @@ import {
     GetDailyQuestMessageComposer,
     GetQuestsMessageComposer,
     GetSeasonalQuestsOnlyMessageComposer,
+    OpenQuestTrackerMessageComposer,
+    RejectQuestMessageComposer,
+    StartCampaignMessageComposer,
 } from './messages/outgoing/quest';
 
 // Outgoing Composers - Achievements
@@ -1532,6 +1536,10 @@ export class HabboMessages implements IMessageConfiguration
         // AS3: WIN63-202607011411 registry _SafeCls_2046.as — _composers[id] = composer class.
         this._composers.set(2895, GetQuestsMessageComposer);            // _SafeCls_1837 (requestQuests)
         this._composers.set(1236, GetSeasonalQuestsOnlyMessageComposer); // _SafeCls_1847 (requestSeasonalQuests)
+        this._composers.set(985, AcceptQuestMessageComposer);           // _SafeCls_2865 (QuestsList.onAcceptQuest)
+        this._composers.set(20, RejectQuestMessageComposer);            // _SafeCls_3635 (QuestsList.onCancelQuest)
+        this._composers.set(588, OpenQuestTrackerMessageComposer);      // _SafeCls_3460 (QuestTracker "next quest")
+        this._composers.set(3969, StartCampaignMessageComposer);       // _SafeCls_3041 (QuestTracker.onStartQuestTimer)
 
         // === ACHIEVEMENTS ===
         this._composers.set(2435, GetAchievementsComposer);            // _SafeCls_3287 (AchievementController.show)

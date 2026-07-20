@@ -164,6 +164,32 @@ export class QuestMessageData
         return this._isSeasonal;
     }
 
+    // AS3: _SafePkg_1976/_SafeCls_1975.as::get waitPeriodSeconds()/set waitPeriodSeconds()
+    // Never written by any of the 6 quest wire parsers (QuestMessageEventParser,
+    // QuestsMessageEventParser, SeasonalQuestsMessageEventParser,
+    // QuestCompletedMessageEventParser, QuestCancelledMessageEventParser,
+    // QuestDailyMessageParser) - confirmed by reading all six AS3 parser bodies in full.
+    // It's mutable client-side state instead: QuestTracker/NextQuestTimer read it to gate
+    // the "quest starts in N seconds" delay UI, and NextQuestTimer.refresh() resets it to 0
+    // via the setter once its own countdown reaches zero. Faithful default (0, AS3's
+    // uninitialized int) since no reachable AS3 code path ever sets it to a real value either.
+    private _waitPeriodSeconds: number = 0;
+
+    get waitPeriodSeconds(): number
+    {
+        if(this._waitPeriodSeconds < 1) return 0;
+
+        const now = new Date();
+        const elapsed = Math.floor((now.getTime() - this._receiveTime.getTime()) / 1000);
+
+        return Math.max(0, this._waitPeriodSeconds - elapsed);
+    }
+
+    set waitPeriodSeconds(value: number)
+    {
+        this._waitPeriodSeconds = value;
+    }
+
     private _secondsLeft: number = 0;
 
     get secondsLeft(): number

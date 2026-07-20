@@ -36,6 +36,8 @@ import type {IRoomEngine} from '@habbo/room';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IMessageComposer} from '@core/communication/messages/IMessageComposer';
 import type {IHabboQuestEngine} from './IHabboQuestEngine';
+import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {QuestMessageData} from '@habbo/communication/messages/parser/quest/QuestMessageData';
 import {QuestController} from './QuestController';
 import {AchievementController} from './AchievementController';
 import {AchievementsResolutionController} from './AchievementsResolutionController';
@@ -55,6 +57,11 @@ const log = Logger.getLogger('HabboQuestEngine');
  */
 export class HabboQuestEngine extends Component implements IHabboQuestEngine, ILinkEventTracker, IUpdateReceiver
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::_SafeStr_9135
+    private static readonly QUESTS_WITH_PROMPTS: string[] = [
+        'MOVEITEM', 'ENTEROTHERSROOM', 'CHANGEFIGURE', 'FINDLIFEGUARDTOWER', 'SCRATCHAPET'
+    ];
+
     private _resolutionController: AchievementsResolutionController | null = null;
     private _competitionController: RoomCompetitionController | null = null;
     private _messageHandler: QuestMessageHandler | null = null;
@@ -62,7 +69,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
-    private _catalog: unknown | null = null;
+    private _catalog: IHabboCatalog | null = null;
     private _notifications: IHabboNotifications | null = null;
     private _habboHelp: IHabboHelp | null = null;
     private _navigator: IHabboNewNavigator | null = null;
@@ -119,6 +126,30 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     getProperty(key: string): string
     {
         return this._configuration?.getProperty(key) ?? '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get toolbar()
+    get toolbar(): IHabboToolbar | null
+    {
+        return this._toolbar;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get catalog()
+    get catalog(): IHabboCatalog | null
+    {
+        return this._catalog;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get habboHelp()
+    get habboHelp(): IHabboHelp | null
+    {
+        return this._habboHelp;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get sessionDataManager()
+    get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
     }
 
     private _questController: QuestController | null = null;
@@ -233,7 +264,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
             ),
             new ComponentDependency(
                 IID_HabboCatalog,
-                (catalog: unknown | null) =>
+                (catalog: IHabboCatalog | null) =>
                 {
                     this._catalog = catalog;
                 },
@@ -321,16 +352,22 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
                 if(parts.length === 3)
                 {
                     // Deep link to specific category: questengine/achievements/{category}
-                    this.showAchievements();
+                    this._achievementController?.show();
+                    this._achievementController?.selectCategoryInternalLink(parts[2]);
+                    break;
                 }
-                else
-                {
-                    this.showAchievements();
-                }
+
+                this.showAchievements();
+                break;
+
+            case 'calendar':
+                // TODO(AS3): AS3 calls questController.seasonalCalendarWindow.onToolbarClick() -
+                // the seasonal calendar isn't ported (see QuestController's own TODOs).
+                log.debug('QuestEngine "calendar" link received but the seasonal calendar is not ported');
                 break;
 
             case 'quests':
-                this.showQuests();
+                this._questController?.onToolbarClick();
                 break;
 
             default:
@@ -381,20 +418,15 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     }
 
     /**
-	 * Show the quests panel
-	 *
-	 * TODO(AS3): AS3 (HabboQuestEngine.as:522) calls
-	 * `if(questController != null && !questController.questsList.isVisible())
-	 * questController.onToolbarClick();` - QuestController.ts documents that its
-	 * QuestsList window/view is not ported yet (see that class's own notes), so
-	 * there is no `questsList`/`onToolbarClick()` to call into. The old
-	 * `events.emit('showQuests')` had no listener anywhere in the client either
-	 * (same "invented event, no handler" shape as the old goToQuestRooms()), so
-	 * it is left out rather than kept as a misleading no-op.
+	 * Show the quests panel (toggles it if already open, matching onToolbarClick()).
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::showQuests()
     showQuests(): void
     {
-        log.debug('Show quests requested (QuestsList window is not ported yet)');
+        if(this._questController !== null && !this._questController.questsList.isVisible())
+        {
+            this._questController.onToolbarClick();
+        }
     }
 
     /**
@@ -499,6 +531,186 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         const key = `quests.${code}.name`;
 
         return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getQuestRowTitle()
+    getQuestRowTitle(quest: QuestMessageData): string
+    {
+        const key = quest.waitPeriodSeconds < 1 ? `${quest.getQuestLocalizationKey()}.name` : 'quests.list.questdelayed';
+
+        return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getQuestName()
+    getQuestName(quest: QuestMessageData): string
+    {
+        const key = `${quest.getQuestLocalizationKey()}.name`;
+
+        return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getQuestDesc()
+    getQuestDesc(quest: QuestMessageData): string
+    {
+        const key = `${quest.getQuestLocalizationKey()}.desc`;
+
+        return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getQuestHint()
+    getQuestHint(quest: QuestMessageData): string
+    {
+        const key = `${quest.getQuestLocalizationKey()}.hint`;
+
+        return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getCampaignNameByCode()
+    getCampaignNameByCode(code: string): string
+    {
+        const key = `${code}.name`;
+
+        return this._localization?.getLocalizationWithParams(key, key) ?? key;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getCampaignName()
+    getCampaignName(quest: QuestMessageData): string
+    {
+        return this.getCampaignNameByCode(quest.getCampaignLocalizationKey());
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::hasLocalizedValue()
+    hasLocalizedValue(key: string): boolean
+    {
+        return (this._localization?.getLocalizationWithParams(key, '') ?? '') !== '';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::isQuestWithPrompts()
+    isQuestWithPrompts(quest: QuestMessageData): boolean
+    {
+        return HabboQuestEngine.QUESTS_WITH_PROMPTS.indexOf(quest.localizationCode) > -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::isSeasonalCalendarEnabled()
+    isSeasonalCalendarEnabled(): boolean
+    {
+        return this._configuration?.getBoolean('seasonalQuestCalendar.enabled') ?? false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::isSeasonalQuest()
+    isSeasonalQuest(quest: QuestMessageData): boolean
+    {
+        const prefix = this.getSeasonalCampaignCodePrefix();
+
+        return prefix !== '' && quest.campaignCode.indexOf(prefix) === 0;
+    }
+
+    /**
+	 * Open the quest's catalog page, or the catalog root if it has none.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::openCatalog()
+    openCatalog(quest: QuestMessageData): void
+    {
+        const pageName = quest.catalogPageName;
+
+        if(pageName !== '')
+        {
+            log.debug(`Questing->Open Catalog: ${pageName}`);
+            this._catalog?.openCatalogPage(pageName);
+        }
+        else
+        {
+            log.debug('Questing->Open Catalog: Quest Catalog page name not defined');
+            this._catalog?.openCatalog();
+        }
+    }
+
+    /**
+	 * Open the navigator with the quest's (or its campaign's) search tag.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::openNavigator()
+    openNavigator(quest: QuestMessageData): void
+    {
+        const questTagKey = `${quest.getQuestLocalizationKey()}.searchtag`;
+        const key = this.hasLocalizedValue(questTagKey) ? questTagKey : `${quest.getCampaignLocalizationKey()}.searchtag`;
+        const tag = this._localization?.getLocalizationWithParams(key, '') ?? '';
+
+        log.debug(`Questing->Open Navigator: ${tag}`);
+        this._navigator?.performTagSearch(tag);
+    }
+
+    /**
+	 * Set a quest's `quest_pic_bitmap` child to its artwork
+	 * ("<campaignCode>_<localizationCode><imageVersion>[_a if it has in-room prompts]",
+	 * or a generic "quest_timer_questionmark" while it's still delayed).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::setupQuestImage()
+    setupQuestImage(container: IWindowContainer, quest: QuestMessageData): void
+    {
+        const bitmap = container.findChildByName('quest_pic_bitmap') as unknown as IStaticBitmapWrapperWindow | null;
+
+        if(bitmap === null) return;
+
+        const name = quest.waitPeriodSeconds > 0
+            ? 'quest_timer_questionmark'
+            : `${quest.campaignCode}_${quest.localizationCode}${quest.imageVersion}${this.isQuestWithPrompts(quest) ? '_a' : ''}`.toLowerCase();
+
+        bitmap.assetUri = '${image.library.questing.url}' + name + '.png';
+    }
+
+    /**
+	 * Set one of the tracker's `prompt_pic_<frame>` children ("a"/"b"/"c"/"d") to the
+	 * matching in-room-prompt frame of the quest's artwork.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::setupPromptFrameImage()
+    setupPromptFrameImage(container: IWindowContainer, quest: QuestMessageData, frame: string): void
+    {
+        const bitmap = container.findChildByName(`prompt_pic_${frame}`) as unknown as IStaticBitmapWrapperWindow | null;
+
+        if(bitmap === null) return;
+
+        const name = `${quest.campaignCode}_${quest.localizationCode}${quest.imageVersion}_${frame}`.toLowerCase();
+
+        bitmap.assetUri = '${image.library.questing.url}' + name + '.png';
+    }
+
+    /**
+	 * Set a `campaign_pic_bitmap` child to the quest's campaign artwork, or hide it.
+	 * Seasonal quests share one campaign image per seasonal prefix instead of per code.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::setupCampaignImage()
+    setupCampaignImage(container: IWindowContainer, quest: QuestMessageData, visible: boolean): void
+    {
+        const bitmap = container.findChildByName('campaign_pic_bitmap') as unknown as IStaticBitmapWrapperWindow | null;
+
+        if(bitmap === null) return;
+
+        if(!visible)
+        {
+            bitmap.visible = false;
+
+            return;
+        }
+
+        bitmap.visible = true;
+
+        const name = this.isSeasonalQuest(quest) ? `${this.getSeasonalCampaignCodePrefix()}_campaign_icon` : quest.campaignCode;
+
+        bitmap.assetUri = '${image.library.questing.url}' + name + '.png';
+    }
+
+    /**
+	 * The quest-completed celebration sparkle effect.
+	 *
+	 * TODO(AS3): AS3's Animation/AnimationObject/Twinkle/TwinkleImages classes (a generic
+	 * sprite-sheet compositor plus 15 randomly-placed, independently-timed twinkle sprites)
+	 * are not ported - QuestCompleted.ts skips the celebration effect and shows the dialog
+	 * without it, which is the safe default (no missing content, just no sparkle).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::getTwinkleAnimation()
+    getTwinkleAnimation(_container: IWindowContainer): null
+    {
+        return null;
     }
 
     /**
