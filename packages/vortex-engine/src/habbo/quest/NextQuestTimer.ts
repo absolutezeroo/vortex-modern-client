@@ -19,10 +19,15 @@ const TOOLBAR_EXTENSION_ID = 'next_quest';
  */
 export class NextQuestTimer implements IDisposable
 {
+    // AS3: NextQuestTimer.as::_questEngine
     private _engine: HabboQuestEngine | null;
+    // AS3: NextQuestTimer.as::_SafeStr_4677
     private _currentQuest: QuestMessageData | null = null;
+    // AS3: NextQuestTimer.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: NextQuestTimer.as::_expanded
     private _expanded: boolean = false;
+    // AS3: NextQuestTimer.as::_msecsToRefresh
     private _msecsToRefresh: number = 0;
 
     // AS3: NextQuestTimer.as::NextQuestTimer()
@@ -177,6 +182,7 @@ export class NextQuestTimer implements IDisposable
         this.refresh();
     }
 
+    // TS-only helper (AS3 inlines `_window.findChildByName(name).visible = ...` at each call site).
     private setChildVisible(name: string, visible: boolean): void
     {
         const child = this._window?.findChildByName(name);

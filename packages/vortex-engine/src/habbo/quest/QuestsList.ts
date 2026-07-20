@@ -28,12 +28,19 @@ const log = Logger.getLogger('QuestsList');
  */
 export class QuestsList implements IDisposable
 {
+    // AS3: QuestsList.as::_questEngine
     private _engine: HabboQuestEngine | null;
+    // AS3: QuestsList.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: QuestsList.as::_SafeStr_4652
     private _questList: IItemListWindow | null = null;
+    // AS3: QuestsList.as::_SafeStr_7411
     private _hcInfoText: ITextWindow | null = null;
+    // AS3: QuestsList.as::_SafeStr_7110
     private _getHcButton: IWindow | null = null;
+    // AS3: QuestsList.as::_SafeStr_5350
     private _scroller: IScrollbarWindow | null = null;
+    // AS3: QuestsList.as::_SafeStr_5307
     private _windowToggle: WindowToggle | null = null;
 
     // AS3: QuestsList.as::_SafeStr_8063 - reset false the first time the window is toggled;
@@ -43,6 +50,7 @@ export class QuestsList implements IDisposable
     private _hasAcceptedQuest: boolean = false;
     // AS3: QuestsList.as::_SafeStr_5897 - the non-seasonal subset of the last received quest list.
     private _quests: QuestMessageData[] = [];
+    // AS3: QuestsList.as::_msecsToRefresh
     private _msecsToRefresh: number = 1000;
     // AS3: QuestsList.as::_SafeStr_8073
     private _openOnQuestsEvent: boolean = false;
@@ -304,10 +312,7 @@ export class QuestsList implements IDisposable
     }
 
     // AS3: QuestsList.as::createListEntry()
-    createListEntry(
-        onAccept: (event: WindowEvent, window: IWindow) => void,
-        onCancel: (event: WindowEvent, window: IWindow) => void
-    ): IWindowContainer
+    createListEntry(onAccept: (event: WindowEvent, window: IWindow) => void, onCancel: (event: WindowEvent, window: IWindow) => void): IWindowContainer
     {
         const windowManager = this._engine?.windowManager ?? null;
 
@@ -594,6 +599,7 @@ export class QuestsList implements IDisposable
         if(target) target.color = condition ? colorIfTrue : colorIfFalse;
     }
 
+    // TS-only helper (AS3 inlines `param1.findChildByName(name).visible = ...` at each call site).
     private setChildVisible(container: IWindowContainer, name: string, visible: boolean): void
     {
         const child = container.findChildByName(name);

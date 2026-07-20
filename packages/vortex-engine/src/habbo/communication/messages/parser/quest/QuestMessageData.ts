@@ -175,6 +175,7 @@ export class QuestMessageData
     // uninitialized int) since no reachable AS3 code path ever sets it to a real value either.
     private _waitPeriodSeconds: number = 0;
 
+    // AS3: _SafePkg_1976/_SafeCls_1975.as::get waitPeriodSeconds()
     get waitPeriodSeconds(): number
     {
         if(this._waitPeriodSeconds < 1) return 0;
@@ -185,6 +186,7 @@ export class QuestMessageData
         return Math.max(0, this._waitPeriodSeconds - elapsed);
     }
 
+    // AS3: _SafePkg_1976/_SafeCls_1975.as::set waitPeriodSeconds()
     set waitPeriodSeconds(value: number)
     {
         this._waitPeriodSeconds = value;

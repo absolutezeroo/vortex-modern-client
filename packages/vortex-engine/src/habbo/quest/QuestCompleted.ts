@@ -19,14 +19,18 @@ const PREPARE_TO_SHOW_DELAY_MS = 2000;
  */
 export class QuestCompleted implements IDisposable
 {
+    // AS3: QuestCompleted.as::_window
     private _window: IFrameWindow | null = null;
+    // AS3: QuestCompleted.as::_questEngine
     private _engine: HabboQuestEngine | null;
+    // AS3: QuestCompleted.as::_SafeStr_4677
     private _currentQuest: QuestMessageData | null = null;
     // AS3: QuestCompleted.as::_SafeStr_5822 - the twinkle celebration Animation.
     // TODO(AS3): HabboQuestEngine.getTwinkleAnimation() is a documented stub (returns null) -
     // Animation/AnimationObject/Twinkle/TwinkleImages aren't ported. Dialog still shows and
     // functions correctly, just without the sparkle effect.
     private _twinkleAnimation: {restart(): void; stop(): void; update(deltaTime: number): void} | null = null;
+    // AS3: QuestCompleted.as::_SafeStr_6540
     private _msecsUntilShow: number = 0;
 
     // AS3: QuestCompleted.as::QuestCompleted()
@@ -201,6 +205,7 @@ export class QuestCompleted implements IDisposable
         }
     }
 
+    // TS-only helper (AS3 inlines `param1.findChildByName(name).visible = ...` at each call site).
     private setChildVisible(window: IFrameWindow, name: string, visible: boolean): void
     {
         const child = window.findChildByName(name);

@@ -29,12 +29,15 @@ const ENTRY_LOCATION = {x: 8, y: 8};
  */
 export class QuestDetails implements IDisposable
 {
+    // AS3: QuestDetails.as::_questEngine
     private _engine: HabboQuestEngine | null;
+    // AS3: QuestDetails.as::_window
     private _window: IFrameWindow | null = null;
     // AS3: QuestDetails.as::_SafeStr_7881 - "open details for the next quest received via onQuest()".
     private _pendingOpenForNextQuest: boolean = false;
     // AS3: QuestDetails.as::_SafeStr_4677
     private _currentQuest: QuestMessageData | null = null;
+    // AS3: QuestDetails.as::_msecsToRefresh
     private _msecsToRefresh: number = 0;
     // AS3: QuestDetails.as::_SafeStr_8592 - the openForNextQuest flag this popup was opened with.
     private _openedForNextQuest: boolean = false;

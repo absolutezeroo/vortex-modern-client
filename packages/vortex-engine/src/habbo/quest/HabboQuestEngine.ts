@@ -69,6 +69,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     private _localization: IHabboLocalizationManager | null = null;
     private _configuration: IHabboConfigurationManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
+    // AS3: HabboQuestEngine.as::_catalog
     private _catalog: IHabboCatalog | null = null;
     private _notifications: IHabboNotifications | null = null;
     private _habboHelp: IHabboHelp | null = null;

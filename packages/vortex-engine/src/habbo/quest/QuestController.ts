@@ -21,11 +21,17 @@ const log = Logger.getLogger('QuestController');
  */
 export class QuestController implements IDisposable
 {
+    // AS3: QuestController.as::_questEngine
     private _engine: HabboQuestEngine | null;
+    // AS3: QuestController.as::_SafeStr_5508
     private _questsList: QuestsList | null;
+    // AS3: QuestController.as::_questDetails
     private _questDetails: QuestDetails | null;
+    // AS3: QuestController.as::_SafeStr_5871
     private _questCompleted: QuestCompleted | null;
+    // AS3: QuestController.as::_SafeStr_5813
     private _nextQuestTimer: NextQuestTimer | null;
+    // AS3: QuestController.as::_questTrackers
     private _questTrackers: Map<string, QuestTracker> = new Map();
 
     // AS3: QuestController.as::QuestController()

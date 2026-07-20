@@ -51,29 +51,51 @@ const FRAME_WINDOW_TYPES: number[] = [WindowType.FRAME, WindowType.FRAME_THIN, W
  */
 export class QuestTracker implements IDisposable
 {
+    // AS3: QuestTracker.as::_SafeStr_8731
     private static _nextInstanceIndex: number = 0;
 
+    // AS3: QuestTracker.as::_SafeStr_8224
     private readonly _instanceIndex: number;
+    // AS3: QuestTracker.as::_questEngine
     private _engine: HabboQuestEngine | null;
+    // AS3: QuestTracker.as::_SafeStr_4764
     private _currentQuest: QuestMessageData | null = null;
+    // AS3: QuestTracker.as::_window
     private _window: IWindowContainer | null = null;
+    // AS3: QuestTracker.as::_SafeStr_5984
     private _progressBar: ProgressBar | null = null;
 
+    // TS-only: replaces AS3's _SafeStr_5331 (flash.utils.Timer) null-check gate - true once
+    // startDefaultCampaign() has ever created the retry timer.
     private _startQuestTimerCreated: boolean = false;
+    // TS-only: the live setTimeout handle backing AS3's _SafeStr_5331 Timer.
     private _startQuestTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    // TS-only: the configured delay (ms) the Timer above is (re)armed with.
     private _startQuestDelayMs: number = 0;
 
+    // AS3: QuestTracker.as::_trackerAnimationStatus
     private _trackerAnimationStatus: number = STATUS_NONE;
+    // AS3: QuestTracker.as::_SafeStr_5942
     private _nudgeStep: number = 0;
+    // AS3: QuestTracker.as::_remainingWait
     private _remainingWait: number = 0;
+    // AS3: QuestTracker.as::_successFrame
     private _successFrame: number = -1;
+    // AS3: QuestTracker.as::_msecsUntilPrompt
     private _msecsUntilPrompt: number = -1;
+    // AS3: QuestTracker.as::_promptFrame
     private _promptFrame: number = -1;
+    // AS3: QuestTracker.as::_msecsUntilNextPromptFrame
     private _msecsUntilNextPromptFrame: number = 0;
+    // AS3: QuestTracker.as::_SafeStr_7441
     private _promptRepeatsRemaining: number = 0;
+    // AS3: QuestTracker.as::_SafeStr_9681
     private _isQuestOpenPrompt: boolean = false;
+    // AS3: QuestTracker.as::_getNextQuestWhenCompletionAnimationFinishes
     private _getNextQuestWhenCompletionAnimationFinishes: boolean = false;
+    // AS3: QuestTracker.as::_SafeStr_6022
     private _forceCloseRequested: boolean = false;
+    // TS-only: replaces AS3's _SafeStr_7120 uint.MAX sentinel with a nullable setTimeout handle.
     private _newQuestTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     // AS3: QuestTracker.as::QuestTracker()
@@ -161,6 +183,7 @@ export class QuestTracker implements IDisposable
         }
     }
 
+    // TS-only helper backing AS3's Timer.reset()+start() retry inside onStartQuestTimer().
     private scheduleStartQuestTimer(): void
     {
         this._startQuestTimeoutId = setTimeout(this.onStartQuestTimer, this._startQuestDelayMs);
@@ -293,11 +316,13 @@ export class QuestTracker implements IDisposable
         }
     }
 
+    // AS3: QuestTracker.as::getSuccessFrame()
     private getSuccessFrame(index: number): IWindow | null
     {
         return this._window?.findChildByName(`success_pic_${index}`) ?? null;
     }
 
+    // AS3: QuestTracker.as::getPromptFrame()
     private getPromptFrame(frame: string): IWindow | null
     {
         return this._window?.findChildByName(`prompt_pic_${frame}`) ?? null;
