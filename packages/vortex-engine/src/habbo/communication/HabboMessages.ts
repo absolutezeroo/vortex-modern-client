@@ -259,10 +259,13 @@ import {
     WiredFurniConditionEvent,
     WiredFurniAddonEvent,
     WiredFurniVariableEvent,
-    WiredFurniSelectorEvent
+    WiredFurniSelectorEvent,
+    WiredValidationErrorEvent,
+    WiredSaveSuccessEvent,
+    OpenEvent
 } from './messages/incoming/userdefinedroomevents';
 // Outgoing Composers - User Defined Room Events (Wired)
-import {WiredClickUserMessageComposer} from './messages/outgoing/userdefinedroomevents';
+import {WiredClickUserMessageComposer, OpenMessageComposer} from './messages/outgoing/userdefinedroomevents';
 
 // Incoming Events - Poll
 import {
@@ -1027,6 +1030,12 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2574, WiredFurniAddonEvent);
         this._events.set(1501, WiredFurniVariableEvent);
         this._events.set(722, WiredFurniSelectorEvent);
+        // Wired config lifecycle (server -> client), IDs from WIN63 registry _SafeCls_2046.as:
+        //   2635 -> _SafeCls_2464 (Open), 3201 -> _SafeCls_2398 (ValidationError),
+        //   1192 -> _SafeCls_2958 (SaveSuccess).
+        this._events.set(2635, OpenEvent);
+        this._events.set(3201, WiredValidationErrorEvent);
+        this._events.set(1192, WiredSaveSuccessEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -1250,6 +1259,8 @@ export class HabboMessages implements IMessageConfiguration
         // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         // (`_composers[1953] = _SafeCls_2111`, the WiredClickUser composer).
         this._composers.set(1953, WiredClickUserMessageComposer);
+        // OpenMessageComposer: WIN63 registry _SafeCls_2046.as `_composers[1869] = _SafeCls_3966`.
+        this._composers.set(1869, OpenMessageComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);

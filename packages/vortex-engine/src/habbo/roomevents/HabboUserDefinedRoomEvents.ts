@@ -29,6 +29,7 @@ import type {IUserDefinedRoomEventsCtrl} from './wired_setup/IUserDefinedRoomEve
 import {UserDefinedRoomEventsCtrl} from './wired_setup/UserDefinedRoomEventsCtrl';
 import {WiredMenuController} from './wired_menu/WiredMenuController';
 import {WiredEnvironment} from './WiredEnvironment';
+import {IncomingMessages} from './IncomingMessages';
 import {WiredClickUserMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredClickUserMessageComposer';
 
 const log = Logger.getLogger('HabboUserDefinedRoomEvents');
@@ -69,11 +70,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     private _wiredMenu!: WiredMenuController;
     private _wiredEnvironment!: WiredEnvironment;
 
+    private _incomingMessages: IncomingMessages | null = null;
+
     // TODO(AS3): deferred sub-controllers, all created in the AS3 constructor and exposed via getters
     // (variablesSynchronizer/wiredChest/transactionLogs/transactionDetails/rewardNotificationController/
-    // selfDonationTool/transactionDetails/variablePickerHelper) plus the incoming-message handler
-    // (_incomingMessages = new IncomingMessages(this)) and the WiredContractController. Not created in
-    // this milestone; their getters/UI helpers (getXmlWindow/refreshButton/prepareButton/
+    // selfDonationTool/transactionDetails/variablePickerHelper) and the WiredContractController. Not
+    // created in this milestone; their getters/UI helpers (getXmlWindow/refreshButton/prepareButton/
     // getButtonImage) are omitted for now — no ported code calls them yet. One documented gap rather
     // than a fan-out of stubs (same approach as HabboHelp's absent-members block).
 
@@ -156,12 +158,14 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
         this._wiredEnvironment = new WiredEnvironment(this);
 
+        // AS3 creates the incoming-message handler here (initComponent), when communication is ready.
+        this._incomingMessages = new IncomingMessages(this);
+
         // AS3: _roomEngine.events.addEventListener('REE_DISPOSED', onRoomEngineEvent)
         this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
 
-        // TODO(AS3): create _incomingMessages (IncomingMessages), _variablesSynchronizer
-        // (WiredVariablesSynchronizer), and attach the wired-trading controllers — deferred (see the
-        // class-level scope note).
+        // TODO(AS3): create _variablesSynchronizer (WiredVariablesSynchronizer) and attach the
+        // wired-trading controllers — deferred (see the class-level scope note).
 
         log.debug('HabboUserDefinedRoomEvents initialized (wired_setup spine)');
     }
@@ -408,14 +412,20 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
         this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
 
+        if(this._incomingMessages != null)
+        {
+            this._incomingMessages.dispose();
+            this._incomingMessages = null;
+        }
+
         if(this._wiredEnvironment)
         {
             this._wiredEnvironment.dispose();
         }
 
-        // TODO(AS3): dispose _incomingMessages, _variablesSynchronizer and the wired-trading
-        // controllers once ported (deferred — see scope note). _wiredMenu is a DI-attached Component;
-        // it is disposed by the context on detach.
+        // TODO(AS3): dispose _variablesSynchronizer and the wired-trading controllers once ported
+        // (deferred — see scope note). _wiredMenu is a DI-attached Component; it is disposed by the
+        // context on detach.
 
         super.dispose();
 

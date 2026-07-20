@@ -1,5 +1,6 @@
 import type {IUserDefinedRoomEventsCtrl} from './IUserDefinedRoomEventsCtrl';
 import type {HabboUserDefinedRoomEvents} from '../HabboUserDefinedRoomEvents';
+import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
@@ -139,10 +140,10 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::prepareForUpdate()
-    prepareForUpdate(_def: unknown): void
+    prepareForUpdate(_def: Triggerable): void
     {
         // TODO(AS3): Bloc C — apply an incoming trigger/action/condition/selector/variable/addon
-        // definition into the open config dialog. `_def` is the Triggerable DTO (_SafeCls_2448).
+        // definition into the open config dialog.
         log.debug('prepareForUpdate ignored (wired-setup controller not ported — Bloc C)');
     }
 

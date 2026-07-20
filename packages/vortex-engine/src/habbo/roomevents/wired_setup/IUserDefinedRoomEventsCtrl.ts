@@ -1,3 +1,5 @@
+import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+
 /**
  * IUserDefinedRoomEventsCtrl — the wired-setup controller contract (the "wiredCtrl").
  *
@@ -62,8 +64,7 @@ export interface IUserDefinedRoomEventsCtrl
     close(): void;
 
     // AS3: _SafeCls_2147.as::prepareForUpdate()
-    // TODO(AS3): param real type is Triggerable (incoming/userdefinedroomevents/, obfuscated _SafeCls_2448) — not ported yet.
-    prepareForUpdate(def: unknown): void;
+    prepareForUpdate(def: Triggerable): void;
 
     // AS3: _SafeCls_2147.as::get isUsingAdvancedSettings()
     readonly isUsingAdvancedSettings: boolean;

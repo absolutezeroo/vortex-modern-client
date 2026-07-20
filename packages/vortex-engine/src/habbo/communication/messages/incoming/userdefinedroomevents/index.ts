@@ -9,3 +9,7 @@ export * from './WiredFurniConditionEvent';
 export * from './WiredFurniAddonEvent';
 export * from './WiredFurniVariableEvent';
 export * from './WiredFurniSelectorEvent';
+export * from './WiredValidationErrorEvent';
+export * from './WiredValidationErrorParameter';
+export * from './WiredSaveSuccessEvent';
+export * from './OpenEvent';
