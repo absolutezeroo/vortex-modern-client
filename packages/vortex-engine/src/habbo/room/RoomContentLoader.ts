@@ -631,7 +631,37 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
             type = multiType.split(',')[0];
         }
 
-        if(this.getAssetLibrary(type) !== null || this.getAssetLibraryEventDispatcher(type) !== null)
+        const existingLibrary = this.getAssetLibrary(type);
+
+        if(existingLibrary !== null)
+        {
+            // The named asset(s) are still registered - this port shares one AssetLibrary
+            // across every content type instead of AS3's per-type AssetLibraryCollection (see
+            // purge()'s comment), so they're never actually forgotten here. But purge() can
+            // still free the *processed* GraphicAssetCollection built from them to reclaim GPU
+            // memory, and AS3's real object-creation path (room/RoomManager.as::createRoomObject()
+            // lines 307-313) treats `getGraphicAssetCollection() == null` as the one signal that
+            // content needs (re)loading - there is no separate "already loaded" flag there at all.
+            // Rebuild the collection from the still-present data instead of silently leaving the
+            // type looking loaded with nothing to show.
+            if(this.getGraphicAssetCollection(type) === null)
+            {
+                const contentType = this.getRoomObjectOriginalName(this.getContentType(type));
+
+                this.registerContentData(contentType, existingLibrary, type);
+
+                const rebuilt = this.initializeGraphicAssetCollection(contentType, existingLibrary);
+
+                // No fresh load is in flight to fire the normal processLoadedLibrary() event
+                // path, so tell this specific caller directly - it already queued its pending
+                // visualization request before calling in (see RoomEngine.loadFurnitureContent()).
+                events.emit(rebuilt ? RoomContentLoadedEvent.CONTENT_LOAD_SUCCESS : RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, contentType);
+            }
+
+            return false;
+        }
+
+        if(this.getAssetLibraryEventDispatcher(type) !== null)
         {
             return false;
         }
@@ -1320,29 +1350,50 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 
             for(const url of urls)
             {
-                const loader = this._assetLibrary!.loadAssetFromFile(type, url);
-
-                loader.events.on('event', (event: AssetLoaderEvent) =>
+                // loadAssetFromFile() throws synchronously (rather than emitting an ERROR event) when
+                // the shared asset library already has an asset registered under `type` - this is not
+                // an AS3 code path (AS3 gives each content type its own AssetLibraryCollection, so the
+                // name can never collide), but a synchronous throw here would otherwise reject this
+                // promise with nothing ever catching it, permanently leaving `type` stuck in
+                // _loadingTypes with no graphic asset collection. Route it through the same
+                // onContentLoadError()/CONTENT_LOAD_FAILURE path the async loader ERROR event already
+                // uses below, instead of letting it surface as an unhandled rejection - matching the
+                // same try/catch this file already uses around loadThumbnailContent()'s loadAssetFromFile().
+                try
                 {
-                    if(event.type === AssetLoaderEventType.COMPLETE)
-                    {
-                        remaining--;
+                    const loader = this._assetLibrary!.loadAssetFromFile(type, url);
 
-                        if(remaining === 0 && !failed)
+                    loader.events.on('event', (event: AssetLoaderEvent) =>
+                    {
+                        if(event.type === AssetLoaderEventType.COMPLETE)
                         {
-                            this.processLoadedLibrary(type);
+                            remaining--;
+
+                            if(remaining === 0 && !failed)
+                            {
+                                this.processLoadedLibrary(type);
+                                resolve();
+                            }
+                        }
+                        else if(event.type === AssetLoaderEventType.ERROR)
+                        {
+                            failed = true;
+                            this.onContentLoadError(type, url);
+                            this._loadingTypes.delete(type);
+                            events.emit(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, type);
                             resolve();
                         }
-                    }
-                    else if(event.type === AssetLoaderEventType.ERROR)
-                    {
-                        failed = true;
-                        this.onContentLoadError(type, url);
-                        this._loadingTypes.delete(type);
-                        events.emit(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, type);
-                        resolve();
-                    }
-                });
+                    });
+                }
+                catch (error)
+                {
+                    failed = true;
+                    log.error(`Failed to load asset content for ${type} at ${url}`, error);
+                    this.onContentLoadError(type, url);
+                    this._loadingTypes.delete(type);
+                    events.emit(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, type);
+                    resolve();
+                }
             }
         });
     }
@@ -1769,14 +1820,22 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
                 const libraryName = this.getAssetLibraryName(contentType);
                 const assetLibrary = this._assetLibraries.get(libraryName) ?? null;
 
-                if(assetLibrary !== null)
+                // AS3's _libraries stores a dedicated AssetLibraryCollection per content type
+                // (addAssetLibraryCollection() does `new AssetLibraryCollection(...)`), so disposing
+                // it here is always safe there. This port instead registers every content type's
+                // named asset straight into the one shared `_assetLibrary` Nitro-bundle loader (see
+                // addAssetLibraryCollection()/processLoadedLibrary()), so that shared instance must
+                // never be disposed - only remove the *bookkeeping* entry when we are also actually
+                // disposing the underlying library. Deleting the entry unconditionally (regardless of
+                // whether disposal happened) desynced getAssetLibrary(type)'s cache from what's really
+                // still registered in the shared library: a later reload of the same type then hit
+                // AssetLibrary.loadAssetFromFile()'s "Asset with name X already exists" guard, which
+                // is exactly the "tile_cursor already exists" crash reported after leaving it unused
+                // long enough for purge() to run.
+                if(assetLibrary !== null && assetLibrary !== this._assetLibrary)
                 {
                     this._assetLibraries.delete(libraryName);
-
-                    if(assetLibrary !== this._assetLibrary)
-                    {
-                        assetLibrary.dispose();
-                    }
+                    assetLibrary.dispose();
                 }
             }
         }

@@ -12,6 +12,7 @@ import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommun
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
 import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
+import {SetChatStylePreferenceComposer} from '@habbo/communication/messages/outgoing/preferences/SetChatStylePreferenceComposer';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -233,14 +234,11 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set chatFontSizeMode()
-    // TODO(AS3): AS3 sends `new SetChatStylePreferenceComposer(preferedChatStyle,
-    // chatFontSizeMode)` here to persist the choice server-side - that composer isn't
-    // ported yet (2-arg form, evolved from the older single-styleId version - see
-    // preferedChatStyle's setter below for the same gap). The in-memory value still drives
-    // rendering (chatFontSizeScale), only server persistence is missing.
     set chatFontSizeMode(value: number)
     {
         this._chatFontSizeMode = this.clampChatFontSizeMode(value);
+
+        this._communication?.connection?.send(new SetChatStylePreferenceComposer(this._preferedChatStyle, this._chatFontSizeMode));
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatFontSizeScale()
@@ -345,21 +343,11 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set preferedChatStyle()
-    // TODO(AS3): AS3 sends `new SetChatStylePreferenceComposer(preferedChatStyle,
-    // chatFontSizeMode)` here — a 2-arg form combining both preferences in one message,
-    // evolved from the older single-styleId composer (still what's referenced below in
-    // the commented-out send). Neither the composer's real (2026) field layout nor its
-    // older 1-arg version is ported yet; the per-message styleId sent with every chat
-    // (RoomChatInputView's future selectedStyleId -> sendChat()) doesn't depend on this.
     set preferedChatStyle(value: number)
     {
         this._preferedChatStyle = value;
 
-        // TODO: Send SetChatStylePreferenceComposer when composer is implemented
-        // if (this._communication?.connection)
-        // {
-        //     this._communication.connection.send(new SetChatStylePreferenceComposer(value));
-        // }
+        this._communication?.connection?.send(new SetChatStylePreferenceComposer(this._preferedChatStyle, this._chatFontSizeMode));
     }
 
     private _isDisabledInPreferences: boolean = false;

@@ -5213,9 +5213,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     /**
      * Start loading furniture content and track pending visualization requests.
      */
-    private loadFurnitureContent(roomId: number, objectId: number, className: string, category: number): void 
+    private loadFurnitureContent(roomId: number, objectId: number, className: string, category: number): void
     {
-        if(this._contentLoader.isLoaded(className)) 
+        // isLoaded() alone can lie: purge() frees a content type's GraphicAssetCollection to
+        // reclaim GPU memory without clearing this flag (matches RoomManager.ts::isContentAvailable()/
+        // createRoomObject(), which both pair the two for the same reason - see their comments).
+        if(this._contentLoader.isLoaded(className) && this._contentLoader.getGraphicAssetCollection(className) !== null)
         {
             // Already loaded - create visualization immediately
             this.createVisualizationForFurniture(roomId, objectId, className, category);
