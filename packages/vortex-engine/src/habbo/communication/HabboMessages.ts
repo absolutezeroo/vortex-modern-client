@@ -253,7 +253,13 @@ import {
     WiredRewardResultMessageEvent,
     WiredEnvironmentEvent,
     WiredClickSettingsEvent,
-    WiredClickUserResponseEvent
+    WiredClickUserResponseEvent,
+    WiredFurniTriggerEvent,
+    WiredFurniActionEvent,
+    WiredFurniConditionEvent,
+    WiredFurniAddonEvent,
+    WiredFurniVariableEvent,
+    WiredFurniSelectorEvent
 } from './messages/incoming/userdefinedroomevents';
 // Outgoing Composers - User Defined Room Events (Wired)
 import {WiredClickUserMessageComposer} from './messages/outgoing/userdefinedroomevents';
@@ -1011,6 +1017,16 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3931, WiredClickSettingsEvent);
         this._events.set(309, WiredClickUserResponseEvent);
         this._events.set(2997, WiredRewardResultMessageEvent);
+        // Wired-furni definition pushes (server -> client), IDs from WIN63's registry _SafeCls_2046.as:
+        //   1265 -> _SafeCls_3224 (Trigger), 2552 -> _SafeCls_3816 (Action), 2250 -> _SafeCls_3178
+        //   (Condition), 2574 -> _SafeCls_3130 (Addon), 1501 -> _SafeCls_3199 (Variable),
+        //   722 -> _SafeCls_2636 (Selector). Each parser exposes .def (a Triggerable subclass).
+        this._events.set(1265, WiredFurniTriggerEvent);
+        this._events.set(2552, WiredFurniActionEvent);
+        this._events.set(2250, WiredFurniConditionEvent);
+        this._events.set(2574, WiredFurniAddonEvent);
+        this._events.set(1501, WiredFurniVariableEvent);
+        this._events.set(722, WiredFurniSelectorEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
