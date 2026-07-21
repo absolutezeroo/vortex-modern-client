@@ -23,7 +23,13 @@ import {SimpleListViewPreset} from './presets/SimpleListViewPreset';
 import {ScrollListPreset} from './presets/ScrollListPreset';
 import {ButtonRowPreset} from './presets/ButtonRowPreset';
 import {HorizontalSectionListPreset} from './presets/HorizontalSectionListPreset';
+import {CheckboxOptionPreset} from './presets/CheckboxOptionPreset';
+import {CheckboxGroupPreset} from './presets/CheckboxGroupPreset';
+import {RadioButtonPreset} from './presets/RadioButtonPreset';
+import {RadioGroupPreset} from './presets/RadioGroupPreset';
 import type {ListScrollParams} from './params/ListScrollParams';
+import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
+import type {RadioButtonParam} from './params/RadioButtonParam';
 
 /**
  * PresetManager — the factory the wired UI builder uses to instantiate every preset (buttons, text,
@@ -174,5 +180,29 @@ export class PresetManager
     createHorizontalSectionListPreset(presets: WiredUIPreset[]): HorizontalSectionListPreset
     {
         return new HorizontalSectionListPreset(this._roomEvents, this, this.wiredStyle, presets);
+    }
+
+    // AS3: PresetManager.as::createCheckboxOption()
+    createCheckboxOption(param: CheckboxOptionParam, last: boolean = false): CheckboxOptionPreset
+    {
+        return new CheckboxOptionPreset(this._roomEvents, this, this.wiredStyle, param, last);
+    }
+
+    // AS3: PresetManager.as::createCheckboxGroup()
+    createCheckboxGroup(params: CheckboxOptionParam[], onChange: ((id: number, selected: boolean) => void) | null = null, columns: number = 1): CheckboxGroupPreset
+    {
+        return new CheckboxGroupPreset(this._roomEvents, this, this.wiredStyle, params, onChange, columns);
+    }
+
+    // AS3: PresetManager.as::createRadioButton()
+    createRadioButton(param: RadioButtonParam, last: boolean = false): RadioButtonPreset
+    {
+        return new RadioButtonPreset(this._roomEvents, this, this.wiredStyle, param, last);
+    }
+
+    // AS3: PresetManager.as::createRadioGroup()
+    createRadioGroup(params: RadioButtonParam[], onChange: ((selected: number) => void) | null = null, columns: number = 1): RadioGroupPreset
+    {
+        return new RadioGroupPreset(this._roomEvents, this, this.wiredStyle, params, onChange, columns);
     }
 }
