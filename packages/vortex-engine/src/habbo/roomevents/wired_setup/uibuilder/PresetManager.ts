@@ -43,9 +43,15 @@ import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
 import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
 import {VolterMiniAssetIconButtonPreset} from './presets/VolterMiniAssetIconButtonPreset';
 import {PressedButtonMiniAssetIconButtonPreset} from './presets/PressedButtonMiniAssetIconButtonPreset';
+import type {HeaderPreset} from './presets/main_layout/HeaderPreset';
+import {VolterHeaderPreset} from './presets/main_layout/VolterHeaderPreset';
+import {IlluminaHeaderPreset} from './presets/main_layout/IlluminaHeaderPreset';
+import {FooterPreset} from './presets/main_layout/FooterPreset';
+import {AdvancedSettingsWrapperPreset} from './presets/main_layout/AdvancedSettingsWrapperPreset';
 import type {SourceTypeSelectorParam} from './params/SourceTypeSelectorParam';
 import type {SectionParam} from './params/SectionParam';
 import type {AssetButtonParam} from './params/AssetButtonParam';
+import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
 import type {RadioButtonParam} from './params/RadioButtonParam';
@@ -315,5 +321,33 @@ export class PresetManager
     createAssetButtonPreset(assetName: string, tooltip: string, onClick: (() => void) | null): AssetButtonPreset
     {
         return new AssetButtonPreset(this._roomEvents, this, this.wiredStyle, assetName, tooltip, onClick);
+    }
+
+    // AS3: PresetManager.as::createHeaderPreset()
+    createHeaderPreset(name: string, typeHolder: IWiredTypeHolder, buttonMode: number, onApplySnapshot: () => void, onOpenMenu: () => void, onViewLogs: () => void): HeaderPreset
+    {
+        if(this.wiredStyle.isVolter)
+        {
+            return new VolterHeaderPreset(this._roomEvents, this, this.wiredStyle, name, typeHolder, buttonMode, onApplySnapshot, onOpenMenu, onViewLogs);
+        }
+
+        if(this.wiredStyle.name === 'illumina')
+        {
+            return new IlluminaHeaderPreset(this._roomEvents, this, this.wiredStyle, name, typeHolder, buttonMode, onApplySnapshot, onOpenMenu, onViewLogs);
+        }
+
+        throw new Error('Header preset for unsupported style');
+    }
+
+    // AS3: PresetManager.as::createFooterPreset()
+    createFooterPreset(onSave: () => void, onCancel: () => void): FooterPreset
+    {
+        return new FooterPreset(this._roomEvents, this, this.wiredStyle, onSave, onCancel);
+    }
+
+    // AS3: PresetManager.as::createAdvancedSettingsWrapperPreset()
+    createAdvancedSettingsWrapperPreset(presets: WiredUIPreset[], alwaysExpanded: boolean): AdvancedSettingsWrapperPreset
+    {
+        return new AdvancedSettingsWrapperPreset(this._roomEvents, this, this.wiredStyle, presets, alwaysExpanded);
     }
 }
