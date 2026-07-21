@@ -38,8 +38,14 @@ import {SectionPreset} from './presets/SectionPreset';
 import {BorderSection} from './presets/sections/BorderSection';
 import {UsageInfoSection} from './presets/sections/UsageInfoSection';
 import {UsageWarningSection} from './presets/sections/UsageWarningSection';
+import {AssetButtonPreset} from './presets/AssetButtonPreset';
+import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
+import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
+import {VolterMiniAssetIconButtonPreset} from './presets/VolterMiniAssetIconButtonPreset';
+import {PressedButtonMiniAssetIconButtonPreset} from './presets/PressedButtonMiniAssetIconButtonPreset';
 import type {SourceTypeSelectorParam} from './params/SourceTypeSelectorParam';
 import type {SectionParam} from './params/SectionParam';
+import type {AssetButtonParam} from './params/AssetButtonParam';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
 import type {RadioButtonParam} from './params/RadioButtonParam';
@@ -286,5 +292,28 @@ export class PresetManager
     createUsageWarningSection(text: string): UsageWarningSection
     {
         return new UsageWarningSection(this._roomEvents, this, this.wiredStyle, text);
+    }
+
+    // AS3: PresetManager.as::createAssetButtonRow()
+    createAssetButtonRow(params: AssetButtonParam[]): AssetButtonRowPreset
+    {
+        return new AssetButtonRowPreset(this._roomEvents, this, this.wiredStyle, params);
+    }
+
+    // AS3: PresetManager.as::createMiniAssetIconButtonPreset()
+    createMiniAssetIconButtonPreset(assetName: string, tooltip: string, onClick: (() => void) | null): MiniAssetIconButtonPreset
+    {
+        if(this.wiredStyle.isVolter)
+        {
+            return new VolterMiniAssetIconButtonPreset(this._roomEvents, this, this.wiredStyle, assetName, tooltip, onClick);
+        }
+
+        return new PressedButtonMiniAssetIconButtonPreset(this._roomEvents, this, this.wiredStyle, assetName, tooltip, onClick);
+    }
+
+    // AS3: PresetManager.as::createAssetButtonPreset()
+    createAssetButtonPreset(assetName: string, tooltip: string, onClick: (() => void) | null): AssetButtonPreset
+    {
+        return new AssetButtonPreset(this._roomEvents, this, this.wiredStyle, assetName, tooltip, onClick);
     }
 }
