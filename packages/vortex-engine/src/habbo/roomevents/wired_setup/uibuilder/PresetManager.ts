@@ -1,15 +1,24 @@
 import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {WiredStyle} from './styles/WiredStyle';
 import {TextParam} from './params/TextParam';
+import type {HtmlTextParam} from './params/HtmlTextParam';
+import type {WiredUIPreset} from './presets/WiredUIPreset';
 import {SpacerPreset} from './presets/SpacerPreset';
 import {SplitterPreset} from './presets/SplitterPreset';
 import {SpacingPreset} from './presets/SpacingPreset';
 import {TextPreset} from './presets/TextPreset';
 import {ButtonPreset} from './presets/ButtonPreset';
 import {IconButtonPreset} from './presets/IconButtonPreset';
+import {HtmlPreset} from './presets/HtmlPreset';
+import {StaticBitmapAssetWrapperPreset} from './presets/StaticBitmapAssetWrapperPreset';
+import {TextualButtonPreset} from './presets/TextualButtonPreset';
+import {PaddedContainerPreset} from './presets/PaddedContainerPreset';
+import {ContainerButtonPreset} from './presets/ContainerButtonPreset';
+import {CenteredContainerPreset} from './presets/CenteredContainerPreset';
 
 /**
  * PresetManager — the factory the wired UI builder uses to instantiate every preset (buttons, text,
@@ -100,5 +109,41 @@ export class PresetManager
     createIconButtonPreset(name: string, onClick: (() => void) | null): IconButtonPreset
     {
         return new IconButtonPreset(this._roomEvents, this, this.wiredStyle, name, onClick);
+    }
+
+    // AS3: PresetManager.as::createHtml()
+    createHtml(text: string, param: HtmlTextParam): HtmlPreset
+    {
+        return new HtmlPreset(this._roomEvents, this, this.wiredStyle, text, param);
+    }
+
+    // AS3: PresetManager.as::createBitmapWrapperPreset()
+    createBitmapWrapperPreset(assetUri: string): StaticBitmapAssetWrapperPreset
+    {
+        return new StaticBitmapAssetWrapperPreset(this._roomEvents, this, this.wiredStyle, assetUri);
+    }
+
+    // AS3: PresetManager.as::createTextualButtonPreset()
+    createTextualButtonPreset(caption: string, onClick: () => void): TextualButtonPreset
+    {
+        return new TextualButtonPreset(this._roomEvents, this, this.wiredStyle, caption, onClick);
+    }
+
+    // AS3: PresetManager.as::createPaddedContainerPreset()
+    createPaddedContainerPreset(wrapped: WiredUIPreset, leftPadding: number, top: number, rightPadding: number, bottom: number, window: IWindowContainer | null = null, stretchMode: boolean = false): PaddedContainerPreset
+    {
+        return new PaddedContainerPreset(this._roomEvents, this, this.wiredStyle, wrapped, leftPadding, top, rightPadding, bottom, window, stretchMode);
+    }
+
+    // AS3: PresetManager.as::createContainerButtonPreset()
+    createContainerButtonPreset(wrapped: WiredUIPreset, onClick: (() => void) | null, stretchMode: boolean = true): ContainerButtonPreset
+    {
+        return new ContainerButtonPreset(this._roomEvents, this, this.wiredStyle, wrapped, onClick, stretchMode);
+    }
+
+    // AS3: PresetManager.as::createCenteredContainerPreset()
+    createCenteredContainerPreset(wrapped: WiredUIPreset, margin: number, window: IWindowContainer | null = null): CenteredContainerPreset
+    {
+        return new CenteredContainerPreset(this._roomEvents, this, this.wiredStyle, wrapped, margin, window);
     }
 }
