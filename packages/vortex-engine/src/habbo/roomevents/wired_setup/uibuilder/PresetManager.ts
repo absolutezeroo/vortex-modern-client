@@ -30,6 +30,9 @@ import {RadioGroupPreset} from './presets/RadioGroupPreset';
 import {TextInputPreset} from './presets/TextInputPreset';
 import {NumberInputPreset} from './presets/NumberInputPreset';
 import {TextAreaPreset} from './presets/TextAreaPreset';
+import {BitmapViewPreset} from './presets/BitmapViewPreset';
+import {AvatarImagePreset} from './presets/AvatarImagePreset';
+import {CollapseExpandSectionButtonPreset} from './presets/CollapseExpandSectionButtonPreset';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
 import type {RadioButtonParam} from './params/RadioButtonParam';
@@ -228,5 +231,23 @@ export class PresetManager
     createTextArea(param: TextAreaParam): TextAreaPreset
     {
         return new TextAreaPreset(this._roomEvents, this, this.wiredStyle, param);
+    }
+
+    // AS3: PresetManager.as::createBitmapViewPreset()
+    createBitmapViewPreset(): BitmapViewPreset
+    {
+        return new BitmapViewPreset(this._roomEvents, this, this.wiredStyle);
+    }
+
+    // AS3: PresetManager.as::createAvatarImagePreset()
+    createAvatarImagePreset(): AvatarImagePreset
+    {
+        return new AvatarImagePreset(this._roomEvents, this, this.wiredStyle);
+    }
+
+    // AS3: PresetManager.as::createCollapseExpandSectionButton()
+    createCollapseExpandSectionButton(callback: ((expanded: boolean) => void) | null = null, startExpanded: boolean = true): CollapseExpandSectionButtonPreset
+    {
+        return new CollapseExpandSectionButtonPreset(this._roomEvents, this, this.wiredStyle, callback, startExpanded);
     }
 }
