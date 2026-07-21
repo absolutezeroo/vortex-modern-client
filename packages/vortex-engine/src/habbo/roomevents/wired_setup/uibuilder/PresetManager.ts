@@ -48,6 +48,8 @@ import {VolterHeaderPreset} from './presets/main_layout/VolterHeaderPreset';
 import {IlluminaHeaderPreset} from './presets/main_layout/IlluminaHeaderPreset';
 import {FooterPreset} from './presets/main_layout/FooterPreset';
 import {AdvancedSettingsWrapperPreset} from './presets/main_layout/AdvancedSettingsWrapperPreset';
+import {FramePreset} from './presets/main_layout/FramePreset';
+import {InnerBorderFramePreset} from './presets/main_layout/InnerBorderFramePreset';
 import type {SourceTypeSelectorParam} from './params/SourceTypeSelectorParam';
 import type {SectionParam} from './params/SectionParam';
 import type {AssetButtonParam} from './params/AssetButtonParam';
@@ -357,5 +359,16 @@ export class PresetManager
     createMenuPreset(items: IMenuElement[], menuButton: IWindow): MenuPreset
     {
         return new MenuPreset(this._roomEvents, this, this.wiredStyle, items, menuButton);
+    }
+
+    // AS3: PresetManager.as::createFramePreset()
+    createFramePreset(elements: WiredUIPreset[], onClose: (() => void) | null, holderKey: string | null = null, code: number = -1, resizable: boolean = false, showMenu: boolean = false, scrollParams: ListScrollParams | null = null): FramePreset
+    {
+        if(this.wiredStyle.useInnerBorder)
+        {
+            return new InnerBorderFramePreset(this._roomEvents, this, this.wiredStyle, elements, onClose, holderKey ?? '', code, resizable);
+        }
+
+        return new FramePreset(this._roomEvents, this, this.wiredStyle, elements, onClose, holderKey ?? '', code, resizable, showMenu, scrollParams);
     }
 }
