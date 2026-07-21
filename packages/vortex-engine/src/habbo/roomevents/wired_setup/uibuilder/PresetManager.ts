@@ -51,6 +51,8 @@ import {AdvancedSettingsWrapperPreset} from './presets/main_layout/AdvancedSetti
 import type {SourceTypeSelectorParam} from './params/SourceTypeSelectorParam';
 import type {SectionParam} from './params/SectionParam';
 import type {AssetButtonParam} from './params/AssetButtonParam';
+import {MenuPreset} from './presets/menu/MenuPreset';
+import type {IMenuElement} from './presets/menu/elements/IMenuElement';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
@@ -349,5 +351,11 @@ export class PresetManager
     createAdvancedSettingsWrapperPreset(presets: WiredUIPreset[], alwaysExpanded: boolean): AdvancedSettingsWrapperPreset
     {
         return new AdvancedSettingsWrapperPreset(this._roomEvents, this, this.wiredStyle, presets, alwaysExpanded);
+    }
+
+    // AS3: PresetManager.as::createMenuPreset()
+    createMenuPreset(items: IMenuElement[], menuButton: IWindow): MenuPreset
+    {
+        return new MenuPreset(this._roomEvents, this, this.wiredStyle, items, menuButton);
     }
 }
