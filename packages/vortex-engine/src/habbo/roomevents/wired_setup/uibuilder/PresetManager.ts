@@ -27,9 +27,15 @@ import {CheckboxOptionPreset} from './presets/CheckboxOptionPreset';
 import {CheckboxGroupPreset} from './presets/CheckboxGroupPreset';
 import {RadioButtonPreset} from './presets/RadioButtonPreset';
 import {RadioGroupPreset} from './presets/RadioGroupPreset';
+import {TextInputPreset} from './presets/TextInputPreset';
+import {NumberInputPreset} from './presets/NumberInputPreset';
+import {TextAreaPreset} from './presets/TextAreaPreset';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
 import type {RadioButtonParam} from './params/RadioButtonParam';
+import type {TextInputParam} from './params/TextInputParam';
+import type {NumberInputParam} from './params/NumberInputParam';
+import type {TextAreaParam} from './params/TextAreaParam';
 
 /**
  * PresetManager — the factory the wired UI builder uses to instantiate every preset (buttons, text,
@@ -204,5 +210,23 @@ export class PresetManager
     createRadioGroup(params: RadioButtonParam[], onChange: ((selected: number) => void) | null = null, columns: number = 1): RadioGroupPreset
     {
         return new RadioGroupPreset(this._roomEvents, this, this.wiredStyle, params, onChange, columns);
+    }
+
+    // AS3: PresetManager.as::createTextInput()
+    createTextInput(param: TextInputParam): TextInputPreset
+    {
+        return new TextInputPreset(this._roomEvents, this, this.wiredStyle, param);
+    }
+
+    // AS3: PresetManager.as::createNumberInput()
+    createNumberInput(param: NumberInputParam): NumberInputPreset
+    {
+        return new NumberInputPreset(this._roomEvents, this, this.wiredStyle, param);
+    }
+
+    // AS3: PresetManager.as::createTextArea()
+    createTextArea(param: TextAreaParam): TextAreaPreset
+    {
+        return new TextAreaPreset(this._roomEvents, this, this.wiredStyle, param);
     }
 }
