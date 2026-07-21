@@ -1,6 +1,8 @@
 import type {IUserDefinedRoomEventsCtrl} from './IUserDefinedRoomEventsCtrl';
 import type {HabboUserDefinedRoomEvents} from '../HabboUserDefinedRoomEvents';
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+import type {WiredStyle} from './uibuilder/styles/WiredStyle';
+import type {PresetManager} from './uibuilder/PresetManager';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
@@ -155,24 +157,25 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::get wiredStyle()
-    get wiredStyle(): unknown
+    get wiredStyle(): WiredStyle
     {
-        // TODO(AS3): Bloc D — real return type is WiredStyle.
-        return null;
+        // TODO(AS3): Bloc C — the controller builds and selects the active WiredStyle. Until then no
+        // wired UI is opened, so this is never read on a live path.
+        return null as unknown as WiredStyle;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::get presetManager()
-    get presetManager(): unknown
+    get presetManager(): PresetManager
     {
-        // TODO(AS3): Bloc D — real return type is PresetManager.
-        return null;
+        // TODO(AS3): Bloc C — the controller owns the PresetManager. Not constructed by the stub.
+        return null as unknown as PresetManager;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::getStyleByName()
-    getStyleByName(_name: string): unknown
+    getStyleByName(_name: string): WiredStyle
     {
-        // TODO(AS3): Bloc D — real return type is WiredStyle.
-        return null;
+        // TODO(AS3): Bloc C — resolve a WiredStyle by name from the controller's style set.
+        return null as unknown as WiredStyle;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::setPreferredWiredStyleByName()

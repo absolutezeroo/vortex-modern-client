@@ -1,6 +1,8 @@
 import {Component, ComponentDependency} from '@core/runtime';
 import type {IContext} from '@core/runtime';
 import type {IMessageComposer} from '@core';
+import type {IWindow} from '@core/window/IWindow';
+import type {XmlAsset} from '@core/assets/XmlAsset';
 import {Logger} from '@core/utils/Logger';
 
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
@@ -337,6 +339,28 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     send(composer: IMessageComposer<unknown[]>): void
     {
         this._communication?.connection?.send(composer);
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::getXmlWindow()
+    getXmlWindow(name: string): IWindow | null
+    {
+        try
+        {
+            const asset = this.assets?.getAssetByName(name + '_xml');
+            const xmlAsset = asset as unknown as XmlAsset | null;
+            const content = xmlAsset?.content ?? null;
+
+            if(content == null)
+            {
+                return null;
+            }
+
+            return this.windowManager?.buildFromXML(content) ?? null;
+        }
+        catch (_e)
+        {
+            return null;
+        }
     }
 
     // --- Event handlers ---

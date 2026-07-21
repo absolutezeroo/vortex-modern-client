@@ -1,4 +1,6 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
+import type {WiredStyle} from './uibuilder/styles/WiredStyle';
+import type {PresetManager} from './uibuilder/PresetManager';
 
 /**
  * IUserDefinedRoomEventsCtrl — the wired-setup controller contract (the "wiredCtrl").
@@ -70,16 +72,13 @@ export interface IUserDefinedRoomEventsCtrl
     readonly isUsingAdvancedSettings: boolean;
 
     // AS3: _SafeCls_2147.as::get wiredStyle()
-    // TODO(AS3): real return type is WiredStyle (wired_setup/uibuilder/styles/) — not ported yet.
-    readonly wiredStyle: unknown;
+    readonly wiredStyle: WiredStyle;
 
     // AS3: _SafeCls_2147.as::get presetManager()
-    // TODO(AS3): real return type is PresetManager (wired_setup/uibuilder/) — not ported yet.
-    readonly presetManager: unknown;
+    readonly presetManager: PresetManager;
 
     // AS3: _SafeCls_2147.as::getStyleByName()
-    // TODO(AS3): real return type is WiredStyle — not ported yet.
-    getStyleByName(name: string): unknown;
+    getStyleByName(name: string): WiredStyle;
 
     // AS3: _SafeCls_2147.as::setPreferredWiredStyleByName()
     setPreferredWiredStyleByName(name: string): void;
