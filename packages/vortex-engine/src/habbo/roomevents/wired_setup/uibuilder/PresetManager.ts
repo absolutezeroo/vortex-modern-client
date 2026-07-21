@@ -19,6 +19,11 @@ import {TextualButtonPreset} from './presets/TextualButtonPreset';
 import {PaddedContainerPreset} from './presets/PaddedContainerPreset';
 import {ContainerButtonPreset} from './presets/ContainerButtonPreset';
 import {CenteredContainerPreset} from './presets/CenteredContainerPreset';
+import {SimpleListViewPreset} from './presets/SimpleListViewPreset';
+import {ScrollListPreset} from './presets/ScrollListPreset';
+import {ButtonRowPreset} from './presets/ButtonRowPreset';
+import {HorizontalSectionListPreset} from './presets/HorizontalSectionListPreset';
+import type {ListScrollParams} from './params/ListScrollParams';
 
 /**
  * PresetManager — the factory the wired UI builder uses to instantiate every preset (buttons, text,
@@ -145,5 +150,29 @@ export class PresetManager
     createCenteredContainerPreset(wrapped: WiredUIPreset, margin: number, window: IWindowContainer | null = null): CenteredContainerPreset
     {
         return new CenteredContainerPreset(this._roomEvents, this, this.wiredStyle, wrapped, margin, window);
+    }
+
+    // AS3: PresetManager.as::createSimpleListView()
+    createSimpleListView(vertical: boolean, presets: WiredUIPreset[], centered: boolean = false): SimpleListViewPreset
+    {
+        return new SimpleListViewPreset(this._roomEvents, this, this.wiredStyle, vertical, presets, centered);
+    }
+
+    // AS3: PresetManager.as::createScrollList()
+    createScrollList(presets: WiredUIPreset[], scrollParams: ListScrollParams, centered: boolean = false): ScrollListPreset
+    {
+        return new ScrollListPreset(this._roomEvents, this, this.wiredStyle, presets, scrollParams, centered);
+    }
+
+    // AS3: PresetManager.as::createButtonRow()
+    createButtonRow(buttons: WiredUIPreset[]): ButtonRowPreset
+    {
+        return new ButtonRowPreset(this._roomEvents, this, this.wiredStyle, buttons);
+    }
+
+    // AS3: PresetManager.as::createHorizontalSectionListPreset()
+    createHorizontalSectionListPreset(presets: WiredUIPreset[]): HorizontalSectionListPreset
+    {
+        return new HorizontalSectionListPreset(this._roomEvents, this, this.wiredStyle, presets);
     }
 }

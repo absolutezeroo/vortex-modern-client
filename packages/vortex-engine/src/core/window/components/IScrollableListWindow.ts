@@ -11,4 +11,7 @@ export interface IScrollableListWindow extends IItemListWindow
 {
     autoHideScrollBar: boolean;
     readonly isScrollBarVisible: boolean;
+    // The scrolled content region; ScrollableItemListWindow already implements it. Exposed here (as on
+    // the AS3 interface) so the wired ScrollListPreset can size itself to the content height.
+    readonly scrollableRegion: { x: number; y: number; width: number; height: number };
 }
