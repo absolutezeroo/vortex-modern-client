@@ -363,6 +363,16 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         }
     }
 
+    // AS3: HabboUserDefinedRoomEvents.as::getButtonImage()
+    getButtonImage(name: string, suffix: string = '_png'): ImageBitmap | null
+    {
+        // AS3 resolves a BitmapDataAsset and returns a clone() of its BitmapData; the port's image
+        // assets are ImageBitmaps consumed read-only by the caller, so the content is returned directly.
+        const asset = this.assets?.getAssetByName(name + suffix);
+
+        return (asset?.content as ImageBitmap | null) ?? null;
+    }
+
     // --- Event handlers ---
 
     // AS3: HabboUserDefinedRoomEvents.as::roomObjectAddedHandler()

@@ -33,6 +33,8 @@ import {TextAreaPreset} from './presets/TextAreaPreset';
 import {BitmapViewPreset} from './presets/BitmapViewPreset';
 import {AvatarImagePreset} from './presets/AvatarImagePreset';
 import {CollapseExpandSectionButtonPreset} from './presets/CollapseExpandSectionButtonPreset';
+import {SourceTypeSelectorPreset} from './presets/SourceTypeSelectorPreset';
+import type {SourceTypeSelectorParam} from './params/SourceTypeSelectorParam';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
 import type {RadioButtonParam} from './params/RadioButtonParam';
@@ -249,5 +251,11 @@ export class PresetManager
     createCollapseExpandSectionButton(callback: ((expanded: boolean) => void) | null = null, startExpanded: boolean = true): CollapseExpandSectionButtonPreset
     {
         return new CollapseExpandSectionButtonPreset(this._roomEvents, this, this.wiredStyle, callback, startExpanded);
+    }
+
+    // AS3: PresetManager.as::createSourceTypeSelector()
+    createSourceTypeSelector(param: SourceTypeSelectorParam): SourceTypeSelectorPreset
+    {
+        return new SourceTypeSelectorPreset(this._roomEvents, this, this.wiredStyle, param);
     }
 }
