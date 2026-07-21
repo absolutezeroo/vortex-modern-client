@@ -37,7 +37,8 @@ export interface ITextWindow extends IWindow, IScrollableWindow
     readonly italic: boolean;
     underline: boolean;
     readonly fontFace: string;
-    readonly fontSize: number;
+    // AS3 ITextWindow exposes fontSize as read/write; TextController already implements the setter.
+    fontSize: number;
     readonly length: number;
     readonly numLines: number;
     readonly textHeight: number;
@@ -48,6 +49,10 @@ export interface ITextWindow extends IWindow, IScrollableWindow
     textBackground: boolean;
     textBackgroundColor: number;
     maxChars: number;
+    // AS3-settable line cap (TextController implements it); used by wired TextPreset multiline mode.
+    maxLines: number;
+    // AS3-settable overflow ellipsis replacement (TextController implements it); wired overflow mode.
+    overflowReplace: string;
     multiline: boolean;
     wordWrap: boolean;
     autoSize: string;
