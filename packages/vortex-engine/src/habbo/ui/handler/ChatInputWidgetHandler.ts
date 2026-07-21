@@ -26,6 +26,8 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     private _disposed: boolean = false;
     private _container: IRoomWidgetHandlerContainer | null = null;
     private _widget: RoomChatInputWidget | null = null;
+    /** Whether the `:showstats` FPS overlay is currently toggled on. */
+    private _statsShown: boolean = false;
 
     // AS3: sources/win63_version/habbo/ui/handler/ChatInputWidgetHandler.as::get container() / set container()
     public get container(): IRoomWidgetHandlerContainer | null
@@ -90,6 +92,17 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                 const chatMessage = message as RoomWidgetChatMessage;
 
                 if(!chatMessage.text) return null;
+
+                // AS3: ChatInputWidgetHandler.as::processWidgetMessage() intercepts ":"
+                // commands before sending. Only :showstats (the FPS/render/memory overlay)
+                // is ported; AS3 always enables it, we toggle so it can be hidden again.
+                if(chatMessage.text.trim().toLowerCase() === ':showstats')
+                {
+                    this._statsShown = !this._statsShown;
+                    this._container.roomEngine?.setFpsCounterEnabled(this._statsShown);
+
+                    return null;
+                }
 
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processWidgetMessage()
                 // Resolve against the stored chat-style preference: a style change gets

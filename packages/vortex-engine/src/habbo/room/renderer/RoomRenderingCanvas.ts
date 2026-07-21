@@ -11,7 +11,7 @@
  *
  * @see sources/win63_version/room/renderer/class_3523.as
  */
-import {Container, Graphics, type Renderer, Texture} from 'pixi.js';
+import {Container, Graphics, Text, type Renderer, Texture} from 'pixi.js';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomRenderingCanvas as IRoomRenderingCanvasInterface} from '@room/renderer/IRoomRenderingCanvas';
@@ -124,19 +124,37 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
     private _fpsCounterEnabled: boolean = false;
 
+    /**
+     * The `:showstats` overlay (AS3 var_478/var_381 TextFields). Lives on `_master`
+     * (screen space, top-right), a sibling of `_display` so it doesn't pan/zoom with
+     * the room. Created lazily on first enabled update; kept but hidden when disabled.
+     */
+    private _fpsOverlay: Container | null = null;
+    private _fpsText: Text | null = null;
+    private _fpsBackground: Graphics | null = null;
+
     // AS3: sources/win63_version/room/renderer/class_3523.as::get fpsCounterEnabled()
-    get fpsCounterEnabled(): boolean 
+    get fpsCounterEnabled(): boolean
     {
         return this._fpsCounterEnabled;
     }
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::set fpsCounterEnabled()
-    set fpsCounterEnabled(value: boolean) 
+    set fpsCounterEnabled(value: boolean)
     {
         this._fpsCounterEnabled = value;
-        // TODO(AS3): sources/win63_version/room/renderer/class_3523.as fpsCounterEnabled
-        // Flash draws TextField overlays with FPS/render/memory data. Keep the public
-        // API for parity; no Pixi overlay is created yet.
+
+        if(value)
+        {
+            // Show the overlay immediately instead of waiting for the next periodic
+            // interval tick (~50 frames), so `:showstats` gives instant feedback.
+            this.updateFpsOverlay();
+        }
+        // AS3 clears both TextFields' text when disabled; here we hide the overlay.
+        else if(this._fpsOverlay)
+        {
+            this._fpsOverlay.visible = false;
+        }
     }
 
     private _useMask: boolean = false;
@@ -584,6 +602,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         }
 
         this._master.destroy({children: true});
+
+        // Children (incl. the fps overlay) are destroyed by the cascade above.
+        this._fpsOverlay = null;
+        this._fpsText = null;
+        this._fpsBackground = null;
         this._disposed = true;
     }
 
@@ -678,14 +701,80 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
                 this._runningSlow = false;
             }
 
-            if(this._fpsCounterEnabled) 
+            if(this._fpsCounterEnabled)
             {
-                // TODO(AS3): sources/win63_version/room/renderer/class_3523.as calculateUpdateInterval()
-                // Render FPS/debug TextField equivalents for Pixi when debug overlays are ported.
+                this.updateFpsOverlay();
             }
 
             this._haltedFrameInterval = 0;
         }
+    }
+
+    /**
+     * Draws the `:showstats` overlay — FPS, average render time, JS heap and any
+     * halted-frame interval — top-right of the canvas, in screen space.
+     *
+     * AS3 drew two red Verdana-9 TextFields (var_478 with a black background,
+     * var_381 without) whose text is
+     * `"<fps> fps\nrender <ms>ms\nmem <MB> MB[\nhalted <ms>ms]"`. Here a single red
+     * Text over a translucent black box reproduces the visible result. Refreshed
+     * only on the periodic interval tick (~50 frames), never per frame.
+     *
+     * AS3: sources/win63_version/room/renderer/class_3523.as::calculateUpdateInterval()
+     */
+    private updateFpsOverlay(): void
+    {
+        if(!this._fpsOverlay)
+        {
+            this._fpsBackground = new Graphics();
+            this._fpsText = new Text({
+                text: '',
+                style: {fontFamily: 'Verdana, sans-serif', fontSize: 9, fill: 0xff3300, lineHeight: 11, align: 'left'}
+            });
+            this._fpsText.x = 3;
+            this._fpsText.y = 2;
+
+            this._fpsOverlay = new Container();
+            this._fpsOverlay.label = 'fpsCounter';
+            this._fpsOverlay.eventMode = 'none';
+            this._fpsOverlay.interactiveChildren = false;
+            this._fpsOverlay.addChild(this._fpsBackground, this._fpsText);
+            this._master.addChild(this._fpsOverlay);
+        }
+
+        const fps = this._averageUpdateInterval > 0 ? 1000 / this._averageUpdateInterval : 0;
+        const render = this._averageRenderTime < 1 ? '<1.0' : this._averageRenderTime.toFixed(1);
+
+        let text = `${fps.toFixed(1)} fps\nrender ${render}ms`;
+
+        // System.totalMemory in AS3; browsers only expose it via the non-standard
+        // performance.memory (Chromium). Omit the line where it's unavailable.
+        const memory = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
+
+        if(memory)
+        {
+            text += `\nmem ${Math.round(memory.usedJSHeapSize / 1000000)} MB`;
+        }
+
+        if(this._haltedFrameInterval > 0)
+        {
+            text += `\nhalted ${Math.round(this._haltedFrameInterval)}ms`;
+        }
+
+        const label = this._fpsText!;
+
+        label.text = text;
+
+        const background = this._fpsBackground!;
+
+        background.clear();
+        background.rect(0, 0, label.width + 6, label.height + 4);
+        background.fill({color: 0x000000, alpha: 0.6});
+
+        // Top-left of the canvas (AS3 anchored it top-right; left is the requested layout).
+        this._fpsOverlay.x = 4;
+        this._fpsOverlay.y = 2;
+        this._fpsOverlay.visible = true;
     }
 
     /**

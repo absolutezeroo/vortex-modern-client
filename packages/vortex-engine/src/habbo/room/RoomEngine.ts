@@ -3085,17 +3085,32 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_version/habbo/room/class_34.as::setRoomCanvasMask()
-    setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void 
+    setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void
     {
         const key = roomId * 1000 + canvasId;
         const canvas = this._renderingCanvases.get(key);
 
-        if(!canvas) 
+        if(!canvas)
         {
             return;
         }
 
         canvas.useMask = useMask;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setFpsCounterEnabled()
+    setFpsCounterEnabled(enabled: boolean): void
+    {
+        // AS3 getActiveRoomActiveCanvas() returns the active room's active canvas
+        // (getRoomCanvas(activeRoomId, activeCanvasId)); the port keys canvases by
+        // roomId*1000+canvasId and the main room view is canvasId 1 (getRenderingCanvas
+        // default), so it stands in for the active canvas here.
+        const canvas = this.getRenderingCanvas(this._activeRoomId);
+
+        if(canvas)
+        {
+            canvas.fpsCounterEnabled = enabled;
+        }
     }
 
     /**

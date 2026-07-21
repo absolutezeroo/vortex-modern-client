@@ -341,6 +341,12 @@ export interface IRoomEngine extends IDisposable {
     setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void;
 
     /**
+     * Toggles the `:showstats` FPS/render/memory overlay on the active room canvas.
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::setFpsCounterEnabled()
+     */
+    setFpsCounterEnabled(enabled: boolean): void;
+
+    /**
      * Handles a mouse event on the room canvas.
      */
     handleRoomCanvasMouseEvent(
