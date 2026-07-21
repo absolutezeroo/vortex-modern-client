@@ -34,7 +34,12 @@ import {BitmapViewPreset} from './presets/BitmapViewPreset';
 import {AvatarImagePreset} from './presets/AvatarImagePreset';
 import {CollapseExpandSectionButtonPreset} from './presets/CollapseExpandSectionButtonPreset';
 import {SourceTypeSelectorPreset} from './presets/SourceTypeSelectorPreset';
+import {SectionPreset} from './presets/SectionPreset';
+import {BorderSection} from './presets/sections/BorderSection';
+import {UsageInfoSection} from './presets/sections/UsageInfoSection';
+import {UsageWarningSection} from './presets/sections/UsageWarningSection';
 import type {SourceTypeSelectorParam} from './params/SourceTypeSelectorParam';
+import type {SectionParam} from './params/SectionParam';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
 import type {RadioButtonParam} from './params/RadioButtonParam';
@@ -257,5 +262,29 @@ export class PresetManager
     createSourceTypeSelector(param: SourceTypeSelectorParam): SourceTypeSelectorPreset
     {
         return new SourceTypeSelectorPreset(this._roomEvents, this, this.wiredStyle, param);
+    }
+
+    // AS3: PresetManager.as::createSection()
+    createSection(title: string, content: WiredUIPreset, param: SectionParam | null = null): SectionPreset
+    {
+        return new SectionPreset(this._roomEvents, this, this.wiredStyle, title, content, param);
+    }
+
+    // AS3: PresetManager.as::createBorderSection()
+    createBorderSection(title: string, content: WiredUIPreset, param: SectionParam | null = null): BorderSection
+    {
+        return new BorderSection(this._roomEvents, this, this.wiredStyle, title, content, param);
+    }
+
+    // AS3: PresetManager.as::createUsageInfoSection()
+    createUsageInfoSection(text: string, collapsed: boolean = false, title: string | null = null): UsageInfoSection
+    {
+        return new UsageInfoSection(this._roomEvents, this, this.wiredStyle, text, collapsed, title);
+    }
+
+    // AS3: PresetManager.as::createUsageWarningSection()
+    createUsageWarningSection(text: string): UsageWarningSection
+    {
+        return new UsageWarningSection(this._roomEvents, this, this.wiredStyle, text);
     }
 }
