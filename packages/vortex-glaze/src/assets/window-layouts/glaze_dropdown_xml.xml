@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_dropdown" width="190" height="24">
+  <window>
+    <dropmenu x="0" y="0" width="190" height="24" params="17" style="100" name="glaze_dd"/>
+  </window>
+</layout>

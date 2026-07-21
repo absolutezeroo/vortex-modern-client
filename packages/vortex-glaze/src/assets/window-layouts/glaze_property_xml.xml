@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_property" width="344" height="600">
+  <window>
+    <frame x="0" y="0" width="344" height="600" params="1" style="102" name="glaze_property_frame" caption="Property Editor">
+      <variables>
+        <var key="margin_left" value="6" type="int"/>
+        <var key="margin_top" value="26" type="int"/>
+        <var key="margin_right" value="6" type="int"/>
+        <var key="margin_bottom" value="7" type="int"/>
+      </variables>
+      <children>
+        <itemlist_vertical x="0" y="0" width="332" height="567" params="2177" style="3" name="glaze_property_list">
+          <variables>
+            <var key="resize_on_item_update" value="false" type="Boolean"/>
+          </variables>
+        </itemlist_vertical>
+      </children>
+    </frame>
+  </window>
+</layout>

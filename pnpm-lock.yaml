@@ -39,12 +39,12 @@ importers:
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.4
-      vortex-engine:
-        specifier: workspace:*
-        version: link:../vortex-engine
       pixi.js:
         specifier: ^8.6.6
         version: 8.16.0
+      vortex-engine:
+        specifier: workspace:*
+        version: link:../vortex-engine
     devDependencies:
       '@types/node':
         specifier: ^22.10.0
@@ -89,6 +89,31 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+
+  packages/vortex-glaze:
+    dependencies:
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.4
+      pixi.js:
+        specifier: ^8.6.6
+        version: 8.16.0
+      vortex-client:
+        specifier: workspace:*
+        version: link:../vortex-client
+      vortex-engine:
+        specifier: workspace:*
+        version: link:../vortex-engine
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.10
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.3(@types/node@22.19.10)(sass-embedded@1.97.3)(sass@1.97.3)(tsx@4.23.0)(yaml@2.9.0)
 
 packages:
 

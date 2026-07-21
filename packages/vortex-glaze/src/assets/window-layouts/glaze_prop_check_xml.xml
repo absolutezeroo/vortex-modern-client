@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_prop_check" width="332" height="24">
+  <window>
+    <container x="0" y="0" width="332" height="24" params="16" style="3" name="glaze_crow">
+      <children>
+        <text x="8" y="5" width="220" height="16" params="16" style="3" name="glaze_crow_label" caption="prop">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <text x="232" y="5" width="60" height="16" params="16" style="3" name="glaze_crow_type" caption="boolean" color="0xff9a9ab0">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="300" y="1" width="19" height="21" params="17" style="101" name="glaze_crow_check" treshold="0" height_min="21" height_max="21"/>
+      </children>
+    </container>
+  </window>
+</layout>

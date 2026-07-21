@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_check" width="19" height="21">
+  <window>
+    <checkbox x="0" y="0" width="19" height="21" params="17" style="101" name="glaze_chk" treshold="0" height_min="21" height_max="21"/>
+  </window>
+</layout>

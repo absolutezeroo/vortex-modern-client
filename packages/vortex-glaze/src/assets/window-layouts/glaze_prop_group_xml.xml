@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_prop_group" width="332" height="24">
+  <window>
+    <container x="0" y="0" width="332" height="24" params="16" style="3" name="glaze_group" background="true" color="0xffe9e9f2">
+      <children>
+        <text x="8" y="5" width="316" height="16" params="16" style="3" name="glaze_group_label" caption="Group">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_button" type="String"/>
+            <var key="bold" value="true" type="Boolean"/>
+          </variables>
+        </text>
+      </children>
+    </container>
+  </window>
+</layout>

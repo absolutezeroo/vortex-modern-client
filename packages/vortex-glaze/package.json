@@ -1,0 +1,23 @@
+{
+  "name": "vortex-glaze",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Live window-layout editor for Vortex (Glaze-style)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "bundle": "node ../vortex-client/tools/bundle-assets.mjs"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "vortex-client": "workspace:*",
+    "vortex-engine": "workspace:*",
+    "pixi.js": "^8.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0"
+  }
+}

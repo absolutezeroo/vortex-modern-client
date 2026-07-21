@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_toolbar" width="1200" height="44">
+  <window>
+    <container x="0" y="0" width="1200" height="44" params="1" style="3" name="glaze_toolbar_bar" background="true" color="0xfff3f3f8">
+      <children>
+        <text x="14" y="14" width="120" height="18" params="0" style="3" name="glaze_toolbar_title" caption="GLAZE">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_button" type="String"/>
+            <var key="bold" value="true" type="Boolean"/>
+          </variables>
+        </text>
+      </children>
+    </container>
+  </window>
+</layout>

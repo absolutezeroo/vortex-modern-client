@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_swatch" width="18" height="18">
+  <window>
+    <region x="0" y="0" width="18" height="18" params="0" style="3" name="glaze_swatch" background="true" color="0xffffffff"/>
+  </window>
+</layout>

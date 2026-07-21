@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_gallery_row" width="390" height="42">
+  <window>
+    <region x="0" y="0" width="390" height="42" params="17" style="3" name="glaze_grow" treshold="0">
+      <children>
+        <static_bitmap x="5" y="5" width="32" height="32" params="16" style="3" name="glaze_grow_img">
+          <variables>
+            <var key="stretched_x" value="false" type="Boolean"/>
+            <var key="stretched_y" value="false" type="Boolean"/>
+            <var key="pivot_point" value="center" type="String"/>
+            <var key="fit_size_to_contents" value="false" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+        <text x="46" y="13" width="338" height="16" params="16" style="3" name="glaze_grow_label" caption="image">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+      </children>
+    </region>
+  </window>
+</layout>

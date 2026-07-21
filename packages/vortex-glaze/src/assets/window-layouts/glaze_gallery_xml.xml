@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_gallery" width="420" height="520">
+  <window>
+    <frame x="0" y="0" width="420" height="520" params="32769" style="102" name="glaze_gallery_frame" caption="Image Gallery" width_min="240">
+      <variables>
+        <var key="margin_left" value="6" type="int"/>
+        <var key="margin_top" value="26" type="int"/>
+        <var key="margin_right" value="6" type="int"/>
+        <var key="margin_bottom" value="7" type="int"/>
+      </variables>
+      <children>
+        <scrollable_itemlist_vertical x="0" y="0" width="408" height="487" params="16" style="100" name="glaze_gallery_list">
+          <variables>
+            <var key="resize_on_item_update" value="false" type="Boolean"/>
+          </variables>
+        </scrollable_itemlist_vertical>
+      </children>
+    </frame>
+  </window>
+</layout>

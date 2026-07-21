@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_smallinput" width="54" height="22">
+  <window>
+    <border x="0" y="0" width="54" height="22" params="16" style="105" name="glaze_sibox">
+      <children>
+        <input x="4" y="2" width="46" height="16" params="2177" style="3" name="glaze_siinput" tags="INPUT">
+          <variables>
+            <var key="text_color" value="0x4a4a4a" type="hex"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="margin_left" value="4" type="int"/>
+          </variables>
+        </input>
+      </children>
+    </border>
+  </window>
+</layout>

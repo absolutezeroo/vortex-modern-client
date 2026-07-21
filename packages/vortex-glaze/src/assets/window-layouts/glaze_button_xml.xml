@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_button" width="70" height="26">
+  <window>
+    <button x="0" y="0" width="70" height="26" params="1" style="102" name="glaze_btn" caption="btn" dynamic_style="button">
+      <variables>
+        <var key="text_style" value="il_button" type="String"/>
+      </variables>
+    </button>
+  </window>
+</layout>

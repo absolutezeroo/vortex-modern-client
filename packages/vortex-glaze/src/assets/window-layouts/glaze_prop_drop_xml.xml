@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_prop_drop" width="332" height="26">
+  <window>
+    <container x="0" y="0" width="332" height="26" params="16" style="3" name="glaze_drow">
+      <children>
+        <text x="8" y="6" width="74" height="16" params="16" style="3" name="glaze_drow_label" caption="prop">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <dropmenu x="128" y="2" width="196" height="22" params="17" style="100" name="glaze_drow_drop"/>
+      </children>
+    </container>
+  </window>
+</layout>
