@@ -64,6 +64,7 @@ import {RewardRowPreset} from './presets/combinations/RewardRowPreset';
 import {RewardListPreset} from './presets/combinations/RewardListPreset';
 import {DropdownPreset} from './presets/DropdownPreset';
 import {NamedDropdownPreset} from './presets/combinations/NamedDropdownPreset';
+import {VariablePickerPreset} from './presets/VariablePickerPreset';
 import {VariableNameSection} from './presets/sections/VariableNameSection';
 import {PlaceholderNameSection} from './presets/sections/PlaceholderNameSection';
 import {PlaceholderTypeSection} from './presets/sections/PlaceholderTypeSection';
@@ -77,6 +78,7 @@ import type {TextInputParam} from './params/TextInputParam';
 import type {NumberInputParam} from './params/NumberInputParam';
 import type {TextAreaParam} from './params/TextAreaParam';
 import type {DropdownParam} from './params/DropdownParam';
+import type {WiredVariable} from '@habbo/communication/messages/incoming/userdefinedroomevents/variables/WiredVariable';
 
 /**
  * PresetManager — the factory the wired UI builder uses to instantiate every preset (buttons, text,
@@ -224,6 +226,12 @@ export class PresetManager
     createNamedDropdown(param: DropdownParam, caption: string, bold: boolean = false): NamedDropdownPreset
     {
         return new NamedDropdownPreset(this._roomEvents, this, this.wiredStyle, param, caption, bold);
+    }
+
+    // AS3: PresetManager.as::createVariablePicker()
+    createVariablePicker(variableFilter: ((variable: WiredVariable) => boolean) | null = null, onSelect: ((variable: WiredVariable | null) => void) | null = null): VariablePickerPreset
+    {
+        return new VariablePickerPreset(this._roomEvents, this, this.wiredStyle, variableFilter, onSelect);
     }
 
     // AS3: PresetManager.as::createPaddedContainerPreset()
