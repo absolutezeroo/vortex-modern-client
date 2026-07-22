@@ -134,6 +134,12 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::activeFurniPicks (backing field)
     private _activeFurniPicks: number = 1;
 
+    // AS3: UserDefinedRoomEventsCtrl.as::_stuffs1 (Dictionary of selected furni ids, source set 1)
+    private _stuffs1: Set<number> = new Set<number>();
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_stuffs2 (Dictionary of selected furni ids, source set 2)
+    private _stuffs2: Set<number> = new Set<number>();
+
     // AS3: UserDefinedRoomEventsCtrl.as::UserDefinedRoomEventsCtrl()
     constructor(roomEvents: HabboUserDefinedRoomEvents)
     {
@@ -190,6 +196,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
 
         log.debug('Opened wired config: ' + holder.getKey() + ' code ' + def.code);
+
+        // AS3: seed the picked-furni sets from the def's existing wired stuffs (drives the
+        // "${wiredfurni.pickfurnis.caption}" count). TODO(AS3): RoomObjectHighLighter show/highlight
+        // of these in-room is the Bloc C stuff-picking UI (stubbed) — the sets themselves are faithful.
+        this._stuffs1 = new Set<number>(def.stuffIds);
+        this._stuffs2 = new Set<number>(def.stuffIds2);
+
         this._currentElement.onEditStart(def);
         this.onEditStartUpdateCommonUI();
         this._currentElement.onEditInitialized();
@@ -413,6 +426,10 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._selectorOptionsPreset.optionById(1).selected = this._currentDef.isInvert;
         }
 
+        // TODO(AS3): header buttonVisible for variable types (initialVariableName + wiredMenu.isEnabled)
+        // — belongs here (AS3 order), deferred with the variable-menu common UI.
+        this.onStuffsChanged();
+
         if(this._delaySection != null && this._currentDef instanceof ActionDefinition)
         {
             this._delaySection.value = this._currentDef.delayInPulses;
@@ -425,6 +442,28 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
 
         this._frame?.refreshForNewTriggerable();
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::onStuffsChanged()
+    // Registers the live count/limit parameters on the pick-furnis caption localization key. The
+    // section title window is a registered listener of that key (TextController), so registering the
+    // params re-resolves "${wiredfurni.pickfurnis.caption}" from raw "%count%/%limit%" to real values.
+    private onStuffsChanged(): void
+    {
+        if(this._currentDef == null || this._frame == null)
+        {
+            return;
+        }
+
+        const count = this.getStuffIds().length;
+        const limit = this._currentDef.furniLimit;
+
+        this._roomEvents.localization.registerParameter('wiredfurni.pickfurnis.caption', 'count', '' + count);
+        this._roomEvents.localization.registerParameter('wiredfurni.pickfurnis.caption', 'limit', '' + limit);
+
+        // TODO(AS3): refresh the picked-furni preview rows (_SafeStr_4793.refresh(def, element)) —
+        // the in-room stuff-picking preview list is the Bloc C stub.
+        this._frame.updateButtonDisabledStates();
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::isStuffSelectionMode()
@@ -638,21 +677,22 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::getStuffIds()
     getStuffIds(): number[]
     {
-        // TODO(AS3): Bloc C.
-        return [];
+        return Array.from(this._stuffs1);
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::getStuffIds2()
     getStuffIds2(): number[]
     {
-        // TODO(AS3): Bloc C.
-        return [];
+        return Array.from(this._stuffs2);
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::clearStuffPicks()
     clearStuffPicks(): void
     {
-        // TODO(AS3): Bloc C.
+        // TODO(AS3): hideFurniHighlights() (RoomObjectHighLighter — Bloc C stub) precedes the reset.
+        this._stuffs1 = new Set<number>();
+        this._stuffs2 = new Set<number>();
+        this.onStuffsChanged();
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::resetToDefault()
