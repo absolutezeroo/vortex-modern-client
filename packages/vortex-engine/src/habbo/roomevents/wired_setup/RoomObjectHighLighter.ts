@@ -15,13 +15,13 @@ interface IFilterableVisualization
 
 /**
  * RoomObjectHighLighter — paints the in-room visual feedback for wired furni selection. Selected
- * furnis get a desaturating ColorMatrixFilter (25% saturation + grey lift) pushed onto their
- * FurnitureVisualization.filters, so they read as "greyed out / picked".
+ * furnis get a desaturating ColorMatrixFilter (25% saturation + grey lift) and the wired furni being
+ * edited gets the active-wired tint, both pushed onto their FurnitureVisualization.filters.
  *
- * AS3 applies more layers this port does NOT yet reproduce (documented as TODO on the individual
- * methods): the furnitureFilter_pbj edge shader (a compiled Flash Pixel Bender program that would need
- * a GLSL rewrite), the wall GlowFilter, the dual-picking red/blue source tints, and the yellow
- * active-wired highlight. The dominant "grey" effect is faithful; the rest is deferred.
+ * AS3 applies two more layers this port does NOT yet reproduce: the furnitureFilter_pbj edge shader (a
+ * compiled Flash Pixel Bender program that would need a GLSL rewrite, part of the BW stack) and the
+ * dual-picking red/blue source tints (dual-picking / merged-source mode is not ported). The BW
+ * desaturation and the active-wired tint are faithful ColorMatrixFilters.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/RoomObjectHighLighter.as
  */
@@ -29,6 +29,9 @@ export class RoomObjectHighLighter
 {
     // Shared desaturation filter (PixiJS filters can be reused across display objects).
     private static _selectionFilter: ColorMatrixFilter | null = null;
+
+    // Shared active-wired tint filter.
+    private static _activeWiredFilter: ColorMatrixFilter | null = null;
 
     // AS3: RoomObjectHighLighter.as::_roomEvents
     private _roomEvents: HabboUserDefinedRoomEvents;
@@ -59,6 +62,27 @@ export class RoomObjectHighLighter
         }
 
         return RoomObjectHighLighter._selectionFilter;
+    }
+
+    // AS3: RoomObjectHighLighter.as::_SafeStr_8420 (the active-wired highlight tint). Flash matrix
+    // [0.9,0,0,0,0 ; 0,1,0,0,40 ; 0,0,1,0,80 ; 0,0,0,0.8,0] — green/blue lift + 0.8 alpha, offsets /255.
+    private static activeWiredFilter(): ColorMatrixFilter
+    {
+        if(RoomObjectHighLighter._activeWiredFilter === null)
+        {
+            const filter = new ColorMatrixFilter();
+
+            filter.matrix = [
+                0.9, 0, 0, 0, 0,
+                0, 1, 0, 0, 0.1569,
+                0, 0, 1, 0, 0.3137,
+                0, 0, 0, 0.8, 0
+            ];
+
+            RoomObjectHighLighter._activeWiredFilter = filter;
+        }
+
+        return RoomObjectHighLighter._activeWiredFilter;
     }
 
     // AS3: RoomObjectHighLighter.as::show() — activateFurni (BW filter). TODO(AS3): wall GlowFilter +
@@ -92,16 +116,16 @@ export class RoomObjectHighLighter
         }
     }
 
-    // AS3: RoomObjectHighLighter.as::highlightActiveWired()
-    highlightActiveWired(_id: number): void
+    // AS3: RoomObjectHighLighter.as::highlightActiveWired() — tints the wired furni being edited.
+    highlightActiveWired(id: number): void
     {
-        // TODO(AS3): addFiltersToFurni(getFurni(id), _highlight) — yellow tint on the wired furni itself.
+        this.applyFilters(id, [RoomObjectHighLighter.activeWiredFilter()]);
     }
 
     // AS3: RoomObjectHighLighter.as::unhighlightActiveWired()
-    unhighlightActiveWired(_id: number): void
+    unhighlightActiveWired(id: number): void
     {
-        // TODO(AS3): removeFiltersFromFurni(getFurni(id), _highlight).
+        this.applyFilters(id, null);
     }
 
     // AS3: RoomObjectHighLighter.as::getFurni() — negative id = wall furni (category 20), else floor (10).
