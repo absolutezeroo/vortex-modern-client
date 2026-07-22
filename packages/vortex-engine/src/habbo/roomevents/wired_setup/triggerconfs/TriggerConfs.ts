@@ -28,14 +28,15 @@ import {TriggerPeriodically} from './TriggerPeriodically';
 import {TriggerPeriodicallyLong} from './TriggerPeriodicallyLong';
 import {UseStuff} from './UseStuff';
 import {UserClicksUser} from './UserClicksUser';
+import {UserPerformsAction} from './UserPerformsAction';
 
 /**
  * TriggerConfs — the wired trigger registry (IWiredTypeHolder): instantiates every trigger config and
  * resolves one by its server code.
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3)
- * _SafeCls_4035 (Dropdown TRIGGER_CODE_16) and VariableUpdate (varpicker). getElementByCode returns
- * null for their codes.
+ * VariableUpdate (varpicker). getElementByCode returns null for its code. (_SafeCls_4035
+ * UserPerformsAction / TRIGGER_CODE_16 is now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/triggerconfs/TriggerConfs.as
  */
@@ -67,7 +68,8 @@ export class TriggerConfs implements IWiredTypeHolder
         new AvatarLeavesRoom(),
         new UserClicksUser(),
         new TransactionCompleted(),
-        new TransactionFailed()
+        new TransactionFailed(),
+        new UserPerformsAction()
     ];
 
     // AS3: TriggerConfs.as::getByCode()

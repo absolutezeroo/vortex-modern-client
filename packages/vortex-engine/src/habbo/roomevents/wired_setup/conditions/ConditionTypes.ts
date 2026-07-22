@@ -16,6 +16,7 @@ import {FurnisHaveNoAvatars} from './FurnisHaveNoAvatars';
 import {HasStackedFurnis} from './HasStackedFurnis';
 import {InputSourceQuantity} from './InputSourceQuantity';
 import {LevelMatches} from './LevelMatches';
+import {PerformingAction} from './PerformingAction';
 import {StatesMatch} from './StatesMatch';
 import {StuffTypeMatches} from './StuffTypeMatches';
 import {TeamHasScore} from './TeamHasScore';
@@ -32,8 +33,10 @@ import {UserDirection} from './UserDirection';
  * and resolves one by its server code.
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * Dropdown-blocked (_4103, _4118, _4326, DateMatches, TimeMatches), varpicker-blocked (_4119, _4236,
- * _4192), and _4271/ChestHasAmount. getElementByCode returns null for their codes.
+ * Dropdown-blocked (_4103 ActorIsGroupMember, _4118 ActorHasHanditem), the timezone-base conditions
+ * (_4314 DateMatches/TimeMatches base), varpicker-blocked (_4119, _4236, _4192 VariableAge), and
+ * _4271/ChestHasAmount. getElementByCode returns null for their codes. (_4326 PerformingAction is now
+ * ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as
  */
@@ -63,7 +66,8 @@ export class ConditionTypes implements IWiredTypeHolder
         new InputSourceQuantity(),
         new CanPerformMove(),
         new LevelMatches(),
-        new DateRangeActive()
+        new DateRangeActive(),
+        new PerformingAction()
     ];
 
     // AS3: ConditionTypes.as::getByCode()
