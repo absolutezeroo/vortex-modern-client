@@ -23,6 +23,7 @@ import type {HabboUserDefinedRoomEvents} from '../HabboUserDefinedRoomEvents';
 import type {IWiredTypeHolder} from './IWiredTypeHolder';
 import type {IWiredElement} from './IWiredElement';
 import {DefaultElement} from './DefaultElement';
+import {RoomObjectHighLighter} from './RoomObjectHighLighter';
 import {PresetManager} from './uibuilder/PresetManager';
 import {WiredUIBuilder} from './uibuilder/WiredUIBuilder';
 import type {WiredStyle} from './uibuilder/styles/WiredStyle';
@@ -155,10 +156,22 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_9888 (non-owner change already confirmed this session)
     private _confirmed: boolean = false;
 
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5372 (RoomObjectHighLighter)
+    private _highlighter: RoomObjectHighLighter;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_6372 (merged-source dual-picking mode; false = single set)
+    // TODO(AS3): driven by the input-source picker (setMergedSourceType) — advanced sources not ported,
+    // so this stays false and the active set is always _stuffs1.
+    private _mergedSourceMode: boolean = false;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5819 (active source slot: 1 = set 1, 2 = set 2)
+    private _activeSourceSlot: number = 1;
+
     // AS3: UserDefinedRoomEventsCtrl.as::UserDefinedRoomEventsCtrl()
     constructor(roomEvents: HabboUserDefinedRoomEvents)
     {
         this._roomEvents = roomEvents;
+        this._highlighter = new RoomObjectHighLighter(roomEvents);
         this._presetManager = new PresetManager(roomEvents);
         this._wiredStyles.add('volter', new VolterWiredStyle(roomEvents));
         this._wiredStyles.add('illumina', new IlluminaWiredStyle(roomEvents));
@@ -722,16 +735,60 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
     // ---- The methods below remain Bloc C stubs (furni picking, clipboard, network save, guilds). ----
 
-    // AS3: UserDefinedRoomEventsCtrl.as::stuffAdded()
-    stuffAdded(_id: number): void
+    // AS3: UserDefinedRoomEventsCtrl.as::get activeStuffsDictionary() / get activeStuffsArray()
+    // The set the furni picks toggle against: source set 1 by default; set 2 only in merged
+    // dual-picking mode with slot 2 active (advanced sources, not ported → always set 1).
+    private activeStuffs(): Set<number>
     {
-        // TODO(AS3): Bloc C — RoomObjectHighLighter.
+        if(!this._mergedSourceMode || this._activeSourceSlot === 1)
+        {
+            return this._stuffs1;
+        }
+
+        return this._stuffs2;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::stuffAdded()
+    stuffAdded(id: number): void
+    {
+        if(this.activeStuffs().has(id))
+        {
+            this._highlighter.show(id, this._mergedSourceMode, this._activeSourceSlot);
+        }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::stuffSelected()
-    stuffSelected(_id: number): void
+    stuffSelected(id: number): void
     {
-        // TODO(AS3): Bloc C — furni pick selection.
+        if(this._frame == null || this._currentDef == null)
+        {
+            return;
+        }
+
+        if(this._frame.isCopyingIntoMode)
+        {
+            return;
+        }
+
+        if(!this.isStuffSelectionMode() || (!this._currentDef.allowWallFurni && id < 0))
+        {
+            return;
+        }
+
+        const active = this.activeStuffs();
+
+        if(active.has(id))
+        {
+            active.delete(id);
+            this._highlighter.hide(id, this._mergedSourceMode, this._activeSourceSlot);
+        }
+        else if(active.size < this._currentDef.furniLimit)
+        {
+            active.add(id);
+            this._highlighter.show(id, this._mergedSourceMode, this._activeSourceSlot);
+        }
+
+        this.onStuffsChanged();
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::stuffRemoved()

@@ -370,10 +370,20 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._widgetFactory = value;
     }
 
-    // TODO(AS3): no concrete implementation exists yet, see IHabboUserDefinedRoomEvents.ts.
-    public get userDefinedRoomEvents(): IHabboUserDefinedRoomEvents | null 
+    // AS3: RoomDesktop.as::get/set userDefinedRoomEvents — injected by RoomUI, which DI-resolves the
+    // HabboUserDefinedRoomEvents component. Drives wired furni picking: InfoStandWidgetHandler routes
+    // furni clicks here via container.userDefinedRoomEvents.stuffSelected(id).
+    private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
+
+    public get userDefinedRoomEvents(): IHabboUserDefinedRoomEvents | null
     {
-        return null;
+        return this._userDefinedRoomEvents;
+    }
+
+    // AS3: RoomDesktop.as::set userDefinedRoomEvents()
+    public set userDefinedRoomEvents(value: IHabboUserDefinedRoomEvents | null)
+    {
+        this._userDefinedRoomEvents = value;
     }
 
     public set layout(layoutName: string) 
