@@ -3,20 +3,36 @@ import {VariableDefinition} from '@habbo/communication/messages/incoming/userdef
 
 import type {IWiredElement} from '../IWiredElement';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
+import {ContextVariable} from './ContextVariable';
+import {DailyTaskVariable} from './DailyTaskVariable';
+import {FurniVariable} from './FurniVariable';
+import {GlobalVariable} from './GlobalVariable';
+import {QuestChainVariable} from './QuestChainVariable';
+import {QuestVariable} from './QuestVariable';
+import {UserVariable} from './UserVariable';
 
 /**
- * VariableTypes — the wired variable registry (IWiredTypeHolder).
+ * VariableTypes — the wired variable registry (IWiredTypeHolder): instantiates every variable type and
+ * resolves one by its server code.
  *
- * PORT GAP: no variable types are ported yet (the whole variables/ category is pending — TODO(AS3)),
- * so `_types` is empty and getElementByCode returns null for every code. The registry still exists so
- * the controller can resolve the variable holder and no variable dialog opens until the types land.
+ * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
+ * ChooseVariable-blocked generic variable (_4356) and the Dropdown-blocked ReferenceVariable (and the
+ * ECHO_VARIABLE which has no dedicated type here). getElementByCode returns null for their codes.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/variables/VariableTypes.as
  */
 export class VariableTypes implements IWiredTypeHolder
 {
-    // AS3: VariableTypes.as::_types (empty until the variables category is ported)
-    private _types: IWiredElement[] = [];
+    // AS3: VariableTypes.as::_types
+    private _types: IWiredElement[] = [
+        new FurniVariable(),
+        new UserVariable(),
+        new GlobalVariable(),
+        new ContextVariable(),
+        new QuestVariable(),
+        new QuestChainVariable(),
+        new DailyTaskVariable()
+    ];
 
     // AS3: VariableTypes.as::getByCode()
     getByCode(code: number): IWiredElement | null
