@@ -5,6 +5,7 @@ import type {IWiredElement} from '../IWiredElement';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import {FurniByType} from './FurniByType';
 import {FurniFromSignal} from './FurniFromSignal';
+import {FurniWithVariable} from './FurniWithVariable';
 import {FurniOnFurni} from './FurniOnFurni';
 import {FurniWithAltitude} from './FurniWithAltitude';
 import {RemoteSelector} from './RemoteSelector';
@@ -17,15 +18,17 @@ import {UsersOnFurni} from './UsersOnFurni';
 import {UsersInGroup} from './UsersInGroup';
 import {UsersPerformingAction} from './UsersPerformingAction';
 import {UsersWithHanditem} from './UsersWithHanditem';
+import {UsersWithVariable} from './UsersWithVariable';
 
 /**
  * SelectorTypes — the wired selector registry (IWiredTypeHolder): instantiates every selector type and
  * resolves one by its server code.
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the area
- * selectors (InArea/UsersInArea/FurniInArea, need roomEngine.areaSelectionManager), varpicker-blocked
- * (_4352/_4353/_4378) and combinations-blocked InNeighborhood family (_4420/_4450). getElementByCode
- * returns null for their codes. (_4286 UsersPerformingAction, _4047 UsersWithHanditem, UsersInGroup are
+ * selectors (InArea/UsersInArea/FurniInArea, need roomEngine.areaSelectionManager) and the combinations-
+ * blocked InNeighborhood family (_4420/_4450). getElementByCode returns null for their codes. (The
+ * VariableSelector family _4352/_4378 UsersWithVariable/_4353 FurniWithVariable is now ported; _4286
+ * UsersPerformingAction, _4047 UsersWithHanditem, UsersInGroup are
  * now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/SelectorTypes.as
@@ -47,7 +50,9 @@ export class SelectorTypes implements IWiredTypeHolder
         new RemoteSelector(),
         new UsersPerformingAction(),
         new UsersWithHanditem(),
-        new UsersInGroup()
+        new UsersInGroup(),
+        new UsersWithVariable(),
+        new FurniWithVariable()
     ];
 
     // AS3: SelectorTypes.as::getByCode()
