@@ -3,20 +3,49 @@ import {AddonDefinition} from '@habbo/communication/messages/incoming/userdefine
 
 import type {IWiredElement} from '../IWiredElement';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
+import {AchievementEnabler} from './AchievementEnabler';
+import {ActionPicker} from './ActionPicker';
+import {AddonCode2} from './AddonCode2';
+import {AnimationTime} from './AnimationTime';
+import {CarryUsers} from './CarryUsers';
+import {ConditionEvaluation} from './ConditionEvaluation';
+import {ExecuteInOrder} from './ExecuteInOrder';
+import {ExecutionLimiter} from './ExecutionLimiter';
+import {FurniNamePlaceholder} from './FurniNamePlaceholder';
+import {MovePhysics} from './MovePhysics';
+import {NoMoveAnimation} from './NoMoveAnimation';
+import {UsernamePlaceholder} from './UsernamePlaceholder';
+import {VariableTextConverter} from './VariableTextConverter';
 
 /**
- * AddonTypes — the wired addon registry (IWiredTypeHolder).
+ * AddonTypes — the wired addon registry (IWiredTypeHolder): instantiates every addon type and resolves
+ * one by its server code.
  *
- * PORT GAP: no addon types are ported yet (the whole addons/ category is pending — TODO(AS3)), so
- * `_types` is empty and getElementByCode returns null for every code. The registry still exists so the
- * controller can resolve the addon holder and no addon dialog opens until the types land.
+ * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
+ * ValueOrVariable-blocked (SelectorFilter family, JumpStrength, _4253 family), ChooseVariable/varpicker
+ * (VariableCapturer, VariablePlaceholder), Dropdown (VariableTimeUtil) and combinations (Projectile,
+ * GlobalPlaceholder, VariableLevelUp). getElementByCode returns null for their codes.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/addons/AddonTypes.as
  */
 export class AddonTypes implements IWiredTypeHolder
 {
-    // AS3: AddonTypes.as::_types (empty until the addons category is ported)
-    private _types: IWiredElement[] = [];
+    // AS3: AddonTypes.as::_types
+    private _types: IWiredElement[] = [
+        new ConditionEvaluation(),
+        new ActionPicker(),
+        new AddonCode2(),
+        new ExecutionLimiter(),
+        new NoMoveAnimation(),
+        new MovePhysics(),
+        new CarryUsers(),
+        new AnimationTime(),
+        new UsernamePlaceholder(),
+        new ExecuteInOrder(),
+        new FurniNamePlaceholder(),
+        new VariableTextConverter(),
+        new AchievementEnabler()
+    ];
 
     // AS3: AddonTypes.as::getByCode()
     getByCode(code: number): IWiredElement | null
