@@ -28,6 +28,7 @@ import {TimeElapsedMore} from './TimeElapsedMore';
 import {TriggererIsOnFurni} from './TriggererIsOnFurni';
 import {TriggererMatches} from './TriggererMatches';
 import {UserCountIn} from './UserCountIn';
+import {VariableAge} from './VariableAge';
 import {UserDirection} from './UserDirection';
 
 /**
@@ -35,9 +36,10 @@ import {UserDirection} from './UserDirection';
  * and resolves one by its server code.
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * the timezone-base conditions (_4314 DateMatches/TimeMatches base), varpicker-blocked (_4119, _4236,
- * _4192 VariableAge), and _4271/ChestHasAmount. getElementByCode returns null for their codes. (_4326
- * PerformingAction, _4118 ActorHasHanditem, _4103 ActorIsGroupMember are now ported.)
+ * timezone-base conditions (_4314 DateMatches/TimeMatches base, need applications/Chrono), ChooseVariable-
+ * blocked (_4119, _4236), and _4271/ChestHasAmount (chests). getElementByCode returns null for their
+ * codes. (_4326 PerformingAction, _4118 ActorHasHanditem, _4103 ActorIsGroupMember, _4192 VariableAge
+ * are now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as
  */
@@ -70,7 +72,8 @@ export class ConditionTypes implements IWiredTypeHolder
         new DateRangeActive(),
         new PerformingAction(),
         new ActorHasHanditem(),
-        new ActorIsGroupMember()
+        new ActorIsGroupMember(),
+        new VariableAge()
     ];
 
     // AS3: ConditionTypes.as::getByCode()

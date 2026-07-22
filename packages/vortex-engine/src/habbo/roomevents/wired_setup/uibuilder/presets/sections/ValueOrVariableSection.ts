@@ -1,5 +1,5 @@
 import type {WiredVariable} from '@habbo/communication/messages/incoming/userdefinedroomevents/variables/WiredVariable';
-import type {SharedVariableList} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredcontext/SharedVariableList';
+import type {AbstractVariableList} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredcontext/AbstractVariableList';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import {WiredInputSourcePicker} from '../../../inputsources/WiredInputSourcePicker';
@@ -63,7 +63,7 @@ export class ValueOrVariableSection extends AbstractSectionPreset implements ISo
     }
 
     // AS3: ValueOrVariableSection.as::init()
-    init(allVariables: SharedVariableList, selectedId: string, target: number, option: number, value: number): void
+    init(allVariables: AbstractVariableList | null, selectedId: string, target: number, option: number, value: number): void
     {
         this._picker.init(allVariables, selectedId, target);
         this._target = target;

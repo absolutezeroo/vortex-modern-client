@@ -1,6 +1,6 @@
 import type {WiredVariable} from '@habbo/communication/messages/incoming/userdefinedroomevents/variables/WiredVariable';
 import {WiredVariableType} from '@habbo/communication/messages/incoming/userdefinedroomevents/variables/WiredVariableType';
-import type {SharedVariableList} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredcontext/SharedVariableList';
+import type {AbstractVariableList} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredcontext/AbstractVariableList';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
@@ -57,8 +57,9 @@ export class NewVariablePicker implements IDisposable
     // AS3: NewVariablePicker.as::_showFilteredVariables
     private _showFilteredVariables: boolean = true;
 
-    // AS3: NewVariablePicker.as::_allVariables
-    private _allVariables: SharedVariableList | null = null;
+    // AS3: NewVariablePicker.as::_allVariables (the common variable-list base; both SharedVariableList
+    // and AllVariablesInRoom are passed here, matching AS3's `_SafeCls_2575` = AbstractVariableList).
+    private _allVariables: AbstractVariableList | null = null;
 
     // AS3: NewVariablePicker.as::_filteredVariables
     private _filteredVariables: WiredVariable[] = [];
@@ -121,7 +122,7 @@ export class NewVariablePicker implements IDisposable
     }
 
     // AS3: NewVariablePicker.as::init()
-    init(allVariables: SharedVariableList, selectedId: string, target: number): void
+    init(allVariables: AbstractVariableList | null, selectedId: string, target: number): void
     {
         this._allVariables = allVariables;
         this._variableTarget = target;
