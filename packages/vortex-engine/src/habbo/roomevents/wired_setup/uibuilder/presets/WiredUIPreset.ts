@@ -7,11 +7,10 @@ import type {IWiredUIPreset} from '../IWiredUIPreset';
 import type {PresetManager} from '../PresetManager';
 import type {WiredStyle} from '../styles/WiredStyle';
 import type {SpacerPreset} from './SpacerPreset';
-import {AlignRightWrapperPreset} from './AlignRightWrapperPreset';
-import {AlignCenterWrapperPreset} from './AlignCenterWrapperPreset';
-import {StaticHeightPreset} from './StaticHeightPreset';
-import {FloatVerticallyPreset} from './FloatVerticallyPreset';
-import {WindowWrapperPreset} from './WindowWrapperPreset';
+// The wrapper classes are NOT imported here: they `extends WiredUIPreset`, so a static import would
+// form an evaluation-order cycle (runtime TDZ). They are built through the wrapperCtors registry
+// instead (populated by registerWrappers, called from the PresetManager constructor).
+import {wrapperCtors} from './wrapperCtors';
 
 /**
  * WiredUIPreset — the base of every wired UI preset. It carries the shared plumbing: the root window
@@ -110,31 +109,31 @@ export class WiredUIPreset implements IWiredUIPreset
     // AS3: WiredUIPreset.as::alignRight()
     alignRight(): WiredUIPreset
     {
-        return new AlignRightWrapperPreset(this._roomEvents, this._presetManager, this._wiredStyle, this);
+        return new wrapperCtors.AlignRight!(this._roomEvents, this._presetManager, this._wiredStyle, this);
     }
 
     // AS3: WiredUIPreset.as::alignCenter()
     alignCenter(): WiredUIPreset
     {
-        return new AlignCenterWrapperPreset(this._roomEvents, this._presetManager, this._wiredStyle, this);
+        return new wrapperCtors.AlignCenter!(this._roomEvents, this._presetManager, this._wiredStyle, this);
     }
 
     // AS3: WiredUIPreset.as::staticHeight()
     staticHeight(height: number): WiredUIPreset
     {
-        return new StaticHeightPreset(this._roomEvents, this._presetManager, this._wiredStyle, this, height);
+        return new wrapperCtors.StaticHeight!(this._roomEvents, this._presetManager, this._wiredStyle, this, height);
     }
 
     // AS3: WiredUIPreset.as::floatVertically()
     floatVertically(): WiredUIPreset
     {
-        return new FloatVerticallyPreset(this._roomEvents, this._presetManager, this._wiredStyle, this);
+        return new wrapperCtors.FloatVertically!(this._roomEvents, this._presetManager, this._wiredStyle, this);
     }
 
     // AS3: WiredUIPreset.as::wrapWindow()
     wrapWindow(window: IWindow, staticWidth: boolean = false): WiredUIPreset
     {
-        return new WindowWrapperPreset(this._roomEvents, this._presetManager, this._wiredStyle, window, staticWidth);
+        return new wrapperCtors.WindowWrapper!(this._roomEvents, this._presetManager, this._wiredStyle, window, staticWidth);
     }
 
     // AS3: WiredUIPreset.as::noDisable()

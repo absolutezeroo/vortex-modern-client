@@ -7,6 +7,7 @@ import type {WiredStyle} from './styles/WiredStyle';
 import {TextParam} from './params/TextParam';
 import type {HtmlTextParam} from './params/HtmlTextParam';
 import type {WiredUIPreset} from './presets/WiredUIPreset';
+import {ensureWrappersRegistered} from './presets/registerWrappers';
 import {SpacerPreset} from './presets/SpacerPreset';
 import {SplitterPreset} from './presets/SplitterPreset';
 import {SpacingPreset} from './presets/SpacingPreset';
@@ -100,6 +101,9 @@ export class PresetManager
     // AS3: PresetManager.as::PresetManager()
     constructor(roomEvents: HabboUserDefinedRoomEvents)
     {
+        // Populate the WiredUIPreset wrapper-constructor registry before any preset is built (breaks
+        // the base<->wrapper import cycle; see presets/wrapperCtors).
+        ensureWrappersRegistered();
         this._roomEvents = roomEvents;
     }
 
