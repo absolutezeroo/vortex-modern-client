@@ -12,8 +12,12 @@ import {ConditionEvaluation} from './ConditionEvaluation';
 import {ExecuteInOrder} from './ExecuteInOrder';
 import {ExecutionLimiter} from './ExecutionLimiter';
 import {FurniNamePlaceholder} from './FurniNamePlaceholder';
+import {FurniSelectorFilter} from './FurniSelectorFilter';
+import {FurniVariableFilter} from './FurniVariableFilter';
 import {GlobalPlaceholderAddon} from './GlobalPlaceholderAddon';
 import {JumpStrength} from './JumpStrength';
+import {UserSelectorFilter} from './UserSelectorFilter';
+import {UserVariableFilter} from './UserVariableFilter';
 import {MovePhysics} from './MovePhysics';
 import {NoMoveAnimation} from './NoMoveAnimation';
 import {UsernamePlaceholder} from './UsernamePlaceholder';
@@ -49,7 +53,11 @@ export class AddonTypes implements IWiredTypeHolder
         new VariableTextConverter(),
         new AchievementEnabler(),
         new GlobalPlaceholderAddon(),
-        new JumpStrength()
+        new JumpStrength(),
+        new FurniSelectorFilter(),
+        new UserSelectorFilter(),
+        new FurniVariableFilter(),
+        new UserVariableFilter()
     ];
 
     // AS3: AddonTypes.as::getByCode()
