@@ -16,18 +16,24 @@ export class VolterWiredStyle extends WiredStyle
     public static readonly NAME: string = 'volter';
 
     // AS3: VolterWiredStyle.as::_styleTemplate
-    private _styleTemplate: IWindowContainer;
+    private _styleTemplate: IWindowContainer | null = null;
 
     // AS3: VolterWiredStyle.as::VolterWiredStyle()
     constructor(roomEvents: HabboUserDefinedRoomEvents)
     {
         super(roomEvents);
-        this._styleTemplate = roomEvents.getXmlWindow('wired_style_volter') as unknown as IWindowContainer;
     }
 
     // AS3: VolterWiredStyle.as::get styleTemplate()
+    // Lazy load (see IlluminaWiredStyle): window-layouts register after this component inits, so an
+    // eager ctor load returns null; first access is at dialog-open, when they exist.
     protected override get styleTemplate(): IWindowContainer
     {
+        if(this._styleTemplate === null)
+        {
+            this._styleTemplate = this._roomEvents.getXmlWindow('wired_style_volter') as unknown as IWindowContainer;
+        }
+
         return this._styleTemplate;
     }
 

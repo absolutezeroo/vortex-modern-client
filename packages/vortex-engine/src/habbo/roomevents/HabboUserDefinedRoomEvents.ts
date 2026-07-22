@@ -2,7 +2,6 @@ import {Component, ComponentDependency} from '@core/runtime';
 import type {IContext} from '@core/runtime';
 import type {IMessageComposer} from '@core';
 import type {IWindow} from '@core/window/IWindow';
-import type {XmlAsset} from '@core/assets/XmlAsset';
 import {Logger} from '@core/utils/Logger';
 
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
@@ -346,16 +345,13 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     {
         try
         {
-            const asset = this.assets?.getAssetByName(name + '_xml');
-            const xmlAsset = asset as unknown as XmlAsset | null;
-            const content = xmlAsset?.content ?? null;
-
-            if(content == null)
-            {
-                return null;
-            }
-
-            return this.windowManager?.buildFromXML(content) ?? null;
+            // AS3: assets.getAssetByName(name + "_xml") → _windowManager.buildFromXML(content).
+            // In this port, window layouts are not held in a per-component asset library; every
+            // window-layouts/*.xml is registered once in the window manager's widget-layout registry
+            // (App.ts → registerWidgetLayout, keyed by the *Com.as field name, i.e. name + "_xml").
+            // buildWidgetLayout(name + "_xml") is the exact equivalent: fetch that stored XML and
+            // buildFromXML() a fresh window — the same path ClubCenterView/CatalogPage/etc. use.
+            return this.windowManager?.buildWidgetLayout(name + '_xml') ?? null;
         }
         catch (_e)
         {

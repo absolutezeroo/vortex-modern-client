@@ -17,10 +17,14 @@ import {HeaderPreset} from './HeaderPreset';
 export class IlluminaHeaderPreset extends HeaderPreset
 {
     // AS3: IlluminaHeaderPreset.as::_name1Preset
-    private _name1!: TextPreset;
+    // `declare` (no runtime field init): assigned in createTopHeaderElement(), which the base
+    // HeaderPreset constructor calls during super(). Under ES2022 useDefineForClassFields a plain
+    // field declaration would re-run after super() and clobber that value back to undefined
+    // (see ActionDefinition/ConditionDefinition for the same port pattern).
+    private declare _name1: TextPreset;
 
     // AS3: IlluminaHeaderPreset.as::_name2Preset
-    private _name2!: TextPreset;
+    private declare _name2: TextPreset;
 
     // AS3: IlluminaHeaderPreset.as::IlluminaHeaderPreset()
     constructor(roomEvents: HabboUserDefinedRoomEvents, presetManager: PresetManager, wiredStyle: WiredStyle, name: string, typeHolder: IWiredTypeHolder, buttonMode: number, onApplySnapshot: () => void, onOpenMenu: () => void, onViewLogs: () => void)

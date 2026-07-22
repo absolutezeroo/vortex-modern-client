@@ -17,18 +17,26 @@ export class IlluminaWiredStyle extends WiredStyle
     public static readonly NAME: string = 'illumina';
 
     // AS3: IlluminaWiredStyle.as::_styleTemplate
-    private _styleTemplate: IWindowContainer;
+    private _styleTemplate: IWindowContainer | null = null;
 
     // AS3: IlluminaWiredStyle.as::IlluminaWiredStyle()
     constructor(roomEvents: HabboUserDefinedRoomEvents)
     {
         super(roomEvents);
-        this._styleTemplate = roomEvents.getXmlWindow('wired_style_illumina') as unknown as IWindowContainer;
     }
 
     // AS3: IlluminaWiredStyle.as::get styleTemplate()
+    // AS3 loads this eagerly in the constructor (Flash loads the component's asset library before
+    // initComponent). In this port the window-layouts are registered later (App.ts, after the
+    // roomevents component inits), so an eager load returns null and freezes the template. Loading
+    // lazily on first access defers it to first use (dialog open), when layouts are registered.
     protected override get styleTemplate(): IWindowContainer
     {
+        if(this._styleTemplate === null)
+        {
+            this._styleTemplate = this._roomEvents.getXmlWindow('wired_style_illumina') as unknown as IWindowContainer;
+        }
+
         return this._styleTemplate;
     }
 
