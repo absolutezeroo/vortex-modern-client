@@ -12,7 +12,9 @@ export class RadioButtonParam
     private _id: number;
 
     // AS3: RadioButtonParam.as::_text
-    private _text: string;
+    // Nullable in AS3: icon-only radio options are constructed with a null label (e.g. the MoveFurni /
+    // MoveUser direction grids), and RadioButtonPreset guards with `param.text != null`.
+    private _text: string | null;
 
     // AS3: RadioButtonParam.as::_iconAssetName
     private _iconAssetName: string | null = null;
@@ -27,7 +29,7 @@ export class RadioButtonParam
     private _newLine: boolean;
 
     // AS3: RadioButtonParam.as::RadioButtonParam()
-    constructor(id: number, text: string, extra1: WiredUIPreset | null = null, extra2: WiredUIPreset | null = null, newLine: boolean = false)
+    constructor(id: number, text: string | null, extra1: WiredUIPreset | null = null, extra2: WiredUIPreset | null = null, newLine: boolean = false)
     {
         this._id = id;
         this._text = text;
@@ -43,7 +45,7 @@ export class RadioButtonParam
     }
 
     // AS3: RadioButtonParam.as::get text()
-    get text(): string
+    get text(): string | null
     {
         return this._text;
     }
