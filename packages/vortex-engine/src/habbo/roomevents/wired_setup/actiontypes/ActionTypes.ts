@@ -15,8 +15,11 @@ import {BotTalkDirectToAvatar} from './BotTalkDirectToAvatar';
 import {BotTeleport} from './BotTeleport';
 import {CallAnotherStack} from './CallAnotherStack';
 import {Chase} from './Chase';
+import {Chat} from './Chat';
+import {ClickSettings} from './ClickSettings';
 import {ControlClock} from './ControlClock';
 import {Flee} from './Flee';
+import {FreezeUser} from './FreezeUser';
 import {GiveEffect} from './GiveEffect';
 import {GiveReward} from './GiveReward';
 import {GiveScore} from './GiveScore';
@@ -44,6 +47,7 @@ import {TeleportToRoom} from './TeleportToRoom';
 import {ToggleFurniState} from './ToggleFurniState';
 import {ToggleToRandomState} from './ToggleToRandomState';
 import {UnfreezeUser} from './UnfreezeUser';
+import {WriteToLog} from './WriteToLog';
 
 /**
  * ActionTypes — the wired action registry (IWiredTypeHolder): instantiates every action type and
@@ -98,7 +102,11 @@ export class ActionTypes implements IWiredTypeHolder
         new GiveEffect(),
         new OverrideHeight(),
         new RemoveFurni(),
-        new UnfreezeUser()
+        new UnfreezeUser(),
+        new Chat(),
+        new FreezeUser(),
+        new ClickSettings(),
+        new WriteToLog()
     ];
 
     // AS3: ActionTypes.as::getByCode()
