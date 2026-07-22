@@ -18,6 +18,7 @@ import {GlobalPlaceholderAddon} from './GlobalPlaceholderAddon';
 import {JumpStrength} from './JumpStrength';
 import {UserSelectorFilter} from './UserSelectorFilter';
 import {UserVariableFilter} from './UserVariableFilter';
+import {VariableCapturer} from './VariableCapturer';
 import {MovePhysics} from './MovePhysics';
 import {NoMoveAnimation} from './NoMoveAnimation';
 import {UsernamePlaceholder} from './UsernamePlaceholder';
@@ -57,7 +58,8 @@ export class AddonTypes implements IWiredTypeHolder
         new FurniSelectorFilter(),
         new UserSelectorFilter(),
         new FurniVariableFilter(),
-        new UserVariableFilter()
+        new UserVariableFilter(),
+        new VariableCapturer()
     ];
 
     // AS3: AddonTypes.as::getByCode()

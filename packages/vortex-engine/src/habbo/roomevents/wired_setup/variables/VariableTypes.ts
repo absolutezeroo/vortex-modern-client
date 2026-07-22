@@ -5,6 +5,7 @@ import type {IWiredElement} from '../IWiredElement';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import {ContextVariable} from './ContextVariable';
 import {DailyTaskVariable} from './DailyTaskVariable';
+import {EchoVariable} from './EchoVariable';
 import {ReferenceVariable} from './ReferenceVariable';
 import {FurniVariable} from './FurniVariable';
 import {GlobalVariable} from './GlobalVariable';
@@ -33,7 +34,8 @@ export class VariableTypes implements IWiredTypeHolder
         new QuestVariable(),
         new QuestChainVariable(),
         new DailyTaskVariable(),
-        new ReferenceVariable()
+        new ReferenceVariable(),
+        new EchoVariable()
     ];
 
     // AS3: VariableTypes.as::getByCode()
