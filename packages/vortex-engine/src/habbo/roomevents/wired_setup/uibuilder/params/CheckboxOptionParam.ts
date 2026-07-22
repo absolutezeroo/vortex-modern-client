@@ -9,7 +9,9 @@ import type {WiredUIPreset} from '../presets/WiredUIPreset';
 export class CheckboxOptionParam
 {
     // AS3: CheckboxOptionParam.as::_text
-    private _text: string;
+    // Nullable in AS3: icon-only checkbox options are constructed with a null label (e.g. the
+    // UserDirection 8-direction grid), and CheckboxOptionPreset guards with `param.text != null`.
+    private _text: string | null;
 
     // AS3: CheckboxOptionParam.as::id (backing field)
     private _id: number = -1;
@@ -24,7 +26,7 @@ export class CheckboxOptionParam
     private _extra2: WiredUIPreset | null;
 
     // AS3: CheckboxOptionParam.as::CheckboxOptionParam()
-    constructor(text: string, id: number = -1, extra1: WiredUIPreset | null = null, extra2: WiredUIPreset | null = null)
+    constructor(text: string | null, id: number = -1, extra1: WiredUIPreset | null = null, extra2: WiredUIPreset | null = null)
     {
         this._text = text;
         this._id = id;
@@ -33,7 +35,7 @@ export class CheckboxOptionParam
     }
 
     // AS3: CheckboxOptionParam.as::get text()
-    get text(): string
+    get text(): string | null
     {
         return this._text;
     }
