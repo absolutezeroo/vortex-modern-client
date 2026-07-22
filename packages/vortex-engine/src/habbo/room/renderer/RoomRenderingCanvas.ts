@@ -11,7 +11,7 @@
  *
  * @see sources/win63_version/room/renderer/class_3523.as
  */
-import {Container, Graphics, Text, type Renderer, Texture} from 'pixi.js';
+import {Container, type Filter, Graphics, Text, type Renderer, Texture} from 'pixi.js';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomRenderingCanvas as IRoomRenderingCanvasInterface} from '@room/renderer/IRoomRenderingCanvas';
@@ -1277,6 +1277,19 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
             // Blend mode
             extSprite.blendMode = sprite.blendMode as any;
+
+            // Selection-highlight filters — mirror the room object sprite's filters (set by
+            // FurnitureVisualization.filters, e.g. RoomObjectHighLighter's wired-pick desaturation)
+            // onto the PixiJS display object. Runs only on the change path (needsUpdate gate), so no
+            // per-frame filter churn.
+            if(sprite.filters !== null && sprite.filters.length > 0)
+            {
+                extSprite.filters = sprite.filters as Filter[];
+            }
+            else if(extSprite.filters != null)
+            {
+                extSprite.filters = [];
+            }
         }
 
         // Always update position

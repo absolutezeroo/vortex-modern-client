@@ -226,10 +226,23 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         log.debug('Opened wired config: ' + holder.getKey() + ' code ' + def.code);
 
         // AS3: seed the picked-furni sets from the def's existing wired stuffs (drives the
-        // "${wiredfurni.pickfurnis.caption}" count). TODO(AS3): RoomObjectHighLighter show/highlight
-        // of these in-room is the Bloc C stuff-picking UI (stubbed) — the sets themselves are faithful.
+        // "${wiredfurni.pickfurnis.caption}" count) and grey-highlight them in-room.
         this._stuffs1 = new Set<number>(def.stuffIds);
         this._stuffs2 = new Set<number>(def.stuffIds2);
+
+        // AS3: highlightActiveWired(def.id) + showAll(_stuffs1/_stuffs2). Merged dual-picking (set 2)
+        // is not ported, so single-set slot 0.
+        this._highlighter.highlightActiveWired(def.id);
+
+        if(this._mergedSourceMode)
+        {
+            this._highlighter.showAll(this._stuffs1, true, 1);
+            this._highlighter.showAll(this._stuffs2, true, 2);
+        }
+        else
+        {
+            this._highlighter.showAll(this._stuffs1, false, 0);
+        }
 
         this._currentElement.onEditStart(def);
         this.onEditStartUpdateCommonUI();
@@ -558,10 +571,16 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     {
         if(this._currentDef != null && this._currentElement != null)
         {
+            this._highlighter.unhighlightActiveWired(this._currentDef.id);
             this._currentElement.onEditEnd();
             this._currentDef = null;
             this._currentElement = null;
         }
+
+        // AS3: hideFurniHighlights() then clear the sets — un-greys every picked furni on close.
+        this.hideFurniHighlights();
+        this._stuffs1 = new Set<number>();
+        this._stuffs2 = new Set<number>();
 
         if(this._frame != null)
         {
@@ -746,6 +765,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         }
 
         return this._stuffs2;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::hideFurniHighlights()
+    private hideFurniHighlights(): void
+    {
+        this._highlighter.hideAll(this._stuffs1, true, 1);
+        this._highlighter.hideAll(this._stuffs2, true, 2);
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::stuffAdded()
