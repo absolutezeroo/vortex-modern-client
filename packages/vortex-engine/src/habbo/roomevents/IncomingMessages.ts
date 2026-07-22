@@ -16,6 +16,7 @@ import {WiredValidationErrorEvent} from '@habbo/communication/messages/incoming/
 import {WiredSaveSuccessEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/WiredSaveSuccessEvent';
 import {WiredRewardResultMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/WiredRewardResultMessageEvent';
 import {OpenEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/OpenEvent';
+import {WiredPermissionsEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/WiredPermissionsEvent';
 import {GuildMembershipsMessageEvent} from '@habbo/communication/messages/incoming/users/GuildMembershipsMessageEvent';
 import {ObjectRemoveMessageEvent} from '@habbo/communication/messages/incoming/room/engine/ObjectRemoveMessageEvent';
 import {UserObjectMessageEvent} from '@habbo/communication/messages/incoming/handshake/UserObjectMessageEvent';
@@ -27,6 +28,7 @@ import type {WiredValidationErrorParser} from '@habbo/communication/messages/par
 import type {WiredRewardResultMessageEventParser} from '@habbo/communication/messages/parser/userdefinedroomevents/WiredRewardResultMessageEventParser';
 import type {UserObjectMessageParser} from '@habbo/communication/messages/parser/handshake/UserObjectMessageParser';
 import type {ObjectRemoveMessageParser} from '@habbo/communication/messages/parser/room/engine/ObjectRemoveMessageParser';
+import type {WiredPermissionsEventParser} from '@habbo/communication/messages/parser/userdefinedroomevents/WiredPermissionsEventParser';
 
 const log = Logger.getLogger('IncomingMessages');
 
@@ -58,6 +60,7 @@ export class IncomingMessages implements IDisposable
         this.addMessageEvent(new ObjectRemoveMessageEvent((event: IMessageEvent) => this.onObjectRemove(event)));
         this.addMessageEvent(new WiredFurniAddonEvent((event: IMessageEvent) => this.onAddon(event)));
         this.addMessageEvent(new OpenEvent((event: IMessageEvent) => this.onOpen(event)));
+        this.addMessageEvent(new WiredPermissionsEvent((event: IMessageEvent) => this.onWiredPermissions(event)));
         this.addMessageEvent(new UserObjectMessageEvent((event: IMessageEvent) => this.onUserObject(event)));
         this.addMessageEvent(new CloseConnectionMessageEvent((event: IMessageEvent) => this.onRoomExit(event)));
         this.addMessageEvent(new WiredFurniActionEvent((event: IMessageEvent) => this.onAction(event)));
@@ -78,6 +81,13 @@ export class IncomingMessages implements IDisposable
     {
         const parser = event.parser as OpenMessageParser;
         this._roomEvents?.send(new OpenMessageComposer(parser.stuffId));
+    }
+
+    // AS3: WiredMenuController.as::onWiredPermissions() (registered via this wired hub in the port)
+    private onWiredPermissions(event: IMessageEvent): void
+    {
+        const parser = event.parser as WiredPermissionsEventParser;
+        this._roomEvents?.wiredMenu.applyPermissions(parser.canModify, parser.canRead);
     }
 
     // AS3: _SafeCls_1951.as::onTrigger()

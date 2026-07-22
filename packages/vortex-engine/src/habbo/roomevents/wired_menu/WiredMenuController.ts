@@ -11,8 +11,9 @@ import type {HabboUserDefinedRoomEvents} from '../HabboUserDefinedRoomEvents';
  * controller is 657 lines at
  * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_menu/WiredMenuController.as
  * It is stubbed here because the HabboUserDefinedRoomEvents component and WiredEnvironment read its
- * read/write permission surface. Permission getters return false (no wired rights until the real
- * WiredPermissionsEvent flow is ported); every method is a no-op. Do not treat as ported.
+ * read/write permission surface. The permission flow IS ported (isEnabled / hasRead/WritePermission /
+ * isRoomOwnerOrStaff / applyPermissions from WiredPermissionsEvent); the rest (menu tabs, monitor,
+ * variables management, chests, play-test UI) remains a no-op stub. Do not treat those as ported.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_menu/WiredMenuController.as
  */
@@ -20,6 +21,12 @@ export class WiredMenuController extends Component
 {
     // AS3: WiredMenuController.as::_roomEvents (parent wired component)
     private _roomEvents: HabboUserDefinedRoomEvents;
+
+    // AS3: WiredMenuController.as::_canModify (from WiredPermissionsEvent)
+    private _canModify: boolean = false;
+
+    // AS3: WiredMenuController.as::_canRead (from WiredPermissionsEvent)
+    private _canRead: boolean = false;
 
     // AS3: WiredMenuController.as::wiredWhisperDisabled (backing field)
     private _wiredWhisperDisabled: boolean = false;
@@ -34,25 +41,57 @@ export class WiredMenuController extends Component
         this._roomEvents = roomEvents;
     }
 
+    // AS3: WiredMenuController.as::onWiredPermissions()
+    // Applies the WiredPermissionsEvent payload. Registered via the wired IncomingMessages hub (the
+    // port centralises wired incoming handlers there; AS3 registers it in this controller's ctor).
+    // TODO(AS3): AS3 also notifies wiredChest.onPermissionsChanged() (wired_menu bloc, not ported).
+    applyPermissions(canModify: boolean, canRead: boolean): void
+    {
+        this._canModify = canModify;
+        this._canRead = canRead;
+    }
+
     // AS3: WiredMenuController.as::get isEnabled()
     get isEnabled(): boolean
     {
-        // TODO(AS3): wired_menu bloc.
-        return false;
+        return this.getBoolean('wired.menu.enabled');
+    }
+
+    // AS3: WiredMenuController.as::isRoomOwnerOrStaff()
+    isRoomOwnerOrStaff(): boolean
+    {
+        const session = this._roomEvents.roomSession;
+
+        if(session == null)
+        {
+            return false;
+        }
+
+        const hasStaff = this._roomEvents.sessionDataManager?.hasSecurity(4) ?? false;
+
+        return hasStaff || session.isRoomOwner;
     }
 
     // AS3: WiredMenuController.as::get hasReadPermission()
     get hasReadPermission(): boolean
     {
-        // TODO(AS3): wired_menu bloc — driven by WiredPermissionsEvent (canRead).
-        return false;
+        if(this.isRoomOwnerOrStaff())
+        {
+            return true;
+        }
+
+        return this._canRead;
     }
 
     // AS3: WiredMenuController.as::get hasWritePermission()
     get hasWritePermission(): boolean
     {
-        // TODO(AS3): wired_menu bloc — driven by WiredPermissionsEvent (canModify).
-        return false;
+        if(this.isRoomOwnerOrStaff())
+        {
+            return true;
+        }
+
+        return this._canModify;
     }
 
     // AS3: WiredMenuController.as::get wiredMenuButton()
