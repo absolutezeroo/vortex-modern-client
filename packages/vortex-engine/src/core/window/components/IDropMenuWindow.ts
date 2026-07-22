@@ -15,4 +15,8 @@ export interface IDropMenuWindow extends IInteractiveWindow
     populateWithStrings(items: string[]): void;
 
     enumerateSelection(): string[];
+
+    // AS3: the interface (_SafeCls_2308) declares openMenu(); ExpandableDropdown drives it through
+    // this type. DropMenuController already implements it (openExpandedMenuView delegate).
+    openMenu(): void;
 }

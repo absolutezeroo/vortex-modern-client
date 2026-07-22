@@ -8,7 +8,7 @@ import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {IIconButtonWindow} from '@core/window/components/IIconButtonWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
-import type {IDropListWindow} from '@core/window/components/IDropListWindow';
+import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
@@ -25,7 +25,9 @@ import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefine
  * `_SafeCls_1828`→IWindowContainer, `_SafeCls_2013`→IInteractiveWindow (button), `_SafeCls_2110`→
  * IFrameWindow, `_SafeCls_2117`→IHTMLTextWindow, `_SafeCls_2168`→IIconButtonWindow, `_SafeCls_2254`→
  * IWindowContainer (border), `_SafeCls_1857`→ISelectableWindow (checkbox), `_SafeCls_2308`→
- * IDropListWindow.
+ * IDropMenuWindow (the string-populated drop MENU — not IDropListWindow, the IWindow-valued drop
+ * LIST used by the catalog GuildSelector; both extend DropBaseController but only the menu carries
+ * populateWithStrings/openMenu, which the wired ExpandableDropdown drives).
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/styles/WiredStyle.as
  */
@@ -329,9 +331,9 @@ export class WiredStyle
     }
 
     // AS3: WiredStyle.as::createDropdown()
-    createDropdown(): IDropListWindow
+    createDropdown(): IDropMenuWindow
     {
-        return this.recreateElement('dropdown_view') as unknown as IDropListWindow;
+        return this.recreateElement('dropdown_view') as unknown as IDropMenuWindow;
     }
 
     // AS3: WiredStyle.as::createSlider()

@@ -62,6 +62,8 @@ import {NamedNumberInputPreset} from './presets/combinations/NamedNumberInputPre
 import {NamedTextInputPreset} from './presets/combinations/NamedTextInputPreset';
 import {RewardRowPreset} from './presets/combinations/RewardRowPreset';
 import {RewardListPreset} from './presets/combinations/RewardListPreset';
+import {DropdownPreset} from './presets/DropdownPreset';
+import {NamedDropdownPreset} from './presets/combinations/NamedDropdownPreset';
 import {VariableNameSection} from './presets/sections/VariableNameSection';
 import {PlaceholderNameSection} from './presets/sections/PlaceholderNameSection';
 import {PlaceholderTypeSection} from './presets/sections/PlaceholderTypeSection';
@@ -74,6 +76,7 @@ import type {RadioButtonParam} from './params/RadioButtonParam';
 import type {TextInputParam} from './params/TextInputParam';
 import type {NumberInputParam} from './params/NumberInputParam';
 import type {TextAreaParam} from './params/TextAreaParam';
+import type {DropdownParam} from './params/DropdownParam';
 
 /**
  * PresetManager — the factory the wired UI builder uses to instantiate every preset (buttons, text,
@@ -209,6 +212,18 @@ export class PresetManager
     createRewardRow(): RewardRowPreset
     {
         return new RewardRowPreset(this._roomEvents, this, this.wiredStyle);
+    }
+
+    // AS3: PresetManager.as::createDropdown()
+    createDropdown(param: DropdownParam): DropdownPreset
+    {
+        return new DropdownPreset(this._roomEvents, this, this.wiredStyle, param);
+    }
+
+    // AS3: PresetManager.as::createNamedDropdown()
+    createNamedDropdown(param: DropdownParam, caption: string, bold: boolean = false): NamedDropdownPreset
+    {
+        return new NamedDropdownPreset(this._roomEvents, this, this.wiredStyle, param, caption, bold);
     }
 
     // AS3: PresetManager.as::createPaddedContainerPreset()
