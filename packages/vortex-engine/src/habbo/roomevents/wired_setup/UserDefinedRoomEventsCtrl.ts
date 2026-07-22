@@ -1075,9 +1075,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         return model.getNumber('furniture_owner_id') === (this._roomEvents.sessionDataManager?.userId ?? -1);
     }
 
-    // AS3: UserDefinedRoomEventsCtrl.as::onGuildMemberships()
-    onGuildMemberships(_event: unknown): void
+    // AS3: UserDefinedRoomEventsCtrl.as::onGuildMemberships() — forward the guild-memberships event to
+    // the element currently being edited (the group condition/selector refills its dropdown from it).
+    onGuildMemberships(event: unknown): void
     {
-        // TODO(AS3): Bloc C.
+        if(this._currentElement !== null)
+        {
+            this._currentElement.onGuildMemberships(event);
+        }
     }
 }

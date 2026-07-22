@@ -16,6 +16,7 @@ import {FurnisHaveNoAvatars} from './FurnisHaveNoAvatars';
 import {HasStackedFurnis} from './HasStackedFurnis';
 import {InputSourceQuantity} from './InputSourceQuantity';
 import {ActorHasHanditem} from './ActorHasHanditem';
+import {ActorIsGroupMember} from './ActorIsGroupMember';
 import {LevelMatches} from './LevelMatches';
 import {PerformingAction} from './PerformingAction';
 import {StatesMatch} from './StatesMatch';
@@ -34,10 +35,9 @@ import {UserDirection} from './UserDirection';
  * and resolves one by its server code.
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * Dropdown-blocked (_4103 ActorIsGroupMember), the timezone-base conditions (_4314 DateMatches/
- * TimeMatches base), varpicker-blocked (_4119, _4236, _4192 VariableAge), and _4271/ChestHasAmount.
- * getElementByCode returns null for their codes. (_4326 PerformingAction, _4118 ActorHasHanditem are
- * now ported.)
+ * the timezone-base conditions (_4314 DateMatches/TimeMatches base), varpicker-blocked (_4119, _4236,
+ * _4192 VariableAge), and _4271/ChestHasAmount. getElementByCode returns null for their codes. (_4326
+ * PerformingAction, _4118 ActorHasHanditem, _4103 ActorIsGroupMember are now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as
  */
@@ -69,7 +69,8 @@ export class ConditionTypes implements IWiredTypeHolder
         new LevelMatches(),
         new DateRangeActive(),
         new PerformingAction(),
-        new ActorHasHanditem()
+        new ActorHasHanditem(),
+        new ActorIsGroupMember()
     ];
 
     // AS3: ConditionTypes.as::getByCode()
