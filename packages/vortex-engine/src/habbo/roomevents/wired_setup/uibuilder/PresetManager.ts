@@ -66,6 +66,8 @@ import {DropdownPreset} from './presets/DropdownPreset';
 import {NamedDropdownPreset} from './presets/combinations/NamedDropdownPreset';
 import {VariablePickerPreset} from './presets/VariablePickerPreset';
 import {VariableNameSection} from './presets/sections/VariableNameSection';
+import {ChooseVariableSection} from './presets/sections/ChooseVariableSection';
+import {ValueOrVariableSection} from './presets/sections/ValueOrVariableSection';
 import {PlaceholderNameSection} from './presets/sections/PlaceholderNameSection';
 import {PlaceholderTypeSection} from './presets/sections/PlaceholderTypeSection';
 import {VariablePlaceholderModeSection} from './presets/sections/VariablePlaceholderModeSection';
@@ -232,6 +234,18 @@ export class PresetManager
     createVariablePicker(variableFilter: ((variable: WiredVariable) => boolean) | null = null, onSelect: ((variable: WiredVariable | null) => void) | null = null): VariablePickerPreset
     {
         return new VariablePickerPreset(this._roomEvents, this, this.wiredStyle, variableFilter, onSelect);
+    }
+
+    // AS3: PresetManager.as::createValueOrVariableSection()
+    createValueOrVariableSection(mergedType: number, sourceTypes: number[], title: string, min: number, max: number): ValueOrVariableSection
+    {
+        return new ValueOrVariableSection(this._roomEvents, this, this.wiredStyle, mergedType, sourceTypes, title, min, max);
+    }
+
+    // AS3: PresetManager.as::createChooseVariableSection()
+    createChooseVariableSection(mergedType: number = -1, sourceTypes: number[] | null = null, filter: ((variable: WiredVariable) => boolean) | null = null, onSelect: ((variable: WiredVariable | null) => void) | null = null, title: string | null = null): ChooseVariableSection
+    {
+        return new ChooseVariableSection(this._roomEvents, this, this.wiredStyle, mergedType, sourceTypes, filter, onSelect, title);
     }
 
     // AS3: PresetManager.as::createPaddedContainerPreset()
