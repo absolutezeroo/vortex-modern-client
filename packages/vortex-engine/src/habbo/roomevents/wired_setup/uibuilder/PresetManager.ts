@@ -61,6 +61,10 @@ import {NamedNumberInputPreset} from './presets/combinations/NamedNumberInputPre
 import {NamedTextInputPreset} from './presets/combinations/NamedTextInputPreset';
 import {RewardRowPreset} from './presets/combinations/RewardRowPreset';
 import {RewardListPreset} from './presets/combinations/RewardListPreset';
+import {VariableNameSection} from './presets/sections/VariableNameSection';
+import {PlaceholderNameSection} from './presets/sections/PlaceholderNameSection';
+import {PlaceholderTypeSection} from './presets/sections/PlaceholderTypeSection';
+import {VariablePlaceholderModeSection} from './presets/sections/VariablePlaceholderModeSection';
 import type {ISliderConverter} from '../common/slider_converter/ISliderConverter';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import type {ListScrollParams} from './params/ListScrollParams';
@@ -402,6 +406,30 @@ export class PresetManager
     createSliderSection(localizationKey: string, unit: string, converter: ISliderConverter, min: number = 0, max: number = 1, step: number = 0, showNumberInput: boolean = true, param: SectionParam | null = null): SliderSection
     {
         return new SliderSection(this._roomEvents, this, this.wiredStyle, localizationKey, unit, converter, min, max, step, showNumberInput, param);
+    }
+
+    // AS3: PresetManager.as::createVariableNameSection()
+    createVariableNameSection(): VariableNameSection
+    {
+        return new VariableNameSection(this._roomEvents, this, this.wiredStyle);
+    }
+
+    // AS3: PresetManager.as::createPlaceholderNameSection()
+    createPlaceholderNameSection(title: string, prefix: string): PlaceholderNameSection
+    {
+        return new PlaceholderNameSection(this._roomEvents, this, this.wiredStyle, title, prefix);
+    }
+
+    // AS3: PresetManager.as::createPlaceholderTypeSection()
+    createPlaceholderTypeSection(prefix: string | null = null): PlaceholderTypeSection
+    {
+        return new PlaceholderTypeSection(this._roomEvents, this, this.wiredStyle, prefix);
+    }
+
+    // AS3: PresetManager.as::createVariablePlaceholderModeSection()
+    createVariablePlaceholderModeSection(title: string): VariablePlaceholderModeSection
+    {
+        return new VariablePlaceholderModeSection(this._roomEvents, this, this.wiredStyle, title);
     }
 
     // AS3: PresetManager.as::createFramePreset()
