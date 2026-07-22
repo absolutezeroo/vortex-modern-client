@@ -33,6 +33,7 @@ import type {IUserDefinedRoomEventsCtrl} from './wired_setup/IUserDefinedRoomEve
 import {UserDefinedRoomEventsCtrl} from './wired_setup/UserDefinedRoomEventsCtrl';
 import {WiredMenuController} from './wired_menu/WiredMenuController';
 import {WiredEnvironment} from './WiredEnvironment';
+import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariablepicker/NewVariablePickerHelper';
 import {IncomingMessages} from './IncomingMessages';
 import {WiredClickUserMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredClickUserMessageComposer';
 
@@ -75,14 +76,17 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     private _wiredMenu!: WiredMenuController;
     private _wiredEnvironment!: WiredEnvironment;
 
+    // AS3: HabboUserDefinedRoomEvents.as::_variablePickerHelper (shared state for the variable picker).
+    private _variablePickerHelper!: NewVariablePickerHelper;
+
     private _incomingMessages: IncomingMessages | null = null;
 
     // TODO(AS3): deferred sub-controllers, all created in the AS3 constructor and exposed via getters
     // (variablesSynchronizer/wiredChest/transactionLogs/transactionDetails/rewardNotificationController/
-    // selfDonationTool/transactionDetails/variablePickerHelper) and the WiredContractController. Not
-    // created in this milestone; their getters/UI helpers (getXmlWindow/refreshButton/prepareButton/
-    // getButtonImage) are omitted for now — no ported code calls them yet. One documented gap rather
-    // than a fan-out of stubs (same approach as HabboHelp's absent-members block).
+    // selfDonationTool/transactionDetails) and the WiredContractController. Not created in this
+    // milestone; their getters/UI helpers (getXmlWindow/refreshButton/prepareButton/getButtonImage) are
+    // omitted for now — no ported code calls them yet. One documented gap rather than a fan-out of stubs
+    // (same approach as HabboHelp's absent-members block). (variablePickerHelper is now created below.)
 
     // AS3: HabboUserDefinedRoomEvents.as::HabboUserDefinedRoomEvents()
     constructor(context: IContext)
@@ -181,6 +185,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
         this._wiredCtrl = new UserDefinedRoomEventsCtrl(this);
         this._wiredEnvironment = new WiredEnvironment(this);
+        this._variablePickerHelper = new NewVariablePickerHelper(this);
 
         // AS3 creates the incoming-message handler here (initComponent), when communication is ready.
         this._incomingMessages = new IncomingMessages(this);
@@ -236,6 +241,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     get wiredMenu(): WiredMenuController
     {
         return this._wiredMenu;
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::get variablePickerHelper()
+    get variablePickerHelper(): NewVariablePickerHelper
+    {
+        return this._variablePickerHelper;
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get sessionDataManager()
