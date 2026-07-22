@@ -91,6 +91,7 @@ import type {PetColorResult} from './PetColorResult';
 import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
+import {UseFurnitureMessageComposer} from '@habbo/communication/messages/outgoing/room/furniture/UseFurnitureMessageComposer';
 import {
     PlaceObjectMessageComposer
 } from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
@@ -107,6 +108,7 @@ import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessag
 import {RoomObjectRoomPlaneVisibilityUpdateMessage} from './messages/RoomObjectRoomPlaneVisibilityUpdateMessage';
 import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoomPlanePropertyUpdateMessage';
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
+import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
 const log = Logger.getLogger('RoomEngine');
@@ -4493,23 +4495,103 @@ export class RoomEngine extends Component implements IRoomEngine,
         return `${ROOM_ID_PREFIX}${roomId}`;
     }
 
-    private onRoomObjectEvent(event: unknown): void 
+    private onRoomObjectEvent(event: unknown): void
     {
         // Handle tile mouse events for tile cursor
-        if(event instanceof RoomObjectTileMouseEvent) 
+        if(event instanceof RoomObjectTileMouseEvent)
         {
             this.handleTileMouseEvent(event);
         }
-        else if(event instanceof RoomObjectMouseEvent) 
+        else if(event instanceof RoomObjectMouseEvent)
         {
             this.handleObjectMouseEvent(event);
         }
+        // AS3: RoomObjectEventHandler.as::processObjectEvent() ROSCE_STATE_CHANGE/ROSCE_STATE_RANDOM
+        // cases — a furni "use" (e.g. double-click, dispatched by FurnitureLogic.useObject()) turns
+        // into the server use/state message. This is what opens a wired furni's config.
+        else if(event instanceof RoomObjectStateChangeEvent)
+        {
+            if(event.type === RoomObjectStateChangeEvent.ROSCE_STATE_RANDOM)
+            {
+                this.handleObjectRandomStateChange(event);
+            }
+            else
+            {
+                this.handleObjectStateChange(event);
+            }
+        }
 
         // Forward object events
-        if(event && typeof event === 'object' && 'type' in event) 
+        if(event && typeof event === 'object' && 'type' in event)
         {
             this.events.emit('roomObjectEvent', event);
         }
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_1947.as::handleObjectStateChange()
+    private handleObjectStateChange(event: RoomObjectStateChangeEvent): void
+    {
+        const object = event.object;
+
+        if(object === null) return;
+
+        this.changeObjectState(this._activeRoomId, object.getId(), object.getType(), event.param, false);
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_1947.as::handleObjectRandomStateChange()
+    private handleObjectRandomStateChange(event: RoomObjectStateChangeEvent): void
+    {
+        const object = event.object;
+
+        if(object === null) return;
+
+        this.changeObjectState(this._activeRoomId, object.getId(), object.getType(), event.param, true);
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_1947.as::changeObjectState()
+    private changeObjectState(roomId: number, objectId: number, objectType: string, state: number, isRandom: boolean): void
+    {
+        const category = this.getRoomObjectCategory(objectType);
+
+        this.changeRoomObjectState(roomId, objectId, category, state, isRandom);
+    }
+
+    // AS3: sources/win63_version/habbo/room/class_1947.as::changeRoomObjectState()
+    private changeRoomObjectState(roomId: number, objectId: number, category: number, state: number, isRandom: boolean): boolean
+    {
+        if(this._connection === null) return true;
+
+        const session = this._roomSessionManager?.getSession(roomId) ?? null;
+
+        if(session !== null && session.playTestMode)
+        {
+            const object = this.getRoomObject(roomId, objectId, category);
+
+            if(object !== null && object.getModel().getNumber(RoomObjectVariableEnum.FURNITURE_USAGE_POLICY) < 2)
+            {
+                return false;
+            }
+        }
+
+        const selectedObjectData = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
+
+        if(selectedObjectData === null || selectedObjectData.operation !== 'OBJECT_PLACE')
+        {
+            if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+            {
+                if(!isRandom)
+                {
+                    this._connection.send(new UseFurnitureMessageComposer(objectId, state));
+                }
+                // TODO(AS3): else SetRandomStateMessageComposer(objectId, state) — composer not ported.
+            }
+            // TODO(AS3): category OBJECT_CATEGORY_WALL → UseWallItemMessageComposer(objectId, state) —
+            // composer not ported; wired furni are floor items (category 10) so this is not on the
+            // wired open path.
+        }
+
+        // TODO(AS3): session.trackEventLogOncePerSession('Achievements', 'interaction', 'furniture.use').
+        return true;
     }
 
     /**
