@@ -12,6 +12,7 @@ import {ConditionEvaluation} from './ConditionEvaluation';
 import {ExecuteInOrder} from './ExecuteInOrder';
 import {ExecutionLimiter} from './ExecutionLimiter';
 import {FurniNamePlaceholder} from './FurniNamePlaceholder';
+import {GlobalPlaceholderAddon} from './GlobalPlaceholderAddon';
 import {MovePhysics} from './MovePhysics';
 import {NoMoveAnimation} from './NoMoveAnimation';
 import {UsernamePlaceholder} from './UsernamePlaceholder';
@@ -23,8 +24,9 @@ import {VariableTextConverter} from './VariableTextConverter';
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
  * ValueOrVariable-blocked (SelectorFilter family, JumpStrength, _4253 family), ChooseVariable/varpicker
- * (VariableCapturer, VariablePlaceholder), Dropdown (VariableTimeUtil) and combinations (Projectile,
- * GlobalPlaceholder, VariableLevelUp). getElementByCode returns null for their codes.
+ * (VariableCapturer, VariablePlaceholder), SubVariableCreator (VariableTimeUtil, Projectile) and
+ * combinations (VariableLevelUp). getElementByCode returns null for their codes. (GlobalPlaceholderAddon
+ * is now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/addons/AddonTypes.as
  */
@@ -44,7 +46,8 @@ export class AddonTypes implements IWiredTypeHolder
         new ExecuteInOrder(),
         new FurniNamePlaceholder(),
         new VariableTextConverter(),
-        new AchievementEnabler()
+        new AchievementEnabler(),
+        new GlobalPlaceholderAddon()
     ];
 
     // AS3: AddonTypes.as::getByCode()

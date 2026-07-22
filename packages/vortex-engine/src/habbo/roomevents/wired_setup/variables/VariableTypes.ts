@@ -5,6 +5,7 @@ import type {IWiredElement} from '../IWiredElement';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import {ContextVariable} from './ContextVariable';
 import {DailyTaskVariable} from './DailyTaskVariable';
+import {ReferenceVariable} from './ReferenceVariable';
 import {FurniVariable} from './FurniVariable';
 import {GlobalVariable} from './GlobalVariable';
 import {QuestChainVariable} from './QuestChainVariable';
@@ -16,8 +17,8 @@ import {UserVariable} from './UserVariable';
  * resolves one by its server code.
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * ChooseVariable-blocked generic variable (_4356) and the Dropdown-blocked ReferenceVariable (and the
- * ECHO_VARIABLE which has no dedicated type here). getElementByCode returns null for their codes.
+ * ChooseVariable-blocked generic variable (_4356) (and the ECHO_VARIABLE which has no dedicated type
+ * here). getElementByCode returns null for their codes. (ReferenceVariable is now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/variables/VariableTypes.as
  */
@@ -31,7 +32,8 @@ export class VariableTypes implements IWiredTypeHolder
         new ContextVariable(),
         new QuestVariable(),
         new QuestChainVariable(),
-        new DailyTaskVariable()
+        new DailyTaskVariable(),
+        new ReferenceVariable()
     ];
 
     // AS3: VariableTypes.as::getByCode()
