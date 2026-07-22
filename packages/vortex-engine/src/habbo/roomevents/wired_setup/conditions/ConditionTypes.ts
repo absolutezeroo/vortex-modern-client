@@ -8,6 +8,7 @@ import {ActorIsWearingBadge} from './ActorIsWearingBadge';
 import {ActorIsWearingEffect} from './ActorIsWearingEffect';
 import {CanPerformMove} from './CanPerformMove';
 import {ClockTimeMatches} from './ClockTimeMatches';
+import {DateRangeActive} from './DateRangeActive';
 import {DontHaveStackedFurnis} from './DontHaveStackedFurnis';
 import {FurniHasAltitude} from './FurniHasAltitude';
 import {FurnisHaveAvatars} from './FurnisHaveAvatars';
@@ -32,8 +33,7 @@ import {UserDirection} from './UserDirection';
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
  * Dropdown-blocked (_4103, _4118, _4326, DateMatches, TimeMatches), varpicker-blocked (_4119, _4236,
- * _4192), DateTimeFormatter-blocked (_4368), and _4271/ChestHasAmount. getElementByCode returns null
- * for their codes.
+ * _4192), and _4271/ChestHasAmount. getElementByCode returns null for their codes.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as
  */
@@ -62,7 +62,8 @@ export class ConditionTypes implements IWiredTypeHolder
         new UserDirection(),
         new InputSourceQuantity(),
         new CanPerformMove(),
-        new LevelMatches()
+        new LevelMatches(),
+        new DateRangeActive()
     ];
 
     // AS3: ConditionTypes.as::getByCode()
