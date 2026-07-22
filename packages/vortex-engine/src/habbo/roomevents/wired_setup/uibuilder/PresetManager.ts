@@ -55,6 +55,9 @@ import type {SectionParam} from './params/SectionParam';
 import type {AssetButtonParam} from './params/AssetButtonParam';
 import {MenuPreset} from './presets/menu/MenuPreset';
 import type {IMenuElement} from './presets/menu/elements/IMenuElement';
+import {SliderPreset} from './presets/SliderPreset';
+import {SliderSection} from './presets/sections/SliderSection';
+import type {ISliderConverter} from '../common/slider_converter/ISliderConverter';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import type {ListScrollParams} from './params/ListScrollParams';
 import type {CheckboxOptionParam} from './params/CheckboxOptionParam';
@@ -359,6 +362,18 @@ export class PresetManager
     createMenuPreset(items: IMenuElement[], menuButton: IWindow): MenuPreset
     {
         return new MenuPreset(this._roomEvents, this, this.wiredStyle, items, menuButton);
+    }
+
+    // AS3: PresetManager.as::createSliderPreset()
+    createSliderPreset(min: number = 0, max: number = 1, step: number = 0): SliderPreset
+    {
+        return new SliderPreset(this._roomEvents, this, this.wiredStyle, min, max, step);
+    }
+
+    // AS3: PresetManager.as::createSliderSection()
+    createSliderSection(localizationKey: string, unit: string, converter: ISliderConverter, min: number = 0, max: number = 1, step: number = 0, showNumberInput: boolean = true, param: SectionParam | null = null): SliderSection
+    {
+        return new SliderSection(this._roomEvents, this, this.wiredStyle, localizationKey, unit, converter, min, max, step, showNumberInput, param);
     }
 
     // AS3: PresetManager.as::createFramePreset()
