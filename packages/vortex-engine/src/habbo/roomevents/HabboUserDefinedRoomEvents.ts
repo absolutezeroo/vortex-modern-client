@@ -22,8 +22,11 @@ import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
+import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 
 import type {IHabboUserDefinedRoomEvents} from './IHabboUserDefinedRoomEvents';
 import type {IUserDefinedRoomEventsCtrl} from './wired_setup/IUserDefinedRoomEventsCtrl';
@@ -64,6 +67,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     private _toolbar: IHabboToolbar | null = null;
 
     private _roomSession: IRoomSession | null = null;
+    private _roomSessionManager: IRoomSessionManager | null = null;
     private _userName: string = '';
 
     // Created in initComponent() (see scope note).
@@ -87,14 +91,13 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get dependencies()
-    // TODO(AS3): the dependency-eventListener mechanism (base Component) attaches to the resolved
-    // instance's `events` emitter. In this port RoomSessionManager emits RSE_* on a dedicated
-    // `sessionEvents` emitter (not `events`, per rule "never override get events()"), and
-    // RoomEngine/HabboToolbar likewise may route REOE_ADDED / HTE_TOOLBAR_CLICK elsewhere. So the
-    // REOE_ADDED / RSE_* / HTE_TOOLBAR_CLICK listeners below are the faithful AS3 shape but may not
-    // fire until re-pointed to the correct emitters. No live regression today: every one of these
-    // handlers currently drives a stub/deferred controller (wiredCtrl.stuffAdded, wiredMenu.toggleView,
-    // wiredEnvironment.leaveRoom). Re-point when Bloc C makes them load-bearing.
+    // The base Component's dependency-eventListener list attaches to the resolved instance's `events`
+    // emitter. Audited per emitter:
+    //   - RSE_* : RoomSessionManager emits on `sessionEvents` (not `events`, per rule 20-architecture
+    //     #4) → the list never fired; now subscribed on sessionEvents in the resolve callback below.
+    //   - HTE_TOOLBAR_CLICK : HabboToolbar emits on `toolbarEvents` → same fix (subscribed below);
+    //     its handler (wiredMenu.toggleView) is still a wired_menu-bloc stub, so currently inert.
+    //   - REOE_ADDED : RoomEngine DOES emit on `events`, so the list form works — kept as-is.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- variance: typed ComponentDependency<T> is contravariant in T
     protected override get dependencies(): Array<ComponentDependency<any>>
     {
@@ -121,15 +124,26 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
                 true,
                 [{ type: 'REOE_ADDED', callback: (e: unknown) => this.roomObjectAddedHandler(e) }]
             ),
+            // AS3 registers the RSE_* listeners through the dependency's event-listener list, which the
+            // port attaches to the resolved instance's `events` emitter. RoomSessionManager emits RSE_*
+            // on `sessionEvents` (the port keeps `events` for the DI system, rule 20-architecture #4),
+            // so those listeners never fired and _roomSession stayed null (→ roomId 0). Subscribe on
+            // sessionEvents in the resolve callback instead — the same pattern HabboCatalog/HabboInventory use.
             new ComponentDependency(
                 IID_RoomSessionManager,
-                null,
-                false,
-                [
-                    { type: 'RSE_CREATED', callback: (e: unknown) => this.roomSessionStateEventHandler(e) },
-                    { type: 'RSE_STARTED', callback: (e: unknown) => this.roomSessionStateEventHandler(e) },
-                    { type: 'RSE_ENDED', callback: (e: unknown) => this.roomSessionStateEventHandler(e) }
-                ]
+                (manager: IRoomSessionManager | null) =>
+                {
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this._onRoomSessionEvent);
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this._onRoomSessionEvent);
+                    this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this._onRoomSessionEvent);
+
+                    this._roomSessionManager = manager;
+
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_CREATED, this._onRoomSessionEvent);
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this._onRoomSessionEvent);
+                    manager?.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this._onRoomSessionEvent);
+                },
+                false
             ),
             new ComponentDependency(
                 IID_SessionDataManager,
@@ -140,11 +154,20 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
                 (ui: IRoomUI | null) => { this._roomUI = ui; },
                 false
             ),
+            // Same emitter mismatch as RSE_* above: HabboToolbar dispatches TOOLBAR_CLICK on its
+            // dedicated `toolbarEvents` emitter, not `events`, so the dependency's event-listener list
+            // never fired. Subscribe on toolbarEvents in the resolve callback. (Its handler target,
+            // wiredMenu.toggleView(), is still a wired_menu-bloc stub, so this is currently inert — but
+            // now correctly wired for when that bloc lands.)
             new ComponentDependency(
                 IID_HabboToolbar,
-                (toolbar: IHabboToolbar | null) => { this._toolbar = toolbar; },
-                false,
-                [{ type: 'HTE_TOOLBAR_CLICK', callback: (e: unknown) => this.onHabboToolbarEvent(e) }]
+                (toolbar: IHabboToolbar | null) =>
+                {
+                    this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this._onToolbarEvent);
+                    this._toolbar = toolbar;
+                    toolbar?.toolbarEvents.on(HabboToolbarEvent.TOOLBAR_CLICK, this._onToolbarEvent);
+                },
+                false
             )
         ];
     }
@@ -387,6 +410,13 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         }
     }
 
+    // Bound entry point for sessionEvents.on/off (preserves `this`; see the RoomSessionManager
+    // dependency). Delegates to the AS3-named handler below.
+    private _onRoomSessionEvent = (event: RoomSessionEvent): void =>
+    {
+        this.roomSessionStateEventHandler(event);
+    };
+
     // AS3: HabboUserDefinedRoomEvents.as::roomSessionStateEventHandler()
     private roomSessionStateEventHandler(event: unknown): void
     {
@@ -410,6 +440,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::onHabboToolbarEvent()
+    // Bound entry point for toolbarEvents.on/off (preserves `this`; see the HabboToolbar dependency).
+    private _onToolbarEvent = (event: unknown): void =>
+    {
+        this.onHabboToolbarEvent(event);
+    };
+
     private onHabboToolbarEvent(event: unknown): void
     {
         // AS3 param is HabboToolbarEvent (type + iconId).
@@ -441,6 +477,10 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         if(this._disposed) return;
 
         this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this._onRoomSessionEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this._onRoomSessionEvent);
+        this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this._onRoomSessionEvent);
+        this._toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this._onToolbarEvent);
 
         if(this._incomingMessages != null)
         {
