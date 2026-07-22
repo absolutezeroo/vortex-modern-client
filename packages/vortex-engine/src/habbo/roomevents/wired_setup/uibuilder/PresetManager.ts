@@ -57,6 +57,10 @@ import {MenuPreset} from './presets/menu/MenuPreset';
 import type {IMenuElement} from './presets/menu/elements/IMenuElement';
 import {SliderPreset} from './presets/SliderPreset';
 import {SliderSection} from './presets/sections/SliderSection';
+import {NamedNumberInputPreset} from './presets/combinations/NamedNumberInputPreset';
+import {NamedTextInputPreset} from './presets/combinations/NamedTextInputPreset';
+import {RewardRowPreset} from './presets/combinations/RewardRowPreset';
+import {RewardListPreset} from './presets/combinations/RewardListPreset';
 import type {ISliderConverter} from '../common/slider_converter/ISliderConverter';
 import type {IWiredTypeHolder} from '../IWiredTypeHolder';
 import type {ListScrollParams} from './params/ListScrollParams';
@@ -173,6 +177,30 @@ export class PresetManager
     createTextualButtonPreset(caption: string, onClick: () => void): TextualButtonPreset
     {
         return new TextualButtonPreset(this._roomEvents, this, this.wiredStyle, caption, onClick);
+    }
+
+    // AS3: PresetManager.as::createNamedNumberInput()
+    createNamedNumberInput(param: NumberInputParam, name: string, bold: boolean = false): NamedNumberInputPreset
+    {
+        return new NamedNumberInputPreset(this._roomEvents, this, this.wiredStyle, param, name, bold);
+    }
+
+    // AS3: PresetManager.as::createNamedTextInput()
+    createNamedTextInput(param: TextInputParam, name: string, bold: boolean = false): NamedTextInputPreset
+    {
+        return new NamedTextInputPreset(this._roomEvents, this, this.wiredStyle, param, name, bold);
+    }
+
+    // AS3: PresetManager.as::createRewardList()
+    createRewardList(maxRewards: number, displayedRewards: number): RewardListPreset
+    {
+        return new RewardListPreset(this._roomEvents, this, this.wiredStyle, maxRewards, displayedRewards);
+    }
+
+    // AS3: PresetManager.as::createRewardRow()
+    createRewardRow(): RewardRowPreset
+    {
+        return new RewardRowPreset(this._roomEvents, this, this.wiredStyle);
     }
 
     // AS3: PresetManager.as::createPaddedContainerPreset()
