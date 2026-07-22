@@ -400,6 +400,16 @@ export class VortexApp
     /** The window that received the last DOWN event (for drag/UP tracking). */
     private _mouseDownWindow: IWindow | null = null;
 
+    /** Double-click detection: timestamp/window/position of the last synthesized CLICK. */
+    private _lastClickTime: number = 0;
+    private _lastClickWindow: IWindow | null = null;
+    private _lastClickX: number = 0;
+    private _lastClickY: number = 0;
+
+    /** Max gap (ms) and pointer travel (px) between two clicks to count as a double-click. */
+    private static readonly DOUBLE_CLICK_MS: number = 350;
+    private static readonly DOUBLE_CLICK_DIST: number = 8;
+
     /** Document-level mousemove handler (for drag/scale). */
     private _docMoveHandler: ((e: MouseEvent) => void) | null = null;
 
@@ -1154,12 +1164,7 @@ export class VortexApp
 
                         clickHit.getGlobalPosition(cp);
 
-                        const clickEvent = WindowMouseEvent.allocateMouse(
-                            WindowMouseEvent.CLICK, clickHit, null,
-                            ux - cp.x, uy - cp.y, ev.clientX, ev.clientY
-                        );
-                        (clickHit as WindowController).update(clickHit as WindowController, clickEvent);
-                        clickEvent.recycle();
+                        this.synthesizeClick(clickHit, ux - cp.x, uy - cp.y, ev.clientX, ev.clientY);
                     }
                 }
 
@@ -1246,6 +1251,50 @@ export class VortexApp
         }
     };
 
+    /**
+     * Dispatches a CLICK to the hit window, and — when this is the second click on the same window
+     * within DOUBLE_CLICK_MS/DIST — a DOUBLE_CLICK too. The browser gives us no dblclick here because
+     * clicks are synthesized from mousedown/mouseup, so this reconstructs it. RoomDesktop maps the
+     * WME_DOUBLE_CLICK to the room 'doubleClick' event (e.g. FurnitureLogic.useObject → open wired),
+     * mirroring Flash's doubleClick firing after two clicks.
+     */
+    private synthesizeClick(clickHit: IWindow, localX: number, localY: number, clientX: number, clientY: number): void
+    {
+        const clickEvent = WindowMouseEvent.allocateMouse(
+            WindowMouseEvent.CLICK, clickHit, null,
+            localX, localY, clientX, clientY
+        );
+        (clickHit as WindowController).update(clickHit as WindowController, clickEvent);
+        clickEvent.recycle();
+
+        const now = performance.now();
+        const isDoubleClick = clickHit === this._lastClickWindow
+            && (now - this._lastClickTime) <= VortexApp.DOUBLE_CLICK_MS
+            && Math.abs(clientX - this._lastClickX) <= VortexApp.DOUBLE_CLICK_DIST
+            && Math.abs(clientY - this._lastClickY) <= VortexApp.DOUBLE_CLICK_DIST;
+
+        if(isDoubleClick)
+        {
+            const dblEvent = WindowMouseEvent.allocateMouse(
+                WindowMouseEvent.DOUBLE_CLICK, clickHit, null,
+                localX, localY, clientX, clientY
+            );
+            (clickHit as WindowController).update(clickHit as WindowController, dblEvent);
+            dblEvent.recycle();
+
+            // Reset so a third rapid click doesn't chain into another double-click.
+            this._lastClickTime = 0;
+            this._lastClickWindow = null;
+        }
+        else
+        {
+            this._lastClickTime = now;
+            this._lastClickWindow = clickHit;
+            this._lastClickX = clientX;
+            this._lastClickY = clientY;
+        }
+    }
+
     /** Canvas mouseup handler (fallback for non-drag scenarios). */
     private _onMouseUp = (e: MouseEvent): void =>
     {
@@ -1278,13 +1327,8 @@ export class VortexApp
         (hit as WindowController).update(hit as WindowController, upEvent);
         upEvent.recycle();
 
-        // Synthesize CLICK
-        const clickEvent = WindowMouseEvent.allocateMouse(
-            WindowMouseEvent.CLICK, hit, null,
-            x - globalPos.x, y - globalPos.y, e.clientX, e.clientY
-        );
-        (hit as WindowController).update(hit as WindowController, clickEvent);
-        clickEvent.recycle();
+        // Synthesize CLICK (+ DOUBLE_CLICK on a rapid second click)
+        this.synthesizeClick(hit, x - globalPos.x, y - globalPos.y, e.clientX, e.clientY);
     };
 
     /** Canvas wheel handler. */
