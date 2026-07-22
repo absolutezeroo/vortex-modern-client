@@ -13,6 +13,7 @@ import {ExecuteInOrder} from './ExecuteInOrder';
 import {ExecutionLimiter} from './ExecutionLimiter';
 import {FurniNamePlaceholder} from './FurniNamePlaceholder';
 import {GlobalPlaceholderAddon} from './GlobalPlaceholderAddon';
+import {JumpStrength} from './JumpStrength';
 import {MovePhysics} from './MovePhysics';
 import {NoMoveAnimation} from './NoMoveAnimation';
 import {UsernamePlaceholder} from './UsernamePlaceholder';
@@ -47,7 +48,8 @@ export class AddonTypes implements IWiredTypeHolder
         new FurniNamePlaceholder(),
         new VariableTextConverter(),
         new AchievementEnabler(),
-        new GlobalPlaceholderAddon()
+        new GlobalPlaceholderAddon(),
+        new JumpStrength()
     ];
 
     // AS3: AddonTypes.as::getByCode()

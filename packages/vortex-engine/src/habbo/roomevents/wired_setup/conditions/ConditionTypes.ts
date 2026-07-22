@@ -14,6 +14,7 @@ import {FurniHasAltitude} from './FurniHasAltitude';
 import {FurnisHaveAvatars} from './FurnisHaveAvatars';
 import {FurnisHaveNoAvatars} from './FurnisHaveNoAvatars';
 import {HasStackedFurnis} from './HasStackedFurnis';
+import {HasVariable} from './HasVariable';
 import {InputSourceQuantity} from './InputSourceQuantity';
 import {ActorHasHanditem} from './ActorHasHanditem';
 import {ActorIsGroupMember} from './ActorIsGroupMember';
@@ -73,7 +74,8 @@ export class ConditionTypes implements IWiredTypeHolder
         new PerformingAction(),
         new ActorHasHanditem(),
         new ActorIsGroupMember(),
-        new VariableAge()
+        new VariableAge(),
+        new HasVariable()
     ];
 
     // AS3: ConditionTypes.as::getByCode()

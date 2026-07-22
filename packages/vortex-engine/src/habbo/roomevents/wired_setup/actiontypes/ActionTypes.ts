@@ -39,6 +39,7 @@ import {MuteUser} from './MuteUser';
 import {OverrideHeight} from './OverrideHeight';
 import {RelativeFurniMove} from './RelativeFurniMove';
 import {RemoveFurni} from './RemoveFurni';
+import {RemoveVariable} from './RemoveVariable';
 import {Reset} from './Reset';
 import {ResetRewardTrack} from './ResetRewardTrack';
 import {SendSignal} from './SendSignal';
@@ -106,7 +107,8 @@ export class ActionTypes implements IWiredTypeHolder
         new Chat(),
         new FreezeUser(),
         new ClickSettings(),
-        new WriteToLog()
+        new WriteToLog(),
+        new RemoveVariable()
     ];
 
     // AS3: ActionTypes.as::getByCode()
