@@ -8,6 +8,15 @@ import {VariableDefinition} from '@habbo/communication/messages/incoming/userdef
 import {OrderedMap} from '@core/utils/OrderedMap';
 import {Logger} from '@core/utils/Logger';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IDisposable} from '@core/runtime/IDisposable';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {UpdateTriggerMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/UpdateTriggerMessageComposer';
+import {UpdateActionMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/UpdateActionMessageComposer';
+import {UpdateConditionMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/UpdateConditionMessageComposer';
+import {UpdateAddonMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/UpdateAddonMessageComposer';
+import {UpdateVariableMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/UpdateVariableMessageComposer';
+import {UpdateSelectorMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/UpdateSelectorMessageComposer';
+import {ApplySnapshotMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/ApplySnapshotMessageComposer';
 
 import type {IUserDefinedRoomEventsCtrl} from './IUserDefinedRoomEventsCtrl';
 import type {HabboUserDefinedRoomEvents} from '../HabboUserDefinedRoomEvents';
@@ -139,6 +148,12 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
     // AS3: UserDefinedRoomEventsCtrl.as::_stuffs2 (Dictionary of selected furni ids, source set 2)
     private _stuffs2: Set<number> = new Set<number>();
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_updateMode (0 = save+close, 1 = save+notify, 2 = paste+notify)
+    private _updateMode: number = 0;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_9888 (non-owner change already confirmed this session)
+    private _confirmed: boolean = false;
 
     // AS3: UserDefinedRoomEventsCtrl.as::UserDefinedRoomEventsCtrl()
     constructor(roomEvents: HabboUserDefinedRoomEvents)
@@ -553,7 +568,12 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::applySnapshot()
     private _applySnapshot = (): void =>
     {
-        // TODO(AS3): Bloc C — send the state-snapshot apply composer.
+        if(this._currentDef == null)
+        {
+            return;
+        }
+
+        this._roomEvents.send(new ApplySnapshotMessageComposer(this._currentDef.id));
     };
 
     // AS3: UserDefinedRoomEventsCtrl.as::viewVariableInMenu()
@@ -568,11 +588,57 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         // TODO(AS3): Bloc C — open the wired menu logs.
     };
 
-    // AS3: UserDefinedRoomEventsCtrl.as::save()
+    // AS3: UserDefinedRoomEventsCtrl.as::save() (the footer's save button handler)
     private _saveHandler = (): void =>
     {
-        // TODO(AS3): Bloc C — serialise the form and send the update composer.
-        log.debug('wired save requested (network save not ported — Bloc C)');
+        this.save();
+    };
+
+    // AS3: UserDefinedRoomEventsCtrl.as::save()
+    private save(): void
+    {
+        if(this._currentDef == null || this._frame == null)
+        {
+            return;
+        }
+
+        if(this._currentDef instanceof SelectorDefinition && this.isSelectorInvert() && !this.isSelectorFilter())
+        {
+            this._roomEvents.windowManager?.confirm('${wiredfurni.danger.1.change.confirm.title}', '${wiredfurni.danger.1.change.confirm.body}', 0, this._confirmCallback);
+        }
+        else if(!this.isOwner(this._currentDef.id) && !this._confirmed)
+        {
+            this._roomEvents.windowManager?.confirm('${wiredfurni.nonowner.change.confirm.title}', '${wiredfurni.nonowner.change.confirm.body}', 0, this._confirmCallback);
+        }
+        else
+        {
+            const confirmation = this._currentElement?.requireConfirmation as { title: string; body: string } | null;
+
+            if(confirmation != null)
+            {
+                this._roomEvents.windowManager?.confirm(confirmation.title, confirmation.body, 0, this._confirmCallback);
+            }
+            else
+            {
+                this.update();
+            }
+        }
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::confirmCallback()
+    private _confirmCallback = (dialog: IDisposable, event: WindowEvent): void =>
+    {
+        dialog.dispose();
+
+        if(event.type === 'WE_OK')
+        {
+            this._confirmed = true;
+
+            if(this.isEditing())
+            {
+                this.update();
+            }
+        }
     };
 
     // AS3: UserDefinedRoomEventsCtrl.as::close (handler)
@@ -748,19 +814,182 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::onSaveFailure()
     onSaveFailure(): void
     {
-        // TODO(AS3): Bloc C.
+        if(this._updateMode === 1)
+        {
+            this._updateMode = 0;
+        }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::onSaveSuccess()
     onSaveSuccess(): void
     {
-        // TODO(AS3): Bloc C.
+        if(this._updateMode === 0)
+        {
+            this.close();
+        }
+        else if(this._updateMode === 1)
+        {
+            // TODO(AS3): AS3 passes a {time_display: 2500} options object the port's addItem lacks.
+            this._roomEvents.notifications.addItem('${notification.wired.saved}', 'wired');
+        }
+        else if(this._updateMode === 2)
+        {
+            this._roomEvents.notifications.addItem('${notification.wired.pasted_into}', 'wired');
+        }
+
+        this._updateMode = 0;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::update()
-    update(_a: number = 0, _b: number = -1): void
+    update(mode: number = 0, id: number = -1): void
     {
-        // TODO(AS3): Bloc C.
+        if(this._currentDef == null || this._currentElement == null)
+        {
+            return;
+        }
+
+        const validationError = this._currentElement.validate();
+
+        if(validationError != null)
+        {
+            this._roomEvents.windowManager?.alert('${wiredfurni.error.title}', validationError, 0, null);
+
+            return;
+        }
+
+        this._updateMode = mode;
+
+        if(id === -1)
+        {
+            id = this._currentDef.id;
+        }
+
+        const intParams = this.resolveIntParams();
+        const variableIds = this.resolveVariableIds();
+        const stringParam = this.resolveStringParam();
+        const stuffIds = this.getStuffIds();
+        const stuffIds2 = this.getStuffIds2();
+        const furniSources = this.resolveFurniSources();
+        const userSources = this.resolveUserSources();
+
+        if(this._currentDef instanceof TriggerDefinition)
+        {
+            this._roomEvents.send(new UpdateTriggerMessageComposer(id, intParams, variableIds, stringParam, stuffIds, stuffIds2, furniSources, userSources));
+        }
+        else if(this._currentDef instanceof ActionDefinition)
+        {
+            this._roomEvents.send(new UpdateActionMessageComposer(id, intParams, variableIds, stringParam, stuffIds, stuffIds2, this.getActionDelay(), furniSources, userSources));
+        }
+        else if(this._currentDef instanceof ConditionDefinition)
+        {
+            this._roomEvents.send(new UpdateConditionMessageComposer(id, intParams, variableIds, stringParam, stuffIds, stuffIds2, this.resolveQuantifier(), furniSources, userSources));
+        }
+        else if(this._currentDef instanceof AddonDefinition)
+        {
+            this._roomEvents.send(new UpdateAddonMessageComposer(id, intParams, variableIds, stringParam, stuffIds, stuffIds2, furniSources, userSources));
+        }
+        else if(this._currentDef instanceof SelectorDefinition)
+        {
+            this._roomEvents.send(new UpdateSelectorMessageComposer(id, intParams, variableIds, stringParam, stuffIds, stuffIds2, this.resolveFilterField(), this.resolveInverseField(), furniSources, userSources));
+        }
+        else if(this._currentDef instanceof VariableDefinition)
+        {
+            this._roomEvents.send(new UpdateVariableMessageComposer(id, intParams, variableIds, stringParam, stuffIds, stuffIds2, furniSources, userSources));
+        }
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::getActionDelay()
+    getActionDelay(): number
+    {
+        return this._delaySection?.value ?? 0;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveQuantifier()
+    resolveQuantifier(): number
+    {
+        // TODO(AS3): the quantifier selector (_SafeStr_5080) is not ported; AS3 returns its .selected.
+        return 0;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveIntParams()
+    private resolveIntParams(): number[]
+    {
+        return this._currentElement?.readIntParamsFromForm() ?? [];
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveVariableIds()
+    private resolveVariableIds(): string[]
+    {
+        return this._currentElement?.readVariableIdsFromForm() ?? [];
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveStringParam()
+    private resolveStringParam(): string
+    {
+        return this._currentElement?.readStringParamFromForm() ?? '';
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveFurniSources()
+    private resolveFurniSources(): number[]
+    {
+        return this._currentDef?.furniSourceTypes ?? [];
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveUserSources()
+    private resolveUserSources(): number[]
+    {
+        return this._currentDef?.userSourceTypes ?? [];
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveFilterField()
+    private resolveFilterField(): boolean
+    {
+        return this.isSelectorFilter();
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::resolveInverseField()
+    private resolveInverseField(): boolean
+    {
+        return this.isSelectorInvert();
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::isSelectorFilter()
+    private isSelectorFilter(): boolean
+    {
+        return this._selectorOptionsPreset != null && this._selectorOptionsPreset.optionById(0).selected;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::isSelectorInvert()
+    private isSelectorInvert(): boolean
+    {
+        return this._selectorOptionsPreset != null && this._selectorOptionsPreset.optionById(1).selected;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::isEditing()
+    private isEditing(): boolean
+    {
+        return this._currentElement != null && this._currentDef != null && this._frame != null;
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::isOwner()
+    private isOwner(id: number): boolean
+    {
+        // 10 = RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE (AS3 passes the literal here).
+        const object = this._roomEvents.roomEngine?.getRoomObject(this._roomEvents.roomId, id, 10) ?? null;
+
+        if(object == null)
+        {
+            return false;
+        }
+
+        const model = object.getModel();
+
+        if(model == null)
+        {
+            return false;
+        }
+
+        return model.getNumber('furniture_owner_id') === (this._roomEvents.sessionDataManager?.userId ?? -1);
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::onGuildMemberships()

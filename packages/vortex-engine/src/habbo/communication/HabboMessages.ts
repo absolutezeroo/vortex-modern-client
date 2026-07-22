@@ -265,7 +265,17 @@ import {
     OpenEvent
 } from './messages/incoming/userdefinedroomevents';
 // Outgoing Composers - User Defined Room Events (Wired)
-import {WiredClickUserMessageComposer, OpenMessageComposer} from './messages/outgoing/userdefinedroomevents';
+import {
+    WiredClickUserMessageComposer,
+    OpenMessageComposer,
+    UpdateTriggerMessageComposer,
+    UpdateActionMessageComposer,
+    UpdateConditionMessageComposer,
+    UpdateAddonMessageComposer,
+    UpdateVariableMessageComposer,
+    UpdateSelectorMessageComposer,
+    ApplySnapshotMessageComposer
+} from './messages/outgoing/userdefinedroomevents';
 
 // Incoming Events - Poll
 import {
@@ -1261,6 +1271,18 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1953, WiredClickUserMessageComposer);
         // OpenMessageComposer: WIN63 registry _SafeCls_2046.as `_composers[1869] = _SafeCls_3966`.
         this._composers.set(1869, OpenMessageComposer);
+        // Wired save composers (ids from WIN63 registry _SafeCls_2046.as):
+        //   _composers[3953]=_SafeCls_2484 (trigger), [2197]=_SafeCls_2689 (action),
+        //   [767]=_SafeCls_3197 (condition), [1138]=_SafeCls_3344 (addon),
+        //   [2475]=_SafeCls_3053 (variable), [510]=UpdateSelectorMessageComposer (selector),
+        //   [2790]=_SafeCls_3118 (applySnapshot).
+        this._composers.set(3953, UpdateTriggerMessageComposer);
+        this._composers.set(2197, UpdateActionMessageComposer);
+        this._composers.set(767, UpdateConditionMessageComposer);
+        this._composers.set(1138, UpdateAddonMessageComposer);
+        this._composers.set(2475, UpdateVariableMessageComposer);
+        this._composers.set(510, UpdateSelectorMessageComposer);
+        this._composers.set(2790, ApplySnapshotMessageComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
