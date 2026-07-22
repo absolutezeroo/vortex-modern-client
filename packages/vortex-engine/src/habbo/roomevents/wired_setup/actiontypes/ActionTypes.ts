@@ -8,6 +8,7 @@ import {ActionCode8} from './ActionCode8';
 import {AdjustClock} from './AdjustClock';
 import {BotChangeFigure} from './BotChangeFigure';
 import {BotFollowAvatar} from './BotFollowAvatar';
+import {BotGiveHandItem} from './BotGiveHandItem';
 import {BotMove} from './BotMove';
 import {BotTalk} from './BotTalk';
 import {BotTalkDirectToAvatar} from './BotTalkDirectToAvatar';
@@ -81,6 +82,7 @@ export class ActionTypes implements IWiredTypeHolder
         new BotFollowAvatar(),
         new BotChangeFigure(),
         new BotTalkDirectToAvatar(),
+        new BotGiveHandItem(),
         new ControlClock(),
         new SetFurniAltitude(),
         new SendSignal(),

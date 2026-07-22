@@ -15,6 +15,7 @@ import {UsersFromSignal} from './UsersFromSignal';
 import {UsersInTeam} from './UsersInTeam';
 import {UsersOnFurni} from './UsersOnFurni';
 import {UsersPerformingAction} from './UsersPerformingAction';
+import {UsersWithHanditem} from './UsersWithHanditem';
 
 /**
  * SelectorTypes — the wired selector registry (IWiredTypeHolder): instantiates every selector type and
@@ -22,9 +23,9 @@ import {UsersPerformingAction} from './UsersPerformingAction';
  *
  * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the area
  * selectors (InArea/UsersInArea/FurniInArea, need roomEngine.areaSelectionManager), Dropdown-blocked
- * (UsersInGroup, _4047 UsersWithHanditem), varpicker-blocked (_4352/_4353/_4378) and combinations-
- * blocked InNeighborhood family (_4420/_4450). getElementByCode returns null for their codes.
- * (_4286 UsersPerformingAction is now ported.)
+ * (UsersInGroup), varpicker-blocked (_4352/_4353/_4378) and combinations-blocked InNeighborhood family
+ * (_4420/_4450). getElementByCode returns null for their codes. (_4286 UsersPerformingAction, _4047
+ * UsersWithHanditem are now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/SelectorTypes.as
  */
@@ -43,7 +44,8 @@ export class SelectorTypes implements IWiredTypeHolder
         new UsersByName(),
         new FurniWithAltitude(),
         new RemoteSelector(),
-        new UsersPerformingAction()
+        new UsersPerformingAction(),
+        new UsersWithHanditem()
     ];
 
     // AS3: SelectorTypes.as::getByCode()
