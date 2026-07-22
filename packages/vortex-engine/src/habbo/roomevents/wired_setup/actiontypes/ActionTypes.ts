@@ -22,6 +22,7 @@ import {Flee} from './Flee';
 import {FreezeUser} from './FreezeUser';
 import {GiveEffect} from './GiveEffect';
 import {GiveReward} from './GiveReward';
+import {GiveVariable} from './GiveVariable';
 import {GiveScore} from './GiveScore';
 import {GiveScoreToPredefinedTeam} from './GiveScoreToPredefinedTeam';
 import {JoinTeam} from './JoinTeam';
@@ -108,7 +109,8 @@ export class ActionTypes implements IWiredTypeHolder
         new FreezeUser(),
         new ClickSettings(),
         new WriteToLog(),
-        new RemoveVariable()
+        new RemoveVariable(),
+        new GiveVariable()
     ];
 
     // AS3: ActionTypes.as::getByCode()

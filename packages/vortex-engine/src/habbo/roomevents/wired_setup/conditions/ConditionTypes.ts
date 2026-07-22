@@ -30,6 +30,7 @@ import {TriggererIsOnFurni} from './TriggererIsOnFurni';
 import {TriggererMatches} from './TriggererMatches';
 import {UserCountIn} from './UserCountIn';
 import {VariableAge} from './VariableAge';
+import {VariableValue} from './VariableValue';
 import {UserDirection} from './UserDirection';
 
 /**
@@ -75,7 +76,8 @@ export class ConditionTypes implements IWiredTypeHolder
         new ActorHasHanditem(),
         new ActorIsGroupMember(),
         new VariableAge(),
-        new HasVariable()
+        new HasVariable(),
+        new VariableValue()
     ];
 
     // AS3: ConditionTypes.as::getByCode()
