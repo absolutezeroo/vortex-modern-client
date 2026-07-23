@@ -192,9 +192,12 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._badgesModel;
     }
 
-    private _effectsModel!: EffectsModel;
+    // Lazily created in init(); null before the inventory is initialized, so the
+    // avatar bubble / effects widget can query effects before the user has ever
+    // opened their inventory. AS3 guards `effectsModel == null` everywhere.
+    private _effectsModel: EffectsModel | null = null;
 
-    get effectsModel(): IEffectsModel
+    get effectsModel(): IEffectsModel | null
     {
         return this._effectsModel;
     }
@@ -864,6 +867,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         if(!parser) return;
 
+        const model = this._effectsModel;
+
+        if(!model) return;
+
         for(const dto of parser.effects)
         {
             const effect = new Effect();
@@ -888,7 +895,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 effect.secondsLeft = dto.duration;
             }
 
-            this._effectsModel.addEffect(effect);
+            model.addEffect(effect);
         }
 
         this.setInventoryCategoryInit('effects');
@@ -900,7 +907,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         const parser = event.parser as AvatarEffectAddedMessageParser | null;
 
-        if(!parser) return;
+        if(!parser || !this._effectsModel) return;
 
         const effect = new Effect();
 
@@ -919,7 +926,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         const parser = event.parser as AvatarEffectActivatedMessageParser | null;
 
-        if(!parser) return;
+        if(!parser || !this._effectsModel) return;
 
         this._effectsModel.setEffectActivated(parser.type);
         this.notifyChangedEffects();
@@ -930,7 +937,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         const parser = event.parser as AvatarEffectExpiredMessageParser | null;
 
-        if(!parser) return;
+        if(!parser || !this._effectsModel) return;
 
         this._effectsModel.setEffectExpired(parser.type);
         this.notifyChangedEffects();
@@ -939,18 +946,20 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: HabboInventory.as::getAvatarEffects()
     getAvatarEffects(): Effect[]
     {
-        return this._effectsModel.getEffects();
+        return this._effectsModel ? this._effectsModel.getEffects() : [];
     }
 
     // AS3: HabboInventory.as::getActivatedAvatarEffects()
     getActivatedAvatarEffects(): Effect[]
     {
-        return this._effectsModel.getEffects(EffectFilter.ACTIVE);
+        return this._effectsModel ? this._effectsModel.getEffects(EffectFilter.ACTIVE) : [];
     }
 
     // AS3: HabboInventory.as::setEffectSelected() — wear an owned effect
     setEffectSelected(type: number): void
     {
+        if(!this._effectsModel) return;
+
         this._effectsModel.useEffect(type);
         this.notifyChangedEffects();
     }
@@ -958,6 +967,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: HabboInventory.as::setEffectDeselected() — stop wearing an effect
     setEffectDeselected(type: number): void
     {
+        if(!this._effectsModel) return;
+
         this._effectsModel.stopUsingEffect(type, true);
         this.notifyChangedEffects();
     }
@@ -965,6 +976,8 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: HabboInventory.as::deselectAllEffects()
     deselectAllEffects(clearLastActivated: boolean = false): void
     {
+        if(!this._effectsModel) return;
+
         this._effectsModel.stopUsingAllEffects(true, true, clearLastActivated);
         this.notifyChangedEffects();
     }
@@ -972,7 +985,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     // AS3: HabboInventory.as::getAvatarEffect()
     getAvatarEffect(type: number): Effect | null
     {
-        return this._effectsModel.getEffect(type);
+        return this._effectsModel ? this._effectsModel.getEffect(type) : null;
     }
 
     // AS3: HabboInventory.as::notifyChangedEffects() — dispatches HabboInventoryEffectsEvent

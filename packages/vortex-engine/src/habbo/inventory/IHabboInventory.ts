@@ -47,7 +47,7 @@ export interface IHabboInventory
     // Models
     readonly furniModel: IFurniModel;
     readonly badgesModel: IBadgesModel;
-    readonly effectsModel: IEffectsModel;
+    readonly effectsModel: IEffectsModel | null;
     readonly petsModel: IPetsModel;
     readonly botsModel: IBotsModel;
     readonly tradingModel: ITradingModel;
