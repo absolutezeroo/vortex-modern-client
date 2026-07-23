@@ -54,6 +54,7 @@ import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObj
 import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
+import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -679,6 +680,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_EFFECTS':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:848
                 handler = new EffectsWidgetHandler();
+                break;
+            case 'RWE_AVATAR_INFO':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
+                handler = new AvatarInfoWidgetHandler();
                 break;
             case 'RWE_CHAT_WIDGET': {
                 // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737

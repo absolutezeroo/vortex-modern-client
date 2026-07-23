@@ -15,6 +15,7 @@ import {RoomToolsWidget} from './widget/roomtools/RoomToolsWidget';
 import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
 import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 import {EffectsWidget} from './widget/effects/EffectsWidget';
+import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 
 const log = Logger.getLogger('RoomWidgetFactory');
 
@@ -47,6 +48,11 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
             case 'RWE_EFFECTS':
                 return new EffectsWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            case 'RWE_AVATAR_INFO':
+                return new AvatarInfoWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.config, this._roomUI.catalog
                 );
             case 'RWE_CHAT_INPUT_WIDGET':
                 return new RoomChatInputWidget(
