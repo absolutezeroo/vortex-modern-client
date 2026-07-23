@@ -107,9 +107,13 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
 
             if(!this._window) return;
 
+            // AS3: the bubble is dismissed on avatar deselect; the port has no
+            // empty-space deselect event, so use the window system's click-away.
+            this._window.procedure = this.windowProc;
+
             const minimize = this._window.findChildByName('minimize');
 
-            if(minimize) minimize.procedure = this.buttonEventProc;
+            if(minimize) minimize.procedure = this.onMinimize;
         }
 
         this._buttons = this._window.findChildByName('buttons') as IItemListWindow | null;
@@ -386,4 +390,25 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
     {
         return this.widget.hasClub;
     }
+
+    // Close the bubble when the user clicks outside it (the port's stand-in for
+    // AS3's RWROUE_OBJECT_DESELECTED dismissal).
+    private windowProc = (event: WindowEvent, _window: IWindow): void =>
+    {
+        if(event.type === 'WME_CLICK_AWAY')
+        {
+            this._widget.removeView(this, false);
+        }
+    };
+
+    // AS3: ContextInfoView.as::onMinimize() → setMinimized(true). The minimized
+    // view is deferred in this slice, so the fold button just closes the bubble.
+    // TODO(AS3): collapse to the minimized_menu view instead of closing.
+    private onMinimize = (event: WindowEvent, _window: IWindow): void =>
+    {
+        if(event.type === 'WME_CLICK')
+        {
+            this._widget.removeView(this, false);
+        }
+    };
 }
