@@ -58,6 +58,18 @@ import type {SpecialRoomEffectMessageParser} from '../communication/messages/par
 import {RoomRotatingEffect} from '@room/utils/RoomRotatingEffect';
 import {RoomShakingEffect} from '@room/utils/RoomShakingEffect';
 import {RoomEngineZoomEvent} from './events/RoomEngineZoomEvent';
+import {PetExperienceEvent} from '../communication/messages/incoming/room/pet/PetExperienceEvent';
+import type {PetExperienceEventParser} from '../communication/messages/parser/room/pet/PetExperienceEventParser';
+import {PetFigureUpdateEvent} from '../communication/messages/incoming/room/pet/PetFigureUpdateEvent';
+import type {PetFigureUpdateEventParser} from '../communication/messages/parser/room/pet/PetFigureUpdateEventParser';
+import {YouArePlayingGameMessageEvent} from '../communication/messages/incoming/room/session/YouArePlayingGameMessageEvent';
+import type {YouArePlayingGameMessageParser} from '../communication/messages/parser/room/session/YouArePlayingGameMessageParser';
+import {YouAreNotSpectatorMessageEvent} from '../communication/messages/incoming/room/session/YouAreNotSpectatorMessageEvent';
+import type {YouAreNotSpectatorMessageParser} from '../communication/messages/parser/room/session/YouAreNotSpectatorMessageParser';
+import {GamePlayerValueMessageEvent} from '../communication/messages/incoming/room/session/GamePlayerValueMessageEvent';
+import type {GamePlayerValueMessageParser} from '../communication/messages/parser/room/session/GamePlayerValueMessageParser';
+import {HanditemConfigurationMessageEvent} from '../communication/messages/incoming/room/session/HanditemConfigurationMessageEvent';
+import type {HanditemConfigurationMessageParser} from '../communication/messages/parser/room/session/HanditemConfigurationMessageParser';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import {GuideSessionStartedMessageEvent} from '../communication/messages/incoming/help/GuideSessionStartedMessageEvent';
@@ -250,6 +262,12 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ObjectRemoveConfirmMessageEvent(this.onObjectRemoveConfirm.bind(this)));
             connection.addMessageEvent(new BCPlacementWarningMessageEvent(this.onBCPlacementWarning.bind(this)));
             connection.addMessageEvent(new SpecialRoomEffectMessageEvent(this.onSpecialRoomEvent.bind(this)));
+            connection.addMessageEvent(new PetExperienceEvent(this.onPetExperience.bind(this)));
+            connection.addMessageEvent(new PetFigureUpdateEvent(this.onPetFigureUpdate.bind(this)));
+            connection.addMessageEvent(new YouArePlayingGameMessageEvent(this.onPlayingGame.bind(this)));
+            connection.addMessageEvent(new YouAreNotSpectatorMessageEvent(this.onYouAreNotSpectator.bind(this)));
+            connection.addMessageEvent(new GamePlayerValueMessageEvent(this.onGamePlayerNumberValue.bind(this)));
+            connection.addMessageEvent(new HanditemConfigurationMessageEvent(this.onConfigurationItemStates.bind(this)));
             connection.addMessageEvent(new GuideSessionStartedMessageEvent(this.onGuideSessionStarted.bind(this)));
             connection.addMessageEvent(new GuideSessionEndedMessageEvent(this.onGuideSessionEnded.bind(this)));
             connection.addMessageEvent(new GuideSessionErrorMessageEvent(this.onGuideSessionError.bind(this)));
@@ -940,6 +958,169 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.status,
             new LegacyStuffData()
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onPetExperience()
+    onPetExperience(event: IMessageEvent): void
+    {
+        const experienceEvent = event as PetExperienceEvent;
+
+        if(experienceEvent === null)
+        {
+            return;
+        }
+
+        const parser = experienceEvent.getParser() as PetExperienceEventParser;
+
+        if(parser === null || this._roomCreator === null)
+        {
+            return;
+        }
+
+        this._roomCreator.updateObjectUserAction(
+            this._currentRoomId,
+            parser.petRoomIndex,
+            'figure_gained_experience',
+            parser.gainedExperience
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onPetFigureUpdate()
+    onPetFigureUpdate(event: IMessageEvent): void
+    {
+        const figureEvent = event as PetFigureUpdateEvent;
+
+        if(figureEvent === null)
+        {
+            return;
+        }
+
+        const parser = figureEvent.getParser() as PetFigureUpdateEventParser;
+
+        if(parser === null || this._roomCreator === null)
+        {
+            return;
+        }
+
+        // AS3 reads parser.figureData.figureString with no null check; the port's getter is
+        // nullable, so guard. Both the sex and subType arguments are the empty string in AS3.
+        const figureData = parser.figureData;
+
+        if(figureData === null)
+        {
+            return;
+        }
+
+        this._roomCreator.updateObjectUserFigure(
+            this._currentRoomId,
+            parser.roomIndex,
+            figureData.figureString,
+            '',
+            '',
+            parser.isRiding
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onPlayingGame()
+    onPlayingGame(event: IMessageEvent): void
+    {
+        const gameEvent = event as YouArePlayingGameMessageEvent;
+
+        if(gameEvent === null)
+        {
+            return;
+        }
+
+        const parser = gameEvent.getParser() as YouArePlayingGameMessageParser;
+
+        if(parser === null || this._roomCreator === null)
+        {
+            return;
+        }
+
+        this._roomCreator.setIsPlayingGame(this._currentRoomId, parser.isPlaying);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onYouAreNotSpectator()
+    onYouAreNotSpectator(event: IMessageEvent): void
+    {
+        const spectatorEvent = event as YouAreNotSpectatorMessageEvent;
+
+        if(spectatorEvent === null)
+        {
+            return;
+        }
+
+        const parser = spectatorEvent.getParser() as YouAreNotSpectatorMessageParser;
+
+        // The message is broadcast per flat: ignore it unless it names the room we are in.
+        if(parser === null || parser.flatId !== this._currentRoomId)
+        {
+            return;
+        }
+
+        const session = this._roomCreator?.roomSessionManager?.getSession(this._currentRoomId) ?? null;
+
+        if(session === null || !session.isSpectatorMode)
+        {
+            return;
+        }
+
+        session.isSpectatorMode = false;
+        this._roomCreator?.leaveSpectate();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onGamePlayerNumberValue()
+    onGamePlayerNumberValue(event: IMessageEvent): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        if(!(event instanceof GamePlayerValueMessageEvent))
+        {
+            return;
+        }
+
+        const parser = event.getParser() as GamePlayerValueMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        // AS3 routes this through getRoomId(0), a private helper whose argument is ignored: it
+        // returns the current room id unconditionally.
+        this._roomCreator.updateObjectUserAction(
+            this._currentRoomId,
+            parser.userId,
+            'figure_number_value',
+            parser.value
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onConfigurationItemStates()
+    onConfigurationItemStates(event: IMessageEvent): void
+    {
+        const configEvent = event as HanditemConfigurationMessageEvent;
+
+        if(configEvent === null)
+        {
+            return;
+        }
+
+        const parser = configEvent.getParser() as HanditemConfigurationMessageParser;
+
+        if(parser === null || this._roomCreator === null)
+        {
+            return;
+        }
+
+        this._roomCreator.setHanditemControlBlocked(this._currentRoomId, parser.isHanditemControlBlocked);
+        this._roomCreator.setChooserDisabled(this._currentRoomId, parser.chooserDisabled);
+        this._roomCreator.setFreeFurniMovementsMode(this._currentRoomId, parser.freeFurniMovementsEnabled);
+        this._roomCreator.setInvisibleFurni(this._currentRoomId, parser.invisibleFurni);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onSpecialRoomEvent()

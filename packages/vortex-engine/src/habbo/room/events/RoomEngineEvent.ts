@@ -14,6 +14,8 @@ export class RoomEngineEvent
     public static readonly REE_OBJECTS_INITIALIZED = 'REE_OBJECTS_INITIALIZED';
     public static readonly REE_NORMAL_MODE = 'REE_NORMAL_MODE';
     public static readonly REE_GAME_MODE = 'REE_GAME_MODE';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::leaveSpectate()
+    public static readonly REE_ENTRANCE_AFTER_SPECTATE = 'REE_ENTRANCE_AFTER_SPECTATE';
 
     constructor(type: string, roomId: number)
     {

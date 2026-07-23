@@ -3076,6 +3076,42 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.setRoomObjectUserOwnUser(roomId, roomIndex);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setIsPlayingGame()
+    setIsPlayingGame(roomId: number, isPlaying: boolean): void
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room !== null)
+        {
+            const value = isPlaying ? 1 : 0;
+            room.setNumber(RoomVariableEnum.IS_PLAYING_GAME, value);
+
+            const type = value === 0 ? RoomEngineEvent.REE_NORMAL_MODE : RoomEngineEvent.REE_GAME_MODE;
+            this.events.emit(type, new RoomEngineEvent(type, roomId));
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::leaveSpectate()
+    leaveSpectate(): void
+    {
+        // AS3 fires this on the ACTIVE room id, not on any room passed in — there is no parameter.
+        this.events.emit(
+            RoomEngineEvent.REE_ENTRANCE_AFTER_SPECTATE,
+            new RoomEngineEvent(RoomEngineEvent.REE_ENTRANCE_AFTER_SPECTATE, this._activeRoomId)
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setHanditemControlBlocked()
+    setHanditemControlBlocked(roomId: number, blocked: boolean): void
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room !== null)
+        {
+            room.setNumber(RoomVariableEnum.HANDITEM_CONTROL_BLOCKED, blocked ? 1 : 0);
+        }
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setChooserDisabled()
     setChooserDisabled(roomId: number, disabled: boolean): void
     {

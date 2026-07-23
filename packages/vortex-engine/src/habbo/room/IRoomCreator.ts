@@ -254,6 +254,42 @@ export interface IRoomCreator
     readonly sessionDataManager: ISessionDataManager | null;
 
     /**
+	 * Flag the room as being in game mode, emitting REE_GAME_MODE / REE_NORMAL_MODE.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setIsPlayingGame()
+    setIsPlayingGame(roomId: number, isPlaying: boolean): void;
+
+    /**
+	 * Leave spectator mode on the active room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::leaveSpectate()
+    leaveSpectate(): void;
+
+    /**
+	 * Block/unblock handitem control for the room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setHanditemControlBlocked()
+    setHanditemControlBlocked(roomId: number, blocked: boolean): void;
+
+    /**
+	 * Disable the furni chooser for the room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setChooserDisabled()
+    setChooserDisabled(roomId: number, disabled: boolean): void;
+
+    /**
+	 * Toggle free (grid-less) furni movement for the room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setFreeFurniMovementsMode()
+    setFreeFurniMovementsMode(roomId: number, enabled: boolean): void;
+
+    /**
+	 * Toggle the invisible-furni room mode.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::setInvisibleFurni()
+    setInvisibleFurni(roomId: number, invisible: boolean): void;
+
+    /**
 	 * Set the room's background colour / light level (the disco special event).
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoomColor()
