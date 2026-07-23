@@ -277,6 +277,10 @@ import {
     UpdateSelectorMessageComposer,
     ApplySnapshotMessageComposer
 } from './messages/outgoing/userdefinedroomevents';
+import {GetAllVariablesMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesMessageComposer';
+import {GetAllVariablesDiffMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesDiffMessageComposer';
+import {AllVariablesHashMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
+import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
 
 // Incoming Events - Poll
 import {
@@ -1048,6 +1052,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2635, OpenEvent);
         this._events.set(3201, WiredValidationErrorEvent);
         this._events.set(1192, WiredSaveSuccessEvent);
+        this._events.set(3287, AllVariablesHashMessageEvent);
+        this._events.set(2733, AllVariablesDiffMessageEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -1285,6 +1291,8 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2475, UpdateVariableMessageComposer);
         this._composers.set(510, UpdateSelectorMessageComposer);
         this._composers.set(2790, ApplySnapshotMessageComposer);
+        this._composers.set(984, GetAllVariablesMessageComposer);
+        this._composers.set(797, GetAllVariablesDiffMessageComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
