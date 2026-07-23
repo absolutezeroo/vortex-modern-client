@@ -11,6 +11,7 @@ export {ObjectUpdateMessageEvent} from './ObjectUpdateMessageEvent';
 export {ObjectRemoveMessageEvent} from './ObjectRemoveMessageEvent';
 export {ObjectDataUpdateMessageEvent} from './ObjectDataUpdateMessageEvent';
 export {ObjectsDataUpdateMessageEvent} from './ObjectsDataUpdateMessageEvent';
+export {DiceValueMessageEvent} from './DiceValueMessageEvent';
 export {ItemsMessageEvent} from './ItemsMessageEvent';
 export {ItemAddMessageEvent} from './ItemAddMessageEvent';
 export {ItemUpdateMessageEvent} from './ItemUpdateMessageEvent';

@@ -34,6 +34,9 @@ import {
 import {
     ObjectsDataUpdateMessageEvent
 } from '../communication/messages/incoming/room/engine/ObjectsDataUpdateMessageEvent';
+import {DiceValueMessageEvent} from '../communication/messages/incoming/room/engine/DiceValueMessageEvent';
+import type {DiceValueMessageParser} from '../communication/messages/parser/room/engine/DiceValueMessageParser';
+import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import {ItemsMessageEvent} from '../communication/messages/incoming/room/engine/ItemsMessageEvent';
 import {ItemAddMessageEvent} from '../communication/messages/incoming/room/engine/ItemAddMessageEvent';
 import {ItemUpdateMessageEvent} from '../communication/messages/incoming/room/engine/ItemUpdateMessageEvent';
@@ -187,6 +190,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ObjectRemoveMessageEvent(this.onObjectRemove.bind(this)));
             connection.addMessageEvent(new ObjectDataUpdateMessageEvent(this.onObjectDataUpdate.bind(this)));
             connection.addMessageEvent(new ObjectsDataUpdateMessageEvent(this.onObjectsDataUpdate.bind(this)));
+            connection.addMessageEvent(new DiceValueMessageEvent(this.onDiceValue.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
             connection.addMessageEvent(new ItemAddMessageEvent(this.onItemAdd.bind(this)));
             connection.addMessageEvent(new ItemUpdateMessageEvent(this.onItemUpdate.bind(this)));
@@ -804,6 +808,40 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 );
             }
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onDiceValue()
+    onDiceValue(event: IMessageEvent): void
+    {
+        const diceEvent = event as DiceValueMessageEvent;
+
+        if(diceEvent === null)
+        {
+            return;
+        }
+
+        const parser = diceEvent.getParser() as DiceValueMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        // AS3 hands updateObjectFurniture a fresh empty LegacyDataType (_SafeCls_1945) as the stuff
+        // data; the rolled face is carried by the state argument.
+        this._roomCreator.updateObjectFurniture(
+            this._currentRoomId,
+            parser.id,
+            null,
+            null,
+            parser.value,
+            new LegacyStuffData()
+        );
     }
 
     onItems(event: IMessageEvent): void
