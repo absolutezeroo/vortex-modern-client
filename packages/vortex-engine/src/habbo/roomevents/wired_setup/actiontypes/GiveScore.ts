@@ -63,8 +63,8 @@ export class GiveScore extends DefaultActionType
     // AS3: GiveScore.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        let points = def.intParams[0];
-        const times = def.intParams[1];
+        let points = def.getInt(0);
+        const times = def.getInt(1);
         let operation = 0;
 
         if(points < 0)

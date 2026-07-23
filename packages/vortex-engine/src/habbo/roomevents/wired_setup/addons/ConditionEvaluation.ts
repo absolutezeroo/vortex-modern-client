@@ -53,12 +53,12 @@ export class ConditionEvaluation extends DefaultAddonType
             this._compareInputs[i].value = 0;
         }
 
-        let mode = Math.trunc(def.intParams[0]);
+        let mode = Math.trunc(def.getInt(0));
 
         if(mode === -1)
         {
-            const compareType = Math.trunc(def.intParams[1]);
-            const compareValue = Math.trunc(def.intParams[2]);
+            const compareType = Math.trunc(def.getInt(1));
+            const compareValue = Math.trunc(def.getInt(2));
             mode = ConditionEvaluation.COMPARE_BASE + compareType;
 
             if(compareType >= 0 && compareType < this._compareInputs.length)

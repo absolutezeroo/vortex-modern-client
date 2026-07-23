@@ -56,7 +56,7 @@ export class BotTalkDirectToAvatar extends DefaultBotActionType
 
         this._botName.text = parts.length >= 1 ? parts[0] : '';
         this._chatMessage.text = parts.length === 2 ? parts[1] : '';
-        this._operation.selected = def.intParams[0];
+        this._operation.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4292.as::readIntParamsFromForm()

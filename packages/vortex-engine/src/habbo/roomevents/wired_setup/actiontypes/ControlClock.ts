@@ -54,7 +54,7 @@ export class ControlClock extends DefaultActionType
     // AS3: _SafeCls_4061.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._control.selected = def.intParams[0];
+        this._control.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4061.as::readIntParamsFromForm()

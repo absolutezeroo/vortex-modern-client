@@ -84,7 +84,7 @@ export class PerformingAction extends DefaultConditionType
     // AS3: _SafeCls_4326.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._actionDropdown.selectedId = def.intParams[0];
+        this._actionDropdown.selectedId = def.getInt(0);
         this.updateExtraSections(def.stringParam);
     }
 

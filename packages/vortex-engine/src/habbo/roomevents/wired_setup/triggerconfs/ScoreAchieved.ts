@@ -62,8 +62,8 @@ export class ScoreAchieved extends DefaultTriggerConf
     // AS3: ScoreAchieved.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const score = Math.trunc(def.intParams[0]);
-        const team = Math.trunc(def.intParams[1]);
+        const score = Math.trunc(def.getInt(0));
+        const team = Math.trunc(def.getInt(1));
 
         this._score.value = score;
         this._team.selected = team;

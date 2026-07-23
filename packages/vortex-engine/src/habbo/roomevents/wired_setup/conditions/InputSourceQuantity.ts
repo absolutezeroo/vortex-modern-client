@@ -63,8 +63,8 @@ export class InputSourceQuantity extends DefaultConditionType
     override onEditStart(def: Triggerable): void
     {
         this._userSource = def.getBoolean(0);
-        this._amount.value = def.intParams[1];
-        this._comparison.selected = def.intParams[2];
+        this._amount.value = def.getInt(1);
+        this._comparison.selected = def.getInt(2);
     }
 
     // AS3: _SafeCls_4243.as::readIntParamsFromForm()

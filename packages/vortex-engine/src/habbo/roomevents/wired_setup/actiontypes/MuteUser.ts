@@ -49,7 +49,7 @@ export class MuteUser extends DefaultActionType
     override onEditStart(def: Triggerable): void
     {
         this._message.text = def.stringParam;
-        this._length.value = def.intParams[0];
+        this._length.value = def.getInt(0);
     }
 
     // AS3: _SafeCls_4144.as::get inputMode()

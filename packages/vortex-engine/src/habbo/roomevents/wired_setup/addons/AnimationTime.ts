@@ -42,7 +42,7 @@ export class AnimationTime extends DefaultAddonType
     // AS3: AnimationTime.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._time.value = def.intParams[0];
+        this._time.value = def.getInt(0);
     }
 
     // AS3: AnimationTime.as::readIntParamsFromForm()

@@ -50,8 +50,8 @@ export class ExecutionLimiter extends DefaultAddonType
     // AS3: _SafeCls_4166.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._amount.value = def.intParams[0];
-        this._timeWindow.value = def.intParams[1];
+        this._amount.value = def.getInt(0);
+        this._timeWindow.value = def.getInt(1);
     }
 
     // AS3: _SafeCls_4166.as::readIntParamsFromForm()

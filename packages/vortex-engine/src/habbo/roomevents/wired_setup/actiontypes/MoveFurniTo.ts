@@ -42,8 +42,8 @@ export class MoveFurniTo extends DefaultActionType
     // AS3: _SafeCls_4270.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._direction.selected = def.intParams[0];
-        this._emptyTiles.value = def.intParams[1];
+        this._direction.selected = def.getInt(0);
+        this._emptyTiles.value = def.getInt(1);
     }
 
     // AS3: _SafeCls_4270.as::get inputMode()

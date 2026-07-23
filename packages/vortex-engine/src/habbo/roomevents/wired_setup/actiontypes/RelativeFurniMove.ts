@@ -90,8 +90,8 @@ export class RelativeFurniMove extends DefaultActionType
     // AS3: _SafeCls_4186.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this.setAxisValue(def.intParams[0], this._horizontalAxis, this._horizontalSlider, 'horizontal');
-        this.setAxisValue(def.intParams[1], this._verticalAxis, this._verticalSlider, 'vertical');
+        this.setAxisValue(def.getInt(0), this._horizontalAxis, this._horizontalSlider, 'horizontal');
+        this.setAxisValue(def.getInt(1), this._verticalAxis, this._verticalSlider, 'vertical');
     }
 
     // AS3: _SafeCls_4186.as::readIntParamsFromForm()

@@ -49,7 +49,7 @@ export class GlobalVariable extends DefaultVariableType
     override onEditStart(def: Triggerable): void
     {
         super.onEditStart(def);
-        this._availability.selected = Math.trunc(def.intParams[0]);
+        this._availability.selected = Math.trunc(def.getInt(0));
         this.initialVariableName = def.stringParam;
 
         const value = def.wiredContext.globalVariableInfo?.value ?? 0;

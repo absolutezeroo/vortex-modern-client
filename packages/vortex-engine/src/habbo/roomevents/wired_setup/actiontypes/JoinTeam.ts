@@ -62,8 +62,8 @@ export class JoinTeam extends DefaultActionType
     // AS3: _SafeCls_4361.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._team.selected = def.intParams[0];
-        this._type.selected = def.intParams[1];
+        this._team.selected = def.getInt(0);
+        this._type.selected = def.getInt(1);
     }
 
     // AS3: _SafeCls_4361.as::readIntParamsFromForm()

@@ -50,7 +50,7 @@ export class BotFollowAvatar extends DefaultBotActionType
     override onEditStart(def: Triggerable): void
     {
         this._botName.text = def.stringParam;
-        this._operation.selected = def.intParams[0];
+        this._operation.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4421.as::get inputMode()

@@ -52,7 +52,7 @@ export class UsersByType extends DefaultSelectorType
     // AS3: _SafeCls_4427.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._userType.selected = def.intParams[0];
+        this._userType.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4427.as::readIntParamsFromForm()

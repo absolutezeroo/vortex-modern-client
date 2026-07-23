@@ -36,8 +36,8 @@ export class MoveUser extends DefaultActionType
     // AS3: _SafeCls_4333.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._move.selected = def.intParams[0];
-        this._rotate.selected = def.intParams[1];
+        this._move.selected = def.getInt(0);
+        this._rotate.selected = def.getInt(1);
     }
 
     // AS3: _SafeCls_4333.as::readIntParamsFromForm()

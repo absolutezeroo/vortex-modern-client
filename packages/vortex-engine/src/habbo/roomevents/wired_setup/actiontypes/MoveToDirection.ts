@@ -41,9 +41,9 @@ export class MoveToDirection extends DefaultActionType
     // AS3: _SafeCls_4268.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._startDir.selected = def.intParams[0];
-        this._turn.selected = def.intParams[1];
-        this._blockOnCollide.optionById(0).selected = def.intParams[2] !== 0;
+        this._startDir.selected = def.getInt(0);
+        this._turn.selected = def.getInt(1);
+        this._blockOnCollide.optionById(0).selected = def.getInt(2) !== 0;
     }
 
     // AS3: _SafeCls_4268.as::readIntParamsFromForm()

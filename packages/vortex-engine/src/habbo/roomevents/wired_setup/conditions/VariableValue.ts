@@ -84,15 +84,14 @@ export class VariableValue extends DefaultConditionType
     // AS3: _SafeCls_4119.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const intParams = def.intParams;
         const variableId0 = def.variableIds[0];
         let variableId1 = def.variableIds[1];
 
-        this._target = intParams[0];
-        const comparison = intParams[1];
-        const option = intParams[2];
-        let value = intParams[4];
-        const referenceTarget = intParams[5];
+        this._target = def.getInt(0);
+        const comparison = def.getInt(1);
+        const option = def.getInt(2);
+        let value = def.getInt(4);
+        const referenceTarget = def.getInt(5);
 
         this._picker.init(def.wiredContext.roomVariablesList, variableId0, this._target);
         this._comparisonRadio.selected = comparison;

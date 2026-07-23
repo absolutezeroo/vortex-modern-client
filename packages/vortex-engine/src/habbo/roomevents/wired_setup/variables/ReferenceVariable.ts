@@ -106,7 +106,7 @@ export class ReferenceVariable extends DefaultVariableType
 
         // AS3 also guards `variableIds != null`; the port's Triggerable.variableIds is never null.
         const variableId = def.variableIds.length > 0 ? def.variableIds[0] : WiredVariable.DEFAULT_VARIABLE_ID;
-        const readOnly = def.intParams[0] !== 0;
+        const readOnly = def.getInt(0) !== 0;
 
         this._readOnlyCheckbox.optionById(0).selected = readOnly;
         this._ready = false;

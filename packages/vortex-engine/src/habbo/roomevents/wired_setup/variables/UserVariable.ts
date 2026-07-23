@@ -53,8 +53,8 @@ export class UserVariable extends DefaultVariableType
     override onEditStart(def: Triggerable): void
     {
         super.onEditStart(def);
-        const availability = Math.trunc(def.intParams[0]);
-        const hasValue = def.intParams[1] !== 0;
+        const availability = Math.trunc(def.getInt(0));
+        const hasValue = def.getInt(1) !== 0;
         this._settings.optionById(0).selected = hasValue;
         this._previousAvailability = availability;
         this._availability.selected = availability;

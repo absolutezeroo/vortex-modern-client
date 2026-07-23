@@ -38,7 +38,7 @@ export class MoveUserToFurni extends DefaultActionType
     // AS3: _SafeCls_4021.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._walkMode.selected = def.intParams[0];
+        this._walkMode.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4021.as::get inputMode()

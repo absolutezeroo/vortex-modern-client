@@ -54,8 +54,8 @@ export class SetFurniAltitude extends DefaultActionType
     // AS3: SetFurniAltitude.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._altitude.value = def.intParams[0];
-        this._operator.selected = def.intParams[1];
+        this._altitude.value = def.getInt(0);
+        this._operator.selected = def.getInt(1);
     }
 
     // AS3: SetFurniAltitude.as::readIntParamsFromForm()

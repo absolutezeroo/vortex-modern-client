@@ -54,7 +54,7 @@ export class UserDirection extends DefaultConditionType
     // AS3: _SafeCls_4308.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const mask = Math.trunc(def.intParams[0]);
+        const mask = Math.trunc(def.getInt(0));
 
         for(let i = 0; i < 8; i++)
         {

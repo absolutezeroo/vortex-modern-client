@@ -46,8 +46,8 @@ export class ActionPicker extends DefaultAddonType
     // AS3: _SafeCls_4334.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._skips.value = def.intParams[0];
-        this._picks.value = def.intParams[1];
+        this._skips.value = def.getInt(0);
+        this._picks.value = def.getInt(1);
     }
 
     // AS3: _SafeCls_4334.as::buildInputs()

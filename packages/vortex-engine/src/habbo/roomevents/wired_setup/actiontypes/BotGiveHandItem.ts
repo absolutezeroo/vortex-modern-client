@@ -74,7 +74,7 @@ export class BotGiveHandItem extends DefaultBotActionType
         this._botName.text = def.stringParam;
         this._botUsageCheckboxGroup.optionById(0).selected = hasBotName;
         this._botName.window.visible = hasBotName;
-        this.setSelectedHandItemByCode(def.intParams[0]);
+        this.setSelectedHandItemByCode(def.getInt(0));
     }
 
     // AS3: _SafeCls_4127.as::setSelectedHandItemByCode()

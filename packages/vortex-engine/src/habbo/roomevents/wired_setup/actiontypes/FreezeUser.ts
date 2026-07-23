@@ -61,7 +61,7 @@ export class FreezeUser extends DefaultActionType
     // AS3: _SafeCls_4182.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._effectDropdown.selectedId = def.intParams[0];
+        this._effectDropdown.selectedId = def.getInt(0);
         this._cancelCheckbox.optionById(0).selected = def.getBoolean(1);
     }
 

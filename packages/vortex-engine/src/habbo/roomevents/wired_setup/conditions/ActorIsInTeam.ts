@@ -59,7 +59,7 @@ export class ActorIsInTeam extends DefaultConditionType
     // AS3: _SafeCls_4112.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._team.selected = def.intParams[0];
+        this._team.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4112.as::readIntParamsFromForm()

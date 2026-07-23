@@ -90,15 +90,14 @@ export class VariableAge extends DefaultConditionType
     // AS3: _SafeCls_4192.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const intParams = def.intParams;
         const variableId = def.variableIds[0];
 
-        this._target = intParams[0];
+        this._target = def.getInt(0);
         this._picker.init(def.wiredContext.roomVariablesList, variableId, this._target);
-        this._comparisonRadio.selected = intParams[1];
-        this._compareValueRadio.selected = intParams[2];
-        this._durationInput.value = intParams[4];
-        this._timeUnit.selectedId = intParams[5];
+        this._comparisonRadio.selected = def.getInt(1);
+        this._compareValueRadio.selected = def.getInt(2);
+        this._durationInput.value = def.getInt(4);
+        this._timeUnit.selectedId = def.getInt(5);
         this.updateAgeOptions(this._picker.selected);
     }
 

@@ -53,7 +53,7 @@ export class FurniOnFurni extends DefaultSelectorType
     // AS3: _SafeCls_4116.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._selection.selected = def.intParams[0];
+        this._selection.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4116.as::readIntParamsFromForm()

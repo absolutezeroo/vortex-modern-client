@@ -49,7 +49,7 @@ export class GiveScoreToPredefinedTeam extends GiveScore
     override onEditStart(def: Triggerable): void
     {
         super.onEditStart(def);
-        this._team.selected = def.intParams[2];
+        this._team.selected = def.getInt(2);
     }
 
     // AS3: _SafeCls_4136.as::readIntParamsFromForm()

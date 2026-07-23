@@ -66,9 +66,9 @@ export class RemoteSelector extends DefaultSelectorType
     // AS3: _SafeCls_4251.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._type.selected = def.intParams[0];
+        this._type.selected = def.getInt(0);
 
-        const count = Math.trunc(def.intParams[1]);
+        const count = Math.trunc(def.getInt(1));
         this._filter.selected = count > 0 ? 1 : 0;
         this._filterCount.value = count;
     }

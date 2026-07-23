@@ -52,11 +52,10 @@ export class JumpStrength extends DefaultAddonType
     // AS3: _SafeCls_4247.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const intParams = def.intParams;
         let variableId = def.variableIds[0];
-        const option = intParams[0];
-        let value = intParams[1];
-        const target = intParams[2];
+        const option = def.getInt(0);
+        let value = def.getInt(1);
+        const target = def.getInt(2);
 
         if(option === 0)
         {

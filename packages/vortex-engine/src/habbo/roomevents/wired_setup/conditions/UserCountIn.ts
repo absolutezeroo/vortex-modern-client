@@ -56,8 +56,8 @@ export class UserCountIn extends DefaultConditionType
     // AS3: _SafeCls_4388.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._min.value = def.intParams[0];
-        this._max.value = def.intParams[1];
+        this._min.value = def.getInt(0);
+        this._max.value = def.getInt(1);
     }
 
     // AS3: _SafeCls_4388.as::readIntParamsFromForm()

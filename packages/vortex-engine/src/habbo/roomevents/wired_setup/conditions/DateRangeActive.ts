@@ -89,7 +89,7 @@ export class DateRangeActive extends DefaultConditionType
         const formatter = new DateTimeFormatter('en-US');
         formatter.setDateTimePattern(DateRangeActive.DATE_TIME_PATTERN);
 
-        this._startInput.text = def.intParams.length > 0 ? formatter.format(new Date(def.intParams[0] * 1000)) : '';
-        this._endInput.text = def.intParams.length > 1 ? formatter.format(new Date(def.intParams[1] * 1000)) : '';
+        this._startInput.text = def.intParams.length > 0 ? formatter.format(new Date(def.getInt(0) * 1000)) : '';
+        this._endInput.text = def.intParams.length > 1 ? formatter.format(new Date(def.getInt(1) * 1000)) : '';
     }
 }

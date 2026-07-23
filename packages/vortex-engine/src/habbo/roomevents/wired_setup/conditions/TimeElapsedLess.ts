@@ -47,7 +47,7 @@ export class TimeElapsedLess extends DefaultConditionType
     // AS3: _SafeCls_4196.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._time.value = def.intParams[0] - 1;
+        this._time.value = def.getInt(0) - 1;
     }
 
     // AS3: _SafeCls_4196.as::readIntParamsFromForm()

@@ -83,9 +83,9 @@ export class GiveVariable extends DefaultActionType
     override onEditStart(def: Triggerable): void
     {
         const variableId = def.variableIds[0];
-        this._target = def.intParams[0];
-        let value = def.intParams[2];
-        const override = def.intParams[3] !== 0;
+        this._target = def.getInt(0);
+        let value = def.getInt(2);
+        const override = def.getInt(3) !== 0;
 
         this._picker.init(def.wiredContext.roomVariablesList, variableId, this._target);
 

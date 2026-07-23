@@ -54,8 +54,8 @@ export class LevelMatches extends DefaultConditionType
     // AS3: LevelMatches.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._level.value = def.intParams[0];
-        this._comparison.selected = def.intParams[1];
+        this._level.value = def.getInt(0);
+        this._comparison.selected = def.getInt(1);
     }
 
     // AS3: LevelMatches.as::readIntParamsFromForm()

@@ -68,7 +68,7 @@ export class UsersWithHanditem extends DefaultSelectorType
     // AS3: _SafeCls_4047.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this.setSelectedHandItemByCode(def.intParams[0]);
+        this.setSelectedHandItemByCode(def.getInt(0));
     }
 
     // AS3: _SafeCls_4047.as::createOptions()

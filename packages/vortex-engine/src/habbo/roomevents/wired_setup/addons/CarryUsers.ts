@@ -55,7 +55,7 @@ export class CarryUsers extends DefaultAddonType
     // AS3: CarryUsers.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._carryUsersMode.selected = def.intParams[0];
+        this._carryUsersMode.selected = def.getInt(0);
     }
 
     // AS3: CarryUsers.as::userSelectionTitle()

@@ -47,7 +47,7 @@ export class DontHaveStackedFurnis extends DefaultConditionType
     // AS3: DontHaveStackedFurnis.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._mode.selected = def.intParams[0];
+        this._mode.selected = def.getInt(0);
     }
 
     // AS3: DontHaveStackedFurnis.as::readIntParamsFromForm()

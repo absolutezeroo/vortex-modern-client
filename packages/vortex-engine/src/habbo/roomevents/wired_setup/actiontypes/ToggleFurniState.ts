@@ -52,7 +52,7 @@ export class ToggleFurniState extends DefaultActionType
     // AS3: _SafeCls_4085.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._toggleMode.selected = def.intParams[0];
+        this._toggleMode.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4085.as::readIntParamsFromForm()

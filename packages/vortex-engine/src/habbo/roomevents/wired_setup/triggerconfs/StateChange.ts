@@ -62,6 +62,6 @@ export class StateChange extends DefaultTriggerConf
     // AS3: _SafeCls_4351.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._options.selected = def.intParams[0];
+        this._options.selected = def.getInt(0);
     }
 }

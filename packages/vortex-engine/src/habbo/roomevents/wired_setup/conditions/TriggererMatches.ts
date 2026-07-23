@@ -71,7 +71,7 @@ export class TriggererMatches extends DefaultConditionType
     // AS3: TriggererMatches.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._userType.selected = def.intParams[0];
+        this._userType.selected = def.getInt(0);
 
         if(def.stringParam !== '')
         {

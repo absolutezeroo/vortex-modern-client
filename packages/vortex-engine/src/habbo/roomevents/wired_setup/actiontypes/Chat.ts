@@ -67,8 +67,8 @@ export class Chat extends DefaultActionType
     override onEditStart(def: Triggerable): void
     {
         this._messageArea.text = def.stringParam;
-        this._visibilityRadio.selected = def.intParams[0];
-        this._styleDropdown.selectedId = def.intParams[1];
+        this._visibilityRadio.selected = def.getInt(0);
+        this._styleDropdown.selectedId = def.getInt(1);
     }
 
     // AS3: _SafeCls_4348.as::buildInputs()

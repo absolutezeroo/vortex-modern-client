@@ -196,11 +196,11 @@ export class GiveReward extends DefaultActionType
     // AS3: _SafeCls_4307.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._rewardIntervalGroup.selected = def.intParams[0];
+        this._rewardIntervalGroup.selected = def.getInt(0);
 
         if(this._rewardIntervalGroup.selected > 0 && def.intParams.length === 4)
         {
-            this._intervalInput.text = String(def.intParams[3]);
+            this._intervalInput.text = String(def.getInt(3));
         }
         else
         {
@@ -209,11 +209,11 @@ export class GiveReward extends DefaultActionType
 
         this.onRewardIntervalChange(this._rewardIntervalGroup.selected);
 
-        const unique = def.intParams[1] === 1;
+        const unique = def.getInt(1) === 1;
         this._uniquePrizeCheckbox.optionById(0).selected = unique;
         this.setProbabilityVisibility(!unique);
 
-        const prizeLimit = def.intParams[2];
+        const prizeLimit = def.getInt(2);
 
         if(prizeLimit > 0)
         {

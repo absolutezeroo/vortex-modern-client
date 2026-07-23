@@ -59,6 +59,6 @@ export class ActorIsWearingEffect extends DefaultConditionType
     // AS3: _SafeCls_4337.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._effectId.value = def.intParams[0];
+        this._effectId.value = def.getInt(0);
     }
 }

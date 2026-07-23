@@ -50,8 +50,8 @@ export class FurniVariable extends DefaultVariableType
     override onEditStart(def: Triggerable): void
     {
         super.onEditStart(def);
-        this._settings.optionById(0).selected = def.intParams[0] !== 0;
-        this._availability.selected = Math.trunc(def.intParams[1]);
+        this._settings.optionById(0).selected = def.getInt(0) !== 0;
+        this._availability.selected = Math.trunc(def.getInt(1));
         this.initialVariableName = def.stringParam;
     }
 

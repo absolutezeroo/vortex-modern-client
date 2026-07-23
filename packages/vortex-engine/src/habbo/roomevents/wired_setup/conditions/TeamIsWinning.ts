@@ -61,8 +61,8 @@ export class TeamIsWinning extends DefaultConditionType
     // AS3: _SafeCls_4226.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._team.selected = def.intParams[0];
-        this._placement.selected = def.intParams[1];
+        this._team.selected = def.getInt(0);
+        this._placement.selected = def.getInt(1);
     }
 
     // AS3: _SafeCls_4226.as::readIntParamsFromForm()

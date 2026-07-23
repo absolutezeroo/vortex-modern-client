@@ -54,8 +54,8 @@ export class FurniWithAltitude extends DefaultSelectorType
     // AS3: FurniWithAltitude.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._altitude.value = def.intParams[0];
-        this._comparison.selected = def.intParams[1];
+        this._altitude.value = def.getInt(0);
+        this._comparison.selected = def.getInt(1);
     }
 
     // AS3: FurniWithAltitude.as::readIntParamsFromForm()

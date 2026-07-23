@@ -55,6 +55,6 @@ export class TriggerPeriodically extends DefaultTriggerConf
     // AS3: _SafeCls_4050.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._time.value = def.intParams[0];
+        this._time.value = def.getInt(0);
     }
 }

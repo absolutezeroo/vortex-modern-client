@@ -82,13 +82,12 @@ export class VariableSelector extends DefaultSelectorType
     // AS3: _SafeCls_4352.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const intParams = def.intParams;
         const variableId0 = def.variableIds[0];
         let variableId1 = def.variableIds[1];
-        const comparison = intParams[0];
-        let mode = intParams[1];
-        let value = intParams[3];
-        const referenceTarget = intParams[4];
+        const comparison = def.getInt(0);
+        let mode = def.getInt(1);
+        let value = def.getInt(3);
+        const referenceTarget = def.getInt(4);
 
         this._picker.init(def.wiredContext.roomVariablesList, variableId0, this.variableSource);
         this._comparisonRadio.selected = comparison;

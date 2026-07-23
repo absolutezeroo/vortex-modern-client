@@ -53,7 +53,7 @@ export class UsersInTeam extends DefaultSelectorType
     // AS3: _SafeCls_4216.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._team.selected = def.intParams[0];
+        this._team.selected = def.getInt(0);
     }
 
     // AS3: _SafeCls_4216.as::readIntParamsFromForm()

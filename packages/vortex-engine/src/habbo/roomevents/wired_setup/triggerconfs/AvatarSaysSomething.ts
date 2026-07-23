@@ -81,10 +81,9 @@ export class AvatarSaysSomething extends DefaultTriggerConf
     {
         this._chatInput.text = def.stringParam;
 
-        const intParams = def.intParams;
-        this._options.optionById(0).selected = intParams[0] !== 0;
-        this._options.optionById(1).selected = intParams[2] !== 0;
-        this._triggerType.selected = intParams[1];
+        this._options.optionById(0).selected = def.getInt(0) !== 0;
+        this._options.optionById(1).selected = def.getInt(2) !== 0;
+        this._triggerType.selected = def.getInt(1);
         this._onTriggerTypeChange(this._triggerType.selected);
     }
 

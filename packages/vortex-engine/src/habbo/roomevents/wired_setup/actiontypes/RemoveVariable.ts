@@ -62,7 +62,7 @@ export class RemoveVariable extends DefaultActionType
     override onEditStart(def: Triggerable): void
     {
         const variableId = def.variableIds[0];
-        this._target = def.intParams[0];
+        this._target = def.getInt(0);
         this._picker.init(def.wiredContext.roomVariablesList, variableId, this._target);
     }
 

@@ -64,9 +64,9 @@ export class TeamHasScore extends DefaultConditionType
     // AS3: TeamHasScore.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._team.selected = def.intParams[0];
-        this._score.value = def.intParams[1];
-        this._comparison.selected = def.intParams[2];
+        this._team.selected = def.getInt(0);
+        this._score.value = def.getInt(1);
+        this._comparison.selected = def.getInt(2);
     }
 
     // AS3: TeamHasScore.as::readIntParamsFromForm()

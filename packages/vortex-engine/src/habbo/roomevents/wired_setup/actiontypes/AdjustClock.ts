@@ -61,13 +61,13 @@ export class AdjustClock extends DefaultActionType
     // AS3: _SafeCls_4279.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const seconds = Math.trunc(def.intParams[0]);
-        const minutes = Math.trunc(def.intParams[1]);
-        const subPulse = Math.trunc(def.intParams[2]);
+        const seconds = Math.trunc(def.getInt(0));
+        const minutes = Math.trunc(def.getInt(1));
+        const subPulse = Math.trunc(def.getInt(2));
 
         this._seconds.value = seconds * 2 + subPulse;
         this._minutes.value = minutes;
-        this._operator.selected = def.intParams[3];
+        this._operator.selected = def.getInt(3);
     }
 
     // AS3: _SafeCls_4279.as::readIntParamsFromForm()

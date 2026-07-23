@@ -48,7 +48,7 @@ export class FurnisHaveAvatars extends DefaultConditionType
     // AS3: FurnisHaveAvatars.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        this._mode.selected = def.intParams[0];
+        this._mode.selected = def.getInt(0);
     }
 
     // AS3: FurnisHaveAvatars.as::readIntParamsFromForm()

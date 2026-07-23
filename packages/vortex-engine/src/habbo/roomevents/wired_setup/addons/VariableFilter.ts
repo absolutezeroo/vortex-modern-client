@@ -80,13 +80,12 @@ export class VariableFilter extends DefaultAddonType
     // AS3: _SafeCls_4253.as::onEditStart()
     override onEditStart(def: Triggerable): void
     {
-        const intParams = def.intParams;
         const variableId0 = def.variableIds[0];
         let variableId1 = def.variableIds[1];
-        let value = intParams[0];
-        const sortBy = intParams[1];
-        const option = intParams[2];
-        const referenceTarget = intParams[3];
+        let value = def.getInt(0);
+        const sortBy = def.getInt(1);
+        const option = def.getInt(2);
+        const referenceTarget = def.getInt(3);
 
         this._picker.init(def.wiredContext.roomVariablesList, variableId0, this.variableType);
 
