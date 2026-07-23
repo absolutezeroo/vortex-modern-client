@@ -45,6 +45,8 @@ import {SubVariableCreatorPreset} from './presets/applications/SubVariableCreato
 import type {SubVariableParam} from './params/applications/SubVariableParam';
 import {WindowWrapperPreset} from './presets/WindowWrapperPreset';
 import {LevelXpPreviewPreset} from './presets/applications/LevelXpPreviewPreset';
+import {FloorDrawingPreset} from './presets/applications/FloorDrawingPreset';
+import {FloorEditorPreset} from './presets/applications/FloorEditorPreset';
 import {AssetButtonPreset} from './presets/AssetButtonPreset';
 import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
 import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
@@ -414,6 +416,18 @@ export class PresetManager
     createLevelXpPreview(previewLevels: number[]): LevelXpPreviewPreset
     {
         return new LevelXpPreviewPreset(this._roomEvents, this, this.wiredStyle, previewLevels);
+    }
+
+    // AS3: PresetManager.as::createFloorDrawingPreset()
+    createFloorDrawingPreset(onRootTileChanged: (x: number, y: number) => void): FloorDrawingPreset
+    {
+        return new FloorDrawingPreset(this._roomEvents, this, this.wiredStyle, onRootTileChanged);
+    }
+
+    // AS3: PresetManager.as::createFloorEditorPreset()
+    createFloorEditorPreset(buttonRow: AssetButtonRowPreset, floorDrawing: FloorDrawingPreset): FloorEditorPreset
+    {
+        return new FloorEditorPreset(this._roomEvents, this, this.wiredStyle, buttonRow, floorDrawing);
     }
 
     // AS3: PresetManager.as::createAssetButtonRow()

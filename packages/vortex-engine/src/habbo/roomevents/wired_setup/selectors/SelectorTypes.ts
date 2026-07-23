@@ -21,16 +21,17 @@ import {UsersWithHanditem} from './UsersWithHanditem';
 import {UsersWithVariable} from './UsersWithVariable';
 import {UsersInArea} from './UsersInArea';
 import {FurniInArea} from './FurniInArea';
+import {UsersInNeighborhood} from './UsersInNeighborhood';
+import {FurniInNeighborhood} from './FurniInNeighborhood';
 
 /**
  * SelectorTypes — the wired selector registry (IWiredTypeHolder): instantiates every selector type and
  * resolves one by its server code.
  *
- * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported InNeighborhood family
- * (_4420/_4450, need the applications Floor presets). getElementByCode returns null for their codes.
- * (The area selectors UsersInArea/FurniInArea are now ported — area selection itself is inert until the
- * room-engine RoomAreaSelectionManager lands, see its TODO(AS3); the VariableSelector family
- * UsersWithVariable/FurniWithVariable, UsersPerformingAction, UsersWithHanditem, UsersInGroup are ported.)
+ * All AS3 selector types are now ported and registered. Two visual editors remain inert pending
+ * room-engine/rendering infra (their leaves still (de)serialize faithfully): area selection needs the
+ * room-engine RoomAreaSelectionManager (UsersInArea/FurniInArea) and the neighborhood floor-drawing
+ * canvas needs a bitmap pixel layer (UsersInNeighborhood/FurniInNeighborhood) — see their TODO(AS3)s.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/SelectorTypes.as
  */
@@ -55,7 +56,9 @@ export class SelectorTypes implements IWiredTypeHolder
         new UsersWithVariable(),
         new FurniWithVariable(),
         new UsersInArea(),
-        new FurniInArea()
+        new FurniInArea(),
+        new UsersInNeighborhood(),
+        new FurniInNeighborhood()
     ];
 
     // AS3: SelectorTypes.as::getByCode()
