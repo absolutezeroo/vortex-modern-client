@@ -35,6 +35,12 @@ import {
     ObjectsDataUpdateMessageEvent
 } from '../communication/messages/incoming/room/engine/ObjectsDataUpdateMessageEvent';
 import {DiceValueMessageEvent} from '../communication/messages/incoming/room/engine/DiceValueMessageEvent';
+import {OneWayDoorStatusMessageEvent} from '../communication/messages/incoming/room/engine/OneWayDoorStatusMessageEvent';
+import type {OneWayDoorStatusMessageParser} from '../communication/messages/parser/room/engine/OneWayDoorStatusMessageParser';
+import {ItemRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ItemRemoveMultipleMessageEvent';
+import type {ItemRemoveMultipleMessageParser} from '../communication/messages/parser/room/engine/ItemRemoveMultipleMessageParser';
+import {ObjectRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ObjectRemoveMultipleMessageEvent';
+import type {ObjectRemoveMultipleMessageParser} from '../communication/messages/parser/room/engine/ObjectRemoveMultipleMessageParser';
 import type {DiceValueMessageParser} from '../communication/messages/parser/room/engine/DiceValueMessageParser';
 import {LegacyStuffData} from '@habbo/room/object/data/LegacyStuffData';
 import {ItemsMessageEvent} from '../communication/messages/incoming/room/engine/ItemsMessageEvent';
@@ -191,6 +197,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ObjectDataUpdateMessageEvent(this.onObjectDataUpdate.bind(this)));
             connection.addMessageEvent(new ObjectsDataUpdateMessageEvent(this.onObjectsDataUpdate.bind(this)));
             connection.addMessageEvent(new DiceValueMessageEvent(this.onDiceValue.bind(this)));
+            connection.addMessageEvent(new OneWayDoorStatusMessageEvent(this.onOneWayDoorStatus.bind(this)));
+            connection.addMessageEvent(new ItemRemoveMultipleMessageEvent(this.onItemRemoveMultiple.bind(this)));
+            connection.addMessageEvent(new ObjectRemoveMultipleMessageEvent(this.onObjectRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
             connection.addMessageEvent(new ItemAddMessageEvent(this.onItemAdd.bind(this)));
             connection.addMessageEvent(new ItemUpdateMessageEvent(this.onItemUpdate.bind(this)));
@@ -842,6 +851,98 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.value,
             new LegacyStuffData()
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onOneWayDoorStatus()
+    onOneWayDoorStatus(event: IMessageEvent): void
+    {
+        const doorEvent = event as OneWayDoorStatusMessageEvent;
+
+        if(doorEvent === null)
+        {
+            return;
+        }
+
+        const parser = doorEvent.getParser() as OneWayDoorStatusMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        // Same shape as onDiceValue: the status becomes the object state, with a fresh empty
+        // LegacyDataType (AS3 _SafeCls_1945) as the stuff data.
+        this._roomCreator.updateObjectFurniture(
+            this._currentRoomId,
+            parser.id,
+            null,
+            null,
+            parser.status,
+            new LegacyStuffData()
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onItemRemoveMultiple()
+    onItemRemoveMultiple(event: IMessageEvent): void
+    {
+        const removeEvent = event as ItemRemoveMultipleMessageEvent;
+
+        if(removeEvent === null)
+        {
+            return;
+        }
+
+        const parser = removeEvent.getParser() as ItemRemoveMultipleMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        for(const itemId of parser.itemIds)
+        {
+            this._roomCreator.disposeObjectWallItem(this._currentRoomId, itemId, parser.pickerId);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectRemoveMultiple()
+    onObjectRemoveMultiple(event: IMessageEvent): void
+    {
+        const removeEvent = event as ObjectRemoveMultipleMessageEvent;
+
+        if(removeEvent === null)
+        {
+            return;
+        }
+
+        const parser = removeEvent.getParser() as ObjectRemoveMultipleMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        for(const id of parser.ids)
+        {
+            this._roomCreator.disposeObjectFurniture(this._currentRoomId, id, parser.pickerId);
+        }
+
+        this._roomCreator.refreshTileObjectMap(this._currentRoomId, 'RoomEngine.onObjectRemoveMultiple()');
     }
 
     onItems(event: IMessageEvent): void

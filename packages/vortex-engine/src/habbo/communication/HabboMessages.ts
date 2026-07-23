@@ -210,6 +210,9 @@ import {
     ObjectDataUpdateMessageEvent,
     ObjectsDataUpdateMessageEvent,
     DiceValueMessageEvent,
+    OneWayDoorStatusMessageEvent,
+    ItemRemoveMultipleMessageEvent,
+    ObjectRemoveMultipleMessageEvent,
     ObjectRemoveMessageEvent,
     ObjectsMessageEvent,
     ObjectUpdateMessageEvent,
@@ -955,6 +958,9 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2329, ObjectDataUpdateMessageEvent);
         this._events.set(632, ObjectsDataUpdateMessageEvent);
         this._events.set(264, DiceValueMessageEvent);
+        this._events.set(1778, OneWayDoorStatusMessageEvent);
+        this._events.set(254, ItemRemoveMultipleMessageEvent);
+        this._events.set(2361, ObjectRemoveMultipleMessageEvent);
         this._events.set(3379, ItemsMessageEvent);
         this._events.set(3733, ItemAddMessageEvent);
         this._events.set(1198, ItemUpdateMessageEvent);
