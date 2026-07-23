@@ -158,6 +158,21 @@ export interface IRoomCreator
     ): boolean;
 
     /**
+	 * Toggle an area-hide furni's hidden floor zone.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateAreaHide()
+    updateAreaHide(
+        roomId: number,
+        furniId: number,
+        on: boolean,
+        rootX: number,
+        rootY: number,
+        width: number,
+        length: number,
+        invert: boolean
+    ): boolean;
+
+    /**
 	 * Dispose wall item.
 	 */
     disposeObjectWallItem(

@@ -43,6 +43,8 @@ import {ItemsStateUpdateMessageEvent} from '../communication/messages/incoming/r
 import type {ItemsStateUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemsStateUpdateMessageParser';
 import {ItemDataUpdateMessageEvent} from '../communication/messages/incoming/room/engine/ItemDataUpdateMessageEvent';
 import type {ItemDataUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemDataUpdateMessageParser';
+import {AreaHideMessageEvent} from '../communication/messages/incoming/room/engine/AreaHideMessageEvent';
+import type {AreaHideMessageParser} from '../communication/messages/parser/room/engine/AreaHideMessageParser';
 import {ItemRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ItemRemoveMultipleMessageEvent';
 import type {ItemRemoveMultipleMessageParser} from '../communication/messages/parser/room/engine/ItemRemoveMultipleMessageParser';
 import {ObjectRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ObjectRemoveMultipleMessageEvent';
@@ -207,6 +209,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ItemStateUpdateMessageEvent(this.onItemStateUpdate.bind(this)));
             connection.addMessageEvent(new ItemsStateUpdateMessageEvent(this.onItemsStateUpdate.bind(this)));
             connection.addMessageEvent(new ItemDataUpdateMessageEvent(this.onItemDataUpdate.bind(this)));
+            connection.addMessageEvent(new AreaHideMessageEvent(this.onAreaHide.bind(this)));
             connection.addMessageEvent(new ItemRemoveMultipleMessageEvent(this.onItemRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ObjectRemoveMultipleMessageEvent(this.onObjectRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
@@ -894,6 +897,47 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.status,
             new LegacyStuffData()
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onAreaHide()
+    onAreaHide(event: IMessageEvent): void
+    {
+        const areaHideEvent = event as AreaHideMessageEvent;
+
+        if(areaHideEvent === null)
+        {
+            return;
+        }
+
+        const parser = areaHideEvent.getParser() as AreaHideMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        const data = parser.areaHideMessageData;
+
+        // AS3 reads .furniId etc. off the parser's data without a null check — parse() always
+        // assigns it, but the port's getter is nullable, so guard here.
+        if(data === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator !== null)
+        {
+            this._roomCreator.updateAreaHide(
+                this._currentRoomId,
+                data.furniId,
+                data.on,
+                data.rootX,
+                data.rootY,
+                data.width,
+                data.length,
+                data.invert
+            );
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onItemStateUpdate()

@@ -105,6 +105,8 @@ import {RoomEngineObjectPlacedEvent} from './events/RoomEngineObjectPlacedEvent'
 import {RoomObjectRoomMaskUpdateMessage} from './messages/RoomObjectRoomMaskUpdateMessage';
 import {RoomObjectDataUpdateMessage} from './messages/RoomObjectDataUpdateMessage';
 import {RoomObjectItemDataUpdateMessage} from './messages/RoomObjectItemDataUpdateMessage';
+import {RoomObjectRoomFloorHoleUpdateMessage} from './messages/RoomObjectRoomFloorHoleUpdateMessage';
+import {RoomEngineAreaHideStateWidgetEvent} from './events/RoomEngineAreaHideStateWidgetEvent';
 import {LegacyStuffData} from './object/data/LegacyStuffData';
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
@@ -2628,6 +2630,66 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateAreaHide()
+    updateAreaHide(
+        roomId: number,
+        furniId: number,
+        on: boolean,
+        rootX: number,
+        rootY: number,
+        width: number,
+        length: number,
+        invert: boolean
+    ): boolean
+    {
+        // AS3 dispatches the widget event BEFORE the room-object null check, so the widget is told
+        // about the toggle even when the room object is gone. Category 10 is the furniture category.
+        this.events.emit(
+            RoomEngineAreaHideStateWidgetEvent.UPDATE_STATE_AREA_HIDE,
+            new RoomEngineAreaHideStateWidgetEvent(
+                roomId,
+                furniId,
+                RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE,
+                on
+            )
+        );
+
+        const roomObject = this.getObjectRoom(roomId);
+
+        if(roomObject === null || roomObject.getEventHandler() === null)
+        {
+            return false;
+        }
+
+        const message = on
+            ? new RoomObjectRoomFloorHoleUpdateMessage(
+                RoomObjectRoomFloorHoleUpdateMessage.ADD_HOLE,
+                furniId,
+                rootX,
+                rootY,
+                width,
+                length,
+                invert
+            )
+            : new RoomObjectRoomFloorHoleUpdateMessage(
+                RoomObjectRoomFloorHoleUpdateMessage.REMOVE_HOLE,
+                furniId
+            );
+
+        roomObject.getEventHandler()?.processUpdateMessage(message);
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getObjectRoom()
+    private getObjectRoom(roomId: number): IRoomObjectController | null
+    {
+        return this.getRoomObject(
+            roomId,
+            OBJECT_ID_ROOM,
+            RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM
+        ) as IRoomObjectController | null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getObjectWallItem()
