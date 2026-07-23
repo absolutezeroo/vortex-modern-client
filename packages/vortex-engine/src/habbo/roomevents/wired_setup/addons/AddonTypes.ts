@@ -26,16 +26,17 @@ import {UsernamePlaceholder} from './UsernamePlaceholder';
 import {VariableTextConverter} from './VariableTextConverter';
 import {ChestItemTypeScanner} from './chests/ChestItemTypeScanner';
 import {CustomContract} from './chests/CustomContract';
+import {Projectile} from './Projectile';
+import {VariableTimeUtil} from './VariableTimeUtil';
 
 /**
  * AddonTypes — the wired addon registry (IWiredTypeHolder): instantiates every addon type and resolves
  * one by its server code.
  *
- * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * ValueOrVariable-blocked (SelectorFilter family, JumpStrength, _4253 family), ChooseVariable/varpicker
- * (VariableCapturer, VariablePlaceholder), SubVariableCreator (VariableTimeUtil, Projectile) and
- * combinations (VariableLevelUp). getElementByCode returns null for their codes. (GlobalPlaceholderAddon
- * is now ported.)
+ * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported VariableLevelUp addon
+ * (needs the levelupper helpers + LevelXpPreviewPreset). getElementByCode returns null for its code.
+ * (GlobalPlaceholderAddon, the chest addons ChestItemTypeScanner/CustomContract, and the SubVariable
+ * addons VariableTimeUtil/Projectile are now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/addons/AddonTypes.as
  */
@@ -65,7 +66,9 @@ export class AddonTypes implements IWiredTypeHolder
         new VariableCapturer(),
         new VariablePlaceholder(),
         new ChestItemTypeScanner(),
-        new CustomContract()
+        new CustomContract(),
+        new VariableTimeUtil(),
+        new Projectile()
     ];
 
     // AS3: AddonTypes.as::getByCode()

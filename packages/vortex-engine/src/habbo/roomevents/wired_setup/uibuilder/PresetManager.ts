@@ -41,6 +41,9 @@ import {UsageInfoSection} from './presets/sections/UsageInfoSection';
 import {UsageWarningSection} from './presets/sections/UsageWarningSection';
 import {ChronoMaskFilterPreset} from './presets/applications/ChronoMaskFilterPreset';
 import {ChronoRangeFilterPreset} from './presets/applications/ChronoRangeFilterPreset';
+import {SubVariableCreatorPreset} from './presets/applications/SubVariableCreatorPreset';
+import type {SubVariableParam} from './params/applications/SubVariableParam';
+import {WindowWrapperPreset} from './presets/WindowWrapperPreset';
 import {AssetButtonPreset} from './presets/AssetButtonPreset';
 import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
 import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
@@ -392,6 +395,18 @@ export class PresetManager
     createChronoRangeFilter(skipLabel: string, exactLabel: string, rangeLabel: string, defaultValue: number, min: number, max: number, width: number): ChronoRangeFilterPreset
     {
         return new ChronoRangeFilterPreset(this._roomEvents, this, this.wiredStyle, skipLabel, exactLabel, rangeLabel, defaultValue, min, max, width);
+    }
+
+    // AS3: PresetManager.as::createSubVariableCreator()
+    createSubVariableCreator(prefix: string, params: SubVariableParam[]): SubVariableCreatorPreset
+    {
+        return new SubVariableCreatorPreset(this._roomEvents, this, this.wiredStyle, prefix, params);
+    }
+
+    // AS3: PresetManager.as::createWrapperPreset()
+    createWrapperPreset(window: IWindow): WindowWrapperPreset
+    {
+        return new WindowWrapperPreset(this._roomEvents, this, this.wiredStyle, window, false);
     }
 
     // AS3: PresetManager.as::createAssetButtonRow()
