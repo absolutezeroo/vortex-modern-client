@@ -14,6 +14,7 @@ import {BotTalk} from './BotTalk';
 import {BotTalkDirectToAvatar} from './BotTalkDirectToAvatar';
 import {BotTeleport} from './BotTeleport';
 import {CallAnotherStack} from './CallAnotherStack';
+import {ChangeVariable} from './ChangeVariable';
 import {Chase} from './Chase';
 import {Chat} from './Chat';
 import {ClickSettings} from './ClickSettings';
@@ -38,6 +39,8 @@ import {MoveUser} from './MoveUser';
 import {MoveUserToFurni} from './MoveUserToFurni';
 import {MuteUser} from './MuteUser';
 import {OverrideHeight} from './OverrideHeight';
+import {ProgressAchievement} from './ProgressAchievement';
+import {ProgressRewardTrack} from './ProgressRewardTrack';
 import {RelativeFurniMove} from './RelativeFurniMove';
 import {RemoveFurni} from './RemoveFurni';
 import {RemoveVariable} from './RemoveVariable';
@@ -110,7 +113,10 @@ export class ActionTypes implements IWiredTypeHolder
         new ClickSettings(),
         new WriteToLog(),
         new RemoveVariable(),
-        new GiveVariable()
+        new GiveVariable(),
+        new ChangeVariable(),
+        new ProgressAchievement(),
+        new ProgressRewardTrack()
     ];
 
     // AS3: ActionTypes.as::getByCode()
@@ -118,7 +124,8 @@ export class ActionTypes implements IWiredTypeHolder
     {
         for(const type of this._types)
         {
-            if(type.code === code)
+            // AS3 getByCode matches either the positive code or the negativeCode.
+            if(type.code === code || type.negativeCode === code)
             {
                 return type;
             }

@@ -78,7 +78,8 @@ export class TriggerConfs implements IWiredTypeHolder
     {
         for(const type of this._types)
         {
-            if(type.code === code)
+            // AS3 getByCode matches either the positive code or the negativeCode.
+            if(type.code === code || type.negativeCode === code)
             {
                 return type;
             }
