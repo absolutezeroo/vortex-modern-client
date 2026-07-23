@@ -19,17 +19,18 @@ import {UsersInGroup} from './UsersInGroup';
 import {UsersPerformingAction} from './UsersPerformingAction';
 import {UsersWithHanditem} from './UsersWithHanditem';
 import {UsersWithVariable} from './UsersWithVariable';
+import {UsersInArea} from './UsersInArea';
+import {FurniInArea} from './FurniInArea';
 
 /**
  * SelectorTypes — the wired selector registry (IWiredTypeHolder): instantiates every selector type and
  * resolves one by its server code.
  *
- * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the area
- * selectors (InArea/UsersInArea/FurniInArea, need roomEngine.areaSelectionManager) and the combinations-
- * blocked InNeighborhood family (_4420/_4450). getElementByCode returns null for their codes. (The
- * VariableSelector family _4352/_4378 UsersWithVariable/_4353 FurniWithVariable is now ported; _4286
- * UsersPerformingAction, _4047 UsersWithHanditem, UsersInGroup are
- * now ported.)
+ * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported InNeighborhood family
+ * (_4420/_4450, need the applications Floor presets). getElementByCode returns null for their codes.
+ * (The area selectors UsersInArea/FurniInArea are now ported — area selection itself is inert until the
+ * room-engine RoomAreaSelectionManager lands, see its TODO(AS3); the VariableSelector family
+ * UsersWithVariable/FurniWithVariable, UsersPerformingAction, UsersWithHanditem, UsersInGroup are ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/selectors/SelectorTypes.as
  */
@@ -52,7 +53,9 @@ export class SelectorTypes implements IWiredTypeHolder
         new UsersWithHanditem(),
         new UsersInGroup(),
         new UsersWithVariable(),
-        new FurniWithVariable()
+        new FurniWithVariable(),
+        new UsersInArea(),
+        new FurniInArea()
     ];
 
     // AS3: SelectorTypes.as::getByCode()

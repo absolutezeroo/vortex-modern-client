@@ -17,6 +17,7 @@ import type {PetColorResult} from './PetColorResult';
 import type {IGetImageListener} from './IGetImageListener';
 import type {ImageResult} from './ImageResult';
 import type {ISelectedRoomObjectData} from './ISelectedRoomObjectData';
+import type {IRoomAreaSelectionManager} from './IRoomAreaSelectionManager';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {IRoomEngineRectangle} from './RoomEngine';
 
@@ -38,6 +39,9 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::get isGameMode()
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
     isGameMode: boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get areaSelectionManager()
+    readonly areaSelectionManager: IRoomAreaSelectionManager;
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::getFurnitureType()
     getFurnitureType(type: number): string | null;

@@ -16,6 +16,8 @@ import {Vortex} from '../../Vortex';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from './IRoomEngine';
+import type {IRoomAreaSelectionManager} from './IRoomAreaSelectionManager';
+import {RoomAreaSelectionManager} from './utils/RoomAreaSelectionManager';
 import type {IRoomCreator} from './IRoomCreator';
 import type {IRoomEngineServices} from './IRoomEngineServices';
 import type {IRoomContentListener} from './IRoomContentListener';
@@ -228,9 +230,21 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     private _roomManager: IRoomManager | null = null;
 
-    get roomManager(): IRoomManager | null 
+    get roomManager(): IRoomManager | null
     {
         return this._roomManager;
+    }
+
+    // AS3: RoomEngine.as::_SafeStr_5591 (the area-selection manager, name derived from the getter)
+    private _areaSelectionManager: IRoomAreaSelectionManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get areaSelectionManager()
+    get areaSelectionManager(): IRoomAreaSelectionManager
+    {
+        // AS3 creates the manager in init(); the port lazily creates the (currently inert) stub. See
+        // RoomAreaSelectionManager for the TODO(AS3) on the interactive tile-highlight behaviour.
+        this._areaSelectionManager ??= new RoomAreaSelectionManager();
+        return this._areaSelectionManager;
     }
 
     private _connection: IConnection | null = null;
