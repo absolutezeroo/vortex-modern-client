@@ -23,6 +23,7 @@ export {ItemStateUpdateMessageEvent} from './ItemStateUpdateMessageEvent';
 export {ItemsStateUpdateMessageEvent} from './ItemsStateUpdateMessageEvent';
 export {ItemDataUpdateMessageEvent} from './ItemDataUpdateMessageEvent';
 export {AreaHideMessageEvent} from './AreaHideMessageEvent';
+export {WiredMovementsMessageEvent} from './WiredMovementsMessageEvent';
 export {UsersMessageEvent} from './UsersMessageEvent';
 export {UserUpdateMessageEvent} from './UserUpdateMessageEvent';
 export {UserRemoveMessageEvent} from './UserRemoveMessageEvent';

@@ -215,6 +215,7 @@ import {
     ItemsStateUpdateMessageEvent,
     ItemDataUpdateMessageEvent,
     AreaHideMessageEvent,
+    WiredMovementsMessageEvent,
     ItemRemoveMultipleMessageEvent,
     ObjectRemoveMultipleMessageEvent,
     ObjectRemoveMessageEvent,
@@ -973,6 +974,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1787, ItemsStateUpdateMessageEvent);
         this._events.set(540, ItemDataUpdateMessageEvent);
         this._events.set(1131, AreaHideMessageEvent);
+        this._events.set(325, WiredMovementsMessageEvent);
         // TODO(AS3): header verified against sources/WIN63-202607011411-782849652 (_SafeCls_2131), but
         // the new parser reads one more Integer than the TS parser - re-verify field order.
         this._events.set(996, UsersMessageEvent);

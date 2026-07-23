@@ -7,6 +7,8 @@
  * Used by RoomMessageHandler to communicate with the room engine.
  */
 import type {IVector3d} from '@room/utils/IVector3d';
+import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
+import type {IRoomInstance} from '@room/IRoomInstance';
 import type {IStuffData} from './object/data/IStuffData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
@@ -94,7 +96,9 @@ export interface IRoomCreator
         location: IVector3d,
         direction: IVector3d | null,
         target: IVector3d | null,
-        animationTime?: number
+        animationTime?: number,
+        overshootingDistance?: number,
+        curveStrength?: number
     ): boolean;
 
     /**
@@ -207,8 +211,44 @@ export interface IRoomCreator
         direction?: IVector3d,
         headDirection?: number,
         animationTime?: number,
-        skipPositionUpdate?: boolean
+        skipPositionUpdate?: boolean,
+        jumpingPower?: number
     ): boolean;
+
+    /**
+	 * Turn a user on the spot (body + head direction, no move).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserDir()
+    updateObjectUserDir(
+        roomId: number,
+        roomIndex: number,
+        direction: IVector3d,
+        headDirection: number
+    ): boolean;
+
+    /**
+	 * Update wall item location for sliding.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectWallItemLocation()
+    updateObjectWallItemLocation(
+        roomId: number,
+        id: number,
+        location: IVector3d,
+        target?: IVector3d | null,
+        animationTime?: number
+    ): boolean;
+
+    /**
+	 * The room instance, for handlers that need to read an object's model directly.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::getRoom()
+    getRoom(roomId: number): IRoomInstance | null;
+
+    /**
+	 * The room's canvas-1 geometry, used to snap wired move targets onto the screen grid.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::getRoomGeometry()
+    getRoomGeometry(roomId: number): IRoomGeometry | null;
 
     /**
 	 * Update user figure.

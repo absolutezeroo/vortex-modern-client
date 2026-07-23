@@ -107,6 +107,7 @@ import {RoomObjectDataUpdateMessage} from './messages/RoomObjectDataUpdateMessag
 import {RoomObjectItemDataUpdateMessage} from './messages/RoomObjectItemDataUpdateMessage';
 import {RoomObjectRoomFloorHoleUpdateMessage} from './messages/RoomObjectRoomFloorHoleUpdateMessage';
 import {RoomEngineAreaHideStateWidgetEvent} from './events/RoomEngineAreaHideStateWidgetEvent';
+import {RoomObjectAvatarDirectionUpdateMessage} from './messages/RoomObjectAvatarDirectionUpdateMessage';
 import {LegacyStuffData} from './object/data/LegacyStuffData';
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
@@ -2458,28 +2459,101 @@ export class RoomEngine extends Component implements IRoomEngine,
         location: IVector3d,
         direction: IVector3d | null,
         target: IVector3d | null,
-        animationTime?: number
-    ): boolean 
+        animationTime?: number,
+        overshootingDistance: number = NaN,
+        curveStrength: number = NaN
+    ): boolean
     {
         const room = this.getRoomInstance(roomId);
 
-        if(!room) 
+        if(!room)
         {
             return false;
         }
 
         const object = room.getObject(id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) as IRoomObjectController;
 
-        if(!object || !object.getEventHandler()) 
+        if(!object || !object.getEventHandler())
         {
             return false;
         }
 
-        const message = new RoomObjectMoveUpdateMessage(location, target, direction, animationTime ?? NaN, target !== null);
+        const message = new RoomObjectMoveUpdateMessage(
+            location,
+            target,
+            direction,
+            animationTime ?? NaN,
+            target !== null,
+            false,
+            overshootingDistance,
+            curveStrength
+        );
 
         object.getEventHandler()!.processUpdateMessage(message);
 
         return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectWallItemLocation()
+    updateObjectWallItemLocation(
+        roomId: number,
+        id: number,
+        location: IVector3d,
+        target: IVector3d | null = null,
+        animationTime: number = NaN
+    ): boolean
+    {
+        const object = this.getObjectWallItem(roomId, id);
+
+        if(object === null)
+        {
+            return false;
+        }
+
+        if(object.getEventHandler() !== null)
+        {
+            const message = new RoomObjectMoveUpdateMessage(location, target, null, animationTime, target !== null);
+            object.getEventHandler()?.processUpdateMessage(message);
+        }
+
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::
+        // updateObjectWallItemLocation() ends with updateObjectRoomWindow(roomId, id), which
+        // re-emits the wall item's plane mask at its new position (RORMUM_ADD_MASK /
+        // RORMUM_REMOVE_MASK on the room object). updateObjectRoomWindow() is not ported yet, so a
+        // window furni moved by wired keeps its mask at the old spot until it is re-added.
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserDir()
+    updateObjectUserDir(roomId: number, roomIndex: number, direction: IVector3d, headDirection: number): boolean
+    {
+        const room = this.getRoomInstance(roomId);
+
+        if(room === null)
+        {
+            return false;
+        }
+
+        const object = room.getObject(roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) as IRoomObjectController | null;
+
+        if(object === null || object.getEventHandler() === null || object.getModel() === null)
+        {
+            return false;
+        }
+
+        // The body direction rides on the base message's direction slot; the logic's
+        // super.processUpdateMessage() applies it, and dirHead sets the head separately.
+        const message = new RoomObjectAvatarDirectionUpdateMessage(null, direction, headDirection);
+        object.getEventHandler()?.processUpdateMessage(message);
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomGeometry()
+    getRoomGeometry(roomId: number): IRoomGeometry | null
+    {
+        return this.getRoomCanvasGeometry(roomId, 1);
     }
 
     disposeObjectFurniture(
@@ -2797,8 +2871,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         direction?: IVector3d,
         headDirection?: number,
         animationTime?: number,
-        skipPositionUpdate?: boolean
-    ): boolean 
+        skipPositionUpdate?: boolean,
+        jumpingPower: number = NaN
+    ): boolean
     {
         return this.updateRoomObjectUser(
             roomId,
@@ -2810,7 +2885,8 @@ export class RoomEngine extends Component implements IRoomEngine,
             canStandUp ?? false,
             baseZ ?? 0,
             animationTime ?? NaN,
-            skipPositionUpdate ?? false
+            skipPositionUpdate ?? false,
+            jumpingPower
         );
     }
 

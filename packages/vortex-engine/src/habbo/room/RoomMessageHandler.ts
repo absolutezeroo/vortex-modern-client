@@ -45,6 +45,13 @@ import {ItemDataUpdateMessageEvent} from '../communication/messages/incoming/roo
 import type {ItemDataUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemDataUpdateMessageParser';
 import {AreaHideMessageEvent} from '../communication/messages/incoming/room/engine/AreaHideMessageEvent';
 import type {AreaHideMessageParser} from '../communication/messages/parser/room/engine/AreaHideMessageParser';
+import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
+import {WiredMovementsMessageEvent} from '../communication/messages/incoming/room/engine/WiredMovementsMessageEvent';
+import type {WiredMovementsMessageParser} from '../communication/messages/parser/room/engine/WiredMovementsMessageParser';
+import type {WiredUserMoveData} from '../communication/messages/parser/room/engine/WiredUserMoveData';
+import type {WiredFurniMoveData} from '../communication/messages/parser/room/engine/WiredFurniMoveData';
+import type {WiredWallItemMoveData} from '../communication/messages/parser/room/engine/WiredWallItemMoveData';
+import type {WiredUserDirectionUpdateData} from '../communication/messages/parser/room/engine/WiredUserDirectionUpdateData';
 import {ItemRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ItemRemoveMultipleMessageEvent';
 import type {ItemRemoveMultipleMessageParser} from '../communication/messages/parser/room/engine/ItemRemoveMultipleMessageParser';
 import {ObjectRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ObjectRemoveMultipleMessageEvent';
@@ -210,6 +217,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ItemsStateUpdateMessageEvent(this.onItemsStateUpdate.bind(this)));
             connection.addMessageEvent(new ItemDataUpdateMessageEvent(this.onItemDataUpdate.bind(this)));
             connection.addMessageEvent(new AreaHideMessageEvent(this.onAreaHide.bind(this)));
+            connection.addMessageEvent(new WiredMovementsMessageEvent(this.onWiredMovements.bind(this)));
             connection.addMessageEvent(new ItemRemoveMultipleMessageEvent(this.onItemRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ObjectRemoveMultipleMessageEvent(this.onObjectRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
@@ -897,6 +905,237 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.status,
             new LegacyStuffData()
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onWiredMovements()
+    onWiredMovements(event: IMessageEvent): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        if(!(event instanceof WiredMovementsMessageEvent))
+        {
+            return;
+        }
+
+        const parser = event.getParser() as WiredMovementsMessageParser;
+
+        for(const userMove of parser.userMoves)
+        {
+            this.onWiredUserMove(userMove);
+        }
+
+        for(const furniMove of parser.furniMoves)
+        {
+            this.onWiredFurniMove(furniMove);
+        }
+
+        for(const wallItemMove of parser.wallItemMoves)
+        {
+            this.onWiredWallItemMove(wallItemMove);
+        }
+
+        for(const directionUpdate of parser.userDirectionUpdates)
+        {
+            this.onUserDirectionUpdate(directionUpdate);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onWiredFurniMove()
+    private onWiredFurniMove(data: WiredFurniMoveData): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        const direction = new Vector3d((data.rotation % 8) * 45);
+
+        this._roomCreator.updateObjectFurnitureLocation(
+            this._currentRoomId,
+            data.furniId,
+            this.roundLocation(data.source),
+            direction,
+            this.roundLocation(data.target),
+            data.animationTime,
+            data.overshootingDistance,
+            data.curveStrength
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::roundLocation()
+    private roundLocation(location: IVector3d): IVector3d
+    {
+        const geometry = this._roomCreator?.getRoomGeometry(this._currentRoomId) ?? null;
+
+        if(geometry === null)
+        {
+            return location;
+        }
+
+        const screen = geometry.getScreenPosition(location);
+
+        if(screen === null)
+        {
+            return location;
+        }
+
+        // A second projection one centimetre higher gives the screen-pixels-per-z-unit slope, which
+        // turns the sub-pixel remainder of the first projection back into a z correction. The result
+        // is a location whose projected y lands exactly on a pixel boundary — without it a wired
+        // slide ends up half a pixel off and the sprite jitters.
+        const raised = new Vector3d(location.x, location.y, location.z + 0.01);
+        const raisedScreen = geometry.getScreenPosition(raised);
+
+        if(raisedScreen === null)
+        {
+            return location;
+        }
+
+        const screenY = screen.y;
+        const pixelsPerZ = (screenY - raisedScreen.y) * 100;
+        const remainder = screenY - Math.round(screenY);
+        const correctedZ = location.z + remainder / pixelsPerZ;
+
+        return new Vector3d(location.x, location.y, correctedZ);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onWiredWallItemMove()
+    private onWiredWallItemMove(data: WiredWallItemMoveData): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        // AS3 reads the room's LegacyWallGeometry off the engine (getLegacyGeometry); this port
+        // keeps its own instance on the handler, initialised from the heightmap, and already uses
+        // it for every other wall-item placement.
+        const side = data.isDirectionRight ? 'r' : 'l';
+        const oldLocation = this._legacyWallGeometry.getLocation(
+            data.oldWallX, data.oldWallY, data.oldOffsetX, data.oldOffsetY, side
+        );
+        const newLocation = this._legacyWallGeometry.getLocation(
+            data.newWallX, data.newWallY, data.newOffsetX, data.newOffsetY, side
+        );
+
+        this._roomCreator.updateObjectWallItemLocation(
+            this._currentRoomId,
+            data.itemId,
+            this.roundLocation(oldLocation),
+            this.roundLocation(newLocation),
+            data.animationTime
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onWiredUserMove()
+    private onWiredUserMove(data: WiredUserMoveData): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        let canStandUp = false;
+
+        // Only a slide ("sld") consults the model: a wired slide must not stand a sitting avatar up
+        // unless its figure allows it. A plain move ("mv") always passes false.
+        if(data.moveType === 'sld')
+        {
+            const room = this._roomCreator.getRoom(this._currentRoomId);
+
+            if(room !== null)
+            {
+                const object = room.getObject(data.userIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
+
+                if(object !== null)
+                {
+                    const model = object.getModel();
+                    canStandUp = model !== null && model.getNumber('figure_can_stand_up') > 0;
+                }
+            }
+        }
+
+        const direction = new Vector3d((data.bodyDirection % 8) * 45);
+        const headDirection = (data.headDirection % 8) * 45;
+
+        this._roomCreator.updateObjectUser(
+            this._currentRoomId,
+            data.userIndex,
+            this.roundLocation(data.source),
+            this.roundLocation(data.target),
+            canStandUp,
+            0,
+            direction,
+            headDirection,
+            data.animationTime,
+            false,
+            data.jumpPower
+        );
+
+        this.setUserMovePosture(data.userIndex, data.moveType);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onUserDirectionUpdate()
+    private onUserDirectionUpdate(data: WiredUserDirectionUpdateData): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        // AS3 computes BOTH the body vector and the head angle from bodyDirection and never reads
+        // data.headDirection — the head follows the body on a wired turn. Preserved verbatim.
+        const direction = new Vector3d((data.bodyDirection % 8) * 45);
+        const headDirection = (data.bodyDirection % 8) * 45;
+
+        this._roomCreator.updateObjectUserDir(
+            this._currentRoomId,
+            data.userIndex,
+            direction,
+            headDirection
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::setUserMovePosture()
+    private setUserMovePosture(userIndex: number, moveType: string): void
+    {
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        const room = this._roomCreator.getRoom(this._currentRoomId);
+        const object = room !== null ? room.getObject(userIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) : null;
+
+        if(object === null || object.getType() === 'monsterplant')
+        {
+            return;
+        }
+
+        const model = object.getModel();
+        let posture: string | null = null;
+
+        switch(moveType)
+        {
+            case 'mv':
+                posture = 'mv';
+                break;
+            case 'sld':
+            {
+                // A slide keeps whatever the avatar was doing (sitting, laying), except that a
+                // walking posture becomes standing — the avatar is carried, not walking.
+                const current = model !== null ? model.getString('figure_posture') : null;
+                posture = current === 'mv' ? 'std' : current;
+                break;
+            }
+        }
+
+        // AS3 calls updateObjectUserPosture unconditionally once the object passed the type check,
+        // so an unrecognised moveType pushes a null posture — preserved verbatim.
+        this._roomCreator.updateObjectUserPosture(this._currentRoomId, userIndex, posture as string, '');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onAreaHide()
