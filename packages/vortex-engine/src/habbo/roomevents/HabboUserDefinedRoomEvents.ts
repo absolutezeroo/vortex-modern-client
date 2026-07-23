@@ -31,6 +31,7 @@ import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import type {IHabboUserDefinedRoomEvents} from './IHabboUserDefinedRoomEvents';
 import type {IUserDefinedRoomEventsCtrl} from './wired_setup/IUserDefinedRoomEventsCtrl';
 import {UserDefinedRoomEventsCtrl} from './wired_setup/UserDefinedRoomEventsCtrl';
+import {WiredVariablesSynchronizer} from './WiredVariablesSynchronizer';
 import {WiredMenuController} from './wired_menu/WiredMenuController';
 import {WiredEnvironment} from './WiredEnvironment';
 import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariablepicker/NewVariablePickerHelper';
@@ -73,6 +74,9 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
     // Created in initComponent() (see scope note).
     private _wiredCtrl!: UserDefinedRoomEventsCtrl;
+
+    // AS3: HabboUserDefinedRoomEvents.as::_variablesSynchronizer
+    private _variablesSynchronizer!: WiredVariablesSynchronizer;
     private _wiredMenu!: WiredMenuController;
     private _wiredEnvironment!: WiredEnvironment;
 
@@ -193,8 +197,8 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         // AS3: _roomEngine.events.addEventListener('REE_DISPOSED', onRoomEngineEvent)
         this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
 
-        // TODO(AS3): create _variablesSynchronizer (WiredVariablesSynchronizer) and attach the
-        // wired-trading controllers — deferred (see the class-level scope note).
+        this._variablesSynchronizer = new WiredVariablesSynchronizer(this);
+        // TODO(AS3): attach the wired-trading controllers — deferred (see the class-level scope note).
 
         log.debug('HabboUserDefinedRoomEvents initialized (wired_setup spine)');
     }
@@ -235,6 +239,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     get wiredCtrl(): IUserDefinedRoomEventsCtrl
     {
         return this._wiredCtrl;
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::get variablesSynchronizer()
+    get variablesSynchronizer(): WiredVariablesSynchronizer
+    {
+        return this._variablesSynchronizer;
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get wiredMenu()
@@ -497,6 +507,11 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         {
             this._incomingMessages.dispose();
             this._incomingMessages = null;
+        }
+
+        if(this._variablesSynchronizer)
+        {
+            this._variablesSynchronizer.dispose();
         }
 
         if(this._wiredEnvironment)
