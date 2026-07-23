@@ -47,6 +47,7 @@ import {WindowWrapperPreset} from './presets/WindowWrapperPreset';
 import {LevelXpPreviewPreset} from './presets/applications/LevelXpPreviewPreset';
 import {FloorDrawingPreset} from './presets/applications/FloorDrawingPreset';
 import {FloorEditorPreset} from './presets/applications/FloorEditorPreset';
+import {InputSourceSection} from './presets/main_layout/InputSourceSection';
 import {AssetButtonPreset} from './presets/AssetButtonPreset';
 import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
 import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
@@ -428,6 +429,12 @@ export class PresetManager
     createFloorEditorPreset(buttonRow: AssetButtonRowPreset, floorDrawing: FloorDrawingPreset): FloorEditorPreset
     {
         return new FloorEditorPreset(this._roomEvents, this, this.wiredStyle, buttonRow, floorDrawing);
+    }
+
+    // AS3: PresetManager.as::createInputSourceSection()
+    createInputSourceSection(title: string, sourceType: number, id: number, sourceOptionIds: number[] | null = null, hasCustomTypePicker: boolean = false, dualFurniPickingMode: boolean = false): InputSourceSection
+    {
+        return new InputSourceSection(this._roomEvents, this, this.wiredStyle, title, sourceType, id, sourceOptionIds, hasCustomTypePicker, dualFurniPickingMode);
     }
 
     // AS3: PresetManager.as::createAssetButtonRow()
