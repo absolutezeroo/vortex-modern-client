@@ -54,6 +54,10 @@ import {ToggleFurniState} from './ToggleFurniState';
 import {ToggleToRandomState} from './ToggleToRandomState';
 import {UnfreezeUser} from './UnfreezeUser';
 import {WriteToLog} from './WriteToLog';
+import {CancelTransaction} from './chests/CancelTransaction';
+import {GiveCurrencyFromChest} from './chests/GiveCurrencyFromChest';
+import {GiveFurniFromChest} from './chests/GiveFurniFromChest';
+import {InitiateTransaction} from './chests/InitiateTransaction';
 
 /**
  * ActionTypes — the wired action registry (IWiredTypeHolder): instantiates every action type and
@@ -118,7 +122,11 @@ export class ActionTypes implements IWiredTypeHolder
         new ChangeVariable(),
         new ProgressAchievement(),
         new ProgressRewardTrack(),
-        new PlaceFurni()
+        new PlaceFurni(),
+        new GiveCurrencyFromChest(),
+        new GiveFurniFromChest(),
+        new InitiateTransaction(),
+        new CancelTransaction()
     ];
 
     // AS3: ActionTypes.as::getByCode()

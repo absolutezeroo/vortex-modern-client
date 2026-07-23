@@ -24,6 +24,8 @@ import {MovePhysics} from './MovePhysics';
 import {NoMoveAnimation} from './NoMoveAnimation';
 import {UsernamePlaceholder} from './UsernamePlaceholder';
 import {VariableTextConverter} from './VariableTextConverter';
+import {ChestItemTypeScanner} from './chests/ChestItemTypeScanner';
+import {CustomContract} from './chests/CustomContract';
 
 /**
  * AddonTypes — the wired addon registry (IWiredTypeHolder): instantiates every addon type and resolves
@@ -61,7 +63,9 @@ export class AddonTypes implements IWiredTypeHolder
         new FurniVariableFilter(),
         new UserVariableFilter(),
         new VariableCapturer(),
-        new VariablePlaceholder()
+        new VariablePlaceholder(),
+        new ChestItemTypeScanner(),
+        new CustomContract()
     ];
 
     // AS3: AddonTypes.as::getByCode()
