@@ -39,6 +39,8 @@ import {SectionPreset} from './presets/SectionPreset';
 import {BorderSection} from './presets/sections/BorderSection';
 import {UsageInfoSection} from './presets/sections/UsageInfoSection';
 import {UsageWarningSection} from './presets/sections/UsageWarningSection';
+import {ChronoMaskFilterPreset} from './presets/applications/ChronoMaskFilterPreset';
+import {ChronoRangeFilterPreset} from './presets/applications/ChronoRangeFilterPreset';
 import {AssetButtonPreset} from './presets/AssetButtonPreset';
 import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
 import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
@@ -378,6 +380,18 @@ export class PresetManager
     createUsageWarningSection(text: string): UsageWarningSection
     {
         return new UsageWarningSection(this._roomEvents, this, this.wiredStyle, text);
+    }
+
+    // AS3: PresetManager.as::createChronoMaskFilter()
+    createChronoMaskFilter(labels: string[], columns: number = 1): ChronoMaskFilterPreset
+    {
+        return new ChronoMaskFilterPreset(this._roomEvents, this, this.wiredStyle, labels, columns);
+    }
+
+    // AS3: PresetManager.as::createChronoRangeFilter()
+    createChronoRangeFilter(skipLabel: string, exactLabel: string, rangeLabel: string, defaultValue: number, min: number, max: number, width: number): ChronoRangeFilterPreset
+    {
+        return new ChronoRangeFilterPreset(this._roomEvents, this, this.wiredStyle, skipLabel, exactLabel, rangeLabel, defaultValue, min, max, width);
     }
 
     // AS3: PresetManager.as::createAssetButtonRow()

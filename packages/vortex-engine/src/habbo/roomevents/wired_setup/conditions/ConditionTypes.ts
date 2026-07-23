@@ -34,16 +34,17 @@ import {VariableValue} from './VariableValue';
 import {UserDirection} from './UserDirection';
 import {ChestHasAmount} from './chests/ChestHasAmount';
 import {ChestHasItemTypes} from './chests/ChestHasItemTypes';
+import {DateMatches} from './DateMatches';
+import {TimeMatches} from './TimeMatches';
 
 /**
  * ConditionTypes — the wired condition registry (IWiredTypeHolder): instantiates every condition type
  * and resolves one by its server code.
  *
- * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * timezone-base conditions (_4314 DateMatches/TimeMatches base, need applications/Chrono) and
- * ChooseVariable-blocked (_4119, _4236). getElementByCode returns null for their codes. (_4326
- * PerformingAction, _4118 ActorHasHanditem, _4103 ActorIsGroupMember, _4192 VariableAge, and the chest
- * conditions ChestHasAmount/ChestHasItemTypes are now ported.)
+ * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported ChooseVariable-blocked
+ * conditions (_4119, _4236). getElementByCode returns null for their codes. (_4326 PerformingAction,
+ * _4118 ActorHasHanditem, _4103 ActorIsGroupMember, _4192 VariableAge, the chest conditions
+ * ChestHasAmount/ChestHasItemTypes, and the timezone-base TimeMatches/DateMatches are now ported.)
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as
  */
@@ -81,7 +82,9 @@ export class ConditionTypes implements IWiredTypeHolder
         new HasVariable(),
         new VariableValue(),
         new ChestHasAmount(),
-        new ChestHasItemTypes()
+        new ChestHasItemTypes(),
+        new TimeMatches(),
+        new DateMatches()
     ];
 
     // AS3: ConditionTypes.as::getByCode()
