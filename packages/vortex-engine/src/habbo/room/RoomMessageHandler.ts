@@ -37,6 +37,12 @@ import {
 import {DiceValueMessageEvent} from '../communication/messages/incoming/room/engine/DiceValueMessageEvent';
 import {OneWayDoorStatusMessageEvent} from '../communication/messages/incoming/room/engine/OneWayDoorStatusMessageEvent';
 import type {OneWayDoorStatusMessageParser} from '../communication/messages/parser/room/engine/OneWayDoorStatusMessageParser';
+import {ItemStateUpdateMessageEvent} from '../communication/messages/incoming/room/engine/ItemStateUpdateMessageEvent';
+import type {ItemStateUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemStateUpdateMessageParser';
+import {ItemsStateUpdateMessageEvent} from '../communication/messages/incoming/room/engine/ItemsStateUpdateMessageEvent';
+import type {ItemsStateUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemsStateUpdateMessageParser';
+import {ItemDataUpdateMessageEvent} from '../communication/messages/incoming/room/engine/ItemDataUpdateMessageEvent';
+import type {ItemDataUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemDataUpdateMessageParser';
 import {ItemRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ItemRemoveMultipleMessageEvent';
 import type {ItemRemoveMultipleMessageParser} from '../communication/messages/parser/room/engine/ItemRemoveMultipleMessageParser';
 import {ObjectRemoveMultipleMessageEvent} from '../communication/messages/incoming/room/engine/ObjectRemoveMultipleMessageEvent';
@@ -198,6 +204,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ObjectsDataUpdateMessageEvent(this.onObjectsDataUpdate.bind(this)));
             connection.addMessageEvent(new DiceValueMessageEvent(this.onDiceValue.bind(this)));
             connection.addMessageEvent(new OneWayDoorStatusMessageEvent(this.onOneWayDoorStatus.bind(this)));
+            connection.addMessageEvent(new ItemStateUpdateMessageEvent(this.onItemStateUpdate.bind(this)));
+            connection.addMessageEvent(new ItemsStateUpdateMessageEvent(this.onItemsStateUpdate.bind(this)));
+            connection.addMessageEvent(new ItemDataUpdateMessageEvent(this.onItemDataUpdate.bind(this)));
             connection.addMessageEvent(new ItemRemoveMultipleMessageEvent(this.onItemRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ObjectRemoveMultipleMessageEvent(this.onObjectRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
@@ -884,6 +893,107 @@ export class RoomMessageHandler implements IRoomMessageHandler
             null,
             parser.status,
             new LegacyStuffData()
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onItemStateUpdate()
+    onItemStateUpdate(event: IMessageEvent): void
+    {
+        const stateEvent = event as ItemStateUpdateMessageEvent;
+
+        if(stateEvent === null)
+        {
+            return;
+        }
+
+        const parser = stateEvent.getParser() as ItemStateUpdateMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        this._roomCreator.updateObjectWallItemState(
+            this._currentRoomId,
+            parser.id,
+            parser.state,
+            parser.itemData
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onItemsStateUpdate()
+    onItemsStateUpdate(event: IMessageEvent): void
+    {
+        const stateEvent = event as ItemsStateUpdateMessageEvent;
+
+        if(stateEvent === null)
+        {
+            return;
+        }
+
+        const parser = stateEvent.getParser() as ItemsStateUpdateMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        for(let i = 0; i < parser.itemCount; i++)
+        {
+            const itemData = parser.getItemData(i);
+
+            // AS3 dereferences getItemData(i) without a null check — the loop bound makes it
+            // unreachable, but the port's return type is nullable, so guard here.
+            if(itemData === null)
+            {
+                continue;
+            }
+
+            this._roomCreator.updateObjectWallItemState(
+                this._currentRoomId,
+                itemData.id,
+                itemData.state,
+                itemData.itemData
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onItemDataUpdate()
+    onItemDataUpdate(event: IMessageEvent): void
+    {
+        const dataEvent = event as ItemDataUpdateMessageEvent;
+
+        if(dataEvent === null)
+        {
+            return;
+        }
+
+        const parser = dataEvent.getParser() as ItemDataUpdateMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        this._roomCreator.updateObjectWallItemData(
+            this._currentRoomId,
+            parser.id,
+            parser.itemData
         );
     }
 

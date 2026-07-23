@@ -104,6 +104,8 @@ import {
 import {RoomEngineObjectPlacedEvent} from './events/RoomEngineObjectPlacedEvent';
 import {RoomObjectRoomMaskUpdateMessage} from './messages/RoomObjectRoomMaskUpdateMessage';
 import {RoomObjectDataUpdateMessage} from './messages/RoomObjectDataUpdateMessage';
+import {RoomObjectItemDataUpdateMessage} from './messages/RoomObjectItemDataUpdateMessage';
+import {LegacyStuffData} from './object/data/LegacyStuffData';
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
 import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
@@ -2571,11 +2573,78 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectWallItemState()
+    updateObjectWallItemState(
+        roomId: number,
+        id: number,
+        state: number,
+        itemData: string
+    ): boolean
+    {
+        const object = this.getObjectWallItem(roomId, id);
+
+        if(object === null)
+        {
+            return false;
+        }
+
+        // AS3 `new _SafeCls_1945()` — the default empty IStuffData, ported as LegacyStuffData.
+        const stuffData = new LegacyStuffData();
+        stuffData.setString(itemData);
+
+        const message = new RoomObjectDataUpdateMessage(state, stuffData);
+
+        // AS3 re-tests `_loc7_ != null` here even though the early return above already
+        // guaranteed it — preserved verbatim.
+        if(object !== null && object.getEventHandler() !== null)
+        {
+            object.getEventHandler()?.processUpdateMessage(message);
+        }
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectWallItemData()
+    updateObjectWallItemData(
+        roomId: number,
+        id: number,
+        itemData: string
+    ): boolean
+    {
+        const object = this.getObjectWallItem(roomId, id);
+
+        if(object === null)
+        {
+            return false;
+        }
+
+        const message = new RoomObjectItemDataUpdateMessage(itemData);
+
+        // AS3 re-tests `_loc5_ != null` here even though the early return above already
+        // guaranteed it — preserved verbatim.
+        if(object !== null && object.getEventHandler() !== null)
+        {
+            object.getEventHandler()?.processUpdateMessage(message);
+        }
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getObjectWallItem()
+    private getObjectWallItem(roomId: number, id: number): IRoomObjectController | null
+    {
+        return this.getRoomObject(
+            roomId,
+            id,
+            RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL
+        ) as IRoomObjectController | null;
+    }
+
     disposeObjectWallItem(
         roomId: number,
         id: number,
         _pickerId?: number
-    ): boolean 
+    ): boolean
     {
         return this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL);
     }

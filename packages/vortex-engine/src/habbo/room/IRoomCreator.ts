@@ -137,6 +137,27 @@ export interface IRoomCreator
     ): boolean;
 
     /**
+	 * Update a wall item's state, carrying its raw item data string.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectWallItemState()
+    updateObjectWallItemState(
+        roomId: number,
+        id: number,
+        state: number,
+        itemData: string
+    ): boolean;
+
+    /**
+	 * Update a wall item's raw item data string only (e.g. stickie content).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectWallItemData()
+    updateObjectWallItemData(
+        roomId: number,
+        id: number,
+        itemData: string
+    ): boolean;
+
+    /**
 	 * Dispose wall item.
 	 */
     disposeObjectWallItem(
