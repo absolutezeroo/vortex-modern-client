@@ -90,6 +90,9 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::STYLE_DEFAULT
     public static readonly STYLE_DEFAULT: string = 'illumina';
 
+    // AS3: UserDefinedRoomEventsCtrl.as::STYLE_OPTIONS
+    public static readonly STYLE_OPTIONS: string[] = ['illumina', 'volter'];
+
     // AS3: UserDefinedRoomEventsCtrl.as::_roomEvents
     private _roomEvents: HabboUserDefinedRoomEvents;
 
