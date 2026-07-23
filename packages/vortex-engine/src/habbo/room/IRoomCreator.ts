@@ -11,6 +11,7 @@ import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomInstance} from '@room/IRoomInstance';
 import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
+import type {IHabboWindowManager} from '../window/IHabboWindowManager';
 import type {IStuffData} from './object/data/IStuffData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
@@ -251,6 +252,12 @@ export interface IRoomCreator
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get sessionDataManager()
     readonly sessionDataManager: ISessionDataManager | null;
+
+    /**
+	 * The window manager, for handlers that must raise a confirm dialog.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get windowManager()
+    readonly windowManager: IHabboWindowManager | null;
 
     /**
 	 * The room instance, for handlers that need to read an object's model directly.

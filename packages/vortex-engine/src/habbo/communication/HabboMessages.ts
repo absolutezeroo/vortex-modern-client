@@ -216,6 +216,8 @@ import {
     ItemDataUpdateMessageEvent,
     AreaHideMessageEvent,
     WiredMovementsMessageEvent,
+    ObjectRemoveConfirmMessageEvent,
+    BCPlacementWarningMessageEvent,
     ItemRemoveMultipleMessageEvent,
     ObjectRemoveMultipleMessageEvent,
     ObjectRemoveMessageEvent,
@@ -632,6 +634,8 @@ import {
     CheckGiftableMessageComposer,
     GetRoomAdsPurchaseInfoMessageComposer,
     PurchaseProductAsGiftMessageComposer,
+    PlaceObjectFromCatalogComposer,
+    PlaceWallItemFromCatalogComposer,
 } from './messages/outgoing/catalog';
 
 // Outgoing Composers - Marketplace
@@ -978,6 +982,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(540, ItemDataUpdateMessageEvent);
         this._events.set(1131, AreaHideMessageEvent);
         this._events.set(325, WiredMovementsMessageEvent);
+        this._events.set(3643, ObjectRemoveConfirmMessageEvent);
+        this._events.set(2458, BCPlacementWarningMessageEvent);
         // TODO(AS3): header verified against sources/WIN63-202607011411-782849652 (_SafeCls_2131), but
         // the new parser reads one more Integer than the TS parser - re-verify field order.
         this._events.set(996, UsersMessageEvent);
@@ -1649,6 +1655,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2093, GetCatalogPageComposer);
         this._composers.set(1692, GetProductOfferComposer);
         this._composers.set(1706, PurchaseFromCatalogComposer);
+        // Builders-club direct placement (_composers[3849] = _SafeCls_1996,
+        // _composers[2740] = _SafeCls_1748 in the WIN63 registry).
+        this._composers.set(3849, PlaceObjectFromCatalogComposer);
+        this._composers.set(2740, PlaceWallItemFromCatalogComposer);
         this._composers.set(1739, BuildersClubQueryFurniCountMessageComposer);
         this._composers.set(2779, RedeemVoucherMessageComposer);
         this._composers.set(667, GetClubOffersMessageComposer);

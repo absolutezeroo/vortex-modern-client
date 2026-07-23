@@ -46,6 +46,15 @@ import type {ItemDataUpdateMessageParser} from '../communication/messages/parser
 import {AreaHideMessageEvent} from '../communication/messages/incoming/room/engine/AreaHideMessageEvent';
 import type {AreaHideMessageParser} from '../communication/messages/parser/room/engine/AreaHideMessageParser';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
+import {ObjectRemoveConfirmMessageEvent} from '../communication/messages/incoming/room/engine/ObjectRemoveConfirmMessageEvent';
+import type {ObjectRemoveConfirmMessageParser} from '../communication/messages/parser/room/engine/ObjectRemoveConfirmMessageParser';
+import {PickupObjectMessageComposer} from '../communication/messages/outgoing/room/engine/PickupObjectMessageComposer';
+import {BCPlacementWarningMessageEvent} from '../communication/messages/incoming/room/engine/BCPlacementWarningMessageEvent';
+import {BCPlacementWarningMessageParser} from '../communication/messages/parser/room/engine/BCPlacementWarningMessageParser';
+import {PlaceObjectFromCatalogComposer} from '../communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
+import {PlaceWallItemFromCatalogComposer} from '../communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import type {IDisposable} from '@core/runtime/IDisposable';
 import {GuideSessionStartedMessageEvent} from '../communication/messages/incoming/help/GuideSessionStartedMessageEvent';
 import {GuideSessionEndedMessageEvent} from '../communication/messages/incoming/help/GuideSessionEndedMessageEvent';
 import {GuideSessionErrorMessageEvent} from '../communication/messages/incoming/help/GuideSessionErrorMessageEvent';
@@ -230,6 +239,8 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ItemDataUpdateMessageEvent(this.onItemDataUpdate.bind(this)));
             connection.addMessageEvent(new AreaHideMessageEvent(this.onAreaHide.bind(this)));
             connection.addMessageEvent(new WiredMovementsMessageEvent(this.onWiredMovements.bind(this)));
+            connection.addMessageEvent(new ObjectRemoveConfirmMessageEvent(this.onObjectRemoveConfirm.bind(this)));
+            connection.addMessageEvent(new BCPlacementWarningMessageEvent(this.onBCPlacementWarning.bind(this)));
             connection.addMessageEvent(new GuideSessionStartedMessageEvent(this.onGuideSessionStarted.bind(this)));
             connection.addMessageEvent(new GuideSessionEndedMessageEvent(this.onGuideSessionEnded.bind(this)));
             connection.addMessageEvent(new GuideSessionErrorMessageEvent(this.onGuideSessionError.bind(this)));
@@ -919,6 +930,102 @@ export class RoomMessageHandler implements IRoomMessageHandler
             null,
             parser.status,
             new LegacyStuffData()
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onBCPlacementWarning()
+    onBCPlacementWarning(event: IMessageEvent): void
+    {
+        const warningEvent = event as BCPlacementWarningMessageEvent;
+
+        if(warningEvent === null)
+        {
+            return;
+        }
+
+        const parser = warningEvent.getParser() as BCPlacementWarningMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        const windowManager = this._roomCreator?.windowManager ?? null;
+
+        if(windowManager === null)
+        {
+            return;
+        }
+
+        // AS3 tests only against the floor code and treats every other value as a wall placement —
+        // it never compares against the wall constant. Preserved verbatim.
+        const composer = parser.typeCode === BCPlacementWarningMessageParser.TYPE_CODE_FLOOR
+            ? new PlaceObjectFromCatalogComposer(
+                parser.pageId, parser.offerId, parser.extraParam, parser.x, parser.y, parser.direction, true
+            )
+            : new PlaceWallItemFromCatalogComposer(
+                parser.pageId, parser.offerId, parser.extraParam, parser.wallLocation, true
+            );
+
+        // The confirm text is fixed here, unlike onObjectRemoveConfirm where the server supplies it.
+        windowManager.confirm(
+            '${generic.alert.title}',
+            '${room.confirm.hide_room}',
+            0,
+            (dialog: IDisposable, windowEvent: WindowEvent): void =>
+            {
+                dialog.dispose();
+
+                if(windowEvent.type === WindowEvent.WE_OK)
+                {
+                    event.connection?.send(composer);
+                }
+            }
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectRemoveConfirm()
+    onObjectRemoveConfirm(event: IMessageEvent): void
+    {
+        const confirmationEvent = event as ObjectRemoveConfirmMessageEvent;
+
+        if(confirmationEvent === null)
+        {
+            return;
+        }
+
+        const parser = confirmationEvent.getParser() as ObjectRemoveConfirmMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        const windowManager = this._roomCreator?.windowManager ?? null;
+
+        if(windowManager === null)
+        {
+            return;
+        }
+
+        // The composer is built up front, as AS3 does, so the closure captures it rather than the
+        // parser — parsers are pooled and flushed, and the dialog answer arrives much later.
+        const composer = new PickupObjectMessageComposer(parser.id, parser.category, true);
+
+        // The server sends bare localisation keys; AS3 wraps them in ${...} at the call site.
+        windowManager.confirm(
+            '${' + parser.confirmTitle + '}',
+            '${' + parser.confirmBody + '}',
+            0,
+            (dialog: IDisposable, windowEvent: WindowEvent): void =>
+            {
+                dialog.dispose();
+
+                if(windowEvent.type === WindowEvent.WE_OK)
+                {
+                    event.connection?.send(composer);
+                }
+            }
         );
     }
 

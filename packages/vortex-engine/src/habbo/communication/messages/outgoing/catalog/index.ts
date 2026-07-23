@@ -21,3 +21,5 @@ export * from './PurchaseMintTokensMessageComposer';
 export * from './CheckGiftableMessageComposer';
 export * from './GetRoomAdsPurchaseInfoMessageComposer';
 export * from './PurchaseProductAsGiftMessageComposer';
+export * from './PlaceObjectFromCatalogComposer';
+export * from './PlaceWallItemFromCatalogComposer';

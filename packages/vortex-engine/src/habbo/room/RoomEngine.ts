@@ -80,6 +80,8 @@ import {RoomVisualizationData} from './object/visualization/room/RoomVisualizati
 import type {IAssetRoomVisualizationData} from './object/visualization/room/rasterizer/basic/PlaneRasterizerTypes';
 import type {NitroAsset} from '@core/assets/NitroAsset';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
+import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
@@ -188,6 +190,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _roomDragLastY: number = 0;
     private _roomDraggingAlwaysCenters: boolean = false;
     private _roomSessionManager: IRoomSessionManager | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
     private _roomRendererFactory: IRoomRendererFactory | null = null;
     private _moverIconSprite: Sprite | null = null;
     private _moverIconCanvas: RoomRenderingCanvas | null = null;
@@ -318,11 +322,21 @@ export class RoomEngine extends Component implements IRoomEngine,
             ),
             new ComponentDependency(
                 IID_RoomRendererFactory,
-                (factory: IRoomRendererFactory | null) => 
+                (factory: IRoomRendererFactory | null) =>
                 {
                     this._roomRendererFactory = factory;
                 },
                 true // Required dependency
+            ),
+            // AS3: _SafeCls_90.as:434 — RoomEngine takes IIDHabboWindowManager so that
+            // RoomMessageHandler can raise the pick-up / builders-club placement confirms.
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (windowManager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = windowManager;
+                },
+                true
             ),
             new ComponentDependency(
                 IID_HabboConfigurationManager,
@@ -417,6 +431,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     get sessionDataManager(): ISessionDataManager | null
     {
         return this._sessionDataManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get windowManager()
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::contentLoaded()
