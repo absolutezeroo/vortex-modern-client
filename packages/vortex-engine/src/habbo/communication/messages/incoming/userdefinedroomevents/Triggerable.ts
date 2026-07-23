@@ -263,7 +263,12 @@ export class Triggerable
     // AS3: Triggerable.as::getInt()
     getInt(index: number): number
     {
-        return this._intParams[index];
+        // AS3 `getInt():int` returns `_intParams[index]` through an `:int` return type, which implicitly
+        // coerces via int(): a missing (out-of-range) or NaN slot becomes 0, fractionals truncate toward
+        // zero. TS erases the return type so the coercion must be explicit — otherwise a missing param
+        // surfaces as `undefined`/NaN and shows up as "NaN" in number inputs (e.g. Date/TimeMatches).
+        const value = this._intParams[index];
+        return value === undefined || Number.isNaN(value) ? 0 : Math.trunc(value);
     }
 
     // AS3: Triggerable.as::get allowWallFurni()
