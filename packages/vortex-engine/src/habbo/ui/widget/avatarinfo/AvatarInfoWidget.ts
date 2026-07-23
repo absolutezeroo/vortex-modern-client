@@ -147,6 +147,16 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         this._data.populate(event);
 
+        // Resolve the own room-object id here too — this event also fires when the
+        // user clicks their own avatar directly (not only via selectOwnAvatar), and
+        // the bubble needs the id to position itself. Without this, clicking your
+        // avatar did nothing until the toolbar me-menu had been opened once.
+        const container = this.container;
+        const userId = container?.sessionDataManager?.userId ?? -1;
+        const userData = userId >= 0 ? (container?.roomSession.userDataManager.getUserData(userId) ?? null) : null;
+
+        if(userData) this._ownRoomIndex = userData.roomObjectId;
+
         if(!this._cachedOwnMenu)
         {
             this._cachedOwnMenu = new OwnAvatarMenuView(this);
