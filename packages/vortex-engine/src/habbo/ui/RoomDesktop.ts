@@ -28,6 +28,7 @@ import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfig
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
@@ -52,6 +53,7 @@ import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
+import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -239,9 +241,23 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._catalog;
     }
 
-    public set catalog(value: IHabboCatalog | null) 
+    public set catalog(value: IHabboCatalog | null)
     {
         this._catalog = value;
+    }
+
+    private _inventory: IHabboInventory | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get inventory()
+    // Consumed by the effects widget (container.inventory.getAvatarEffects(), setEffectSelected/Deselected).
+    public get inventory(): IHabboInventory | null
+    {
+        return this._inventory;
+    }
+
+    public set inventory(value: IHabboInventory | null)
+    {
+        this._inventory = value;
     }
 
     private _habboTracking: IHabboTracking | null = null;
@@ -659,6 +675,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             }
             case 'RWE_CHAT_INPUT_WIDGET':
                 handler = new ChatInputWidgetHandler();
+                break;
+            case 'RWE_EFFECTS':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:848
+                handler = new EffectsWidgetHandler();
                 break;
             case 'RWE_CHAT_WIDGET': {
                 // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737

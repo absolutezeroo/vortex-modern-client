@@ -1,24 +1,46 @@
 import type {EffectFilterType, IEffectsModel} from './IEffectsModel';
 import {EffectFilter} from './IEffectsModel';
 import type {Effect} from './Effect';
+import type {IConnection} from '@core/communication/connection/IConnection';
+import {AvatarEffectActivatedComposer} from '../../communication/messages/outgoing/inventory/AvatarEffectActivatedComposer';
+import {AvatarEffectSelectedComposer} from '../../communication/messages/outgoing/inventory/AvatarEffectSelectedComposer';
 
 /**
- * Manages avatar effects inventory data
+ * Owned avatar-effects data + activation/selection commands.
  *
- * Based on AS3 com.sulake.habbo.inventory.effects.EffectsModel (ENGINE only)
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/EffectsModel.as
+ *
+ * Faithful to the AS3 inventory EffectsModel for the parts the me-menu effects
+ * widget uses: it holds the owned Effect list and SENDS the activate/select
+ * composers itself (AS3 sends via `HabboInventory.communication.connection`).
+ *
+ * TODO(AS3): the AS3 model also owns an inventory-tab EffectsView + two
+ * EffectListProxy instances and calls view.updateListViews()/updateActionView()
+ * from refreshViews(). That inventory tab is legacy (no "effects" tab exists in
+ * the modern inventory_xml layout), so it is intentionally not ported here; the
+ * live UI (the me-menu EffectsWidget) refreshes via
+ * HabboInventory.notifyChangedEffects() ("HIEE_EFFECTS_CHANGED") instead.
  */
 export class EffectsModel implements IEffectsModel
 {
+    // AS3: EffectsModel.as::_communication (used as .connection.send(...))
+    private _connection: IConnection | null;
+
     private _effects: Effect[] = [];
 
     private _disposed: boolean = false;
+
+    private _lastActivatedEffect: number = -1;
+
+    constructor(connection: IConnection | null = null)
+    {
+        this._connection = connection;
+    }
 
     get disposed(): boolean
     {
         return this._disposed;
     }
-
-    private _lastActivatedEffect: number = -1;
 
     get lastActivatedEffect(): number
     {
@@ -35,9 +57,11 @@ export class EffectsModel implements IEffectsModel
         }
 
         this._effects = [];
+        this._connection = null;
         this._disposed = true;
     }
 
+    // AS3: EffectsModel.as::addEffect() (icon load deferred to the widget in this port)
     addEffect(effect: Effect): boolean
     {
         const existing = this.getEffect(effect.type);
@@ -54,6 +78,7 @@ export class EffectsModel implements IEffectsModel
         return true;
     }
 
+    // AS3: EffectsModel.as::getEffect()
     getEffect(type: number): Effect | null
     {
         for(const effect of this._effects)
@@ -67,6 +92,7 @@ export class EffectsModel implements IEffectsModel
         return null;
     }
 
+    // AS3: EffectsModel.as::getEffects()
     getEffects(filter: EffectFilterType = EffectFilter.ALL): Effect[]
     {
         if(filter === EffectFilter.ALL)
@@ -85,6 +111,7 @@ export class EffectsModel implements IEffectsModel
         });
     }
 
+    // AS3: EffectsModel.as::getItemInIndex()
     getItemInIndex(index: number, filter: EffectFilterType = EffectFilter.ALL): Effect | null
     {
         const effects = this.getEffects(filter);
@@ -97,67 +124,88 @@ export class EffectsModel implements IEffectsModel
         return effects[index];
     }
 
+    // AS3: EffectsModel.as::requestEffectActivated() — sends the enable/activate composer (3022)
+    requestEffectActivated(type: number): void
+    {
+        this._connection?.send(new AvatarEffectActivatedComposer(type));
+    }
+
+    // AS3: EffectsModel.as::setEffectActivated() — server-confirmed activation
     setEffectActivated(type: number): Effect | null
     {
         const effect = this.getEffect(type);
 
         if(!effect) return null;
 
-        this.stopUsingAllEffects();
+        // AS3 passes (false,false): stop others WITHOUT sending a stop composer.
+        this.stopUsingAllEffects(false, false);
         effect.isActive = true;
         effect.isInUse = true;
 
         return effect;
     }
 
-    useEffect(type: number): number
+    // AS3: EffectsModel.as::useEffect() — activate if needed, then wear (send select 2362)
+    useEffect(type: number): void
     {
-        this.stopUsingAllEffectsInternal(false);
+        this.stopUsingAllEffects(false, false, true);
 
         const effect = this.getEffect(type);
 
-        if(!effect) return -1;
+        if(!effect) return;
 
-        // If not active, need to activate first
         if(!effect.isActive)
         {
-            // Return type for caller to send activation message
-            return effect.type;
+            this.requestEffectActivated(effect.type);
         }
 
-        // Already active, just mark as in use
         if(!effect.isInUse)
         {
             effect.isInUse = true;
+            this._connection?.send(new AvatarEffectSelectedComposer(type));
             this._lastActivatedEffect = type;
-
-            return type;
         }
-
-        return -1;
     }
 
-    stopUsingEffect(type: number): boolean
+    // AS3: EffectsModel.as::stopUsingEffect()
+    stopUsingEffect(type: number, sendStop: boolean = false): void
     {
         const effect = this.getEffect(type);
 
-        if(!effect) return false;
+        if(!effect) return;
 
         if(effect.isInUse)
         {
             effect.isInUse = false;
 
-            return true;
+            if(sendStop)
+            {
+                this._connection?.send(new AvatarEffectSelectedComposer(-1));
+                this._lastActivatedEffect = -1;
+            }
+        }
+    }
+
+    // AS3: EffectsModel.as::stopUsingAllEffects()
+    stopUsingAllEffects(sendStop: boolean = true, _refresh: boolean = true, clearLastActivated: boolean = false): void
+    {
+        for(const effect of this._effects)
+        {
+            effect.isInUse = false;
         }
 
-        return false;
+        if(sendStop)
+        {
+            this._connection?.send(new AvatarEffectSelectedComposer(-1));
+        }
+
+        if(clearLastActivated)
+        {
+            this._lastActivatedEffect = -1;
+        }
     }
 
-    stopUsingAllEffects(): void
-    {
-        this.stopUsingAllEffectsInternal(true);
-    }
-
+    // AS3: EffectsModel.as::toggleEffectSelected()
     toggleEffectSelected(type: number): Effect | null
     {
         const effect = this.getEffect(type);
@@ -177,6 +225,7 @@ export class EffectsModel implements IEffectsModel
         return effect;
     }
 
+    // AS3: EffectsModel.as::setEffectSelected()
     setEffectSelected(type: number): void
     {
         const effect = this.getEffect(type);
@@ -187,6 +236,7 @@ export class EffectsModel implements IEffectsModel
         effect.isSelected = true;
     }
 
+    // AS3: EffectsModel.as::setEffectDeselected()
     setEffectDeselected(type: number): void
     {
         const effect = this.getEffect(type);
@@ -205,6 +255,7 @@ export class EffectsModel implements IEffectsModel
         }
     }
 
+    // AS3: EffectsModel.as::getSelectedEffect()
     getSelectedEffect(filter: EffectFilterType = EffectFilter.ALL): Effect | null
     {
         const effects = this.getEffects(filter);
@@ -220,6 +271,7 @@ export class EffectsModel implements IEffectsModel
         return null;
     }
 
+    // AS3: EffectsModel.as::setEffectExpired()
     setEffectExpired(type: number): boolean
     {
         this._lastActivatedEffect = -1;
@@ -235,32 +287,17 @@ export class EffectsModel implements IEffectsModel
             return false;
         }
 
-        // Remove effect entirely
         this.removeEffect(type);
 
         return true;
     }
 
-    reactivateLastEffect(): number
+    // AS3: EffectsModel.as::reactivateLastEffect()
+    reactivateLastEffect(): void
     {
         if(this._lastActivatedEffect !== -1)
         {
-            return this.useEffect(this._lastActivatedEffect);
-        }
-
-        return -1;
-    }
-
-    private stopUsingAllEffectsInternal(clearLastActivated: boolean): void
-    {
-        for(const effect of this._effects)
-        {
-            effect.isInUse = false;
-        }
-
-        if(clearLastActivated)
-        {
-            this._lastActivatedEffect = -1;
+            this.useEffect(this._lastActivatedEffect);
         }
     }
 

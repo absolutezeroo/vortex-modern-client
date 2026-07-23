@@ -7,6 +7,21 @@ export class Effect
 {
     private _activationTimestamp: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/effects/Effect.as::icon
+    // AS3 holds a Flash BitmapData; the port uses an ImageBitmap (the asset
+    // library's decoded content for `fx_icon_<type>`). Consumed by EffectView.
+    private _icon: ImageBitmap | null = null;
+
+    get icon(): ImageBitmap | null
+    {
+        return this._icon;
+    }
+
+    set icon(value: ImageBitmap | null)
+    {
+        this._icon = value;
+    }
+
     private _type: number = 0;
 
     get type(): number

@@ -86,6 +86,9 @@ import {
 import {
     AchievementsScoreMessageEvent,
     AvatarEffectsMessageEvent,
+    AvatarEffectAddedMessageEvent,
+    AvatarEffectActivatedMessageEvent,
+    AvatarEffectExpiredMessageEvent,
     BadgesMessageEvent,
     BotInventoryMessageEvent,
     CreditBalanceEvent,
@@ -846,6 +849,11 @@ export class HabboMessages implements IMessageConfiguration
         // onPostMessageMessage (_SafeCls_3133, GroupForumController.as), an unrelated,
         // unported message.
         this._events.set(2405, AvatarEffectsMessageEvent);
+        // Discrete avatar-effect push updates (owned by inventory/_SafeCls_1951.as).
+        // IDs from com/sulake/habbo/communication/_SafeCls_2046.as.
+        this._events.set(1577, AvatarEffectAddedMessageEvent);
+        this._events.set(3814, AvatarEffectActivatedMessageEvent);
+        this._events.set(2236, AvatarEffectExpiredMessageEvent);
 
         // === INVENTORY - FURNI ===
         this._events.set(2694, FurniListMessageEvent);

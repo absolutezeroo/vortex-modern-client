@@ -1,6 +1,8 @@
+import type {EventEmitter} from 'eventemitter3';
 import type {IFurniModel} from './furni/IFurniModel';
 import type {IBadgesModel} from './badges/IBadgesModel';
 import type {IEffectsModel} from './effects/IEffectsModel';
+import type {Effect} from './effects/Effect';
 import type {IPetsModel} from './pets/IPetsModel';
 import type {IBotsModel} from './bots/IBotsModel';
 import type {ITradingModel} from './trading/ITradingModel';
@@ -37,6 +39,10 @@ export interface IHabboInventory
 {
     readonly isInitialized: boolean;
     readonly currentCategory: InventoryCategoryType | null;
+
+    // Component event emitter — the me-menu EffectsWidget handler subscribes to
+    // HIEE_EFFECTS_CHANGED here (AS3: container.inventory.events).
+    readonly events: EventEmitter;
 
     // Models
     readonly furniModel: IFurniModel;
@@ -182,4 +188,25 @@ export interface IHabboInventory
 	 * Request bots from server
 	 */
     requestBots(): void;
+
+    // AS3: HabboInventory.as::getAvatarEffects()
+    getAvatarEffects(): Effect[];
+
+    // AS3: HabboInventory.as::getActivatedAvatarEffects()
+    getActivatedAvatarEffects(): Effect[];
+
+    // AS3: HabboInventory.as::setEffectSelected()
+    setEffectSelected(type: number): void;
+
+    // AS3: HabboInventory.as::setEffectDeselected()
+    setEffectDeselected(type: number): void;
+
+    // AS3: HabboInventory.as::deselectAllEffects()
+    deselectAllEffects(clearLastActivated?: boolean): void;
+
+    // AS3: HabboInventory.as::getAvatarEffect()
+    getAvatarEffect(type: number): Effect | null;
+
+    // AS3: HabboInventory.as::notifyChangedEffects()
+    notifyChangedEffects(): void;
 }

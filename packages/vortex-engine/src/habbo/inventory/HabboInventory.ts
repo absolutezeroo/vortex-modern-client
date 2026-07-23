@@ -5,6 +5,7 @@ import type {IHabboInventory, InventoryCategoryType} from './IHabboInventory';
 import type {IFurniModel} from './furni/IFurniModel';
 import type {IBadgesModel} from './badges/IBadgesModel';
 import type {IEffectsModel} from './effects/IEffectsModel';
+import {EffectFilter} from './effects/IEffectsModel';
 import type {IPetsModel} from './pets/IPetsModel';
 import type {IBotsModel} from './bots/IBotsModel';
 import type {ITradingModel} from './trading/ITradingModel';
@@ -60,6 +61,16 @@ import type {FurniListRemoveMultipleMessageParser} from '../communication/messag
 import type {FurniListItemParser} from '../communication/messages/parser/inventory/furni/FurniListItemParser';
 import type {IFurnitureItemData} from './items/FurnitureItemData';
 import {FurnitureItem} from './items/FurnitureItem';
+import {AvatarEffectsMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectsMessageEvent';
+import {AvatarEffectAddedMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectAddedMessageEvent';
+import {AvatarEffectActivatedMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectActivatedMessageEvent';
+import {AvatarEffectExpiredMessageEvent} from '../communication/messages/incoming/inventory/AvatarEffectExpiredMessageEvent';
+import type {AvatarEffectsMessageParser} from '../communication/messages/parser/inventory/AvatarEffectsMessageParser';
+import type {AvatarEffectAddedMessageParser} from '../communication/messages/parser/inventory/AvatarEffectAddedMessageParser';
+import type {AvatarEffectActivatedMessageParser} from '../communication/messages/parser/inventory/AvatarEffectActivatedMessageParser';
+import type {AvatarEffectExpiredMessageParser} from '../communication/messages/parser/inventory/AvatarEffectExpiredMessageParser';
+import {HabboInventoryEffectsEvent} from './events/HabboInventoryEffectsEvent';
+import {Effect} from './effects/Effect';
 
 const log = Logger.getLogger('Inventory');
 
@@ -81,6 +92,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _sessionDataManager: ISessionDataManager | null = null;
     private _localization: IHabboLocalizationManager | null = null;
     private _furniMessageEvents: IMessageEvent[] = [];
+    private _effectMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
     private _initializedCategories: Set<string> = new Set();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
@@ -394,7 +406,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication?.removeMessageEvent(event);
         }
 
+        for(const event of this._effectMessageEvents)
+        {
+            this._communication?.removeMessageEvent(event);
+        }
+
         this._furniMessageEvents = [];
+        this._effectMessageEvents = [];
         this._furniModel?.dispose();
         this._badgesModel?.dispose();
         this._effectsModel?.dispose();
@@ -423,7 +441,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._localization!
         );
         this._badgesModel = new BadgesModel();
-        this._effectsModel = new EffectsModel();
+        this._effectsModel = new EffectsModel(this._communication?.connection ?? null);
         this._petsModel = new PetsModel();
         this._botsModel = new BotsModel();
         this._tradingModel = new TradingModel(this._communication?.connection ?? null);
@@ -737,6 +755,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._unseenItemTracker = new UnseenItemTracker(this._communication!, this.events, this);
         this._view = new InventoryMainView(this);
         this.registerFurniMessageEvents();
+        this.registerEffectMessageEvents();
         log.info('Inventory initialized');
     }
 
@@ -818,6 +837,150 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new FurniListRemoveMessageEvent(this.onFurniListRemove)),
             this._communication.addMessageEvent(new FurniListRemoveMultipleMessageEvent(this.onFurniListRemoveMultiple)),
             this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate))
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as
+    // The inventory owns the avatar-effects message pipeline (the session-side
+    // AvatarEffectsHandler is a stub; SessionDataManager also caches 2405 but
+    // nothing reads it — the MessageRegistry allows both listeners). Populates the
+    // EffectsModel and fires HIEE_EFFECTS_CHANGED so the me-menu widget re-renders.
+    private registerEffectMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._effectMessageEvents.push(
+            this._communication.addMessageEvent(new AvatarEffectsMessageEvent(this.onAvatarEffects)),
+            this._communication.addMessageEvent(new AvatarEffectAddedMessageEvent(this.onAvatarEffectAdded)),
+            this._communication.addMessageEvent(new AvatarEffectActivatedMessageEvent(this.onAvatarEffectActivated)),
+            this._communication.addMessageEvent(new AvatarEffectExpiredMessageEvent(this.onAvatarEffectExpired))
+        );
+    }
+
+    // AS3: _SafeCls_1951.as::onAvatarEffects()
+    private onAvatarEffects = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as AvatarEffectsMessageParser | null;
+
+        if(!parser) return;
+
+        for(const dto of parser.effects)
+        {
+            const effect = new Effect();
+
+            effect.type = dto.type;
+            effect.subType = dto.subType;
+            effect.duration = dto.duration;
+            effect.isPermanent = dto.isPermanent;
+            effect.amountInInventory = dto.inactiveEffectsInInventory;
+
+            // AS3: secondsLeftIfActive >= 0 → active (and counts as an extra owned
+            // instance); -1 → inactive stock (full duration remaining).
+            if(dto.secondsLeftIfActive >= 0)
+            {
+                effect.isActive = true;
+                effect.secondsLeft = dto.secondsLeftIfActive;
+                effect.amountInInventory++;
+            }
+            else
+            {
+                effect.isActive = false;
+                effect.secondsLeft = dto.duration;
+            }
+
+            this._effectsModel.addEffect(effect);
+        }
+
+        this.setInventoryCategoryInit('effects');
+        this.notifyChangedEffects();
+    };
+
+    // AS3: _SafeCls_1951.as::onAvatarEffectAdded()
+    private onAvatarEffectAdded = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as AvatarEffectAddedMessageParser | null;
+
+        if(!parser) return;
+
+        const effect = new Effect();
+
+        effect.type = parser.type;
+        effect.subType = parser.subType;
+        effect.duration = parser.duration;
+        effect.isPermanent = parser.isPermanent;
+        effect.secondsLeft = parser.duration;
+
+        this._effectsModel.addEffect(effect);
+        this.notifyChangedEffects();
+    };
+
+    // AS3: _SafeCls_1951.as::onAvatarEffectActivated()
+    private onAvatarEffectActivated = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as AvatarEffectActivatedMessageParser | null;
+
+        if(!parser) return;
+
+        this._effectsModel.setEffectActivated(parser.type);
+        this.notifyChangedEffects();
+    };
+
+    // AS3: _SafeCls_1951.as::onAvatarEffectExpired()
+    private onAvatarEffectExpired = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as AvatarEffectExpiredMessageParser | null;
+
+        if(!parser) return;
+
+        this._effectsModel.setEffectExpired(parser.type);
+        this.notifyChangedEffects();
+    };
+
+    // AS3: HabboInventory.as::getAvatarEffects()
+    getAvatarEffects(): Effect[]
+    {
+        return this._effectsModel.getEffects();
+    }
+
+    // AS3: HabboInventory.as::getActivatedAvatarEffects()
+    getActivatedAvatarEffects(): Effect[]
+    {
+        return this._effectsModel.getEffects(EffectFilter.ACTIVE);
+    }
+
+    // AS3: HabboInventory.as::setEffectSelected() — wear an owned effect
+    setEffectSelected(type: number): void
+    {
+        this._effectsModel.useEffect(type);
+        this.notifyChangedEffects();
+    }
+
+    // AS3: HabboInventory.as::setEffectDeselected() — stop wearing an effect
+    setEffectDeselected(type: number): void
+    {
+        this._effectsModel.stopUsingEffect(type, true);
+        this.notifyChangedEffects();
+    }
+
+    // AS3: HabboInventory.as::deselectAllEffects()
+    deselectAllEffects(clearLastActivated: boolean = false): void
+    {
+        this._effectsModel.stopUsingAllEffects(true, true, clearLastActivated);
+        this.notifyChangedEffects();
+    }
+
+    // AS3: HabboInventory.as::getAvatarEffect()
+    getAvatarEffect(type: number): Effect | null
+    {
+        return this._effectsModel.getEffect(type);
+    }
+
+    // AS3: HabboInventory.as::notifyChangedEffects() — dispatches HabboInventoryEffectsEvent
+    notifyChangedEffects(): void
+    {
+        this.events.emit(
+            HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED,
+            new HabboInventoryEffectsEvent()
         );
     }
 

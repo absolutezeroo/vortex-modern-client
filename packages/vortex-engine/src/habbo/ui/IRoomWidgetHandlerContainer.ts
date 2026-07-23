@@ -16,6 +16,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
@@ -44,6 +45,8 @@ export interface IRoomWidgetHandlerContainer
     readonly layoutManager: RoomDesktopLayoutManager;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
     readonly catalog: IHabboCatalog | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get inventory()
+    readonly inventory: IHabboInventory | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get config()
     readonly config: IHabboConfigurationManager | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get habboTracking()

@@ -14,6 +14,7 @@ import {InfoStandWidget} from './widget/infostand/InfoStandWidget';
 import {RoomToolsWidget} from './widget/roomtools/RoomToolsWidget';
 import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
 import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
+import {EffectsWidget} from './widget/effects/EffectsWidget';
 
 const log = Logger.getLogger('RoomWidgetFactory');
 
@@ -43,6 +44,10 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 );
             case 'RWE_ROOM_TOOLS':
                 return new RoomToolsWidget(handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI);
+            case 'RWE_EFFECTS':
+                return new EffectsWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
             case 'RWE_CHAT_INPUT_WIDGET':
                 return new RoomChatInputWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,

@@ -870,10 +870,13 @@ export class VortexApp
             // null, so those bitmaps rendered blank/white.
             //
             // Decode and register the catalog bitmaps into the asset library too, the same way the
-            // chat-style images already are. Scoped to the `ctlg_` prefix rather than the whole
+            // chat-style images already are. Scoped to a few prefixes rather than the whole
             // images/ bundle: this eagerly decodes an ImageBitmap per entry, and nothing else needs
             // library access today.
-            if(name.startsWith('ctlg_'))
+            // - ctlg_*: catalog swatches/slot backgrounds.
+            // - fx_icon_* / memenu_fx_*: the me-menu EffectsWidget rows read these programmatically
+            //   (effect icon + play/pause hilite) via assets.getAssetByName(...).content.
+            if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_'))
             {
                 const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
                     ?? new AssetTypeDeclaration('application/octet-stream', UnknownAsset);

@@ -45,26 +45,32 @@ export interface IEffectsModel
     getItemInIndex(index: number, filter?: EffectFilterType): Effect | null;
 
     /**
-	 * Mark effect as activated (timer started)
+	 * Mark effect as activated (server-confirmed; timer started)
 	 */
     setEffectActivated(type: number): Effect | null;
 
     /**
-	 * Use an effect (activate if needed, mark as in use)
-	 * Returns type of effect to send to server, or -1 if already in use
+	 * Send the enable/activate composer (3022) for an owned effect.
 	 */
-    useEffect(type: number): number;
+    requestEffectActivated(type: number): void;
 
     /**
-	 * Stop using a specific effect
-	 * Returns true if effect was being used
+	 * Use an effect: activate it if needed, then wear it (sends the select
+	 * composer 2362).
 	 */
-    stopUsingEffect(type: number): boolean;
+    useEffect(type: number): void;
 
     /**
-	 * Stop using all effects
+	 * Stop using a specific effect; when sendStop is true also sends the
+	 * select-stop composer (2362 with -1).
 	 */
-    stopUsingAllEffects(): void;
+    stopUsingEffect(type: number, sendStop?: boolean): void;
+
+    /**
+	 * Stop using all effects. sendStop sends the select-stop composer (2362,-1),
+	 * clearLastActivated resets the last-activated tracker.
+	 */
+    stopUsingAllEffects(sendStop?: boolean, refresh?: boolean, clearLastActivated?: boolean): void;
 
     /**
 	 * Toggle effect selection
@@ -98,8 +104,7 @@ export interface IEffectsModel
     setEffectExpired(type: number): boolean;
 
     /**
-	 * Reactivate last used effect
-	 * Returns type to send to server, or -1 if none
+	 * Reactivate the last used effect (re-sends select via useEffect).
 	 */
-    reactivateLastEffect(): number;
+    reactivateLastEffect(): void;
 }
