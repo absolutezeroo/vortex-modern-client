@@ -29,6 +29,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
+import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
@@ -259,6 +260,20 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     public set inventory(value: IHabboInventory | null)
     {
         this._inventory = value;
+    }
+
+    private _habboHelp: IHabboHelp | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboHelp()
+    // Consumed by the own-avatar bubble's "change name" button.
+    public get habboHelp(): IHabboHelp | null
+    {
+        return this._habboHelp;
+    }
+
+    public set habboHelp(value: IHabboHelp | null)
+    {
+        this._habboHelp = value;
     }
 
     private _habboTracking: IHabboTracking | null = null;

@@ -23,6 +23,7 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
+import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
@@ -41,6 +42,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
+import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
@@ -125,6 +127,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     private _catalog: IHabboCatalog | null = null;
     private _inventory: IHabboInventory | null = null;
+    private _habboHelp: IHabboHelp | null = null;
 
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
     private _userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null = null;
@@ -315,6 +318,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 false
             ),
             new ComponentDependency(
+                IID_HabboHelp,
+                (help: IHabboHelp | null) =>
+                {
+                    this._habboHelp = help;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.habboHelp = help;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
                 IID_HabboUserDefinedRoomEvents,
                 (roomEvents: IHabboUserDefinedRoomEvents | null) =>
                 {
@@ -438,6 +454,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.roomWidgetFactory = this._widgetFactory;
         desktop.catalog = this._catalog;
         desktop.inventory = this._inventory;
+        desktop.habboHelp = this._habboHelp;
         desktop.userDefinedRoomEvents = this._userDefinedRoomEvents;
         desktop.habboTracking = this._habboTracking;
         desktop.habboGroupsManager = this._habboGroupsManager;

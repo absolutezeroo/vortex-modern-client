@@ -255,12 +255,63 @@ export class ContextInfoView
         }
     }
 
-    // AS3: ContextInfoView.as::getMinimizedView() — minimized menu deferred; return the full view.
-    // TODO(AS3): port the "minimized_menu" bubble.
+    // AS3: ContextInfoView.as::get/set the static "minimized" flag (_SafeStr_5107).
+    protected get minimized(): boolean
+    {
+        return ContextInfoView._minimized;
+    }
+
+    // AS3: ContextInfoView.as::setMinimized()
+    protected setMinimized(value: boolean): void
+    {
+        ContextInfoView._minimized = value;
+        this._forcedPositionUpdate = true;
+        this.updateWindow();
+    }
+
+    // AS3: ContextInfoView.as::getMinimizedView() — builds the minimized_menu bubble.
     protected getMinimizedView(): IWindowContainer | null
     {
-        return this._window;
+        if(!this._minimizedWindow)
+        {
+            this._minimizedWindow = this._widget.windowManager.buildWidgetLayout('minimized_menu') as IWindowContainer | null;
+
+            if(!this._minimizedWindow) return null;
+
+            const minimize = this._minimizedWindow.findChildByName('minimize');
+
+            if(minimize)
+            {
+                minimize.procedure = this.onMinimizedProc;
+            }
+
+            this._minimizedWindow.procedure = this.onMouseHoverEvent;
+        }
+
+        return this._minimizedWindow;
     }
+
+    // AS3: ContextInfoView.as::onMinimize() → collapse to the minimized bubble.
+    protected onMinimize = (event: WindowEvent, _window: IWindow): void =>
+    {
+        if(event.type === 'WME_CLICK') this.setMinimized(true);
+    };
+
+    // AS3: ContextInfoView.as::onMaximize()/onMinimizeHover() — restore + hover tint,
+    // both wired on the minimized bubble's "minimize" region.
+    private onMinimizedProc = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type === 'WME_CLICK')
+        {
+            this.setMinimized(false);
+
+            return;
+        }
+
+        const icon = (window as IWindowContainer).findChildByName?.('icon');
+
+        if(icon) icon.color = event.type === 'WME_OVER' ? 4282950861 : 16777215;
+    };
 
     private startAutoHideTimer(): void
     {

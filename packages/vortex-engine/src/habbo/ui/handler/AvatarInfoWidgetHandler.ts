@@ -106,7 +106,8 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
                 roomSession.sendChangePostureMessage((message as RoomWidgetChangePostureMessage).posture);
                 break;
             case RoomWidgetUserActionMessage.START_NAME_CHANGE:
-                // TODO(AS3): container.habboHelp.startNameChange() — habboHelp not ported.
+                // AS3: AvatarInfoWidgetHandler.as::processWidgetMessage() → habboHelp.startNameChange()
+                this._container.habboHelp?.startNameChange();
                 break;
         }
 

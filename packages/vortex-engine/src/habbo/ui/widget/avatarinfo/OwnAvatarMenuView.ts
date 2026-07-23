@@ -101,6 +101,16 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
     {
         if(!this._widget.assets || !this._widget.windowManager) return;
 
+        // AS3: collapsed state → show the small minimized bubble instead.
+        if(this.minimized)
+        {
+            const minimizedView = this.getMinimizedView();
+
+            if(minimizedView) this.activeView = minimizedView;
+
+            return;
+        }
+
         if(!this._window)
         {
             this._window = this._widget.windowManager.buildWidgetLayout('own_avatar_menu') as IWindowContainer | null;
@@ -396,17 +406,6 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
     private windowProc = (event: WindowEvent, _window: IWindow): void =>
     {
         if(event.type === 'WME_CLICK_AWAY')
-        {
-            this._widget.removeView(this, false);
-        }
-    };
-
-    // AS3: ContextInfoView.as::onMinimize() → setMinimized(true). The minimized
-    // view is deferred in this slice, so the fold button just closes the bubble.
-    // TODO(AS3): collapse to the minimized_menu view instead of closing.
-    private onMinimize = (event: WindowEvent, _window: IWindow): void =>
-    {
-        if(event.type === 'WME_CLICK')
         {
             this._widget.removeView(this, false);
         }
