@@ -53,6 +53,11 @@ import {BCPlacementWarningMessageEvent} from '../communication/messages/incoming
 import {BCPlacementWarningMessageParser} from '../communication/messages/parser/room/engine/BCPlacementWarningMessageParser';
 import {PlaceObjectFromCatalogComposer} from '../communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
 import {PlaceWallItemFromCatalogComposer} from '../communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
+import {SpecialRoomEffectMessageEvent} from '../communication/messages/incoming/room/engine/SpecialRoomEffectMessageEvent';
+import type {SpecialRoomEffectMessageParser} from '../communication/messages/parser/room/engine/SpecialRoomEffectMessageParser';
+import {RoomRotatingEffect} from '@room/utils/RoomRotatingEffect';
+import {RoomShakingEffect} from '@room/utils/RoomShakingEffect';
+import {RoomEngineZoomEvent} from './events/RoomEngineZoomEvent';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import {GuideSessionStartedMessageEvent} from '../communication/messages/incoming/help/GuideSessionStartedMessageEvent';
@@ -178,6 +183,9 @@ import type {IRoomMessageHandler} from "@habbo/room/IRoomMessageHandler";
 
 const log = Logger.getLogger('RoomMessageHandler');
 
+// AS3: _SafeCls_1984.as::onSpecialRoomEvent() — `new Timer(1000, discoColours.length + 1)`
+const DISCO_TICK_MS = 1000;
+
 export class RoomMessageHandler implements IRoomMessageHandler 
 {
     public static readonly EFFECT_NONE = 0;
@@ -241,6 +249,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new WiredMovementsMessageEvent(this.onWiredMovements.bind(this)));
             connection.addMessageEvent(new ObjectRemoveConfirmMessageEvent(this.onObjectRemoveConfirm.bind(this)));
             connection.addMessageEvent(new BCPlacementWarningMessageEvent(this.onBCPlacementWarning.bind(this)));
+            connection.addMessageEvent(new SpecialRoomEffectMessageEvent(this.onSpecialRoomEvent.bind(this)));
             connection.addMessageEvent(new GuideSessionStartedMessageEvent(this.onGuideSessionStarted.bind(this)));
             connection.addMessageEvent(new GuideSessionEndedMessageEvent(this.onGuideSessionEnded.bind(this)));
             connection.addMessageEvent(new GuideSessionErrorMessageEvent(this.onGuideSessionError.bind(this)));
@@ -931,6 +940,79 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.status,
             new LegacyStuffData()
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onSpecialRoomEvent()
+    onSpecialRoomEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as SpecialRoomEffectMessageParser;
+
+        // AS3 dereferences the parser without a null check here — guard, since the port's `parser`
+        // accessor is nullable.
+        if(parser === null)
+        {
+            return;
+        }
+
+        // The ids are the wire's own, not the EFFECT_* constants above: 0 rotate, 1 shake, 2 zoom,
+        // 3 disco. AS3 has no default branch — an unknown id does nothing.
+        switch(parser.effectId)
+        {
+            case 0:
+                RoomRotatingEffect.init(250, 5000);
+                RoomRotatingEffect.turnVisualizationOn();
+                break;
+            case 1:
+                RoomShakingEffect.init(250, 5000);
+                RoomShakingEffect.turnVisualizationOn();
+                break;
+            case 2:
+                this._roomCreator?.roomSessionManager?.sessionEvents.emit(
+                    RoomEngineZoomEvent.ROOM_ZOOM,
+                    new RoomEngineZoomEvent(this._currentRoomId, -1, true)
+                );
+                break;
+            case 3:
+                this.startDiscoEffect();
+                break;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onSpecialRoomEvent()
+    // (the `case 3` closure — extracted here because TS has no inline Timer listener)
+    private startDiscoEffect(): void
+    {
+        // AS3 builds a Timer(1000, colours.length + 1): one extra tick past the end of the array.
+        // On that last tick arrayIndex === colours.length, so the branch that reads
+        // discoColours[arrayIndex++] with backgroundOnly=true indexes one past the end and passes
+        // `undefined` as the colour. Preserved verbatim — the tick still fires, and it is what ends
+        // the effect on the real client.
+        const discoColours = [29371, 16731195, 16764980, 10092288, 29371, 16731195, 16764980, 10092288, 0];
+        let arrayIndex = 0;
+        let ticksLeft = discoColours.length + 1;
+
+        const tick = (): void =>
+        {
+            if(this._roomCreator !== null)
+            {
+                const backgroundOnly = arrayIndex === discoColours.length;
+                this._roomCreator.updateObjectRoomColor(
+                    this._currentRoomId,
+                    discoColours[arrayIndex++],
+                    176,
+                    backgroundOnly
+                );
+            }
+
+            ticksLeft--;
+
+            if(ticksLeft > 0)
+            {
+                setTimeout(tick, DISCO_TICK_MS);
+            }
+        };
+
+        setTimeout(tick, DISCO_TICK_MS);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onBCPlacementWarning()

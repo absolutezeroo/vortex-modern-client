@@ -254,6 +254,17 @@ export interface IRoomCreator
     readonly sessionDataManager: ISessionDataManager | null;
 
     /**
+	 * Set the room's background colour / light level (the disco special event).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoomColor()
+    updateObjectRoomColor(
+        roomId: number,
+        color: number,
+        light: number,
+        backgroundOnly: boolean
+    ): boolean;
+
+    /**
 	 * The window manager, for handlers that must raise a confirm dialog.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get windowManager()

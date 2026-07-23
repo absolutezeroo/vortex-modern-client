@@ -389,9 +389,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      *
      * @see sources/PRODUCTION-201601012205-226667486/com/sulake/room/renderer/RoomSpriteCanvas.as line 390
      */
-    render(time: number, force: boolean = false): void 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::
+    // render() also polls RoomShakingEffect.isVisualizationOn() / RoomRotatingEffect
+    // .isVisualizationOn() here and calls changeShaking() / changeRotation(), which walk the
+    // geometry's location along a rod of length _rotationRodLength and add a per-frame sine offset
+    // to its direction. Neither method nor the rod field is ported, so headers 536's rotate (0) and
+    // shake (1) effects drive their state machines correctly but produce no visible motion. The zoom
+    // (2) and disco (3) branches are complete.
+    render(time: number, force: boolean = false): void
     {
-        if(time === -1) 
+        if(time === -1)
         {
             time = this._renderTimeStamp + 1;
         }

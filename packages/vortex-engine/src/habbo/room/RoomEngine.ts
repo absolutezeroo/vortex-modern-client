@@ -110,6 +110,8 @@ import {RoomObjectItemDataUpdateMessage} from './messages/RoomObjectItemDataUpda
 import {RoomObjectRoomFloorHoleUpdateMessage} from './messages/RoomObjectRoomFloorHoleUpdateMessage';
 import {RoomEngineAreaHideStateWidgetEvent} from './events/RoomEngineAreaHideStateWidgetEvent';
 import {RoomObjectAvatarDirectionUpdateMessage} from './messages/RoomObjectAvatarDirectionUpdateMessage';
+import {RoomObjectRoomColorUpdateMessage} from './messages/RoomObjectRoomColorUpdateMessage';
+import {RoomEngineRoomColorEvent} from './events/RoomEngineRoomColorEvent';
 import {LegacyStuffData} from './object/data/LegacyStuffData';
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
 import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
@@ -2785,6 +2787,33 @@ export class RoomEngine extends Component implements IRoomEngine,
             );
 
         roomObject.getEventHandler()?.processUpdateMessage(message);
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectRoomColor()
+    updateObjectRoomColor(roomId: number, color: number, light: number, backgroundOnly: boolean): boolean
+    {
+        const roomObject = this.getObjectRoom(roomId);
+
+        if(roomObject === null || roomObject.getEventHandler() === null)
+        {
+            return false;
+        }
+
+        const message = new RoomObjectRoomColorUpdateMessage(
+            RoomObjectRoomColorUpdateMessage.BACKGROUND_COLOR,
+            color,
+            light,
+            backgroundOnly
+        );
+
+        roomObject.getEventHandler()?.processUpdateMessage(message);
+
+        this.events.emit(
+            RoomEngineRoomColorEvent.RERCE_ROOM_COLOR,
+            new RoomEngineRoomColorEvent(roomId, color, light, backgroundOnly)
+        );
+
         return true;
     }
 
