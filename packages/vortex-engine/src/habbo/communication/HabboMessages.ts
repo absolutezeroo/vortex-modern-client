@@ -279,6 +279,7 @@ import {
 } from './messages/outgoing/userdefinedroomevents';
 import {GetAllVariablesMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesMessageComposer';
 import {GetAllVariablesDiffMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesDiffMessageComposer';
+import {SetWiredMenuPreferencesComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/SetWiredMenuPreferencesComposer';
 import {AllVariablesHashMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
 import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
 
@@ -1293,6 +1294,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2790, ApplySnapshotMessageComposer);
         this._composers.set(984, GetAllVariablesMessageComposer);
         this._composers.set(797, GetAllVariablesDiffMessageComposer);
+        this._composers.set(3124, SetWiredMenuPreferencesComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
