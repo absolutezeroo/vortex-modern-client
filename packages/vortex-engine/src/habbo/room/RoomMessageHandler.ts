@@ -46,6 +46,10 @@ import type {ItemDataUpdateMessageParser} from '../communication/messages/parser
 import {AreaHideMessageEvent} from '../communication/messages/incoming/room/engine/AreaHideMessageEvent';
 import type {AreaHideMessageParser} from '../communication/messages/parser/room/engine/AreaHideMessageParser';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
+import {GuideSessionStartedMessageEvent} from '../communication/messages/incoming/help/GuideSessionStartedMessageEvent';
+import {GuideSessionEndedMessageEvent} from '../communication/messages/incoming/help/GuideSessionEndedMessageEvent';
+import {GuideSessionErrorMessageEvent} from '../communication/messages/incoming/help/GuideSessionErrorMessageEvent';
+import type {GuideSessionStartedMessageParser} from '../communication/messages/parser/help/GuideSessionStartedMessageParser';
 import {WiredMovementsMessageEvent} from '../communication/messages/incoming/room/engine/WiredMovementsMessageEvent';
 import type {WiredMovementsMessageParser} from '../communication/messages/parser/room/engine/WiredMovementsMessageParser';
 import type {WiredUserMoveData} from '../communication/messages/parser/room/engine/WiredUserMoveData';
@@ -175,6 +179,14 @@ export class RoomMessageHandler implements IRoomMessageHandler
     private _roomCreator: IRoomCreator | null = null;
     private _currentRoomId: number = 0;
     private _ownUserId: number = -1;
+
+    // AS3: _SafeCls_1984.as::_SafeStr_6558 (name derived: the guide's web user id, from its only
+    // assignment `= parser.guideUserId` in onGuideSessionStarted)
+    private _guideUserId: number = -1;
+
+    // AS3: _SafeCls_1984.as::_SafeStr_6723 (name derived: the requester's web user id, from its only
+    // assignment `= parser.requesterUserId` in onGuideSessionStarted)
+    private _requesterUserId: number = -1;
     private _planeParser: RoomPlaneParser;
     private _legacyWallGeometry: LegacyWallGeometry;
     private _entryTileEvent: RoomEntryTileMessageEvent | null = null;
@@ -218,6 +230,9 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ItemDataUpdateMessageEvent(this.onItemDataUpdate.bind(this)));
             connection.addMessageEvent(new AreaHideMessageEvent(this.onAreaHide.bind(this)));
             connection.addMessageEvent(new WiredMovementsMessageEvent(this.onWiredMovements.bind(this)));
+            connection.addMessageEvent(new GuideSessionStartedMessageEvent(this.onGuideSessionStarted.bind(this)));
+            connection.addMessageEvent(new GuideSessionEndedMessageEvent(this.onGuideSessionEnded.bind(this)));
+            connection.addMessageEvent(new GuideSessionErrorMessageEvent(this.onGuideSessionError.bind(this)));
             connection.addMessageEvent(new ItemRemoveMultipleMessageEvent(this.onItemRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ObjectRemoveMultipleMessageEvent(this.onObjectRemoveMultiple.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
@@ -905,6 +920,82 @@ export class RoomMessageHandler implements IRoomMessageHandler
             parser.status,
             new LegacyStuffData()
         );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onGuideSessionStarted()
+    onGuideSessionStarted(event: IMessageEvent): void
+    {
+        const parser = event.parser as GuideSessionStartedMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        this._guideUserId = parser.guideUserId;
+        this._requesterUserId = parser.requesterUserId;
+        this.updateGuideMarker();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onGuideSessionEnded()
+    onGuideSessionEnded(_event: IMessageEvent): void
+    {
+        this.removeGuideMarker();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onGuideSessionError()
+    onGuideSessionError(_event: IMessageEvent): void
+    {
+        this.removeGuideMarker();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::updateGuideMarker()
+    private updateGuideMarker(): void
+    {
+        const ownUserId = this._roomCreator?.sessionDataManager?.userId ?? -1;
+
+        // Each side is marked only from the other's point of view: the guide gets marker 1 when I am
+        // the requester, the requester gets marker 2 when I am the guide, and a bystander sees 0.
+        this.setUserGuideStatus(this._guideUserId, this._requesterUserId === ownUserId ? 1 : 0);
+        this.setUserGuideStatus(this._requesterUserId, this._guideUserId === ownUserId ? 2 : 0);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::removeGuideMarker()
+    private removeGuideMarker(): void
+    {
+        this.setUserGuideStatus(this._guideUserId, 0);
+        this.setUserGuideStatus(this._requesterUserId, 0);
+        this._guideUserId = -1;
+        this._requesterUserId = -1;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::setUserGuideStatus()
+    private setUserGuideStatus(userId: number, status: number): void
+    {
+        if(this._roomCreator === null || this._roomCreator.roomSessionManager === null)
+        {
+            return;
+        }
+
+        const session = this._roomCreator.roomSessionManager.getSession(this._currentRoomId);
+
+        if(session === null)
+        {
+            return;
+        }
+
+        // Type 1 is the avatar user type; the marker rides on the room object, not the web user.
+        const userData = session.userDataManager.getUserDataByType(userId, 1);
+
+        if(userData !== null)
+        {
+            this._roomCreator.updateObjectUserAction(
+                this._currentRoomId,
+                userData.roomObjectId,
+                'figure_guide_status',
+                status
+            );
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onWiredMovements()

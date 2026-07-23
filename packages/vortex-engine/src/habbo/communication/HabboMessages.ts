@@ -321,6 +321,9 @@ import {
     ChangeUserNameResultMessageEvent,
     FaqTextMessageEvent,
     UserNameChangedMessageEvent,
+    GuideSessionStartedMessageEvent,
+    GuideSessionEndedMessageEvent,
+    GuideSessionErrorMessageEvent,
 } from './messages/incoming/help';
 
 // Incoming Events - Error
@@ -1005,7 +1008,13 @@ export class HabboMessages implements IMessageConfiguration
         // onRoomSettingsSaved (_SafeCls_2385), which has moved here - see ROOM SETTINGS below.
         this._events.set(1036, ExpressionMessageEvent);
         this._events.set(2217, DanceMessageEvent);
-        this._events.set(3629, AvatarEffectMessageEvent);
+        // AS3: header corrected 3629 -> 2624. The registry maps _SafeStr_4546[2624] = _SafeCls_2589,
+        // the event RoomMessageHandler.onAvatarEffect subscribes to, whose parser _SafeCls_3361
+        // reads (userId, effectId, delayMilliSeconds) — exactly this TS parser. 3629 is a different
+        // message entirely (_SafeCls_3136 -> parser _SafeCls_4142, a single `type` int), consumed by
+        // AvatarEditorMessageHandler.onAvatarEffectSelected. The wrong header is why in-room avatar
+        // effects never arrived even though the whole render pipeline was ported.
+        this._events.set(2624, AvatarEffectMessageEvent);
         this._events.set(3517, SleepMessageEvent);
         this._events.set(2850, CarryObjectMessageEvent);
         // AS3: header corrected 2833 -> 1953 (_SafeCls_3578, onUseObject,
@@ -1149,6 +1158,14 @@ export class HabboMessages implements IMessageConfiguration
         // questionId/answerText - vs. sources/PRODUCTION-201601012205-226667486's FaqTextMessageParser). Response to
         // GetFaqTextMessageComposer(questionId), not yet ported.
         this._events.set(2913, FaqTextMessageEvent);
+
+        // === GUIDE SESSIONS (room-side markers) ===
+        // Headers from the WIN63 registry: _SafeStr_4546[3649] = _SafeCls_3061 (started),
+        // [2126] = _SafeCls_2956 (ended), [2377] = _SafeCls_3662 (error). RoomMessageHandler
+        // subscribes to all three to paint the guide/requester marker on the two avatars.
+        this._events.set(3649, GuideSessionStartedMessageEvent);
+        this._events.set(2126, GuideSessionEndedMessageEvent);
+        this._events.set(2377, GuideSessionErrorMessageEvent);
 
         // === PREFERENCES ===
         this._events.set(724, AccountPreferencesEvent);

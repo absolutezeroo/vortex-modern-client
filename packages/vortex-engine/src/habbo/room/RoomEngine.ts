@@ -402,9 +402,21 @@ export class RoomEngine extends Component implements IRoomEngine,
         return this._configurationManager?.getBoolean('room.camera.follow_user') ? 1000 : 0;
     }
 
-    getRoom(roomId: number): IRoomInstance | null 
+    getRoom(roomId: number): IRoomInstance | null
     {
         return this.getRoomInstance(roomId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomSessionManager()
+    get roomSessionManager(): IRoomSessionManager | null
+    {
+        return this._roomSessionManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get sessionDataManager()
+    get sessionDataManager(): ISessionDataManager | null
+    {
+        return this._sessionDataManager;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::contentLoaded()

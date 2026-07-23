@@ -9,6 +9,8 @@
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomInstance} from '@room/IRoomInstance';
+import type {IRoomSessionManager} from '../session/IRoomSessionManager';
+import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IStuffData} from './object/data/IStuffData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
@@ -237,6 +239,18 @@ export interface IRoomCreator
         target?: IVector3d | null,
         animationTime?: number
     ): boolean;
+
+    /**
+	 * The room session manager, for handlers that need the room's user data.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get roomSessionManager()
+    readonly roomSessionManager: IRoomSessionManager | null;
+
+    /**
+	 * The session data manager, for handlers that need the logged-in user's own id.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get sessionDataManager()
+    readonly sessionDataManager: ISessionDataManager | null;
 
     /**
 	 * The room instance, for handlers that need to read an object's model directly.
