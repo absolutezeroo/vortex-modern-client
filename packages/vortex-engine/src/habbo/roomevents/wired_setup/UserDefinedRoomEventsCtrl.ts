@@ -1,6 +1,7 @@
 import type {Triggerable} from '@habbo/communication/messages/incoming/userdefinedroomevents/Triggerable';
 import {ActionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ActionDefinition';
 import {ConditionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition';
+import {QuantifierType} from '@habbo/communication/messages/incoming/userdefinedroomevents/QuantifierType';
 import {SelectorDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/SelectorDefinition';
 import {TriggerDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/TriggerDefinition';
 import {AddonDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/AddonDefinition';
@@ -48,6 +49,9 @@ import type {HeaderPreset} from './uibuilder/presets/main_layout/HeaderPreset';
 import type {InputSourceSection} from './uibuilder/presets/main_layout/InputSourceSection';
 import type {AdvancedSettingsWrapperPreset} from './uibuilder/presets/main_layout/AdvancedSettingsWrapperPreset';
 import {WiredInputSourcePicker} from './inputsources/WiredInputSourcePicker';
+import type {RadioGroupPreset} from './uibuilder/presets/RadioGroupPreset';
+import {RadioButtonParam} from './uibuilder/params/RadioButtonParam';
+import type {WiredUIPreset} from './uibuilder/presets/WiredUIPreset';
 import type {FooterPreset} from './uibuilder/presets/main_layout/FooterPreset';
 import type {SectionPreset} from './uibuilder/presets/SectionPreset';
 import type {CheckboxGroupPreset} from './uibuilder/presets/CheckboxGroupPreset';
@@ -67,9 +71,10 @@ const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
  * TODO(AS3) — NOT yet ported (stubbed with faithful no-ops so the dialog still shows):
  * - RoomObjectHighLighter (furni-selection highlights) — skipped.
  * - WiredVariablesSynchronizer (synchronizeTriggerable) — treated as "no sync needed".
- * - createAdvancedSections / createAdvancedInputSources — the input-source advanced rows are now built
- *   and wired (InputSourceSection + WiredInputSourcePicker + updateSourceContainer/setMergedSourceType);
- *   only the quantifier section (quantifiable defs) remains a TODO.
+ * - createAdvancedSections / createAdvancedInputSources — the input-source advanced rows AND the
+ *   condition quantifier section are now built and wired (InputSourceSection + WiredInputSourcePicker +
+ *   updateSourceContainer/setMergedSourceType + quantifier radio/resolveQuantifier); only
+ *   fixQuantifierNames (invert-driven relabel) remains a minor TODO.
  * - WiredConfigurationCache (useCache) — caching disabled (useCache = false).
  * - The clipboard, network save, quantifier/merged-source common-UI refinements, stuff dictionaries.
  *
@@ -142,6 +147,9 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
     // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5845 (name derived: the advanced-settings wrapper)
     private _advancedSettingsWrapper: AdvancedSettingsWrapperPreset | null = null;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5080 (name derived: the quantifier radio group)
+    private _quantifierRadio: RadioGroupPreset | null = null;
 
     // AS3: UserDefinedRoomEventsCtrl.as::_initialWidth
     private _initialWidth: number = -1;
@@ -494,7 +502,13 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._advancedSettingsWrapper.expanded = useAdvancedSettings;
         }
 
-        // TODO(AS3): the quantifier radio selection (quantifiable defs) — not ported.
+        if(this._currentDef instanceof ConditionDefinition && this._currentDef.quantifierType !== QuantifierType.NONE && this._quantifierRadio !== null)
+        {
+            this._quantifierRadio.selected = this._currentDef.quantifierCode;
+            // TODO(AS3): fixQuantifierNames() (re-derive the radio labels on invert change) needs a
+            // RadioGroupPreset option accessor; labels are already correct for the current def at build.
+        }
+
         for(const section of this._advancedInputSources)
         {
             section.refresh(this._currentDef!, this._currentElement!);
@@ -545,17 +559,40 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         const def = this._currentDef!;
         const element = this._currentElement!;
         const conf = def.inputSourcesConf;
+        const hasQuantifier = def instanceof ConditionDefinition && def.quantifierType !== QuantifierType.NONE;
 
-        // TODO(AS3): the quantifier section (quantifiable defs + _SafeCls_3026) is not ported; only the
-        // input-source advanced sections are built here.
-        if(!(def.advancedMode && (conf.amountFurniSelections > 0 || conf.amountUserSelections > 0)))
+        if(!(def.advancedMode && (conf.amountFurniSelections > 0 || conf.amountUserSelections > 0 || hasQuantifier)))
         {
             return;
         }
 
+        const sections: WiredUIPreset[] = [];
+
+        if(hasQuantifier)
+        {
+            const key = this.getQuantifierKey(def as ConditionDefinition);
+            this._quantifierRadio = this._presetManager.createRadioGroup([new RadioButtonParam(0, '${' + key + '0}'), new RadioButtonParam(1, '${' + key + '1}')]);
+            sections.push(this._presetManager.createSection('${wiredfurni.params.quantifier_selection}', this._quantifierRadio));
+        }
+
         this.createAdvancedInputSources();
-        this._advancedSettingsWrapper = this._presetManager.createAdvancedSettingsWrapperPreset(this._advancedInputSources, element.advancedAlwaysVisible());
+
+        for(const section of this._advancedInputSources)
+        {
+            sections.push(section);
+        }
+
+        this._advancedSettingsWrapper = this._presetManager.createAdvancedSettingsWrapperPreset(sections, element.advancedAlwaysVisible());
         builder.addElements(this._advancedSettingsWrapper);
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::getQuantifierKey()
+    private getQuantifierKey(def: ConditionDefinition): string
+    {
+        const type = def.quantifierType;
+        let key = type === QuantifierType.FURNI ? 'furni' : (type === QuantifierType.USERS ? 'users' : (type === QuantifierType.VARIABLES ? 'variables' : ''));
+        key = key + (def.isInvert ? '.neg.' : '.');
+        return 'wiredfurni.params.quantifier.' + key;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::createAdvancedInputSources()
@@ -687,6 +724,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._footerPreset = null;
             this._advancedSettingsWrapper = null;
             this._advancedInputSources = [];
+            this._quantifierRadio = null;
             this._initialWidth = -1;
             this._frame.dispose();
             this._frame = null;
@@ -1103,8 +1141,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::resolveQuantifier()
     resolveQuantifier(): number
     {
-        // TODO(AS3): the quantifier selector (_SafeStr_5080) is not ported; AS3 returns its .selected.
-        return 0;
+        return this._quantifierRadio !== null ? this._quantifierRadio.selected : 0;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::resolveIntParams()
