@@ -2,6 +2,7 @@ import type {Triggerable} from '@habbo/communication/messages/incoming/userdefin
 import {ActionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ActionDefinition';
 import {ConditionDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/ConditionDefinition';
 import {QuantifierType} from '@habbo/communication/messages/incoming/userdefinedroomevents/QuantifierType';
+import type {WiredVariable} from '@habbo/communication/messages/incoming/userdefinedroomevents/variables/WiredVariable';
 import {SelectorDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/SelectorDefinition';
 import {TriggerDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/TriggerDefinition';
 import {AddonDefinition} from '@habbo/communication/messages/incoming/userdefinedroomevents/AddonDefinition';
@@ -71,7 +72,8 @@ const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
  *
  * TODO(AS3) — NOT yet ported (stubbed with faithful no-ops so the dialog still shows):
  * - RoomObjectHighLighter (furni-selection highlights) — skipped.
- * - WiredVariablesSynchronizer (synchronizeTriggerable) — treated as "no sync needed".
+ * - WiredVariablesSynchronizer (synchronizeTriggerable) — now ported: a def whose roomVariablesList
+ *   needsSynchronize defers the dialog until the variables are fetched (hash/diff), then reopens.
  * - createAdvancedSections / createAdvancedInputSources — the input-source advanced rows AND the
  *   condition quantifier section are now built and wired (InputSourceSection + WiredInputSourcePicker +
  *   updateSourceContainer/setMergedSourceType + quantifier radio/resolveQuantifier); only
@@ -158,6 +160,9 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // by "<holderKey>-<elementCode>")
     private _clipboard: Map<string, ClipboardWiredEntry> = new Map<string, ClipboardWiredEntry>();
 
+    // AS3: UserDefinedRoomEventsCtrl.as::_variablesCallback (pending variable-sync listener)
+    private _variablesCallback: ((variables: WiredVariable[]) => void) | null = null;
+
     // AS3: UserDefinedRoomEventsCtrl.as::_initialWidth
     private _initialWidth: number = -1;
 
@@ -209,10 +214,43 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this._wiredStyle = this._wiredStyles.getValue('volter')!;
     }
 
+    // AS3: UserDefinedRoomEventsCtrl.as::synchronizeTriggerable()
+    private synchronizeTriggerable(def: Triggerable): boolean
+    {
+        const variablesList = def.wiredContext.roomVariablesList;
+
+        if(variablesList !== null && variablesList.needsSynchronize)
+        {
+            const synchronizer = this._roomEvents.variablesSynchronizer;
+
+            if(this._variablesCallback !== null)
+            {
+                synchronizer.removeListener(this._variablesCallback);
+            }
+
+            this._variablesCallback = (variables: WiredVariable[]): void =>
+            {
+                this._variablesCallback = null;
+                def.wiredContext.roomVariablesList!.synchronize(variables);
+                this.prepareForUpdate(def);
+            };
+
+            synchronizer.getAllVariables(this._variablesCallback, true, variablesList.hash);
+            return true;
+        }
+
+        return false;
+    }
+
     // AS3: UserDefinedRoomEventsCtrl.as::prepareForUpdate()
     prepareForUpdate(def: Triggerable): void
     {
-        // TODO(AS3): copy-into mode + synchronizeTriggerable (variable synchronizer) skipped — Bloc C.
+        // TODO(AS3): copy-into mode (isCopyingIntoMode paste-into) skipped — a separate feature.
+        if(this.synchronizeTriggerable(def))
+        {
+            return;
+        }
+
         if(this._frame != null)
         {
             this.close();
