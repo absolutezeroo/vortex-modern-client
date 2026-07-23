@@ -49,6 +49,7 @@ import type {HeaderPreset} from './uibuilder/presets/main_layout/HeaderPreset';
 import type {InputSourceSection} from './uibuilder/presets/main_layout/InputSourceSection';
 import type {AdvancedSettingsWrapperPreset} from './uibuilder/presets/main_layout/AdvancedSettingsWrapperPreset';
 import {WiredInputSourcePicker} from './inputsources/WiredInputSourcePicker';
+import {ClipboardWiredEntry} from './ClipboardWiredEntry';
 import type {RadioGroupPreset} from './uibuilder/presets/RadioGroupPreset';
 import {RadioButtonParam} from './uibuilder/params/RadioButtonParam';
 import type {WiredUIPreset} from './uibuilder/presets/WiredUIPreset';
@@ -76,7 +77,9 @@ const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
  *   updateSourceContainer/setMergedSourceType + quantifier radio/resolveQuantifier); only
  *   fixQuantifierNames (invert-driven relabel) remains a minor TODO.
  * - WiredConfigurationCache (useCache) — caching disabled (useCache = false).
- * - The clipboard, network save, quantifier/merged-source common-UI refinements, stuff dictionaries.
+ * - The copy/paste clipboard is now ported (createClipboardCopy / pasteFromClipboard /
+ *   hasCurrentElementInClipboard, keyed by holder+code). Network save is done; the remaining gaps are
+ *   the merged-source common-UI refinements and the config cache.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/UserDefinedRoomEventsCtrl.as
  */
@@ -150,6 +153,10 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
     // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5080 (name derived: the quantifier radio group)
     private _quantifierRadio: RadioGroupPreset | null = null;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_8055 (name derived: the copy/paste clipboard, keyed
+    // by "<holderKey>-<elementCode>")
+    private _clipboard: Map<string, ClipboardWiredEntry> = new Map<string, ClipboardWiredEntry>();
 
     // AS3: UserDefinedRoomEventsCtrl.as::_initialWidth
     private _initialWidth: number = -1;
@@ -992,20 +999,97 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::createClipboardCopy()
     createClipboardCopy(): void
     {
-        // TODO(AS3): Bloc C.
+        const holder = this.resolveHolder();
+
+        if(holder === null)
+        {
+            return;
+        }
+
+        const key = holder.getKey() + '-' + this._currentElement!.code;
+        const entry = new ClipboardWiredEntry(this._currentElement!.readIntParamsFromForm(), this._currentElement!.readStringParamFromForm(), this._currentElement!.readVariableIdsFromForm(), this.getStuffIds(), this.getStuffIds2(), [...this._currentDef!.furniSourceTypes], [...this._currentDef!.userSourceTypes]);
+
+        if(this._currentDef instanceof ActionDefinition)
+        {
+            entry.delayInPulses = this.getActionDelay();
+        }
+
+        if(this._currentDef instanceof ConditionDefinition)
+        {
+            entry.quantifierCode = this.resolveQuantifier();
+        }
+
+        if(this._currentDef instanceof SelectorDefinition)
+        {
+            entry.isFilter = this.isSelectorFilter();
+            entry.isInvert = this.isSelectorInvert();
+        }
+
+        this._clipboard.set(key, entry);
+        this._frame?.updateButtonDisabledStates();
+        // TODO(AS3): AS3 passes a {time_display: 2500} options object the port's addItem lacks.
+        this._roomEvents.notifications.addItem('${notification.wired.copied}', 'wired');
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::pasteFromClipboard()
     pasteFromClipboard(): void
     {
-        // TODO(AS3): Bloc C.
+        const holder = this.resolveHolder();
+
+        if(holder === null)
+        {
+            return;
+        }
+
+        const key = holder.getKey() + '-' + this._currentElement!.code;
+        const entry = this._clipboard.get(key);
+
+        if(entry === undefined)
+        {
+            return;
+        }
+
+        this.savePosition();
+        const def = this._currentDef!;
+        def.intParams = [...entry.intParams];
+        def.stringParam = entry.stringParam;
+        def.variableIds = [...entry.variableIds];
+        def.stuffIds = [...entry.stuffIds];
+        def.stuffIds2 = [...entry.stuffIds2];
+        def.furniSourceTypes = [...entry.furniSourceTypes];
+        def.userSourceTypes = [...entry.userSourceTypes];
+
+        if(def instanceof ActionDefinition)
+        {
+            def.delayInPulses = entry.delayInPulses;
+        }
+
+        if(def instanceof ConditionDefinition)
+        {
+            def.quantifierCode = entry.quantifierCode;
+        }
+
+        if(def instanceof SelectorDefinition)
+        {
+            def.isFilter = entry.isFilter;
+            def.isInvert = entry.isInvert;
+        }
+
+        this.prepareForUpdate(def);
+        this.restorePositionAndActivate();
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::hasCurrentElementInClipboard()
     hasCurrentElementInClipboard(): boolean
     {
-        // TODO(AS3): Bloc C.
-        return false;
+        const holder = this.resolveHolder();
+
+        if(holder === null)
+        {
+            return false;
+        }
+
+        return this._clipboard.has(holder.getKey() + '-' + this._currentElement!.code);
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::setMergedSourceType()
