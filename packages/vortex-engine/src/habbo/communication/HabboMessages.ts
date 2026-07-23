@@ -281,6 +281,10 @@ import {GetAllVariablesMessageComposer} from './messages/outgoing/userdefinedroo
 import {GetAllVariablesDiffMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesDiffMessageComposer';
 import {SetWiredMenuPreferencesComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/SetWiredMenuPreferencesComposer';
 import {RequestWiredRoomLogsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomLogsComposer';
+import {SaveWiredMenuSettingsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/SaveWiredMenuSettingsComposer';
+import {ReloadWiredRoomStateComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
+import {RequestWiredMenuSettingsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredMenuSettingsComposer';
+import {WiredMenuSettingsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuSettingsEvent';
 import {AllVariablesHashMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
 import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
 
@@ -1029,6 +1033,7 @@ export class HabboMessages implements IMessageConfiguration
         // parser is the real, non-obfuscated com/sulake/habbo/communication/messages/parser/
         // userdefinedroomevents/wiredmenu/_SafeCls_2783.as - exact field match: canModify/canRead).
         this._events.set(3483, WiredPermissionsEvent);
+        this._events.set(491, WiredMenuSettingsEvent);
         // IDs read directly from WIN63's own message registry
         // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         // (`_SafeStr_4546[id] = _SafeCls_N`, the incoming-events map):
@@ -1297,6 +1302,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(797, GetAllVariablesDiffMessageComposer);
         this._composers.set(3124, SetWiredMenuPreferencesComposer);
         this._composers.set(706, RequestWiredRoomLogsComposer);
+        this._composers.set(2553, SaveWiredMenuSettingsComposer);
+        this._composers.set(501, ReloadWiredRoomStateComposer);
+        this._composers.set(1862, RequestWiredMenuSettingsComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
