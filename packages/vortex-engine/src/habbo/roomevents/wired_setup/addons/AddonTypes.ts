@@ -28,15 +28,13 @@ import {ChestItemTypeScanner} from './chests/ChestItemTypeScanner';
 import {CustomContract} from './chests/CustomContract';
 import {Projectile} from './Projectile';
 import {VariableTimeUtil} from './VariableTimeUtil';
+import {VariableLevelUp} from './VariableLevelUp';
 
 /**
  * AddonTypes — the wired addon registry (IWiredTypeHolder): instantiates every addon type and resolves
  * one by its server code.
  *
- * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported VariableLevelUp addon
- * (needs the levelupper helpers + LevelXpPreviewPreset). getElementByCode returns null for its code.
- * (GlobalPlaceholderAddon, the chest addons ChestItemTypeScanner/CustomContract, and the SubVariable
- * addons VariableTimeUtil/Projectile are now ported.)
+ * All AS3 addon types are now ported and registered.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/addons/AddonTypes.as
  */
@@ -68,7 +66,8 @@ export class AddonTypes implements IWiredTypeHolder
         new ChestItemTypeScanner(),
         new CustomContract(),
         new VariableTimeUtil(),
-        new Projectile()
+        new Projectile(),
+        new VariableLevelUp()
     ];
 
     // AS3: AddonTypes.as::getByCode()

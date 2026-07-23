@@ -44,6 +44,7 @@ import {ChronoRangeFilterPreset} from './presets/applications/ChronoRangeFilterP
 import {SubVariableCreatorPreset} from './presets/applications/SubVariableCreatorPreset';
 import type {SubVariableParam} from './params/applications/SubVariableParam';
 import {WindowWrapperPreset} from './presets/WindowWrapperPreset';
+import {LevelXpPreviewPreset} from './presets/applications/LevelXpPreviewPreset';
 import {AssetButtonPreset} from './presets/AssetButtonPreset';
 import {AssetButtonRowPreset} from './presets/AssetButtonRowPreset';
 import type {MiniAssetIconButtonPreset} from './presets/MiniAssetIconButtonPreset';
@@ -407,6 +408,12 @@ export class PresetManager
     createWrapperPreset(window: IWindow): WindowWrapperPreset
     {
         return new WindowWrapperPreset(this._roomEvents, this, this.wiredStyle, window, false);
+    }
+
+    // AS3: PresetManager.as::createLevelXpPreview()
+    createLevelXpPreview(previewLevels: number[]): LevelXpPreviewPreset
+    {
+        return new LevelXpPreviewPreset(this._roomEvents, this, this.wiredStyle, previewLevels);
     }
 
     // AS3: PresetManager.as::createAssetButtonRow()
