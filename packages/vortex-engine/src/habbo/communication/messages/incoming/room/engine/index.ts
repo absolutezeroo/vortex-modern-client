@@ -10,6 +10,7 @@ export {ObjectAddMessageEvent} from './ObjectAddMessageEvent';
 export {ObjectUpdateMessageEvent} from './ObjectUpdateMessageEvent';
 export {ObjectRemoveMessageEvent} from './ObjectRemoveMessageEvent';
 export {ObjectDataUpdateMessageEvent} from './ObjectDataUpdateMessageEvent';
+export {ObjectsDataUpdateMessageEvent} from './ObjectsDataUpdateMessageEvent';
 export {ItemsMessageEvent} from './ItemsMessageEvent';
 export {ItemAddMessageEvent} from './ItemAddMessageEvent';
 export {ItemUpdateMessageEvent} from './ItemUpdateMessageEvent';

@@ -31,6 +31,9 @@ import {ObjectRemoveMessageEvent} from '../communication/messages/incoming/room/
 import {
     ObjectDataUpdateMessageEvent
 } from '../communication/messages/incoming/room/engine/ObjectDataUpdateMessageEvent';
+import {
+    ObjectsDataUpdateMessageEvent
+} from '../communication/messages/incoming/room/engine/ObjectsDataUpdateMessageEvent';
 import {ItemsMessageEvent} from '../communication/messages/incoming/room/engine/ItemsMessageEvent';
 import {ItemAddMessageEvent} from '../communication/messages/incoming/room/engine/ItemAddMessageEvent';
 import {ItemUpdateMessageEvent} from '../communication/messages/incoming/room/engine/ItemUpdateMessageEvent';
@@ -73,6 +76,9 @@ import type {ObjectRemoveMessageParser} from '../communication/messages/parser/r
 import type {
     ObjectDataUpdateMessageParser
 } from '../communication/messages/parser/room/engine/ObjectDataUpdateMessageParser';
+import type {
+    ObjectsDataUpdateMessageParser
+} from '../communication/messages/parser/room/engine/ObjectsDataUpdateMessageParser';
 import type {ItemsMessageParser} from '../communication/messages/parser/room/engine/ItemsMessageParser';
 import type {ItemAddMessageParser} from '../communication/messages/parser/room/engine/ItemAddMessageParser';
 import type {ItemUpdateMessageParser} from '../communication/messages/parser/room/engine/ItemUpdateMessageParser';
@@ -180,6 +186,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ObjectUpdateMessageEvent(this.onObjectUpdate.bind(this)));
             connection.addMessageEvent(new ObjectRemoveMessageEvent(this.onObjectRemove.bind(this)));
             connection.addMessageEvent(new ObjectDataUpdateMessageEvent(this.onObjectDataUpdate.bind(this)));
+            connection.addMessageEvent(new ObjectsDataUpdateMessageEvent(this.onObjectsDataUpdate.bind(this)));
             connection.addMessageEvent(new ItemsMessageEvent(this.onItems.bind(this)));
             connection.addMessageEvent(new ItemAddMessageEvent(this.onItemAdd.bind(this)));
             connection.addMessageEvent(new ItemUpdateMessageEvent(this.onItemUpdate.bind(this)));
@@ -759,7 +766,47 @@ export class RoomMessageHandler implements IRoomMessageHandler
         );
     }
 
-    onItems(event: IMessageEvent): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1984.as::onObjectsDataUpdate()
+    onObjectsDataUpdate(event: IMessageEvent): void
+    {
+        const dataEvent = event as ObjectsDataUpdateMessageEvent;
+
+        if(dataEvent === null)
+        {
+            return;
+        }
+
+        if(this._roomCreator === null)
+        {
+            return;
+        }
+
+        const parser = dataEvent.getParser() as ObjectsDataUpdateMessageParser;
+
+        if(parser === null)
+        {
+            return;
+        }
+
+        for(let i = 0; i < parser.objectCount; i++)
+        {
+            const object = parser.getObjectData(i);
+
+            if(object !== null)
+            {
+                this._roomCreator.updateObjectFurniture(
+                    this._currentRoomId,
+                    object.id,
+                    null,
+                    null,
+                    object.state,
+                    object.data
+                );
+            }
+        }
+    }
+
+    onItems(event: IMessageEvent): void
     {
         const itemsEvent = event as ItemsMessageEvent;
 
