@@ -25,6 +25,7 @@ import type {IUpdateReceiver} from '@core/runtime/IContext';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
+import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {HabboInventoryEffectsEvent} from '@habbo/inventory/events/HabboInventoryEffectsEvent';
 import type {IContextMenuParentWidget} from '../contextmenu/IContextMenuParentWidget';
 import type {ContextInfoView} from '../contextmenu/ContextInfoView';
@@ -64,6 +65,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.handler.widget = this;
 
         this.container?.desktopEvents.on(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
+        this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
         this.container?.inventory?.events.on(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
     }
 
@@ -167,6 +169,14 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         OwnAvatarMenuView.setup(this._cachedOwnMenu, event.webID, event.name, this._ownRoomIndex, 1, this._data);
 
         this.checkUpdateNeed();
+    };
+
+    // AS3: AvatarInfoWidget.as::updateEventHandler (RWROUE_OBJECT_DESELECTED case)
+    // — the bubble is dismissed when the avatar/selection is deselected, which the
+    // room engine now emits for an unhandled (floor/empty-space) click.
+    private onObjectDeselected = (): void =>
+    {
+        this.close();
     };
 
     // AS3: AvatarInfoWidget.as::onEffectsChanged()
@@ -349,6 +359,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         if(this.disposed) return;
 
         this.container?.desktopEvents.off(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
+        this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
         this.container?.inventory?.events.off(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
 
         if(this._updateRegistered)

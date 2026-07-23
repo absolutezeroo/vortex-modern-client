@@ -5001,14 +5001,33 @@ export class RoomEngine extends Component implements IRoomEngine,
         const objType = obj.getType();
         const objId = obj.getId();
 
-        // Skip room object itself
-        if(objType === 'room' || objId < 0) return;
-
         const loc = obj.getLocation();
 
         log.info(`[CLICK] Object id=${objId} type="${objType}" pos=(${loc?.x?.toFixed(1)}, ${loc?.y?.toFixed(1)}, ${loc?.z?.toFixed(1)})`);
 
         if(this._activeRoomId < 0) return;
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:2391-2398
+        // A click no room object handled (i.e. the floor/empty space) dispatches
+        // REOE_DESELECTED(roomId, -1, MINIMUM) unconditionally. Without this the
+        // InfoStand furni/user panels and the own-avatar bubble never closed when
+        // clicking away.
+        if(objType === 'room' || objId < 0)
+        {
+            this._selectedObject = null;
+
+            this.events.emit(
+                RoomEngineObjectEvent.REOE_DESELECTED,
+                new RoomEngineObjectEvent(
+                    RoomEngineObjectEvent.REOE_DESELECTED,
+                    this._activeRoomId,
+                    -1,
+                    RoomObjectCategoryEnum.MINIMUM
+                )
+            );
+
+            return;
+        }
 
         const category = this.findObjectCategory(this._activeRoomId, obj);
 
