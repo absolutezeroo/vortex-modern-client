@@ -39,6 +39,7 @@ import {MoveUser} from './MoveUser';
 import {MoveUserToFurni} from './MoveUserToFurni';
 import {MuteUser} from './MuteUser';
 import {OverrideHeight} from './OverrideHeight';
+import {PlaceFurni} from './PlaceFurni';
 import {ProgressAchievement} from './ProgressAchievement';
 import {ProgressRewardTrack} from './ProgressRewardTrack';
 import {RelativeFurniMove} from './RelativeFurniMove';
@@ -116,7 +117,8 @@ export class ActionTypes implements IWiredTypeHolder
         new GiveVariable(),
         new ChangeVariable(),
         new ProgressAchievement(),
-        new ProgressRewardTrack()
+        new ProgressRewardTrack(),
+        new PlaceFurni()
     ];
 
     // AS3: ActionTypes.as::getByCode()
