@@ -17,7 +17,11 @@ import {HeaderPreset} from './HeaderPreset';
 export class VolterHeaderPreset extends HeaderPreset
 {
     // AS3: VolterHeaderPreset.as::_title
-    private _title!: TextPreset;
+    // `declare` (no runtime field init): assigned in createTopHeaderElement(), which the base
+    // HeaderPreset constructor calls during super(). Under ES2022 useDefineForClassFields a plain
+    // field declaration (including the `!` definite-assignment form) would re-run after super() and
+    // clobber that value back to undefined (see IlluminaHeaderPreset / ConditionDefinition, same port pattern).
+    private declare _title: TextPreset;
 
     // AS3: VolterHeaderPreset.as::VolterHeaderPreset()
     constructor(roomEvents: HabboUserDefinedRoomEvents, presetManager: PresetManager, wiredStyle: WiredStyle, name: string, typeHolder: IWiredTypeHolder, buttonMode: number, onApplySnapshot: () => void, onOpenMenu: () => void, onViewLogs: () => void)
