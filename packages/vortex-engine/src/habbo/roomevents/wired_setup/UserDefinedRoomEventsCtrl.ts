@@ -45,6 +45,9 @@ import {TextParam} from './uibuilder/params/TextParam';
 import {SliderSection} from './uibuilder/presets/sections/SliderSection';
 import type {FramePreset} from './uibuilder/presets/main_layout/FramePreset';
 import type {HeaderPreset} from './uibuilder/presets/main_layout/HeaderPreset';
+import type {InputSourceSection} from './uibuilder/presets/main_layout/InputSourceSection';
+import type {AdvancedSettingsWrapperPreset} from './uibuilder/presets/main_layout/AdvancedSettingsWrapperPreset';
+import {WiredInputSourcePicker} from './inputsources/WiredInputSourcePicker';
 import type {FooterPreset} from './uibuilder/presets/main_layout/FooterPreset';
 import type {SectionPreset} from './uibuilder/presets/SectionPreset';
 import type {CheckboxGroupPreset} from './uibuilder/presets/CheckboxGroupPreset';
@@ -64,7 +67,9 @@ const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
  * TODO(AS3) — NOT yet ported (stubbed with faithful no-ops so the dialog still shows):
  * - RoomObjectHighLighter (furni-selection highlights) — skipped.
  * - WiredVariablesSynchronizer (synchronizeTriggerable) — treated as "no sync needed".
- * - createAdvancedSections / createAdvancedInputSources (InputSourceSection not ported) — skipped.
+ * - createAdvancedSections / createAdvancedInputSources — the input-source advanced rows are now built
+ *   and wired (InputSourceSection + WiredInputSourcePicker + updateSourceContainer/setMergedSourceType);
+ *   only the quantifier section (quantifiable defs) remains a TODO.
  * - WiredConfigurationCache (useCache) — caching disabled (useCache = false).
  * - The clipboard, network save, quantifier/merged-source common-UI refinements, stuff dictionaries.
  *
@@ -131,6 +136,12 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
 
     // AS3: UserDefinedRoomEventsCtrl.as::_delaySection
     private _delaySection: SliderSection | null = null;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_4793 (name derived: the advanced input-source rows)
+    private _advancedInputSources: InputSourceSection[] = [];
+
+    // AS3: UserDefinedRoomEventsCtrl.as::_SafeStr_5845 (name derived: the advanced-settings wrapper)
+    private _advancedSettingsWrapper: AdvancedSettingsWrapperPreset | null = null;
 
     // AS3: UserDefinedRoomEventsCtrl.as::_initialWidth
     private _initialWidth: number = -1;
@@ -344,7 +355,7 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this.createSelectorOptions(builder);
         this.createFurniPicks(builder);
         this.createDelaySection(builder);
-        // TODO(AS3): createAdvancedSections — needs InputSourceSection (not ported); skipped.
+        this.createAdvancedSections(builder);
         this.createFooter(builder);
         builder.build(this._currentElement.widthModifier, this._currentElement.allowScrolling);
         this._frame = builder.frame;
@@ -476,7 +487,25 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._delaySection.value = this._currentDef.delayInPulses;
         }
 
-        // TODO(AS3): quantifier / merged input sources / wired-menu button-visible common UI — Bloc C.
+        const useAdvancedSettings = this._currentDef!.advancedMode && (this.isUsingAdvancedSettings || this._currentElement!.advancedAlwaysVisible());
+
+        if(this._advancedSettingsWrapper != null)
+        {
+            this._advancedSettingsWrapper.expanded = useAdvancedSettings;
+        }
+
+        // TODO(AS3): the quantifier radio selection (quantifiable defs) — not ported.
+        for(const section of this._advancedInputSources)
+        {
+            section.refresh(this._currentDef!, this._currentElement!);
+
+            if(section.baseSourceType === WiredInputSourcePicker.MERGED_SOURCE)
+            {
+                section.sourceType = this._currentElement!.getMergedType(section.id);
+            }
+        }
+
+        // TODO(AS3): wired-menu button-visible common UI — deferred.
         if(this._footerPreset != null)
         {
             this._footerPreset.saveButtonDisabled = !this._roomEvents.wiredMenu.hasWritePermission;
@@ -502,9 +531,74 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
         this._roomEvents.localization.registerParameter('wiredfurni.pickfurnis.caption', 'count', '' + count);
         this._roomEvents.localization.registerParameter('wiredfurni.pickfurnis.caption', 'limit', '' + limit);
 
-        // TODO(AS3): refresh the picked-furni preview rows (_SafeStr_4793.refresh(def, element)) —
-        // the in-room stuff-picking preview list is the Bloc C stub.
+        for(const section of this._advancedInputSources)
+        {
+            section.refresh(this._currentDef, this._currentElement!);
+        }
+
         this._frame.updateButtonDisabledStates();
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::createAdvancedSections()
+    private createAdvancedSections(builder: WiredUIBuilder): void
+    {
+        const def = this._currentDef!;
+        const element = this._currentElement!;
+        const conf = def.inputSourcesConf;
+
+        // TODO(AS3): the quantifier section (quantifiable defs + _SafeCls_3026) is not ported; only the
+        // input-source advanced sections are built here.
+        if(!(def.advancedMode && (conf.amountFurniSelections > 0 || conf.amountUserSelections > 0)))
+        {
+            return;
+        }
+
+        this.createAdvancedInputSources();
+        this._advancedSettingsWrapper = this._presetManager.createAdvancedSettingsWrapperPreset(this._advancedInputSources, element.advancedAlwaysVisible());
+        builder.addElements(this._advancedSettingsWrapper);
+    }
+
+    // AS3: UserDefinedRoomEventsCtrl.as::createAdvancedInputSources()
+    private createAdvancedInputSources(): void
+    {
+        const def = this._currentDef!;
+        const element = this._currentElement!;
+        const conf = def.inputSourcesConf;
+        this._advancedInputSources = [];
+
+        const mergedSelections = element.mergedSelections();
+        const furniMergedSlots: number[] = [];
+        const userMergedSlots: number[] = [];
+
+        for(const selection of mergedSelections)
+        {
+            furniMergedSlots.push(selection[0]);
+            userMergedSlots.push(selection[1]);
+        }
+
+        for(let i = 0; i < conf.amountFurniSelections; i++)
+        {
+            if(furniMergedSlots.indexOf(i) === -1)
+            {
+                const title = '${' + element.furniSelectionTitle(i) + '}';
+                this._advancedInputSources.push(this._presetManager.createInputSourceSection(title, WiredInputSourcePicker.FURNI_SOURCE, i, null, false, conf.isDualFurniPickingMode()));
+            }
+        }
+
+        for(let i = 0; i < conf.amountUserSelections; i++)
+        {
+            if(userMergedSlots.indexOf(i) === -1)
+            {
+                const title = '${' + element.userSelectionTitle(i) + '}';
+                this._advancedInputSources.push(this._presetManager.createInputSourceSection(title, WiredInputSourcePicker.USER_SOURCE, i));
+            }
+        }
+
+        for(let i = 0; i < mergedSelections.length; i++)
+        {
+            const title = '${' + element.mergedSelectionTitle(i) + '}';
+            this._advancedInputSources.push(this._presetManager.createInputSourceSection(title, WiredInputSourcePicker.MERGED_SOURCE, i, element.mergedSourceOptions(i), element.hasCustomTypePicker(i), conf.isDualFurniPickingMode()));
+        }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::isStuffSelectionMode()
@@ -591,6 +685,8 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
             this._furniPicksSection = null;
             this._delaySection = null;
             this._footerPreset = null;
+            this._advancedSettingsWrapper = null;
+            this._advancedInputSources = [];
             this._initialWidth = -1;
             this._frame.dispose();
             this._frame = null;
@@ -744,6 +840,11 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     set activeFurniPicks(value: number)
     {
         this._activeFurniPicks = value;
+
+        for(const section of this._advancedInputSources)
+        {
+            section.activeFurniPicksChanged();
+        }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::clearCache()
@@ -870,15 +971,27 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::setMergedSourceType()
-    setMergedSourceType(_a: number, _b: number): void
+    setMergedSourceType(id: number, type: number): void
     {
-        // TODO(AS3): Bloc C.
+        for(const section of this._advancedInputSources)
+        {
+            if(section.id === id && section.baseSourceType === WiredInputSourcePicker.MERGED_SOURCE)
+            {
+                section.sourceType = type;
+            }
+        }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::updateSourceContainer()
-    updateSourceContainer(_a: number, _b: number): void
+    updateSourceContainer(sourceType: number, id: number): void
     {
-        // TODO(AS3): Bloc C.
+        for(const section of this._advancedInputSources)
+        {
+            if(section.baseSourceType === sourceType && section.id === id)
+            {
+                section.refresh(this._currentDef!, this._currentElement!);
+            }
+        }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::get isUsingAdvancedSettings()
