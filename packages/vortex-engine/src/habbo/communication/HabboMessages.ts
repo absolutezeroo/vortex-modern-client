@@ -285,6 +285,12 @@ import {SaveWiredMenuSettingsComposer} from './messages/outgoing/userdefinedroom
 import {ReloadWiredRoomStateComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
 import {RequestWiredMenuSettingsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredMenuSettingsComposer';
 import {WiredMenuSettingsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuSettingsEvent';
+import {WiredRoomStatsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredRoomStatsEvent';
+import {WiredErrorLogsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredErrorLogsEvent';
+import {RequestWiredRoomStatsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomStatsComposer';
+import {RequestWiredErrorLogsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredErrorLogsComposer';
+import {ClearWiredErrorLogsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/ClearWiredErrorLogsComposer';
+import {WiredMonitorReportComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredMonitorReportComposer';
 import {AllVariablesHashMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
 import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
 
@@ -1034,6 +1040,8 @@ export class HabboMessages implements IMessageConfiguration
         // userdefinedroomevents/wiredmenu/_SafeCls_2783.as - exact field match: canModify/canRead).
         this._events.set(3483, WiredPermissionsEvent);
         this._events.set(491, WiredMenuSettingsEvent);
+        this._events.set(1964, WiredRoomStatsEvent);
+        this._events.set(3419, WiredErrorLogsEvent);
         // IDs read directly from WIN63's own message registry
         // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
         // (`_SafeStr_4546[id] = _SafeCls_N`, the incoming-events map):
@@ -1305,6 +1313,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2553, SaveWiredMenuSettingsComposer);
         this._composers.set(501, ReloadWiredRoomStateComposer);
         this._composers.set(1862, RequestWiredMenuSettingsComposer);
+        this._composers.set(427, RequestWiredRoomStatsComposer);
+        this._composers.set(452, RequestWiredErrorLogsComposer);
+        this._composers.set(2386, ClearWiredErrorLogsComposer);
+        this._composers.set(3608, WiredMonitorReportComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
