@@ -3484,9 +3484,34 @@ export class RoomEngine extends Component implements IRoomEngine,
                 }
             }
 
-            if(!this.handleRoomDragging(canvas, x, y, type, altKey, ctrlKey, shiftKey)) 
+            if(!this.handleRoomDragging(canvas, x, y, type, altKey, ctrlKey, shiftKey))
             {
-                canvas.handleMouseEvent(x, y, type, altKey, ctrlKey, shiftKey, buttonDown);
+                const handled = canvas.handleMouseEvent(x, y, type, altKey, ctrlKey, shiftKey, buttonDown);
+
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:2391-2398
+                // `if(!canvas.handleMouseEvent(...)) { if(click) dispatch REOE_DESELECTED(roomId, -1, MINIMUM) }`.
+                // The port was discarding the return value, so a click no room object
+                // consumed never deselected — which is why the InfoStand furni/user
+                // panels and the own-avatar bubble never closed on clicking away.
+                if(type === 'click')
+                {
+                    log.info(`[CLICK-AWAY] canvas handled=${handled} -> ${handled ? 'no deselect' : 'REOE_DESELECTED emitted'}`);
+                }
+
+                if(!handled && type === 'click')
+                {
+                    this._selectedObject = null;
+
+                    this.events.emit(
+                        RoomEngineObjectEvent.REOE_DESELECTED,
+                        new RoomEngineObjectEvent(
+                            RoomEngineObjectEvent.REOE_DESELECTED,
+                            this._activeRoomId,
+                            -1,
+                            RoomObjectCategoryEnum.MINIMUM
+                        )
+                    );
+                }
             }
 
             this._roomDragLastX = x;
