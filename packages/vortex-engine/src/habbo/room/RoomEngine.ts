@@ -4493,10 +4493,11 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
-    private getRoomObjectScreenLocation(roomId: number, objectId: number, category: number, canvasId: number = 1): {
+    // Public: the wired overview tab's VariableInfoBubbleView projects holder objects to screen space.
+    public getRoomObjectScreenLocation(roomId: number, objectId: number, category: number, canvasId: number = 1): {
         x: number;
         y: number
-    } | null 
+    } | null
     {
         const geometry = this.getRoomCanvasGeometry(roomId, canvasId);
 

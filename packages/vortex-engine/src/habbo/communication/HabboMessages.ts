@@ -308,6 +308,9 @@ import {ClearWiredErrorLogsComposer} from './messages/outgoing/userdefinedroomev
 import {WiredMonitorReportComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredMonitorReportComposer';
 import {AllVariablesHashMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
 import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
+import {VariableInfoAndHoldersEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/VariableInfoAndHoldersEvent';
+import {RequestVariableHoldersComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
+import {RequestVariableManagementComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementComposer';
 
 // Incoming Events - Poll
 import {
@@ -1112,6 +1115,8 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1192, WiredSaveSuccessEvent);
         this._events.set(3287, AllVariablesHashMessageEvent);
         this._events.set(2733, AllVariablesDiffMessageEvent);
+        // Overview tab: variable-holders push (WIN63 registry _SafeCls_2046.as: 3506 -> _SafeCls_2537).
+        this._events.set(3506, VariableInfoAndHoldersEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -1368,6 +1373,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(452, RequestWiredErrorLogsComposer);
         this._composers.set(2386, ClearWiredErrorLogsComposer);
         this._composers.set(3608, WiredMonitorReportComposer);
+        // Overview tab (WIN63 registry _SafeCls_2046.as): 113 -> _SafeCls_3916 (request variable
+        // holders), 2221 -> _SafeCls_3265 (open variable management).
+        this._composers.set(113, RequestVariableHoldersComposer);
+        this._composers.set(2221, RequestVariableManagementComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);

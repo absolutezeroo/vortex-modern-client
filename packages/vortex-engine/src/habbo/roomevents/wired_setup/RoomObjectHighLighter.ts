@@ -85,6 +85,93 @@ export class RoomObjectHighLighter
         return RoomObjectHighLighter._activeWiredFilter;
     }
 
+    // AS3: RoomObjectHighLighter.as::addFiltersToFurni() — appends (or, when prepend is set, prepends)
+    // a filter array onto the furni's FurnitureVisualization.filters, skipping if any of the filters
+    // are already present. Used by VariableHoldersHighlighter to apply an arbitrary filter set to a
+    // resolved room object (the instance show/hide path resolves furnis by id instead).
+    static addFiltersToFurni(furni: IRoomObject | null, filters: unknown[], prepend: boolean = false): void
+    {
+        if(furni === null)
+        {
+            return;
+        }
+
+        if(RoomObjectHighLighter.hasFilters(furni, filters))
+        {
+            return;
+        }
+
+        const visualization = furni.getVisualization() as unknown as IFilterableVisualization | null;
+
+        if(visualization === null || !('filters' in visualization))
+        {
+            return;
+        }
+
+        const current = visualization.filters == null ? [] : visualization.filters;
+        visualization.filters = prepend ? filters.concat(current) : current.concat(filters);
+    }
+
+    // AS3: RoomObjectHighLighter.as::removeFiltersFromFurni() — removes the given filters (by identity)
+    // from the furni's FurnitureVisualization.filters.
+    static removeFiltersFromFurni(furni: IRoomObject | null, filters: unknown[]): void
+    {
+        if(furni === null)
+        {
+            return;
+        }
+
+        const visualization = furni.getVisualization() as unknown as IFilterableVisualization | null;
+
+        if(visualization === null || visualization.filters == null)
+        {
+            return;
+        }
+
+        const remaining = visualization.filters.slice();
+
+        for(const filter of filters)
+        {
+            const index = remaining.indexOf(filter);
+
+            if(index !== -1)
+            {
+                remaining.splice(index, 1);
+            }
+        }
+
+        visualization.filters = remaining;
+    }
+
+    // AS3: RoomObjectHighLighter.as::hasFilters() — true if any of the given filters is already on the
+    // furni's FurnitureVisualization.filters.
+    static hasFilters(furni: IRoomObject | null, filters: unknown[]): boolean
+    {
+        if(furni === null)
+        {
+            return false;
+        }
+
+        const visualization = furni.getVisualization() as unknown as IFilterableVisualization | null;
+
+        if(visualization === null || visualization.filters == null)
+        {
+            return false;
+        }
+
+        const current = visualization.filters;
+
+        for(const filter of filters)
+        {
+            if(current.indexOf(filter) !== -1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // AS3: RoomObjectHighLighter.as::show() — activateFurni (BW filter). TODO(AS3): wall GlowFilter +
     // dual-picking source tint when param2 (dualPicking) is set.
     show(id: number, _dualPicking: boolean, _slot: number): void

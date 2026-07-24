@@ -26,6 +26,13 @@ export interface IRoomUI
     getDesktop(identifier: string): IRoomDesktop | null;
 
     /**
+	 * The active room desktop.
+	 *
+	 * AS3: sources/source_as_win63/habbo/ui/IRoomUI.as::get desktop()
+	 */
+    get desktop(): IRoomDesktop | null;
+
+    /**
 	 * Gets the active canvas ID for a room.
 	 */
     getActiveCanvasId(roomId: number): number;

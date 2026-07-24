@@ -395,6 +395,9 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/win63_version/habbo/room/class_34.as::getRoomObjectBoundingRectangle()
     getRoomObjectBoundingRectangle(roomId: number, objectId: number, category: number, canvasId: number): IRoomEngineRectangle | null;
 
+    // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
+    getRoomObjectScreenLocation(roomId: number, objectId: number, category: number, canvasId?: number): { x: number; y: number } | null;
+
     /**
      * Sets the scale of a room canvas, optionally centering on a point.
      */

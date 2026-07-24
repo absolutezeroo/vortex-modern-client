@@ -25,6 +25,7 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
+import type {IRoomDesktop} from '@habbo/ui/IRoomDesktop';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 
@@ -269,6 +270,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     get roomUI(): IRoomUI | null
     {
         return this._roomUI;
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::get roomDesktop()
+    get roomDesktop(): IRoomDesktop | null
+    {
+        return this._roomUI?.desktop ?? null;
     }
 
     // AS3: HabboUserDefinedRoomEvents.as::get roomId()
