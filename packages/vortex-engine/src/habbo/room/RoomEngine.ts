@@ -213,6 +213,9 @@ export class RoomEngine extends Component implements IRoomEngine,
     // map rebuilds. The port caches the tile coords (all handleObjectMove/Place need).
     private _moveMouseEventCache: Vector3d | null = null;
     private _selectedObject: { roomId: number; id: number; category: number } | null = null;
+    // Last click/doubleClick eventId already delivered to a room object, so a click
+    // that alpha-hits several stacked objects only reaches the frontmost one.
+    private _lastClickEventId: string = '';
 
     constructor(context: IContext, assetLibrary: IAssetLibrary | null = null) 
     {
@@ -3514,16 +3517,33 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    processRoomCanvasMouseEvent(event: RoomSpriteMouseEvent, object: IRoomObject, geometry: IRoomGeometry): void 
+    processRoomCanvasMouseEvent(event: RoomSpriteMouseEvent, object: IRoomObject, geometry: IRoomGeometry): void
     {
-        if(event === null || object === null) 
+        if(event === null || object === null)
         {
             return;
         }
 
+        // A click that hits stacked furniture is dispatched once per overlapping
+        // object, front-to-back (their sprites alpha-hit at the same pixel). Only the
+        // frontmost should act on it, so deliver the click to the first object carrying
+        // this click's eventId and skip the occluded ones behind it. Every sprite in one
+        // mouse event shares an eventId (bumped once per frame in the canvas update), so
+        // consecutive clicks are not skipped. Without this, clicking the top of a stack
+        // also triggered the furniture underneath.
+        if(event.type === 'click' || event.type === 'doubleClick')
+        {
+            if(event.eventId === this._lastClickEventId)
+            {
+                return;
+            }
+
+            this._lastClickEventId = event.eventId;
+        }
+
         const handler = object.getMouseHandler();
 
-        if(handler !== null) 
+        if(handler !== null)
         {
             handler.mouseEvent(event, geometry);
         }
