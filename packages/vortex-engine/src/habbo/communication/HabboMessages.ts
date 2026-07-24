@@ -314,6 +314,8 @@ import {RequestVariableManagementComposer} from './messages/outgoing/userdefined
 import {WiredVariablesForObjectEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredVariablesForObjectEvent';
 import {WiredMenuErrorEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuErrorEvent';
 import {WiredRoomLogsMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredRoomLogsMessageEvent';
+import {WiredUserVariablesPageMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredUserVariablesPageMessageEvent';
+import {RequestVariableManagementDetailComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementDetailComposer';
 import {RequestWiredVariablesForObjectComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredVariablesForObjectComposer';
 import {UpdateWiredVariableComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/UpdateWiredVariableComposer';
 
@@ -1129,6 +1131,9 @@ export class HabboMessages implements IMessageConfiguration
         // Room-logs sub-controller: a page of room logs (WIN63 registry _SafeCls_2046.as: 1910 ->
         // _SafeCls_3729).
         this._events.set(1910, WiredRoomLogsMessageEvent);
+        // Variable-management overview sub-controller: a page of user-variable holders (WIN63 registry
+        // _SafeCls_2046.as: 749 -> _SafeCls_2492).
+        this._events.set(749, WiredUserVariablesPageMessageEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -1393,6 +1398,9 @@ export class HabboMessages implements IMessageConfiguration
         // object), 689 -> _SafeCls_3855 (set/create/delete variable).
         this._composers.set(3466, RequestWiredVariablesForObjectComposer);
         this._composers.set(689, UpdateWiredVariableComposer);
+        // Variable-management overview: open the detail view for one holder (WIN63 registry
+        // _SafeCls_2046.as: 3777 -> _SafeCls_2724).
+        this._composers.set(3777, RequestVariableManagementDetailComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
