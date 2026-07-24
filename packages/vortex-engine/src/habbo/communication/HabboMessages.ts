@@ -313,6 +313,7 @@ import {RequestVariableHoldersComposer} from './messages/outgoing/userdefinedroo
 import {RequestVariableManagementComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementComposer';
 import {WiredVariablesForObjectEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredVariablesForObjectEvent';
 import {WiredMenuErrorEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuErrorEvent';
+import {WiredRoomLogsMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredRoomLogsMessageEvent';
 import {RequestWiredVariablesForObjectComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredVariablesForObjectComposer';
 import {UpdateWiredVariableComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/UpdateWiredVariableComposer';
 
@@ -1125,6 +1126,9 @@ export class HabboMessages implements IMessageConfiguration
         // 1230 -> _SafeCls_2847 (wired-menu error).
         this._events.set(2179, WiredVariablesForObjectEvent);
         this._events.set(1230, WiredMenuErrorEvent);
+        // Room-logs sub-controller: a page of room logs (WIN63 registry _SafeCls_2046.as: 1910 ->
+        // _SafeCls_3729).
+        this._events.set(1910, WiredRoomLogsMessageEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
