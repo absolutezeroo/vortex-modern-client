@@ -887,9 +887,16 @@ export class VortexMain implements IVortexMain
 
         const ctx = Core.instance as CoreComponentContext;
 
-        if(ctx) 
+        if(ctx)
         {
-            ctx.update(ticker.deltaMS);
+            // Clamp the frame delta. requestAnimationFrame (which drives this ticker) is paused
+            // entirely while the tab is hidden, so the first frame after the tab returns to the
+            // foreground can report deltaMS equal to the whole background duration (tens of
+            // seconds). Feeding that to time-based updates would make animations/interpolation
+            // jump. Cap it to a sane single-frame maximum so the client resumes smoothly.
+            const MAX_UPDATE_DELTA_MS = 1000;
+
+            ctx.update(Math.min(ticker.deltaMS, MAX_UPDATE_DELTA_MS));
         }
 
         this.onExitFrame();

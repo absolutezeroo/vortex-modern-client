@@ -407,6 +407,22 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
         this._receivedBuffer.position = this._receivedBuffer.length;
         this._receivedBuffer.writeBytes(bytes);
         this._receivedBuffer.position = oldPosition;
+
+        // Process on arrival, driven by the WebSocket 'message' event, NOT only by the
+        // ticker-driven update loop (CoreCommunicationManager.update -> processReceivedData).
+        //
+        // AS3 parity note: the Flash client also drained the socket from an update loop
+        // (class_44.update -> processReceivedData), and this port faithfully mirrors that. But the
+        // browser fully PAUSES requestAnimationFrame (which drives the Pixi ticker, hence that
+        // update loop) whenever the tab is backgrounded, whereas Flash Player kept a hidden SWF
+        // running (throttled, ~4fps) so its loop never stalled. The result was: switch tabs for
+        // ~30s and the ticker froze -> processReceivedData stopped -> incoming packets piled up in
+        // _receivedBuffer unprocessed while the room appeared frozen, needing a reconnect. The
+        // 'message' event keeps firing on a backgrounded tab, so processing here restores the
+        // Flash behaviour (network keeps up regardless of render throttling). splitMessages()
+        // already buffers partial frames, so a fragmented arrival is safe. The ticker still calls
+        // processReceivedData() too; it simply finds an empty buffer most of the time now.
+        this.processReceivedData();
     }
 
     private startTimeout(): void

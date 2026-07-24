@@ -689,6 +689,7 @@ export class VortexApp
 
         // Remove event listeners
         window.removeEventListener('resize', this._onResize);
+        document.removeEventListener('visibilitychange', this._onVisibilityChange);
 
         if(this._canvas) 
         {
@@ -920,12 +921,31 @@ export class VortexApp
         this.resizeCanvas();
 
         window.addEventListener('resize', this._onResize);
+        document.addEventListener('visibilitychange', this._onVisibilityChange);
     }
 
     /** Bound resize handler. */
     private _onResize = (): void =>
     {
         this.resizeCanvas();
+    };
+
+    /**
+     * Forces a full recomposite when the tab returns to the foreground.
+     *
+     * requestAnimationFrame (which drives both the Pixi ticker and this render loop) is paused
+     * entirely by the browser while the tab is hidden, so the last painted frame is stale on
+     * return. The network model itself was kept current by SocketConnection processing packets on
+     * the WebSocket 'message' event (which keeps firing while hidden), so here we only need to
+     * force the first resumed frame to recomposite the UI; the room canvas repaints from its own
+     * resumed ticker.
+     */
+    private _onVisibilityChange = (): void =>
+    {
+        if(document.visibilityState === 'visible')
+        {
+            this._uiCompositeDirty = true;
+        }
     };
 
     /**
