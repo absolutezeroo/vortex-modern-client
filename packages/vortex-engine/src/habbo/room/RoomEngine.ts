@@ -3493,11 +3493,6 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // The port was discarding the return value, so a click no room object
                 // consumed never deselected — which is why the InfoStand furni/user
                 // panels and the own-avatar bubble never closed on clicking away.
-                if(type === 'click')
-                {
-                    log.info(`[CLICK-AWAY] canvas handled=${handled} -> ${handled ? 'no deselect' : 'REOE_DESELECTED emitted'}`);
-                }
-
                 if(!handled && type === 'click')
                 {
                     this._selectedObject = null;
