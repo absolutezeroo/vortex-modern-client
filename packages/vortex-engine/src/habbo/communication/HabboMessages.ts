@@ -311,6 +311,10 @@ import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroome
 import {VariableInfoAndHoldersEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/VariableInfoAndHoldersEvent';
 import {RequestVariableHoldersComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
 import {RequestVariableManagementComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementComposer';
+import {WiredVariablesForObjectEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredVariablesForObjectEvent';
+import {WiredMenuErrorEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuErrorEvent';
+import {RequestWiredVariablesForObjectComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredVariablesForObjectComposer';
+import {UpdateWiredVariableComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/UpdateWiredVariableComposer';
 
 // Incoming Events - Poll
 import {
@@ -1117,6 +1121,10 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2733, AllVariablesDiffMessageEvent);
         // Overview tab: variable-holders push (WIN63 registry _SafeCls_2046.as: 3506 -> _SafeCls_2537).
         this._events.set(3506, VariableInfoAndHoldersEvent);
+        // Inspection tab (WIN63 registry _SafeCls_2046.as): 2179 -> _SafeCls_3452 (variables for object),
+        // 1230 -> _SafeCls_2847 (wired-menu error).
+        this._events.set(2179, WiredVariablesForObjectEvent);
+        this._events.set(1230, WiredMenuErrorEvent);
 
         // === USERS ===
         this._events.set(1879, ApproveNameMessageEvent);
@@ -1377,6 +1385,10 @@ export class HabboMessages implements IMessageConfiguration
         // holders), 2221 -> _SafeCls_3265 (open variable management).
         this._composers.set(113, RequestVariableHoldersComposer);
         this._composers.set(2221, RequestVariableManagementComposer);
+        // Inspection tab (WIN63 registry _SafeCls_2046.as): 3466 -> _SafeCls_3097 (request variables for
+        // object), 689 -> _SafeCls_3855 (set/create/delete variable).
+        this._composers.set(3466, RequestWiredVariablesForObjectComposer);
+        this._composers.set(689, UpdateWiredVariableComposer);
 
         // === HANDSHAKE ===
         this._composers.set(4000, ClientHelloMessageComposer);
