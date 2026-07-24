@@ -295,9 +295,19 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/_SafeCls_90.as::set isGameMode()
-    set isGameMode(value: boolean) 
+    set isGameMode(value: boolean)
     {
         this._isGameMode = value;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get activeRoomHasFreeFurniMovementsMode()
+    // AS3 body: isRoomVariableActive(_activeRoomId, "free_furni_movements_mode"). When set,
+    // any user may move/rotate furniture in the room (checkFurniManipulationRights passes).
+    get activeRoomHasFreeFurniMovementsMode(): boolean
+    {
+        const room = this.getRoomInstance(this._activeRoomId);
+
+        return room !== null && room.getNumber(RoomVariableEnum.FREE_FURNI_MOVEMENTS_MODE) !== 0;
     }
 
     protected override get dependencies(): Array<ComponentDependency<any>> 
@@ -1262,6 +1272,40 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::rotateActiveObjectPreview()
+    // Rotates the ghost of a floor-furniture (cat 10) currently being placed/moved, in place and
+    // with no server round-trip — driven by the mouse wheel (no modifier) while a placement/move
+    // preview is active. Returns true only when the direction actually changed and validated.
+    rotateActiveObjectPreview(roomId: number, forward: boolean): boolean
+    {
+        const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
+
+        if(data === null) return false;
+        if(data.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return false;
+        if(data.operation !== 'OBJECT_MOVE' && data.operation !== 'OBJECT_PLACE') return false;
+
+        const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
+
+        if(object === null) return false;
+
+        const nextDirection = this.getValidRoomObjectDirection(object, forward);
+
+        if(nextDirection === object.getDirection().x) return false;
+
+        const dirVec = new Vector3d(nextDirection);
+
+        if(!this.validateFurnitureDirection(object, dirVec, this.getFurniStackingHeightMap(roomId))) return false;
+
+        object.setDirection(dirVec);
+        this.updateSelectedObjectData(
+            roomId, data.id, data.category, object.getLocation(), dirVec, data.operation,
+            data.typeId, data.instanceData, data.stuffData, data.state, data.animFrame, data.posture
+        );
+        this.recalibrateMovements(roomId);
+
+        return true;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getPetType()
     // Resolves a pet's content type from its figure — the figure's first space-separated token is
     // the pet type id, which RoomContentLoader maps to the asset library name. AS3's own fallback
@@ -1577,6 +1621,21 @@ export class RoomEngine extends Component implements IRoomEngine,
                 if(!object || !this._connection) return false;
 
                 const controller = object as IRoomObjectController;
+
+                // AS3: for a rentable_bot/monsterplant (cat 100) the rotation is sent through
+                // sendMoveUserObjectMessage (_SafeCls_2801 id 1295 for a bot / _SafeCls_2560 id 432
+                // for a plant), NOT the furniture MoveObject composer.
+                if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+                {
+                    // TODO(AS3): sendMoveUserObjectMessage — the user-move composers (_SafeCls_2801/
+                    // _SafeCls_2560) are not ported, and the Turbo server has no bots (see
+                    // docs/CLIENT-SERVER-ARCHITECTURE.md §"Bots — Do Not Exist"); monsterplant move
+                    // support is likewise unconfirmed. Gesture is recognised; the send is a gap.
+                    log.warn('modifyRoomObject: OBJECT_ROTATE for cat 100 (bot/plant) not wired — user-move composer not ported');
+
+                    return false;
+                }
+
                 const forward = action === 'OBJECT_ROTATE_POSITIVE';
                 const nextDirection = this.getValidRoomObjectDirection(controller, forward);
                 const stackingMap = this.getFurniStackingHeightMap(this._activeRoomId);
@@ -1588,6 +1647,28 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this._connection.send(new MoveObjectMessageComposer(objectId, Math.trunc(location.x), Math.trunc(location.y), nextDirection / 45));
 
                 return true;
+            }
+            // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_PET" case — pick up a
+            // monsterplant, sent via roomSession.pickUpPet(webID) resolved from the room index.
+            case 'OBJECT_PICKUP_PET': {
+                const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
+                const userData = session?.userDataManager?.getUserDataByIndex(objectId) ?? null;
+
+                if(session === null || userData === null) return false;
+
+                session.pickUpPet(userData.webID);
+
+                return true;
+            }
+            // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_BOT" case — connection.send(
+            // new _SafeCls_3108(webID)) (id 2743).
+            case 'OBJECT_PICKUP_BOT': {
+                // TODO(AS3): the rentable-bot pickup composer (_SafeCls_3108, id 2743) is not ported,
+                // and the Turbo server has no bots (docs/CLIENT-SERVER-ARCHITECTURE.md §"Bots — Do
+                // Not Exist"). Gesture is recognised; the send is a documented gap.
+                log.warn('modifyRoomObject: OBJECT_PICKUP_BOT not wired — bot-pickup composer not ported (server has no bots)');
+
+                return false;
             }
             case 'OBJECT_PICKUP':
             case 'OBJECT_EJECT': {
@@ -4264,8 +4345,8 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    // on by FurniModel.onObjectPlaced()'s `-event.objectId === pendingPlacementRef` check).
-    private placeObject(roomId: number): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::placeObject()
+    private placeObject(roomId: number): void
     {
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
@@ -4302,12 +4383,25 @@ export class RoomEngine extends Component implements IRoomEngine,
         const instanceData = data.instanceData;
         const category = data.category;
 
+        // AS3 (_SafeCls_1821.as:2455/2492-2495/2528): the placed objectId is emitted
+        // UN-negated - it is the selected object's own id. The sign is flipped ONLY for
+        // user/avatar items (category 100) that arrive negative. The port previously emitted
+        // `-data.id`, which double-negated against FurniModel.onObjectPlaced()'s floor gate
+        // (`-event.objectId === pendingPlacementRef`), so the equality never held, the re-arm
+        // never fired, and placing from the inventory stopped after a single item.
+        let objectId = data.id;
+
+        if(objectId < 0 && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        {
+            objectId = -objectId;
+        }
+
         this.resetSelectedObjectData(roomId);
 
         this.events.emit(
             'REOE_PLACED',
             new RoomEngineObjectPlacedEvent(
-                'REOE_PLACED', roomId, -data.id, category,
+                'REOE_PLACED', roomId, objectId, category,
                 '', x, y, z, rotation, placedInRoom, true, false, instanceData
             )
         );
@@ -4448,11 +4542,14 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE_TO" case
     // Sends the object's own current (already tile-snapped/validated) location - the object was
-    // live-updated by handleObjectMove() on every preceding mouse move. Deliberately does NOT
-    // call resetSelectedObjectData() on success (matches AS3: the selection is left in the
-    // OBJECT_MOVE_TO state and only cleared by the next OBJECT_MOVE/OBJECT_PLACE call) - the
-    // server's own echoed move-update message takes over the object's position from here.
-    private confirmObjectMove(roomId: number): void 
+    // live-updated by handleObjectMove() on every preceding mouse move. AS3 first re-tags the
+    // selection OBJECT_MOVE_TO (so the trailing resetSelectedObjectData() keeps the moved
+    // position instead of restoring the original one) and THEN resets it (line 2419-2421,
+    // _loc11_ stays true for OBJECT_MOVE_TO - only OBJECT_MOVE sets it false). The reset is what
+    // clears the selection so a *second* move can start; without it the stale OBJECT_MOVE_TO
+    // state left handleObjectMouseDown()'s "already busy" guard permanently tripped, so ALT-drag
+    // worked exactly once. (An earlier port comment wrongly claimed AS3 leaves the state set.)
+    private confirmObjectMove(roomId: number): void
     {
         const data = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
@@ -4490,6 +4587,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         // locationString) - neither the composer nor getLegacyGeometry() exist in this port yet,
         // so moving an already-placed wall item never reaches the server. Mirrors
         // PlaceObjectMessageComposer.ts's own documented wall-placement gap on the place side.
+
+        // AS3 line 2419-2421: reset the (now OBJECT_MOVE_TO-tagged) selection so the moved object
+        // keeps its new position and the selection is cleared - required for a repeatable move.
+        this.resetSelectedObjectData(roomId);
     }
 
     // AS3: sources/win63_client/com/sulake/habbo/room/RoomEngine.as::getRoomObjectScreenLocation()
@@ -5026,13 +5127,23 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     /**
      * Handle object mouse events - selects the clicked object (furniture/user)
-     * so widgets (e.g. infostand) can react, and logs the click for debugging.
+     * so widgets (e.g. infostand) can react. A modifier-held click on furniture is
+     * routed to the manipulation shortcuts (SHIFT=rotate, CTRL=pickup) instead.
      *
      * AS3: sources/win63_version/habbo/room/class_34.as — object click handling
      * that leads to RoomEngineObjectEvent.REOE_SELECTED being dispatched.
      */
-    private handleObjectMouseEvent(event: RoomObjectMouseEvent): void 
+    private handleObjectMouseEvent(event: RoomObjectMouseEvent): void
     {
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseDown() — ALT-drag move starts on mouse-down,
+        // routed separately from the click path.
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_DOWN)
+        {
+            this.handleObjectMouseDown(event);
+
+            return;
+        }
+
         if(event.type !== RoomObjectMouseEvent.ROE_MOUSE_CLICK) return;
 
         const obj = event.object;
@@ -5042,9 +5153,42 @@ export class RoomEngine extends Component implements IRoomEngine,
         const objType = obj.getType();
         const objId = obj.getId();
 
-        const loc = obj.getLocation();
+        // AS3 (handleRoomObjectMouseClick, _SafeCls_1821.as:605-690) confirms a placement/move
+        // only for a clicked category of 0 (the floor) - its ghost is mouse-transparent, so the
+        // click passes THROUGH it to the tile. This port's ghost is a normal interactive
+        // furniture object that sits under the cursor and captures the click as an object event,
+        // so it never reaches handleTileMouseEvent()'s placeObject path. That made placing feel
+        // impossible - every click just re-selected the ghost - and broke repeated ("on the fly")
+        // inventory placement once the FurniModel re-arm was fixed.
+        //
+        // While a placement/move is active, route ANY object-level click to the placement
+        // confirmation, whatever was hit: a click on the ghost (which sits on a valid tile)
+        // places it; a click over the void outside the room hits nothing placeable, but the
+        // ghost was already disposed by handleObjectPlace() on the invalid-tile hover, so
+        // placeObject() finds no ghost and emits REOE_PLACED with placedInRoom=false - which is
+        // exactly how FurniModel.onObjectPlaced() cancels the mover and re-shows the inventory.
+        // That gives the AS3 "click outside the room to cancel placement" behaviour.
+        if(this._activeRoomId >= 0)
+        {
+            const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-        log.info(`[CLICK] Object id=${objId} type="${objType}" pos=(${loc?.x?.toFixed(1)}, ${loc?.y?.toFixed(1)}, ${loc?.z?.toFixed(1)})`);
+            if(selectedObjectData !== null)
+            {
+                if(selectedObjectData.operation === 'OBJECT_PLACE')
+                {
+                    this.placeObject(this._activeRoomId);
+
+                    return;
+                }
+
+                if(selectedObjectData.operation === 'OBJECT_MOVE')
+                {
+                    this.confirmObjectMove(this._activeRoomId);
+
+                    return;
+                }
+            }
+        }
 
         if(this._activeRoomId < 0) return;
 
@@ -5072,9 +5216,102 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const category = this.findObjectCategory(this._activeRoomId, obj);
 
-        if(category !== null)
+        if(category === null) return;
+
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() OBJECT_UNDEFINED modifier branches
+        // (lines 749-778). clickRoomObject (line 581) suppresses the plain click when a modifier
+        // is held, so a modified click manipulates the furniture instead of selecting it. The
+        // dispatched REOE_REQUEST_* events are consumed by RoomDesktop.roomObjectEventHandler(),
+        // which applies checkFurniManipulationRights() then calls modifyRoomObject(). Disabled in
+        // game mode (AS3 line 751). Only the two exact gestures are intercepted; every other
+        // click (including plain, and modifier combos AS3 does not act on) falls through to the
+        // normal selection below.
+        if(!this.isGameMode
+            && (category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+                || category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL))
         {
-            this.selectRoomObject(this._activeRoomId, objId, category);
+            // SHIFT-only click rotates floor furniture (cat 10 only; wall furni excluded) — AS3 line 753.
+            if(event.shiftKey && !event.ctrlKey && !event.altKey
+                && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+            {
+                this.events.emit(
+                    RoomEngineObjectEvent.REOE_REQUEST_ROTATE,
+                    new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_REQUEST_ROTATE, this._activeRoomId, objId, category)
+                );
+
+                return;
+            }
+
+            // CTRL-only click picks up floor/wall furniture — AS3 line 763.
+            if(event.ctrlKey && !event.altKey && !event.shiftKey)
+            {
+                this.events.emit(
+                    RoomEngineObjectEvent.REOE_REQUEST_PICKUP,
+                    new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_REQUEST_PICKUP, this._activeRoomId, objId, category)
+                );
+
+                return;
+            }
+
+            // ALT+drag move is a mouse-DOWN gesture — see handleObjectMouseDown().
+        }
+
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() cat-100 branch (lines 719-748).
+        // Modifier gestures on rentable bots / monsterplants call modifyRoomObject() directly
+        // (unlike furni, which dispatch REOE_REQUEST_*). Only CTRL-pickup is intercepted here:
+        // the monsterplant pickup fully works (roomSession.pickUpPet), the rentable-bot pickup is
+        // a documented composer/server gap. SHIFT-rotate for cat 100 is intentionally NOT
+        // intercepted — it needs the unported user-move composer and the Turbo server has no
+        // bots (docs/CLIENT-SERVER-ARCHITECTURE.md), so a modified click falls through to normal
+        // selection (InfoStand) rather than being swallowed as a no-op.
+        if(!this.isGameMode && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+            && (objType === 'monsterplant' || objType === 'rentable_bot')
+            && event.ctrlKey && !event.altKey && !event.shiftKey)
+        {
+            // CTRL-only click picks it up — bot → OBJECT_PICKUP_BOT (AS3 line 721), plant →
+            // OBJECT_PICKUP_PET (line 732).
+            this.modifyRoomObject(objId, category, objType === 'rentable_bot' ? 'OBJECT_PICKUP_BOT' : 'OBJECT_PICKUP_PET');
+
+            return;
+        }
+
+        this.selectRoomObject(this._activeRoomId, objId, category);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseDown()
+    // ALT-only mouse-down (or, in decorate mode, a plain drag) on floor furniture starts a move,
+    // dispatching REOE_REQUEST_MOVE → RoomDesktop.checkFurniManipulationRights → modifyRoomObject
+    // OBJECT_MOVE (the ghost then follows the cursor and a click confirms via confirmObjectMove).
+    // AS3 also dispatches this for wall furni (cat 20) and bots/plants (cat 100), but this port's
+    // move machinery (handleObjectMove/confirmObjectMove) is floor-furni (cat 10) only — see the
+    // documented wall/user-move composer gaps in confirmObjectMove — so only cat 10 is enabled here.
+    private handleObjectMouseDown(event: RoomObjectMouseEvent): void
+    {
+        if(this._activeRoomId < 0 || this.isGameMode) return;
+
+        const obj = event.object;
+
+        if(!obj) return;
+
+        // Only when nothing is already being placed/moved (AS3 "OBJECT_UNDEFINED" operation).
+        const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
+
+        if(selectedObjectData !== null) return;
+
+        const category = this.findObjectCategory(this._activeRoomId, obj);
+
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return;
+
+        const altOnly = event.altKey && !event.ctrlKey && !event.shiftKey;
+        // AS3 decorateModeMove(): decorate mode + neither CTRL nor SHIFT held.
+        const decorateMove = this.isDecorateMode && !event.ctrlKey && !event.shiftKey;
+
+        if(altOnly || decorateMove)
+        {
+            this.events.emit(
+                RoomEngineObjectEvent.REOE_REQUEST_MOVE,
+                new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_REQUEST_MOVE, this._activeRoomId, obj.getId(), category)
+            );
         }
     }
 

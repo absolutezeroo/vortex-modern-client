@@ -1167,7 +1167,7 @@ export class VortexApp
 
                         clickHit.getGlobalPosition(cp);
 
-                        this.synthesizeClick(clickHit, ux - cp.x, uy - cp.y, ev.clientX, ev.clientY);
+                        this.synthesizeClick(clickHit, ux - cp.x, uy - cp.y, ev.clientX, ev.clientY, ev.altKey, ev.ctrlKey, ev.shiftKey);
                     }
                 }
 
@@ -1261,11 +1261,20 @@ export class VortexApp
      * WME_DOUBLE_CLICK to the room 'doubleClick' event (e.g. FurnitureLogic.useObject → open wired),
      * mirroring Flash's doubleClick firing after two clicks.
      */
-    private synthesizeClick(clickHit: IWindow, localX: number, localY: number, clientX: number, clientY: number): void
+    private synthesizeClick(
+        clickHit: IWindow, localX: number, localY: number, clientX: number, clientY: number,
+        altKey: boolean = false, ctrlKey: boolean = false, shiftKey: boolean = false
+    ): void
     {
+        // The modifier state MUST be threaded through: a click on a mouse-enabled window (which
+        // includes the room canvas wrapper) is synthesized here, and the room's CTRL/SHIFT+click
+        // furniture shortcuts read event.ctrlKey/shiftKey off this event. Dropping them (the old
+        // default-false behaviour) is exactly why CTRL/SHIFT+click did nothing while ALT+drag —
+        // which flows through the modifier-carrying mouse-DOWN path — worked.
         const clickEvent = WindowMouseEvent.allocateMouse(
             WindowMouseEvent.CLICK, clickHit, null,
-            localX, localY, clientX, clientY
+            localX, localY, clientX, clientY,
+            altKey, ctrlKey, shiftKey, false
         );
         (clickHit as WindowController).update(clickHit as WindowController, clickEvent);
         clickEvent.recycle();
@@ -1280,7 +1289,8 @@ export class VortexApp
         {
             const dblEvent = WindowMouseEvent.allocateMouse(
                 WindowMouseEvent.DOUBLE_CLICK, clickHit, null,
-                localX, localY, clientX, clientY
+                localX, localY, clientX, clientY,
+                altKey, ctrlKey, shiftKey, false
             );
             (clickHit as WindowController).update(clickHit as WindowController, dblEvent);
             dblEvent.recycle();
@@ -1331,7 +1341,7 @@ export class VortexApp
         upEvent.recycle();
 
         // Synthesize CLICK (+ DOUBLE_CLICK on a rapid second click)
-        this.synthesizeClick(hit, x - globalPos.x, y - globalPos.y, e.clientX, e.clientY);
+        this.synthesizeClick(hit, x - globalPos.x, y - globalPos.y, e.clientX, e.clientY, e.altKey, e.ctrlKey, e.shiftKey);
     };
 
     /** Canvas wheel handler. */
@@ -1339,19 +1349,42 @@ export class VortexApp
     {
         const {x, y} = this.getCanvasCoords(e);
         const vortex = Vortex.instance;
+
+        // AS3: RoomDesktop.as::mouseWheelHandler() — a plain wheel (no modifier) while a floor-
+        // furniture placement/move preview is active rotates the ghost in place. This must be
+        // tried BEFORE the window-hit branching: the room canvas is itself a mouse-enabled window,
+        // so findWindowAtPoint() returns it (non-null) over the room and the old `!hit`-gated
+        // version never ran. rotateActiveObjectPreview self-gates (returns false when no cat-10
+        // preview is active), so normal wheel scrolling is untouched outside placement/move.
+        // Flash delta>0 is scroll-up = "forward"; the DOM's deltaY is inverted, so scroll-up is deltaY<0.
+        if(this._isInRoom && !e.ctrlKey && !e.altKey && !e.shiftKey)
+        {
+            try
+            {
+                if(vortex.roomEngine.rotateActiveObjectPreview(this._activeRoomId, e.deltaY < 0))
+                {
+                    return;
+                }
+            }
+            catch
+            {
+                // RoomEngine not yet initialized
+            }
+        }
+
         const hit = vortex.windowManager.findWindowAtPoint(x, y);
 
-        if(!hit) 
+        if(!hit)
         {
             // Forward wheel to room desktop for zoom if in a room and Ctrl held
-            if(this._isInRoom && e.ctrlKey) 
+            if(this._isInRoom && e.ctrlKey)
             {
-                try 
+                try
                 {
                     const roomUI = vortex.roomUI as RoomUI;
                     const desktop = roomUI.getDesktopForRoom(this._activeRoomId) as RoomDesktop | null;
 
-                    if(desktop) 
+                    if(desktop)
                     {
                         desktop.handleMouseWheel(e.deltaY, x, y);
                     }

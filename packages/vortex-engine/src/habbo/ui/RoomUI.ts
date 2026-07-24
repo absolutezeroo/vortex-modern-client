@@ -227,6 +227,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineObjectEvent.REOE_DESELECTED, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_ADDED, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REMOVED, this.roomObjectEventHandler, this);
+                        // AS3: RoomDesktop listens for the furniture-manipulation requests dispatched
+                        // by RoomObjectEventHandler on a modifier-held click (SHIFT=rotate, CTRL=pickup,
+                        // ALT-drag=move) and applies them via checkFurniManipulationRights/modifyRoomObject.
+                        engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_ROTATE, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_PICKUP, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_MOVE, this.roomObjectEventHandler, this);
                     }
                 },
                 true

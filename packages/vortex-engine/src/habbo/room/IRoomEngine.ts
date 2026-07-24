@@ -40,6 +40,12 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/room/IRoomEngine.as::set isGameMode()
     isGameMode: boolean;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get activeRoomHasFreeFurniMovementsMode()
+    readonly activeRoomHasFreeFurniMovementsMode: boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::rotateActiveObjectPreview()
+    rotateActiveObjectPreview(roomId: number, forward: boolean): boolean;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::get areaSelectionManager()
     readonly areaSelectionManager: IRoomAreaSelectionManager;
 

@@ -515,6 +515,21 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return pet.ownerId === this._sessionDataManager?.userId;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::checkFurniManipulationRights()
+    // Gates the modifier-click move/rotate shortcuts: room controller, any-room controller,
+    // owner of the furniture, or a room in free-furni-movements mode.
+    private checkFurniManipulationRights(roomId: number, objectId: number, category: number): boolean
+    {
+        if(this.roomSession.roomControllerLevel >= 1) return true;
+        if(this._sessionDataManager?.isAnyRoomController) return true;
+
+        const object = this._roomEngine?.getRoomObject(roomId, objectId, category) ?? null;
+
+        if(object !== null && this.isOwnerOfFurniture(object)) return true;
+
+        return this._roomEngine?.activeRoomHasFreeFurniMovementsMode ?? false;
+    }
+
     public addUpdateListener(handler: IRoomWidgetHandler): void 
     {
         if(this._updateListeners.indexOf(handler) < 0) 
@@ -876,8 +891,30 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     {
         let translatedType: string | null = null;
 
-        switch(event.type) 
+        switch(event.type)
         {
+            // AS3: RoomDesktop.as::processRoomObjectEvent() (lines 1222-1236) — the
+            // furniture-manipulation requests dispatched by RoomObjectEventHandler on a
+            // modifier-held click. MOVE/ROTATE are gated by checkFurniManipulationRights;
+            // PICKUP is not (the server validates ownership).
+            case RoomEngineObjectEvent.REOE_REQUEST_MOVE:
+                if(this.checkFurniManipulationRights(event.roomId, event.objectId, event.category))
+                {
+                    this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_MOVE');
+                }
+
+                return;
+            case RoomEngineObjectEvent.REOE_REQUEST_ROTATE:
+                if(this.checkFurniManipulationRights(event.roomId, event.objectId, event.category))
+                {
+                    this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_ROTATE_POSITIVE');
+                }
+
+                return;
+            case RoomEngineObjectEvent.REOE_REQUEST_PICKUP:
+                this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_PICKUP');
+
+                return;
             case RoomEngineObjectEvent.REOE_SELECTED:
                 // AS3 only builds the update event when selection is allowed; when it is disabled
                 // the local stays null and nothing is dispatched.
