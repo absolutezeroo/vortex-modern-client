@@ -1,6 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
+import {TextFieldController} from '@core/window/components/TextFieldController';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {HabboCatalog} from '../../HabboCatalog';
@@ -193,11 +194,22 @@ export class SpinnerCatalogWidget extends CatalogWidget
 
         if(textValue == null) return;
 
-        // AS3 checks `is ITextFieldWindow` to avoid overwriting user-typed input; this port has
-        // no reliable runtime type check for that distinction here, so this always writes -
-        // matching the plain-label (non-input) branch, which is what "text_value" actually is
-        // in every ported spinner layout (a label, not an editable field).
-        textValue.caption = value;
+        // AS3: when text_value is an editable field (ITextFieldWindow), only overwrite its
+        // caption while it is non-empty - so clearing it to retype does not immediately force
+        // the clamped value back in. A plain label text_value is always written. (Both spinner
+        // layouts exist: spinnerWidget.xml uses a <text> label, layout_default_3x3.xml uses an
+        // editable <input> with the +/- buttons hidden, i.e. the quantity is typed.)
+        if(textValue instanceof TextFieldController)
+        {
+            if((textValue.caption?.length ?? 0) > 0)
+            {
+                textValue.caption = value;
+            }
+        }
+        else
+        {
+            textValue.caption = value;
+        }
     }
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::spinnerWindowProcedure()
@@ -277,6 +289,7 @@ export class SpinnerCatalogWidget extends CatalogWidget
         }
     }
 
+    // AS3: sources/win63_version/habbo/catalog/viewer/widgets/SpinnerCatalogWidget.as::onInputEvent()
     private onInputEvent = (event: WindowKeyboardEvent): void =>
     {
         this._value = parseInt(event.target?.caption ?? '1', 10);

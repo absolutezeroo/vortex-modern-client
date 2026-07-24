@@ -179,6 +179,19 @@ export class TextController extends WindowController implements ITextWindow
         this.refreshTextImage();
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/WindowController.as::get caption()
+    // Declaring `set caption` below WITHOUT a matching getter creates an accessor
+    // whose [[Get]] is undefined, which shadows WindowController's inherited
+    // `get caption` - so `textField.caption` returned undefined even though `_caption`
+    // was correctly kept in sync (via set text). That silently broke every caller
+    // reading a text field's caption: e.g. SpinnerCatalogWidget.onInputEvent read
+    // `event.target.caption` (undefined) and reset the catalog quantity to 1 on every
+    // keystroke. Re-expose the base getter so caption reflects the live content again.
+    public override get caption(): string
+    {
+        return super.caption;
+    }
+
     public override set caption(value: string)
     {
         this.text = value;
@@ -193,6 +206,39 @@ export class TextController extends WindowController implements ITextWindow
     {
         this._textColor = value;
         this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set background()
+    // AS3's TextController mirrors `background` onto a real flash.text.TextField
+    // (`_field.background = param1`), and Flash always paints a TextField's background
+    // OPAQUE using its `backgroundColor` (default 0xFFFFFF white). This port has no
+    // `_field`; the background is filled by WindowComposite, which derives the fill
+    // alpha from the colour's high byte. That byte defaults to 0 (see WindowModel
+    // `_alphaColor = 0`), so a background-enabled text field with no explicit
+    // `background_color` filled fully transparent and drew nothing - which is why the
+    // inventory stack-count number disappeared, leaving only the teal `number_container`
+    // badge (the "blue square"). Force the high byte opaque when a background is enabled
+    // and no alpha was set, so the default white backing is painted like Flash. Fills
+    // that already carry an alpha are left untouched (WindowComposite already draws
+    // those), so this can only add a previously-invisible backing, never alter a visible one.
+    public override get color(): number
+    {
+        const value = super.color;
+
+        if(this.background && (value & 0xFF000000) === 0)
+        {
+            return value | 0xFF000000;
+        }
+
+        return value;
+    }
+
+    // Re-expose the base setter: declaring the getter above would otherwise shadow
+    // WindowController's `set color`, silently dropping assignments (e.g. the
+    // `background_color` property handler). Delegates unchanged to the base.
+    public override set color(value: number)
+    {
+        super.color = value;
     }
 
     public get bold(): boolean
@@ -874,6 +920,21 @@ export class TextController extends WindowController implements ITextWindow
         {
             this._fieldWidth = Math.ceil(measured.width);
             this._fieldHeight = Math.ceil(measured.height);
+
+            // AS3/Flash: a flash.text.TextField reserves a 2px gutter ABOVE and BELOW the
+            // text, so its height - and thus the rect its `background` fills - is
+            // textHeight + 4, not the bare line height measured here. The renderer already
+            // offsets glyphs down by the top gutter (TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER)
+            // but the box height omitted both gutters, leaving the background fill ~4px short.
+            // For a background-filled auto-sized field this exposed a strip of the parent below
+            // the text - e.g. the inventory count badge showed the teal `number_container` under
+            // the white `number` field (11px text box in a 15px container = 4px of teal). Only
+            // widen background fields, where the gutter is visible, so the many auto-sized labels
+            // with no background keep their exact box height and do not shift.
+            if(this._background)
+            {
+                this._fieldHeight += 2 * TextController.FLASH_TEXT_FIELD_TOP_GUTTER;
+            }
         }
 
         const fieldWidthWithBorder = Math.floor(this._fieldWidth) + borderPadding;
