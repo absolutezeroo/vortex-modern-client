@@ -8,11 +8,13 @@ import {downloadLayout, importLayoutXml, saveLayout} from '../../ops/LayoutSeria
 import {distributeChildren} from '../../ops/StructuralOps';
 import {toggleLocalisation} from '../../ops/LocaliseOps';
 import type {WindowGallery} from './WindowGallery';
+import {slotsOf} from '../LayoutSlots';
 
 const log = Logger.getLogger('GlazeToolbar');
 
+const SMALL_INPUT = slotsOf('glaze_smallinput_xml');
+
 interface IContainerLike { addChild(child: IWindow): IWindow; }
-interface IFinder { findChildByName(n: string): IWindow | null; }
 interface IDropWidget { populate(items: unknown[]): void; selection: number; addEventListener(type: string, cb: () => void): void; }
 interface IInputWidget { text: string; addEventListener(type: string, cb: () => void): void; }
 
@@ -142,7 +144,7 @@ export class WindowToolbar
 
         if(!box) return;
 
-        const input = (box as unknown as IFinder).findChildByName('glaze_siinput') as unknown as IInputWidget | null;
+        const input = SMALL_INPUT.findAs<IInputWidget>(box, 'glaze_siinput');
 
         (this._bar as unknown as IContainerLike).addChild(box);
         (box as unknown as WindowController).rectangle = {x: this._x2, y: 45, width: 54, height: 22};

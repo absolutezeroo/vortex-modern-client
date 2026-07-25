@@ -3,8 +3,13 @@ import type {WindowController} from '@core/window/WindowController';
 import type {IHabboWindowManager} from '@habbo/window';
 import type {EditorState} from '../../state/EditorState';
 import {Logger} from '@core/utils/Logger';
+import type {GlazeLayoutName} from '../GlazeLayoutSlots';
+import {slotsOf} from '../LayoutSlots';
 
 const log = Logger.getLogger('GlazeChrome');
+
+const HIERARCHY = slotsOf('glaze_hierarchy_xml');
+const PROPERTY = slotsOf('glaze_property_xml');
 
 /** Desktop layer the editor chrome lives on (above the edited layout on layer 1). */
 const CHROME_LAYER = 2;
@@ -47,17 +52,17 @@ export class GlazeChrome
 
     public get hierarchyList(): IWindow | null
     {
-        return this.findChild(this._hierarchy, 'glaze_hierarchy_list');
+        return HIERARCHY.find(this._hierarchy, 'glaze_hierarchy_list');
     }
 
     public get hierarchyControls(): IWindow | null
     {
-        return this.findChild(this._hierarchy, 'glaze_hierarchy_controls');
+        return HIERARCHY.find(this._hierarchy, 'glaze_hierarchy_controls');
     }
 
     public get propertyList(): IWindow | null
     {
-        return this.findChild(this._property, 'glaze_property_list');
+        return PROPERTY.find(this._property, 'glaze_property_list');
     }
 
     public get toolbar(): IWindow | null
@@ -81,7 +86,7 @@ export class GlazeChrome
         window.addEventListener('resize', this._onResize);
     }
 
-    private build(name: string): IWindow | null
+    private build(name: GlazeLayoutName): IWindow | null
     {
         const win = this._wm.buildWidgetLayout(name, CHROME_LAYER);
 
@@ -135,16 +140,6 @@ export class GlazeChrome
         }
 
         (win as unknown as WindowController).rectangle = {x, y, width, height};
-    }
-
-    private findChild(root: IWindow | null, name: string): IWindow | null
-    {
-        if(!root || root.disposed)
-        {
-            return null;
-        }
-
-        return (root as unknown as { findChildByName(n: string): IWindow | null }).findChildByName(name);
     }
 
     public dispose(): void

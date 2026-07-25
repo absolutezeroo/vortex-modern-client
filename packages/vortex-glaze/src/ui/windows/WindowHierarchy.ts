@@ -5,9 +5,11 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowTreeInspector} from '@core/window/debugger';
 import type {IWindowDebugNode} from '@core/window/debugger';
 import {EditorEvents, type EditorState} from '../../state/EditorState';
+import {slotsOf} from '../LayoutSlots';
+
+const ROW = slotsOf('glaze_hierarchy_row_xml');
 
 interface IListLike { addListItem(item: IWindow): IWindow; destroyListItems(): void; }
-interface IFinder { findChildByName(n: string): IWindow | null; }
 interface IToggle { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }
 
 const SELECTED_COLOR = 0xffef9a9a; // Glaze's pink selection tint
@@ -97,16 +99,15 @@ export class WindowHierarchy
             return;
         }
 
-        const finder = row as unknown as IFinder;
         const rc = row as unknown as WindowController;
         const hasChildren = node.children.length > 0;
         const collapsed = this._collapsed.has(node.window);
         const shift = depth * INDENT;
 
-        this.setX(finder.findChildByName('glaze_row_vis'), 4 + shift);
-        this.setX(finder.findChildByName('glaze_row_twisty'), 26 + shift);
+        this.setX(ROW.find(row, 'glaze_row_vis'), 4 + shift);
+        this.setX(ROW.find(row, 'glaze_row_twisty'), 26 + shift);
 
-        const labelEl = finder.findChildByName('glaze_row_label') as unknown as (WindowController & { text: string }) | null;
+        const labelEl = ROW.findAs<WindowController & { text: string }>(row, 'glaze_row_label');
 
         if(labelEl)
         {
@@ -117,15 +118,10 @@ export class WindowHierarchy
             labelEl.x = 42 + shift;
         }
 
-        const arrow = finder.findChildByName('glaze_row_arrow') as unknown as { text: string } | null;
-
-        if(arrow)
-        {
-            arrow.text = hasChildren ? (collapsed ? '▸' : '▾') : '';
-        }
+        ROW.setText(row, 'glaze_row_arrow', hasChildren ? (collapsed ? '▸' : '▾') : '');
 
         // Visibility checkbox.
-        const vis = finder.findChildByName('glaze_row_vis') as unknown as IToggle | null;
+        const vis = ROW.findAs<IToggle>(row, 'glaze_row_vis');
 
         if(vis)
         {
@@ -135,7 +131,7 @@ export class WindowHierarchy
         }
 
         // Twisty collapses/expands (its own procedure, so it doesn't select).
-        const twisty = finder.findChildByName('glaze_row_twisty') as unknown as WindowController | null;
+        const twisty = ROW.findAs<WindowController>(row, 'glaze_row_twisty');
 
         if(twisty && hasChildren)
         {

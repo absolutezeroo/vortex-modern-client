@@ -4,9 +4,14 @@ import {TYPE_CODE_TO_NAME} from '@core/window/enum/WindowType';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import {EditorEvents, type EditorState} from '../../state/EditorState';
 import {GLAZE_THEMES} from '../../ops/ThemeOps';
+import {slotsOf} from '../LayoutSlots';
+
+const GROUP_ROW = slotsOf('glaze_prop_group_xml');
+const INPUT_ROW = slotsOf('glaze_prop_input_xml');
+const CHECK_ROW = slotsOf('glaze_prop_check_xml');
+const DROP_ROW = slotsOf('glaze_prop_drop_xml');
 
 interface IListLike { addListItem(item: IWindow): IWindow; destroyListItems(): void; }
-interface IFinder { findChildByName(n: string): IWindow | null; }
 interface IInputWidget { text: string; addEventListener(type: string, cb: () => void): void; }
 interface ICheckWidget { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }
 interface IDropWidget { populate(items: unknown[]): void; selection: number; addEventListener(type: string, cb: () => void): void; }
@@ -156,11 +161,9 @@ export class WindowProperty
 
         if(!row) return;
 
-        const finder = row as unknown as IFinder;
-        const labelEl = finder.findChildByName('glaze_drow_label');
-        const drop = finder.findChildByName('glaze_drow_drop') as unknown as IDropWidget | null;
+        const drop = DROP_ROW.findAs<IDropWidget>(row, 'glaze_drow_drop');
 
-        if(labelEl) (labelEl as unknown as { text: string }).text = label;
+        DROP_ROW.setText(row, 'glaze_drow_label', label);
 
         if(drop)
         {
@@ -225,9 +228,9 @@ export class WindowProperty
     private group(title: string): void
     {
         const row = this._wm.buildWidgetLayout('glaze_prop_group_xml');
-        const label = row ? (row as unknown as IFinder).findChildByName('glaze_group_label') : null;
 
-        if(label) (label as unknown as { text: string }).text = title;
+        GROUP_ROW.setText(row, 'glaze_group_label', title);
+
         if(row) this._list.addListItem(row);
     }
 
@@ -237,13 +240,10 @@ export class WindowProperty
 
         if(!row) return;
 
-        const finder = row as unknown as IFinder;
-        const labelEl = finder.findChildByName('glaze_prow_label');
-        const typeEl = finder.findChildByName('glaze_prow_type');
-        const input = finder.findChildByName('glaze_prow_input') as unknown as IInputWidget | null;
+        const input = INPUT_ROW.findAs<IInputWidget>(row, 'glaze_prow_input');
 
-        if(labelEl) (labelEl as unknown as { text: string }).text = label;
-        if(typeEl) (typeEl as unknown as { text: string }).text = type;
+        INPUT_ROW.setText(row, 'glaze_prow_label', label);
+        INPUT_ROW.setText(row, 'glaze_prow_type', type);
 
         if(input)
         {
@@ -275,11 +275,9 @@ export class WindowProperty
 
         if(!row) return;
 
-        const finder = row as unknown as IFinder;
-        const labelEl = finder.findChildByName('glaze_crow_label');
-        const check = finder.findChildByName('glaze_crow_check') as unknown as ICheckWidget | null;
+        const check = CHECK_ROW.findAs<ICheckWidget>(row, 'glaze_crow_check');
 
-        if(labelEl) (labelEl as unknown as { text: string }).text = label;
+        CHECK_ROW.setText(row, 'glaze_crow_label', label);
 
         if(check)
         {
@@ -302,11 +300,9 @@ export class WindowProperty
 
         if(!row) return;
 
-        const finder = row as unknown as IFinder;
-        const labelEl = finder.findChildByName('glaze_drow_label');
-        const drop = finder.findChildByName('glaze_drow_drop') as unknown as IDropWidget | null;
+        const drop = DROP_ROW.findAs<IDropWidget>(row, 'glaze_drow_drop');
 
-        if(labelEl) (labelEl as unknown as { text: string }).text = label;
+        DROP_ROW.setText(row, 'glaze_drow_label', label);
 
         if(drop)
         {

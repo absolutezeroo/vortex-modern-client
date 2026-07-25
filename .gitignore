@@ -11,6 +11,8 @@ dist/
 tools/
 !packages/vortex-client/tools/
 !packages/vortex-client/tools/*.mjs
+!packages/vortex-glaze/tools/
+!packages/vortex-glaze/tools/*.mjs
 *.bundle
 *.log
 .DS_Store

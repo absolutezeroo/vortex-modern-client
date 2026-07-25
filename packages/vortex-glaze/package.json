@@ -5,7 +5,8 @@
   "description": "Live window-layout editor for Vortex (Glaze-style)",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "gen:slots": "node tools/gen-layout-slots.mjs",
+    "build": "node tools/gen-layout-slots.mjs && tsc && vite build",
     "preview": "vite preview",
     "bundle": "node ../vortex-client/tools/bundle-assets.mjs"
   },

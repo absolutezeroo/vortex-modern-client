@@ -4,9 +4,12 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {TYPE_NAME_TO_CODE} from '@core/window/enum/WindowType';
 import {type EditorState} from '../../state/EditorState';
+import {slotsOf} from '../LayoutSlots';
+
+const GALLERY = slotsOf('glaze_gallery_xml');
+const GALLERY_ROW = slotsOf('glaze_gallery_row_xml');
 
 interface IContainerLike { addChild(child: IWindow): IWindow; }
-interface IFinder { findChildByName(n: string): IWindow | null; }
 interface IListLike { addListItem(item: IWindow): IWindow; destroyListItems(): void; }
 
 const GALLERY_LAYER = 3;
@@ -69,9 +72,9 @@ export class WindowGallery
         this._frame = frame;
         this._state.modalOpen = true;
 
-        const list = (frame as unknown as IFinder).findChildByName('glaze_gallery_list');
+        const list = GALLERY.findAs<IListLike>(frame, 'glaze_gallery_list');
 
-        if(list) this.populate(list as unknown as IListLike);
+        if(list) this.populate(list);
     }
 
     private populate(list: IListLike): void
@@ -88,12 +91,11 @@ export class WindowGallery
 
             if(!row) continue;
 
-            const finder = row as unknown as IFinder;
-            const img = finder.findChildByName('glaze_grow_img');
-            const label = finder.findChildByName('glaze_grow_label');
+            const img = GALLERY_ROW.findAs<{ assetUri: string }>(row, 'glaze_grow_img');
 
-            if(img) (img as unknown as { assetUri: string }).assetUri = name;
-            if(label) (label as unknown as { text: string }).text = name;
+            if(img) img.assetUri = name;
+
+            GALLERY_ROW.setText(row, 'glaze_grow_label', name);
 
             (row as unknown as WindowController).procedure = (event: WindowEvent): void =>
             {
