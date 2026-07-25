@@ -7,6 +7,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
 import {TextStyleManager} from '../utils/TextStyleManager';
 import {resolveLocalizationTokens} from '../utils/WindowParser';
 import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
+import {GlyphAtlas} from '../utils/GlyphAtlas';
 
 /**
  * Controller for label windows.
@@ -31,6 +32,23 @@ export class TextLabelController extends WindowController implements ILabelWindo
     private _marginBottom: number = 0;
     private _spacing: number = 0;
     private _leading: number = 0;
+
+    /**
+	 * Flash text-quality settings for this label's shared TextField.
+	 *
+	 * AS3 does not store these on the controller: `TextFieldCache.getTextField()`
+	 * stamps them onto the pooled `flash.text.TextField` from the resolved
+	 * style, and the controller's getters read them straight back off it
+	 * (TextLabelController.as l.50, 95, 129, 174). This port has no pooled
+	 * TextField, so the same four values live here instead — with AS3's own
+	 * defaults, which is why gridFitType starts at "pixel"
+	 * (TextFieldCache.as l.52) rather than being style-driven.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextField()
+    private _antiAliasType: string = 'advanced';
+    private _gridFitType: string = 'pixel';
+    private _sharpness: number = 0;
+    private _thickness: number = 0;
 
     constructor(
         name: string,
@@ -266,6 +284,14 @@ export class TextLabelController extends WindowController implements ILabelWindo
                         if(resolved.etchingPosition != null) this._etchingPosition = resolved.etchingPosition;
                         if(resolved.letterSpacing != null) this._spacing = resolved.letterSpacing;
                         if(resolved.leading != null) this._leading = resolved.leading;
+
+                        // AS3: TextFieldCache.as::getTextField() l.51-54 —
+                        // anything but "normal" is coerced to "advanced", and
+                        // sharpness/thickness fall back to 0 when the style
+                        // leaves them unset.
+                        this._antiAliasType = resolved.antiAliasType === 'normal' ? 'normal' : 'advanced';
+                        this._sharpness = resolved.sharpness ?? 0;
+                        this._thickness = resolved.thickness ?? 0;
                     }
 
                     break;
@@ -311,6 +337,30 @@ export class TextLabelController extends WindowController implements ILabelWindo
 
         super.properties = value;
         this.refresh();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get antiAliasType()
+    public get antiAliasType(): string
+    {
+        return this._antiAliasType;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get gridFitType()
+    public get gridFitType(): string
+    {
+        return this._gridFitType;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get sharpness()
+    public get sharpness(): number
+    {
+        return this._sharpness;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::get thickness()
+    public get thickness(): number
+    {
+        return this._thickness;
     }
 
     private static getMeasureCtx(): OffscreenCanvasRenderingContext2D
@@ -364,8 +414,16 @@ export class TextLabelController extends WindowController implements ILabelWindo
         fontStr += `${this._fontSize}px ${quoteFontFamilyList(this._fontFace || 'Ubuntu, Arial, sans-serif')}`;
         ctx.font = fontStr;
 
-        const metrics = ctx.measureText(this._text);
-        const measuredWidth = Math.ceil(metrics.width + (Math.max(0, this._text.length - 1) * this._spacing));
+        // Width has to come from whatever will actually draw the glyphs: the
+        // atlas rounds advances under gridFitType="pixel", so measuring with
+        // ctx.measureText() here would auto-size the label to a width the
+        // renderer never uses.
+        const atlas = GlyphAtlas.handles(this._antiAliasType)
+            ? GlyphAtlas.get(fontStr, this._fontSize, this._antiAliasType, this._sharpness, this._thickness, this._gridFitType)
+            : null;
+        const measuredWidth = atlas
+            ? Math.ceil(atlas.measure(this._text, this._spacing))
+            : Math.ceil(ctx.measureText(this._text).width + (Math.max(0, this._text.length - 1) * this._spacing));
         const measuredHeight = measureFontLineHeight(ctx, this._fontSize, this._leading);
 
         this._textWidth = measuredWidth;

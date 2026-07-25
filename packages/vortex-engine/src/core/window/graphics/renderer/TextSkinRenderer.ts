@@ -1,6 +1,7 @@
 import type {IWindow} from '../../IWindow';
 import {WindowType} from '../../enum/WindowType';
 import {buildCanvasFontString} from '../../utils/CanvasFontString';
+import {GlyphAtlas} from '../../utils/GlyphAtlas';
 import {SkinRenderer} from './SkinRenderer';
 
 /**
@@ -10,7 +11,7 @@ import {SkinRenderer} from './SkinRenderer';
  * same members off it; this port has no equivalent runtime cast, so the shape
  * is spelled out here.
  */
-interface ITextWindowShape
+export interface ITextWindowShape
 {
     textColor?: number;
     fontSize?: number;
@@ -22,6 +23,17 @@ interface ITextWindowShape
     wordWrap?: boolean;
     etchingColor?: number;
     etchingPosition?: string;
+    // AS3: TextController.as::get antiAliasType() / get sharpness() /
+    // get thickness() / get gridFitType() — Flash's four text-quality knobs.
+    // Inert against ctx.fillText(); consumed by GlyphAtlas at bake time.
+    antiAliasType?: string;
+    _antiAliasType?: string;
+    sharpness?: number;
+    _sharpness?: number;
+    thickness?: number;
+    _thickness?: number;
+    gridFitType?: string;
+    _gridFitType?: string;
     autoSize?: string;
     _autoSize?: string;
     spacing?: number;
@@ -77,6 +89,24 @@ export class TextSkinRenderer extends SkinRenderer
     // AS3: sources/win63_version/core/window/components/TextController.as::_field
     protected static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
 
+    /**
+	 * Glyph atlas for the text currently being drawn, resolved once per
+	 * `draw()` and consumed by the line-drawing helpers below.
+	 *
+	 * TS-only, and a transient rather than state: skin renderers are shared
+	 * singletons, but `draw()` is synchronous and never re-entered, so the
+	 * atlas only has to survive the call it was resolved in. Null means the
+	 * atlas is disabled and the helpers fall back to `ctx.fillText()`.
+	 */
+    protected _atlas: GlyphAtlas | null = null;
+
+    /**
+	 * The window's Flash text-quality settings, kept alongside `_atlas` so the
+	 * per-run path can resolve sibling atlases (bold/italic runs) with the same
+	 * quality.
+	 */
+    protected _textQuality: { aa: string; sharpness: number; thickness: number; gridFit: string } | null = null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/TextSkinRenderer.as::isStateDrawable()
     public override isStateDrawable(state: number): boolean
     {
@@ -122,6 +152,11 @@ export class TextSkinRenderer extends SkinRenderer
         ctx.font = fontStr;
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.textBaseline = 'top';
+
+        // Resolve the atlas before the first measurement: with
+        // gridFitType="pixel" it rounds advances, so measuring any other way
+        // would disagree with what gets drawn.
+        this.useAtlas(tw, fontStr, fontSize);
 
         // Margins from TextController
         const marginL = tw.marginLeft ?? tw._marginLeft ?? 2;
@@ -373,6 +408,50 @@ export class TextSkinRenderer extends SkinRenderer
         return baseX;
     }
 
+    /**
+	 * Resolves the glyph atlas for the window being drawn, and the quality
+	 * settings its sibling atlases (bold/italic format runs) must share.
+	 *
+	 * The four settings are Flash's, read off the window exactly as the rest of
+	 * draw() reads its style: AS3 hands them to `flash.text.TextField`, which
+	 * rasterises accordingly (`TextController.as::setAntiAliasType()` and
+	 * friends). Their defaults are AS3's too — `advanced` + `pixel`, sharpness
+	 * and thickness 0 (`TextController.as` ctor, l.82-90, and the style
+	 * resolution at l.554-566).
+	 */
+    // TS-only: no AS3 counterpart — Flash's TextField owns this step.
+    protected useAtlas(tw: ITextWindowShape, fontString: string, fontSize: number): void
+    {
+        const aa = tw.antiAliasType ?? tw._antiAliasType ?? 'advanced';
+
+        if(!GlyphAtlas.handles(aa))
+        {
+            this._atlas = null;
+            this._textQuality = null;
+
+            return;
+        }
+
+        this._textQuality = {
+            aa,
+            sharpness: tw.sharpness ?? tw._sharpness ?? 0,
+            thickness: tw.thickness ?? tw._thickness ?? 0,
+            gridFit: tw.gridFitType ?? tw._gridFitType ?? 'pixel',
+        };
+
+        this._atlas = this.atlasFor(fontString, fontSize);
+    }
+
+    // TS-only: resolves a sibling atlas under the current quality settings.
+    protected atlasFor(fontString: string, fontSize: number): GlyphAtlas | null
+    {
+        const quality = this._textQuality;
+
+        if(!quality || !GlyphAtlas.handles(quality.aa)) return null;
+
+        return GlyphAtlas.get(fontString, fontSize, quality.aa, quality.sharpness, quality.thickness, quality.gridFit);
+    }
+
     // TS-only: Flash's TextField measures itself; Canvas2D has to be asked.
     protected measureTextWidth(
         ctx: OffscreenCanvasRenderingContext2D,
@@ -383,6 +462,13 @@ export class TextSkinRenderer extends SkinRenderer
         if(!text)
         {
             return 0;
+        }
+
+        // Must come from the atlas when one is in use: it is the thing that
+        // decides the advances actually walked in drawText().
+        if(this._atlas)
+        {
+            return this._atlas.measure(text, spacing);
         }
 
         const width = ctx.measureText(text).width;
@@ -442,6 +528,25 @@ export class TextSkinRenderer extends SkinRenderer
 
         const resolvedClipY = clipY ?? y - 2;
         const resolvedClipHeight = clipHeight ?? 4096;
+
+        if(this._atlas)
+        {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+            ctx.clip();
+
+            // With no spacing the clip alone bounds the line, exactly as the
+            // fillText path below does; with spacing the loop stops at the box
+            // edge instead, which is the behaviour that path already had.
+            this._atlas.drawText(
+                ctx, text, x, y, ctx.fillStyle as string, spacing,
+                spacing === 0 ? Number.POSITIVE_INFINITY : x + maxWidth
+            );
+            ctx.restore();
+
+            return;
+        }
 
         if(spacing === 0)
         {
@@ -541,14 +646,19 @@ export class TextSkinRenderer extends SkinRenderer
                 currentFontStr = runFontStr;
             }
 
-            const charWidth = ctx.measureText(char).width;
+            // A bold/italic run is a different face, so it is a different
+            // atlas — resolved under the same quality settings as the base one.
+            const runAtlas = this._atlas ? this.atlasFor(runFontStr, fontSize) : null;
+            const charWidth = runAtlas ? runAtlas.measure(char, 0) : ctx.measureText(char).width;
 
             if(drawX + charWidth > maxX) break;
 
             const fillStyle = (run?.format.color != null) ? this.colorToRgbString(run.format.color) : baseFillStyle;
 
             ctx.fillStyle = fillStyle;
-            ctx.fillText(char, drawX, y);
+
+            if(runAtlas) runAtlas.drawText(ctx, char, drawX, y, fillStyle, 0);
+            else ctx.fillText(char, drawX, y);
 
             if(run?.format.underline)
             {

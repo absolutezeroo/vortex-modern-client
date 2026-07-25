@@ -1,5 +1,6 @@
 import type {IWindow} from '../../IWindow';
 import {buildCanvasFontString} from '../../utils/CanvasFontString';
+import type {ITextWindowShape} from './TextSkinRenderer';
 import {TextSkinRenderer} from './TextSkinRenderer';
 
 /**
@@ -145,8 +146,15 @@ export class LabelRenderer extends TextSkinRenderer
         const hasEtching = etchColor !== 0 && ((etchColor >>> 24) & 0xFF) > 0;
         const offset = hasEtching ? LabelRenderer.ETCHING_POSITION[lw.etchingPosition ?? ''] : null;
 
+        const fontStr = buildCanvasFontString(fontSize, fontFace, isBold, isItalic);
+
+        // drawVertical() bypasses super.draw(), so it has to resolve its own
+        // atlas — otherwise drawTextLine() would reuse whatever the previous
+        // window left behind.
+        this.useAtlas(window as unknown as ITextWindowShape, fontStr, fontSize);
+
         ctx.save();
-        ctx.font = buildCanvasFontString(fontSize, fontFace, isBold, isItalic);
+        ctx.font = fontStr;
         ctx.textBaseline = 'top';
 
         // AS3 draws into the window's own buffer; this port draws into the

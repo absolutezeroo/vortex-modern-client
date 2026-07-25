@@ -8,6 +8,7 @@ import {PropertyStruct} from '../utils/PropertyStruct';
 import {TextStyleManager} from '../utils/TextStyleManager';
 import {TextMargins} from '../utils/TextMargins';
 import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
+import {GlyphAtlas} from '../utils/GlyphAtlas';
 
 type MeasureContext = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
@@ -315,6 +316,60 @@ export class TextController extends WindowController implements ITextWindow
     public set etchingPosition(value: string)
     {
         this._etchingPosition = value;
+        this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get antiAliasType()
+    public get antiAliasType(): string
+    {
+        return this._antiAliasType;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set antiAliasType()
+    // AS3 normalises anything that is not "normal" to "advanced"
+    // (TextController.as::setAntiAliasType()).
+    public set antiAliasType(value: string)
+    {
+        this._antiAliasType = value === 'normal' ? 'normal' : 'advanced';
+        this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get gridFitType()
+    public get gridFitType(): string
+    {
+        return this._gridFitType;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set gridFitType()
+    public set gridFitType(value: string)
+    {
+        this._gridFitType = value;
+        this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get sharpness()
+    public get sharpness(): number
+    {
+        return this._sharpness;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set sharpness()
+    public set sharpness(value: number)
+    {
+        this._sharpness = value;
+        this.refreshTextImage();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get thickness()
+    public get thickness(): number
+    {
+        return this._thickness;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::set thickness()
+    public set thickness(value: number)
+    {
+        this._thickness = value;
         this.refreshTextImage();
     }
 
@@ -1230,6 +1285,30 @@ export class TextController extends WindowController implements ITextWindow
         return out;
     }
 
+    /**
+	 * The atlas this field's text is drawn through, or null when the atlas is
+	 * disabled.
+	 *
+	 * Measurement has to come from the same place as drawing: with
+	 * `gridFitType = "pixel"` the atlas rounds advances to whole pixels, so a
+	 * field measured with `ctx.measureText()` and drawn with the atlas would
+	 * auto-size to the wrong width.
+	 */
+    // TS-only: no AS3 counterpart — Flash's TextField both measures and draws.
+    protected getAtlas(): GlyphAtlas | null
+    {
+        if(!GlyphAtlas.handles(this._antiAliasType)) return null;
+
+        return GlyphAtlas.get(
+            this.buildCanvasFontString(),
+            this._fontSize,
+            this._antiAliasType,
+            this._sharpness,
+            this._thickness,
+            this._gridFitType
+        );
+    }
+
     protected measureLineWidth(text: string): number
     {
         if(typeof text !== 'string')
@@ -1238,6 +1317,10 @@ export class TextController extends WindowController implements ITextWindow
         }
 
         if(!text) return 0;
+
+        const atlas = this.getAtlas();
+
+        if(atlas) return atlas.measure(text, this._spacing);
 
         const ctx = TextController.getMeasureContext();
 
