@@ -606,12 +606,19 @@ export class VortexApp
             {
                 const name = layout.name;
 
-                if(typeof name === 'string' && name.length > 0) 
+                if(typeof name === 'string' && name.length > 0)
                 {
                     vortex.windowManager.registerWidgetLayout(name, layout.xml);
                 }
             }
         }
+
+        // 3b. Register Vortex's own authored layouts (src/vortex-layouts/*.xml). These are not from
+        // the dump and deliberately do not live in src/assets/window-layouts/, which is gitignored
+        // and rebuilt by tools/build-window-assets.mjs — a file placed there would be wiped on the
+        // next asset build. Registered under their file basename, the same way vortex-glaze
+        // registers its editor layouts.
+        this.registerVortexLayouts(vortex);
 
         // 4. Wait for AS3 authentication before creating the visible client UI.
         const ssoTicket = window.VortexConfig?.connection?.ssoTicket;
@@ -663,9 +670,32 @@ export class VortexApp
     }
 
     /**
+     * Registers Vortex's own authored window layouts (src/vortex-layouts/*.xml) under their file
+     * basename, bundled at build time via import.meta.glob.
+     *
+     * These are not Habbo assets: they belong to Vortex-only tools (the furni editor) and have no
+     * counterpart in the dump.
+     */
+    private registerVortexLayouts(vortex: typeof Vortex.instance): void
+    {
+        const modules = import.meta.glob('./vortex-layouts/*.xml', {
+            query: '?raw',
+            import: 'default',
+            eager: true
+        }) as Record<string, string>;
+
+        for(const [path, xml] of Object.entries(modules))
+        {
+            const name = path.split('/').pop()!.replace(/\.xml$/, '');
+
+            vortex.windowManager.registerWidgetLayout(name, xml);
+        }
+    }
+
+    /**
      * Disposes the application and cleans up resources.
      */
-    public dispose(): void 
+    public dispose(): void
     {
         if(this._disposed) return;
 

@@ -95,6 +95,7 @@ import type {PetColorResult} from './PetColorResult';
 import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
+import {ClickFurniMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/ClickFurniMessageComposer';
 import {UseFurnitureMessageComposer} from '@habbo/communication/messages/outgoing/room/furniture/UseFurnitureMessageComposer';
 import {
     PlaceObjectMessageComposer
@@ -213,9 +214,14 @@ export class RoomEngine extends Component implements IRoomEngine,
     // map rebuilds. The port caches the tile coords (all handleObjectMove/Place need).
     private _moveMouseEventCache: Vector3d | null = null;
     private _selectedObject: { roomId: number; id: number; category: number } | null = null;
-    // Last click/doubleClick eventId already delivered to a room object, so a click
-    // that alpha-hits several stacked objects only reaches the frontmost one.
-    private _lastClickEventId: string = '';
+    // AS3: _SafeCls_1821.as::processRoomCanvasMouseEvent() dedups per (category-bucket, event type):
+    // getMouseEventId(category, type) keyed on BOTH the bucketed category and the type. The key is
+    // `${bucket}_${type}`; the value is the last eventId already delivered for that slot, so a click
+    // that alpha-hits several stacked same-category objects only reaches the frontmost, WITHOUT a
+    // 'click' suppressing a same-frame 'doubleClick' (separate slots) — that separation is what keeps
+    // double-click-to-use working. An earlier port used a single field for all types/categories,
+    // which merged those slots and swallowed fast double-clicks (and any second-category object).
+    private _mouseEventIds: Map<string, string> = new Map<string, string>();
 
     constructor(context: IContext, assetLibrary: IAssetLibrary | null = null) 
     {
@@ -3605,21 +3611,38 @@ export class RoomEngine extends Component implements IRoomEngine,
             return;
         }
 
-        // A click that hits stacked furniture is dispatched once per overlapping
-        // object, front-to-back (their sprites alpha-hit at the same pixel). Only the
-        // frontmost should act on it, so deliver the click to the first object carrying
-        // this click's eventId and skip the occluded ones behind it. Every sprite in one
-        // mouse event shares an eventId (bumped once per frame in the canvas update), so
-        // consecutive clicks are not skipped. Without this, clicking the top of a stack
-        // also triggered the furniture underneath.
-        if(event.type === 'click' || event.type === 'doubleClick')
+        // Per-(bucket, type) dedup, ported from AS3 processRoomCanvasMouseEvent (getMouseEventId).
+        // A click that alpha-hits several stacked SAME-category objects reaches only the frontmost
+        // (they share one bucket+type slot), while:
+        //  - the room floor plane (category 0) sits in its OWN bucket, so its tile click still fires
+        //    alongside a furni click on the same pixel — that back-to-front floor click is how you
+        //    walk to a tile partly hidden behind a tall walkable furni (regression fixed here);
+        //  - 'click' and 'doubleClick' are SEPARATE slots, so a click never suppresses a same-frame
+        //    double-click, keeping double-click-to-use (FurnitureLogic.useObject) working.
+        // Category bucketing mirrors AS3: floor=0 keeps its own slot; everything else collapses to
+        // -2 except game users (100) while a game is active. AS3's clickThroughFurni/Users early
+        // return has no port equivalent (no such flags on the Turbo client) — a documented omission.
+        const category = this.getRoomObjectCategory(object.getType());
+        let bucket = category;
+
+        if(category !== 0)
         {
-            if(event.eventId === this._lastClickEventId)
+            bucket = (this.getActiveRoomIsPlayingGame() && category === 100) ? 100 : -2;
+        }
+
+        const dedupKey = `${bucket}_${event.type}`;
+
+        if(this._mouseEventIds.get(dedupKey) === event.eventId)
+        {
+            if(event.type === 'click' || event.type === 'doubleClick'
+                || event.type === 'mouseDown' || event.type === 'mouseUp' || event.type === 'mouseMove')
             {
                 return;
             }
-
-            this._lastClickEventId = event.eventId;
+        }
+        else if(event.eventId !== '')
+        {
+            this._mouseEventIds.set(dedupKey, event.eventId);
         }
 
         const handler = object.getMouseHandler();
@@ -5118,7 +5141,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE_TO" case
                 this.confirmObjectMove(this._activeRoomId);
             }
-            else if(this._connection) 
+            else if(this._connection)
             {
                 this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
             }
@@ -5135,11 +5158,35 @@ export class RoomEngine extends Component implements IRoomEngine,
      */
     private handleObjectMouseEvent(event: RoomObjectMouseEvent): void
     {
-        // AS3: _SafeCls_1821.as::handleRoomObjectMouseDown() — ALT-drag move starts on mouse-down,
-        // routed separately from the click path.
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseEvent() switches on ALL five object event
+        // types. The port previously handled only DOWN and CLICK and early-returned on the rest,
+        // which silently dropped MOVE/ENTER/LEAVE — so hovering a walkable furni never snapped the
+        // tile cursor onto its surface, and REOE_MOUSE_ENTER/LEAVE were never emitted (no other
+        // emit site exists). Route them faithfully.
         if(event.type === RoomObjectMouseEvent.ROE_MOUSE_DOWN)
         {
             this.handleObjectMouseDown(event);
+
+            return;
+        }
+
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
+        {
+            this.handleRoomObjectMouseMove(event);
+
+            return;
+        }
+
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_ENTER)
+        {
+            this.handleRoomObjectMouseEnter(event);
+
+            return;
+        }
+
+        if(event.type === RoomObjectMouseEvent.ROE_MOUSE_LEAVE)
+        {
+            this.handleRoomObjectMouseLeave(event);
 
             return;
         }
@@ -5275,7 +5322,229 @@ export class RoomEngine extends Component implements IRoomEngine,
             return;
         }
 
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() — a plain (unmodified) furni click
+        // notifies the server via ClickFurni (wired "click furni" triggers, click interactions),
+        // then, in where-you-click-where-you-go mode, walks the avatar onto the furni if it is
+        // walkable. clickRoomObject() self-guards on modifiers; handleMoveTargetFurni() only walks
+        // for a walkable floor furni (getActiveSurfaceLocation returns null otherwise), so both are
+        // no-ops for avatars, pets and decorative furniture.
+        this.clickRoomObject(event);
+
+        if(this.isWhereYouClickWhereYouGo())
+        {
+            this.handleMoveTargetFurni(event);
+        }
+
         this.selectRoomObject(this._activeRoomId, objId, category);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseMove()
+    // Object-hover branch only (tile-hover is handled by handleTileMouseEvent). Snaps the tile
+    // cursor onto the surface tile of a walkable floor furni under the cursor, so hovering a rug or
+    // any stand/sit/lay-able furni shows the same highlight you get over bare floor.
+    private handleRoomObjectMouseMove(event: RoomObjectMouseEvent): void
+    {
+        if(this._activeRoomId < 0) return;
+
+        const obj = event.object;
+
+        if(obj === null || obj.getId() === -1) return;
+
+        const tileCursor = this.getTileCursor(this._activeRoomId);
+
+        if(tileCursor === null || tileCursor.getEventHandler() === null) return;
+
+        if(!this.isWhereYouClickWhereYouGo()) return;
+
+        const category = this.getRoomObjectCategory(obj.getType());
+        const cursorUpdate = this.handleMouseOverObject(category, this._activeRoomId, event);
+
+        // AS3 also processes a null update (hiding the cursor) for a non-walkable furni; the port's
+        // tile-cursor handler is not null-tolerant, so leaving the cursor untouched there is the
+        // safe, near-identical behaviour (the highlight simply doesn't move onto the furni).
+        if(cursorUpdate !== null)
+        {
+            tileCursor.getEventHandler()!.processUpdateMessage(cursorUpdate);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleMouseOverObject()
+    // For a floor furni (category 10) whose surface the cursor is over, returns the tile-cursor
+    // update that highlights that surface tile. Reuses getActiveSurfaceLocation (the same projection
+    // the click path uses), so hover and click agree on which tile a walkable furni resolves to.
+    private handleMouseOverObject(category: number, roomId: number, event: RoomObjectMouseEvent): RoomObjectTileCursorUpdateMessage | null
+    {
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE || event.object === null)
+        {
+            return null;
+        }
+
+        const furni = this.getRoomObject(roomId, event.object.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
+        const surface = this.getActiveSurfaceLocation(furni, event);
+
+        if(furni === null || surface === null) return null;
+
+        if(this.getFurniStackingHeightMap(roomId) === null) return null;
+
+        return new RoomObjectTileCursorUpdateMessage(
+            new Vector3d(surface.x, surface.y, furni.getLocation().z),
+            surface.z,
+            true,
+            event.eventId
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseEnter()
+    // Emits REOE_MOUSE_ENTER so hover-driven UI can react. The AS3 category-100 (avatar) branch is
+    // game-mode only; the Turbo client has no games, so only the event dispatch is ported.
+    private handleRoomObjectMouseEnter(event: RoomObjectMouseEvent): void
+    {
+        const obj = event.object;
+
+        if(obj === null) return;
+
+        const category = this.getRoomObjectCategory(obj.getType());
+
+        this.events.emit(
+            RoomEngineObjectEvent.REOE_MOUSE_ENTER,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_MOUSE_ENTER, this._activeRoomId, obj.getId(), category)
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseLeave()
+    // Emits REOE_MOUSE_LEAVE. The AS3 category-100 branch (clearing the game tile cursor) is
+    // game-mode only and omitted; only the event dispatch is ported.
+    private handleRoomObjectMouseLeave(event: RoomObjectMouseEvent): void
+    {
+        const obj = event.object;
+
+        if(obj === null) return;
+
+        const category = this.getRoomObjectCategory(obj.getType());
+
+        this.events.emit(
+            RoomEngineObjectEvent.REOE_MOUSE_LEAVE,
+            new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_MOUSE_LEAVE, this._activeRoomId, obj.getId(), category)
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::clickRoomObject()
+    // Sends the plain-click notification to the server: floor furni by object id, wall furni by its
+    // negation (the server tells the two apart by sign). Suppressed when any modifier is held, so a
+    // rotate/pickup/move gesture never doubles as a click.
+    private clickRoomObject(event: RoomObjectMouseEvent): void
+    {
+        if(event.altKey || event.ctrlKey || event.shiftKey) return;
+
+        const obj = event.object;
+
+        if(!obj || this._connection === null) return;
+
+        const category = this.findObjectCategory(this._activeRoomId, obj);
+
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
+        {
+            this._connection.send(new ClickFurniMessageComposer(obj.getId()));
+        }
+        else if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
+        {
+            this._connection.send(new ClickFurniMessageComposer(-obj.getId()));
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleMoveTargetFurni()
+    // Walks the avatar onto a clicked walkable floor furni (the exact surface tile under the cursor
+    // within the furni's footprint). Returns false — no walk — for non-walkable furni, which is how
+    // Habbo leaves decorative items (vitrines etc.) to be walked *behind* by clicking the floor.
+    private handleMoveTargetFurni(event: RoomObjectMouseEvent): boolean
+    {
+        const obj = event.object;
+
+        if(!obj) return false;
+
+        const furni = this.getRoomObject(this._activeRoomId, obj.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
+        const location = this.getActiveSurfaceLocation(furni, event);
+
+        if(location !== null && !this.isMoveBlocked() && this._connection !== null)
+        {
+            this._connection.send(new MoveAvatarMessageComposer(location.x, location.y));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getActiveSurfaceLocation()
+    // Projects the click into the furni's surface grid and returns the tile hit, or null if the furni
+    // is not stand/sit/lay-able or the projected tile falls outside its footprint. Pure pixel math
+    // ported verbatim from AS3 (variable roles preserved: a/b are the screen->iso projection, then
+    // split into the two tile-axis components).
+    private getActiveSurfaceLocation(obj: IRoomObject | null, event: RoomObjectMouseEvent): Vector3d | null
+    {
+        if(obj === null) return null;
+
+        const data = this.sessionDataManager?.getFloorItemDataByName(obj.getType()) ?? null;
+
+        if(data === null) return null;
+
+        if(!(data.canStandOn || data.canSitOn || data.canLayOn)) return null;
+
+        const model = obj.getModel();
+
+        if(model === null) return null;
+
+        const location = obj.getLocation();
+        const locX = location.x;
+        const locY = location.y;
+        let sizeX = model.getNumber('furniture_size_x');
+        let sizeY = model.getNumber('furniture_size_y');
+        const sizeZ = model.getNumber('furniture_size_z');
+        const direction = obj.getDirection().x;
+
+        if(direction === 90 || direction === 270)
+        {
+            const swap = sizeX;
+            sizeX = sizeY;
+            sizeY = swap;
+        }
+
+        if(sizeX < 1) sizeX = 1;
+        if(sizeY < 1) sizeY = 1;
+
+        const geometry = this.getRoomCanvasGeometry(this._activeRoomId, 1);
+
+        if(geometry === null) return null;
+
+        const scale = geometry.scale;
+        const canSit = data.canSitOn;
+        const sitOffset = canSit ? 0.5 : 0;
+        const projX = (scale / 2 + event.spriteOffsetX + event.localX) / (scale / 4);
+        const projY = (event.spriteOffsetY + event.localY + (sizeZ - sitOffset) * scale / 2) / (scale / 4);
+        const isoA = (projX + 2 * projY) / 4;
+        const isoB = (projX - 2 * projY) / 4;
+        const tileX = Math.floor(locX + isoA);
+        const tileY = Math.floor(locY - isoB + 1);
+
+        let outsideFootprint = false;
+
+        if(tileX < locX || tileX >= locX + sizeX)
+        {
+            outsideFootprint = true;
+        }
+        else if(tileY < locY || tileY >= locY + sizeY)
+        {
+            outsideFootprint = true;
+        }
+
+        const tileZ = canSit ? sizeZ - 0.5 : sizeZ;
+
+        if(!outsideFootprint)
+        {
+            return new Vector3d(tileX, tileY, tileZ);
+        }
+
+        return null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseDown()

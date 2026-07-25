@@ -9,6 +9,8 @@ import {HabboInventory} from '@habbo/inventory/HabboInventory';
 import {HabboCatalog} from '@habbo/catalog/HabboCatalog';
 import {HabboClubCenter} from '@habbo/catalog/clubcenter/HabboClubCenter';
 import {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
+import {HabboFurniEditor} from '@habbo/vortex/furnieditor/HabboFurniEditor';
+import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import {RoomEngine, RoomMessageHandler} from '@habbo/room';
 import {HabboRoomRendererFactory} from '@habbo/room/renderer/HabboRoomRendererFactory';
 import {RoomManager} from '@room/RoomManager';
@@ -74,6 +76,7 @@ import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
+import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
@@ -282,9 +285,20 @@ export class VortexMain implements IVortexMain
         return this._windowManager;
     }
 
+    private _furniEditor: HabboFurniEditor | null = null;
+
+    /**
+     * The Vortex furni editor (staff tool, not from AS3). Null until prepareCore() has run.
+     * Consumers must tolerate null and must check `canEdit` before offering any UI.
+     */
+    get furniEditor(): IHabboFurniEditor | null
+    {
+        return this._furniEditor;
+    }
+
     protected _disposed: boolean = false;
 
-    get disposed(): boolean 
+    get disposed(): boolean
     {
         return this._disposed;
     }
@@ -499,6 +513,7 @@ export class VortexMain implements IVortexMain
         this._freeFlowChat = null;
         this._toolbar = null;
         this._catalog = null;
+        this._furniEditor = null;
         this._notifications = null;
         this._groupsManager = null;
         this._tracking = null;
@@ -730,6 +745,12 @@ export class VortexMain implements IVortexMain
         // until the RoomUI->RoomDesktop plumbing is added — Bloc C).
         this._userDefinedRoomEvents = new HabboUserDefinedRoomEvents(ctx);
         ctx.attachComponent(this._userDefinedRoomEvents, [IID_HabboUserDefinedRoomEvents]);
+
+        // 12n. Furni editor (Vortex-specific, not from AS3). Attached after the window manager,
+        // which it depends on. Its own capability flag arrives during the handshake, so until the
+        // server says otherwise it stays inert and offers no UI.
+        this._furniEditor = new HabboFurniEditor(ctx);
+        ctx.attachComponent(this._furniEditor, [IID_HabboFurniEditor]);
 
         // Set PixiJS stage on room engine for rendering
         this._roomEngine.setStage(this._application!.stage);

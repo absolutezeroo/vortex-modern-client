@@ -617,6 +617,13 @@ export class FurniModel implements IFurniModel
                 groupItem.isSelected = true;
                 groupItem.selectedItemIndex = -1;
 
+                // AS3 selectFirstItem() ends with updateActionView(), which renders the selected
+                // item into the preview panel. The port omitted it, so on the data-load open path
+                // (selectFirstItem() + setViewToState(), and setViewToState() does NOT render the
+                // preview) the inventory opened with the first item selected in the model but a
+                // blank preview — no item shown.
+                this._view.updateActionView();
+
                 return groupItem;
             }
         }
@@ -1090,6 +1097,7 @@ export class FurniModel implements IFurniModel
         this.addItemToTop(groupItem);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateCategorySelection()
     private updateCategorySelection(): void
     {
         this.removeSelections();
@@ -1105,5 +1113,10 @@ export class FurniModel implements IFurniModel
         {
             this.selectFirstItem();
         }
+
+        // AS3 always renders the action view here (both branches), so re-opening the furni tab shows
+        // the selected item's preview immediately. The port selected the item but never re-rendered,
+        // so opening the inventory left the preview blank until you clicked a thumbnail.
+        this._view.updateActionView();
     }
 }

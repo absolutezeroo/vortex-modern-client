@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Furniture *definition* editor: one row of furniture_definitions, i.e. a furniture type rather than
+  a placed item.
+
+  NOT from the Habbo dump — an authored Vortex layout, registered by App.registerVortexLayouts().
+
+  Follows the glaze authored-layout vocabulary: tinted section header bars (container background
+  0xffe9e9f2 + bold il_button label), a shared label column (x=8) and field column (x=96) so inputs
+  line up, 21-high style-105 input boxes and style-100 dropmenus. The interaction (logic) and the
+  four enums are dropmenus rather than "guess the number" inputs.
+
+  Explicit Save, not per-field commit: the server rewrites the whole row at once (see
+  FurniDefinitionView).
+-->
+<layout name="vortex_furni_definition" width="372" height="485">
+  <window>
+    <frame x="0" y="0" width="372" height="485" params="32769" style="102" name="vortex_furni_definition_frame" caption="${vortex.furni_definition.title}" width_min="372">
+      <variables>
+        <var key="margin_left" value="6" type="int"/>
+        <var key="margin_top" value="26" type="int"/>
+        <var key="margin_right" value="6" type="int"/>
+        <var key="margin_bottom" value="7" type="int"/>
+      </variables>
+      <children>
+        <container x="0" y="0" width="360" height="24" params="16" style="3" name="fd_sec_identity" background="true" color="0xffe9e9f2">
+          <children>
+            <text x="8" y="5" width="344" height="16" params="16" style="3" name="fd_sec_identity_label" caption="${vortex.furni_definition.section.identity}">
+              <variables>
+                <var key="auto_size" value="left" type="String"/>
+                <var key="text_style" value="il_button" type="String"/>
+                <var key="bold" value="true" type="Boolean"/>
+              </variables>
+            </text>
+          </children>
+        </container>
+        <text x="8" y="31" width="76" height="16" params="16" style="3" name="fd_label_name" caption="${vortex.furni_definition.name}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <border x="96" y="27" width="264" height="21" params="16" style="105" name="fd_name_box">
+          <children>
+            <input x="4" y="2" width="256" height="16" params="2177" style="3" name="fd_name" tags="INPUT">
+              <variables>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <text x="8" y="57" width="76" height="16" params="16" style="3" name="fd_label_logic" caption="${vortex.furni_definition.logic}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <dropmenu x="96" y="54" width="264" height="22" params="17" style="100" name="fd_logic"/>
+        <text x="8" y="83" width="44" height="16" params="16" style="3" name="fd_label_sprite" caption="${vortex.furni_definition.sprite}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <border x="56" y="79" width="60" height="21" params="16" style="105" name="fd_sprite_box">
+          <children>
+            <input x="4" y="2" width="52" height="16" params="2177" style="3" name="fd_sprite" tags="INPUT">
+              <variables>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <text x="130" y="83" width="52" height="16" params="16" style="3" name="fd_label_product" caption="${vortex.furni_definition.product}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <dropmenu x="186" y="80" width="174" height="22" params="17" style="100" name="fd_product"/>
+        <text x="8" y="109" width="76" height="16" params="16" style="3" name="fd_label_category" caption="${vortex.furni_definition.category}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <dropmenu x="96" y="106" width="264" height="22" params="17" style="100" name="fd_category"/>
+        <container x="0" y="132" width="360" height="24" params="16" style="3" name="fd_sec_dimensions" background="true" color="0xffe9e9f2">
+          <children>
+            <text x="8" y="5" width="344" height="16" params="16" style="3" name="fd_sec_dimensions_label" caption="${vortex.furni_definition.section.dimensions}">
+              <variables>
+                <var key="auto_size" value="left" type="String"/>
+                <var key="text_style" value="il_button" type="String"/>
+                <var key="bold" value="true" type="Boolean"/>
+              </variables>
+            </text>
+          </children>
+        </container>
+        <text x="8" y="163" width="44" height="16" params="16" style="3" name="fd_label_width" caption="${vortex.furni_definition.width}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <border x="56" y="159" width="54" height="21" params="16" style="105" name="fd_width_box">
+          <children>
+            <input x="4" y="2" width="46" height="16" params="2177" style="3" name="fd_width" tags="INPUT">
+              <variables>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <text x="122" y="163" width="46" height="16" params="16" style="3" name="fd_label_length" caption="${vortex.furni_definition.length}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <border x="170" y="159" width="54" height="21" params="16" style="105" name="fd_length_box">
+          <children>
+            <input x="4" y="2" width="46" height="16" params="2177" style="3" name="fd_length" tags="INPUT">
+              <variables>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <text x="236" y="163" width="50" height="16" params="16" style="3" name="fd_label_states" caption="${vortex.furni_definition.states}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <border x="292" y="159" width="68" height="21" params="16" style="105" name="fd_states_box">
+          <children>
+            <input x="4" y="2" width="60" height="16" params="2177" style="3" name="fd_states" tags="INPUT">
+              <variables>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <text x="8" y="189" width="44" height="16" params="16" style="3" name="fd_label_stack" caption="${vortex.furni_definition.stack}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <border x="56" y="185" width="60" height="21" params="16" style="105" name="fd_stack_box">
+          <children>
+            <input x="4" y="2" width="52" height="16" params="2177" style="3" name="fd_stack" tags="INPUT">
+              <variables>
+                <var key="text_color" value="0x4a4a4a" type="hex"/>
+                <var key="text_style" value="il_regular" type="String"/>
+                <var key="margin_left" value="5" type="int"/>
+                <var key="spacing" value="0" type="Number"/>
+                <var key="leading" value="0" type="Number"/>
+              </variables>
+            </input>
+          </children>
+        </border>
+        <text x="130" y="189" width="52" height="16" params="16" style="3" name="fd_label_usage" caption="${vortex.furni_definition.usage}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <dropmenu x="186" y="186" width="174" height="22" params="17" style="100" name="fd_usage"/>
+        <container x="0" y="212" width="360" height="24" params="16" style="3" name="fd_sec_behavior" background="true" color="0xffe9e9f2">
+          <children>
+            <text x="8" y="5" width="344" height="16" params="16" style="3" name="fd_sec_behavior_label" caption="${vortex.furni_definition.section.behavior}">
+              <variables>
+                <var key="auto_size" value="left" type="String"/>
+                <var key="text_style" value="il_button" type="String"/>
+                <var key="bold" value="true" type="Boolean"/>
+              </variables>
+            </text>
+          </children>
+        </container>
+        <checkbox x="8" y="239" width="19" height="21" params="17" style="101" name="fd_canstack" treshold="0" height_min="21" height_max="21"/>
+        <text x="30" y="243" width="80" height="16" params="16" style="3" name="fd_label_canstack" caption="${vortex.furni_definition.canstack}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="190" y="239" width="19" height="21" params="17" style="101" name="fd_cantrade" treshold="0" height_min="21" height_max="21"/>
+        <text x="212" y="243" width="80" height="16" params="16" style="3" name="fd_label_cantrade" caption="${vortex.furni_definition.cantrade}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="8" y="263" width="19" height="21" params="17" style="101" name="fd_canwalk" treshold="0" height_min="21" height_max="21"/>
+        <text x="30" y="267" width="80" height="16" params="16" style="3" name="fd_label_canwalk" caption="${vortex.furni_definition.canwalk}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="190" y="263" width="19" height="21" params="17" style="101" name="fd_cansell" treshold="0" height_min="21" height_max="21"/>
+        <text x="212" y="267" width="80" height="16" params="16" style="3" name="fd_label_cansell" caption="${vortex.furni_definition.cansell}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="8" y="287" width="19" height="21" params="17" style="101" name="fd_cansit" treshold="0" height_min="21" height_max="21"/>
+        <text x="30" y="291" width="80" height="16" params="16" style="3" name="fd_label_cansit" caption="${vortex.furni_definition.cansit}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="190" y="287" width="19" height="21" params="17" style="101" name="fd_canrecycle" treshold="0" height_min="21" height_max="21"/>
+        <text x="212" y="291" width="80" height="16" params="16" style="3" name="fd_label_canrecycle" caption="${vortex.furni_definition.canrecycle}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="8" y="311" width="19" height="21" params="17" style="101" name="fd_canlay" treshold="0" height_min="21" height_max="21"/>
+        <text x="30" y="315" width="80" height="16" params="16" style="3" name="fd_label_canlay" caption="${vortex.furni_definition.canlay}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <checkbox x="190" y="311" width="19" height="21" params="17" style="101" name="fd_cangroup" treshold="0" height_min="21" height_max="21"/>
+        <text x="212" y="315" width="80" height="16" params="16" style="3" name="fd_label_cangroup" caption="${vortex.furni_definition.cangroup}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <container x="0" y="338" width="360" height="24" params="16" style="3" name="fd_sec_data" background="true" color="0xffe9e9f2">
+          <children>
+            <text x="8" y="5" width="344" height="16" params="16" style="3" name="fd_sec_data_label" caption="${vortex.furni_definition.section.data}">
+              <variables>
+                <var key="auto_size" value="left" type="String"/>
+                <var key="text_style" value="il_button" type="String"/>
+                <var key="bold" value="true" type="Boolean"/>
+              </variables>
+            </text>
+          </children>
+        </container>
+        <text x="8" y="369" width="76" height="16" params="16" style="3" name="fd_label_stuffdata" caption="${vortex.furni_definition.stuffdata}">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+          </variables>
+        </text>
+        <dropmenu x="96" y="366" width="264" height="22" params="17" style="100" name="fd_stuffdata"/>
+        <text x="0" y="394" width="360" height="28" params="16" style="3" name="fd_status" caption="" color="0xff9a9ab0">
+          <variables>
+            <var key="text_style" value="il_regular" type="String"/>
+            <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+            <var key="word_wrap" value="true" type="Boolean"/>
+          </variables>
+        </text>
+        <button x="0" y="426" width="100" height="26" params="1" style="102" name="fd_save" caption="${vortex.furni_definition.save}" dynamic_style="button">
+          <variables><var key="text_style" value="il_button" type="String"/></variables>
+        </button>
+        <button x="108" y="426" width="100" height="26" params="1" style="102" name="fd_reload" caption="${vortex.furni_definition.reload}" dynamic_style="button">
+          <variables><var key="text_style" value="il_button" type="String"/></variables>
+        </button>
+      </children>
+    </frame>
+  </window>
+</layout>

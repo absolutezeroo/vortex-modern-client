@@ -1,115 +1,249 @@
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
+import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
+import {PlacePetComposer} from '@habbo/communication/messages/outgoing/room/pet/PlacePetComposer';
+
+import type {HabboInventory} from '../HabboInventory';
 import type {IPetsModel} from './IPetsModel';
 import type {Pet} from './Pet';
+import {PetsView} from './PetsView';
+
+// Unseen-item tracker category for pets (AS3 uses category 3).
+const UNSEEN_CATEGORY_PETS = 3;
 
 /**
- * Manages pet inventory data
+ * PetsModel — the pets-inventory tab controller (an IInventoryModel).
  *
- * Based on AS3 com.sulake.habbo.inventory.pets.PetsModel (ENGINE only)
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/pets/PetsModel.as
+ *
+ * Owns the `Map<number, Pet>` store AND a PetsView, forwarding every mutation into the view. This
+ * replaces the earlier data-only stub that had no view integration.
  */
 export class PetsModel implements IPetsModel
 {
+    private _controller: HabboInventory;
+    private _communication: IHabboCommunicationManager;
+    private _roomEngine: IRoomEngine;
+    private _localization: IHabboLocalizationManager;
+    private _view: PetsView;
+
+    private _pets: Map<number, Pet> = new Map<number, Pet>();
+    private _listInitialized: boolean = false;
+    private _placementPending: boolean = false;
     private _disposed: boolean = false;
+
+    constructor(
+        controller: HabboInventory,
+        windowManager: IHabboWindowManager,
+        communication: IHabboCommunicationManager,
+        roomEngine: IRoomEngine,
+        localization: IHabboLocalizationManager
+    )
+    {
+        this._controller = controller;
+        this._communication = communication;
+        this._roomEngine = roomEngine;
+        this._localization = localization;
+        this._view = new PetsView(this, windowManager, roomEngine);
+        this._roomEngine.events.on('REOE_PLACED', this.onObjectPlaced);
+    }
 
     get disposed(): boolean
     {
         return this._disposed;
     }
 
-    private _isListInitialized: boolean = false;
-
-    get isListInitialized(): boolean
+    // AS3: PetsModel.as::get controller()
+    get controller(): HabboInventory
     {
-        return this._isListInitialized;
+        return this._controller;
     }
 
-    private _pets: Map<number, Pet> = new Map();
+    // AS3: PetsModel.as::get roomSession()
+    get roomSession(): IRoomSession | null
+    {
+        return this._controller.roomSession;
+    }
 
+    get localization(): IHabboLocalizationManager
+    {
+        return this._localization;
+    }
+
+    // AS3: PetsModel.as::get pets()
     get pets(): Map<number, Pet>
     {
         return this._pets;
     }
 
-    dispose(): void
+    // AS3: PetsModel.as::isListInitialized()
+    isListInitialized(): boolean
     {
-        if(this._disposed) return;
-
-        for(const pet of this._pets.values())
-        {
-            pet.dispose();
-        }
-
-        this._pets.clear();
-        this._disposed = true;
+        return this._listInitialized;
     }
 
-    addPet(pet: Pet): boolean
+    // AS3: PetsModel.as::setListInitialized()
+    setListInitialized(): void
     {
-        if(this._pets.has(pet.id))
+        this._listInitialized = true;
+        this._view.updateState();
+    }
+
+    // AS3: PetsModel.as::requestPetInventory() — the request itself already lives in
+    // HabboInventory.requestPets(); kept for the IInventoryModel contract.
+    requestInitialization(): void
+    {
+        this._controller.requestPets();
+    }
+
+    // AS3: PetsModel.as::addPet()
+    addPet(pet: Pet): void
+    {
+        if(!this._pets.has(pet.id))
+        {
+            this._pets.set(pet.id, pet);
+            this._view.addPet(pet);
+        }
+
+        this._view.updateState();
+    }
+
+    // AS3: PetsModel.as::updatePets() — reconcile the store against a fresh set, forwarding each
+    // add/remove into the view, then flag the list initialized (which renders it).
+    updatePets(pets: Map<number, Pet>): void
+    {
+        const incoming = new Set(pets.keys());
+
+        for(const id of Array.from(this._pets.keys()))
+        {
+            if(!incoming.has(id))
+            {
+                this._pets.delete(id);
+                this._view.removePet(id);
+            }
+        }
+
+        for(const [id, pet] of pets)
+        {
+            if(!this._pets.has(id))
+            {
+                this._pets.set(id, pet);
+                this._view.addPet(pet);
+            }
+        }
+
+        this.setListInitialized();
+    }
+
+    // AS3: PetsModel.as::removePet()
+    removePet(id: number): void
+    {
+        this._pets.delete(id);
+        this._view.removePet(id);
+        this._view.updateState();
+    }
+
+    // AS3: PetsModel.as::categorySwitch()
+    categorySwitch(category: string): void
+    {
+        if(category === 'pets' && this._controller.isVisible)
+        {
+            this._controller.events.emit('HABBO_INVENTORY_TRACKING_EVENT_PETS');
+        }
+    }
+
+    // AS3: PetsModel.as::getWindowContainer()
+    getWindowContainer(): unknown
+    {
+        return this._view.getWindowContainer();
+    }
+
+    // AS3: PetsModel.as::closingInventoryView()
+    closingInventoryView(): void
+    {
+        if(this._view.isVisible)
+        {
+            this.resetUnseenItems();
+        }
+    }
+
+    // AS3: PetsModel.as::updateView()
+    updateView(): void
+    {
+        this._view.update();
+    }
+
+    // AS3: PetsModel.as::placePetToRoom()
+    placePetToRoom(id: number, skipServer: boolean = false): boolean
+    {
+        const pet = this._pets.get(id);
+
+        if(pet === undefined) return false;
+
+        const roomSession = this._controller.roomSession;
+
+        if(roomSession !== null && roomSession.isRoomOwner)
+        {
+            // TODO(AS3): initializeRoomObjectInsert takes 6 params in this port; AS3 also passes the
+            // monster-plant growth posture as a 9th arg. The pet still places, but a young monster
+            // plant previews at its full-grown posture until that arg is threaded through.
+            this._placementPending = this._roomEngine.initializeRoomObjectInsert(
+                'inventory',
+                id * -1,
+                100,
+                2,
+                pet.figureString
+            );
+            this._controller.closeView();
+
+            return this._placementPending;
+        }
+
+        if(roomSession === null || !roomSession.arePetsAllowed)
         {
             return false;
         }
 
-        this._pets.set(pet.id, pet);
+        if(!skipServer)
+        {
+            // AS3: PetsModel.placePetToRoom() guest branch — `new _SafeCls_2777(pet.id, 0, 0)`.
+            // The server resolves the actual drop tile, so x/y are always 0.
+            this._communication.connection?.send(new PlacePetComposer(id, 0, 0));
+        }
 
         return true;
     }
 
-    updatePets(pets: Map<number, Pet>): {
-        added: number[];
-        removed: number[];
-    }
+    // AS3: PetsModel.as::onObjectPlaced()
+    private onObjectPlaced = (event: {type?: string}): void =>
     {
-        const existingIds = new Set(this._pets.keys());
-        const newIds = new Set(pets.keys());
-
-        const added: number[] = [];
-        const removed: number[] = [];
-
-        // Find pets to remove
-        for(const id of existingIds)
+        if(this._placementPending && event.type === 'REOE_PLACED')
         {
-            if(!newIds.has(id))
-            {
-                const pet = this._pets.get(id);
-
-                if(pet)
-                {
-                    pet.dispose();
-                }
-
-                this._pets.delete(id);
-                removed.push(id);
-            }
+            this._controller.showView();
+            this._placementPending = false;
         }
+    };
 
-        // Find pets to add
-        for(const [id, pet] of pets)
-        {
-            if(!existingIds.has(id))
-            {
-                this._pets.set(id, pet);
-                added.push(id);
-            }
-        }
-
-        this._isListInitialized = true;
-
-        return {added, removed};
+    // AS3: PetsModel.as::resetUnseenItems()
+    resetUnseenItems(): void
+    {
+        this._controller.unseenItemTracker.resetCategory(UNSEEN_CATEGORY_PETS);
+        this._controller.updateUnseenItemCounts();
+        this._view.update();
     }
 
-    removePet(id: number): Pet | null
+    // AS3: PetsModel.as::isUnseen()
+    isUnseen(id: number): boolean
     {
-        const pet = this._pets.get(id);
+        return this._controller.unseenItemTracker.isUnseen(UNSEEN_CATEGORY_PETS, id);
+    }
 
-        if(pet)
-        {
-            this._pets.delete(id);
-            pet.dispose();
-
-            return pet;
-        }
-
-        return null;
+    // AS3: PetsModel.as::selectItemById()
+    selectItemById(id: number): void
+    {
+        this._view.selectById(id);
     }
 
     getPetById(id: number): Pet | null
@@ -117,79 +251,19 @@ export class PetsModel implements IPetsModel
         return this._pets.get(id) ?? null;
     }
 
-    getPetsArray(): Pet[]
+    dispose(): void
     {
-        return Array.from(this._pets.values());
-    }
+        if(this._disposed) return;
 
-    getSelectedPet(): Pet | null
-    {
-        for(const pet of this._pets.values())
-        {
-            if(pet.isSelected)
-            {
-                return pet;
-            }
-        }
-
-        return null;
-    }
-
-    selectPet(id: number): void
-    {
-        this.removeSelections();
-
-        const pet = this._pets.get(id);
-
-        if(pet)
-        {
-            pet.isSelected = true;
-        }
-    }
-
-    removeSelections(): void
-    {
-        for(const pet of this._pets.values())
-        {
-            pet.isSelected = false;
-        }
-    }
-
-    resetUnseenItems(): number[]
-    {
-        const resetIds: number[] = [];
+        this._disposed = true;
+        this._roomEngine.events.off('REOE_PLACED', this.onObjectPlaced);
+        this._view.dispose();
 
         for(const pet of this._pets.values())
         {
-            if(pet.isUnseen)
-            {
-                pet.isUnseen = false;
-                resetIds.push(pet.id);
-            }
+            pet.dispose();
         }
 
-        return resetIds;
-    }
-
-    updateUnseenItems(unseenIds: number[]): void
-    {
-        const unseenSet = new Set(unseenIds);
-
-        for(const pet of this._pets.values())
-        {
-            pet.isUnseen = unseenSet.has(pet.id);
-        }
-    }
-
-    isUnseen(id: number): boolean
-    {
-        return this._pets.get(id)?.isUnseen ?? false;
-    }
-
-    // AS3: sources/win63_version/habbo/inventory/pets/PetsModel.as::updateView()
-    // TODO(AS3): no-op until PetsView (habbo/inventory/pets/PetsView.as) is ported.
-    updateView(): void
-    {
-        // Intentional no-op — matches AS3's `if(var_18 == null) return;` guard.
+        this._pets.clear();
     }
 }

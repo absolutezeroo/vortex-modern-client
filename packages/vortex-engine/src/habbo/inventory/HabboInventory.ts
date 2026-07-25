@@ -23,6 +23,10 @@ import {FurniModel} from './furni/FurniModel';
 import {BadgesModel} from './badges/BadgesModel';
 import {EffectsModel} from './effects/EffectsModel';
 import {PetsModel} from './pets/PetsModel';
+import {Pet} from './pets/Pet';
+import {PetFigureData} from './pets/PetFigureData';
+import {PetInventoryMessageEvent} from '../communication/messages/incoming/inventory/pets/PetInventoryMessageEvent';
+import type {PetInventoryMessageParser} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
 import {BotsModel} from './bots/BotsModel';
 import {TradingModel} from './trading/TradingModel';
 import {Purse} from './purse/Purse';
@@ -94,6 +98,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     private _furniMessageEvents: IMessageEvent[] = [];
     private _effectMessageEvents: IMessageEvent[] = [];
     private _furniListFragments: Map<number, FurniListItemParser> = new Map();
+
+    // Accumulates pets across a fragmented PetInventory response (AS3 buffers by fragment like furni).
+    private _petListFragments: Map<number, Pet> = new Map();
+    private _petMessageEvents: IMessageEvent[] = [];
     private _initializedCategories: Set<string> = new Set();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::_SafeStr_4983
     private _purseTimer: ReturnType<typeof setInterval> | null = null;
@@ -445,7 +453,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         );
         this._badgesModel = new BadgesModel();
         this._effectsModel = new EffectsModel(this._communication?.connection ?? null);
-        this._petsModel = new PetsModel();
+        this._petsModel = new PetsModel(
+            this,
+            this._windowManager!,
+            this._communication!,
+            this._roomEngine!,
+            this._localization!
+        );
         this._botsModel = new BotsModel();
         this._tradingModel = new TradingModel(this._communication?.connection ?? null);
 
@@ -465,6 +479,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         if(category === 'furni' || category === 'rentables')
         {
             this._furniModel.categorySwitch(category);
+        }
+        else if(category === 'pets')
+        {
+            this._petsModel.categorySwitch(category);
         }
     }
 
@@ -515,6 +533,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     closingInventoryView(): void
     {
         this._furniModel?.closingInventoryView();
+        this._petsModel?.closingInventoryView();
         this.events.emit('HABBO_INVENTORY_TRACKING_EVENT_CLOSED');
     }
 
@@ -593,6 +612,11 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             return this._furniModel.getWindowContainer();
         }
 
+        if(category === 'pets')
+        {
+            return this._petsModel.getWindowContainer() as IWindowContainer | null;
+        }
+
         return null;
     }
 
@@ -608,6 +632,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         if(category === 'furni' || category === 'rentables')
         {
             this._furniModel.updateView();
+        }
+        else if(category === 'pets')
+        {
+            this._petsModel.updateView();
         }
     }
 
@@ -758,6 +786,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._unseenItemTracker = new UnseenItemTracker(this._communication!, this.events, this);
         this._view = new InventoryMainView(this);
         this.registerFurniMessageEvents();
+        this.registerPetMessageEvents();
         this.registerEffectMessageEvents();
         log.info('Inventory initialized');
     }
@@ -842,6 +871,51 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
             this._communication.addMessageEvent(new FurniListInvalidateMessageEvent(this.onFurniListInvalidate))
         );
     }
+
+    // AS3: HabboInventory.as::registerMessageEvents() — the pet-inventory branch. Without this the
+    // PetInventory response (header 1200) reached the registry but nothing consumed it, so the pets
+    // tab stayed empty even though requestPets() sent GetPetInventoryComposer.
+    private registerPetMessageEvents(): void
+    {
+        if(!this._communication) return;
+
+        this._petMessageEvents.push(
+            this._communication.addMessageEvent(new PetInventoryMessageEvent(this.onPetInventory))
+        );
+    }
+
+    // Mirrors onFurniList: accumulate across fragments, then hand the full set to the model.
+    private onPetInventory = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as PetInventoryMessageParser | null;
+
+        if(!parser) return;
+
+        for(const data of parser.pets)
+        {
+            const figureData = new PetFigureData(
+                data.figureData.typeId,
+                data.figureData.paletteId,
+                data.figureData.color,
+                data.figureData.breedId,
+                Math.floor(data.figureData.customParts.length / 3),
+                data.figureData.customParts
+            );
+
+            this._petListFragments.set(data.id, new Pet(data.id, data.name, figureData, data.level));
+        }
+
+        if(parser.fragmentNo < parser.totalFragments - 1) return;
+
+        const pets = new Map<number, Pet>(this._petListFragments);
+
+        this._petListFragments.clear();
+
+        // updatePets() sets the list-initialized flag; updateView() is a no-op until PetsView is
+        // wired (Step 2/3). This already proves the wire path fills the model.
+        this._petsModel?.updatePets(pets);
+        this._petsModel?.updateView();
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as
     // The inventory owns the avatar-effects message pipeline (the session-side

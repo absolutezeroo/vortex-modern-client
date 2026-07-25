@@ -4,6 +4,8 @@
 export {Pet} from './Pet';
 export {PetFigureData} from './PetFigureData';
 export {PetsModel} from './PetsModel';
+export {PetsView} from './PetsView';
+export {PetsGridItem} from './PetsGridItem';
 
 // Types
 export type {IPetsModel} from './IPetsModel';

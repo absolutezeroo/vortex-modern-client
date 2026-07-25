@@ -25,6 +25,9 @@ export class TextFieldController extends TextController implements ITextFieldWin
 {
     private static readonly WORD_DELIMS: RegExp = /[~%&!\\;:"',<>?#\s.\-()=[\]{}^_]/g;
     protected _inputElement: HTMLInputElement | HTMLTextAreaElement | null = null;
+
+    // requestAnimationFrame handle for the per-frame caret position tracking while focused.
+    private _caretTrackRaf: number | null = null;
     private _maxLength: number = 0;
     private _focusCapturer: boolean = false;
     private _boundOnInput: EventListener | null = null;
@@ -381,10 +384,53 @@ export class TextFieldController extends TextController implements ITextFieldWin
                 this._inputElement.style.display = '';
                 this._inputElement.value = this._text;
                 this._inputElement.focus();
+                this.startInputPositionTracking();
             }
         }
 
         return result;
+    }
+
+    /**
+     * Keeps the (transparent-text) input — and therefore its native caret — glued to the field
+     * while it has focus, so the caret follows the window when its frame is dragged.
+     *
+     * An event would be cleaner, but WE_PARENT_RELOCATED is only delivered to a moved window's
+     * DIRECT children (WindowController.notifyChildren) and is not re-cascaded, so a field nested
+     * inside a border inside the frame — the common case — never receives it. Polling per frame
+     * while focused sidesteps that; only one field is focused at a time and the sync is a cheap
+     * position read, so the cost is negligible. Stops on blur/dispose.
+     */
+    private startInputPositionTracking(): void
+    {
+        if(typeof requestAnimationFrame === 'undefined') return;
+
+        this.stopInputPositionTracking();
+
+        const tick = (): void =>
+        {
+            if(!this._inputElement || document.activeElement !== this._inputElement)
+            {
+                this._caretTrackRaf = null;
+
+                return;
+            }
+
+            this.syncInputPosition();
+            this._caretTrackRaf = requestAnimationFrame(tick);
+        };
+
+        this._caretTrackRaf = requestAnimationFrame(tick);
+    }
+
+    private stopInputPositionTracking(): void
+    {
+        if(this._caretTrackRaf !== null && typeof cancelAnimationFrame !== 'undefined')
+        {
+            cancelAnimationFrame(this._caretTrackRaf);
+        }
+
+        this._caretTrackRaf = null;
     }
 
     /**
@@ -395,6 +441,8 @@ export class TextFieldController extends TextController implements ITextFieldWin
 	 */
     public override unfocus(): boolean
     {
+        this.stopInputPositionTracking();
+
         if(this._inputElement)
         {
             if(document.activeElement === this._inputElement)
@@ -518,6 +566,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
         if(this._disposed) return;
 
         this._focusCapturer = false;
+        this.stopInputPositionTracking();
 
         if(this._inputElement)
         {
@@ -565,8 +614,17 @@ export class TextFieldController extends TextController implements ITextFieldWin
             el.type = this._displayAsPassword ? 'password' : 'text';
         }
 
+        // The visible text is painted on the canvas (TextSkinRenderer), not by this element — but a
+        // fully transparent input (opacity:0) hides its native caret too, which is why editable
+        // fields had no blinking cursor. Instead keep the element visible with TRANSPARENT text and
+        // only its caret coloured (caret-color, set per-field in positionInputElement). The canvas
+        // still draws the glyphs; the browser contributes just the blinking caret, its arrow-key
+        // movement and IME — for free, and pixel-aligned because the canvas is 1:1 CSS pixels (no
+        // DPR scaling, see App.resizeCanvas) and this element is positioned over the field in the
+        // same coordinate space with a matching font.
         el.style.position = 'absolute';
-        el.style.opacity = '0';
+        el.style.opacity = '1';
+        el.style.color = 'transparent';
         el.style.pointerEvents = 'none';
         el.style.zIndex = '9999';
         el.style.display = 'none';
@@ -575,6 +633,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
         el.style.border = 'none';
         el.style.outline = 'none';
         el.style.background = 'transparent';
+        el.style.boxSizing = 'border-box';
 
         if(this._maxChars > 0)
         {
@@ -600,7 +659,12 @@ export class TextFieldController extends TextController implements ITextFieldWin
     /**
 	 * Positions the hidden input element over the window's global position.
 	 */
-    private positionInputElement(): void
+    /**
+     * Light per-frame update: only the screen position, so the input (and its caret) tracks the
+     * field as its window moves. The heavier font/margin/caret-colour setup stays in
+     * positionInputElement, which runs on focus and resize.
+     */
+    private syncInputPosition(): void
     {
         if(!this._inputElement) return;
 
@@ -608,17 +672,39 @@ export class TextFieldController extends TextController implements ITextFieldWin
         this.getGlobalPosition(pos);
 
         const canvas = document.querySelector('canvas');
+        const rect = canvas ? canvas.getBoundingClientRect() : {left: 0, top: 0};
 
-        if(canvas)
-        {
-            const rect = canvas.getBoundingClientRect();
-            this._inputElement.style.left = (rect.left + pos.x) + 'px';
-            this._inputElement.style.top = (rect.top + pos.y) + 'px';
-        }
+        const left = (rect.left + pos.x) + 'px';
+        const top = (rect.top + pos.y) + 'px';
+
+        if(this._inputElement.style.left !== left) this._inputElement.style.left = left;
+        if(this._inputElement.style.top !== top) this._inputElement.style.top = top;
+    }
+
+    private positionInputElement(): void
+    {
+        if(!this._inputElement) return;
+
+        this.syncInputPosition();
 
         this._inputElement.style.width = this._width + 'px';
         this._inputElement.style.height = this._height + 'px';
         this._inputElement.style.fontSize = this._fontSize + 'px';
+
+        // Match the canvas text metrics so the native (transparent-text) caret sits exactly where
+        // the painted glyphs do: same font family, same left margin as TextSkinRenderer uses
+        // (marginLeft, default 2), and the Flash 2px top gutter. lineHeight = field height keeps the
+        // caret vertically centred like a normal single-line input.
+        // 2 = the Flash top gutter TextSkinRenderer offsets glyphs down by (its own
+        // FLASH_TEXT_FIELD_TOP_GUTTER); TextController's copy is private, so mirror the literal.
+        const flashTopGutter = 2;
+        this._inputElement.style.fontFamily = this._fontFace;
+        this._inputElement.style.paddingLeft = this._marginLeft + 'px';
+        this._inputElement.style.paddingTop = (this._marginTop + flashTopGutter) + 'px';
+        this._inputElement.style.lineHeight = this._fontSize + 'px';
+
+        const color = this._textColor & 0xFFFFFF;
+        this._inputElement.style.caretColor = '#' + color.toString(16).padStart(6, '0');
     }
 
     /**

@@ -23,6 +23,7 @@ import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
+import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
 import type {IRoomWidgetHandler} from './IRoomWidgetHandler';
@@ -60,6 +61,11 @@ export interface IRoomWidgetHandlerContainer
     readonly friendList: IHabboFriendList | null;
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get freeFlowChat()
     readonly freeFlowChat: IHabboFreeFlowChat | null;
+    // NOT from AS3: the furni editor is a Vortex-only staff tool with no counterpart in
+    // IRoomWidgetHandlerContainer.as. It is exposed here rather than reached through the root
+    // Vortex module because that import (widget -> Vortex -> VortexMain -> RoomUI -> widget) is a
+    // cycle, and a cycle here takes the whole InfoStand widget down with it.
+    readonly furniEditor: IHabboFurniEditor | null;
     // AS3: sources/win63_version/habbo/ui/IRoomWidgetHandlerContainer.as::get userDefinedRoomEvents()
     // TODO(AS3): no concrete implementation exists yet — always null, see IHabboUserDefinedRoomEvents.ts.
     readonly userDefinedRoomEvents: IHabboUserDefinedRoomEvents | null;

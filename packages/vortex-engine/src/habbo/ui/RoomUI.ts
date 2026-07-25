@@ -23,6 +23,7 @@ import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
+import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboGroupsManager} from '@iid/IIDHabboGroupsManager';
@@ -42,6 +43,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
+import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
@@ -127,6 +129,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     private _catalog: IHabboCatalog | null = null;
     private _inventory: IHabboInventory | null = null;
+
+    // NOT from AS3: Vortex-only furni editor.
+    private _furniEditor: IHabboFurniEditor | null = null;
     private _habboHelp: IHabboHelp | null = null;
 
     // AS3: RoomUI.as::_userDefinedRoomEvents — DI-resolved; injected into every RoomDesktop.
@@ -311,6 +316,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 false
             ),
             new ComponentDependency(
+                IID_HabboFurniEditor,
+                (furniEditor: IHabboFurniEditor | null) =>
+                {
+                    this._furniEditor = furniEditor;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.furniEditor = furniEditor;
+                    }
+                },
+                false
+            ),
+            new ComponentDependency(
                 IID_HabboInventory,
                 (inventory: IHabboInventory | null) =>
                 {
@@ -460,6 +478,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.roomWidgetFactory = this._widgetFactory;
         desktop.catalog = this._catalog;
         desktop.inventory = this._inventory;
+        desktop.furniEditor = this._furniEditor;
         desktop.habboHelp = this._habboHelp;
         desktop.userDefinedRoomEvents = this._userDefinedRoomEvents;
         desktop.habboTracking = this._habboTracking;

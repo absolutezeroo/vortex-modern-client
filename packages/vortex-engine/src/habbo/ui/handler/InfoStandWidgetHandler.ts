@@ -31,6 +31,7 @@ import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetR
 import {RoomWidgetFurniActionMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniActionMessage';
 import {RoomWidgetGetBadgeDetailsMessage} from '@habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage';
 import {RoomWidgetOpenProfileMessage} from '@habbo/ui/widget/messages/RoomWidgetOpenProfileMessage';
+import {RoomWidgetUserActionMessage} from '@habbo/ui/widget/messages/RoomWidgetUserActionMessage';
 import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
@@ -260,12 +261,76 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             return null;
         }
 
-        if(UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type)) 
+        if(message instanceof RoomWidgetUserActionMessage)
+        {
+            this.processUserActionMessage(message);
+
+            return null;
+        }
+
+        if(UNIMPLEMENTED_WIDGET_MESSAGES.has(message.type))
         {
             log.debug(`TODO(AS3): unimplemented widget message ${message.type}`);
         }
 
         return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage() (RWUAM_* pet cases)
+    //
+    // The AS3 resolves the addressed entity up front — for every pet-scoped action it looks the
+    // target up via userDataManager.getPetUserData(userId) and bails when that returns null (the
+    // pet left the room mid-click). The user-scoped RWUAM cases (whisper/ignore/kick/ban/mute/
+    // rights/trading/friend-request/respect-user/open-profile) live in the InfoStandUserView path
+    // and are not emitted by the pet view; they stay in UNIMPLEMENTED_WIDGET_MESSAGES until that
+    // view is wired.
+    private processUserActionMessage(message: RoomWidgetUserActionMessage): void
+    {
+        const container = this._container;
+
+        if(!container?.roomSession) return;
+
+        const petId = message.userId;
+
+        // AS3 pre-resolves the pet's user data and returns null (drops the message) if the pet is
+        // no longer in the room. Same guard here so a stale click can't fire a composer.
+        if(container.roomSession.userDataManager.getPetUserData(petId) === null) return;
+
+        switch(message.type)
+        {
+            case RoomWidgetUserActionMessage.PICK_UP_PET:
+                container.roomSession.pickUpPet(petId);
+                break;
+            case RoomWidgetUserActionMessage.MOUNT_PET:
+                container.roomSession.mountPet(petId);
+                break;
+            case RoomWidgetUserActionMessage.DISMOUNT_PET:
+                container.roomSession.dismountPet(petId);
+                break;
+            case RoomWidgetUserActionMessage.TOGGLE_PET_RIDING_PERMISSION:
+                container.roomSession.togglePetRidingPermission(petId);
+                break;
+            case RoomWidgetUserActionMessage.TOGGLE_PET_BREEDING_PERMISSION:
+                container.roomSession.togglePetBreedingPermission(petId);
+                break;
+            case RoomWidgetUserActionMessage.SADDLE_OFF:
+                container.roomSession.removeSaddleFromPet(petId);
+                break;
+            case RoomWidgetUserActionMessage.RESPECT_PET:
+                container.sessionDataManager?.givePetRespect(petId);
+                break;
+            case RoomWidgetUserActionMessage.TREAT_PET:
+            case RoomWidgetUserActionMessage.GIVE_WATER_TO_PET:
+            case RoomWidgetUserActionMessage.GIVE_LIGHT_TO_PET:
+                // TODO(AS3): these send monster-plant care composers (AS3 _SafeCls_1909 /
+                // _SafeCls_2695(id,0|1)) that have no port equivalent yet. Left as a TODO so the
+                // action is visible rather than silently dropped.
+                log.debug(`TODO(AS3): pet care composer not ported yet (${message.type})`);
+                break;
+            default:
+                log.debug(`TODO(AS3): unimplemented user-action message ${message.type}`);
+                break;
+        }
     }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/IGetImageListener.as::imageReady()

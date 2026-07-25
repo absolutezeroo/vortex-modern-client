@@ -29,6 +29,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
+import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
 import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboGroupsManager} from '@habbo/groups/IHabboGroupsManager';
@@ -249,6 +250,20 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     }
 
     private _inventory: IHabboInventory | null = null;
+
+    // NOT from AS3: Vortex-only furni editor. Consumed by InfoStandFurniView to decide whether to
+    // offer its button. See IRoomWidgetHandlerContainer for why it is injected rather than imported.
+    private _furniEditor: IHabboFurniEditor | null = null;
+
+    public get furniEditor(): IHabboFurniEditor | null
+    {
+        return this._furniEditor;
+    }
+
+    public set furniEditor(value: IHabboFurniEditor | null)
+    {
+        this._furniEditor = value;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get inventory()
     // Consumed by the effects widget (container.inventory.getAvatarEffects(), setEffectSelected/Deselected).

@@ -19,6 +19,7 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IRoomUI} from '@habbo/ui/IRoomUI';
 import type {IVortex} from './IVortex';
@@ -264,6 +265,15 @@ export class Vortex implements IVortex
     get windowManager(): IHabboWindowManager
     {
         return this._habboMain!.windowManager;
+    }
+
+    /**
+     * The Vortex furni editor (staff tool, not from AS3). Null before bootstrap completes, and
+     * inert until the server grants `room.furni.edit` during the handshake.
+     */
+    get furniEditor(): IHabboFurniEditor | null
+    {
+        return this._habboMain?.furniEditor ?? null;
     }
 
     get toolbar(): IHabboToolbar

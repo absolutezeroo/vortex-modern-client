@@ -386,7 +386,7 @@ export class BitmapDataRenderer extends SkinRenderer
         }
 
         const canvas = new OffscreenCanvas(width, height);
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', {willReadFrequently: true});
 
         if(!ctx) return null;
 
@@ -519,7 +519,7 @@ export class BitmapDataRenderer extends SkinRenderer
         if(isIdentity) return null;
 
         const canvas = new OffscreenCanvas(srcW, srcH);
-        const tctx = canvas.getContext('2d');
+        const tctx = canvas.getContext('2d', {willReadFrequently: true});
 
         if(!tctx) return null;
 

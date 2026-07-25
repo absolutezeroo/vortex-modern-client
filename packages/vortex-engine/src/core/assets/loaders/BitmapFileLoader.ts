@@ -1,5 +1,4 @@
-import type { Texture} from 'pixi.js';
-import {Assets} from 'pixi.js';
+import {Assets, Texture} from 'pixi.js';
 import {BinaryFileLoader} from './BinaryFileLoader';
 import {Logger} from '@core/utils/Logger';
 
@@ -63,8 +62,15 @@ export class BitmapFileLoader extends BinaryFileLoader
         this._errorCode = 0;
         this.handleLoadEvent('open');
 
-        // Use PixiJS Assets loader
-        Assets.load<Texture>(url)
+        // PixiJS's Assets loader has no GIF parser, so `Assets.load(...gif)` warns
+        // ("we don't know how to parse it") and fails — which is what left catalogue promo images
+        // (e.g. c_images/catalogue/hubbly_h.gif) blank. GIFs are decoded natively by the browser via
+        // createImageBitmap (first frame), so route them through that instead of the parser.
+        const loadTexture = this.isGifUrl(url)
+            ? this.loadGifTexture(url)
+            : Assets.load<Texture>(url);
+
+        loadTexture
             .then((texture: Texture) =>
             {
                 if(this._disposed)
@@ -85,6 +91,31 @@ export class BitmapFileLoader extends BinaryFileLoader
                 Logger.getLogger('BitmapFileLoader').error('Error loading texture:', error);
                 this.handleLoadEvent('ioError');
             });
+    }
+
+    private isGifUrl(url: string): boolean
+    {
+        return /\.gif(\?|#|$)/i.test(url);
+    }
+
+    /**
+     * Decodes a GIF (first frame) with the browser and wraps it as a Texture, bypassing PixiJS's
+     * parser. The texture is not registered in the Assets cache, so the Assets.unload() calls
+     * elsewhere in this loader are harmless no-ops for it and the BitmapDataAsset that takes
+     * ownership destroys it the same way as any other texture.
+     */
+    private async loadGifTexture(url: string): Promise<Texture>
+    {
+        const response = await fetch(url);
+
+        if(!response.ok)
+        {
+            throw new Error(`HTTP ${response.status} for ${url}`);
+        }
+
+        const bitmap = await createImageBitmap(await response.blob());
+
+        return Texture.from(bitmap);
     }
 
     /**

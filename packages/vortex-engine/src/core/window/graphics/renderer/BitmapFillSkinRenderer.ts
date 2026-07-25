@@ -350,7 +350,7 @@ export class BitmapFillSkinRenderer extends SkinRenderer
         }
 
         const canvas = new OffscreenCanvas(source.width, source.height);
-        const pctx = canvas.getContext('2d')!;
+        const pctx = canvas.getContext('2d', {willReadFrequently: true})!;
 
         pctx.drawImage(source, 0, 0);
 

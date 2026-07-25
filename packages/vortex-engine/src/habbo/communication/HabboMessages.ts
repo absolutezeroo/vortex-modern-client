@@ -508,6 +508,7 @@ import {
     GetFurnitureAliasesMessageComposer,
     GetHeightMapMessageComposer,
     MoveAvatarMessageComposer,
+    ClickFurniMessageComposer,
     MoveObjectMessageComposer,
     PickupObjectMessageComposer,
     PlaceObjectMessageComposer,
@@ -608,6 +609,7 @@ import {
     MovePetMessageComposer,
     PetSelectedMessageComposer,
     PickUpPetComposer,
+    PlacePetComposer,
     RemoveSaddleFromPetComposer,
     TogglePetBreedingPermissionComposer,
     TogglePetRidingPermissionComposer,
@@ -778,6 +780,20 @@ import {
     UnacceptTradingComposer,
     WithdrawCreditVaultMessageComposer,
 } from './messages/outgoing/inventory';
+
+// Vortex-specific (no AS3 backing) - furni editor
+import {
+    VortexApplyFurniDefinitionComposer,
+    VortexApplyFurniEditComposer,
+    VortexGetFurniDefinitionComposer,
+    VortexGetFurniEditorDataComposer,
+} from './messages/outgoing/vortex';
+
+import {
+    VortexFurniDefinitionMessageEvent,
+    VortexFurniEditorDataMessageEvent,
+    VortexFurniEditorRightsMessageEvent,
+} from './messages/incoming/vortex';
 
 /**
  * Habbo message configuration
@@ -1353,6 +1369,14 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(879, RoomSettingsSaveErrorEvent);
         this._events.set(2089, UserUnbannedFromRoomEvent);
         this._events.set(2944, ShowEnforceRoomCategoryDialogEvent);
+
+        // === VORTEX-SPECIFIC (no AS3 backing) ===
+        // The furni editor's incoming half. These headers exist in no Habbo client; they are matched
+        // by hand against the emulator's Vortex.Revisions/Revision20260701/Headers.cs. The 8000-8999
+        // band was chosen because it is empty in both registries. Never renumber one side alone.
+        this._events.set(8002, VortexFurniEditorDataMessageEvent);
+        this._events.set(8004, VortexFurniEditorRightsMessageEvent);
+        this._events.set(8006, VortexFurniDefinitionMessageEvent);
     }
 
     /**
@@ -1523,6 +1547,10 @@ export class HabboMessages implements IMessageConfiguration
 
         // === ROOM PET ===
         this._composers.set(1640, PickUpPetComposer);
+        // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_2777.as
+        // (guest place-pet). Header from the emulator's Revision20260701/Headers.cs
+        // (PlacePetMessageEvent = 1018, "AS3-verified: _SafeCls_3396 -> placePetToRoom()").
+        this._composers.set(1018, PlacePetComposer);
         // Vortex-custom (not in official AS3 dumps): vortex-client commit e8dc43d "chore(protocol):
         // register rentable space (4600/4601) and pet (3072/3073) message IDs"
         this._composers.set(3072, IssuePetCommandMessageComposer);
@@ -1643,6 +1671,8 @@ export class HabboMessages implements IMessageConfiguration
         // AS3 composer takes 6 params, the TS constructor only 4 (itemId, x, y, rotation).
         this._composers.set(1974, PlaceObjectMessageComposer);
         this._composers.set(1482, MoveObjectMessageComposer);
+        // AS3: ClickFurniMessageComposer header 443 (win63 registry); sent on a plain furni click.
+        this._composers.set(443, ClickFurniMessageComposer);
         // AS3: header corrected 443 -> 1919 (sources/WIN63-202607011411-782849652
         // unknowns/_SafePkg_2136/_SafeCls_3412.as, real construction confirmed at
         // com/sulake/habbo/room/_SafeCls_1821.as:2329 and _SafeCls_1984.as:316).
@@ -1780,5 +1810,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(701, DeleteRoomMessageComposer);
         this._composers.set(159, RemoveAllRightsMessageComposer);
         this._composers.set(2804, UnbanUserFromRoomMessageComposer);
+
+        // === VORTEX-SPECIFIC (no AS3 backing) ===
+        // See the matching note in registerEvents() for why these headers sit at 8000+.
+        this._composers.set(8001, VortexGetFurniEditorDataComposer);
+        this._composers.set(8003, VortexApplyFurniEditComposer);
+        this._composers.set(8005, VortexGetFurniDefinitionComposer);
+        this._composers.set(8007, VortexApplyFurniDefinitionComposer);
     }
 }

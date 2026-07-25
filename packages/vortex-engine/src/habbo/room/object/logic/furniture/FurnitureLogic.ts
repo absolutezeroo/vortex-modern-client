@@ -341,7 +341,14 @@ export class FurnitureLogic extends MovingObjectLogic
                     this.eventDispatcher.emit(clickEvent.type, clickEvent);
                 }
 
-                if(this.eventDispatcher !== null && adUrl !== null && adUrl.indexOf('http') === 0)
+                // `this.object` is re-checked from here on, even though mouseEvent() already
+                // guarded it on entry: `object` is a getter over the logic's live reference, and the
+                // click emitted just above runs its listeners synchronously. One of them can detach
+                // or dispose the room object — a click that removes the furni, or a server remove
+                // arriving for it — after which these branches would dereference null. The
+                // context-menu branch below already guards for exactly this reason; these two were
+                // missed, and `this.object.getId()` was the crash.
+                if(this.eventDispatcher !== null && this.object !== null && adUrl !== null && adUrl.indexOf('http') === 0)
                 {
                     this.eventDispatcher.emit(
                         RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE,
@@ -349,7 +356,7 @@ export class FurnitureLogic extends MovingObjectLogic
                     );
                 }
 
-                if(this.eventDispatcher !== null && adUrl !== null)
+                if(this.eventDispatcher !== null && this.object !== null && adUrl !== null)
                 {
                     this.handleAdClick(this.object.getId(), this.object.getType(), adUrl);
                 }
