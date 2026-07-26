@@ -5,6 +5,8 @@ import {VortexMain} from './VortexMain';
 import {IID_CoreCommunicationManager} from '@iid/IIDCoreCommunicationManager';
 import {Logger} from '@core/utils/Logger';
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
+import type {IElementDescriptionData} from '@habbo/window/IElementDescriptor';
+import type {ISkinData} from '@core/window/graphics/renderer/BitmapSkinParser';
 import type {ICoreCommunicationManager} from '@core/communication/ICoreCommunicationManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
@@ -63,6 +65,27 @@ export interface IConnectionConfig
 }
 
 /**
+ * The window manager's asset library, supplied at construction.
+ *
+ * AS3 equivalent: the `_SafeCls_76` (AssetLibrary) third argument of
+ * HabboWindowManagerComponent, loaded from the embedded HabboWindowManagerCom resource.
+ */
+export interface IVortexWindowAssets
+{
+    /** Parsed element-description XML (window type -> skin/renderer descriptors). */
+    elementDescription?: IElementDescriptionData | null;
+
+    /** Skin definitions keyed by skin id. */
+    skins?: Map<string, ISkinData>;
+
+    /** Decoded atlas spritesheets keyed by atlas name. */
+    atlases?: Map<string, ImageBitmap>;
+
+    /** Widget layout XML keyed by asset name. */
+    layouts?: Map<string, string>;
+}
+
+/**
  * Vortex configuration
  */
 export interface IVortexConfig extends IVortexCoreConfig
@@ -78,6 +101,19 @@ export interface IVortexConfig extends IVortexCoreConfig
 
     /** AS3 embedded text/XML asset contents keyed by asset name. */
     embeddedConfigurations?: Record<string, string>;
+
+    /**
+     * Window skins and layouts, handed to HabboWindowManager at construction.
+     *
+     * AS3's HabboWindowManagerComponent(context, flags, assets) takes its asset library as a
+     * constructor argument, already filled from the embedded HabboWindowManagerCom resource —
+     * so the component owns its layouts from the instant it exists. Pushing them in afterwards
+     * (which is what the client used to do, once the bundle had been parsed) leaves a window
+     * in which the manager is alive but empty: the socket opens during component init, so an
+     * early server message could reach buildWidgetLayout() before the layouts landed and get
+     * null back — intermittently, depending on who won the race.
+     */
+    windowAssets?: IVortexWindowAssets;
 
     /** Allow arbitrary configuration properties at the top level */
     [key: string]: unknown;
@@ -151,6 +187,20 @@ export class Vortex implements IVortex
         }
 
         return this._instance;
+    }
+
+    /**
+     * Whether a fully initialized engine exists.
+     *
+     * `instance` lazily constructs an *unbooted* Vortex, so it can never answer this: every
+     * accessor on that object (windowManager, communication, ...) reaches into a context that
+     * init() has not built yet. Callers that may run before the boot — the login flow, which
+     * AS3 gates the whole core behind (HabboAir.as::startCoreInitializationIfPossible) — must
+     * test this instead of null-checking `instance`.
+     */
+    public static get hasInstance(): boolean
+    {
+        return !!this._instance && this._instance._ready;
     }
 
     get disposed(): boolean

@@ -38,7 +38,7 @@ import {CoreCommunicationManager} from '@core/communication/CoreCommunicationMan
 import type {CoreComponentContext} from '@core/runtime/CoreComponentContext';
 import {CoreSetup} from '@core/runtime/CoreComponentContext';
 import {Logger} from '@core/utils/Logger';
-import type {IVortexConfig} from './Vortex';
+import type {IVortexConfig, IVortexWindowAssets} from './Vortex';
 import {Vortex} from './Vortex';
 
 import {PacketLogger} from '@core/communication/PacketLogger';
@@ -449,7 +449,14 @@ export class VortexMain implements IVortexMain
      * AS3 flow:
      * 1. prepareCore() — create Core, register all components
      * 2. addInitializationProgressListeners() — track config, localization, room engine, core running
-     * 3. initLocalization() — activate localization definition
+     *
+     * The localization download is NOT started here. AS3 starts it exactly once, from
+     * HabboLocalizationManager.as::onAuthenticated() -> requestLocalizationInit(); the only
+     * caller of activateLocalizationDefinition() in the whole client is
+     * habbo/ui/handler/ChatInputWidgetHandler.as:394, the runtime language-switch command.
+     * Calling it at boot as well made both paths fetch and parse external_texts — 50,074
+     * entries twice, 175 ms apart, inside the window where the furnidata parse already has
+     * the main thread pinned.
      *
      * @param application - The PixiJS Application (created by Vortex shell)
      * @param config - Optional Vortex configuration
@@ -466,8 +473,6 @@ export class VortexMain implements IVortexMain
         await this.prepareCore(config);
 
         this.addInitializationProgressListeners();
-
-        this.initLocalization();
     }
 
     /**
@@ -727,6 +732,7 @@ export class VortexMain implements IVortexMain
 
         // 12j. Window Manager
         this._windowManager = new HabboWindowManager(ctx);
+        this.applyWindowAssets(config?.windowAssets ?? null);
         ctx.attachComponent(this._windowManager, [IID_HabboWindowManager]);
 
         // 12k. Room UI
@@ -813,11 +819,16 @@ export class VortexMain implements IVortexMain
     }
 
     /**
-     * Initialize localization.
+     * Activates the configured localization definition, downloading its texts.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as (inline in prepareCore)
+     * Not part of the boot: AS3 only reaches activateLocalizationDefinition() through the
+     * runtime language-switch command (ChatInputWidgetHandler.as:394), and lets
+     * onAuthenticated() -> requestLocalizationInit() do the initial load. Kept on IVortexMain
+     * so that switch has something to call once it is ported.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as
      */
-    initLocalization(): void 
+    initLocalization(): void
     {
         if(this._configurationManager!.propertyExists('localization.1')) 
         {
@@ -983,6 +994,46 @@ export class VortexMain implements IVortexMain
         // In our system, all components are ready after prepareCore + microtask flush.
         // We trigger this after the current microtask completes.
         queueMicrotask(() => this.onCoreRunning());
+    }
+
+    /**
+     * Fills the window manager's asset library, at construction.
+     *
+     * AS3: HabboWindowManagerComponent(context, flags, assets) — the third argument is the
+     * AssetLibrary loaded from the embedded HabboWindowManagerCom resource, so the component
+     * has its skins and layouts before it is attached, let alone before any message can be
+     * handled. The client used to call loadElementDescription/loadSkinAssets/
+     * registerWidgetLayout itself after Vortex.bootstrap() returned, which left the manager
+     * alive but empty while the socket (opened during HabboCommunicationManager.initComponent)
+     * was already carrying server messages — buildWidgetLayout() then returned null for
+     * whatever arrived first.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::HabboWindowManagerComponent()
+     */
+    private applyWindowAssets(windowAssets: IVortexWindowAssets | null): void
+    {
+        if(!windowAssets || !this._windowManager)
+        {
+            return;
+        }
+
+        if(windowAssets.elementDescription)
+        {
+            this._windowManager.loadElementDescription(windowAssets.elementDescription);
+        }
+
+        if(windowAssets.skins)
+        {
+            this._windowManager.loadSkinAssets(windowAssets.skins, windowAssets.atlases ?? new Map());
+        }
+
+        if(windowAssets.layouts)
+        {
+            for(const [name, xml] of windowAssets.layouts)
+            {
+                this._windowManager.registerWidgetLayout(name, xml);
+            }
+        }
     }
 
     /**

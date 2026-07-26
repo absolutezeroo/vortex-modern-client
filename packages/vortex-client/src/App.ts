@@ -1,4 +1,4 @@
-import type {IVortexConfig} from 'vortex-engine';
+import type {IVortexConfig, IVortexWindowAssets} from 'vortex-engine';
 import {Vortex} from 'vortex-engine';
 import {AssetTypeDeclaration} from '@core/assets/AssetTypeDeclaration';
 import {UnknownAsset} from '@core/assets/UnknownAsset';
@@ -13,7 +13,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IElementDescriptionData} from '@habbo/window';
 import type {RoomUI} from '@habbo/ui/RoomUI';
 import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
-import type {VortexLoadingScreen} from './VortexLoadingScreen';
+import {VortexLoadingScreen} from './VortexLoadingScreen';
 import {AssetBundle} from './AssetBundle';
 import {LoginFlow} from './login/LoginFlow';
 import {ChangelogWindow} from './changelog/ChangelogWindow';
@@ -386,6 +386,9 @@ export class VortexApp
     private _lastUiRenderVersion: number = -1;
     private _disposed: boolean = false;
     private _loadingScreen: VortexLoadingScreen | null;
+
+    /** Memoized engine boot — see bootstrapEngine(). */
+    private _enginePromise: Promise<typeof Vortex.instance> | null = null;
     private _imageBundle: AssetBundle | null = null;
     private _xmlBundle: AssetBundle | null = null;
     private _changelogWindow: ChangelogWindow | null = null;
@@ -485,18 +488,106 @@ export class VortexApp
                 ...(window.VortexConfig?.embeddedConfigurations ?? {}),
             },
         };
-        const vortex = await Vortex.bootstrap(vortexConfig, this._loadingScreen ?? undefined);
 
-        if(import.meta.env.DEV) 
+        this._imageBundle = imageBundle;
+        this._xmlBundle = xmlBundle;
+
+        // Mount the "What's New" changelog button now, not after login/connect —
+        // it's an independent DOM overlay (not a room/toolbar window) and should stay
+        // visible even while stuck on the login flow or waiting on the backend.
+        this._changelogWindow = new ChangelogWindow();
+        this._changelogWindow.mount();
+
+        // AS3: HabboAir.as::createLoginFlowOrLoadingScreen() — with no SSO ticket the login
+        // flow is shown and _loadingScreen is never created, which makes the very next call,
+        // startCoreInitializationIfPossible(), return on `if(_loadingScreen == null)`. Nothing
+        // of the game loads until a ticket exists; in particular SessionDataManager (and its
+        // furnidata/productdata downloads) is only constructed once the core starts. So the
+        // engine boot lives *after* this gate, not before it.
+        const configuredTicket = window.VortexConfig?.connection?.ssoTicket;
+
+        if(!configuredTicket)
+        {
+            // AS3 shows one or the other, never both: createLoginFlowOrLoadingScreen() returns
+            // before createLoadingScreen() when the login flow takes over, and
+            // onLoginFlowFinished() then does `_loadingScreen = null; createLoadingScreen();`.
+            // Ours is already on screen (index.ts puts it up while the bundles download), so
+            // drop it for the duration of the login and stand a fresh one up afterwards.
+            this._loadingScreen?.dispose();
+            this._loadingScreen = null;
+
+            await this.showLoginFlow(vortexConfig);
+
+            // AS3: onLoginFlowFinished() -> createLoadingScreen()
+            this._loadingScreen = new VortexLoadingScreen();
+        }
+
+        const vortex = await this.bootstrapEngine(vortexConfig);
+
+        // AS3: the SSO ticket reaches the client through FlashVars either way — HabboAir
+        // writes the one the login flow produced back into the same Dictionary
+        // (`_SafeStr_4998["sso.token"] = _loginFlow.ssoToken`) before starting the core.
+        const ssoTicket = window.VortexConfig?.connection?.ssoTicket;
+
+        if(ssoTicket)
+        {
+            vortex.habboCommunication.ssoTicket = ssoTicket;
+        }
+
+        // 5. Create the canvas and set desktop sizes BEFORE creating windows.
+        //
+        // This used to run after connect(), behind an unconditional dispose of the loading
+        // screen. That dispose was a second, ungated owner: VortexMain.onExitFrame() already
+        // implements AS3's real condition (`if(_SafeStr_8656 && _SafeStr_9943)` in
+        // HabboAir.as — room engine ready AND core running), and AS3 never waits on the
+        // connection for it. Doing it here as well meant the loader's lifetime was decided by
+        // whichever fired first. The engine now owns it alone, so the canvas has to exist by
+        // the time that gate opens — hence before connect() rather than after.
+        this.createCanvas();
+
+        await vortex.connect();
+
+        await this.initClientUi(vortex);
+    }
+
+    /**
+     * Boots the engine and loads everything that depends on it (fonts, chat styles, window
+     * skins, layouts). Idempotent: the login flow's avatar creator calls it too, so the two
+     * entry points share one boot rather than racing a second one.
+     *
+     * AS3: HabboAir.as::startCoreInitializationIfPossible() -> prepareCore(). Nothing in here
+     * may run before an SSO ticket exists — see the gate in init().
+     */
+    private bootstrapEngine(vortexConfig: IVortexConfig): Promise<typeof Vortex.instance>
+    {
+        if(!this._enginePromise)
+        {
+            this._enginePromise = this.doBootstrapEngine(vortexConfig);
+        }
+
+        return this._enginePromise;
+    }
+
+    private async doBootstrapEngine(vortexConfig: IVortexConfig): Promise<typeof Vortex.instance>
+    {
+        const imageBundle = this._imageBundle!;
+        const xmlBundle = this._xmlBundle!;
+
+        // The window assets are parsed BEFORE the engine boots and handed to it, so
+        // HabboWindowManager owns them at construction the way AS3's does (its third
+        // constructor argument is the already-filled AssetLibrary). See IVortexWindowAssets.
+        const vortex = await Vortex.bootstrap(
+            {...vortexConfig, windowAssets: await this.readWindowAssets(imageBundle, xmlBundle)},
+            this._loadingScreen ?? undefined
+        );
+
+        if(import.meta.env.DEV)
         {
             // Dev-only console access, e.g. Vortex.instance.configuration.getProperty('...').
             // Vortex is only ever ES-module-imported elsewhere, so without this the class
             // (and its `instance` singleton getter) isn't reachable from the browser console.
             (window as unknown as { Vortex: typeof Vortex }).Vortex = Vortex;
         }
-
-        this._imageBundle = imageBundle;
-        this._xmlBundle = xmlBundle;
 
         // Register bundled webfonts (Volter/Ubuntu) before anything renders text —
         // see loadWebFonts() for why this was previously silently missing.
@@ -508,29 +599,33 @@ export class VortexApp
         // embeddedConfigurations.
         await registerChatStyleImageAssets(vortex, imageBundle, xmlBundle);
 
-        // Mount the "What's New" changelog button now, not after login/connect —
-        // it's an independent overlay (not a room/toolbar window) and should stay
-        // visible even while stuck on the login flow or waiting on the backend.
-        this._changelogWindow = new ChangelogWindow();
-        this._changelogWindow.mount();
+        return vortex;
+    }
+
+    /**
+     * Parses the window skins, atlases and layouts out of the asset bundles.
+     *
+     * Kept separate from the engine boot on purpose: the result is passed *into*
+     * Vortex.bootstrap() (IVortexConfig.windowAssets) rather than pushed onto a live window
+     * manager afterwards, which is what AS3 does by handing HabboWindowManagerComponent its
+     * AssetLibrary as a constructor argument.
+     */
+    private async readWindowAssets(imageBundle: AssetBundle, xmlBundle: AssetBundle): Promise<IVortexWindowAssets>
+    {
+        const windowAssets: IVortexWindowAssets = {};
 
         // 2. Load element descriptions + atlas bitmaps from bundle
-        try 
+        try
         {
             const elementDescriptionKey = `window-skins/${ELEMENT_DESCRIPTION_ASSET}.xml`;
             const elementDescriptionXml = xmlBundle.getText(elementDescriptionKey);
 
             if(elementDescriptionXml)
             {
-                const elementDescription = parseElementDescriptionFromBundle(
+                windowAssets.elementDescription = parseElementDescriptionFromBundle(
                     elementDescriptionXml,
                     elementDescriptionKey
                 );
-
-                if(elementDescription) 
-                {
-                    vortex.windowManager.loadElementDescription(elementDescription);
-                }
             }
 
             // Decode atlas spritesheets as ImageBitmaps
@@ -571,15 +666,18 @@ export class VortexApp
                 if(skin) skins.set(skin.id, skin);
             }
 
-            vortex.windowManager.loadSkinAssets(skins, atlases);
+            windowAssets.skins = skins;
+            windowAssets.atlases = atlases;
         }
-        catch (error) 
+        catch (error)
         {
             log.warn('Failed to load skin/element assets:', error);
         }
 
+        const layoutsByName = new Map<string, string>();
+
         // 3. Register all window layouts from XML bundle
-        for(const key of xmlBundle.listKeys('window-layouts/')) 
+        for(const key of xmlBundle.listKeys('window-layouts/'))
         {
             const layoutXml = xmlBundle.getText(key);
 
@@ -602,46 +700,34 @@ export class VortexApp
                 continue;
             }
 
-            for(const layout of layouts) 
+            for(const layout of layouts)
             {
                 const name = layout.name;
 
                 if(typeof name === 'string' && name.length > 0)
                 {
-                    vortex.windowManager.registerWidgetLayout(name, layout.xml);
+                    layoutsByName.set(name, layout.xml);
                 }
             }
         }
 
-        // 3b. Register Vortex's own authored layouts (src/vortex-layouts/*.xml). These are not from
+        // 3b. Vortex's own authored layouts (src/vortex-layouts/*.xml). These are not from
         // the dump and deliberately do not live in src/assets/window-layouts/, which is gitignored
         // and rebuilt by tools/build-window-assets.mjs — a file placed there would be wiped on the
         // next asset build. Registered under their file basename, the same way vortex-glaze
         // registers its editor layouts.
-        this.registerVortexLayouts(vortex);
+        this.readVortexLayouts(layoutsByName);
 
-        // 4. Wait for AS3 authentication before creating the visible client UI.
-        const ssoTicket = window.VortexConfig?.connection?.ssoTicket;
+        windowAssets.layouts = layoutsByName;
 
-        if(!ssoTicket) 
-        {
-            await this.showLoginFlow();
-        }
-        else 
-        {
-            await vortex.connect();
-        }
+        return windowAssets;
+    }
 
-        // 5. Dispose loading screen before creating canvas (prevents white flash)
-        if(this._loadingScreen) 
-        {
-            this._loadingScreen.dispose();
-            this._loadingScreen = null;
-        }
-
-        // 6. Create the canvas and set desktop sizes BEFORE creating windows
-        this.createCanvas();
-
+    /**
+     * Everything that only makes sense once the client is authenticated and on screen.
+     */
+    private async initClientUi(vortex: typeof Vortex.instance): Promise<void>
+    {
         // Dev-only visual window debugger (Ctrl+Shift+D). Never bundled in
         // production — import.meta.env.DEV is statically stripped by Vite.
         if(import.meta.env.DEV && this._canvas)
@@ -676,7 +762,7 @@ export class VortexApp
      * These are not Habbo assets: they belong to Vortex-only tools (the furni editor) and have no
      * counterpart in the dump.
      */
-    private registerVortexLayouts(vortex: typeof Vortex.instance): void
+    private readVortexLayouts(sink: Map<string, string>): void
     {
         const modules = import.meta.glob('./vortex-layouts/*.xml', {
             query: '?raw',
@@ -688,7 +774,7 @@ export class VortexApp
         {
             const name = path.split('/').pop()!.replace(/\.xml$/, '');
 
-            vortex.windowManager.registerWidgetLayout(name, xml);
+            sink.set(name, xml);
         }
     }
 
@@ -770,45 +856,50 @@ export class VortexApp
      * The LoginFlow runs as a standalone Sprite before the main client starts.
      * When complete, it provides an SSO token that is passed to the engine.
      *
+     * It runs on its own embedded-only configuration (LoginFlow.createConfiguration), so the
+     * engine is still unbooted here — connecting is the caller's job, once init() has booted
+     * it. The one screen that needs an engine boots it through the ensureEngine callback.
+     *
      * @see sources/win63_2021_version/login/LoginFlow.as
      * @returns Promise that resolves when the login flow finishes
      */
-    private showLoginFlow(): Promise<void> 
+    private showLoginFlow(vortexConfig: IVortexConfig): Promise<void>
     {
-        return new Promise((resolve, reject) => 
+        return new Promise((resolve, reject) =>
         {
-            const vortex = Vortex.instance;
-            const loginFlow = new LoginFlow(vortex.configuration);
+            const loginFlow = new LoginFlow(
+                vortexConfig.embeddedConfigurations ?? {},
+                () => this.bootstrapEngine(vortexConfig).then(() => undefined)
+            );
 
-            loginFlow.init();
+            void loginFlow.init();
 
-            loginFlow.loginEvents.once(LoginFlow.LOGIN_FLOW_FINISHED_EVENT, async () => 
+            loginFlow.loginEvents.once(LoginFlow.LOGIN_FLOW_FINISHED_EVENT, () =>
             {
-                try 
+                try
                 {
                     const token = loginFlow.ssoToken;
 
-                    if(!token) 
+                    if(!token)
                     {
                         throw new Error('[VortexApp] Login flow finished without SSO ticket');
                     }
 
-                    // Set the SSO ticket on the communication manager
-                    vortex.habboCommunication.ssoTicket = token;
-
-                    // Update the global config so connect() picks it up
-                    if(window.VortexConfig?.connection) 
+                    // Hand the ticket over the same way AS3 does — back into the FlashVars-equivalent
+                    // config, which init() reads once the engine is up.
+                    if(!window.VortexConfig?.connection)
                     {
-                        window.VortexConfig.connection.ssoTicket = token;
+                        // connect() reads host/ports from here too, so a missing block is a
+                        // misconfiguration, not something to paper over with a partial object.
+                        throw new Error('[VortexApp] No connection configuration to attach the SSO ticket to');
                     }
 
-                    // Trigger the connection and wait for AS3 AUTHENTICATED before continuing.
-                    await vortex.connect();
+                    window.VortexConfig.connection.ssoTicket = token;
 
                     loginFlow.dispose();
                     resolve();
                 }
-                catch (error) 
+                catch (error)
                 {
                     const message = error instanceof Error ? error.message : String(error);
 

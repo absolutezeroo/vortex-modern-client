@@ -39,6 +39,7 @@
  */
 import {EventEmitter} from 'eventemitter3';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
+import {HabboConfigurationManager} from '@habbo/configuration/HabboConfigurationManager';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {HabboCommunicationManager} from '@habbo/communication/HabboCommunicationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -85,6 +86,18 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
     /** AS3: _configuration — HabboConfigurationManager */
     private _configuration: IHabboConfigurationManager;
+
+    /**
+     * AS3 embedded configuration TextAssets (common_configuration_txt & co), the only
+     * property source the login flow gets — see createConfiguration().
+     */
+    private readonly _embeddedConfigurations: Record<string, string>;
+
+    /**
+     * Boots the engine on demand, for the one screen that needs it (see showAvatarCreate()).
+     * Null when the caller has no engine to offer.
+     */
+    private readonly _ensureEngine: (() => Promise<void>) | null;
 
     /** AS3: _localization — HabboLocalizationManager */
     private _localization: IHabboLocalizationManager | null = null;
@@ -145,10 +158,16 @@ export class LoginFlow implements ILoginContext, ILoginViewer
     /**
      * AS3: LoginFlow(_arg_1:Dictionary)
      * Constructor calls createFakeContext() which sets up all managers and the provider.
+     *
+     * Takes the embedded configuration assets rather than a live manager: AS3 builds the
+     * login flow's configuration out of the embedded HabboConfigurationCom library, so the
+     * flow runs with no engine behind it (HabboAir.as gates startCoreInitializationIfPossible()
+     * on the loading screen, which only exists once login is done).
      */
-    constructor(configurationManager: IHabboConfigurationManager) 
+    constructor(embeddedConfigurations: Record<string, string>, ensureEngine: (() => Promise<void>) | null = null)
     {
-        this._configuration = configurationManager;
+        this._embeddedConfigurations = embeddedConfigurations;
+        this._ensureEngine = ensureEngine;
 
         // AS3: createFakeContext(_arg_1)
         this.createFakeContext();
@@ -179,12 +198,20 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
     /**
      * AS3: get avatarRenderManager():IAvatarRenderManager — OnBoardingHc.as
-     * The engine's avatar render manager is already bootstrapped before the login
-     * flow is shown (see VortexApp.init()), so we reuse it directly rather than
-     * standing up a second onboarding-only renderer as AS3 does.
+     *
+     * AS3's own login screens never render an avatar locally: login/AvatarView.as pulls a
+     * finished PNG off habbo-imaging, and OnBoardingHc lives in habbo/friendbar — i.e. after
+     * login. Our AvatarCreateView is a real client-side editor with no AS3 counterpart, so it
+     * is the single screen that needs the engine; showAvatarCreate() boots it on demand and
+     * this getter reports null until then rather than touching an absent Vortex.instance.
      */
-    public get avatarRenderManager(): IAvatarRenderManager | null 
+    public get avatarRenderManager(): IAvatarRenderManager | null
     {
+        if(!Vortex.hasInstance)
+        {
+            return null;
+        }
+
         return Vortex.instance.windowManager.avatarRenderer;
     }
 
@@ -333,13 +360,7 @@ export class LoginFlow implements ILoginContext, ILoginViewer
                 break;
 
             case LoginFlow.SCREEN_AVATAR_CREATE:
-                if(this._avatarCreateView && this._viewContainer) 
-                {
-                    this._viewContainer.appendChild(this._avatarCreateView.element);
-                    this._avatarCreateView.init();
-                }
-
-                this.layoutMainElements();
+                void this.showAvatarCreate();
                 break;
         }
 
@@ -593,8 +614,21 @@ export class LoginFlow implements ILoginContext, ILoginViewer
      * AS3: init()
      * Initializes the login flow DOM — background, logo, views, side images.
      */
-    public init(): void 
+    public async init(): Promise<void>
     {
+        // The Component base defers initComponent to a microtask; wait for it so the
+        // embedded AS3 TextAsset configurations are parsed before any view reads a
+        // property (same wait VortexMain.init() does after setEmbeddedConfigurationAssets).
+        await Promise.resolve();
+
+        // AS3: _localization.loadDefaultEmbedLocalizations(_configuration.getProperty("environment.id"))
+        if(this._localization)
+        {
+            const envId = this.getProperty('environment.id') ?? 'en';
+
+            this._localization.loadDefaultEmbedLocalizations(envId);
+        }
+
         // Root overlay.
         this._root = document.createElement('div');
         Object.assign(this._root.style, {
@@ -1015,6 +1049,39 @@ export class LoginFlow implements ILoginContext, ILoginViewer
     };
 
     /**
+     * Opens the avatar creator, booting the engine first if it isn't up.
+     *
+     * Every other login screen runs on the FakeContext alone. This one drives
+     * IAvatarRenderManager (figuredata, part downloads, live previews), so it is the only
+     * place the pre-login flow needs a real engine — see the avatarRenderManager getter for
+     * why AS3 has no equivalent. Booting here keeps the furnidata download out of the plain
+     * sign-in path, which is the whole point of gating the core behind login.
+     */
+    private async showAvatarCreate(): Promise<void>
+    {
+        if(this._ensureEngine && !Vortex.hasInstance)
+        {
+            try
+            {
+                await this._ensureEngine();
+            }
+            catch (error)
+            {
+                log.error('Failed to boot the engine for the avatar creator', error);
+            }
+        }
+
+        if(this._disposed || !this._avatarCreateView || !this._viewContainer)
+        {
+            return;
+        }
+
+        this._viewContainer.appendChild(this._avatarCreateView.element);
+        this._avatarCreateView.init();
+        this.layoutMainElements();
+    }
+
+    /**
      * AS3: createFakeContext(_arg_1:Dictionary)
      *
      * @see sources/win63_2021_version/login/LoginFlow.as lines 160-174
@@ -1027,13 +1094,9 @@ export class LoginFlow implements ILoginContext, ILoginViewer
         this._localization = this.createLocalization();
         this._communication = this.createCommunication();
 
-        // AS3: _localization.loadDefaultEmbedLocalizations(_configuration.getProperty("environment.id"))
-        if(this._localization) 
-        {
-            const envId = this.getProperty('environment.id') ?? 'en';
-
-            this._localization.loadDefaultEmbedLocalizations(envId);
-        }
+        // AS3 runs loadDefaultEmbedLocalizations() here, but our Component base defers
+        // initComponent (and with it the embedded-asset parse) to a microtask, so no
+        // property is readable yet — init() awaits that microtask and does it there.
 
         // AS3: _SafeStr_597 = new WebApiLoginProvider(this)
         this._provider = new WebApiLoginProvider(this);
@@ -1044,11 +1107,21 @@ export class LoginFlow implements ILoginContext, ILoginViewer
 
     /**
      * AS3: createConfiguration(_arg_1:IContext):HabboConfigurationManager
-     * In our port, we reuse the engine's already-loaded configuration manager.
+     *
+     * AS3 builds this one from the embedded HabboConfigurationCom asset library alone and
+     * never downloads external_variables — the login screen only needs properties that ship
+     * inside the client (web.api, url.prefix, use.sso, live.environment.list,
+     * landing.view.background_*.uri, habbo.imaging.avatar.url), all of which are in
+     * common_configuration_txt. Reusing the engine's manager instead would force the whole
+     * core — and with it the furnidata download — to boot before the user has authenticated.
      */
-    private createConfiguration(): IHabboConfigurationManager 
+    private createConfiguration(): IHabboConfigurationManager
     {
-        return this._configuration;
+        const configuration = new HabboConfigurationManager(this._fakeContext!);
+
+        configuration.setEmbeddedConfigurationAssets(this._embeddedConfigurations);
+
+        return configuration;
     }
 
     /**
