@@ -1,6 +1,9 @@
 import type {IWindow} from '../../IWindow';
+import {Logger} from '@core/utils/Logger';
 import {PivotPoint} from '../../enum/PivotPoint';
 import {SkinRenderer} from './SkinRenderer';
+
+const log = Logger.getLogger('BitmapDataRenderer');
 
 /**
  * PERFORMANCE CACHE — do not remove or "simplify away".
@@ -84,6 +87,18 @@ export class BitmapDataRenderer extends SkinRenderer
     // disposed and no longer referenced elsewhere.
     private _bitmapWrapperCache: WeakMap<IWindow, IBitmapWrapperCacheEntry> = new WeakMap();
 
+    // Names of the global constructors drawImage() accepts, in the order the
+    // spec lists CanvasImageSource. Looked up by name rather than referenced
+    // directly so a missing type is a false, not a ReferenceError.
+    private static readonly DRAWABLE_TYPES: readonly string[] = [
+        'ImageBitmap', 'OffscreenCanvas', 'HTMLCanvasElement', 'HTMLImageElement',
+        'HTMLVideoElement', 'SVGImageElement', 'VideoFrame',
+    ];
+
+    // Window names already reported by reportUndrawableBitmap(), so the warning
+    // fires once per window instead of once per frame.
+    private static readonly REPORTED_UNDRAWABLE: Set<string> = new Set();
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapDataRenderer.as::isStateDrawable()
     public override isStateDrawable(state: number): boolean
     {
@@ -123,6 +138,25 @@ export class BitmapDataRenderer extends SkinRenderer
         const bmp = bdc.bitmapData ?? null;
 
         if(!bmp) return;
+
+        // `bitmapData` is typed `ImageBitmap | null`, but several call sites
+        // assign to it through a cast (`asset.content as ImageBitmap` and
+        // friends), so a non-image can reach here with the type system none the
+        // wiser. Every drawImage() below then throws, and because draw() runs
+        // inside HabboWindowManager's update receiver, that one bad window
+        // aborts the WHOLE window-manager update — every frame, taking the rest
+        // of the UI's rendering down with it. Skip the window instead, and name
+        // it once so the actual assigner can be found.
+        //
+        // TS-only: AS3 cannot reach this state — `bitmapData` is a typed
+        // `BitmapData` reference there, checked by the AVM, not a structural
+        // cast.
+        if(!BitmapDataRenderer.isDrawable(bmp))
+        {
+            BitmapDataRenderer.reportUndrawableBitmap(window, bmp);
+
+            return;
+        }
 
         const zoomX = bdc.zoomX ?? 1;
         const zoomY = bdc.zoomY ?? 1;
@@ -444,6 +478,59 @@ export class BitmapDataRenderer extends SkinRenderer
         rctx.drawImage(bmp, 0, 0);
 
         return canvas;
+    }
+
+    /**
+	 * Whether a value is something `CanvasRenderingContext2D.drawImage()` will
+	 * actually accept (a `CanvasImageSource`).
+	 *
+	 * Each constructor is checked for existence first: `VideoFrame` is absent in
+	 * older engines and every DOM-only type is absent in a worker, where
+	 * referencing the bare identifier would throw a ReferenceError rather than
+	 * return false.
+	 */
+    // TS-only: guards a cast the type system cannot — see draw().
+    private static isDrawable(value: unknown): value is CanvasImageSource
+    {
+        if(typeof value !== 'object' || value === null) return false;
+
+        const globals = globalThis as unknown as Record<string, unknown>;
+
+        for(const name of BitmapDataRenderer.DRAWABLE_TYPES)
+        {
+            const ctor = globals[name];
+
+            if(typeof ctor === 'function' && value instanceof (ctor as new (...args: never[]) => unknown))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+	 * Logs an undrawable `bitmapData` once per window name, with the value's
+	 * actual constructor — the one piece of information needed to find the
+	 * assigner. Rate-limited by name because draw() runs every frame the window
+	 * is dirty, and an unbounded log would bury everything else.
+	 */
+    // TS-only: diagnostic for the guard above.
+    private static reportUndrawableBitmap(window: IWindow, value: unknown): void
+    {
+        const name = window.name || '<unnamed>';
+
+        if(BitmapDataRenderer.REPORTED_UNDRAWABLE.has(name)) return;
+
+        BitmapDataRenderer.REPORTED_UNDRAWABLE.add(name);
+
+        const actual = (value as { constructor?: { name?: string } })?.constructor?.name ?? typeof value;
+
+        log.warn(
+            `Window "${name}" (type ${window.type}, style ${window.style}) has a bitmapData that drawImage() cannot accept: `
+			+ `got ${actual}. The window is skipped. Whatever assigns this window's bitmap is passing a non-image `
+			+ `through a cast — fix it there; this guard only keeps one bad window from aborting the whole render pass.`
+        );
     }
 
     /**
