@@ -557,8 +557,12 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
         this._communicationManager?.addHabboConnectionMessageEvent(new NavigatorSettingsMessageEvent(this.onNavigatorSettings));
 
-        // Initialize the landing view
-        this.tryInitialize();
+        // No tryInitialize() here: AS3's initComponent() only registers these three listeners,
+        // and lets onNavigatorSettings() (roomIdToEnter <= 0) do the one initialization — which
+        // is right, since a session that auto-enters a room should never build a landing view
+        // at all. Calling it here as well built the whole thing twice: initialize() assigns a
+        // fresh WidgetContainerLayout without disposing the previous one, so the second pass
+        // saw a null window and rebuilt every widget.
     }
 
     /**

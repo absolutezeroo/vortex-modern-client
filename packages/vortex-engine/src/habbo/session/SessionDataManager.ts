@@ -124,8 +124,8 @@ import type {
 } from '../communication/messages/parser/inventory/AchievementsScoreMessageParser';
 import type {FigureSetIdsMessageParser} from '../communication/messages/parser/inventory/FigureSetIdsMessageParser';
 import type {
-    IAvatarEffect,
-    AvatarEffectsMessageParser
+    AvatarEffectsMessageParser,
+    IAvatarEffect
 } from '../communication/messages/parser/inventory/AvatarEffectsMessageParser';
 import type {
     MysteryBoxKeysMessageParser
@@ -169,8 +169,12 @@ import {
 import {
     IncomeRewardClaimMessageComposer
 } from '../communication/messages/outgoing/inventory/IncomeRewardClaimMessageComposer';
-import {GetUserNftChatStylesMessageComposer} from '../communication/messages/outgoing/users/GetUserNftChatStylesMessageComposer';
-import {ReplenishRespectMessageComposer} from '../communication/messages/outgoing/users/ReplenishRespectMessageComposer';
+import {
+    GetUserNftChatStylesMessageComposer
+} from '../communication/messages/outgoing/users/GetUserNftChatStylesMessageComposer';
+import {
+    ReplenishRespectMessageComposer
+} from '../communication/messages/outgoing/users/ReplenishRespectMessageComposer';
 
 // Session events
 import {UserNameUpdateEvent} from './events/UserNameUpdateEvent';
@@ -1067,12 +1071,6 @@ export class SessionDataManager extends Component implements ISessionDataManager
         if(listener)
         {
             this._productDataListeners.add(listener);
-        }
-
-        // Actually trigger loading if not already in progress
-        if(!this._productDataParser)
-        {
-            this.initProductData();
         }
 
         return false;
