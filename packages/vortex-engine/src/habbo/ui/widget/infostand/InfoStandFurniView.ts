@@ -36,7 +36,7 @@ import type {RoomWidgetFurniInfoUpdateEvent} from '../events/RoomWidgetFurniInfo
 import type {InfoStandWidget} from './InfoStandWidget';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('InfoStandFurniView');
+const log = Logger.getLogger('habbo.ui.widget.infostand.InfoStandFurniView');
 
 // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandFurniView.as::const_389
 const OWNER_BC_MARKER = -12345678;

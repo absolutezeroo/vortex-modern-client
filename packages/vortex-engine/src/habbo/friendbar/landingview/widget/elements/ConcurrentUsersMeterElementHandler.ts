@@ -9,7 +9,7 @@ import type {ConcurrentUsersGoalProgressMessageParser} from '@habbo/communicatio
 import {ConcurrentUsersGoalProgressMessageEvent} from '@habbo/communication/messages/incoming/quest/ConcurrentUsersGoalProgressMessageEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ConcurrentUsersMeterElementHandler');
+const log = Logger.getLogger('habbo.friendbar.landingview.widget.elements.ConcurrentUsersMeterElementHandler');
 
 /**
  * Progress-meter image that swaps its asset in 10%-of-goal increments as the

@@ -2,7 +2,7 @@ import type {IDisposable} from '@core/runtime';
 import type {HabboQuestEngine} from './HabboQuestEngine';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('RoomCompetitionController');
+const log = Logger.getLogger('habbo.quest.RoomCompetitionController');
 
 /**
  * Room competition controller

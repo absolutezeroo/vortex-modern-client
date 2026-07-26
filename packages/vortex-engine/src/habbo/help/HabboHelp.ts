@@ -35,7 +35,7 @@ import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IMessageComposer} from '@core';
 
-const log = Logger.getLogger('HabboHelp');
+const log = Logger.getLogger('habbo.help.HabboHelp');
 
 /**
  * Main help component

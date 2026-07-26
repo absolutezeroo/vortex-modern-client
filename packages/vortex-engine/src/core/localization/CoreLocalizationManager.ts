@@ -10,7 +10,7 @@ import {LocalizationDefinition} from './LocalizationDefinition';
 import {GameDataResources} from './GameDataResources';
 import {LocalizationEvent} from './LocalizationEvent';
 
-const log = Logger.getLogger('Localization');
+const log = Logger.getLogger('core.localization.CoreLocalizationManager');
 
 /**
  * Core localization manager

@@ -109,7 +109,7 @@ import {
 import {HabboSearchMessageComposer} from '@habbo/communication/messages/outgoing/friendlist/HabboSearchMessageComposer';
 import type {IMessageComposer} from "@core";
 
-const log = Logger.getLogger('HabboFriendList');
+const log = Logger.getLogger('habbo.friendlist.HabboFriendList');
 
 /**
  * HabboFriendList - Core friend list manager component.
@@ -322,7 +322,7 @@ export class HabboFriendList extends Component implements IHabboFriendList
 
     protected initComponent(): void
     {
-        log.info('Initializing HabboFriendList...');
+        log.debug('Initializing HabboFriendList...');
 
         this.addMessageEvent(new MessengerInitEvent(this.onMessengerInit.bind(this)));
         this.addMessageEvent(new FriendListFragmentMessageEvent(this.onFriendListFragment.bind(this)));
@@ -382,7 +382,7 @@ export class HabboFriendList extends Component implements IHabboFriendList
         this._userFriendLimit = parser.userFriendLimit;
         this._extendedFriendLimit = parser.extendedFriendLimit;
 
-        log.info(`Messenger initialized. Friend limit: ${this._userFriendLimit}, Extended: ${this._extendedFriendLimit}`);
+        log.debug(`Messenger initialized. Friend limit: ${this._userFriendLimit}, Extended: ${this._extendedFriendLimit}`);
 
         // Start periodic update timer (every 120 seconds, matching AS3)
         if(!this._updateTimerId)

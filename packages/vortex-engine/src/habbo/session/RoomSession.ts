@@ -57,7 +57,7 @@ import {
 import type {IUserDataManager} from "@habbo/session/IUserDataManager";
 import {UserDataManager} from "@habbo/session/UserDataManager";
 
-const log = Logger.getLogger('RoomSession');
+const log = Logger.getLogger('habbo.session.RoomSession');
 
 /**
  * Ban duration types

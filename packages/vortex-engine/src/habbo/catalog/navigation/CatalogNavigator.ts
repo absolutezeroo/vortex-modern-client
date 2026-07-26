@@ -14,7 +14,7 @@ import type {ICatalogNode} from './ICatalogNode';
 import {CatalogNode} from './CatalogNode';
 import {CatalogNodeRenderable} from './CatalogNodeRenderable';
 
-const log = Logger.getLogger('CatalogNavigator');
+const log = Logger.getLogger('habbo.catalog.navigation.CatalogNavigator');
 
 /**
  * The catalog category tree + navigation window (one per catalog type, e.g. "NORMAL").

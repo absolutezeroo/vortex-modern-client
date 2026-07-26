@@ -87,7 +87,7 @@ import type {
     CompetitionEntrySubmitResultMessageEventParser
 } from '@habbo/communication/messages/parser/competition/CompetitionEntrySubmitResultMessageEventParser';
 
-const log = Logger.getLogger('QuestMessageHandler');
+const log = Logger.getLogger('habbo.quest.QuestMessageHandler');
 
 /**
  * Central message handler/router for all quest, achievement, and competition
@@ -177,7 +177,7 @@ export class QuestMessageHandler implements IDisposable
         // Notification events
         this.addMessageEvent(communication, new HabboAchievementNotificationMessageEvent(this.onLevelUp.bind(this)));
 
-        log.info('Quest message handler initialized');
+        log.debug('Quest message handler initialized');
     }
 
     /**
@@ -200,7 +200,7 @@ export class QuestMessageHandler implements IDisposable
 
         if(!parser) return;
 
-        log.debug('Quest received');
+        log.trace('Quest received');
 
         if(parser.quest) this._engine.questController?.onQuest(parser.quest);
     }
@@ -216,7 +216,7 @@ export class QuestMessageHandler implements IDisposable
 
         if(!parser) return;
 
-        log.debug(`Quests received: count=${parser.quests?.length}, openWindow=${parser.openWindow}`);
+        log.trace(`Quests received: count=${parser.quests?.length}, openWindow=${parser.openWindow}`);
         this._engine.events.emit(
             QuestsListEvent.QUESTS,
             new QuestsListEvent(QuestsListEvent.QUESTS, parser.quests, parser.openWindow)
@@ -234,7 +234,7 @@ export class QuestMessageHandler implements IDisposable
 
         if(!parser) return;
 
-        log.debug(`Seasonal quests received: count=${parser.quests?.length}`);
+        log.trace(`Seasonal quests received: count=${parser.quests?.length}`);
         this._engine.events.emit(
             QuestsListEvent.QUESTS_SEASONAL,
             new QuestsListEvent(QuestsListEvent.QUESTS_SEASONAL, parser.quests, true)
@@ -443,6 +443,6 @@ export class QuestMessageHandler implements IDisposable
 
         this._engine.achievementsResolutionController?.onLevelUp(parser.data);
 
-        log.debug('Achievement level-up notification received');
+        log.trace('Achievement level-up notification received');
     }
 }

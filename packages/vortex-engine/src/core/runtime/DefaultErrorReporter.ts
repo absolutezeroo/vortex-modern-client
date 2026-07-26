@@ -2,7 +2,7 @@ import type {ICoreErrorReporter} from './ICoreErrorReporter';
 import type {ICoreErrorLogger} from './ICoreErrorLogger';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('CoreErrorReporter');
+const log = Logger.getLogger('core.runtime.DefaultErrorReporter');
 
 /**
  * Default error reporter implementation.

@@ -88,7 +88,7 @@ export class BitmapFileLoader extends BinaryFileLoader
             })
             .catch((error: Error) =>
             {
-                Logger.getLogger('BitmapFileLoader').error('Error loading texture:', error);
+                Logger.getLogger('core.assets.loaders.BitmapFileLoader').error('Error loading texture:', error);
                 this.handleLoadEvent('ioError');
             });
     }

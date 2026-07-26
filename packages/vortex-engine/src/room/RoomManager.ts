@@ -24,7 +24,7 @@ import type {IRoomObjectSpriteVisualization} from './object/visualization/IRoomO
 import {RoomInstance} from './RoomInstance';
 import {RoomContentLoadedEvent} from './events/RoomContentLoadedEvent';
 
-const log = Logger.getLogger('RoomManager');
+const log = Logger.getLogger('room.RoomManager');
 
 /**
  * Room manager states.

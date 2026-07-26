@@ -11,7 +11,7 @@ import {ModerationMessageHandler} from './ModerationMessageHandler';
 import {LocalizationHelper} from './LocalizationHelper';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 
-const log = Logger.getLogger('Moderation');
+const log = Logger.getLogger('habbo.moderation.ModerationManager');
 
 /**
  * Central moderation component.
@@ -213,7 +213,7 @@ export class ModerationManager extends Component implements IHabboModeration
 
         this._initData = null;
 
-        log.info('ModerationManager disposed');
+        log.debug('ModerationManager disposed');
         super.dispose();
     }
 
@@ -226,6 +226,6 @@ export class ModerationManager extends Component implements IHabboModeration
         this._issueManager = new IssueManager(this);
         this._messageHandler = new ModerationMessageHandler(this);
 
-        log.info('ModerationManager initialized');
+        log.debug('ModerationManager initialized');
     }
 }

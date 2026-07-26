@@ -48,7 +48,7 @@ import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
 import type {InfoStandWidget} from '@habbo/ui/widget/infostand/InfoStandWidget';
 
-const log = Logger.getLogger('InfoStandWidgetHandler');
+const log = Logger.getLogger('habbo.ui.handler.InfoStandWidgetHandler');
 
 // Every message type from getWidgetMessages() that processWidgetMessage() doesn't
 // yet implement — kept as one list so the switch's default branch can log which
@@ -325,7 +325,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 // TODO(AS3): these send monster-plant care composers (AS3 _SafeCls_1909 /
                 // _SafeCls_2695(id,0|1)) that have no port equivalent yet. Left as a TODO so the
                 // action is visible rather than silently dropped.
-                log.debug(`TODO(AS3): pet care composer not ported yet (${message.type})`);
+                log.warn(`TODO(AS3): pet care composer not ported yet (${message.type})`);
                 break;
             default:
                 log.debug(`TODO(AS3): unimplemented user-action message ${message.type}`);

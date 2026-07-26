@@ -12,7 +12,7 @@ import {WindowGallery} from './ui/windows/WindowGallery';
 import {GlazeShortcuts} from './input/GlazeShortcuts';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('GlazeMain');
+const log = Logger.getLogger('glaze.main');
 
 async function main(): Promise<void>
 {

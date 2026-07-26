@@ -18,7 +18,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ChatBubbleStyle');
+const log = Logger.getLogger('habbo.ui.widget.roomchat.style.ChatBubbleStyle');
 
 export interface IChatBubbleStyleDescriptor
 {

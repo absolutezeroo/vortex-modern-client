@@ -8,7 +8,7 @@ import {UserChangeMessageEvent} from '@habbo/communication/messages/incoming/roo
 import {AvatarRenderEvent} from '@habbo/avatar/enum/AvatarRenderEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuIconLoader');
+const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuIconLoader');
 
 /**
  * Icon loading for the legacy me menu

@@ -11,7 +11,7 @@ import type {IVipBuyCatalogWidget} from './IVipBuyCatalogWidget';
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const log = Logger.getLogger('ClubBuyCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.ClubBuyCatalogWidget');
 
 /**
  * Habbo Club purchase widget (the "buy HC/VIP days" catalog page).

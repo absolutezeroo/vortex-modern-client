@@ -64,7 +64,7 @@ interface ITintedPage
  */
 export class GlyphAtlas
 {
-    private static readonly LOGGER = Logger.getLogger('GlyphAtlas');
+    private static readonly LOGGER = Logger.getLogger('core.window.utils.GlyphAtlas');
 
     /**
      * Global kill switch, so the previous `ctx.fillText()` behaviour stays one

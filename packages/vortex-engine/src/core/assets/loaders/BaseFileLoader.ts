@@ -4,7 +4,7 @@ import type {IAssetLoader} from './IAssetLoader';
 import {AssetLoaderErrorCodes} from './IAssetLoader';
 import {AssetLoaderEvent, AssetLoaderEventType} from './AssetLoaderEvent';
 
-const log = Logger.getLogger('BaseFileLoader');
+const log = Logger.getLogger('core.assets.loaders.BaseFileLoader');
 
 /**
  * BaseFileLoader

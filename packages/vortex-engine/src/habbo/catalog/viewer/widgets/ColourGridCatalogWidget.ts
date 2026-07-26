@@ -10,7 +10,7 @@ import {CatalogWidgetColourIndexEvent} from './events/CatalogWidgetColourIndexEv
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 
-const log = Logger.getLogger('ColourGridCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.ColourGridCatalogWidget');
 
 /**
  * A generic colour-swatch grid: builds one `color_chooser_cell` widget instance per available

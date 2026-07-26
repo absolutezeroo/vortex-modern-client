@@ -11,7 +11,7 @@ import {Exception} from './exceptions/Exception';
 import {LibraryProgressEvent} from './events/LibraryProgressEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('CoreComponentContext');
+const log = Logger.getLogger('core.runtime.CoreComponentContext');
 
 /**
  * Number of update receiver priority levels.
@@ -157,7 +157,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
             // Flash-native dev profiling UI; this port's target platform has browser devtools
             // instead). Falls back to the simple handler, same as the unhandled-mode default below.
             case CoreSetup.FRAME_UPDATE_PROFILER:
-                log.debug('Core: using profiler frame update handler (Profiler/ProfilerViewer not ported, falling back to simple)');
+                log.warn('Core: using profiler frame update handler (Profiler/ProfilerViewer not ported, falling back to simple)');
                 this._frameUpdateHandler = this.simpleFrameUpdateHandler.bind(this);
                 break;
             case CoreSetup.FRAME_UPDATE_EXPERIMENT:
@@ -317,7 +317,7 @@ export class CoreComponentContext extends ComponentContext implements ICore
     {
         // Profiler mode is not applicable in the web version.
         // The browser DevTools serve this purpose.
-        log.debug('Core: profiler mode not supported in web version, use browser DevTools');
+        log.warn('Core: profiler mode not supported in web version, use browser DevTools');
     }
 
     /**

@@ -16,7 +16,7 @@ import {AdImageRequest} from './AdImageRequest';
 import type {IAdManager} from './IAdManager';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 
-const log = Logger.getLogger('AdManager');
+const log = Logger.getLogger('habbo.advertisement.AdManager');
 
 /**
  * Advertisement manager

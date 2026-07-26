@@ -20,7 +20,7 @@ import {RoomVisualizationData} from './RoomVisualizationData';
 import {RoomPlaneBitmapMaskParser} from '@habbo/room/object/RoomPlaneBitmapMaskParser';
 import {Logger} from "@core";
 
-const log = Logger.getLogger('RoomVisualization');
+const log = Logger.getLogger('habbo.room.object.visualization.room.RoomVisualization');
 
 export class RoomVisualization extends RoomObjectSpriteVisualization
 {

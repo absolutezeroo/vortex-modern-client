@@ -123,7 +123,7 @@ import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
-const log = Logger.getLogger('RoomEngine');
+const log = Logger.getLogger('habbo.room.RoomEngine');
 
 // Room identifier prefix
 const ROOM_ID_PREFIX = 'room_';

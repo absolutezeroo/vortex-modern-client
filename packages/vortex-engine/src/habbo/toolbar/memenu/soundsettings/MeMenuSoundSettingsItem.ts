@@ -1,7 +1,7 @@
 import type {MeMenuSoundSettingsView} from './MeMenuSoundSettingsView';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuSoundSettingsItem');
+const log = Logger.getLogger('habbo.toolbar.memenu.soundsettings.MeMenuSoundSettingsItem');
 
 /**
  * Sound settings item for the me menu (UI, furni, or trax volume)

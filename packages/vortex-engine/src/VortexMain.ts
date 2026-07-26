@@ -84,7 +84,7 @@ import type {IVortexMain} from "./IVortexMain";
 import type {IVortexLoadingScreen} from './IVortexLoadingScreen';
 import type {Application, Ticker} from 'pixi.js';
 
-const log = Logger.getLogger('HabboMain');
+const log = Logger.getLogger('VortexMain');
 
 /**
  * HabboMain
@@ -815,7 +815,7 @@ export class VortexMain implements IVortexMain
         this._friendBar = new HabboFriendBar(ctx);
         ctx.attachComponent(this._friendBar, [IID_HabboFriendBar]);
 
-        log.info('Friend Bar initialized');
+        log.debug('Friend Bar initialized');
     }
 
     /**
@@ -1144,7 +1144,7 @@ export class VortexMain implements IVortexMain
 
         if(spaweb === '1') 
         {
-            log.info('SPA heartbeat enabled');
+            log.debug('SPA heartbeat enabled');
 
             this.sendHeartBeat();
 

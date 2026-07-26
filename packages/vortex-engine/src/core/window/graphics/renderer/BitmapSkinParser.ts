@@ -5,7 +5,7 @@ import {SkinTemplate} from './SkinTemplate';
 import {SkinTemplateEntity} from './SkinTemplateEntity';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('BitmapSkinParser');
+const log = Logger.getLogger('core.window.graphics.renderer.BitmapSkinParser');
 
 /**
  * JSON data interfaces for skin descriptions.

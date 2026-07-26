@@ -2,7 +2,7 @@ import type {MeMenuSettingsMenuView} from '../MeMenuSettingsMenuView';
 import type {ToolbarView} from '../../ToolbarView';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuChatSettingsView');
+const log = Logger.getLogger('habbo.toolbar.memenu.chatsettings.MeMenuChatSettingsView');
 
 /**
  * Chat settings view within the me menu settings

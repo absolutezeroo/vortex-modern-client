@@ -17,7 +17,7 @@ import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 import {EffectsWidget} from './widget/effects/EffectsWidget';
 import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 
-const log = Logger.getLogger('RoomWidgetFactory');
+const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
 export class RoomWidgetFactory implements IRoomWidgetFactory
 {

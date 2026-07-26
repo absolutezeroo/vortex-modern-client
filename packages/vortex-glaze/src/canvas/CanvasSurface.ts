@@ -5,7 +5,7 @@ import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperato
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('GlazeCanvasSurface');
+const log = Logger.getLogger('glaze.canvas.CanvasSurface');
 
 /**
  * CanvasSurface — the live window preview area.

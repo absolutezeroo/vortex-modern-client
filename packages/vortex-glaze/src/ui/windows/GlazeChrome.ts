@@ -6,7 +6,7 @@ import {Logger} from '@core/utils/Logger';
 import type {GlazeLayoutName} from '../GlazeLayoutSlots';
 import {slotsOf} from '../LayoutSlots';
 
-const log = Logger.getLogger('GlazeChrome');
+const log = Logger.getLogger('glaze.ui.windows.GlazeChrome');
 
 const HIERARCHY = slotsOf('glaze_hierarchy_xml');
 const PROPERTY = slotsOf('glaze_property_xml');

@@ -44,7 +44,7 @@ import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('HabboLandingView');
+const log = Logger.getLogger('habbo.friendbar.landingview.HabboLandingView');
 
 /**
  * HabboLandingView

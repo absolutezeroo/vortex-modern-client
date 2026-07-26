@@ -47,7 +47,15 @@ export default tseslint.config(
             [
                 'error',
                 { selector: 'ExportDefaultDeclaration', message: 'Named exports only — never use `export default` (docs/STYLEGUIDE.md).' },
-                { selector: 'TSUnionType > TSUndefinedKeyword', message: 'Use `| null`, not `| undefined`, in type annotations (docs/STYLEGUIDE.md).' }
+                { selector: 'TSUnionType > TSUndefinedKeyword', message: 'Use `| null`, not `| undefined`, in type annotations (docs/STYLEGUIDE.md).' },
+                // A logger name is a dotted path mirroring the module, because that is what makes
+                // `__log.set('habbo.room', 'debug')` cover a subsystem rather than one class. Flat
+                // names also collide silently - `Moderation` was three different files, `Navigator`
+                // two. `Vortex`/`VortexMain` are the two engine entry points and *are* roots.
+                {
+                    selector: "CallExpression[callee.object.name='Logger'][callee.property.name='getLogger'] > Literal:not([value=/\\./]):not([value=/^(Vortex|VortexMain)$/])",
+                    message: "Logger namespaces are dotted module paths - Logger.getLogger('habbo.room.RoomEngine'), not a bare class name (docs/STYLEGUIDE.md -> Logging)."
+                }
             ],
 
             '@typescript-eslint/no-explicit-any': 'warn',
@@ -91,8 +99,9 @@ export default tseslint.config(
                 // (`_pool`/`_disposePool`/`_keyboardPool`/`_linkPool`/`_mousePool`/`_touchPool`), a
                 // scratch/temp object reused to avoid per-call allocations (`_tempRect`,
                 // `_helperVector`), or a lazily-populated cache (`_alphaHitCache`, `_toolEvents`,
-                // `_propertySetters`, `_previewWindow`, `_encoder`/`_decoder`, `_startTime`) - not a
-                // fixed value, so it keeps the ordinary private-field `_camelCase` convention.
+                // `_propertySetters`, `_previewWindow`, `_encoder`/`_decoder`, `_startTime`) or a
+                // runtime registry (Logger's `_loggers`/`_overrides`/`_onceKeys`) - not a fixed
+                // value, so it keeps the ordinary private-field `_camelCase` convention.
                 // Excluded by name rather than by type: type-aware filtering needs a
                 // `parserOptions.project`, which isn't configured, and would be wrong here anyway -
                 // pools/caches and fixed-value arrays share the same `T[]`/`Map<...>` shape.
@@ -101,7 +110,7 @@ export default tseslint.config(
                 {
                     selector: 'classProperty', modifiers: ['private', 'static', 'readonly'], format: ['UPPER_CASE'],
                     filter: {
-                        regex: '^_(pool|disposePool|keyboardPool|linkPool|mousePool|touchPool|tempRect|helperVector|alphaHitCache|toolEvents|propertySetters|previewWindow|encoder|decoder|startTime)$',
+                        regex: '^_(pool|disposePool|keyboardPool|linkPool|mousePool|touchPool|tempRect|helperVector|alphaHitCache|toolEvents|propertySetters|previewWindow|encoder|decoder|startTime|loggers|overrides|onceKeys)$',
                         match: false
                     }
                 },

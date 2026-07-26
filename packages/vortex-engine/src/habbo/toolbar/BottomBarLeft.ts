@@ -20,7 +20,7 @@ import {DropBounce} from '@core/window/motion/DropBounce';
 import {Dispose} from '@core/window/motion/Dispose';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('BottomBarLeft');
+const log = Logger.getLogger('habbo.toolbar.BottomBarLeft');
 
 /**
  * Horizontal bottom bar with icon click handlers, unseen counters, and collapse
@@ -512,7 +512,7 @@ export class BottomBarLeft
 
         if(!iconName)
         {
-            log.warn(`[Toolbar] Unknown icon type for unseen item counter for iconId: ${iconId}`);
+            log.warn(`Unknown icon type for unseen item counter for iconId: ${iconId}`);
         }
 
         let counter = (this._unseenItemCounters.get(iconId) ?? null) as IWindowContainer | null;

@@ -58,7 +58,7 @@ import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {IID_AvatarRenderManager} from "@iid/IIDAvatarRenderManager";
 import type {IAvatarRenderManager} from '../avatar/IAvatarRenderManager';
 
-const log = Logger.getLogger('HabboToolbar');
+const log = Logger.getLogger('habbo.toolbar.HabboToolbar');
 
 /**
  * Events emitted by HabboToolbar via toolbarEvents
@@ -548,7 +548,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
                     this._bottomBarLeft.window.visible = false;
                 }
 
-                log.info('BottomBarLeft created successfully');
+                log.debug('BottomBarLeft created successfully');
 
                 // Replay any icon-visibility requests that arrived before the
                 // window layout was registered (construction fails silently
@@ -1126,7 +1126,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
         // registered the window layouts. In AS3, layouts were embedded in
         // the SWF and available immediately; here they're registered after
         // bootstrap by the client layer.
-        log.info('Toolbar component initialized');
+        log.debug('Toolbar component initialized');
     }
 
     /**
@@ -1162,7 +1162,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 
             this._extensionsInitialized = true;
 
-            log.info('Toolbar extensions initialized after perks update');
+            log.debug('Toolbar extensions initialized after perks update');
         }
     }
 

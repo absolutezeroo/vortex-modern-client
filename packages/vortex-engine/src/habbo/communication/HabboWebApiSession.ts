@@ -17,7 +17,7 @@ import type {IHabboWebApiSession} from './IHabboWebApiSession';
 import {WEB_API_ROUTES} from './IHabboWebApiSession';
 import {WebApiRequest} from './WebApiRequest';
 
-const logger = Logger.getLogger('HabboWebApiSession');
+const logger = Logger.getLogger('habbo.communication.HabboWebApiSession');
 
 export class HabboWebApiSession implements IHabboWebApiSession, IApiListener 
 {

@@ -2,7 +2,7 @@ import type {MeMenuController} from './MeMenuController';
 import type {ToolbarView} from '../ToolbarView';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuSettingsMenuView');
+const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuSettingsMenuView');
 
 /**
  * Settings menu view within the me menu

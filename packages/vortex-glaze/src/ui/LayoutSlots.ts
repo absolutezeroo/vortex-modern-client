@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import {Logger} from '@core/utils/Logger';
 import type {GlazeLayoutName, GlazeSlot} from './GlazeLayoutSlots';
 
-const log = Logger.getLogger('GlazeSlots');
+const log = Logger.getLogger('glaze.ui.LayoutSlots');
 
 interface IFinder { findChildByName(name: string): IWindow | null; }
 

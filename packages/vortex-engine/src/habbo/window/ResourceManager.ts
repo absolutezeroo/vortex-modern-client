@@ -3,7 +3,7 @@ import type {IResourceManager} from '@core/window/IResourceManager';
 import type {IAssetReceiver} from '@core/window/IAssetReceiver';
 import type {IHabboWindowManager} from './IHabboWindowManager';
 
-const log = Logger.getLogger('ResourceManager');
+const log = Logger.getLogger('habbo.window.ResourceManager');
 
 /**
  * Manages asset retrieval for the window system.

@@ -19,7 +19,7 @@ import {AvatarAction} from './enum/AvatarAction';
 import {AvatarScaleType} from './enum/AvatarScaleType';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AvatarImage');
+const log = Logger.getLogger('habbo.avatar.AvatarImage');
 
 /**
  * Main avatar image rendering class. Manages actions, directions,

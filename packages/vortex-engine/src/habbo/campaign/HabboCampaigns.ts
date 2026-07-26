@@ -24,7 +24,7 @@ import {
 } from '@habbo/communication/messages/outgoing/campaign/OpenCampaignCalendarDoorAsStaffComposer';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 
-const log = Logger.getLogger('Campaign');
+const log = Logger.getLogger('habbo.campaign.HabboCampaigns');
 
 /**
  * Campaign calendar manager
@@ -114,7 +114,7 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
 
         if(parts[1] === 'calendar')
         {
-            log.debug('Calendar link received');
+            log.trace('Calendar link received');
             // Calendar UI will be handled by SolidJS
         }
     }
@@ -158,7 +158,7 @@ export class HabboCampaigns extends Component implements ILinkEventTracker
 
         this._calendarData = parser.cloneData();
 
-        log.debug('Campaign calendar data received:', this._calendarData?.campaignName);
+        log.trace('Campaign calendar data received:', this._calendarData?.campaignName);
     }
 
     /**

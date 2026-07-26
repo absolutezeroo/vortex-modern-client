@@ -59,7 +59,7 @@ import {
     GetUserFlatCatsMessageComposer,
 } from '../communication/messages/outgoing/navigator';
 
-const log = Logger.getLogger('Navigator');
+const log = Logger.getLogger('habbo.navigator.IncomingMessages');
 
 /**
  * Handles incoming navigator messages
@@ -153,7 +153,7 @@ export class IncomingMessages
         this.data.homeRoomId = parser.homeRoomId;
         this.data.settingsReceived = true;
 
-        log.debug(`Navigator settings received: homeRoomId=${parser.homeRoomId}`);
+        log.trace(`Navigator settings received: homeRoomId=${parser.homeRoomId}`);
     }
 
     private onFavourites(event: IMessageEvent): void
@@ -166,7 +166,7 @@ export class IncomingMessages
 
         this.data.onFavourites(parser.limit, parser.favouriteRoomIds);
 
-        log.debug(`Favourites received: ${parser.favouriteRoomIds.length} rooms`);
+        log.trace(`Favourites received: ${parser.favouriteRoomIds.length} rooms`);
     }
 
     private onFavouriteChanged(event: IMessageEvent): void
@@ -297,7 +297,7 @@ export class IncomingMessages
 
         this.data.popularTags = parser.data;
 
-        log.debug(`Popular tags received: ${parser.data?.tags.length ?? 0} tags`);
+        log.trace(`Popular tags received: ${parser.data?.tags.length ?? 0} tags`);
     }
 
     private onOfficialRooms(event: IMessageEvent): void
@@ -312,7 +312,7 @@ export class IncomingMessages
         this.data.adRoom = parser.adRoom;
         this.data.promotedRooms = parser.promotedRooms;
 
-        log.debug(`Official rooms received: ${parser.data?.entries.length ?? 0} entries`);
+        log.trace(`Official rooms received: ${parser.data?.entries.length ?? 0} entries`);
     }
 
     private onCategoriesWithVisitorCount(event: IMessageEvent): void
@@ -325,7 +325,7 @@ export class IncomingMessages
 
         this.data.categoriesWithVisitorData = parser.data;
 
-        log.debug('Categories with visitor count received');
+        log.trace('Categories with visitor count received');
     }
 
     private onUserFlatCats(event: IMessageEvent): void
@@ -338,7 +338,7 @@ export class IncomingMessages
 
         this.data.categories = parser.nodes;
 
-        log.debug(`User flat categories received: ${parser.nodes.length} categories`);
+        log.trace(`User flat categories received: ${parser.nodes.length} categories`);
     }
 
     private onUserEventCats(event: IMessageEvent): void
@@ -351,7 +351,7 @@ export class IncomingMessages
 
         this.data.eventCategories = parser.eventCategories;
 
-        log.debug(`User event categories received: ${parser.eventCategories.length} categories`);
+        log.trace(`User event categories received: ${parser.eventCategories.length} categories`);
     }
 
     private onCanCreateRoom(event: IMessageEvent): void

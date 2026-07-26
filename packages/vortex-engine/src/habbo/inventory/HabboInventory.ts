@@ -76,7 +76,7 @@ import type {AvatarEffectExpiredMessageParser} from '../communication/messages/p
 import {HabboInventoryEffectsEvent} from './events/HabboInventoryEffectsEvent';
 import {Effect} from './effects/Effect';
 
-const log = Logger.getLogger('Inventory');
+const log = Logger.getLogger('habbo.inventory.HabboInventory');
 
 /**
  * Main inventory controller
@@ -435,7 +435,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         this._initializedCategories.clear();
 
-        log.info('Inventory disposed');
+        log.debug('Inventory disposed');
         super.dispose();
     }
 
@@ -788,7 +788,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.registerFurniMessageEvents();
         this.registerPetMessageEvents();
         this.registerEffectMessageEvents();
-        log.info('Inventory initialized');
+        log.debug('Inventory initialized');
     }
 
     /**
@@ -840,7 +840,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         if(parts[1] !== 'open')
         {
-            log.debug(`Inventory unknown link-type received: ${parts[1]}`);
+            log.warn(`Inventory unknown link-type received: ${parts[1]}`);
         }
         else if(parts.length === 2)
         {

@@ -71,7 +71,7 @@ import type {IRoomDesktop} from './IRoomDesktop';
 import {RoomDesktop} from './RoomDesktop';
 import {RoomWidgetFactory} from './RoomWidgetFactory';
 
-const log = Logger.getLogger('RoomUI');
+const log = Logger.getLogger('habbo.ui.RoomUI');
 
 export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
 {
@@ -520,7 +520,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._currentDesktop = null;
         }
 
-        log.info(`Desktop disposed: ${identifier}`);
+        log.debug(`Desktop disposed: ${identifier}`);
     }
 
     /**
@@ -622,7 +622,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     protected override initComponent(): void 
     {
-        log.info('RoomUI initialized');
+        log.debug('RoomUI initialized');
     }
 
     // AS3: sources/win63_version/habbo/ui/RoomUI.as::bottomBarResizeHandler()
@@ -642,7 +642,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         switch(event.type) 
         {
             case RoomSessionEvent.RSE_CREATED: {
-                log.info(`Session created for room ${event.session.roomId}`);
+                log.debug(`Session created for room ${event.session.roomId}`);
 
                 this.createDesktop(event.session);
 
@@ -665,7 +665,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             }
 
             case RoomSessionEvent.RSE_STARTED: {
-                log.info(`Session started for room ${event.session.roomId}`);
+                log.debug(`Session started for room ${event.session.roomId}`);
 
                 // Switch toolbar to room view mode
                 // AS3: RoomUI.defineToolbarState()
@@ -684,7 +684,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             }
 
             case RoomSessionEvent.RSE_ENDED: {
-                log.info(`Session ended for room ${event.session.roomId}`);
+                log.debug(`Session ended for room ${event.session.roomId}`);
 
                 const identifier = this.getRoomIdentifier(event.session.roomId);
 

@@ -1,7 +1,7 @@
 import type {IKeyExchange} from '@core/communication/handshake/IKeyExchange';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('Encryption');
+const log = Logger.getLogger('habbo.communication.encryption.DiffieHellman');
 
 /**
  * Simple BigInteger implementation for Diffie-Hellman

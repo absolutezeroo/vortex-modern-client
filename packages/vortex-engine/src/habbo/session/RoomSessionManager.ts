@@ -36,7 +36,7 @@ import type {IRoomEngine} from '@habbo/room';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 
-const log = Logger.getLogger('RoomSessionManager');
+const log = Logger.getLogger('habbo.session.RoomSessionManager');
 
 /**
  * Room session manager implementation
@@ -404,7 +404,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 
         super.dispose();
 
-        log.info('RoomSessionManager disposed');
+        log.debug('RoomSessionManager disposed');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::initComponent()
@@ -416,7 +416,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 
         this.executePendingSessionRequest();
 
-        log.info('RoomSessionManager initialized');
+        log.debug('RoomSessionManager initialized');
     }
 
     /**
@@ -497,7 +497,7 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
 
         this._sessionEvents.emit(RoomSessionEvent.RSE_CREATED, new RoomSessionEvent(RoomSessionEvent.RSE_CREATED, session));
 
-        log.info(`Room session created: ${session.roomId}`);
+        log.debug(`Room session created: ${session.roomId}`);
 
         // Start the session
         this.startSession(session);

@@ -11,7 +11,7 @@ import type {BottomBarLeft} from '../BottomBarLeft';
 import {HabboToolbarEvent} from '../events/HabboToolbarEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AbstractSubMenuController');
+const log = Logger.getLogger('habbo.toolbar.abstractsubmenu.AbstractSubMenuController');
 
 /**
  * Shared base for the bottom bar's popup sub-menus (me-menu, progression menu, ...).
@@ -237,7 +237,7 @@ export class AbstractSubMenuController implements IDisposable
     {
         if(!name)
         {
-            log.warn(`[Toolbar] Unknown icon type for unseen item counter for iconId: ${name}`);
+            log.warn(`Unknown icon type for unseen item counter for iconId: ${name}`);
         }
 
         let counter = this._unseenItemCounters.get(name) ?? null;

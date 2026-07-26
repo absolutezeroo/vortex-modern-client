@@ -2,7 +2,7 @@ import type {HabboToolbar} from '../../HabboToolbar';
 import {SoundSettingsItem} from './SoundSettingsItem';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('SoundSettingsView');
+const log = Logger.getLogger('habbo.toolbar.extensions.settings.SoundSettingsView');
 
 /**
  * Sound settings panel view

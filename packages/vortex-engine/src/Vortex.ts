@@ -434,7 +434,7 @@ export class Vortex implements IVortex
             throw new Error('[Vortex] Login without an SSO ticket is not supported');
         }
 
-        log.info('Connecting to server...');
+        log.debug('Connecting to server...');
 
         demo.startConnectionWithSSO(ssoTicket);
         await demo.waitForAuthentication();
@@ -555,7 +555,7 @@ export class Vortex implements IVortex
 
             this._events.emit('ready');
 
-            log.success('Ready!');
+            log.info('Ready!');
         }
         catch (error)
         {

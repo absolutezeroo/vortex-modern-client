@@ -29,7 +29,7 @@ import {
 
 import type {HabboHelp} from './HabboHelp';
 
-const log = Logger.getLogger('HelpMessageHandler');
+const log = Logger.getLogger('habbo.help.HelpMessageHandler');
 
 /**
  * Message handler for the help system
@@ -134,121 +134,121 @@ export class HelpMessageHandler
 
     private onCallForHelpReply(_event: IMessageEvent): void
     {
-        log.debug('CallForHelpReply received');
+        log.trace('CallForHelpReply received');
     }
 
     private onCallForHelpResult(_event: IMessageEvent): void
     {
-        log.debug('CallForHelpResult received');
+        log.trace('CallForHelpResult received');
     }
 
     private onCallForHelpPendingCalls(_event: IMessageEvent): void
     {
-        log.debug('CallForHelpPendingCalls received');
+        log.trace('CallForHelpPendingCalls received');
     }
 
     private onCallForHelpPendingCallsDeleted(_event: IMessageEvent): void
     {
-        log.debug('CallForHelpPendingCallsDeleted received');
+        log.trace('CallForHelpPendingCallsDeleted received');
     }
 
     private onCallForHelpDisabledNotify(_event: IMessageEvent): void
     {
-        log.debug('CallForHelpDisabledNotify received');
+        log.trace('CallForHelpDisabledNotify received');
     }
 
     // --- Sanction / Topics / Reporting ---
 
     private onSanctionStatus(_event: IMessageEvent): void
     {
-        log.debug('SanctionStatus received');
+        log.trace('SanctionStatus received');
     }
 
     private onCfhTopicsInit(_event: IMessageEvent): void
     {
-        log.debug('CfhTopicsInit received');
+        log.trace('CfhTopicsInit received');
     }
 
     private onGuideReportingStatus(_event: IMessageEvent): void
     {
-        log.debug('GuideReportingStatus received');
+        log.trace('GuideReportingStatus received');
     }
 
     // --- Guide session handlers ---
 
     private onGuideSessionStarted(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionStarted received');
+        log.trace('GuideSessionStarted received');
     }
 
     private onGuideOnDutyStatus(_event: IMessageEvent): void
     {
-        log.debug('GuideOnDutyStatus received');
+        log.trace('GuideOnDutyStatus received');
     }
 
     private onGuideSessionAttached(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionAttached received');
+        log.trace('GuideSessionAttached received');
     }
 
     private onGuideSessionDetached(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionDetached received');
+        log.trace('GuideSessionDetached received');
     }
 
     private onGuideSessionMessage(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionMessage received');
+        log.trace('GuideSessionMessage received');
     }
 
     private onGuideSessionEnded(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionEnded received');
+        log.trace('GuideSessionEnded received');
     }
 
     // --- Guide invite handlers ---
 
     private onGuideSessionInviteRequester(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionInviteRequester received');
+        log.trace('GuideSessionInviteRequester received');
     }
 
     private onGuideSessionInvitedToGuideRoom(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionInvitedToGuideRoom received');
+        log.trace('GuideSessionInvitedToGuideRoom received');
     }
 
     private onGuideSessionRequesterRoom(_event: IMessageEvent): void
     {
-        log.debug('GuideSessionRequesterRoom received');
+        log.trace('GuideSessionRequesterRoom received');
     }
 
     // --- Guide ticket handlers ---
 
     private onGuideTicketCreationResult(_event: IMessageEvent): void
     {
-        log.debug('GuideTicketCreationResult received');
+        log.trace('GuideTicketCreationResult received');
     }
 
     private onGuideTicketResolution(_event: IMessageEvent): void
     {
-        log.debug('GuideTicketResolution received');
+        log.trace('GuideTicketResolution received');
     }
 
     // --- Name change handlers ---
 
     private onCheckUserNameResult(_event: IMessageEvent): void
     {
-        log.debug('CheckUserNameResult received');
+        log.trace('CheckUserNameResult received');
     }
 
     private onChangeUserNameResult(_event: IMessageEvent): void
     {
-        log.debug('ChangeUserNameResult received');
+        log.trace('ChangeUserNameResult received');
     }
 
     private onUserNameChanged(_event: IMessageEvent): void
     {
-        log.debug('UserNameChanged received');
+        log.trace('UserNameChanged received');
     }
 }

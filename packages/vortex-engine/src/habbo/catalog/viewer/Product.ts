@@ -11,7 +11,7 @@ import type {IProduct} from './IProduct';
 import type {ProductContainer} from './ProductContainer';
 import {ProductGridItem} from './ProductGridItem';
 
-const log = Logger.getLogger('Product');
+const log = Logger.getLogger('habbo.catalog.viewer.Product');
 
 /**
  * A single product (furni/badge/effect/subscription/avatar-render/chat-style) inside an offer.

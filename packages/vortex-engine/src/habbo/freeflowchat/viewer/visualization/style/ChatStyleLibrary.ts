@@ -7,7 +7,7 @@ import type {IChatStyleLibrary} from '@habbo/freeflowchat/style/IChatStyleLibrar
 import type {IChatLinkStyleSheet} from './IChatStyleInternal';
 import {ChatStyle, type IChatStyleDescriptor} from './ChatStyle';
 
-const log = Logger.getLogger('ChatStyleLibrary');
+const log = Logger.getLogger('habbo.freeflowchat.viewer.visualization.style.ChatStyleLibrary');
 
 interface IChatStyleAttributes
 {

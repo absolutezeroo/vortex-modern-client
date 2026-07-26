@@ -5,7 +5,7 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IModalDialog} from './IModalDialog';
 
-const log = Logger.getLogger('ModalDialog');
+const log = Logger.getLogger('habbo.window.utils.ModalDialog');
 
 /**
  * Base modal dialog implementation.

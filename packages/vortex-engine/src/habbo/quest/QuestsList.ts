@@ -18,7 +18,7 @@ import {WindowToggle} from '@habbo/utils/WindowToggle';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('QuestsList');
+const log = Logger.getLogger('habbo.quest.QuestsList');
 
 /**
  * The "Quests" window - lists active/available quest campaigns, one QuestEntry row per

@@ -31,7 +31,7 @@ import {GetGuestRoomMessageComposer} from '../communication/messages/outgoing/na
 
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('NewNavigator');
+const log = Logger.getLogger('habbo.navigator.NewIncomingMessages');
 
 /**
  * Handles incoming messages for the new navigator
@@ -112,7 +112,7 @@ export class NewIncomingMessages
 
         if(!parser) return;
 
-        log.info(`NavigatorMetaData received: ${parser.topLevelContexts.length} top-level contexts`);
+        log.debug(`NavigatorMetaData received: ${parser.topLevelContexts.length} top-level contexts`);
 
         this._navigator.initialize(parser);
     }

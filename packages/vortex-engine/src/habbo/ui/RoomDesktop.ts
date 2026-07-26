@@ -61,7 +61,7 @@ import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import type {IRoomWidget} from './widget/IRoomWidget';
 
-const log = Logger.getLogger('RoomDesktop');
+const log = Logger.getLogger('habbo.ui.RoomDesktop');
 
 // AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627)
 const REUSABLE_WIDGET_TYPES = new Set([

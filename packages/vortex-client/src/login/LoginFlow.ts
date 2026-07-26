@@ -67,7 +67,7 @@ import './login-ui.scss';
 // Import logo
 import habboLogoUrl from '../assets/images/logo_new.png';
 
-const log = Logger.getLogger('LoginFlow');
+const log = Logger.getLogger('client.login.LoginFlow');
 
 export class LoginFlow implements ILoginContext, ILoginViewer 
 {
@@ -981,7 +981,7 @@ export class LoginFlow implements ILoginContext, ILoginViewer
      */
     private _onImageComplete = (event: ImageLoaderEvent): void => 
     {
-        log.info('Image complete: ' + event.url);
+        log.debug('Image complete: ' + event.url);
 
         // CSS transition handles the fade-in (opacity 0 -> 1 over 1.2s)
         event.loader.style.opacity = '1';

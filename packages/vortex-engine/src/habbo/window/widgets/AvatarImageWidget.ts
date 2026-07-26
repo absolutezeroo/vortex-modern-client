@@ -15,7 +15,7 @@ import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 
-const log = Logger.getLogger('AvatarImageWidget');
+const log = Logger.getLogger('habbo.window.widgets.AvatarImageWidget');
 
 /**
  * Avatar image rendering widget.

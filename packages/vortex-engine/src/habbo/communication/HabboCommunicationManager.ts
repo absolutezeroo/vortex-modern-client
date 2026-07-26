@@ -21,7 +21,7 @@ import {HabboWebApiSession} from './HabboWebApiSession';
 import {IID_CoreCommunicationManager} from "@iid/IIDCoreCommunicationManager";
 import {ErrorReportStorage} from '@core/utils/ErrorReportStorage';
 
-const log = Logger.getLogger('Communication');
+const log = Logger.getLogger('habbo.communication.HabboCommunicationManager');
 
 export interface IHabboConnectionConfig
 {
@@ -387,7 +387,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
     connectionOpened(): void
     {
-        log.success('Connected to server');
+        log.info('Connected to server');
 
         this._connectionActions?.setConnected();
     }
@@ -493,7 +493,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
             if(this._connectionAttempt > this._maxConnectionAttempts)
             {
-                log.failure('Failed to connect after all attempts');
+                log.error('Failed to connect after all attempts');
 
                 return;
             }

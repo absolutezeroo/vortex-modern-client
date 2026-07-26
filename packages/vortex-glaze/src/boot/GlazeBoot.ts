@@ -16,7 +16,7 @@ import {
 } from '@client/window/WindowXmlAssetParser';
 import {GlazeLocalizationStub} from './GlazeLocalizationStub';
 
-const log = Logger.getLogger('GlazeBoot');
+const log = Logger.getLogger('glaze.boot.GlazeBoot');
 
 /**
  * The element description's asset name (see vortex-client App.ts).
@@ -149,7 +149,7 @@ export class GlazeBoot
         Logger.configureFromEnvironment(import.meta.env.DEV);
         // Glaze doesn't render avatars, so layouts referencing avatar placeholder
         // bitmaps flood ResourceManager with harmless "Asset not found" warnings.
-        Logger.setLoggerLevel('ResourceManager', LogLevel.ERROR);
+        Logger.setNamespaceLevel('habbo.window.ResourceManager', LogLevel.ERROR);
 
         const [imageBundle, xmlBundle] = await Promise.all([
             this.loadBundle('/assets-images.bundle'),

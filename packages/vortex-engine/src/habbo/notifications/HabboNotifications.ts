@@ -27,7 +27,7 @@ import {GetMOTDMessageComposer} from "@habbo/communication";
 import type {IHabboLocalizationManager} from "@habbo/localization";
 import {IID_HabboLocalizationManager} from "@iid";
 
-const log = Logger.getLogger('HabboNotifications');
+const log = Logger.getLogger('habbo.notifications.HabboNotifications');
 
 /**
  * Events emitted by the notifications component.
@@ -431,7 +431,7 @@ export class HabboNotifications extends Component implements IHabboNotifications
 
         this._notificationEvents.removeAllListeners();
 
-        log.info('HabboNotifications disposed');
+        log.debug('HabboNotifications disposed');
 
         super.dispose();
     }
@@ -445,6 +445,6 @@ export class HabboNotifications extends Component implements IHabboNotifications
         this._singularController = new SingularNotificationController(this);
         this._messageHandler = new NotificationMessageHandler(this, this._communication!);
 
-        log.info('HabboNotifications initialized');
+        log.debug('HabboNotifications initialized');
     }
 }

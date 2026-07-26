@@ -5,7 +5,7 @@ import {MeMenuIconLoader} from './MeMenuIconLoader';
 import {HabboToolbarEvent} from '../events/HabboToolbarEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuController');
+const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuController');
 
 /**
  * Main me menu controller (old/legacy UI variant)

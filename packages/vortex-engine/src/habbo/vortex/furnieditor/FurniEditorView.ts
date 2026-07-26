@@ -11,7 +11,7 @@ import {FurniEditFieldEnum} from './FurniEditField';
 import type {IFurniEditorState} from './IFurniEditorState';
 import type {IFurniEditPayload} from './IFurniEditPayload';
 
-const log = Logger.getLogger('FurniEditorView');
+const log = Logger.getLogger('habbo.vortex.furnieditor.FurniEditorView');
 
 /** Product types, as sent by the emulator's `ProductType`. */
 const PRODUCT_TYPE_WALL = 1;

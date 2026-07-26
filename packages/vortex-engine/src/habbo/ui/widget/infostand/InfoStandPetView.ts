@@ -36,7 +36,7 @@ import type {CommandConfiguration} from './CommandConfiguration';
 import type {InfoStandPetData} from './InfoStandPetData';
 import type {InfoStandWidget} from './InfoStandWidget';
 
-const log = Logger.getLogger('InfoStandPetView');
+const log = Logger.getLogger('habbo.ui.widget.infostand.InfoStandPetView');
 
 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WIDTH
 const STATUS_BAR_WIDTH = 162;
@@ -213,7 +213,7 @@ export class InfoStandPetView
     // TODO(AS3): forwards to PetCommandTool.setEnabledCommands(petId, config) — not ported.
     public updateEnabledTrainingCommands(_petId: number, _config: CommandConfiguration): void
     {
-        log.debug('TODO(AS3): updateEnabledTrainingCommands needs PetCommandTool, not ported yet');
+        log.warn('TODO(AS3): updateEnabledTrainingCommands needs PetCommandTool, not ported yet');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::openTrainView()
@@ -221,7 +221,7 @@ export class InfoStandPetView
     // with the cached InfoStandPetData for _currentPetId (still cached above, ready for it).
     public openTrainView(): void
     {
-        log.debug('TODO(AS3): openTrainView needs PetCommandTool, not ported yet');
+        log.warn('TODO(AS3): openTrainView needs PetCommandTool, not ported yet');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::closeTrainView()

@@ -3,7 +3,7 @@ import type {IStructureData} from './IStructureData';
 import {parseXmlDocument} from './AvatarXmlUtils';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AvatarStructureDownload');
+const log = Logger.getLogger('habbo.avatar.structure.AvatarStructureDownload');
 
 /**
  * Downloads and applies additional avatar structure data (figure part lists).

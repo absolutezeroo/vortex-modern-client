@@ -1,7 +1,7 @@
 import {EventEmitter} from 'eventemitter3';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('HabboWebTools');
+const log = Logger.getLogger('habbo.utils.HabboWebTools');
 
 /**
  * Events emitted by HabboWebTools

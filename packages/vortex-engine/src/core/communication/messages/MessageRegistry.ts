@@ -3,7 +3,7 @@ import type {ComposerClass, EventClass, IMessageConfiguration} from './IMessageC
 import type {IMessageEvent} from './IMessageEvent';
 import {Logger} from '../../utils/Logger';
 
-const log = Logger.getLogger('Registry');
+const log = Logger.getLogger('core.communication.messages.MessageRegistry');
 
 /**
  * Registry for message composers and event handlers

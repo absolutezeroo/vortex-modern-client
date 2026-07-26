@@ -15,7 +15,7 @@ import {Logger} from '@core/utils/Logger';
 import {ChangelogService, type IChangelogCommit} from './ChangelogService';
 import './changelog-ui.scss';
 
-const log = Logger.getLogger('ChangelogWindow');
+const log = Logger.getLogger('client.changelog.ChangelogWindow');
 
 /** localStorage key tracking the newest commit sha the user has already seen. */
 const LAST_SEEN_KEY = 'changelog_last_seen_sha';

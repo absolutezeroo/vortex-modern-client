@@ -6,7 +6,7 @@ import type {ComponentDependency} from './ComponentDependency';
 import type {AssetLoaderStruct, IAsset, IAssetLibrary} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('Component');
+const log = Logger.getLogger('core.runtime.Component');
 
 /**
  * Helper to check if an object has an `events` property that is an EventEmitter
@@ -313,7 +313,7 @@ export class Component implements IDisposable
             }
             catch (e)
             {
-                log.error('[Component] Cleanup error:', e);
+                log.error('Cleanup error:', e);
             }
         }
         this._cleanupFunctions.length = 0;
@@ -687,7 +687,7 @@ export class Component implements IDisposable
                     }
                     catch (e)
                     {
-                        log.error(`[Component] Error in initComponent for ${this.constructor.name}:`, e);
+                        log.error(`Error in initComponent for ${this.constructor.name}:`, e);
                         throw e;
                     }
                 });
@@ -703,7 +703,7 @@ export class Component implements IDisposable
                 }
                 catch (e)
                 {
-                    log.error(`[Component] Error in initComponent for ${this.constructor.name}:`, e);
+                    log.error(`Error in initComponent for ${this.constructor.name}:`, e);
                     throw e;
                 }
             }

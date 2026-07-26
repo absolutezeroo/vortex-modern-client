@@ -40,7 +40,7 @@ import {
 } from '@habbo/communication/messages/outgoing/users';
 import {ExtendedProfileWindowCtrl} from './ExtendedProfileWindowCtrl';
 
-const log = Logger.getLogger('Groups');
+const log = Logger.getLogger('habbo.groups.HabboGroupsManager');
 
 /**
  * Habbo Groups Manager
@@ -362,7 +362,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     {
         const data = (event as ExtendedProfileMessageEvent).data;
 
-        log.debug(`onExtendedProfile: received, userId=${data?.userId} openProfileWindow=${data?.openProfileWindow}`);
+        log.trace(`onExtendedProfile: received, userId=${data?.userId} openProfileWindow=${data?.openProfileWindow}`);
 
         if(!data || !data.openProfileWindow) return;
 

@@ -1,6 +1,6 @@
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('FigureDataContainer');
+const log = Logger.getLogger('habbo.utils.FigureDataContainer');
 
 /**
  * Avatar figure string parser and container.
@@ -184,7 +184,7 @@ export class FigureDataContainer
     {
         if(FigureDataContainer.VALID_SET_TYPES.indexOf(type) === -1)
         {
-            log.warn('[FigureData] Unknown partset: ' + type + ', can not store color-ids');
+            log.warn('Unknown partset: ' + type + ', can not store color-ids');
             return;
         }
 
@@ -297,7 +297,7 @@ export class FigureDataContainer
     {
         if(FigureDataContainer.VALID_SET_TYPES.indexOf(type) === -1)
         {
-            log.warn('[FigureData] Unknown partset: ' + type + ', can not store id: ' + id);
+            log.warn('Unknown partset: ' + type + ', can not store id: ' + id);
             return;
         }
 

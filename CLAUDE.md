@@ -110,13 +110,13 @@ bodyparts `order-before` applies to.
 
 ## Documentation
 
-| File                                 | Content                                                                                               |
-|--------------------------------------|-------------------------------------------------------------------------------------------------------|
-| `.claude/rules/`                     | Auto-loaded enforcement rules for Claude Code                                                         |
-| `AGENTS.md`                          | Universal AI agent instructions (generated from `.claude/rules/`, for non-Claude tools)               |
-| `docs/CONTEXT.md`                    | Full architecture and project context                                                                 |
-| `docs/PATTERNS.md`                   | Implementation templates with code examples                                                           |
-| `docs/STYLEGUIDE.md`                 | Complete code style reference + performance                                                           |
-| `docs/IMPLEMENTATION_STATUS.md`      | Progress tracking (~35% overall, ~710+ files)                                                         |
-| `docs/architectures/`                | Per-module AS3 architecture deep-dives, created on demand — see `docs/architectures/README.md`        |
-| `docs/CLIENT-SERVER-ARCHITECTURE.md` | Real client↔server protocol, message flows, and known server-side bugs (Arcturus-Community reference) |
+| File                                 | Content                                                                                                              |
+|--------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `.claude/rules/`                     | Auto-loaded enforcement rules for Claude Code                                                                        |
+| `AGENTS.md`                          | Universal AI agent instructions (generated from `.claude/rules/`, for non-Claude tools)                              |
+| `docs/CONTEXT.md`                    | Full architecture and project context                                                                                |
+| `docs/PATTERNS.md`                   | Implementation templates with code examples                                                                          |
+| `docs/STYLEGUIDE.md`                 | Complete code style reference + performance                                                                          |
+| `docs/IMPLEMENTATION_STATUS.md`      | Progress tracking (~35% overall, ~710+ files)                                                                        |
+| `docs/architectures/`                | Per-module AS3 architecture deep-dives, created on demand — see `docs/architectures/README.md`                       |
+| `docs/CLIENT-SERVER-ARCHITECTURE.md` | Real client↔server protocol, message flows, and known server-side bugs — the server is `vortex-emulator` (see below) |

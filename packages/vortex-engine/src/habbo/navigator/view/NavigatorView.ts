@@ -21,7 +21,7 @@ import type {LiftView} from './LiftView';
 import {RoomInfoPopup} from './RoomInfoPopup';
 import type {IUpdateReceiver} from "@core";
 
-const log = Logger.getLogger('NavigatorView');
+const log = Logger.getLogger('habbo.navigator.view.NavigatorView');
 
 const LAYOUT_NAME = 'navigator_frame_2_xml';
 const MAX_WINDOW_WIDTH = 578;
@@ -880,7 +880,7 @@ export class NavigatorView implements IUpdateReceiver
             this._window.height = this._lastWindowHeight;
         }
 
-        log.info(`Navigator window created: ${this._window.width}x${this._window.height} at (${this._window.x}, ${this._window.y})`);
+        log.debug(`Navigator window created: ${this._window.width}x${this._window.height} at (${this._window.x}, ${this._window.y})`);
     }
 
     private refreshSearchResults = (event: WindowEvent, window: IWindow): void => 

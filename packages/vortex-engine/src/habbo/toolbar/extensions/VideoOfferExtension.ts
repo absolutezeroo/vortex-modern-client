@@ -1,7 +1,7 @@
 import type {HabboToolbar} from '../HabboToolbar';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('VideoOfferExtension');
+const log = Logger.getLogger('habbo.toolbar.extensions.VideoOfferExtension');
 
 /**
  * Video offer display extension for the toolbar

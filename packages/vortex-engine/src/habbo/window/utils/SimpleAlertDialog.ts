@@ -8,7 +8,7 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IModalDialog} from './IModalDialog';
 
-const log = Logger.getLogger('SimpleAlertDialog');
+const log = Logger.getLogger('habbo.window.utils.SimpleAlertDialog');
 
 /**
  * Simplified alert dialog with optional subtitle, link, and illustration.

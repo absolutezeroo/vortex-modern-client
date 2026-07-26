@@ -4,7 +4,7 @@ import type {IAsset} from './IAsset';
 import type {AssetTypeDeclaration} from './AssetTypeDeclaration';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('BitmapDataAsset');
+const log = Logger.getLogger('core.assets.BitmapDataAsset');
 
 /**
  * IPoint structure for offset

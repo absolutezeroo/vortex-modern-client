@@ -28,7 +28,7 @@ import type {WiredRewardResultMessageEventParser} from '@habbo/communication/mes
 import type {UserObjectMessageParser} from '@habbo/communication/messages/parser/handshake/UserObjectMessageParser';
 import type {ObjectRemoveMessageParser} from '@habbo/communication/messages/parser/room/engine/ObjectRemoveMessageParser';
 
-const log = Logger.getLogger('IncomingMessages');
+const log = Logger.getLogger('habbo.roomevents.IncomingMessages');
 
 /**
  * IncomingMessages — registers the wired system's incoming message handlers on the connection and
@@ -134,7 +134,7 @@ export class IncomingMessages implements IDisposable
     private onObjectRemove(event: IMessageEvent): void
     {
         const parser = event.parser as ObjectRemoveMessageParser;
-        log.debug(`Received object remove event: ${parser.objectId}, ${parser.isExpired}`);
+        log.trace(`Received object remove event: ${parser.objectId}, ${parser.isExpired}`);
         this._roomEvents?.wiredCtrl.stuffRemoved(parser.objectId);
     }
 

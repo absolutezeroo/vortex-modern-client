@@ -18,7 +18,7 @@ import type {UserObjectMessageParser} from '@habbo/communication/messages/parser
 import {UserChangeMessageEvent} from '@habbo/communication/messages/incoming/room/action/UserChangeMessageEvent';
 import type {UserChangeMessageEventParser} from '@habbo/communication/messages/parser/room/action/UserChangeMessageEventParser';
 
-const log = Logger.getLogger('CommunityGoalPrizesWidget');
+const log = Logger.getLogger('habbo.friendbar.landingview.widget.CommunityGoalPrizesWidget');
 
 /**
  * Rank-tier prize breakdown for the active community goal (top 1/2/3 reward

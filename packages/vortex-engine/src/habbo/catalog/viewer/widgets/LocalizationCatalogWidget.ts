@@ -11,7 +11,7 @@ import {SelectProductEvent} from './events/SelectProductEvent';
 import {CatalogWidget} from './CatalogWidget';
 import {AssetBitmap} from '@core/assets/AssetBitmap';
 
-const log = Logger.getLogger('LocalizationCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.LocalizationCatalogWidget');
 
 /**
  * Applies a page's PageLocalization text/image fields (and the catalog main window's
@@ -87,7 +87,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
     {
         const target = event.target as unknown as IWindow;
 
-        log.debug(`[Localization Catalog Widget] Unhandled link clicked ${[this.page.layoutCode, target?.name]}`);
+        log.debug(`Unhandled link clicked ${[this.page.layoutCode, target?.name]}`);
     };
 
     // AS3: sources/win63_version/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::initStaticImages()
@@ -155,7 +155,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
             }
             else
             {
-                log.debug(`[Localization Catalog Widget] Could not place text in layout: element: ${elementName}, content: ${content}`);
+                log.warn(`Could not place text in layout: element: ${elementName}, content: ${content}`);
             }
         }
 
@@ -228,7 +228,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
 
             if(asset == null)
             {
-                log.debug(`[Localization Catalog Widget] Asset does not exist (Bitmap window): ${[elementName, assetName]}`);
+                log.warn(`Asset does not exist (Bitmap window): ${[elementName, assetName]}`);
 
                 return;
             }
@@ -268,7 +268,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
             return;
         }
 
-        log.debug(`[Localization Catalog Widget] Could not find element: ${elementName}`);
+        log.warn(`Could not find element: ${elementName}`);
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/catalog/viewer/widgets/LocalizationCatalogWidget.as::retrieveCatalogImage()
@@ -292,7 +292,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
 
         if(loader == null)
         {
-            log.debug(`[Localization Catalog Widget] Failed to start loading catalog image: ${assetName}`);
+            log.warn(`Failed to start loading catalog image: ${assetName}`);
 
             return;
         }

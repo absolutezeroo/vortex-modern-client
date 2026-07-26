@@ -180,7 +180,7 @@ import {Purse} from './purse/Purse';
 import {PurseEvent} from './purse/PurseEvent';
 import {PurseUpdateEvent} from './purse/PurseUpdateEvent';
 
-const log = Logger.getLogger('HabboCatalog');
+const log = Logger.getLogger('habbo.catalog.HabboCatalog');
 
 /**
  * Habbo catalog component.
@@ -1774,7 +1774,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 break;
 
             default:
-                log.debug(`Catalog unknown link-type receive: ${parts[1]}`);
+                log.warn(`Catalog unknown link-type receive: ${parts[1]}`);
 
                 break;
         }

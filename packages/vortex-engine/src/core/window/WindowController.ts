@@ -19,7 +19,7 @@ import {DynamicStyleManager} from './dynamicstyle/DynamicStyleManager';
 import {resolveLocalizationTokens} from './utils/WindowParser';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('WindowController');
+const log = Logger.getLogger('core.window.WindowController');
 
 type WindowRectangle = { x: number; y: number; width: number; height: number };
 

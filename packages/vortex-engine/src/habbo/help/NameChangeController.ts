@@ -1,7 +1,7 @@
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('NameChangeController');
+const log = Logger.getLogger('habbo.help.NameChangeController');
 
 /**
  * Name change controller

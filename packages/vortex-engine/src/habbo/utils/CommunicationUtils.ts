@@ -1,7 +1,7 @@
 import type {IEncryptedLocalStorage} from './IEncryptedLocalStorage';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('CommunicationUtils');
+const log = Logger.getLogger('habbo.utils.CommunicationUtils');
 
 /**
  * Communication and local storage utility.

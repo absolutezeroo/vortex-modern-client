@@ -46,7 +46,7 @@ import type {
 
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('RoomSessionHandler');
+const log = Logger.getLogger('habbo.session.handler.RoomSessionHandler');
 
 /**
  * Room session state constants

@@ -11,7 +11,7 @@ import {SingleProductContainer} from './SingleProductContainer';
 import {MultiProductContainer} from './MultiProductContainer';
 import {BundleProductContainer} from './BundleProductContainer';
 
-const log = Logger.getLogger('Offer');
+const log = Logger.getLogger('habbo.catalog.viewer.Offer');
 
 /**
  * A purchasable catalog offer: price(s), the page it belongs to, and its product(s).
@@ -261,7 +261,7 @@ export class Offer implements IPurchasableOffer
                 break;
             default:
                 this._productContainer = new ProductContainer(this, products, this._catalog!);
-                log.warn(`[Offer] Unknown pricing model${this._pricingModel}`);
+                log.warn(`Unknown pricing model${this._pricingModel}`);
         }
     }
 

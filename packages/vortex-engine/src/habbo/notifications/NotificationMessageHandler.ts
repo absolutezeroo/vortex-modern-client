@@ -71,7 +71,7 @@ import {GenericNotificationItemData} from "@habbo/notifications/feed";
 // import {AccountSafetyLockStatusChangeMessageEvent} from '@habbo/communication/messages/incoming/users/AccountSafetyLockStatusChangeMessageEvent';
 // import {RoomMessageNotificationMessageEvent} from '@habbo/communication/messages/incoming/room/furniture/RoomMessageNotificationMessageEvent';
 
-const log = Logger.getLogger('NotificationMessageHandler');
+const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
 
 /**
  * Notification message handler hub.
@@ -175,7 +175,7 @@ export class NotificationMessageHandler
         // this.addMessageEvent(new AccountSafetyLockStatusChangeMessageEvent(this.onAccountSafetyLockStatusChanged.bind(this)));
         this.addMessageEvent(new RoomMessageNotificationMessageEvent(this.onRoomMessagesNotification.bind(this)));
 
-        log.info('Notification message handlers registered');
+        log.debug('Notification message handlers registered');
     }
 
     // === Handler methods for currently available events ===

@@ -44,7 +44,7 @@ import {
 } from '../communication/messages/outgoing/navigator';
 import type {IMessageComposer} from "@core";
 
-const log = Logger.getLogger('Navigator');
+const log = Logger.getLogger('habbo.navigator.HabboNavigator');
 
 /**
  * Habbo Navigator component
@@ -353,7 +353,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
 
         this._isOpen = true;
 
-        log.info('Navigator opened');
+        log.debug('Navigator opened');
     }
 
     closeNavigator(): void 
@@ -362,7 +362,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
 
         this._isOpen = false;
 
-        log.info('Navigator closed');
+        log.debug('Navigator closed');
     }
 
     toggleRoomInfoVisibility(): void 
@@ -631,7 +631,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
      */
     linkReceived(link: string): void 
     {
-        log.debug(`Link received: ${link}`);
+        log.trace(`Link received: ${link}`);
 
         const parts = link.split('/');
 
@@ -682,7 +682,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
         this._incomingMessages?.dispose();
         this._data.dispose();
 
-        log.info('Navigator disposed');
+        log.debug('Navigator disposed');
         super.dispose();
     }
 
@@ -690,7 +690,7 @@ export class HabboNavigator extends Component implements IHabboNavigator
     {
         this._incomingMessages = new IncomingMessages(this);
 
-        log.info('Navigator initialized');
+        log.debug('Navigator initialized');
     }
 
     /**

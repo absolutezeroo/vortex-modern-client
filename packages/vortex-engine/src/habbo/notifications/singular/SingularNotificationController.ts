@@ -6,7 +6,7 @@ import {HabboAlertDialogManager} from './HabboAlertDialogManager';
 import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('SingularNotificationController');
+const log = Logger.getLogger('habbo.notifications.singular.SingularNotificationController');
 
 /**
  * Manages the notification item queue and display.

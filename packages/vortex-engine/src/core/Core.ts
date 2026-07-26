@@ -4,7 +4,7 @@ import {CoreComponentContext, CoreSetup} from '@core/runtime/CoreComponentContex
 import {DefaultErrorReporter} from '@core/runtime/DefaultErrorReporter';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('Core');
+const log = Logger.getLogger('core.Core');
 
 /**
  * Core — Static singleton facade for the core runtime.

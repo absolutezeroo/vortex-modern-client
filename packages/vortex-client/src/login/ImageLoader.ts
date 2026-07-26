@@ -10,7 +10,7 @@ import {EventEmitter} from 'eventemitter3';
 import {ImageLoaderEvent} from './ImageLoaderEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ImageLoader');
+const log = Logger.getLogger('client.login.ImageLoader');
 
 export class ImageLoader extends EventEmitter
 {
@@ -51,7 +51,7 @@ export class ImageLoader extends EventEmitter
 	 */
     private _onComplete = (): void =>
     {
-        log.info('Loaded image ' + this._url);
+        log.debug('Loaded image ' + this._url);
         this.emit('complete', new ImageLoaderEvent(this._loader, this._url));
     };
 
@@ -60,6 +60,6 @@ export class ImageLoader extends EventEmitter
 	 */
     private _onError = (): void =>
     {
-        log.info('Failed to load image ' + this._url);
+        log.warn('Failed to load image ' + this._url);
     };
 }

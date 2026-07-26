@@ -8,7 +8,7 @@ import {NextQuestTimer} from './NextQuestTimer';
 import {QuestTracker} from './QuestTracker';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('QuestController');
+const log = Logger.getLogger('habbo.quest.QuestController');
 
 /**
  * Quest lifecycle controller.
@@ -88,7 +88,7 @@ export class QuestController implements IDisposable
             // TODO(AS3): AS3 opens seasonalcalendar.MainWindow and closes questsList here -
             // the calendar window isn't ported (see constructor's TODO), so fall back to the
             // regular quest list rather than silently doing nothing.
-            log.debug('Seasonal calendar enabled but not ported - falling back to the regular quest list');
+            log.warn('Seasonal calendar enabled but not ported - falling back to the regular quest list');
         }
 
         this._questsList?.onToolbarClick();

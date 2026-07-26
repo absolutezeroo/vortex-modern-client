@@ -75,7 +75,7 @@ import {SimpleAlertDialog} from './utils/SimpleAlertDialog';
 import {HabbletLinkHandler} from './handlers/HabbletLinkHandler';
 import {ElementPointerHandler} from './utils/ElementPointerHandler';
 
-const log = Logger.getLogger('HabboWindowManager');
+const log = Logger.getLogger('habbo.window.HabboWindowManager');
 
 /**
  * Habbo Window Manager Component.

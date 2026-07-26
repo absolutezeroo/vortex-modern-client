@@ -5,7 +5,7 @@ import type {ILinkEventTracker} from './events/ILinkEventTracker';
 import {Component, ComponentEvents, ComponentFlags} from './Component';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ComponentContext');
+const log = Logger.getLogger('core.runtime.ComponentContext');
 
 /**
  * Interface queue entry

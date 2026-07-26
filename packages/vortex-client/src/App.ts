@@ -26,7 +26,7 @@ import {
 } from './window/WindowXmlAssetParser';
 import './_index.scss';
 
-const log = Logger.getLogger('VortexApp');
+const log = Logger.getLogger('client.App');
 
 /**
  * The element description's asset name.
@@ -449,8 +449,9 @@ export class VortexApp
      */
     public async init(): Promise<void>
     {
-        // DEBUG in dev, WARN in production; overridable per-logger via localStorage
-        // (see Logger.configureFromEnvironment) without a rebuild.
+        // INFO in dev, WARN in production, then the `vortex:log` localStorage key and the `?log=`
+        // query parameter layered on top — `__log.set('habbo.room', 'debug')` at runtime, no
+        // rebuild. See docs/STYLEGUIDE.md → Logging.
         Logger.configureFromEnvironment(import.meta.env.DEV);
 
         // 1. Load bundles, then bootstrap engine with AS3 embedded configuration assets

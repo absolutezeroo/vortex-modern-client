@@ -1,7 +1,7 @@
 import type {HabboToolbar} from '../HabboToolbar';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ClubDiscountPromoExtension');
+const log = Logger.getLogger('habbo.toolbar.extensions.ClubDiscountPromoExtension');
 
 /**
  * Club discount promotion extension for the toolbar

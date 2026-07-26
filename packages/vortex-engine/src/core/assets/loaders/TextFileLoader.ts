@@ -96,7 +96,7 @@ export class TextFileLoader extends BinaryFileLoader
         }
         catch (e)
         {
-            Logger.getLogger('TextFileLoader').error('Error decoding content:', e);
+            Logger.getLogger('core.assets.loaders.TextFileLoader').error('Error decoding content:', e);
             this._textContent = '';
         }
     }

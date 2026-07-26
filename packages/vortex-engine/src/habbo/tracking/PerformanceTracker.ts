@@ -4,7 +4,7 @@ import {
 } from '@habbo/communication/messages/outgoing/tracking/PerformanceLogMessageComposer';
 import type {HabboTracking} from './HabboTracking';
 
-const log = Logger.getLogger('PerformanceTracker');
+const log = Logger.getLogger('habbo.tracking.PerformanceTracker');
 
 /**
  * Tracks client performance (frame intervals, memory usage, slow updates)

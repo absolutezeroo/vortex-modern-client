@@ -48,7 +48,7 @@ import type {IHabboFurniEditor} from './IHabboFurniEditor';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const log = Logger.getLogger('HabboFurniEditor');
+const log = Logger.getLogger('habbo.vortex.furnieditor.HabboFurniEditor');
 
 /**
  * The Vortex furni editor.
@@ -253,7 +253,7 @@ export class HabboFurniEditor extends Component implements IHabboFurniEditor
         // Logged unconditionally: "the button is missing" has two very different causes — the
         // capability was not granted, or the packet never arrived at all — and without this line
         // they look identical from the client.
-        log.info(`Furni editor rights received: canEdit=${this._canEdit}`);
+        log.debug(`Furni editor rights received: canEdit=${this._canEdit}`);
 
         // Losing the right mid-session (a role change) must take the window with it, not just the
         // button that opens it.
