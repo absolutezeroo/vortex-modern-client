@@ -1,6 +1,6 @@
 import type {IWindow} from '../../IWindow';
 import {WindowType} from '../../enum/WindowType';
-import {buildCanvasFontString} from '../../utils/CanvasFontString';
+import {buildCanvasFontString, measureFontLineHeight} from '../../utils/CanvasFontString';
 import {GlyphAtlas} from '../../utils/GlyphAtlas';
 import {SkinRenderer} from './SkinRenderer';
 
@@ -302,7 +302,15 @@ export class TextSkinRenderer extends SkinRenderer
         autoSize: string = 'none'
     ): void
     {
-        const lineHeight = Math.max(1, fontSize + 2 + leading);
+        // Must be the SAME line height the controller sized the box with
+        // (TextController.getLineHeight() → measureFontLineHeight()). This used
+        // to be `fontSize + 2 + leading`, an approximation with nothing behind
+        // it: for Volter 9px the font's own metrics give 11.02px (ascender
+        // 1024, descender -230, unitsPerEm 1024) and so a 12px line, while the
+        // guess gave 11 — the controller sized a multiline box at 12px per line
+        // and this loop then stacked them every 11px, drifting the text a pixel
+        // per line up inside its own box.
+        const lineHeight = Math.max(1, measureFontLineHeight(ctx, fontSize, leading));
         const lines = text.split('\n');
         let currentY = y;
         const hasEtching = etchingColor !== 0 && ((etchingColor >>> 24) & 0xFF) > 0;

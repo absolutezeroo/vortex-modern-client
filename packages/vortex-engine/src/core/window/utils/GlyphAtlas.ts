@@ -116,6 +116,16 @@ export class GlyphAtlas
      * Supersampling factor used for the `"normal"` (aliased) path. Only affects
      * how precisely the pixel centre is located — it adds no blur, because the
      * samples are never averaged.
+     *
+     * Font hinting is deliberately left at the browser default here. Baking
+     * with `ctx.textRendering = 'geometricPrecision'` was tried on the live
+     * client and produced no visible difference at this factor, which is what
+     * the arithmetic predicts: at 5× the bake runs at 45px for a 9px style,
+     * where a hinting-snapped stem moves by at most one supersample — 1/5 of a
+     * final pixel — so it can only flip pixels whose coverage already sits on
+     * the centre-sample boundary. Do not re-add the option without also
+     * lowering this factor, which is the only thing that would give hinting
+     * any leverage.
      */
     private static readonly SUPERSAMPLE: number = 5;
 
