@@ -3,6 +3,7 @@ import type {
     EventClass,
     IMessageConfiguration
 } from '@core/communication/messages/IMessageConfiguration';
+import {Logger} from '@core/utils/Logger';
 
 // Incoming Events - Handshake
 import {
@@ -153,6 +154,11 @@ import {CommunityVoteReceivedEvent, PromoArticlesMessageEvent,} from './messages
 
 // Incoming Events - Competition
 import {CurrentTimingCodeMessageEvent} from './messages/incoming/competition';
+import {CompetitionEntrySubmitResultMessageEvent} from './messages/incoming/competition/CompetitionEntrySubmitResultMessageEvent';
+import {CompetitionVotingInfoMessageEvent} from './messages/incoming/competition/CompetitionVotingInfoMessageEvent';
+import {AchievementResolutionCompletedMessageEvent} from './messages/incoming/game/lobby/AchievementResolutionCompletedMessageEvent';
+import {AchievementResolutionProgressMessageEvent} from './messages/incoming/game/lobby/AchievementResolutionProgressMessageEvent';
+import {AchievementResolutionsMessageEvent} from './messages/incoming/game/lobby/AchievementResolutionsMessageEvent';
 
 // Incoming Events - Quest
 import {
@@ -795,28 +801,66 @@ import {
     VortexFurniEditorRightsMessageEvent,
 } from './messages/incoming/vortex';
 
+const log = Logger.getLogger('habbo.communication.HabboMessages');
+
+/**
+ * A `Map` that refuses to lose an entry quietly.
+ *
+ * Registering two classes under one header used to be invisible: the second `set()` replaced the
+ * first, `MessageRegistry` then only ever saw the survivor, and the loser surfaced much later — if
+ * at all — as a bare "Unknown message event class" from whichever handler happened to register it.
+ * That is how `GuestRoomSearchResultMessageEvent` sat on 1265 (the Wired trigger's header) with no
+ * id of its own. A collision here is always a bug in one of the two headers, never a policy.
+ *
+ * This has no AS3 counterpart: AS3 assigns into a plain array (`_SafeStr_4546[id] = cls`) and has
+ * the same hazard, but its ids came from the compiler rather than from being recovered by hand.
+ */
+class HeaderMap<T> extends Map<number, T>
+{
+    constructor(private readonly _kind: string)
+    {
+        super();
+    }
+
+    override set(id: number, value: T): this
+    {
+        const existing = this.get(id);
+
+        if(existing !== undefined && existing !== value)
+        {
+            log.error(
+                `Duplicate ${this._kind} header ${id}: ${(value as {name?: string}).name ?? value} would replace `
+                + `${(existing as {name?: string}).name ?? existing}. One of the two headers is wrong — the replaced `
+                + 'class ends up with no id and never fires. Check the WIN63 registry (_SafeCls_2046.as).'
+            );
+        }
+
+        return super.set(id, value);
+    }
+}
+
 /**
  * Habbo message configuration
  * Maps message IDs to their composer and event classes
  */
-export class HabboMessages implements IMessageConfiguration 
+export class HabboMessages implements IMessageConfiguration
 {
-    constructor() 
+    constructor()
     {
         this.registerEvents();
         this.registerComposers();
     }
 
-    private _events: Map<number, EventClass> = new Map();
+    private _events: Map<number, EventClass> = new HeaderMap<EventClass>('incoming event');
 
-    get events(): Map<number, EventClass> 
+    get events(): Map<number, EventClass>
     {
         return this._events;
     }
 
-    private _composers: Map<number, ComposerClass> = new Map();
+    private _composers: Map<number, ComposerClass> = new HeaderMap<ComposerClass>('outgoing composer');
 
-    get composers(): Map<number, ComposerClass> 
+    get composers(): Map<number, ComposerClass>
     {
         return this._composers;
     }
@@ -861,7 +905,12 @@ export class HabboMessages implements IMessageConfiguration
         // there is really onPetFigureUpdate (_SafeCls_2731), an unrelated, unported message.
         this._events.set(3081, FavouriteChangedMessageEvent);
         this._events.set(3042, GetGuestRoomResultMessageEvent);
-        this._events.set(1265, GuestRoomSearchResultMessageEvent);
+        // AS3: header corrected 1265 -> 160 (_SafeCls_3509, whose parser _SafeCls_4150 builds the
+        // searchType/searchParam/rooms/ad data class _SafeCls_3104 — WIN63 registry _SafeCls_2046.as
+        // l.1262). 1265 is really the Wired furni-trigger push (_SafeCls_3224, registered below at
+        // l.1127), and because `_events` is a Map the later `set(1265, ...)` silently replaced this
+        // entry, so GuestRoomSearchResultMessageEvent had no id at all.
+        this._events.set(160, GuestRoomSearchResultMessageEvent);
         this._events.set(837, UserFlatCatsMessageEvent);
         this._events.set(1370, UserEventCatsMessageEvent);
         this._events.set(2952, PopularRoomTagsResultMessageEvent);
@@ -1308,6 +1357,15 @@ export class HabboMessages implements IMessageConfiguration
 
         // === COMPETITION ===
         this._events.set(3076, CurrentTimingCodeMessageEvent);
+        // RoomCompetitionController registers both of these, but neither had a header, so
+        // MessageRegistry dropped them with "Unknown message event class" and the room-competition
+        // voting/submit replies never arrived. IDs read from WIN63's registry
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as,
+        // matching each event to the parser it constructs (member names are not obfuscated):
+        //   2617 -> _SafeCls_2434, parser _SafeCls_4063 (goalId/goalCode/resultCode/votesRemaining)
+        //   3222 -> _SafeCls_2536, parser _SafeCls_3313 (goalId/goalCode/requiredFurnis/missingFurnis)
+        this._events.set(2617, CompetitionVotingInfoMessageEvent);
+        this._events.set(3222, CompetitionEntrySubmitResultMessageEvent);
 
         // === CATALOG (bonus rare) ===
         this._events.set(3573, BonusRareInfoMessageEvent);
@@ -1353,6 +1411,15 @@ export class HabboMessages implements IMessageConfiguration
         // === ACHIEVEMENTS ===
         this._events.set(1969, AchievementsMessageEvent);   // _SafeCls_2687 → onAchievements
         this._events.set(3981, AchievementMessageEvent);    // _SafeCls_2786 → onAchievement
+        // AchievementsResolutionController's three messages, registered by QuestMessageHandler but
+        // headerless until now. Same method as the competition pair above — each event class was
+        // identified through the parser it constructs, then looked up in _SafeCls_2046.as:
+        //   3143 -> _SafeCls_3258, parser _SafeCls_3983 (stuffId/achievements/endTime)
+        //   1844 -> _SafeCls_3814, parser _SafeCls_3262 (stuffId/achievementId/requiredLevelBadgeCode)
+        //   1166 -> _SafeCls_3558, parser _SafeCls_3054 (stuffCode/badgeCode)
+        this._events.set(3143, AchievementResolutionsMessageEvent);
+        this._events.set(1844, AchievementResolutionProgressMessageEvent);
+        this._events.set(1166, AchievementResolutionCompletedMessageEvent);
 
         // === ROOM SETTINGS ===
         this._events.set(791, RoomSettingsDataEvent);
