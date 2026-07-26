@@ -28,6 +28,7 @@ import {ExtraInfoItemData} from './bundlepurchaseinfodisplay/ExtraInfoItemData';
 import type {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
+import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
 
 const log = Logger.getLogger('ProductViewCatalogWidget');
 
@@ -195,6 +196,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this._toggleZoomButton = null;
         this.setFloorFurnitureRotationAvailabilityMonitorEnabled(false);
         this.stopPreviewZoomAnimation();
+        PreviewCanvasStack.unregister(this._canvasDisplayObject);
         this._catalog?.roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
         this._canvasDisplayObject = null;
         this._catalog = null;
@@ -249,6 +251,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
                 {
                     this._roomCanvas.setDisplayObject(canvas);
                     this._canvasDisplayObject = canvas;
+                    PreviewCanvasStack.register(canvas, this._roomCanvas as unknown as IWindow);
                     this._catalog!.roomEngine?.registerCanvasSyncCallback(this._syncCanvasPositionBound);
                     this.syncCanvasPosition();
                 }
@@ -334,12 +337,12 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this._canvasDisplayObject.x = globalPosition.x;
         this._canvasDisplayObject.y = globalPosition.y;
 
-        const stage = this._canvasDisplayObject.parent;
-
-        if(stage && stage.children[stage.children.length - 1] !== this._canvasDisplayObject)
-        {
-            stage.setChildIndex(this._canvasDisplayObject, stage.children.length - 1);
-        }
+        // This canvas and the inventory previewer's are siblings on the shared
+        // stage, so neither can decide its own depth — both used to re-assert
+        // front-of-stage every frame and fought over the same slot, which is
+        // what put the catalog's furniture inside the inventory's preview frame
+        // (and back again on the next window move). Ordering lives in one place.
+        PreviewCanvasStack.restack();
 
         const desktop = this._catalog!.windowManager?.getDesktop(1) ?? null;
         let window: IWindow | null = this._roomCanvas;

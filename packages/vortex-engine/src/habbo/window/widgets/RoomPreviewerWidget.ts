@@ -11,6 +11,7 @@ import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {RoomPreviewer} from '@habbo/room/preview/RoomPreviewer';
+import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
 
 /**
  * Room previewer widget.
@@ -185,8 +186,9 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         // straight into the window's own composited buffer at the right
         // position automatically, so once we're showing one, the live canvas
         // and its sync callback can go entirely.
-        if(this._canvasDisplayObject) 
+        if(this._canvasDisplayObject)
         {
+            PreviewCanvasStack.unregister(this._canvasDisplayObject);
             this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
             this._canvasDisplayObject.parent?.removeChild(this._canvasDisplayObject);
             this._canvasDisplayObject = null;
@@ -218,6 +220,7 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
         this._disposed = true;
 
+        PreviewCanvasStack.unregister(this._canvasDisplayObject);
         this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
         this._roomEngine = null;
         this._canvasWrapper = null;
@@ -278,6 +281,8 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
             // (window events alone can't catch every case, e.g. an ancestor
             // window being hidden), exactly like RoomDesktop does for the main
             // room view via a per-frame position sync.
+            PreviewCanvasStack.register(canvas, canvasWrapper as unknown as IWindow);
+
             roomEngine.registerCanvasSyncCallback(this._syncCanvasPositionBound);
             this.syncCanvasPosition();
         }
@@ -305,14 +310,9 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
         // room view's canvas is (re)created after this one — e.g. entering a
         // room while the inventory/preview is already open — it ends up on top
         // and visually covers the preview wherever their screen rects overlap.
-        // Since this widget is always logically a floating UI element above the
-        // room view, re-assert front-of-stage every frame here.
-        const stage = this._canvasDisplayObject.parent;
-
-        if(stage && stage.children[stage.children.length - 1] !== this._canvasDisplayObject) 
-        {
-            stage.setChildIndex(this._canvasDisplayObject, stage.children.length - 1);
-        }
+        // Ordering all preview canvases against each other cannot be decided
+        // here (this one cannot see the catalog's), so it lives in one place.
+        PreviewCanvasStack.restack();
 
         // Flash semantics: a DisplayObject parented into the window is only
         // shown when the window AND all its ancestors are visible. The canvas
