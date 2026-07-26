@@ -170,6 +170,9 @@ export class RoomEngine extends Component implements IRoomEngine,
     private _resizeHandlers: WeakMap<RoomRenderingCanvas, () => void> = new WeakMap();
     private _pixiStage: Container | null = null;
     private _roomVisualizationData: RoomVisualizationData | null = null;
+
+    /** How many textures the last conversion pass blitted instead of reading back — see blitTextureFrame(). */
+    private _blittedTextureCount: number = 0;
     private _configurationManager: IHabboConfigurationManager | null = null;
     private _sessionDataManager: ISessionDataManager | null = null;
     private _toolbar: IHabboToolbar | null = null;
@@ -4904,6 +4907,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         const canvasTextures = new Map<string, HTMLCanvasElement>();
         const textures: Map<string, Texture> = asset.textures;
         const libraryPrefix = `${OBJECT_TYPE_ROOM}_`;
+        const conversionStart = performance.now();
+
+        this._blittedTextureCount = 0;
 
         if(textures) 
         {
@@ -4923,6 +4929,11 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
         }
 
+        const readbacks = textures ? textures.size - this._blittedTextureCount : 0;
+
+        log.info(`Room textures converted in ${Math.round(performance.now() - conversionStart)} ms `
+            + `(${this._blittedTextureCount} blitted, ${readbacks} via GPU readback)`);
+
         this._roomVisualizationData.initializeAssetCollection(canvasTextures);
 
         log.debug(`Room visualization data initialized with ${canvasTextures.size} textures`);
@@ -4938,24 +4949,81 @@ export class RoomEngine extends Component implements IRoomEngine,
      * is PixiJS's own supported way to read a Texture back to a canvas regardless of backing
      * resource, so it's used here instead.
      */
-    private pixiTextureToCanvas(texture: Texture): HTMLCanvasElement | null 
+    private pixiTextureToCanvas(texture: Texture): HTMLCanvasElement | null
     {
-        try 
+        try
         {
             const frame = texture.frame;
 
             if(frame.width < 1 || frame.height < 1) return null;
 
+            const blitted = this.blitTextureFrame(texture);
+
+            if(blitted)
+            {
+                return blitted;
+            }
+
             const canvas = Vortex.instance.application.renderer.extract.canvas(texture);
 
             return canvas as HTMLCanvasElement;
         }
-        catch (error) 
+        catch (error)
         {
             log.warn('pixiTextureToCanvas: failed to convert texture to canvas', error);
 
             return null;
         }
+    }
+
+    /**
+     * Blits a texture's frame straight out of its CPU-side source bitmap.
+     *
+     * extract.canvas() is correct for any texture but pays a synchronous GPU->CPU readback
+     * each call, and onRoomContentReady() makes 304 of them back to back — measured as a
+     * ~800 ms frame in the boot log. Room bundle frames all share one TextureSource built by
+     * NitroBundleLoader from `Texture.from(imageBitmap)`, so the pixels are already in memory
+     * and a plain drawImage() of the frame rect produces the same canvas without touching the
+     * GPU.
+     *
+     * Returns null whenever that is not provably the case — no CPU resource, or a rotated or
+     * trimmed frame, where the layout extract.canvas() produces is not simply the frame rect.
+     * The caller then falls back, so correctness never depends on this path succeeding.
+     */
+    private blitTextureFrame(texture: Texture): HTMLCanvasElement | null
+    {
+        const resource = (texture.source as unknown as { resource?: unknown } | null)?.resource;
+
+        if(!resource) return null;
+
+        const drawable = (typeof ImageBitmap !== 'undefined' && resource instanceof ImageBitmap)
+            || resource instanceof HTMLCanvasElement
+            || resource instanceof HTMLImageElement;
+
+        if(!drawable) return null;
+        if((texture.rotate ?? 0) !== 0) return null;
+        if(texture.trim) return null;
+
+        const frame = texture.frame;
+        const canvas = document.createElement('canvas');
+
+        canvas.width = Math.ceil(frame.width);
+        canvas.height = Math.ceil(frame.height);
+
+        const context = canvas.getContext('2d');
+
+        if(!context) return null;
+
+        context.imageSmoothingEnabled = false;
+        context.drawImage(
+            resource as CanvasImageSource,
+            frame.x, frame.y, frame.width, frame.height,
+            0, 0, canvas.width, canvas.height
+        );
+
+        this._blittedTextureCount++;
+
+        return canvas;
     }
 
     private fixedUserLocation(roomId: number, location: IVector3d | null): IVector3d | null 
