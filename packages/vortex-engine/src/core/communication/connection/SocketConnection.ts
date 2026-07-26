@@ -14,7 +14,7 @@ import type {IWireFormatter} from '../wireformat/IWireFormatter';
 import {PreEncryptionMessageComposer} from '../messages/PreEncryptionMessageComposer';
 import {PacketLogger} from '../PacketLogger';
 
-const log = Logger.getLogger('Socket');
+const log = Logger.getLogger('core.communication.connection.SocketConnection');
 
 export interface IConnectionEvents
 {
@@ -362,8 +362,18 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
             this.flushPendingMessages();
         };
 
-        this._socket.onclose = () =>
+        this._socket.onclose = (event) =>
         {
+            // The close code is the only evidence of *why* the link went away, and it is gone the
+            // moment this handler returns. 1000/1001 = someone closed it deliberately (server
+            // shutdown, navigation); 1006 = no close frame at all, i.e. the TCP connection died —
+            // which is what a backgrounded tab, a sleeping machine or a dropped route looks like.
+            // Without this the disconnect was indistinguishable from every other disconnect.
+            log.warn(
+                `Connection closed: code=${event.code} reason="${event.reason}" clean=${event.wasClean}`
+                + (event.code === 1006 ? ' — no close frame; the transport dropped rather than the peer closing' : '')
+            );
+
             this.clearTimeout();
             this._connected = false;
             this._callback?.connectionClosed?.();
@@ -456,14 +466,29 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
             return false;
         }
 
-        if(!this._connected)
+        // Queue only while the socket has NEVER been open — the port connects asynchronously where
+        // Flash called send() after connect, so a message composed during the handshake window has
+        // to wait for onopen. CONNECTING is exactly that window and nothing else.
+        if(this._socket.readyState === WebSocket.CONNECTING)
         {
             this._pendingMessages.push(data.clone());
             return true;
         }
 
+        // AS3: SocketConnection.as::send() l.222-229 — `if(_socket.connected) { write } else
+        // return false`. There is no queue on this path in AS3, and adding one was actively
+        // harmful: `onclose` leaves `_socket` non-null and only clears `_connected`, so a
+        // connection lost while the tab was hidden sent every later action into `_pendingMessages`
+        // and reported success. Nothing ever flushes that queue (only `onopen` does, and there is
+        // no reconnect), so the client looked alive while silently swallowing every click — the
+        // "came back to the tab and can do nothing, have to reconnect" symptom.
         if(this._socket.readyState !== WebSocket.OPEN)
         {
+            log.once('send-after-close').warn(
+                'Send attempted on a closed connection — the socket went away and nothing reconnects. '
+                + 'Every action from here on is dropped until the page is reloaded.'
+            );
+
             return false;
         }
 
