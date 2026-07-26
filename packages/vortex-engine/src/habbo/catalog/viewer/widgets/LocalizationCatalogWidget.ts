@@ -9,6 +9,7 @@ import {type AssetLoaderEvent, AssetLoaderEventType} from '@core/assets/loaders/
 import type {HabboCatalog} from '../../HabboCatalog';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {CatalogWidget} from './CatalogWidget';
+import {AssetBitmap} from '@core/assets/AssetBitmap';
 
 const log = Logger.getLogger('LocalizationCatalogWidget');
 
@@ -232,7 +233,28 @@ export class LocalizationCatalogWidget extends CatalogWidget
                 return;
             }
 
-            bitmapWrapper.bitmap = asset.content as ImageBitmap;
+            // A bitmap asset's content is a PixiJS Texture, not an ImageBitmap
+            // — the `as ImageBitmap` this used to do was a lie the compiler
+            // could not catch (IAsset.content is `unknown`), and the Texture
+            // reached drawImage() in BitmapDataRenderer, which threw and took
+            // the whole window-manager render pass down with it every frame.
+            // This is what made `ctlg_teaserimg_1` break the UI.
+            const bitmap = AssetBitmap.resolveSync(asset.content);
+
+            if(bitmap)
+            {
+                bitmapWrapper.bitmap = bitmap;
+
+                return;
+            }
+
+            // Atlas sub-frame: needs a copy, so it lands a microtask later.
+            // Re-check the window on the way back — a catalogue page change can
+            // dispose it in between.
+            void AssetBitmap.resolve(asset.content).then((resolved) =>
+            {
+                if(resolved && this.window != null && !this.window.disposed) bitmapWrapper.bitmap = resolved;
+            });
 
             return;
         }
