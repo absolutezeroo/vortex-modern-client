@@ -69,12 +69,11 @@ export class FurnitureCreditWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * AS3: FurnitureCreditWidgetHandler.as::processWidgetMessage() "RWFWM_MESSAGE_REQUEST_CREDITFURNI"
-     *
      * Two gates, both AS3's: only the furni's owner sees the dialog at all, and an NFT credit furni
      * is refused outright unless `nft.credit.converting.enabled` is set — the widget is never told,
      * so the click simply does nothing.
      */
+    // AS3: FurnitureCreditWidgetHandler.as::processWidgetMessage() "RWFWM_MESSAGE_REQUEST_CREDITFURNI"
     private openRedeemDialog(message: RoomWidgetFurniToWidgetMessage): void
     {
         const roomObject = this._container?.roomEngine?.getRoomObject(

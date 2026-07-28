@@ -92,8 +92,6 @@ export class CreditFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: CreditFurniWidget.as::showInterface()
-     *
      * Rebuilds the window every time rather than reusing it — the caption depends on the furni,
      * so a second exchange dialog must not inherit the first one's text.
      *
@@ -101,6 +99,7 @@ export class CreditFurniWidget extends RoomWidgetBase
      * both steps, so that becomes `buildWidgetLayout('credit_redeem')` plus the properties AS3
      * sets afterwards.
      */
+    // AS3: CreditFurniWidget.as::showInterface()
     private showInterface(): void
     {
         if(this._objectId === -1) return;
@@ -175,11 +174,10 @@ export class CreditFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: CreditFurniWidget.as::sendRedeemMessage()
-     *
      * Closes only after the message is handed off, so a missing listener leaves the dialog open
      * rather than silently swallowing the exchange.
      */
+    // AS3: CreditFurniWidget.as::sendRedeemMessage()
     private sendRedeemMessage(): void
     {
         if(this._objectId === -1) return;
@@ -195,11 +193,10 @@ export class CreditFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: CreditFurniWidget.as::onMouseEvent()
-     *
      * The link is only followed when the localized value really is a URL — AS3 checks the `http`
      * prefix, so an unresolved localization key never reaches the browser.
      */
+    // AS3: CreditFurniWidget.as::onMouseEvent()
     private onMouseEvent = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type !== 'WME_CLICK') return;
