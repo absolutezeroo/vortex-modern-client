@@ -54,9 +54,13 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
 
     // AS3: BackgroundColorFurniWidget.as::BackgroundColorFurniWidget()
     constructor(
+        // AS3: BackgroundColorFurniWidget.as::BackgroundColorFurniWidget() param1
         handler: IRoomWidgetHandler,
+        // AS3: BackgroundColorFurniWidget.as::BackgroundColorFurniWidget() param2
         windowManager: IHabboWindowManager,
+        // AS3: BackgroundColorFurniWidget.as::BackgroundColorFurniWidget() param3
         assets: IAssetLibrary | null = null,
+        // AS3: BackgroundColorFurniWidget.as::BackgroundColorFurniWidget() param4
         localizations: IHabboLocalizationManager | null = null
     )
     {
@@ -72,11 +76,10 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: BackgroundColorFurniWidget.as::open()
-     *
      * The `Math.max(x, 0)` clamps are AS3's: an unset model variable reads back as -1, and a
      * negative would put the slider knob off its track.
      */
+    // AS3: BackgroundColorFurniWidget.as::open()
     public open(objectId: number, hue: number, saturation: number, lightness: number): void
     {
         this._objectId = objectId;
@@ -107,11 +110,10 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: BackgroundColorFurniWidget.as::createWindow()
-     *
      * Builds only once — re-opening a toner reuses the existing window and its slider positions
      * rather than rebuilding, which is why `open()` assigns the values before this runs.
      */
+    // AS3: BackgroundColorFurniWidget.as::createWindow()
     private createWindow(): void
     {
         if(this._window) return;
@@ -152,12 +154,11 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: BackgroundColorFurniWidget.as::renderColorPreview()
-     *
      * AS3 packs the three 8-bit channels into one int and hands it to `ColorConverter.hslToRGB()`,
      * then fills a bitmap the size of the swatch. This port paints the window instead of
      * allocating a BitmapData per slider tick — the swatch is a flat fill either way.
      */
+    // AS3: BackgroundColorFurniWidget.as::renderColorPreview()
     private renderColorPreview(): void
     {
         if(this._window === null) return;
@@ -172,11 +173,10 @@ export class BackgroundColorFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: BackgroundColorFurniWidget.as::windowProcedure()
-     *
      * The on-off button sends the *generic* use-furniture message, not a toner-specific one — the
      * server toggles the furni's state like any other multi-state item.
      */
+    // AS3: BackgroundColorFurniWidget.as::windowProcedure()
     private windowProcedure = (event: WindowEvent, window: IWindow): void =>
     {
         if(window === null || event.type !== 'WME_CLICK') return;

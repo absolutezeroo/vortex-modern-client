@@ -18,6 +18,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetRoomBackgroundColorDataMessageComposer extends MessageComposer<ConstructorParameters<typeof SetRoomBackgroundColorDataMessageComposer>>
 {
+    // AS3: _SafeCls_3281.as::_SafeStr_6628 / _SafeStr_6701 / _SafeStr_6829 / _SafeStr_6793
     private _data: ConstructorParameters<typeof SetRoomBackgroundColorDataMessageComposer>;
 
     constructor(objectId: number, hue: number, saturation: number, lightness: number)
@@ -26,6 +27,7 @@ export class SetRoomBackgroundColorDataMessageComposer extends MessageComposer<C
         this._data = [objectId, hue, saturation, lightness];
     }
 
+    // AS3: _SafeCls_3281.as::getMessageArray()
     getMessageArray()
     {
         return this._data;

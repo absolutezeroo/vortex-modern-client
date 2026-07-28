@@ -99,11 +99,10 @@ export class FurnitureBackgroundColorWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * AS3: FurnitureBackgroundColorWidgetHandler.as::validateRights()
-     *
      * Owner, any-room controller, or room-controller level >= 1. Evaluated before the room object
      * is even looked up, so a visitor never opens the editor.
      */
+    // AS3: FurnitureBackgroundColorWidgetHandler.as::validateRights()
     private validateRights(): boolean
     {
         const isOwner = this._container?.roomSession?.isRoomOwner ?? false;

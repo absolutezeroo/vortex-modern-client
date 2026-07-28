@@ -40,11 +40,10 @@ export class BackgroundColorWidgetSlider
     private _buttonBitmap: ImageBitmap | null = null;
 
     /**
-     * AS3: BackgroundColorWidgetSlider.as::_referenceWidth
-     *
      * The travel available to the knob — the movement area's width minus the knob's own. Set by
      * displaySlider(), and every value<->position conversion divides by it.
      */
+    // AS3: BackgroundColorWidgetSlider.as::_referenceWidth
     private _referenceWidth: number = 0;
 
     // AS3: BackgroundColorWidgetSlider.as::BackgroundColorWidgetSlider()
@@ -87,22 +86,20 @@ export class BackgroundColorWidgetSlider
     }
 
     /**
-     * AS3: BackgroundColorWidgetSlider.as::buttonProcedure()
-     *
      * AS3 reads the knob's x on every event without filtering by event type, so a drag reports
      * continuously — that is what makes the preview follow the knob rather than jump on release.
      */
+    // AS3: BackgroundColorWidgetSlider.as::buttonProcedure()
     private buttonProcedure = (_event: WindowEvent, window: IWindow): void =>
     {
         this._widget?.setParameterCallback(this._parameter, this.getValue(window.x));
     };
 
     /**
-     * AS3: BackgroundColorWidgetSlider.as::displaySlider()
-     *
      * The knob lives inside `slider_movement_area`, not beside it, which is why the reference
      * width is measured from that container and not from the slider as a whole.
      */
+    // AS3: BackgroundColorWidgetSlider.as::displaySlider()
     private displaySlider(): void
     {
         if(this._container === null) return;
