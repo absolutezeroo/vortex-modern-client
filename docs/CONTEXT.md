@@ -24,20 +24,28 @@ The port must reuse the lifecycle system and display/window architecture from th
 vortex/
 ├── packages/
 │   ├── vortex-engine/     Engine, protocol, room engine, Habbo logic, ported Flash window/UI framework
-│   └── vortex-client/     Vite shell, login/bootstrap, asset bundling, converted layout/skin assets
+│   ├── vortex-client/     Vite shell, login/bootstrap, asset bundling, shipped layout/skin assets
+│   └── vortex-glaze/      Live Habbo window-layout editor (Glaze clone), built on the ported widgets
 ├── sources/
-│   ├── WIN63-202607011411-782849652/  Primary AS3 source (obfuscated 2026 build), ~3,369 .as files under src/com/sulake/
-│   ├── win63_version/               Secondary AS3 source / name-recovery reference, 4,783 .as files
-│   ├── PRODUCTION-201601012205-226667486/               Tertiary AS3 source, 7,159 .as files
-│   └── win63_2023_version/          Not code — source of compiled window-layout/skin JSON assets
+│   ├── WIN63-202607011411-782849652/  PRIMARY AS3 source (2026 build, 25% obfuscated)
+│   │                                  3,345 .as under src/com/sulake/ + 1,839 under src/unknowns/
+│   ├── win63_version/                 Secondary AS3 source, 4,783 .as — also obfuscated, different scheme
+│   ├── PRODUCTION-201601012205-226667486/  Tertiary, 4,029 .as — the only unobfuscated tree (2016 build)
+│   ├── WIN63-202601121721-391685409/  Earlier 2026 dump (8,323 .as + raw binaryData/images/shapes);
+│   │                                  used by the compare-as3-revisions skill to diff packet headers
+│   ├── HABBO-ARCTURUS-DAYBREAK/       Unrelated Java reference dump — NOT this project's server
+│   ├── NITRO/                         Unrelated TS client, reference only
+│   └── gamedata/                      external_texts / variables / effect_map
 ├── docs/
-│   ├── CONTEXT.md
-│   ├── IMPLEMENTATION_STATUS.md
-│   ├── MESSAGES_PORT_BACKLOG.md
-│   ├── PATTERNS.md
-│   ├── STYLEGUIDE.md
+│   ├── CONTEXT.md                     This file
+│   ├── IMPLEMENTATION_STATUS.md       Current module/file status — the live number
+│   ├── MESSAGES_PORT_BACKLOG.md       Per-category message gaps
+│   ├── CLIENT-SERVER-ARCHITECTURE.md  Wire protocol + known server-side bugs
+│   ├── PATTERNS.md, STYLEGUIDE.md
+│   ├── architectures/                 Per-module AS3 deep-dives, created on demand
 │   └── audits/
-├── AGENTS.md
+├── .claude/rules/                     Auto-loaded enforcement rules — read 00-mandate.md first
+├── AGENTS.md                          Generated from .claude/rules/ for non-Claude tools
 └── package.json
 ```
 
@@ -117,28 +125,56 @@ packages/vortex-client/src/
 ├── AssetBundle.ts                 Bundled asset access
 ├── VortexLoadingScreen.ts         Loading screen implementation
 ├── login/                         Login flow and SSO views
-├── window/WindowXmlAssetParser.ts Converted window layout parser bridge
-└── assets/
-    ├── window-layouts/            1,045 converted Flash XML layouts
-    ├── window-skins/              97 converted skin definitions
+├── window/WindowXmlAssetParser.ts Window layout parser bridge
+├── changelog/                     In-client changelog window
+├── debugger/                      WindowDebuggerOverlay
+├── vortex-layouts/                Vortex-authored layout XML (4) — NOT ported, restyles only
+├── vortex-skins/                  Vortex-authored skin XML — same rule
+└── assets/                        gitignored, rebuilt by tools/build-window-assets.mjs
+    ├── window-layouts/            783 Flash XML layouts, verbatim from the dump
+    ├── window-skins/              133 skin definitions
+    ├── configurations/
     ├── images/
     └── webfonts/
 ```
+
+`src/assets/` is gitignored and regenerated from the dump, which is why hand-authored files live in
+`src/vortex-layouts/` and `src/vortex-skins/` instead — anything placed under `assets/` is wiped on
+the next asset build. Files there carry no `AS3:` traces and must say so at the top: they are
+restyles, not ports.
 
 Most ported Flash window/controller code currently lives in `packages/vortex-engine/src/core/window`, `packages/vortex-engine/src/habbo/window`, and `packages/vortex-engine/src/habbo/ui`. The client package is mainly the browser shell plus converted assets.
 
 ## AS3 Sources
 
-| Directory                                | Count        | Package roots                             | Usage                                                                   |
-|--------------------------------------------|--------------|--------------------------------------------|--------------------------------------------------------------------------|
-| `sources/WIN63-202607011411-782849652/`       | ~3,369 `.as` | `src/com/sulake/{core,habbo,room,iid}/`   | Primary source; read first.                                             |
-| `sources/win63_version/`                    | 4,783 `.as`  | `core/`, `habbo/`, `room/`, `iid/`        | Secondary; also the name-recovery reference for obfuscated identifiers. |
-| `sources/PRODUCTION-201601012205-226667486/`                    | 7,159 `.as`  | `src/com/sulake/...` plus embedded assets | Tertiary source when neither WIN63 tree has the file.                   |
-| `sources/win63_2023_version/`               | —            | `binaryDataXml_organized/{layouts,skins}` | Not code; source of compiled window-layout/skin JSON assets.            |
+| Directory                                    | Count        | Package roots                             | Usage                                                                   |
+|----------------------------------------------|--------------|-------------------------------------------|-------------------------------------------------------------------------|
+| `sources/WIN63-202607011411-782849652/`      | 3,345 `.as`  | `src/com/sulake/{core,habbo,room,iid}/`   | **Primary**; read first. Plus 1,839 `.as` under `src/unknowns/`.        |
+| `sources/win63_version/`                     | 4,783 `.as`  | `core/`, `habbo/`, `room/`, `iid/`        | Secondary. Also obfuscated — see the warning below.                     |
+| `sources/PRODUCTION-201601012205-226667486/` | 4,029 `.as`  | `src/com/sulake/...` plus embedded assets | Tertiary; the **only** unobfuscated tree, but a 2016 build.             |
+| `sources/WIN63-202601121721-391685409/`      | 8,323 `.as`  | raw dump (`binaryData/`, `images/`, …)    | Earlier 2026 revision; input to the `compare-as3-revisions` skill.      |
 
-`WIN63-202607011411-782849652` mirrors `win63_version` one directory level deeper and both line up 1:1 file-for-file. When a name there is obfuscated (`_SafeCls_N`, `_SafeStr_N`, ...), cross-reference the same path in `win63_version` to recover it. Ignore the flat `_SafeCls_N.as` files under its `src/` root and `src/unknowns/` (`_SafePkg_N/`) — an unrelated, fully-obfuscated module bundled in the same dump.
+> **Three corrections to earlier revisions of this file.** They were repeated for months and each one
+> cost real work; CLAUDE.md is the authority and says the same:
+>
+> 1. **`win63_version` does not recover names.** It is obfuscated too — 868 `class_N.as` files, a
+>    *different* scheme — so the same class carries a different meaningless name in each tree.
+>    RoomEngine is `_SafeCls_90.as` in the primary, `class_34.as` there, and `RoomEngine.as` only in
+>    PRODUCTION. Identify an obfuscated class by the interface it implements, not by a name lookup.
+> 2. **The two trees do not line up 1:1 file-for-file.** In `habbo/room`, 9 filenames of 20 match.
+> 3. **`src/unknowns/` (`_SafePkg_N/`) is part of the client, not a bundled stranger** — 556 files
+>    under `src/com/sulake/` import from it (parser DTOs, composers). Likewise the flat
+>    `_SafeCls_N.as` files under `src/`: they are the embedded-asset classes and carry the
+>    obfuscated-ref → real-embed name mapping in their `@identifier` footer comment, which
+>    `tools/lib/cryptedManifest.mjs` reads. Skipping either means failing to find definitions that
+>    exist.
 
-`WIN63-202607011411-782849652/src/layouts/` and `src/_assets/` hold the same raw window-layout XML / PNG resources as `win63_2023_version` (matching `$<hash>` filenames), just not split into `layouts/`/`skins/`/`non-layouts/` — the compile scripts keep defaulting to `win63_2023_version` because it already has that split.
+Window layouts and skins ship **as XML, verbatim from the dump** — there is no JSON compile step and
+no `win63_2023_version` tree any more. `packages/vortex-client/tools/build-window-assets.mjs` builds
+them from `WIN63-202607011411-782849652/src/layouts/` + `src/_assets/` + `src/binaryData/*Com.as`. An
+asset's real name is its `*Com.as` field name; join declarations to files on the embed's **whole**
+linkage name, hash included, since asset libraries are per-component and the same short name can mean
+two different embeds. See CLAUDE.md → Assets.
 
 Path mapping examples:
 
