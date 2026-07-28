@@ -247,6 +247,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_CREDITFURNI, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX, this.roomObjectEventHandler, this);
                     }
                 },
                 true
@@ -769,6 +770,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     // AS3: RoomUI.as:941. The furni widgets are created eagerly at room entry,
                     // not on demand — creating one is what registers its handler's message
                     // types, so the widget must exist before the furni is ever clicked.
+                    desktop.createWidget('RWE_FURNI_ECOTRONBOX_WIDGET');
                     desktop.createWidget('RWE_FURNI_CREDIT_WIDGET');
                     desktop.createWidget('RWE_ROOM_BACKGROUND_COLOR');
                     desktop.createWidget('RWE_FURNI_PLACEHOLDER');
