@@ -54,18 +54,21 @@ export class PetPackageFurniWidget extends RoomWidgetBase
     private _petImage: ImageBitmap | null = null;
 
     /**
-     * AS3: PetPackageFurniWidget.as::_SafeStr_6206
-     *
      * Set while a name is in flight. It blocks a second send and, on the way back, makes the widget
      * ignore a result it did not ask for.
      */
+    // AS3: PetPackageFurniWidget.as::_SafeStr_6206
     private _waitingForResult: boolean = false;
 
     // AS3: PetPackageFurniWidget.as::PetPackageFurniWidget()
     constructor(
+        // AS3: PetPackageFurniWidget.as::PetPackageFurniWidget() param1
         handler: IRoomWidgetHandler,
+        // AS3: PetPackageFurniWidget.as::PetPackageFurniWidget() param2
         windowManager: IHabboWindowManager,
+        // AS3: PetPackageFurniWidget.as::PetPackageFurniWidget() param3
         assets: IAssetLibrary | null,
+        // AS3: PetPackageFurniWidget.as::PetPackageFurniWidget() param4
         localizations: IHabboLocalizationManager | null
     )
     {
@@ -145,12 +148,11 @@ export class PetPackageFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: PetPackageFurniWidget.as::constructErrorMessage()
-     *
      * Prefers the `.additionalInfo` variant when the server sent something to put in it, and falls
      * back to the plain message otherwise — an empty additional-info string must not blank the
      * alert.
      */
+    // AS3: PetPackageFurniWidget.as::constructErrorMessage()
     private constructErrorMessage(error: string, additionalInfo: string | null): string
     {
         const key = `catalog.alert.petname.${error}`;
@@ -184,12 +186,11 @@ export class PetPackageFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: PetPackageFurniWidget.as::showInterface()
-     *
      * Two layouts: `petpackage` when a pet image is available, `petpackage_new` when it is not —
      * the latter has no preview slot, so a package whose figure has not resolved still shows a
      * usable dialog.
      */
+    // AS3: PetPackageFurniWidget.as::showInterface()
     private showInterface(): void
     {
         if(this._objectId < 0) return;
@@ -229,11 +230,10 @@ export class PetPackageFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: PetPackageFurniWidget.as::showPetImage()
-     *
      * AS3 centres the pet by blitting it into a fresh BitmapData at a computed offset; this assigns
      * the bitmap and lets the wrapper's anchor centre it, as the ecotron box does.
      */
+    // AS3: PetPackageFurniWidget.as::showPetImage()
     private showPetImage(): void
     {
         if(this._petImage === null || this._window === null) return;
@@ -271,11 +271,10 @@ export class PetPackageFurniWidget extends RoomWidgetBase
     };
 
     /**
-     * AS3: PetPackageFurniWidget.as::sendOpenPetPackage()
-     *
      * An empty name is refused client-side with the same "too short" alert the server would send,
      * so the round trip is skipped entirely.
      */
+    // AS3: PetPackageFurniWidget.as::sendOpenPetPackage()
     private sendOpenPetPackage(): void
     {
         if(this._waitingForResult || this._objectId === -1) return;

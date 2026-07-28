@@ -40,11 +40,17 @@ export class RoomWidgetPetPackageUpdateEvent extends RoomWidgetUpdateEvent
 
     // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent()
     constructor(
+        // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent() param1
         type: string,
+        // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent() param2
         objectId: number,
+        // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent() param3
         image: ImageBitmap | null,
+        // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent() param4
         nameValidationStatus: number,
+        // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent() param5
         nameValidationInfo: string | null,
+        // AS3: RoomWidgetPetPackageUpdateEvent.as::RoomWidgetPetPackageUpdateEvent() param6
         typeId: number
     )
     {

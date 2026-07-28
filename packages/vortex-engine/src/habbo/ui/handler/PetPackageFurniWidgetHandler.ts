@@ -42,8 +42,11 @@ const PET_IMAGE_HEAD_ONLY: boolean = true;
  */
 interface IPetFigureData
 {
+    // AS3: _SafePkg_2554/_SafeCls_3943.as::get typeId()
     readonly typeId: number;
+    // AS3: _SafePkg_2554/_SafeCls_3943.as::get paletteId()
     readonly paletteId: number;
+    // AS3: _SafePkg_2554/_SafeCls_3943.as::get color()
     readonly color: string;
 }
 
@@ -56,10 +59,9 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
     private _container: IRoomWidgetHandlerContainer | null = null;
 
     /**
-     * AS3: PetPackageFurniWidgetHandler.as::_SafeStr_4841
-     *
      * Held across the asynchronous image request — `imageReady()` has no object id of its own.
      */
+    // AS3: PetPackageFurniWidgetHandler.as::_SafeStr_4841
     private _objectId: number = -1;
 
     // AS3: PetPackageFurniWidgetHandler.as::get type()
@@ -139,11 +141,10 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
     }
 
     /**
-     * AS3: PetPackageFurniWidgetHandler.as::getPetImage()
-     *
      * The colour arrives as a hex *string* and is parsed base 16 — a pet whose colour did not
      * resolve yields NaN here, exactly as in AS3, and the renderer is left to deal with it.
      */
+    // AS3: PetPackageFurniWidgetHandler.as::getPetImage()
     private getPetImage(figureData: IPetFigureData | null): ImageBitmap | null
     {
         if(figureData === null || figureData === undefined) return null;
@@ -159,11 +160,10 @@ export class PetPackageFurniWidgetHandler implements IRoomWidgetHandler, IGetIma
     }
 
     /**
-     * AS3: PetPackageFurniWidgetHandler.as::imageReady()
-     *
      * Re-dispatches against the object id the handler is holding, which is why the widget checks it
      * before replacing its preview.
      */
+    // AS3: PetPackageFurniWidgetHandler.as::imageReady()
     public imageReady(_id: number, data: ImageBitmap | null): void
     {
         this._container?.desktopEvents.emit(
