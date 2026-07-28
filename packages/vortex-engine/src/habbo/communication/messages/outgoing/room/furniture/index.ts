@@ -16,3 +16,4 @@ export * from './ClaimNftRewardBoxMessageComposer';
 export * from './GetItemDataMessageComposer';
 export * from './SetItemDataMessageComposer';
 export * from './RemoveItemMessageComposer';
+export * from './SetRoomBackgroundColorDataMessageComposer';

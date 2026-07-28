@@ -5281,6 +5281,9 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectWidgetRequestEvent.ROWRE_CLOTHING_CHANGE:
                 this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_CLOTHING_CHANGE, roomId, objectId, category);
                 break;
+            case RoomObjectWidgetRequestEvent.ROWRE_BACKGROUND_COLOR:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR, roomId, objectId, category);
+                break;
             default:
                 // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
                 // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,

@@ -602,6 +602,7 @@ import {
     PresentOpenMessageComposer,
     RemoveItemMessageComposer,
     SetItemDataMessageComposer,
+    SetRoomBackgroundColorDataMessageComposer,
     SpinWheelOfFortuneMessageComposer,
     ThrowDiceMessageComposer,
     RoomDimmerChangeStateComposer,
@@ -1622,6 +1623,8 @@ export class HabboMessages implements IMessageConfiguration
         // AS3: _SafeCls_1821.as::modifyWallItemData() / deleteWallItem()
         this._composers.set(3498, SetItemDataMessageComposer);
         this._composers.set(141, RemoveItemMessageComposer);
+        // AS3: BackgroundColorFurniWidget.as::windowProcedure() apply_button
+        this._composers.set(1647, SetRoomBackgroundColorDataMessageComposer);
         this._composers.set(1884, OpenPetPackageMessageComposer);
         this._composers.set(3145, RoomDimmerGetPresetsComposer);
         this._composers.set(130, RoomDimmerSavePresetComposer);
