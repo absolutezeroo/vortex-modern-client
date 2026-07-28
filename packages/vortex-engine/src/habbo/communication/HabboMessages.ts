@@ -592,10 +592,18 @@ import {
 // Outgoing Composers - Room Furniture
 import {
     ConfigureRentableSpaceMessageComposer,
+    ClaimNftRewardBoxMessageComposer,
     CreditFurniRedeemMessageComposer,
+    DiceOffMessageComposer,
+    EnterOneWayDoorMessageComposer,
+    GetItemDataMessageComposer,
     GetRentableSpaceConfigMessageComposer,
     OpenPetPackageMessageComposer,
     PresentOpenMessageComposer,
+    RemoveItemMessageComposer,
+    SetItemDataMessageComposer,
+    SpinWheelOfFortuneMessageComposer,
+    ThrowDiceMessageComposer,
     RoomDimmerChangeStateComposer,
     RoomDimmerGetPresetsComposer,
     RoomDimmerSavePresetComposer,
@@ -1601,6 +1609,19 @@ export class HabboMessages implements IMessageConfiguration
         // === ROOM FURNITURE ===
         this._composers.set(434, CreditFurniRedeemMessageComposer);
         this._composers.set(2485, PresentOpenMessageComposer);
+        // AS3: _SafeCls_1821.as::useObject() — the six ROFCAE_* furniture actions. Headers from
+        // WIN63's registry; all but 350 and 3422 are corroborated by vortex-emulator, whose
+        // comments cite these same useObject() cases.
+        this._composers.set(1673, ThrowDiceMessageComposer);
+        this._composers.set(259, DiceOffMessageComposer);
+        this._composers.set(3625, SpinWheelOfFortuneMessageComposer);
+        this._composers.set(1753, EnterOneWayDoorMessageComposer);
+        this._composers.set(3422, ClaimNftRewardBoxMessageComposer);
+        // 350 disagrees with the emulator, which listens on 204 — see the composer's own note.
+        this._composers.set(350, GetItemDataMessageComposer);
+        // AS3: _SafeCls_1821.as::modifyWallItemData() / deleteWallItem()
+        this._composers.set(3498, SetItemDataMessageComposer);
+        this._composers.set(141, RemoveItemMessageComposer);
         this._composers.set(1884, OpenPetPackageMessageComposer);
         this._composers.set(3145, RoomDimmerGetPresetsComposer);
         this._composers.set(130, RoomDimmerSavePresetComposer);

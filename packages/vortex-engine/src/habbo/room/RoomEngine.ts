@@ -122,7 +122,18 @@ import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoo
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
 import {RoomObjectWidgetRequestEvent} from './events/RoomObjectWidgetRequestEvent';
+import {RoomObjectFurnitureActionEvent} from './events/RoomObjectFurnitureActionEvent';
 import {RoomEngineToWidgetEvent} from './events/RoomEngineToWidgetEvent';
+import {
+    ClaimNftRewardBoxMessageComposer,
+    DiceOffMessageComposer,
+    EnterOneWayDoorMessageComposer,
+    GetItemDataMessageComposer,
+    RemoveItemMessageComposer,
+    SetItemDataMessageComposer,
+    SpinWheelOfFortuneMessageComposer,
+    ThrowDiceMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
 const log = Logger.getLogger('habbo.room.RoomEngine');
@@ -5073,6 +5084,14 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this.handleObjectStateChange(event);
             }
         }
+        // AS3: RoomObjectEventHandler.as::processObjectEvent() -> handleObjectActionEvent().
+        // The ROFCAE_* furniture actions that go straight to the wire. Same shape of gap as the
+        // widget-request bridge below: RoomObjectFurnitureActionEvent was declared and raised by
+        // the logics, and nothing consumed it.
+        else if(event instanceof RoomObjectFurnitureActionEvent)
+        {
+            this.handleObjectActionEvent(event, this._activeRoomId);
+        }
         // AS3: RoomObjectEventHandler.as::processObjectEvent() -> handleObjectWidgetRequestEvent().
         // Until this branch existed, every ROWRE_* a furniture logic raised died here: both
         // RoomObjectWidgetRequestEvent and RoomEngineToWidgetEvent were declared, the logics
@@ -5087,6 +5106,112 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             this.events.emit('roomObjectEvent', event);
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectActionEvent()
+    private handleObjectActionEvent(event: RoomObjectFurnitureActionEvent, roomId: number): void
+    {
+        if(event === null) return;
+
+        this.useObject(roomId, event.objectId, event.objectType, event.type);
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::useObject()
+     *
+     * `roomId` and `objectType` are unused in AS3's body too — it takes them for the signature and
+     * only ever reads `objectId` and `useType`.
+     */
+    private useObject(_roomId: number, objectId: number, _objectType: string | null, useType: string): void
+    {
+        const connection = this.connection;
+
+        if(connection === null) return;
+
+        switch(useType)
+        {
+            case RoomObjectFurnitureActionEvent.ROFCAE_DICE_ACTIVATE:
+                connection.send(new ThrowDiceMessageComposer(objectId));
+                break;
+            case RoomObjectFurnitureActionEvent.ROFCAE_DICE_OFF:
+                connection.send(new DiceOffMessageComposer(objectId));
+                break;
+            case RoomObjectFurnitureActionEvent.ROFCAE_USE_HABBOWHEEL:
+                connection.send(new SpinWheelOfFortuneMessageComposer(objectId));
+                break;
+            case RoomObjectFurnitureActionEvent.ROFCAE_STICKIE:
+                connection.send(new GetItemDataMessageComposer(objectId));
+                break;
+            case RoomObjectFurnitureActionEvent.ROFCAE_ENTER_ONEWAYDOOR:
+                connection.send(new EnterOneWayDoorMessageComposer(objectId));
+                break;
+            case RoomObjectFurnitureActionEvent.ROFCAE_NFT_REWARD_BOX:
+                // AS3 gates this one behind a confirm dialog and sends only on WE_OK.
+                this._windowManager?.confirm(
+                    '${collectibles.reward_box.confirm_title}',
+                    '${collectibles.reward_box.confirm_description}',
+                    0,
+                    (dialog, dialogEvent) =>
+                    {
+                        dialog.dispose();
+
+                        if(dialogEvent.type === 'WE_OK')
+                        {
+                            connection.send(new ClaimNftRewardBoxMessageComposer(objectId));
+                        }
+                    }
+                );
+                break;
+        }
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectData()
+     *
+     * The category gate is AS3's: only wall items (20) are accepted, and anything else returns
+     * false without touching the wire.
+     */
+    modifyRoomObjectData(objectId: number, category: number, colorHex: string, text: string): boolean
+    {
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL) return false;
+
+        return this.modifyWallItemData(this._activeRoomId, objectId, colorHex, text);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::deleteRoomObject()
+    deleteRoomObject(objectId: number, category: number): boolean
+    {
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL) return false;
+
+        return this.deleteWallItem(this._activeRoomId, objectId);
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::modifyWallItemData()
+     *
+     * `roomId` is unused in AS3's body too — the server infers the room from the session.
+     */
+    modifyWallItemData(_roomId: number, objectId: number, colorHex: string, text: string): boolean
+    {
+        const connection = this.connection;
+
+        if(connection === null) return false;
+
+        connection.send(new SetItemDataMessageComposer(objectId, colorHex, text));
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::deleteWallItem()
+    deleteWallItem(_roomId: number, objectId: number): boolean
+    {
+        const connection = this.connection;
+
+        if(connection === null) return false;
+
+        connection.send(new RemoveItemMessageComposer(objectId));
+
+        return true;
     }
 
     /**
