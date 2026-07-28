@@ -60,6 +60,7 @@ import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
+import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -737,6 +738,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
                 handler = new FurnitureTrophyWidgetHandler();
                 break;
+            case 'RWE_FURNI_STICKIE_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:786
+                handler = new FurnitureStickieWidgetHandler();
+                break;
             case 'RWE_CHAT_WIDGET': {
                 // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
                 const chatHandler = new ChatWidgetHandler();
@@ -944,6 +949,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineToWidgetEvent.REQUEST_TROPHY:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
                     RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_TROPHY_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_STICKIE" (line 1241)
+            case RoomEngineToWidgetEvent.REQUEST_STICKIE:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_STICKIE_WIDGET,
                     event.objectId, event.category, event.roomId
                 ));
 

@@ -272,6 +272,22 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
     modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean;
 
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectData()
+     *
+     * Wall items only (category 20) — anything else returns false without touching the wire.
+     * Backs the sticky note's save path.
+     */
+    modifyRoomObjectData(objectId: number, category: number, colorHex: string, text: string): boolean;
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::deleteRoomObject()
+     *
+     * Wall items only (category 20), same as modifyRoomObjectData(). Backs the sticky note's
+     * delete path.
+     */
+    deleteRoomObject(objectId: number, category: number): boolean;
+
     // User updates
     updateRoomObjectUser(
         roomId: number,
