@@ -23,10 +23,9 @@ export class PlaceholderWidgetHandler implements IRoomWidgetHandler
     private _container: IRoomWidgetHandlerContainer | null = null;
 
     /**
-     * AS3: PlaceholderWidgetHandler.as::get type()
-     *
      * The type `RoomDesktop.createWidget()` keys this handler on (`RoomDesktop.as:780`).
      */
+    // AS3: PlaceholderWidgetHandler.as::get type()
     public get type(): string
     {
         return 'RWE_FURNI_PLACEHOLDER';
@@ -45,12 +44,11 @@ export class PlaceholderWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * AS3: PlaceholderWidgetHandler.as::processWidgetMessage()
-     *
      * Dispatches unconditionally, as AS3 does — it reads the message type into a local it never
      * uses. Harmless either way: `getWidgetMessages()` registers exactly one type, so the switch
      * AS3 never wrote would have had a single branch.
      */
+    // AS3: PlaceholderWidgetHandler.as::processWidgetMessage()
     public processWidgetMessage(_message: unknown): unknown
     {
         if(this.disposed) return null;

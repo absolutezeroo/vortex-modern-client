@@ -46,11 +46,10 @@ export class PlaceholderView
     }
 
     /**
-     * AS3: PlaceholderView.as::toggleWindow()
-     *
      * Unused by PlaceholderWidget, which only ever calls showWindow(). Ported because AS3 declares
      * it public — absence of a caller is not absence of the member.
      */
+    // AS3: PlaceholderView.as::toggleWindow()
     public toggleWindow(): void
     {
         if(this._window !== null && this._window.visible)
@@ -78,12 +77,11 @@ export class PlaceholderView
     }
 
     /**
-     * AS3: PlaceholderView.as::createWindow()
-     *
      * AS3 creates the window itself and calls `buildFromXML()` on it; this port's window manager
      * owns both steps, so it collapses to `buildWidgetLayout('placeholder')` and the properties
      * AS3 sets afterwards are applied here.
      */
+    // AS3: PlaceholderView.as::createWindow()
     private createWindow(): void
     {
         if(!this._assets?.hasAsset('placeholder')) return;

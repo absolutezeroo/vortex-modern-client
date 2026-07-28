@@ -22,9 +22,13 @@ export class PlaceholderWidget extends RoomWidgetBase
 
     // AS3: PlaceholderWidget.as::PlaceholderWidget()
     constructor(
+        // AS3: PlaceholderWidget.as::PlaceholderWidget() param1
         handler: IRoomWidgetHandler,
+        // AS3: PlaceholderWidget.as::PlaceholderWidget() param2
         windowManager: IHabboWindowManager,
+        // AS3: PlaceholderWidget.as::PlaceholderWidget() param3
         assets: IAssetLibrary | null = null,
+        // AS3: PlaceholderWidget.as::PlaceholderWidget() param4
         localizations: IHabboLocalizationManager | null = null
     )
     {
@@ -67,12 +71,11 @@ export class PlaceholderWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: PlaceholderWidget.as::hideInterface()
-     *
      * Nothing calls it — AS3 declares it private and never invokes it, so the view outlives every
      * close until the widget itself is disposed. Ported rather than dropped: a missing private is
      * still a missing member, and its absence is what would hide the leak if one is ever traced.
      */
+    // AS3: PlaceholderWidget.as::hideInterface()
     private hideInterface(): void
     {
         if(this._view !== null)
