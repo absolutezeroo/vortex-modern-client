@@ -50,13 +50,19 @@ export class RoomWidgetFurniToWidgetMessage extends RoomWidgetMessage
      * Obfuscated in every available tree, so the member name is DERIVED from its value
      * ("RWFWM_WIDGET_MESSAGE_REQUEST_ACHIEVEMENT_RESOLUTION_FAILED") rather than recovered.
      */
+    // AS3: RoomWidgetFurniToWidgetMessage.as::_SafeStr_10530
     public static readonly WIDGET_MESSAGE_REQUEST_ACHIEVEMENT_RESOLUTION_FAILED: string = 'RWFWM_WIDGET_MESSAGE_REQUEST_ACHIEVEMENT_RESOLUTION_FAILED';
 
     // AS3: RoomWidgetFurniToWidgetMessage.as::WIDGET_MESSAGE_REQUEST_BADGE_DISPLAY_ENGRAVING
     public static readonly WIDGET_MESSAGE_REQUEST_BADGE_DISPLAY_ENGRAVING: string = 'RWFWM_WIDGET_MESSAGE_REQUEST_BADGE_DISPLAY_ENGRAVING';
 
+    // AS3: RoomWidgetFurniToWidgetMessage.as::_SafeStr_4872
     private _id: number = 0;
+
+    // AS3: RoomWidgetFurniToWidgetMessage.as::_SafeStr_4689
     private _category: number = 0;
+
+    // AS3: RoomWidgetFurniToWidgetMessage.as::_SafeStr_6722
     private _roomId: number = 0;
 
     // AS3: RoomWidgetFurniToWidgetMessage.as::RoomWidgetFurniToWidgetMessage()

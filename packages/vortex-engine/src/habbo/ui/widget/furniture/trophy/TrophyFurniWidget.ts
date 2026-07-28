@@ -29,20 +29,38 @@ export class TrophyFurniWidget extends RoomWidgetBase implements ITrophyFurniWid
     // AS3: TrophyFurniWidget.as::VIEW_NIKO_GOLD
     public static readonly VIEW_NIKO_GOLD: number = 20;
 
+    // AS3: TrophyFurniWidget.as::_name
     private _name: string = '';
+
+    // AS3: TrophyFurniWidget.as::_SafeStr_6343
     private _date: string = '';
+
+    // AS3: TrophyFurniWidget.as::_SafeStr_5626
     private _message: string = '';
+
+    // AS3: TrophyFurniWidget.as::_backgroundTheme
     private _backgroundTheme: number = 0;
+
+    // AS3: TrophyFurniWidget.as::_SafeStr_5128
     private _configuration: IHabboConfigurationManager | null;
+
+    // AS3: TrophyFurniWidget.as::_SafeStr_4550
     private _view: ITrophyView | null = null;
+
+    // AS3: TrophyFurniWidget.as::_SafeStr_8455
     private _viewType: number = 0;
 
     // AS3: TrophyFurniWidget.as::TrophyFurniWidget()
     constructor(
+        // AS3: TrophyFurniWidget.as::TrophyFurniWidget() param1
         handler: IRoomWidgetHandler,
+        // AS3: TrophyFurniWidget.as::TrophyFurniWidget() param2
         windowManager: IHabboWindowManager,
+        // AS3: TrophyFurniWidget.as::TrophyFurniWidget() param3
         assets: IAssetLibrary | null = null,
+        // AS3: TrophyFurniWidget.as::TrophyFurniWidget() param4
         localizations: IHabboLocalizationManager | null = null,
+        // AS3: TrophyFurniWidget.as::TrophyFurniWidget() param5
         configuration: IHabboConfigurationManager | null = null
     )
     {
@@ -75,6 +93,7 @@ export class TrophyFurniWidget extends RoomWidgetBase implements ITrophyFurniWid
      * AS3 really does return the constant white tint and ignore the event's `color`, which
      * carries the *theme* instead (see onObjectUpdate). Not a stub.
      */
+    // AS3: TrophyFurniWidget.as::get color()
     public get color(): number
     {
         return TrophyTheme.DEFAULT_BACKGROUND_TINT;
@@ -128,6 +147,7 @@ export class TrophyFurniWidget extends RoomWidgetBase implements ITrophyFurniWid
      * The event's `color` is the raw `furniture_color`, which is 1-based: AS3 subtracts one
      * before normalizing, so colour 1 is gold.
      */
+    // AS3: TrophyFurniWidget.as::onObjectUpdate()
     private onObjectUpdate(event: RoomWidgetTrophyDataUpdateEvent): void
     {
         this._name = event.name;
@@ -145,6 +165,7 @@ export class TrophyFurniWidget extends RoomWidgetBase implements ITrophyFurniWid
      * AS3 disposes the previous view but does *not* null the field before overwriting it, and
      * switches on `viewType - 10` so that only 10 (silver) and 20 (gold) reach NikoTrophyView.
      */
+    // AS3: TrophyFurniWidget.as::updateInterface()
     private updateInterface(): void
     {
         if(this._view !== null)

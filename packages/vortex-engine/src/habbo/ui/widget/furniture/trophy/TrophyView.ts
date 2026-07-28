@@ -18,7 +18,10 @@ import {TrophyTheme} from './TrophyTheme';
 
 export class TrophyView implements ITrophyView
 {
+    // AS3: TrophyView.as::_SafeStr_4549
     private _widget: ITrophyFurniWidget | null;
+
+    // AS3: TrophyView.as::_window
     private _window: IWindowContainer | null = null;
 
     // AS3: TrophyView.as::TrophyView()
@@ -35,6 +38,7 @@ export class TrophyView implements ITrophyView
      * two steps collapse into `buildWidgetLayout('trophy')`. The `false` return on a missing
      * asset is preserved — it is the only way the caller learns the frame never opened.
      */
+    // AS3: TrophyView.as::showInterface()
     public showInterface(): boolean
     {
         if(!this._widget) return false;

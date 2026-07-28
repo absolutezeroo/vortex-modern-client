@@ -15,6 +15,7 @@ export class TrophyTheme
      * Obfuscated in every available tree. The name is DERIVED from its position: it is
      * index 0, which `BACKGROUND_ASSET_NAMES` maps to `trophy_bg_gold`.
      */
+    // AS3: TrophyTheme.as::_SafeStr_10744
     public static readonly GOLD: number = 0;
 
     // AS3: TrophyTheme.as::SILVER

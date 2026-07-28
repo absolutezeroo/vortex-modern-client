@@ -14,7 +14,10 @@ import {RoomWidgetFurniToWidgetMessage} from '@habbo/ui/widget/messages/RoomWidg
 
 export class FurnitureTrophyWidgetHandler implements IRoomWidgetHandler
 {
+    // AS3: FurnitureTrophyWidgetHandler.as::_SafeStr_5769
     private _disposed: boolean = false;
+
+    // AS3: FurnitureTrophyWidgetHandler.as::_container
     private _container: IRoomWidgetHandlerContainer | null = null;
 
     // AS3: FurnitureTrophyWidgetHandler.as::get type()
@@ -41,6 +44,7 @@ export class FurnitureTrophyWidgetHandler implements IRoomWidgetHandler
      * Returns null in every branch, exactly as AS3 does — the result reaches the widget
      * through the dispatched RoomWidgetTrophyDataUpdateEvent, not through the return value.
      */
+    // AS3: FurnitureTrophyWidgetHandler.as::processWidgetMessage()
     public processWidgetMessage(message: unknown): unknown
     {
         if(this.disposed || message === null || message === undefined) return null;

@@ -23,8 +23,13 @@ import type {TrophyFurniWidget} from './TrophyFurniWidget';
 
 export class NikoTrophyView implements ITrophyView
 {
+    // AS3: NikoTrophyView.as::_SafeStr_8455
     private _viewType: number;
+
+    // AS3: NikoTrophyView.as::_SafeStr_4549
     private _widget: TrophyFurniWidget | null;
+
+    // AS3: NikoTrophyView.as::_window
     private _window: IWindowContainer | null = null;
 
     // AS3: NikoTrophyView.as::NikoTrophyView()
@@ -40,6 +45,7 @@ export class NikoTrophyView implements ITrophyView
      * As in TrophyView, AS3's `getAssetByName("niko_trophy")` + `buildFromXML()` collapse into
      * this port's `buildWidgetLayout('niko_trophy')`.
      */
+    // AS3: NikoTrophyView.as::showInterface()
     public showInterface(): boolean
     {
         if(!this._widget) return false;

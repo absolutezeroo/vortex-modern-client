@@ -13,10 +13,19 @@ export class RoomWidgetTrophyDataUpdateEvent extends RoomWidgetUpdateEvent
     // AS3: RoomWidgetTrophyDataUpdateEvent.as::UPDATE_TROPHY_DATA
     public static readonly UPDATE_TROPHY_DATA: string = 'RWTDUE_TROPHY_DATA';
 
+    // AS3: RoomWidgetTrophyDataUpdateEvent.as::_color
     private _color: number;
+
+    // AS3: RoomWidgetTrophyDataUpdateEvent.as::_name
     private _name: string;
+
+    // AS3: RoomWidgetTrophyDataUpdateEvent.as::_SafeStr_6343
     private _date: string;
+
+    // AS3: RoomWidgetTrophyDataUpdateEvent.as::_SafeStr_5626
     private _message: string;
+
+    // AS3: RoomWidgetTrophyDataUpdateEvent.as::_SafeStr_8455
     private _viewType: number;
 
     /**
