@@ -36,11 +36,17 @@ export class RoomWidgetEcotronBoxDataUpdateEvent extends RoomWidgetUpdateEvent
 
     // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent()
     constructor(
+        // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent() param1
         type: string,
+        // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent() param2
         objectId: number,
+        // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent() param3
         text: string,
+        // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent() param4
         furniTypeName: string,
+        // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent() param5
         controller: boolean = false,
+        // AS3: RoomWidgetEcotronBoxDataUpdateEvent.as::RoomWidgetEcotronBoxDataUpdateEvent() param6
         iconBitmapData: ImageBitmap | null = null
     )
     {

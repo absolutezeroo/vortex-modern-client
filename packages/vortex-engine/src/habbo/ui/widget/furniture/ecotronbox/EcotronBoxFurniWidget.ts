@@ -58,23 +58,21 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     private _controller: boolean = false;
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::_SafeStr_5015
-     *
      * True from the moment Open is pressed until the card is dismissed. It gates the second phase
      * (`RWEBDUE_CONTENTS` is ignored unless it is set), stops a second Open from being sent, and
      * makes `hideInterface()` keep the object id so the contents can still be matched to the card.
      */
+    // AS3: EcotronBoxFurniWidget.as::_SafeStr_5015
     private _opened: boolean = false;
 
     // AS3: EcotronBoxFurniWidget.as::_furniTypeName
     private _furniTypeName: string = 'ecotron_box';
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::_interfaceMapByFurniTypeName
-     *
      * The Furnimatic box gets its own card layout. The empty-string entry is AS3's own fallback
      * for a furni whose class name did not resolve.
      */
+    // AS3: EcotronBoxFurniWidget.as::_interfaceMapByFurniTypeName
     private _interfaceMapByFurniTypeName: Map<string, string> = new Map([
         ['', 'ecotronbox_card'],
         ['ecotron_box', 'ecotronbox_card'],
@@ -83,8 +81,11 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
 
     // AS3: EcotronBoxFurniWidget.as::EcotronBoxFurniWidget()
     constructor(
+        // AS3: EcotronBoxFurniWidget.as::EcotronBoxFurniWidget() param1
         handler: IRoomWidgetHandler,
+        // AS3: EcotronBoxFurniWidget.as::EcotronBoxFurniWidget() param2
         windowManager: IHabboWindowManager,
+        // AS3: EcotronBoxFurniWidget.as::EcotronBoxFurniWidget() param3
         assets: IAssetLibrary | null = null
     )
     {
@@ -156,10 +157,9 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::onPresentUpdate()
-     *
      * A present dialog opening closes this card — the two share the screen.
      */
+    // AS3: EcotronBoxFurniWidget.as::onPresentUpdate()
     private onPresentUpdate(event: {type: string}): void
     {
         if(event.type === PRESENT_UPDATE_PACKAGEINFO)
@@ -169,12 +169,11 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::showIcon()
-     *
      * AS3 centres the icon inside the preview by blitting it into a fresh BitmapData at the
      * computed offset. This port assigns the bitmap and lets the wrapper's own anchor centre it —
      * the null icon becomes a plain clear instead of a 1x1 blit.
      */
+    // AS3: EcotronBoxFurniWidget.as::showIcon()
     private showIcon(icon: ImageBitmap | null): void
     {
         if(this._window === null) return;
@@ -200,12 +199,11 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::showInterface()
-     *
      * The layout is chosen by the furni's class name, so an Ecotron box and a Furnimatic box get
      * different cards. AS3 creates the window itself and calls `buildFromXML()`; this port's window
      * manager owns both steps.
      */
+    // AS3: EcotronBoxFurniWidget.as::showInterface()
     private showInterface(): void
     {
         if(this._objectId < 0) return;
@@ -244,11 +242,10 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::setOpenButton()
-     *
      * Only a controller ever gets a live Open button, and only in the first phase — once the
      * contents are shown it is hidden rather than re-armed.
      */
+    // AS3: EcotronBoxFurniWidget.as::setOpenButton()
     private setOpenButton(visible: boolean): void
     {
         if(this._window === null) return;
@@ -269,11 +266,10 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::hideInterface()
-     *
      * Keeps `_objectId` while `_opened` is set — the contents update arrives after the card is
      * torn down and rebuilt, and would otherwise have nothing to match against.
      */
+    // AS3: EcotronBoxFurniWidget.as::hideInterface()
     private hideInterface(): void
     {
         if(this._window !== null)
@@ -292,10 +288,9 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::sendOpen()
-     *
      * `_opened` is set before the message goes out, so a double click cannot send twice.
      */
+    // AS3: EcotronBoxFurniWidget.as::sendOpen()
     private sendOpen(): void
     {
         if(this._opened || this._objectId === -1 || !this._controller) return;
@@ -311,11 +306,10 @@ export class EcotronBoxFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: EcotronBoxFurniWidget.as::onMouseEvent()
-     *
      * The close case falls through from `default`, so a click on any other child also dismisses
      * the card — that is AS3's switch, not a missing break.
      */
+    // AS3: EcotronBoxFurniWidget.as::onMouseEvent()
     private onMouseEvent = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type !== 'WME_CLICK') return;

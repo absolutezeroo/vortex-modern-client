@@ -33,19 +33,17 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     private _container: IRoomWidgetHandlerContainer | null = null;
 
     /**
-     * AS3: FurnitureEcotronBoxWidgetHandler.as::_SafeStr_4841
-     *
      * The box currently on screen. `RWEBOM_OPEN_ECOTRONBOX` is refused for any other id, so a stale
      * card cannot open the wrong box.
      */
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::_SafeStr_4841
     private _objectId: number = -1;
 
     /**
-     * AS3: FurnitureEcotronBoxWidgetHandler.as::_name
-     *
      * Held between `processEvent()` and `imageReady()` — the asynchronous icon callback carries no
      * name of its own.
      */
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::_name
     private _name: string = '';
 
     // AS3: FurnitureEcotronBoxWidgetHandler.as::get type()
@@ -61,11 +59,10 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     }
 
     /**
-     * AS3: FurnitureEcotronBoxWidgetHandler.as::getWidgetMessages()
-     *
      * AS3 also lists `RWEBOM_ECOTRONBOX_OPENED`, which its own switch has no case for and no class
      * ever sends. Registered here too, so the handler claims exactly what AS3 claims.
      */
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::getWidgetMessages()
     public getWidgetMessages(): string[]
     {
         return [
@@ -101,12 +98,11 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     }
 
     /**
-     * AS3: FurnitureEcotronBoxWidgetHandler.as::processWidgetMessage() "RWFWM_MESSAGE_REQUEST_ECOTRONBOX"
-     *
      * The card's layout is picked from the furni's class name, which comes from the furnidata rather
      * than the room object — an unknown type id yields an empty string, which the widget maps to the
      * default card.
      */
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::processWidgetMessage() "RWFWM_MESSAGE_REQUEST_ECOTRONBOX"
     private openCard(message: RoomWidgetFurniToWidgetMessage): void
     {
         const roomObject = this._container?.roomEngine?.getRoomObject(
@@ -141,11 +137,10 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     }
 
     /**
-     * AS3: FurnitureEcotronBoxWidgetHandler.as::imageReady()
-     *
      * The asynchronous half of the icon request. Dispatches objectId 0, as AS3 does — the widget
      * matches the contents to its open card through its own `_opened` flag, not through this id.
      */
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::imageReady()
     public imageReady(_id: number, data: ImageBitmap | null): void
     {
         if(this.disposed) return;
@@ -171,12 +166,11 @@ export class FurnitureEcotronBoxWidgetHandler implements IRoomWidgetHandler, IGe
     }
 
     /**
-     * AS3: FurnitureEcotronBoxWidgetHandler.as::processEvent()
-     *
      * `itemType` selects which catalogue the class id belongs to: "s" is a floor item, "i" a wall
      * item. The icon request may return a result immediately — AS3 dispatches then and there, and
      * `imageReady()` covers the case where it does not.
      */
+    // AS3: FurnitureEcotronBoxWidgetHandler.as::processEvent()
     public processEvent(event: unknown): void
     {
         const presentEvent = event as RoomSessionPresentEvent | null;
