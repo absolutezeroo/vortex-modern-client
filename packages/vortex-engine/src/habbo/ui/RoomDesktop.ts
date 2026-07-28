@@ -61,6 +61,7 @@ import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
+import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -738,6 +739,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
                 handler = new FurnitureTrophyWidgetHandler();
                 break;
+            case 'RWE_FURNI_PLACEHOLDER':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:780
+                handler = new PlaceholderWidgetHandler();
+                break;
             case 'RWE_FURNI_STICKIE_WIDGET':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:786
                 handler = new FurnitureStickieWidgetHandler();
@@ -949,6 +954,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineToWidgetEvent.REQUEST_TROPHY:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
                     RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_TROPHY_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_PLACEHOLDER" (line 1265)
+            case RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_PLACEHOLDER_WIDGET,
                     event.objectId, event.category, event.roomId
                 ));
 

@@ -18,6 +18,7 @@ import {EffectsWidget} from './widget/effects/EffectsWidget';
 import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 import {TrophyFurniWidget} from './widget/furniture/trophy/TrophyFurniWidget';
 import {StickieFurniWidget} from './widget/furniture/stickie/StickieFurniWidget';
+import {PlaceholderWidget} from './widget/furniture/placeholder/PlaceholderWidget';
 
 const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
@@ -60,6 +61,11 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new RoomChatInputWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI, this._roomUI.desktop
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_PLACEHOLDER"
+            case 'RWE_FURNI_PLACEHOLDER':
+                return new PlaceholderWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
                 );
             // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_STICKIE_WIDGET"
             case 'RWE_FURNI_STICKIE_WIDGET':
