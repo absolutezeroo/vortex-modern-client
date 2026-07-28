@@ -63,12 +63,11 @@ export class StickieFurniWidget extends RoomWidgetBase
     protected _controller: boolean = false;
 
     /**
-     * AS3: StickieFurniWidget.as::_SafeStr_8699
-     *
      * A background-bitmap override. Nothing in AS3 ever assigns it — `showInterface()` reads it and
      * `dispose()` frees it, but no writer exists in this class or any caller. Kept because it
      * changes which bitmap is drawn when set, and dropping it would silently remove that branch.
      */
+    // AS3: StickieFurniWidget.as::_SafeStr_8699
     private _backgroundOverride: ImageBitmap | null = null;
 
     // AS3: StickieFurniWidget.as::_windowName
@@ -76,8 +75,11 @@ export class StickieFurniWidget extends RoomWidgetBase
 
     // AS3: StickieFurniWidget.as::StickieFurniWidget()
     constructor(
+        // AS3: StickieFurniWidget.as::StickieFurniWidget() param1
         handler: IRoomWidgetHandler,
+        // AS3: StickieFurniWidget.as::StickieFurniWidget() param2
         windowManager: IHabboWindowManager,
+        // AS3: StickieFurniWidget.as::StickieFurniWidget() param3
         assets: IAssetLibrary | null = null
     )
     {
@@ -109,11 +111,10 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::onObjectUpdate()
-     *
      * `hideInterface(false)` first — without sending — so switching from one note straight to
      * another does not save the outgoing note's text onto the incoming one.
      */
+    // AS3: StickieFurniWidget.as::onObjectUpdate()
     protected onObjectUpdate(event: RoomWidgetStickieDataUpdateEvent): void
     {
         this.hideInterface(false);
@@ -128,8 +129,6 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::showInterface()
-     *
      * AS3 creates the window itself (`windowManager.createWindow(_windowName, …, Rectangle(100,
      * 100, 2, 2))`) and then calls `buildFromXML()` on it; this port's window manager owns both
      * steps, so it becomes `buildWidgetLayout('stickie')` plus the same starting position.
@@ -139,6 +138,7 @@ export class StickieFurniWidget extends RoomWidgetBase
      * the note's colour. The `post_it` -> `stickie` rename is AS3's, because the furni type and the
      * asset name differ by that prefix.
      */
+    // AS3: StickieFurniWidget.as::showInterface()
     protected showInterface(): void
     {
         if(this._objectId === -1) return;
@@ -214,11 +214,10 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::hideInterface()
-     *
      * The default `true` sends any pending edit before tearing the window down — closing the note
      * is what saves it.
      */
+    // AS3: StickieFurniWidget.as::hideInterface()
     protected hideInterface(sendUpdate: boolean = true): void
     {
         if(sendUpdate)
@@ -238,11 +237,10 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::setColorButtons()
-     *
      * Only shown for a controller on a plain `post_it`: the themed notes have a fixed bitmap, so
      * recolouring them would do nothing visible.
      */
+    // AS3: StickieFurniWidget.as::setColorButtons()
     private setColorButtons(visible: boolean): void
     {
         if(this._stickieWindow === null) return;
@@ -266,11 +264,10 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::storeTextFromField()
-     *
      * Returns false when nothing changed, which is what stops `sendUpdate()` from writing on every
      * close.
      */
+    // AS3: StickieFurniWidget.as::storeTextFromField()
     protected storeTextFromField(): boolean
     {
         if(this._stickieWindow === null) return false;
@@ -302,12 +299,11 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::sendSetColor()
-     *
      * The colour arrives as the button window's own `color`, i.e. an ARGB value, and AS3 keeps only
      * the low six hex digits. Re-selecting the current colour returns early, so no redundant write
      * reaches the wire.
      */
+    // AS3: StickieFurniWidget.as::sendSetColor()
     protected sendSetColor(color: number): void
     {
         if(this._objectId === -1) return;
@@ -349,12 +345,11 @@ export class StickieFurniWidget extends RoomWidgetBase
     }
 
     /**
-     * AS3: StickieFurniWidget.as::onTextWindowEvent()
-     *
      * The line cap is enforced by undoing the keystroke that crossed it: AS3 drops the last
      * character and then pins `maxChars` to the current length, freezing the field until the user
      * deletes something. `maxChars` is re-raised to 500 on every event, which is what releases it.
      */
+    // AS3: StickieFurniWidget.as::onTextWindowEvent()
     private onTextWindowEvent = (_event: WindowEvent, _window: IWindow): void =>
     {
         if(this._stickieWindow === null) return;
@@ -372,12 +367,11 @@ export class StickieFurniWidget extends RoomWidgetBase
     };
 
     /**
-     * AS3: StickieFurniWidget.as::onMouseEvent()
-     *
      * Dispatches on the target's *name*, while the close and delete buttons are found above by
      * *tag* (`close_button` / `delete_button`). The two differ in the layout and AS3 relies on
      * both — matching either one alone would leave a button inert.
      */
+    // AS3: StickieFurniWidget.as::onMouseEvent()
     protected onMouseEvent = (event: WindowEvent, window: IWindow): void =>
     {
         if(event.type !== 'WME_CLICK') return;

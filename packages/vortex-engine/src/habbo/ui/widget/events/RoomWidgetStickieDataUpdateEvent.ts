@@ -70,10 +70,9 @@ export class RoomWidgetStickieDataUpdateEvent extends RoomWidgetUpdateEvent
     }
 
     /**
-     * AS3: RoomWidgetStickieDataUpdateEvent.as::get controller()
-     *
      * True when the viewer may edit or delete the note — room owner, or any-room controller.
      */
+    // AS3: RoomWidgetStickieDataUpdateEvent.as::get controller()
     public get controller(): boolean
     {
         return this._controller;

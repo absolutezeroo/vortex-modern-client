@@ -83,13 +83,12 @@ export class FurnitureStickieWidgetHandler implements IRoomWidgetHandler
     }
 
     /**
-     * AS3: FurnitureStickieWidgetHandler.as::processWidgetMessage() "RWFWM_MESSAGE_REQUEST_STICKIE"
-     *
      * `furniture_itemdata` is `"<colourHex> <text>"`. AS3 splits on the *first* space only, so a
      * note whose text contains spaces survives intact, and a note with no space at all is treated
      * as colour-only with empty text. The length < 6 guard rejects anything too short to hold a
      * six-digit colour.
      */
+    // AS3: FurnitureStickieWidgetHandler.as::processWidgetMessage() RWFWM_MESSAGE_REQUEST_STICKIE
     private openStickie(message: RoomWidgetFurniToWidgetMessage): void
     {
         const roomObject = this._container?.roomEngine?.getRoomObject(

@@ -11,17 +11,15 @@ import {RoomWidgetMessage} from './RoomWidgetMessage';
 export class RoomWidgetStickieSendUpdateMessage extends RoomWidgetMessage
 {
     /**
-     * AS3: RoomWidgetStickieSendUpdateMessage.as::_SafeStr_10719
-     *
      * Obfuscated in every available tree; the member name is DERIVED from its value.
      */
+    // AS3: RoomWidgetStickieSendUpdateMessage.as::_SafeStr_10719
     public static readonly STICKIE_SEND_UPDATE: string = 'RWSUM_STICKIE_SEND_UPDATE';
 
     /**
-     * AS3: RoomWidgetStickieSendUpdateMessage.as::_SafeStr_11078
-     *
      * Obfuscated in every available tree; the member name is DERIVED from its value.
      */
+    // AS3: RoomWidgetStickieSendUpdateMessage.as::_SafeStr_11078
     public static readonly STICKIE_SEND_DELETE: string = 'RWSUM_STICKIE_SEND_DELETE';
 
     // AS3: RoomWidgetStickieSendUpdateMessage.as::_SafeStr_4841

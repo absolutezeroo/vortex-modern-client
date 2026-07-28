@@ -74,12 +74,11 @@ export class FurnitureStickieLogic extends FurnitureLogic
     }
 
     /**
-     * AS3: FurnitureStickieLogic.as::setColorIndexFromItemData()
-     *
      * Drives the note's rendered colour from its data. An unrecognised colour falls back to index
      * 3 (yellow), and the model stores the index **plus one** — which is why the widget's
      * `normalize(color - 1)` subtracts it again.
      */
+    // AS3: FurnitureStickieLogic.as::setColorIndexFromItemData()
     protected setColorIndexFromItemData(): void
     {
         if(this.object === null) return;
