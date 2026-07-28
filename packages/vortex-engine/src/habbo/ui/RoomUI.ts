@@ -62,6 +62,7 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
@@ -238,6 +239,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_ROTATE, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_PICKUP, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_MOVE, this.roomObjectEventHandler, this);
+                        // AS3: RoomUI.as:252 — the same roomObjectEventHandler is registered for
+                        // the RETWE_REQUEST_* furni-widget requests. Without this the engine's
+                        // new bridge would emit into nothing.
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_TROPHY, this.roomObjectEventHandler, this);
                     }
                 },
                 true
@@ -757,6 +762,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_ROOM_TOOLS');
                     desktop.createWidget('RWE_FURNITURE_CONTEXT_MENU');
                     desktop.createWidget('RWE_EFFECTS');
+                    // AS3: RoomUI.as:941. The furni widgets are created eagerly at room entry,
+                    // not on demand — creating one is what registers its handler's message
+                    // types, so the widget must exist before the furni is ever clicked.
+                    desktop.createWidget('RWE_FURNI_TROPHY_WIDGET');
 
                     this._isInRoom = true;
 

@@ -59,6 +59,9 @@ import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
 import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
+import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
+import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
+import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
 
 const log = Logger.getLogger('habbo.ui.RoomDesktop');
@@ -730,6 +733,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new AvatarInfoWidgetHandler();
                 break;
+            case 'RWE_FURNI_TROPHY_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
+                handler = new FurnitureTrophyWidgetHandler();
+                break;
             case 'RWE_CHAT_WIDGET': {
                 // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
                 const chatHandler = new ChatWidgetHandler();
@@ -928,6 +935,17 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 return;
             case RoomEngineObjectEvent.REOE_REQUEST_PICKUP:
                 this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_PICKUP');
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_TROPHY" (line 1249) —
+            // the engine says a trophy was used; turn it into the widget message the trophy
+            // handler claims. The remaining RETWE_REQUEST_* cases follow the same two lines each,
+            // and land as their widgets are ported.
+            case RoomEngineToWidgetEvent.REQUEST_TROPHY:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_TROPHY_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
 
                 return;
             case RoomEngineObjectEvent.REOE_SELECTED:

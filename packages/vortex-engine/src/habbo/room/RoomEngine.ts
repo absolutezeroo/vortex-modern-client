@@ -121,6 +121,8 @@ import {RoomObjectRoomPlaneVisibilityUpdateMessage} from './messages/RoomObjectR
 import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoomPlanePropertyUpdateMessage';
 import {RoomObjectTileMouseEvent} from './events/RoomObjectTileMouseEvent';
 import {RoomObjectStateChangeEvent} from './events/RoomObjectStateChangeEvent';
+import {RoomObjectWidgetRequestEvent} from './events/RoomObjectWidgetRequestEvent';
+import {RoomEngineToWidgetEvent} from './events/RoomEngineToWidgetEvent';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
 const log = Logger.getLogger('habbo.room.RoomEngine');
@@ -5071,12 +5073,110 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this.handleObjectStateChange(event);
             }
         }
+        // AS3: RoomObjectEventHandler.as::processObjectEvent() -> handleObjectWidgetRequestEvent().
+        // Until this branch existed, every ROWRE_* a furniture logic raised died here: both
+        // RoomObjectWidgetRequestEvent and RoomEngineToWidgetEvent were declared, the logics
+        // emitted the first, and nothing ever translated it into the second.
+        else if(event instanceof RoomObjectWidgetRequestEvent)
+        {
+            this.handleObjectWidgetRequestEvent(event, this._activeRoomId);
+        }
 
         // Forward object events
         if(event && typeof event === 'object' && 'type' in event)
         {
             this.events.emit('roomObjectEvent', event);
         }
+    }
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
+     *
+     * Translates a furniture logic's widget request (`ROWRE_*`) into the room-engine event the
+     * room desktop listens for (`RETWE_*`). The mapping is 1:1 and carries no logic of its own;
+     * three of the cases additionally forward the object's own widget/context-menu name.
+     *
+     * `_SafeCls_1821` is AS3's RoomObjectEventHandler, which this port folded into RoomEngine —
+     * the same class that already implements IRoomRenderingCanvasMouseListener here.
+     */
+    private handleObjectWidgetRequestEvent(event: RoomObjectWidgetRequestEvent, roomId: number): void
+    {
+        const objectId = event.objectId;
+        const objectType = event.objectType;
+
+        if(objectType === null) return;
+
+        const category = this.getRoomObjectCategory(objectType);
+
+        // AS3 reads the name off the object's own event handler for the three payload-carrying
+        // cases; `widget` and `contextMenu` are the same underlying field.
+        const widgetName = (event.object as IRoomObjectController | null)?.getEventHandler?.()?.widget ?? null;
+
+        switch(event.type)
+        {
+            case RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_OPEN_WIDGET, roomId, objectId, category, widgetName);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_CLOSE_WIDGET:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_CLOSE_WIDGET, roomId, objectId, category, widgetName);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_OPEN_FURNI_CONTEXT_MENU:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU, roomId, objectId, category, widgetName);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_PLACEHOLDER:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_CREDITFURNI:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_CREDITFURNI, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_STICKIE:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_STICKIE, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_PRESENT:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_PRESENT, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_TROPHY:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_TROPHY, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_TEASER:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_TEASER, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_ECOTRONBOX:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_DIMMER:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_DIMMER, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_REMOVE_DIMMER:
+                this.emitToWidget(RoomEngineToWidgetEvent.REMOVE_DIMMER, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_CLOTHING_CHANGE:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_CLOTHING_CHANGE, roomId, objectId, category);
+                break;
+            default:
+                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
+                // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,
+                // pet-product, guild-context-menu, monsterplant/clothing confirmation,
+                // background-colour, area-hide, mysterybox/effectbox/mysterytrophy dialogs,
+                // achievement-resolution, friend-furni, badge-display, high-score and link
+                // cases. Their RETWE_* constants already exist on RoomEngineToWidgetEvent;
+                // each is one line here once the widget behind it is ported. Left unmapped
+                // rather than emitted, so no event fires that nothing can service.
+                log.warn(`Unmapped room-object widget request: ${event.type}`);
+                break;
+        }
+    }
+
+    /**
+     * AS3 inlines this dispatch at every case of handleObjectWidgetRequestEvent(); folded into
+     * one helper here because the port emits by name rather than through a Flash event bus.
+     */
+    private emitToWidget(type: string, roomId: number, objectId: number, category: number, widget: string | null = null): void
+    {
+        this.events.emit(type, new RoomEngineToWidgetEvent(type, roomId, objectId, category, widget));
     }
 
     // AS3: sources/win63_version/habbo/room/class_1947.as::handleObjectStateChange()

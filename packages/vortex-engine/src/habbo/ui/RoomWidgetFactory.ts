@@ -16,6 +16,7 @@ import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
 import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 import {EffectsWidget} from './widget/effects/EffectsWidget';
 import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
+import {TrophyFurniWidget} from './widget/furniture/trophy/TrophyFurniWidget';
 
 const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
@@ -58,6 +59,12 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new RoomChatInputWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI, this._roomUI.desktop
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_TROPHY_WIDGET"
+            case 'RWE_FURNI_TROPHY_WIDGET':
+                return new TrophyFurniWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.config
                 );
             case 'RWE_CHAT_WIDGET':
                 return new RoomChatWidget(
