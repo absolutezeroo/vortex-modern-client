@@ -63,6 +63,7 @@ import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandl
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
 import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
+import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -740,6 +741,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
                 handler = new FurnitureTrophyWidgetHandler();
                 break;
+            case 'RWE_FURNI_CREDIT_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:783
+                handler = new FurnitureCreditWidgetHandler();
+                break;
             case 'RWE_ROOM_BACKGROUND_COLOR':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new FurnitureBackgroundColorWidgetHandler();
@@ -959,6 +964,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineToWidgetEvent.REQUEST_TROPHY:
                 this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
                     RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_TROPHY_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_CREDITFURNI" (line 1237)
+            case RoomEngineToWidgetEvent.REQUEST_CREDITFURNI:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_CREDITFURNI_WIDGET,
                     event.objectId, event.category, event.roomId
                 ));
 
