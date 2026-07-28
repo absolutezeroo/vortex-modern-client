@@ -667,6 +667,18 @@ export class VortexApp
                 if(skin) skins.set(skin.id, skin);
             }
 
+            // 2b. Vortex's own authored skins (src/vortex-skins/*.xml), registered last so a file
+            // named after a dump skin replaces it. Same reasoning as readVortexLayouts() below:
+            // src/assets/window-skins/ is gitignored and rebuilt from the dump by
+            // tools/build-window-assets.mjs, so a hand-authored file placed there would be wiped
+            // on the next asset build.
+            const vortexElementDescription = this.readVortexSkins(skins);
+
+            if(vortexElementDescription)
+            {
+                windowAssets.elementDescription = vortexElementDescription;
+            }
+
             windowAssets.skins = skins;
             windowAssets.atlases = atlases;
         }
@@ -754,6 +766,66 @@ export class VortexApp
         // 12. Start input and render loop
         this.setupMouseEvents();
         this.startRenderLoop();
+    }
+
+    /**
+     * Registers Vortex's own authored window skins (src/vortex-skins/*.xml) under their file
+     * basename, bundled at build time via import.meta.glob — the skin counterpart of
+     * readVortexLayouts().
+     *
+     * The basename is the skin id, which is what an element descriptor's `asset` field points at
+     * (HabboWindowManager.loadSkinAssets()). So a file named after a dump skin — e.g.
+     * `habbo_skin_frame.xml` — replaces that skin wholesale for every descriptor using it, while a
+     * brand-new id renders nothing until some descriptor asks for it: skins are only ever reached
+     * through the element description, never by name from a layout.
+     *
+     * That is what the `habbo_element_description_xml.xml` override is for. A file under that name
+     * replaces the dump's element description entirely (it is one XML, not a merge), which is the
+     * only way to bind a new skin id to a type/style/intent triplet.
+     *
+     * Templates still resolve their bitmaps out of the atlases decoded above, so a skin here can
+     * only reference an atlas listed in ATLAS_NAMES — a new spritesheet needs a new entry there
+     * plus the PNG in the image bundle.
+     *
+     * @param sink - the skin map being built, mutated in place
+     * @returns the element-description override if one was authored, otherwise null
+     */
+    private readVortexSkins(sink: Map<string, ISkinData>): IElementDescriptionData | null
+    {
+        const modules = import.meta.glob('./vortex-skins/*.xml', {
+            query: '?raw',
+            import: 'default',
+            eager: true
+        }) as Record<string, string>;
+
+        let elementDescription: IElementDescriptionData | null = null;
+
+        for(const [path, xml] of Object.entries(modules))
+        {
+            const name = path.split('/').pop()!.replace(/\.xml$/, '');
+
+            // Parsed per file: a malformed hand-authored skin must not take the dump's skins down
+            // with it, the way the bundle loop above would (its throw unwinds to the outer catch).
+            try
+            {
+                if(name === ELEMENT_DESCRIPTION_ASSET)
+                {
+                    elementDescription = parseElementDescriptionFromBundle(xml, path);
+                    continue;
+                }
+
+                const skin = parseSkinFromBundle(xml, name, path);
+
+                if(skin) sink.set(skin.id, skin);
+                else log.warn(`Vortex skin has no <skin> root element, ignored: ${path}`);
+            }
+            catch (error)
+            {
+                log.warn(`Failed to parse Vortex skin: ${path}`, error);
+            }
+        }
+
+        return elementDescription;
     }
 
     /**
