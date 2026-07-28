@@ -65,6 +65,7 @@ import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
 import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
 import {FurnitureEcotronBoxWidgetHandler} from './handler/FurnitureEcotronBoxWidgetHandler';
+import {PetPackageFurniWidgetHandler} from './handler/PetPackageFurniWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -741,6 +742,10 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_FURNI_TROPHY_WIDGET':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
                 handler = new FurnitureTrophyWidgetHandler();
+                break;
+            case 'RWE_FURNI_PET_PACKAGE_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:798
+                handler = new PetPackageFurniWidgetHandler();
                 break;
             case 'RWE_FURNI_ECOTRONBOX_WIDGET':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:795
