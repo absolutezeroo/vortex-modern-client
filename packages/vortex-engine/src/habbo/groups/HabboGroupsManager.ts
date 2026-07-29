@@ -644,9 +644,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 
     /**
      * AS3 also closes DetailsWindowCtrl here, which is not ported.
-     *
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomLeave()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomLeave()
     private onRoomLeave(_event: IMessageEvent): void
     {
         this._groupRoomInfoCtrl.close();
@@ -656,9 +655,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
      * Only the payload that actually puts the player in the room counts — the navigator
      * asks for guest-room data for rooms it merely lists, and those replies must not
      * retarget the in-room panel.
-     *
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomInfo()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomInfo()
     private onRoomInfo(event: IMessageEvent): void
     {
         const parser = (event as GetGuestRoomResultMessageEvent).getParser() as GetGuestRoomResultMessageParser | null;

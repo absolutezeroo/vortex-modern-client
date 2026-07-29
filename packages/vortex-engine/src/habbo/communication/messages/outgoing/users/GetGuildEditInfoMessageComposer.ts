@@ -14,6 +14,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class GetGuildEditInfoMessageComposer extends MessageComposer<[number]>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1789/_SafeCls_2905.as::_SafeStr_4556
     private _data: [number];
 
     // AS3: .../_SafeCls_2905.as::_SafeCls_2905()

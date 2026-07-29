@@ -38,9 +38,8 @@ export class GroupRoomInfoCtrl
     /**
      * Extensions this panel must sit before on the toolbar strip. AS3 passes the array
      * inline to `attachExtension()`.
-     *
-     * AS3: .../GroupRoomInfoCtrl.as::refresh()
      */
+    // AS3: .../GroupRoomInfoCtrl.as::refresh() (the attachExtension() argument)
     private static readonly TOOLBAR_EXTENSION_ORDER: string[] = ['next_quest_timer', 'quest_tracker', 'event_info_window'];
 
     // AS3: .../GroupRoomInfoCtrl.as::_SafeStr_4571
@@ -75,9 +74,8 @@ export class GroupRoomInfoCtrl
     /**
      * Room data arrived: if it names a group, ask for that group's details; if it does
      * not, the player is not in a base room and the panel goes away.
-     *
-     * AS3: .../GroupRoomInfoCtrl.as::onRoomInfo()
      */
+    // AS3: .../GroupRoomInfoCtrl.as::onRoomInfo()
     onRoomInfo(roomData: GuestRoomData): void
     {
         if(!this._groupsManager?.groupRoomInfoEnabled) return;
@@ -222,9 +220,8 @@ export class GroupRoomInfoCtrl
     /**
      * AS3 detaches the toolbar extension and drops the group, but does not hide or
      * dispose the window — detaching is what removes it from view.
-     *
-     * AS3: .../GroupRoomInfoCtrl.as::close()
      */
+    // AS3: .../GroupRoomInfoCtrl.as::close()
     close(): void
     {
         if(this._window === null) return;
