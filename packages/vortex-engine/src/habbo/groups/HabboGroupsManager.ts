@@ -51,6 +51,9 @@ import type {ScrSendUserInfoMessageParser} from '@habbo/communication/messages/p
 import {FlatCreatedMessageEvent} from '@habbo/communication/messages/incoming/navigator/FlatCreatedMessageEvent';
 import type {FlatCreatedMessageParser} from '@habbo/communication/messages/parser/navigator/FlatCreatedMessageParser';
 import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import {GetGuestRoomResultMessageEvent} from '@habbo/communication/messages/incoming/navigator/GetGuestRoomResultMessageEvent';
+import {CloseConnectionMessageEvent} from '@habbo/communication/messages/incoming/room/session/CloseConnectionMessageEvent';
+import type {GetGuestRoomResultMessageParser} from '@habbo/communication/messages/parser/navigator/GetGuestRoomResultMessageParser';
 import type {RoomEntryInfoMessageParser} from '@habbo/communication/messages/parser/room/engine/RoomEntryInfoMessageParser';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
@@ -59,6 +62,7 @@ import {ExtendedProfileWindowCtrl} from './ExtendedProfileWindowCtrl';
 import {GuildManagementWindowCtrl} from './GuildManagementWindowCtrl';
 import {GroupCreatedWindowCtrl} from './GroupCreatedWindowCtrl';
 import {HcRequiredWindowCtrl} from './HcRequiredWindowCtrl';
+import {GroupRoomInfoCtrl} from './GroupRoomInfoCtrl';
 
 const log = Logger.getLogger('habbo.groups.HabboGroupsManager');
 
@@ -109,6 +113,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     private readonly _groupCreatedWindowCtrl: GroupCreatedWindowCtrl;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_6265
     private readonly _hcRequiredWindowCtrl: HcRequiredWindowCtrl;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_5157
+    private readonly _groupRoomInfoCtrl: GroupRoomInfoCtrl;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_8664
     private _guildEditorData: GuildEditorData | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_9811
@@ -124,6 +130,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._guildManagementWindowCtrl = new GuildManagementWindowCtrl(this);
         this._groupCreatedWindowCtrl = new GroupCreatedWindowCtrl(this);
         this._hcRequiredWindowCtrl = new HcRequiredWindowCtrl(this);
+        this._groupRoomInfoCtrl = new GroupRoomInfoCtrl(this);
     }
 
     /**
@@ -367,6 +374,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._guildManagementWindowCtrl.dispose();
         this._groupCreatedWindowCtrl.dispose();
         this._hcRequiredWindowCtrl.dispose();
+        this._groupRoomInfoCtrl.dispose();
         this._guildEditorData = null;
         this._communicationManager = null;
 
@@ -392,6 +400,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this.addMessageEvent(new FlatCreatedMessageEvent(this.onFlatCreated.bind(this)));
         this.addMessageEvent(new ScrSendUserInfoEvent(this.onSubscriptionInfo.bind(this)));
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
+        this.addMessageEvent(new GetGuestRoomResultMessageEvent(this.onRoomInfo.bind(this)));
+        this.addMessageEvent(new CloseConnectionMessageEvent(this.onRoomLeave.bind(this)));
 
         log.debug('Groups manager initialized');
     }
@@ -459,6 +469,10 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         }
 
         this._groupDetailsById.set(data.groupId, data);
+        this._groupRoomInfoCtrl.onGroupDetails(data);
+
+        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetails() also forwards to DetailsWindowCtrl (120 AS3
+        // lines) and ExtendedProfileWindowCtrl::onGroupDetails(); neither is ported.
     }
 
     private onGroupDetailsChanged(event: IMessageEvent): void
@@ -470,7 +484,9 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
             return;
         }
 
-        if(this._groupDetailsById.has(changedEvent.groupId))
+        // AS3 gates this on DetailsWindowCtrl/GroupRoomInfoCtrl currently displaying the
+        // group. The details cache stands in for the unported DetailsWindowCtrl half.
+        if(this._groupDetailsById.has(changedEvent.groupId) || this._groupRoomInfoCtrl.isDisplayingGroup(changedEvent.groupId))
         {
             this.send(new GetHabboGroupDetailsMessageComposer(changedEvent.groupId, false));
         }
@@ -486,6 +502,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         }
 
         this._groupDetailsById.delete(deactivatedEvent.groupId);
+        this._groupRoomInfoCtrl.onGroupDeactivated(deactivatedEvent.groupId);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onJoinFailed()
@@ -556,9 +573,9 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._groupCreatedWindowCtrl.show(createdEvent.groupId);
         this._guildManagementWindowCtrl.close();
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onGuildCreated()
-        // also sets GroupRoomInfoCtrl.expectedGroupId so the room-info panel picks the new
-        // group up on arrival. GroupRoomInfoCtrl (241 AS3 lines) is not ported yet.
+        // So the room-info panel recognises the new group's details when they arrive,
+        // rather than discarding them as belonging to some other group.
+        this._groupRoomInfoCtrl.expectedGroupId = createdEvent.groupId;
 
         if(this._roomId !== createdEvent.baseRoomId) this.navigator?.goToPrivateRoom(createdEvent.baseRoomId);
     }
@@ -607,14 +624,11 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     }
 
     /**
-     * AS3 also closes DetailsWindowCtrl and GroupRoomInfoCtrl here; neither is ported, so
-     * only the room id is kept — `onGuildCreated()` compares it to decide whether the
-     * player already stands in the new group's base room.
+     * Closes the group panel and records the room id, which `onGuildCreated()` compares
+     * to decide whether the player already stands in the new group's base room.
      *
      * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomEnter()
-     * and ::onRoomLeave() — close DetailsWindowCtrl (120 AS3 lines) and GroupRoomInfoCtrl
-     * (241 AS3 lines) once those are ported. onRoomLeave is not registered at all here for
-     * the same reason: with both controllers missing it would have nothing to do.
+     * also closes DetailsWindowCtrl (120 AS3 lines), which is not ported.
      *
      * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomEnter()
      */
@@ -624,7 +638,38 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
 
         if(!parser) return;
 
+        this._groupRoomInfoCtrl.close();
         this._roomId = parser.guestRoomId;
+    }
+
+    /**
+     * AS3 also closes DetailsWindowCtrl here, which is not ported.
+     *
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomLeave()
+     */
+    private onRoomLeave(_event: IMessageEvent): void
+    {
+        this._groupRoomInfoCtrl.close();
+    }
+
+    /**
+     * Only the payload that actually puts the player in the room counts — the navigator
+     * asks for guest-room data for rooms it merely lists, and those replies must not
+     * retarget the in-room panel.
+     *
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onRoomInfo()
+     */
+    private onRoomInfo(event: IMessageEvent): void
+    {
+        const parser = (event as GetGuestRoomResultMessageEvent).getParser() as GetGuestRoomResultMessageParser | null;
+
+        if(!parser || !parser.enterRoom) return;
+
+        const data = parser.data;
+
+        if(!data) return;
+
+        this._groupRoomInfoCtrl.onRoomInfo(data);
     }
 
     /**
@@ -661,6 +706,12 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     get roomId(): number
     {
         return this._roomId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get groupRoomInfoCtrl()
+    get groupRoomInfoCtrl(): GroupRoomInfoCtrl
+    {
+        return this._groupRoomInfoCtrl;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get guildManagementWindowCtrl()

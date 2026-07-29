@@ -3,6 +3,7 @@
 
 export {ColorGridCtrl} from './ColorGridCtrl';
 export {GroupCreatedWindowCtrl} from './GroupCreatedWindowCtrl';
+export {GroupRoomInfoCtrl} from './GroupRoomInfoCtrl';
 export {GuildKickData} from './GuildKickData';
 export {GuildManagementWindowCtrl} from './GuildManagementWindowCtrl';
 export {GuildSettingsCtrl} from './GuildSettingsCtrl';

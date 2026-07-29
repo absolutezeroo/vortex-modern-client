@@ -751,6 +751,7 @@ import {
     GetExtendedProfileMessageComposer,
     CreateGuildMessageComposer,
     GetGuildCreationInfoMessageComposer,
+    GetGuildEditInfoMessageComposer,
     GetGuildEditorDataMessageComposer,
     GetGuildMembershipsMessageComposer,
     UpdateGuildBadgeMessageComposer,
@@ -1584,6 +1585,7 @@ export class HabboMessages implements IMessageConfiguration
         // (GetGuildEditorDataMessageEvent = 3398, CreateGuildMessageEvent = 207).
         this._composers.set(3398, GetGuildEditorDataMessageComposer);
         this._composers.set(207, CreateGuildMessageComposer);
+        this._composers.set(874, GetGuildEditInfoMessageComposer);
         this._composers.set(2009, UpdateGuildIdentityMessageComposer);
         this._composers.set(3882, UpdateGuildBadgeMessageComposer);
         this._composers.set(3421, UpdateGuildColorsMessageComposer);

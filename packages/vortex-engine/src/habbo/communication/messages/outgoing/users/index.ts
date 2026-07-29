@@ -8,6 +8,7 @@ export {GetEmailStatusComposer} from './GetEmailStatusComposer';
 export {GetExtendedProfileByNameMessageComposer} from './GetExtendedProfileByNameMessageComposer';
 export {GetExtendedProfileMessageComposer} from './GetExtendedProfileMessageComposer';
 export {GetGuildCreationInfoMessageComposer} from './GetGuildCreationInfoMessageComposer';
+export {GetGuildEditInfoMessageComposer} from './GetGuildEditInfoMessageComposer';
 export {GetGuildEditorDataMessageComposer} from './GetGuildEditorDataMessageComposer';
 export {GetGuildMembershipsMessageComposer} from './GetGuildMembershipsMessageComposer';
 export {GetHabboGroupBadgesMessageComposer} from './GetHabboGroupBadgesMessageComposer';
