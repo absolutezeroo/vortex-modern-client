@@ -701,7 +701,10 @@ export class VortexMain implements IVortexMain
         // 12e. Groups Manager
         // AS3 registers this via the HabboGroupsCom SWF library. Consumers waiting on the IID:
         // HabboCatalog.ts:481, RoomUI.ts:310.
-        this._groupsManager = new HabboGroupsManager(ctx);
+        // The asset library is what AS3's HabboGroupsCom SWF supplies; without it
+        // Component.assets stays null and every getButtonImage()/ColorGridCtrl bitmap
+        // lookup in the group windows returns nothing.
+        this._groupsManager = new HabboGroupsManager(ctx, 0, this._assets);
         ctx.attachComponent(this._groupsManager, [IID_HabboGroupsManager]);
 
         // 12f. Notifications

@@ -378,6 +378,26 @@ declare global
  * This mirrors the AS3 pattern where WindowRenderer composed everything into a
  * single BitmapData displayed as a Bitmap on the Stage.
  */
+/**
+ * Images that some ported class fetches from the asset library by exact name, rather than
+ * through the window manager's URL registry. Prefix families are handled inline in
+ * registerImageAssets(); this is for the one-offs.
+ *
+ * - dimmer_slider_*: BackgroundColorWidgetSlider's track and thumb.
+ * - stickie_*: StickieFurniWidget's blank note, close and delete buttons.
+ * - icon_nft: InfoStandFurniView's NFT marker.
+ * - thumb_up: ExtraInfoPromoItem in the catalog's bundle purchase display.
+ */
+const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
+    'dimmer_slider_base',
+    'dimmer_slider_button',
+    'icon_nft',
+    'stickie_blanco',
+    'stickie_close',
+    'stickie_remove',
+    'thumb_up',
+]);
+
 export class VortexApp 
 {
     private _canvas: HTMLCanvasElement | null = null;
@@ -1072,7 +1092,18 @@ export class VortexApp
             // - ctlg_*: catalog swatches/slot backgrounds.
             // - fx_icon_* / memenu_fx_*: the me-menu EffectsWidget rows read these programmatically
             //   (effect icon + play/pause hilite) via assets.getAssetByName(...).content.
-            if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_'))
+            // - color_chooser_* / badge_part_* / position_*: the group creation wizard - every
+            //   ColorGridCtrl swatch cell, and the badge editor's empty/add/picker markers and
+            //   3x3 position grid, all via HabboGroupsManager.getButtonImage().
+            // - LIBRARY_IMAGE_NAMES: the rest, one-off lookups by exact name.
+            //
+            // This list grows once per feature that reads a bitmap from the library, which is a
+            // standing trap: a missing entry does not fail loudly, it just renders nothing. The
+            // current set was found by grepping every getAssetByName('<literal>') call against
+            // the images/ bundle; re-run that when a bitmap comes out blank.
+            if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_')
+                || name.startsWith('color_chooser_') || name.startsWith('badge_part_') || name.startsWith('position_')
+                || LIBRARY_IMAGE_NAMES.has(name))
             {
                 const declaration = vortex.assets.getAssetTypeDeclarationByMimeType('application/octet-stream')
                     ?? new AssetTypeDeclaration('application/octet-stream', UnknownAsset);

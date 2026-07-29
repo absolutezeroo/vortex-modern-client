@@ -1,4 +1,5 @@
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IWindow} from '@core/window/IWindow';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
@@ -70,13 +71,12 @@ const log = Logger.getLogger('habbo.groups.HabboGroupsManager');
  * Habbo Groups Manager
  *
  * Owns the group message events and the window controllers they drive: the extended
- * profile, the creation/edit wizard, the congratulations window and the HC-required
- * window. It also caches the guild editor data, which every badge and colour pane reads
- * and which is fetched once per session.
+ * profile, the creation/edit wizard, the congratulations window, the HC-required window
+ * and the in-room group panel. It also caches the guild editor data, which every badge
+ * and colour pane reads and which is fetched once per session.
  *
- * Four of AS3's controllers are still unported and their handlers say so at the point of
- * use: `GuildMembersWindowCtrl`, `GroupDetailsCtrl`, `GroupRoomInfoCtrl` and
- * `DetailsWindowCtrl`.
+ * Three of AS3's controllers are still unported and their handlers say so at the point of
+ * use: `GuildMembersWindowCtrl`, `GroupDetailsCtrl` and `DetailsWindowCtrl`.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as
  */
@@ -122,9 +122,12 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::_SafeStr_6722
     private _roomId: number = 0;
 
-    constructor(context: IContext)
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::HabboGroupsManager()
+    // The asset library is not optional in practice: getButtonImage() and every ColorGridCtrl
+    // read their bitmaps out of it, and Component leaves `assets` null when none is passed.
+    constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null)
     {
-        super(context);
+        super(context, flags, assetLibrary);
 
         this._extendedProfileWindowCtrl = new ExtendedProfileWindowCtrl(this);
         this._guildManagementWindowCtrl = new GuildManagementWindowCtrl(this);
