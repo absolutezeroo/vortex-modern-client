@@ -757,6 +757,7 @@ import {
     UpdateGuildColorsMessageComposer,
     UpdateGuildIdentityMessageComposer,
     UpdateGuildSettingsMessageComposer,
+    GetHabboGroupBadgesMessageComposer,
     GetHabboGroupDetailsMessageComposer,
     GetIgnoredUsersMessageComposer,
     GetSelectedBadgesMessageComposer,
@@ -1749,6 +1750,14 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(321, GetExtendedProfileByNameMessageComposer);
         this._composers.set(847, GetExtendedProfileMessageComposer);
         this._composers.set(1683, GetHabboGroupDetailsMessageComposer);
+        // HabboGroupInfoManager has been sending this on every room entry since it was
+        // ported, into nothing: the composer existed but was never registered, so every
+        // send was dropped and BadgeImageWidget never learned any group's badge code.
+        // 3346 is WIN63's own registry (_SafeCls_2046.as:957, _SafeCls_2839), corroborated
+        // by vortex-emulator's GetHabboGroupBadgesMessageEvent = 3346. Not win63_version's
+        // 2767 - that is an older build - and not the 2317 the composer's docblock claimed,
+        // which matches no tree.
+        this._composers.set(3346, GetHabboGroupBadgesMessageComposer);
         this._composers.set(1026, GetIgnoredUsersMessageComposer);
         this._composers.set(3726, GetSelectedBadgesMessageComposer);
         this._composers.set(3642, GetUserNftChatStylesMessageComposer);
