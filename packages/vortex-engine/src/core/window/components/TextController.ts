@@ -107,6 +107,7 @@ export class TextController extends WindowController implements ITextWindow
     // editable fields (its FLASH_TEXT_FIELD_LEFT_GUTTER, and the TODO(AS3) there
     // explains why only those), so the caret bridge has to start from the same
     // origin or the caret sits 2px left of the glyphs.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_field
     protected static readonly FLASH_TEXT_FIELD_LEFT_GUTTER: number = 2;
 
     // TS-only: per-range TextFormat overrides applied via setTextFormat().
