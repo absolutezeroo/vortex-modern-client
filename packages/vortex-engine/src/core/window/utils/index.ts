@@ -10,6 +10,7 @@ export {MouseCursorControl} from './MouseCursorControl';
 export {MouseEventProcessor} from './MouseEventProcessor';
 export {MouseEventQueue} from './MouseEventQueue';
 export type {IMouseEventEntry} from './MouseEventQueue';
+export {NativeWheelDelta} from './NativeWheelDelta';
 export {PropertyStruct} from './PropertyStruct';
 export {SmoothScroller} from './SmoothScroller';
 export {TextMargins} from './TextMargins';

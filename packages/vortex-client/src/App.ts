@@ -8,6 +8,7 @@ import type {ISkinData} from '@core/window';
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {NativeWheelDelta} from '@core/window/utils/NativeWheelDelta';
 import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperator';
 import {Logger} from '@core/utils/Logger';
 import type {IElementDescriptionData} from '@habbo/window';
@@ -1627,17 +1628,15 @@ export class VortexApp
 
             target.getGlobalPosition(globalPos);
 
-            // Flash's MouseEvent.delta is positive when the wheel scrolls up; the DOM's
-            // WheelEvent.deltaY is positive when it scrolls down - the opposite sign
-            // convention. SmoothScroller.wheelDeltaToScrollDelta() negates this value to
-            // get a scroll offset (faithfully ported from AS3, see its own header comment),
-            // so feeding it deltaY unconverted inverted every scrollable list/grid in the
-            // app relative to normal browser/OS scroll direction.
+            // NativeWheelDelta converts the DOM's deltaY (pixels/lines/pages, positive
+            // downwards) into the Flash line unit the window system is built on (positive
+            // upwards, 25px per line) - see its header for why the raw deltaY made lists
+            // jump straight to the top or the bottom.
             const event = WindowMouseEvent.allocateMouse(
                 WindowMouseEvent.WHEEL, target, null,
                 x - globalPos.x, y - globalPos.y, e.clientX, e.clientY,
                 e.altKey, e.ctrlKey, e.shiftKey, false,
-                -e.deltaY
+                NativeWheelDelta.fromWheelEvent(e)
             );
 
             const handled = target.update(target, event);

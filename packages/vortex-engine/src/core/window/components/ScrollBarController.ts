@@ -9,6 +9,7 @@ import type {WindowController} from '../WindowController';
 import type {WindowEvent} from '../events/WindowEvent';
 import type {WindowMouseEvent} from '../events/WindowMouseEvent';
 import type {PropertyStruct} from '../utils/PropertyStruct';
+import {SmoothScroller} from '../utils/SmoothScroller';
 
 /**
  * Controller for scrollbar windows.
@@ -16,6 +17,11 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * Manages scroll state, lift (thumb) positioning, increment/decrement
  * buttons, and binding to a scrollable target window.
  *
+ * The wheel path follows the primary tree, where it runs through a
+ * `SmoothScroller` instead of the fixed +/- `_scrollStep` jump the older
+ * `win63_version` build (and this port, until now) used.
+ *
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as
  * @see sources/win63_version/com/sulake/core/window/components/ScrollBarController.as
  */
 // AS3: sources/win63_version/core/window/components/ScrollBarController.as::ScrollBarController()
@@ -26,11 +32,19 @@ export class ScrollBarController extends InteractiveController implements IScrol
     private static readonly SCROLL_SLIDER_TRACK: string = 'slider_track';
     private static readonly SCROLL_SLIDER_BAR: string = 'slider_bar';
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_STEP_SIZE
+    private static readonly SCROLL_STEP_SIZE: number = 15;
+
+    /** The bare `25` AS3 divides by `_scrollStep` in getSmoothScrollAxisSize(). */
+    private static readonly SMOOTH_SCROLL_AXIS_UNIT: number = 25;
+
     protected _offset: number = 0;
     protected _scrollStep: number = 0.1;
     private _targetName: string | null = null;
     private _isUpdatingLift: boolean = false;
     private _initialized: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::smoothScroller
+    private _smoothScroller: SmoothScroller | null = null;
     private _boundScrollButtonEventProc: ((event: WindowEvent, window: IWindow) => void);
     private _boundOnScrollableResized: ((event: WindowEvent) => void);
     private _boundOnScrollableScrolled: ((event: WindowEvent) => void);
@@ -59,6 +73,15 @@ export class ScrollBarController extends InteractiveController implements IScrol
         this._boundScrollButtonEventProc = this.scrollButtonEventProc.bind(this);
         this._boundOnScrollableResized = this.onScrollableResized.bind(this);
         this._boundOnScrollableScrolled = this.onScrollableScrolled.bind(this);
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::ScrollBarController()
+        this._smoothScroller = new SmoothScroller(
+            this.getScrollOffset.bind(this),
+            this.setSmoothScrollOffset.bind(this),
+            this.getSmoothScrollAxisSize.bind(this),
+            200, 60, true, null, ScrollBarController.SCROLL_STEP_SIZE
+        );
+
         this._initialized = true;
 
         if(properties !== null)
@@ -115,6 +138,12 @@ export class ScrollBarController extends InteractiveController implements IScrol
         {
             (this._scrollable as unknown as IWindow).addEventListener('WE_RESIZED', this._boundOnScrollableResized);
             (this._scrollable as unknown as IWindow).addEventListener('WE_SCROLL', this._boundOnScrollableScrolled);
+
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::set scrollable()
+            // Adopt the target's current position, otherwise _offset stays at 0 while the
+            // list is scrolled - and _offset is where the smooth scroller starts from.
+            this.setScrollPosition(this.horizontal ? this._scrollable.scrollH : this._scrollable.scrollV, false);
+
             this.updateLiftSizeAndPosition();
         }
     }
@@ -340,30 +369,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
             }
             else if(event.type === 'WME_WHEEL')
             {
-                const mouseEvent = event as WindowMouseEvent;
-
-                if(mouseEvent.delta > 0)
-                {
-                    if(this.horizontal)
-                    {
-                        this.scrollH -= this._scrollStep;
-                    }
-                    else
-                    {
-                        this.scrollV -= this._scrollStep;
-                    }
-                }
-                else
-                {
-                    if(this.horizontal)
-                    {
-                        this.scrollH += this._scrollStep;
-                    }
-                    else
-                    {
-                        this.scrollV += this._scrollStep;
-                    }
-                }
+                this.scrollWithWheel((event as WindowMouseEvent).delta);
 
                 return true;
             }
@@ -378,15 +384,26 @@ export class ScrollBarController extends InteractiveController implements IScrol
 
         this.scrollable = null;
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::dispose()
+        if(this._smoothScroller)
+        {
+            this._smoothScroller.dispose();
+            this._smoothScroller = null;
+        }
+
         super.dispose();
     }
 
     /**
 	 * Sets the scroll position and optionally syncs to the scrollable target.
 	 *
+	 * `fromSmoothScroller` marks the calls the smooth scroller makes itself, so
+	 * its own animation steps don't get fed back into `adjustStartPosition()`.
+	 *
 	 * @returns Whether the position actually changed
 	 */
-    protected setScrollPosition(value: number, syncTarget: boolean): boolean
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::setScrollPosition()
+    protected setScrollPosition(value: number, syncTarget: boolean, fromSmoothScroller: boolean = false): boolean
     {
         if(this._scrollable === null || this._scrollable.disposed)
         {
@@ -395,6 +412,8 @@ export class ScrollBarController extends InteractiveController implements IScrol
 
         if(value < 0) value = 0;
         if(value > 1) value = 1;
+
+        const diff = value - this._offset;
 
         this._offset = value;
 
@@ -422,7 +441,53 @@ export class ScrollBarController extends InteractiveController implements IScrol
             }
         }
 
+        // Optional chaining, not a null check: the scrollable setter can run from the
+        // base constructor, before this class's field initializers have run at all.
+        if(!fromSmoothScroller && this._smoothScroller?.isScrolling)
+        {
+            this._smoothScroller.adjustStartPosition(diff);
+        }
+
         return changed;
+    }
+
+    /**
+	 * Scrolls by a wheel delta through the smooth scroller.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::scrollWithWheel()
+    private scrollWithWheel(delta: number): boolean
+    {
+        return this._smoothScroller?.scrollWithWheel(delta) ?? false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::getScrollOffset()
+    private getScrollOffset(): number
+    {
+        return this._offset;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::setSmoothScrollOffset()
+    private setSmoothScrollOffset(value: number): void
+    {
+        if(this.setScrollPosition(value, true, true))
+        {
+            this.updateLiftSizeAndPosition();
+        }
+    }
+
+    /**
+	 * The virtual axis length the smooth scroller normalizes its 0..1 offset
+	 * against.
+	 *
+	 * AS3 spells this `25 / _scrollStep` with a bare 25, even though the
+	 * scroller here is constructed with a step of `SCROLL_STEP_SIZE` (15) - so
+	 * one wheel line moves 15 / (25 / 0.1) = 0.06 of the offset, not
+	 * `_scrollStep`. The literal is kept as-is rather than "corrected".
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::getSmoothScrollAxisSize()
+    private getSmoothScrollAxisSize(): number
+    {
+        return ScrollBarController.SMOOTH_SCROLL_AXIS_UNIT / this._scrollStep;
     }
 
     /**
@@ -570,30 +635,7 @@ export class ScrollBarController extends InteractiveController implements IScrol
 
         if(event.type === 'WME_WHEEL')
         {
-            const mouseEvent = event as WindowMouseEvent;
-
-            if(mouseEvent.delta > 0)
-            {
-                if(this.horizontal)
-                {
-                    this.scrollH -= this._scrollStep;
-                }
-                else
-                {
-                    this.scrollV -= this._scrollStep;
-                }
-            }
-            else
-            {
-                if(this.horizontal)
-                {
-                    this.scrollH += this._scrollStep;
-                }
-                else
-                {
-                    this.scrollV += this._scrollStep;
-                }
-            }
+            this.scrollWithWheel((event as WindowMouseEvent).delta);
 
             updateLift = true;
         }

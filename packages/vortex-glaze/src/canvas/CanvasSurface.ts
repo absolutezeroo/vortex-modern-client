@@ -3,6 +3,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
 import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperator';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {NativeWheelDelta} from '@core/window/utils/NativeWheelDelta';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('glaze.canvas.CanvasSurface');
@@ -398,11 +399,12 @@ export class CanvasSurface
 
             target.getGlobalPosition(globalPos);
 
+            // Flash line units, not DOM pixels - see NativeWheelDelta.
             const event = WindowMouseEvent.allocateMouse(
                 WindowMouseEvent.WHEEL, target, null,
                 x - globalPos.x, y - globalPos.y, e.clientX, e.clientY,
                 e.altKey, e.ctrlKey, e.shiftKey, false,
-                -e.deltaY
+                NativeWheelDelta.fromWheelEvent(e)
             );
 
             const handled = target.update(target, event);
