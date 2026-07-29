@@ -5284,13 +5284,20 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectWidgetRequestEvent.ROWRE_BACKGROUND_COLOR:
                 this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR, roomId, objectId, category);
                 break;
+            case RoomObjectWidgetRequestEvent.ROWRE_MYSTERYBOX_OPEN_DIALOG:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_MYSTERYBOX_OPEN_DIALOG, roomId, objectId, category);
+                break;
+            case RoomObjectWidgetRequestEvent.ROWRE_MYSTERYTROPHY_OPEN_DIALOG:
+                this.emitToWidget(RoomEngineToWidgetEvent.REQUEST_MYSTERYTROPHY_OPEN_DIALOG, roomId, objectId, category);
+                break;
             default:
                 // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectWidgetRequestEvent()
                 // continues past ROWRE_CLOTHING_CHANGE with the playlist-editor, mannequin,
                 // pet-product, guild-context-menu, monsterplant/clothing confirmation,
-                // background-colour, area-hide, mysterybox/effectbox/mysterytrophy dialogs,
-                // achievement-resolution, friend-furni, badge-display, high-score and link
-                // cases. Their RETWE_* constants already exist on RoomEngineToWidgetEvent;
+                // area-hide, effectbox dialog, achievement-resolution, friend-furni,
+                // badge-display, high-score and link cases (the mysterybox and mysterytrophy
+                // dialogs above are done). Their RETWE_* constants already exist on
+                // RoomEngineToWidgetEvent;
                 // each is one line here once the widget behind it is ported. Left unmapped
                 // rather than emitted, so no event fires that nothing can service.
                 log.warn(`Unmapped room-object widget request: ${event.type}`);

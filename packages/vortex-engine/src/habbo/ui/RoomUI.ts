@@ -248,6 +248,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_CREDITFURNI, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX, this.roomObjectEventHandler, this);
+                        // The furniture context menu reaches its handler through the desktop's
+                        // per-event handler map, so the bubble only ever opens if these two are
+                        // forwarded like the widget requests above.
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
                     }
                 },
                 true

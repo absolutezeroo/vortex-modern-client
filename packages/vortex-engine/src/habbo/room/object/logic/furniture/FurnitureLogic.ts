@@ -19,6 +19,7 @@ import {RoomObjectWidgetRequestEvent} from '@habbo/room/events/RoomObjectWidgetR
 import {RoomObjectRoomAdEvent} from '@habbo/room/events/RoomObjectRoomAdEvent';
 import type {RoomObjectDataUpdateMessage} from '@habbo/room/messages/RoomObjectDataUpdateMessage';
 import type {RoomObjectHeightUpdateMessage} from '@habbo/room/messages/RoomObjectHeightUpdateMessage';
+import type {RoomObjectSelectedMessage} from '@habbo/room/messages/RoomObjectSelectedMessage';
 
 export class FurnitureLogic extends MovingObjectLogic
 {
@@ -95,13 +96,17 @@ export class FurnitureLogic extends MovingObjectLogic
             RoomObjectMouseEvent.ROE_MOUSE_DOWN
         ];
 
-        if(this._widget !== null)
+        // AS3 reads the `widget`/`contextMenu` **getters**, not the backing fields. Subclasses
+        // that override the getter (FurnitureMysterboxLogic returns "MYSTERY_BOX", and every other
+        // context-menu logic does the same) never touch `contextMenuType`, so reading the field
+        // here silently dropped their two event types — and with them the whole context menu.
+        if(this.widget !== null)
         {
             types.push(RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET);
             types.push(RoomObjectWidgetRequestEvent.ROWRE_CLOSE_WIDGET);
         }
 
-        if(this._contextMenu !== null)
+        if(this.contextMenu !== null)
         {
             types.push(RoomObjectWidgetRequestEvent.ROWRE_OPEN_FURNI_CONTEXT_MENU);
             types.push(RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU);
@@ -361,7 +366,8 @@ export class FurnitureLogic extends MovingObjectLogic
                     this.handleAdClick(this.object.getId(), this.object.getType(), adUrl);
                 }
 
-                if(this.eventDispatcher !== null && this.object !== null && this._contextMenu !== null)
+                // AS3 reads the getter here too — see getEventTypes() above.
+                if(this.eventDispatcher !== null && this.object !== null && this.contextMenu !== null)
                 {
                     this.eventDispatcher.emit(
                         RoomObjectWidgetRequestEvent.ROWRE_OPEN_FURNI_CONTEXT_MENU,
@@ -477,6 +483,26 @@ export class FurnitureLogic extends MovingObjectLogic
             }
 
             this._hasLocation = true;
+        }
+
+        /**
+         * AS3: _SafeCls_1722.as::processUpdateMessage() — a RoomObjectSelectedMessage opens or
+         * closes the context menu according to `selected`.
+         *
+         * Inert today: nothing in this port constructs a RoomObjectSelectedMessage yet, so the
+         * live path is the mouseClick case above. Ported anyway so the menu closes on deselect the
+         * moment selection messages are wired, the same way FurnitureGuildCustomizedLogic already
+         * handles its half of this.
+         */
+        const selectedMessage = message as unknown as RoomObjectSelectedMessage;
+
+        if('selected' in message && this.contextMenu !== null && this.eventDispatcher !== null && this.object !== null)
+        {
+            const type = selectedMessage.selected
+                ? RoomObjectWidgetRequestEvent.ROWRE_OPEN_FURNI_CONTEXT_MENU
+                : RoomObjectWidgetRequestEvent.ROWRE_CLOSE_FURNI_CONTEXT_MENU;
+
+            this.eventDispatcher.emit(type, new RoomObjectWidgetRequestEvent(type, this.object));
         }
 
         super.processUpdateMessage(message);

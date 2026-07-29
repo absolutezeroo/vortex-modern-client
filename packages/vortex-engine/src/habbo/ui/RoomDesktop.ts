@@ -66,6 +66,7 @@ import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgrou
 import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
 import {FurnitureEcotronBoxWidgetHandler} from './handler/FurnitureEcotronBoxWidgetHandler';
 import {PetPackageFurniWidgetHandler} from './handler/PetPackageFurniWidgetHandler';
+import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
 import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
@@ -767,6 +768,14 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:786
                 handler = new FurnitureStickieWidgetHandler();
                 break;
+            case 'RWE_FURNITURE_CONTEXT_MENU': {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
+                const contextMenuHandler = new FurnitureContextMenuWidgetHandler();
+
+                contextMenuHandler.connection = this._connection;
+                handler = contextMenuHandler;
+                break;
+            }
             case 'RWE_CHAT_WIDGET': {
                 // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
                 const chatHandler = new ChatWidgetHandler();

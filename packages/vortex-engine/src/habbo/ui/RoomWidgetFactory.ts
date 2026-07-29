@@ -23,6 +23,7 @@ import {BackgroundColorFurniWidget} from './widget/furniture/backgroundcolor/Bac
 import {CreditFurniWidget} from './widget/furniture/credit/CreditFurniWidget';
 import {EcotronBoxFurniWidget} from './widget/furniture/ecotronbox/EcotronBoxFurniWidget';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
+import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 
 const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
@@ -97,6 +98,12 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new TrophyFurniWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNITURE_CONTEXT_MENU"
+            case 'RWE_FURNITURE_CONTEXT_MENU':
+                return new FurnitureContextMenuWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.catalog
                 );
             case 'RWE_CHAT_WIDGET':
                 return new RoomChatWidget(

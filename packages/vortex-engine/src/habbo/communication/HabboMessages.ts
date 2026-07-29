@@ -111,7 +111,12 @@ import {
 } from './messages/incoming/inventory';
 
 // Incoming Events - Mystery Box
-import {MysteryBoxKeysMessageEvent,} from './messages/incoming/mysterybox';
+import {
+    CancelMysteryBoxWaitMessageEvent,
+    GotMysteryBoxPrizeMessageEvent,
+    MysteryBoxKeysMessageEvent,
+    ShowMysteryBoxWaitMessageEvent,
+} from './messages/incoming/mysterybox';
 
 // Incoming Events - Catalog
 import {
@@ -594,6 +599,9 @@ import {
     SetUIFlagsMessageComposer,
 } from './messages/outgoing/preferences';
 
+// Outgoing Composers - Mystery Box
+import {MysteryBoxWaitingCanceledMessageComposer} from './messages/outgoing/mysterybox';
+
 // Outgoing Composers - Room Furniture
 import {
     ConfigureRentableSpaceMessageComposer,
@@ -603,6 +611,7 @@ import {
     EnterOneWayDoorMessageComposer,
     GetItemDataMessageComposer,
     GetRentableSpaceConfigMessageComposer,
+    OpenMysteryTrophyMessageComposer,
     OpenPetPackageMessageComposer,
     PresentOpenMessageComposer,
     RemoveItemMessageComposer,
@@ -1010,6 +1019,9 @@ export class HabboMessages implements IMessageConfiguration
 
         // === MYSTERY BOX ===
         this._events.set(1389, MysteryBoxKeysMessageEvent);
+        this._events.set(691, ShowMysteryBoxWaitMessageEvent);
+        this._events.set(3840, CancelMysteryBoxWaitMessageEvent);
+        this._events.set(353, GotMysteryBoxPrizeMessageEvent);
 
         // === CATALOG ===
         this._events.set(1893, BuildersClubSubscriptionStatusMessageEvent);
@@ -1665,6 +1677,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3894, RoomDimmerChangeStateComposer);
         this._composers.set(1220, UpdateClothingChangeFurnitureComposer);
         this._composers.set(3353, UseFurnitureMessageComposer);
+        // AS3: MysteryTrophyOpenDialogView.as::onMouseClick() "ok"
+        this._composers.set(2242, OpenMysteryTrophyMessageComposer);
+
+        // === MYSTERY BOX ===
+        // AS3: MysteryBoxOpenDialogView.as::waitWindowProcedure() cancel_button
+        this._composers.set(1063, MysteryBoxWaitingCanceledMessageComposer);
         // Vortex-custom (not in official AS3 dumps): vortex-client commit f3bba54 "feat(rentablespace):
         // add config message, compositors and updated display widget"
         this._composers.set(4600, GetRentableSpaceConfigMessageComposer);
