@@ -360,6 +360,19 @@ export interface IRoomEngine extends IDisposable {
     modifyRoomCanvas(roomId: number, canvasId: number, width: number, height: number): boolean;
 
     /**
+     * Releases a rendering canvas: detaches its container from whatever holds it
+     * and frees the renderer's resources.
+     *
+     * TS-only — AS3's IRoomEngine has no counterpart because Flash's display list
+     * did this for free: a preview canvas was a DisplayObject child of the widget's
+     * own window, so disposing the window took the canvas with it. Here
+     * `createRoomCanvas()` parents it onto the shared root PixiJS stage instead
+     * (see RoomEngine.createRoomCanvas), where nothing owns it — so every owner of
+     * a canvas has to hand it back explicitly.
+     */
+    disposeRenderingCanvas(roomId: number, canvasId?: number): void;
+
+    /**
      * AS3: sources/win63_version/habbo/room/IRoomEngine.as::setRoomCanvasMask()
      */
     setRoomCanvasMask(roomId: number, canvasId: number, useMask: boolean): void;

@@ -198,6 +198,22 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.stopPreviewZoomAnimation();
         PreviewCanvasStack.unregister(this._canvasDisplayObject);
         this._catalog?.roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+
+        // Take the canvas off the stage rather than merely dropping the reference
+        // to it: it is parented onto the shared root PixiJS stage, not into this
+        // widget's window tree (see init()), so nothing else takes it off screen —
+        // and with the sync callback unregistered nothing hides it either, which
+        // left the last previewed piece of furniture floating over the room after
+        // the catalog closed.
+        //
+        // Detaching only THIS container, rather than asking the previewer to
+        // release its canvas: the previewer belongs to HabboCatalog and is shared,
+        // so a widget disposed *after* its replacement was built (page switches
+        // rebuild the product view) would otherwise dispose the fresh widget's
+        // canvas out from under it — they key on the same preview room id. The
+        // engine's own canvas record is replaced safely on the next
+        // getRoomCanvas() in init(), which disposes whatever it superseded.
+        this._canvasDisplayObject?.parent?.removeChild(this._canvasDisplayObject);
         this._canvasDisplayObject = null;
         this._catalog = null;
         this._priceBox = null;
