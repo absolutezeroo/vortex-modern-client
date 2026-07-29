@@ -62,6 +62,7 @@ export class BadgeEditorPartItem implements IAssetReceiver
     private _isLoaded: boolean = false;
     // AS3: .../BadgeEditorPartItem.as::_SafeStr_7631
     private _isEmptyPart: boolean = false;
+    // AS3: .../badge/BadgeEditorPartItem.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../BadgeEditorPartItem.as::BadgeEditorPartItem()
@@ -150,9 +151,8 @@ export class BadgeEditorPartItem implements IAssetReceiver
      * merges the mask over it. Canvas reaches the same result with a `multiply` blend
      * over the whole surface followed by `destination-in`, which restores the part's own
      * alpha and so crops the tint back to the part's silhouette.
-     *
-     * AS3: .../BadgeEditorPartItem.as::getComposite()
      */
+    // AS3: .../badge/BadgeEditorPartItem.as::getComposite()
     getComposite(options: BadgeLayerOptions | null): ImageBitmap | null
     {
         if(!this._isLoaded) return null;
@@ -204,6 +204,7 @@ export class BadgeEditorPartItem implements IAssetReceiver
      * AS3: .../BadgeEditorPartItem.as::getComposite() (the `new BitmapData(...).copyPixels(...)`
      * its callers wrap it in, e.g. BadgeSelectPartCtrl::setGridItemImage())
      */
+    // AS3: .../badge/BadgeEditorPartItem.as::getComposite() (its callers' copy step)
     static copyBitmap(source: ImageBitmap | null): ImageBitmap | null
     {
         if(!source || typeof OffscreenCanvas === 'undefined' || source.width < 1 || source.height < 1) return null;
@@ -221,9 +222,8 @@ export class BadgeEditorPartItem implements IAssetReceiver
     /**
      * Centres the part on its 3x3 cell, then clamps it inside the badge so a part wider
      * than a cell still fits rather than being cut off at the edge.
-     *
-     * AS3: .../BadgeEditorPartItem.as::getPosition()
      */
+    // AS3: .../badge/BadgeEditorPartItem.as::getPosition()
     private getPosition(options: BadgeLayerOptions): {x: number; y: number}
     {
         const image = this._image as ImageBitmap;

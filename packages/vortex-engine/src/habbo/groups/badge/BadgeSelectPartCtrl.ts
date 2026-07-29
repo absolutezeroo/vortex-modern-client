@@ -39,6 +39,7 @@ export class BadgeSelectPartCtrl
     private _hoveredItem: IWindowContainer | null = null;
     // AS3: .../BadgeSelectPartCtrl.as::_SafeStr_5545
     private _selectedMarker: IBitmapWrapperWindow | null = null;
+    // AS3: .../badge/BadgeSelectPartCtrl.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../BadgeSelectPartCtrl.as::BadgeSelectPartCtrl()

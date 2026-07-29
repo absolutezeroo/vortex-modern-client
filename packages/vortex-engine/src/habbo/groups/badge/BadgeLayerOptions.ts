@@ -44,9 +44,8 @@ export class BadgeLayerOptions
      * True when two layers would paint the same picture — same cell, same colour, and
      * on the same side of the base/overlay split (layer 0 draws from a different part
      * list than layers 1-4, so a matching part index means nothing across that line).
-     *
-     * AS3: .../BadgeLayerOptions.as::equalVisuals()
      */
+    // AS3: .../badge/BadgeLayerOptions.as::equalVisuals()
     equalVisuals(other: BadgeLayerOptions | null): boolean
     {
         if(other === null || this._gridX !== other.gridX || this._gridY !== other.gridY || this._colorIndex !== other.colorIndex)

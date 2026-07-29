@@ -32,9 +32,8 @@ export class BadgeLayerCtrl
     /**
      * Pixel pitch of the 3x3 position grid — the picker is nudged by this per cell and
      * a click is divided by it to find the cell. AS3 inlines the literal at both sites.
-     *
-     * AS3: .../BadgeLayerCtrl.as::updatePositionPicker() / onPositionGridClick()
      */
+    // AS3: .../badge/BadgeLayerCtrl.as::updatePositionPicker() / onPositionGridClick()
     private static readonly POSITION_CELL_SIZE: number = 14;
 
     // AS3: .../BadgeLayerCtrl.as::_SafeStr_4571
@@ -61,6 +60,7 @@ export class BadgeLayerCtrl
     private _positionPicker: IBitmapWrapperWindow | null = null;
     // AS3: .../BadgeLayerCtrl.as::_SafeStr_6910
     private _positionGrid: IBitmapWrapperWindow | null = null;
+    // AS3: .../badge/BadgeLayerCtrl.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../BadgeLayerCtrl.as::BadgeLayerCtrl()

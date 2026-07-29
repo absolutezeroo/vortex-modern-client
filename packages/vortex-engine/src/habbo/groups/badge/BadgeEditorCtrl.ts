@@ -30,9 +30,8 @@ export class BadgeEditorCtrl
      * Number of badge layers: one base plus four overlays. AS3 pushes five
      * `BadgeLayerCtrl`s by hand and later walks `_badgePreviewImages` over the same five
      * `layer_N` children; the count is named here rather than repeated.
-     *
-     * AS3: .../BadgeEditorCtrl.as::BadgeEditorCtrl() / createWindow()
      */
+    // AS3: .../badge/BadgeEditorCtrl.as::BadgeEditorCtrl() (the five BadgeLayerCtrl pushes)
     private static readonly LAYER_COUNT: number = 5;
 
     // AS3: .../BadgeEditorCtrl.as::_SafeStr_4571
@@ -57,6 +56,7 @@ export class BadgeEditorCtrl
     private _partEditContainer: IWindowContainer | null = null;
     // AS3: .../BadgeEditorCtrl.as::_badgePreviewImages
     private _badgePreviewImages: IBitmapWrapperWindow[] | null = null;
+    // AS3: .../badge/BadgeEditorCtrl.as::_disposed
     private _disposed: boolean = false;
 
     // AS3: .../BadgeEditorCtrl.as::BadgeEditorCtrl()
@@ -317,9 +317,8 @@ export class BadgeEditorCtrl
     /**
      * The badge as the wire wants it: a flat run of (part, colour, position) triplets,
      * skipping any layer that has no part or no colour chosen.
-     *
-     * AS3: .../BadgeEditorCtrl.as::getBadgeSettings()
      */
+    // AS3: .../badge/BadgeEditorCtrl.as::getBadgeSettings()
     getBadgeSettings(): number[]
     {
         const settings: number[] = [];
@@ -347,9 +346,8 @@ export class BadgeEditorCtrl
     /**
      * The colour of the last filled-in layer, which is what the wizard offers as the
      * guild's primary colour on step 3.
-     *
-     * AS3: .../BadgeEditorCtrl.as::get primaryColorIndex()
      */
+    // AS3: .../badge/BadgeEditorCtrl.as::get primaryColorIndex()
     get primaryColorIndex(): number
     {
         if(this._layers === null) return 0;
@@ -369,9 +367,8 @@ export class BadgeEditorCtrl
 
     /**
      * The base layer's colour, offered as the guild's secondary colour.
-     *
-     * AS3: .../BadgeEditorCtrl.as::get secondaryColorIndex()
      */
+    // AS3: .../badge/BadgeEditorCtrl.as::get secondaryColorIndex()
     get secondaryColorIndex(): number
     {
         if(this._layers !== null && this._layers.length > 0) return this._layers[0].layerOptions.colorIndex;
@@ -384,9 +381,8 @@ export class BadgeEditorCtrl
      *
      * AS3 seeds the surface with the opaque 15329761 (0xE9E9E1) the window's background
      * uses, then copies each visible layer over it.
-     *
-     * AS3: .../BadgeEditorCtrl.as::getBadgeBitmap()
      */
+    // AS3: .../badge/BadgeEditorCtrl.as::getBadgeBitmap()
     getBadgeBitmap(): ImageBitmap | null
     {
         if(typeof OffscreenCanvas === 'undefined') return null;

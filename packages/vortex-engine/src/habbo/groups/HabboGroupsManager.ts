@@ -675,6 +675,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
      * caller — GuildManagementWindowCtrl::onMembersClick() — already null-checks it, so
      * returning null here disables the members link rather than breaking anything.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get guildMembersWindowCtrl()
     get guildMembersWindowCtrl(): {onMembersClick(groupId: number, tab: number): void} | null
     {
         return null;
@@ -683,9 +684,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     /**
      * AS3 routes this through the new navigator's legacy handle rather than the legacy
      * navigator dependency directly.
-     *
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get navigator()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::get navigator()
     get navigator(): IHabboNavigator | null
     {
         return this._newNavigator?.legacyNavigator ?? this._navigator;
@@ -706,9 +706,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     /**
      * `source` is unused by AS3 too — it takes the caller's name and opens the club
      * centre regardless.
-     *
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::openVipPurchase()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::openVipPurchase()
     openVipPurchase(_source: string): void
     {
         (this._catalog as IHabboCatalog | null)?.openClubCenter();
@@ -724,9 +723,8 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
      * AS3 draws the named asset into a fresh transparent BitmapData so callers own the
      * copy; here the asset library already hands back an ImageBitmap, and the windows it
      * is given do not take ownership of it.
-     *
-     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::getButtonImage()
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::getButtonImage()
     getButtonImage(name: string): ImageBitmap | null
     {
         const bitmap = (this.assets?.getAssetByName(name)?.content ?? null) as ImageBitmap | null;
