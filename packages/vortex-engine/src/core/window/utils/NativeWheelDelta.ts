@@ -26,6 +26,10 @@
  */
 export class NativeWheelDelta
 {
+    // No `AS3:` traces below, and no `TODO(AS3)` either: nothing here was ported and
+    // nothing is left to port, so either marker would be a lie. The traceability hook
+    // flags every member of this class - that is expected, not an oversight.
+
     /** Lines per wheel notch, as Flash reported them on Windows. */
     public static readonly LINES_PER_NOTCH: number = 3;
 

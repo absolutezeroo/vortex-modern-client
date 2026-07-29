@@ -35,7 +35,11 @@ export class ScrollBarController extends InteractiveController implements IScrol
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::SCROLL_STEP_SIZE
     private static readonly SCROLL_STEP_SIZE: number = 15;
 
-    /** The bare `25` AS3 divides by `_scrollStep` in getSmoothScrollAxisSize(). */
+    /**
+	 * The bare `25` AS3 divides by `_scrollStep` in getSmoothScrollAxisSize().
+	 * Named here because it is a literal there, not a declared constant.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::getSmoothScrollAxisSize()
     private static readonly SMOOTH_SCROLL_AXIS_UNIT: number = 25;
 
     protected _offset: number = 0;
