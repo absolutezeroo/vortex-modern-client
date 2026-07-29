@@ -358,6 +358,11 @@ import {
     ExtendedProfileChangedMessageEvent,
     ExtendedProfileMessageEvent,
     GroupDetailsChangedMessageEvent,
+    GuildCreatedMessageEvent,
+    GuildCreationInfoMessageEvent,
+    GuildEditFailedMessageEvent,
+    GuildEditInfoMessageEvent,
+    GuildEditorDataMessageEvent,
     GuildMembershipsMessageEvent,
     HabboGroupBadgesMessageEvent,
     HabboGroupDeactivatedMessageEvent,
@@ -744,8 +749,14 @@ import {
     GetEmailStatusComposer,
     GetExtendedProfileByNameMessageComposer,
     GetExtendedProfileMessageComposer,
+    CreateGuildMessageComposer,
     GetGuildCreationInfoMessageComposer,
+    GetGuildEditorDataMessageComposer,
     GetGuildMembershipsMessageComposer,
+    UpdateGuildBadgeMessageComposer,
+    UpdateGuildColorsMessageComposer,
+    UpdateGuildIdentityMessageComposer,
+    UpdateGuildSettingsMessageComposer,
     GetHabboGroupDetailsMessageComposer,
     GetIgnoredUsersMessageComposer,
     GetSelectedBadgesMessageComposer,
@@ -1230,6 +1241,16 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(12, GroupDetailsChangedMessageEvent);
         this._events.set(2087, HabboGroupDeactivatedMessageEvent);
         this._events.set(3356, HabboGroupJoinFailedMessageEvent);
+        // Group creation / edit. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as lines 1761/1192/1352/1219/1681) and
+        // corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
+        // (GuildCreationInfoMessageComposer = 973, GuildEditorDataMessageComposer = 1132,
+        // GuildCreatedMessageComposer = 2138).
+        this._events.set(973, GuildCreationInfoMessageEvent);
+        this._events.set(1288, GuildEditInfoMessageEvent);
+        this._events.set(1132, GuildEditorDataMessageEvent);
+        this._events.set(2138, GuildCreatedMessageEvent);
+        this._events.set(496, GuildEditFailedMessageEvent);
         this._events.set(1292, HabboUserBadgesMessageEvent);
         this._events.set(3874, HandItemReceivedMessageEvent);
         this._events.set(1554, InClientLinkMessageEvent);
@@ -1556,6 +1577,16 @@ export class HabboMessages implements IMessageConfiguration
         // "GetGuildCreationInfoMessageEvent = 2989 ... BuyGuildWidget::onButtonClicked()".
         this._composers.set(3918, GetGuildMembershipsMessageComposer);
         this._composers.set(2989, GetGuildCreationInfoMessageComposer);
+        // Group creation / edit. Headers read from WIN63's own registry
+        // (habbo/communication/_SafeCls_2046.as lines 968/759/749/1058/975/1034) and
+        // corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
+        // (GetGuildEditorDataMessageEvent = 3398, CreateGuildMessageEvent = 207).
+        this._composers.set(3398, GetGuildEditorDataMessageComposer);
+        this._composers.set(207, CreateGuildMessageComposer);
+        this._composers.set(2009, UpdateGuildIdentityMessageComposer);
+        this._composers.set(3882, UpdateGuildBadgeMessageComposer);
+        this._composers.set(3421, UpdateGuildColorsMessageComposer);
+        this._composers.set(3716, UpdateGuildSettingsMessageComposer);
         this._composers.set(184, MyRecommendedRoomsMessageComposer);
         this._composers.set(3744, GuildBaseSearchMessageComposer);
         this._composers.set(3101, SetRoomSessionTagsMessageComposer);
