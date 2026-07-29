@@ -24,6 +24,7 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
 export class TextFieldController extends TextController implements ITextFieldWindow
 {
     private static readonly WORD_DELIMS: RegExp = /[~%&!\\;:"',<>?#\s.\-()=[\]{}^_]/g;
+
     protected _inputElement: HTMLInputElement | HTMLTextAreaElement | null = null;
 
     // requestAnimationFrame handle for the per-frame caret position tracking while focused.
@@ -568,13 +569,24 @@ export class TextFieldController extends TextController implements ITextFieldWin
         this._focusCapturer = false;
         this.stopInputPositionTracking();
 
+        if(this.focused) this.unfocus();
+
+        this.destroyInputElement();
+
+        super.dispose();
+    }
+
+    /**
+	 * Detaches the DOM bridge and drops every listener bound to it.
+	 *
+	 * Split out of dispose() because the element is also thrown away and rebuilt
+	 * mid-life, when the field turns out to be multi-line (see
+	 * ensureInputElementKind()).
+	 */
+    private destroyInputElement(): void
+    {
         if(this._inputElement)
         {
-            if(this.focused)
-            {
-                this.unfocus();
-            }
-
             if(this._boundOnInput) this._inputElement.removeEventListener('input', this._boundOnInput);
             if(this._boundOnKeyDown) this._inputElement.removeEventListener('keydown', this._boundOnKeyDown);
             if(this._boundOnKeyUp) this._inputElement.removeEventListener('keyup', this._boundOnKeyUp);
@@ -594,8 +606,6 @@ export class TextFieldController extends TextController implements ITextFieldWin
         this._boundOnKeyUp = null;
         this._boundOnFocus = null;
         this._boundOnBlur = null;
-
-        super.dispose();
     }
 
     /**
@@ -605,7 +615,7 @@ export class TextFieldController extends TextController implements ITextFieldWin
     {
         if(typeof document === 'undefined') return;
 
-        const el = this._multiline
+        const el = this.usesMultipleLines
             ? document.createElement('textarea')
             : document.createElement('input');
 
@@ -635,9 +645,15 @@ export class TextFieldController extends TextController implements ITextFieldWin
         el.style.background = 'transparent';
         el.style.boxSizing = 'border-box';
 
-        if(this._maxChars > 0)
+        if(el instanceof HTMLTextAreaElement)
         {
-            el.maxLength = this._maxChars;
+            // Soft-wrapped, no scrollbar and no resize grip: the visible lines are
+            // the canvas's, this only has to break in the same places so the caret
+            // lands on the line the renderer drew.
+            el.wrap = 'soft';
+            el.style.overflow = 'hidden';
+            el.style.resize = 'none';
+            el.style.whiteSpace = 'pre-wrap';
         }
 
         this._boundOnInput = ((e: Event) => this.onInputEvent(e)) as EventListener;
@@ -674,37 +690,118 @@ export class TextFieldController extends TextController implements ITextFieldWin
         const canvas = document.querySelector('canvas');
         const rect = canvas ? canvas.getBoundingClientRect() : {left: 0, top: 0};
 
-        const left = (rect.left + pos.x) + 'px';
-        const top = (rect.top + pos.y) + 'px';
+        // The element covers the field's TEXT BOX, not the whole field — see
+        // positionInputElement() for why — so it starts where TextSkinRenderer
+        // starts drawing glyphs: the margins plus Flash's gutters.
+        const left = (rect.left + pos.x + this._marginLeft + TextController.FLASH_TEXT_FIELD_LEFT_GUTTER) + 'px';
+        const top = (rect.top + pos.y + this._marginTop + TextController.FLASH_TEXT_FIELD_TOP_GUTTER) + 'px';
 
         if(this._inputElement.style.left !== left) this._inputElement.style.left = left;
         if(this._inputElement.style.top !== top) this._inputElement.style.top = top;
     }
 
-    private positionInputElement(): void
+    /**
+	 * Whether the field lays its text out over more than one line.
+	 *
+	 * Flash's TextField wraps on `wordWrap` alone — `multiline` only decides
+	 * whether the *user* may add line breaks — and TextSkinRenderer paints it that
+	 * way, so both have to put a `<textarea>` behind the field.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setWordWrap()
+    private get usesMultipleLines(): boolean
+    {
+        return this._multiline || this._wordWrap;
+    }
+
+    /**
+	 * Rebuilds the DOM bridge as an `<input>` or a `<textarea>` to match the
+	 * field's current line mode.
+	 *
+	 * The constructor cannot decide this: `multiline`/`word_wrap` arrive from the
+	 * layout's `<variables>` block, which the window system applies *after*
+	 * construction — so every field, including the 80px-tall wrapped ones, was
+	 * built as a single-line `<input>`. Its caret then ran off horizontally along
+	 * one line while the canvas painted the text wrapped over four, and Enter did
+	 * nothing.
+	 */
+    private ensureInputElementKind(): void
     {
         if(!this._inputElement) return;
 
+        const wantsTextArea = this.usesMultipleLines;
+
+        if(wantsTextArea === (this._inputElement instanceof HTMLTextAreaElement)) return;
+
+        const wasFocused = this.focused;
+        const value = this._inputElement.value;
+        const selectionStart = this._inputElement.selectionStart;
+        const selectionEnd = this._inputElement.selectionEnd;
+
+        this.destroyInputElement();
+        this.createInputElement();
+
+        if(!this._inputElement) return;
+
+        this._inputElement.value = value;
+
+        if(wasFocused)
+        {
+            this._inputElement.style.display = '';
+            this._inputElement.focus();
+
+            if(selectionStart !== null && selectionEnd !== null)
+            {
+                this._inputElement.setSelectionRange(selectionStart, selectionEnd);
+            }
+        }
+    }
+
+    /**
+	 * Sizes and styles the DOM bridge so its native caret lands exactly on the
+	 * glyphs the canvas paints.
+	 *
+	 * The element used to be laid over the whole field with the field's own
+	 * height, which put the caret in the wrong place twice over. A single-line
+	 * `<input>` centres its editor vertically in its content box no matter what
+	 * `line-height` says, so a 9px line inside a 26px field sat ~7px below the
+	 * painted text — and inside an 80px description box, halfway down it.
+	 * `font-family` made it worse: assigning the raw `fontFace` produced invalid
+	 * CSS for any quoted family (`Volter (Goldfish)` — parentheses), the browser
+	 * dropped the declaration and measured the caret's advances in its default
+	 * font while the canvas drew Volter.
+	 *
+	 * So: cover the text box only (origin = where the renderer starts drawing,
+	 * height = exactly one line unless the field wraps), and take the font string
+	 * from the same builder the measuring/drawing path uses.
+	 */
+    private positionInputElement(): void
+    {
+        this.ensureInputElementKind();
+
+        const element = this._inputElement;
+
+        if(!element) return;
+
         this.syncInputPosition();
 
-        this._inputElement.style.width = this._width + 'px';
-        this._inputElement.style.height = this._height + 'px';
-        this._inputElement.style.fontSize = this._fontSize + 'px';
+        const lineHeight = this.getLineHeight();
+        const textWidth = Math.max(0, this._width - this._marginLeft - this._marginRight - TextController.FLASH_TEXT_FIELD_LEFT_GUTTER);
+        const textHeight = this.usesMultipleLines
+            ? Math.max(lineHeight, this._height - this._marginTop - this._marginBottom - TextController.FLASH_TEXT_FIELD_TOP_GUTTER)
+            : lineHeight;
 
-        // Match the canvas text metrics so the native (transparent-text) caret sits exactly where
-        // the painted glyphs do: same font family, same left margin as TextSkinRenderer uses
-        // (marginLeft, default 2), and the Flash 2px top gutter. lineHeight = field height keeps the
-        // caret vertically centred like a normal single-line input.
-        // 2 = the Flash top gutter TextSkinRenderer offsets glyphs down by (its own
-        // FLASH_TEXT_FIELD_TOP_GUTTER); TextController's copy is private, so mirror the literal.
-        const flashTopGutter = 2;
-        this._inputElement.style.fontFamily = this._fontFace;
-        this._inputElement.style.paddingLeft = this._marginLeft + 'px';
-        this._inputElement.style.paddingTop = (this._marginTop + flashTopGutter) + 'px';
-        this._inputElement.style.lineHeight = this._fontSize + 'px';
+        element.style.width = textWidth + 'px';
+        element.style.height = textHeight + 'px';
+        element.style.font = this.buildCanvasFontString();
+        element.style.lineHeight = lineHeight + 'px';
+
+        // maxChars is a layout property too, so it lands after construction as well.
+        if(this._maxChars > 0) element.maxLength = this._maxChars;
+        else element.removeAttribute('maxlength');
 
         const color = this._textColor & 0xFFFFFF;
-        this._inputElement.style.caretColor = '#' + color.toString(16).padStart(6, '0');
+
+        element.style.caretColor = '#' + color.toString(16).padStart(6, '0');
     }
 
     /**

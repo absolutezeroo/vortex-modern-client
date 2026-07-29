@@ -99,7 +99,15 @@ export class TextController extends WindowController implements ITextWindow
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/core/window/components/TextController.as::_field
     // Flash's own top-padding quirk for TextField content — must match
     // WindowComposite.FLASH_TEXT_FIELD_TOP_GUTTER, which renders the same text.
-    private static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
+    // Protected, not private: TextFieldController positions its DOM caret bridge
+    // against the very same gutter (see positionInputElement()).
+    protected static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
+
+    // The horizontal half of the same Flash gutter. TextSkinRenderer applies it to
+    // editable fields (its FLASH_TEXT_FIELD_LEFT_GUTTER, and the TODO(AS3) there
+    // explains why only those), so the caret bridge has to start from the same
+    // origin or the caret sits 2px left of the glyphs.
+    protected static readonly FLASH_TEXT_FIELD_LEFT_GUTTER: number = 2;
 
     // TS-only: per-range TextFormat overrides applied via setTextFormat().
     // Cleared whenever `text`/`htmlText` is reassigned, matching Flash's
@@ -373,14 +381,34 @@ export class TextController extends WindowController implements ITextWindow
         this.refreshTextImage();
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get border()
     public get border(): boolean
     {
         return this._border;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setBorder()
     public set border(value: boolean)
     {
         this._border = value;
+        this.refreshTextImage();
+    }
+
+    /**
+	 * Flash's `TextField.borderColor` is a plain RGB uint with no alpha channel —
+	 * the border it draws is always opaque. WindowComposite relies on that when it
+	 * paints the border, and on the default staying black (Flash's own).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::get borderColor()
+    public get borderColor(): number
+    {
+        return this._borderColor;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setBorderColor()
+    public set borderColor(value: number)
+    {
+        this._borderColor = value;
         this.refreshTextImage();
     }
 
