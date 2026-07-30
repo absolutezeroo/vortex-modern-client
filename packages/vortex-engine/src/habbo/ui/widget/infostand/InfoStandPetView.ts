@@ -235,8 +235,8 @@ export class InfoStandPetView
         }
     }
 
-    // AS3 spells this call out twice, in openTrainView() and at the tail of update(); the argument
-    // list is identical in both, so it lives here once.
+    // TS-only: no AS3 counterpart; AS3 spells this call out twice, in openTrainView() and at the
+    // tail of update(). The argument list is identical in both, so it lives here once.
     private showCommandToolForPetData(petData: InfoStandPetData): void
     {
         if(this._commandTool === null) return;

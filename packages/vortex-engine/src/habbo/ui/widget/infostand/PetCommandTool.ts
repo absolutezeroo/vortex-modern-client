@@ -519,8 +519,8 @@ export class PetCommandTool
         }
     }
 
-    // AS3 starts/stops a Timer; these two wrap the timeout equivalent so the call sites read the
-    // same as the source.
+    // TS-only: no AS3 counterpart; AS3 calls Timer.start()/stop() directly. These two wrap the
+    // timeout equivalent so the call sites read the same as the source.
     private startButtonDisableTimer(): void
     {
         this.stopButtonDisableTimer();
@@ -528,6 +528,7 @@ export class PetCommandTool
         this._buttonDisableTimeout = setTimeout(this.onButtonDisableTimeout, BUTTONS_DISABLED_MS);
     }
 
+    // TS-only: no AS3 counterpart; see startButtonDisableTimer().
     private stopButtonDisableTimer(): void
     {
         if(this._buttonDisableTimeout === null) return;

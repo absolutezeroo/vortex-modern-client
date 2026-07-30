@@ -588,8 +588,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         container.desktopEvents.emit(widgetEvent.type, widgetEvent);
     };
 
-    // AS3 inlines these two copies field by field inside onPetBreedingResult() and
-    // onConfirmPetBreedingEvent(); factored out here only because each is done twice.
+    // TS-only: no AS3 counterpart; AS3 inlines this copy field by field inside
+    // onPetBreedingResult(), twice. Factored out only because it is done twice.
     private static toBreedingResultEventData(source: PetBreedingResultData): PetBreedingResultEventData
     {
         const data = new PetBreedingResultEventData();
@@ -605,6 +605,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         return data;
     }
 
+    // TS-only: no AS3 counterpart; AS3 inlines this copy field by field inside
+    // onConfirmPetBreedingEvent(), once per parent.
     private static toConfirmPetBreedingPetData(source: BreedingPetInfo): ConfirmPetBreedingPetData
     {
         const data = new ConfirmPetBreedingPetData();
