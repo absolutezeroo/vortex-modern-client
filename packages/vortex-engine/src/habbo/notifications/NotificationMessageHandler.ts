@@ -37,6 +37,7 @@ import type {
     PetRespectFailedEventParser} from "@habbo/communication";
 import {
     HabboAchievementNotificationMessageEvent,
+    HabboActivityPointNotificationMessageEvent,
     HabboBroadcastMessageEvent,
     InfoHotelClosedMessageEvent,
     InfoHotelClosingMessageEvent,
@@ -48,6 +49,7 @@ import {
     RoomMessageNotificationMessageEvent
 } from "@habbo/communication";
 import {GenericNotificationItemData} from "@habbo/notifications/feed";
+import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 
 // TODO: Import these events once they are implemented:
 // import {ModeratorMessageEvent} from '@habbo/communication/messages/incoming/moderation/ModeratorMessageEvent';
@@ -161,7 +163,7 @@ export class NotificationMessageHandler
         // this.addMessageEvent(new UserObjectEvent(this.onUserObject.bind(this)));
         this.addMessageEvent(new MOTDNotificationEvent(this.onMOTD.bind(this)));
         this.addMessageEvent(new HabboBroadcastMessageEvent(this.onBroadcastMessageEvent.bind(this)));
-        // this.addMessageEvent(new HabboActivityPointNotificationMessageEvent(this.onActivityPointNotification.bind(this)));
+        this.addMessageEvent(new HabboActivityPointNotificationMessageEvent(this.onActivityPointNotification.bind(this)));
         this.addMessageEvent(new NotificationDialogMessageEvent(this.onNotificationDialogMessageEvent.bind(this)));
         // this.addMessageEvent(new ClubGiftNotificationEvent(this.onClubGiftNotification.bind(this)));
         // this.addMessageEvent(new ClubGiftSelectedEvent(this.onClubGiftSelected.bind(this)));
@@ -535,19 +537,35 @@ export class NotificationMessageHandler
     /**
 	 * Handle activity point notification (loyalty points etc.)
 	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onActivityPointNotification()
+	 * AS3 switches on `type - 5` with a single `case 0`, i.e. only loyalty points (diamonds)
+	 * produce a bubble; every other currency falls through the `default` and shows nothing.
+	 *
+	 * The icon asset is `if_icon_diamond_png` in AS3, because that is the field name in
+	 * HabboNotificationsCom.as. This port registers images under the bare file basename
+	 * (see App.ts::registerImageAssets), so the `_png` suffix has to go.
 	 */
-    // TODO: Uncomment when HabboActivityPointNotificationMessageEvent is implemented
-    // private onActivityPointNotification(event: IMessageEvent): void
-    // {
-    //     const apEvent = event as HabboActivityPointNotificationMessageEvent;
-    //     if (apEvent.change <= 0) return;
-    //     // Type 5 = loyalty points (diamonds)
-    //     if (apEvent.type === 5)
-    //     {
-    //         // Show loyalty points notification
-    //     }
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onActivityPointNotification()
+    private onActivityPointNotification(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const notification = event as HabboActivityPointNotificationMessageEvent;
+
+        if(!notification.parser) return;
+
+        if(notification.change <= 0) return;
+
+        if(notification.type !== ActivityPointTypeEnum.LOYALTY) return;
+
+        const message = this._notifications?.localizationManager?.getLocalizationWithParams(
+            'notifications.text.loyalty.received',
+            '',
+            'amount',
+            String(notification.change)
+        ) ?? '';
+
+        this._notifications?.addItem(message, 'info', 'if_icon_diamond');
+    }
 
     /**
 	 * Handle restore client message (close web page)

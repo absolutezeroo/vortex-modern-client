@@ -609,6 +609,23 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **`HabboActivityPointNotificationMessageEvent` (2046) ported and wired to its three AS3 subscribers**, 2026-07-30.
+  - The single-currency counterpart of `ActivityPointsMessageEvent` (509, whole wallet) was missing
+    from the client entirely, while `vortex-emulator` already sends it from `PlayerWalletModule`
+    on every `CurrencyType.ActivityPoints` movement — so ducket/diamond balances only refreshed on
+    a full-wallet push. Event + parser (`amount`, `change`, `type`; three ints) added and registered.
+  - Header **2046** from `_SafeCls_2046.as` (`_SafeStr_4546[2046] = _SafeCls_2011`), corroborated by
+    the emulator's `Revision20260701/Headers.cs`. The **1016** carried by `win63_version` and Nitro
+    is a 2016-build id and is not used.
+  - Subscribed in all three places AS3 does: `HabboCatalog.onActivityPointNotification()` (writes the
+    one currency into the purse *without* clearing the others, `updatePurse()`, `PurseEvent` +
+    `PurseUpdateEvent`), `NotificationMessageHandler.onActivityPointNotification()` (loyalty-only
+    bubble, `change > 0`, `if_icon_diamond` — the port drops AS3's `_png` suffix) and
+    `QuestMessageHandler.onActivityPointsNotification()` → `QuestController.onActivityPoints()`.
+  - Two gaps left visible as `TODO(AS3)`: the catalog's `HBST_pixels` sound (this port's
+    `HabboCatalog` has no sound-manager dependency at all) and the quest module's own
+    `ActivityPointsMessageEvent` registration, which AS3 has and only `HabboCatalog` carries here.
+
 - ✅ **Pets: protocol re-derived from WIN63's own registry, session + infostand chain closed**, 2026-07-30.
   - **The derivation is gone.** `PetVocalMessageEvent` (3073) and `IssuePetCommandMessageComposer`
     (3072) were Vortex-custom inventions with no counterpart in any AS3 tree, and 3073 is

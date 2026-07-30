@@ -1,4 +1,5 @@
 export * from './ActivityPointsMessageEvent';
+export * from './HabboActivityPointNotificationMessageEvent';
 export * from './InfoFeedEnableMessageEvent';
 export * from './AchievementNotificationData';
 export * from './ClubGiftProductData';

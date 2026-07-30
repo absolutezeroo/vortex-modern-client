@@ -15,6 +15,9 @@ import {
 import {
     HabboAchievementNotificationMessageEvent
 } from '@habbo/communication/messages/incoming/notifications/HabboAchievementNotificationMessageEvent';
+import {
+    HabboActivityPointNotificationMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/HabboActivityPointNotificationMessageEvent';
 
 // Quest message events (may be created concurrently by another agent)
 import {QuestMessageEvent} from '@habbo/communication/messages/incoming/quest/QuestMessageEvent';
@@ -176,6 +179,7 @@ export class QuestMessageHandler implements IDisposable
 
         // Notification events
         this.addMessageEvent(communication, new HabboAchievementNotificationMessageEvent(this.onLevelUp.bind(this)));
+        this.addMessageEvent(communication, new HabboActivityPointNotificationMessageEvent(this.onActivityPointsNotification.bind(this)));
 
         log.debug('Quest message handler initialized');
     }
@@ -444,5 +448,25 @@ export class QuestMessageHandler implements IDisposable
         this._engine.achievementsResolutionController?.onLevelUp(parser.data);
 
         log.trace('Achievement level-up notification received');
+    }
+
+    /**
+	 * Handle a single activity-point balance change (seasonal calendar currency display).
+	 *
+	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as
+	 * also registers the whole-wallet ActivityPointsMessageEvent (onActivityPoints), which resets
+	 * every ActivityPointTypeEnum value to 0 before applying the wallet. That one is still only
+	 * registered by HabboCatalog here, so the quest side never sees the initial wallet.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/_SafeCls_1951.as::onActivityPointsNotification()
+    private onActivityPointsNotification(event: IMessageEvent): void
+    {
+        if(!this._engine) return;
+
+        const notification = event as HabboActivityPointNotificationMessageEvent;
+
+        if(!notification.parser) return;
+
+        this._engine.questController?.onActivityPoints(notification.type, notification.amount);
     }
 }

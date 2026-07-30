@@ -1,4 +1,5 @@
 export * from './ActivityPointsMessageParser';
+export * from './HabboActivityPointNotificationMessageEventParser';
 export * from './InfoFeedEnableMessageParser';
 export * from './MOTDNotificationEventParser';
 export * from './HabboBroadcastMessageEventParser';

@@ -65,6 +65,7 @@ import {
     ClubGiftSelectedEvent,
     ElementPointerMessageEvent,
     HabboAchievementNotificationMessageEvent,
+    HabboActivityPointNotificationMessageEvent,
     HabboBroadcastMessageEvent,
     InfoFeedEnableMessageEvent,
     InfoHotelClosedMessageEvent,
@@ -1019,6 +1020,11 @@ export class HabboMessages implements IMessageConfiguration
 
         // === NOTIFICATIONS ===
         this._events.set(509, ActivityPointsMessageEvent);
+        // Header from the WIN63 registry: _SafeStr_4546[2046] = _SafeCls_2011
+        // (sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as),
+        // corroborated by the emulator's Revision20260701 Headers.cs. The 2016-era 1016 that
+        // win63_version and Nitro carry is a different build's number.
+        this._events.set(2046, HabboActivityPointNotificationMessageEvent);
         this._events.set(1936, InfoFeedEnableMessageEvent);
 
         // === INVENTORY ===
