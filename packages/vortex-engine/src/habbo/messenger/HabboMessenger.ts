@@ -34,6 +34,7 @@ import {RoomInviteEvent} from '@habbo/communication/messages/incoming/friendlist
 import type {IHabboMessenger} from './IHabboMessenger';
 import type {ChatEntry} from './ChatEntry';
 import {DummyFriend} from './DummyFriend';
+import {MainView} from './MainView';
 import {ActiveConversationEvent} from './events/ActiveConversationEvent';
 
 const log = Logger.getLogger('habbo.messenger.HabboMessenger');
@@ -130,7 +131,7 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
      * TODO(AS3): typed `MainView` in AS3; that class is unported, so this stays null.
      */
     // AS3: .../messenger/HabboMessenger.as::_SafeStr_4684
-    private _mainView: null = null;
+    private _mainView: MainView | null = null;
 
     // AS3: .../messenger/HabboMessenger.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
@@ -201,9 +202,8 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     // AS3: .../messenger/HabboMessenger.as::onMessengerInit()
     private onMessengerInit(_event: IMessageEvent): void
     {
-        // AS3 builds MainView here, then registers the four conversation events. The
-        // events are registered regardless so the wiring is real once MainView lands;
-        // each handler no-ops on the null view exactly as AS3's would.
+        this._mainView = new MainView(this);
+
         this.addMessageEvent(new NewConsoleMessageEvent(this.onNewConsoleMessage.bind(this)));
         this.addMessageEvent(new ConsoleMessageHistoryEvent(this.onConsoleHistory.bind(this)));
         this.addMessageEvent(new InstantMessageErrorEvent(this.onInstantMessageError.bind(this)));
@@ -218,32 +218,6 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
         this._communication?.connection?.send(composer);
     }
 
-    /**
-     * Every path below needs `MainView`, which is not ported (1237 l., plus `habbicons/`
-     * at 1399). AS3 guards them all the same way, so the guard itself is faithful — but in
-     * AS3 the view exists and the branch is taken. Here it never is, and a user click
-     * (open a chat, follow a friend) is swallowed without a sound or an error.
-     *
-     * `warn` is the level for a code path the client does not handle: it renders nothing
-     * and throws nothing, so `debug` would bury it. Once per member, so a message arriving
-     * every few seconds cannot flood the console.
-     */
-    // TS-only: no AS3 counterpart; reports the unported view instead of failing silently.
-    private reportMainViewMissing(member: string): void
-    {
-        if(HabboMessenger.REPORTED_MISSING_VIEW.has(member))
-        {
-            return;
-        }
-
-        HabboMessenger.REPORTED_MISSING_VIEW.add(member);
-
-        log.warn(`${member}: the messenger has no MainView — it is not ported yet, so this does nothing. Chat windows, room invites and instant messages are all inert until then.`);
-    }
-
-    // TS-only: no AS3 counterpart; backs reportMainViewMissing()'s once-per-member rule.
-    private static readonly REPORTED_MISSING_VIEW: Set<string> = new Set<string>();
-
     // AS3: .../messenger/HabboMessenger.as::isOpen()
     isOpen(): boolean
     {
@@ -253,35 +227,25 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     // AS3: .../messenger/HabboMessenger.as::toggleMessenger()
     toggleMessenger(): void
     {
-        if(this._mainView !== null)
-        {
-            // AS3: _mainView.toggle();
-        }
-        else
-        {
-            this.reportMainViewMissing('toggleMessenger');
-        }
+        this._mainView?.toggle();
     }
 
     // AS3: .../messenger/HabboMessenger.as::hideTransientSelectors()
     hideTransientSelectors(): void
     {
-        if(this._mainView !== null)
-        {
-            // AS3: _mainView.hideTransientSelectors();
-        }
+        this._mainView?.hideTransientSelectors();
     }
 
     // AS3: .../messenger/HabboMessenger.as::startConversation()
-    startConversation(_userId: number): void
+    startConversation(userId: number): void
     {
         if(this._mainView !== null)
         {
-            // AS3: _mainView.startConversation(userId); _mainView.show(true);
-        }
-        else
-        {
-            this.reportMainViewMissing('startConversation');
+            this._mainView.startConversation(userId);
+
+            // `true` forces the window open even when the avatar strip is empty - this is
+            // the player asking for it, not a message arriving.
+            this._mainView.show(true);
         }
     }
 
@@ -293,30 +257,21 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
      * removal.
      */
     // AS3: .../messenger/HabboMessenger.as::closeConversation()
-    closeConversation(_userId: number): void
+    closeConversation(userId: number): void
     {
-        if(this._mainView !== null)
-        {
-            // AS3: _mainView.hideConversation(userId);
-        }
+        this._mainView?.hideConversation(userId);
     }
 
     // AS3: .../messenger/HabboMessenger.as::setFollowingAllowed()
-    setFollowingAllowed(_userId: number, _allowed: boolean): void
+    setFollowingAllowed(userId: number, allowed: boolean): void
     {
-        if(this._mainView !== null)
-        {
-            // AS3: _mainView.setFollowingAllowed(userId, allowed);
-        }
+        this._mainView?.setFollowingAllowed(userId, allowed);
     }
 
     // AS3: .../messenger/HabboMessenger.as::setOnlineStatus()
-    setOnlineStatus(_userId: number, _online: boolean): void
+    setOnlineStatus(userId: number, online: boolean): void
     {
-        if(this._mainView !== null)
-        {
-            // AS3: _mainView.setOnlineStatus(userId, online);
-        }
+        this._mainView?.setOnlineStatus(userId, online);
     }
 
     // AS3: .../messenger/HabboMessenger.as::getUnseenMiniMailMessageCount()
@@ -411,8 +366,6 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     {
         if(this._mainView === null)
         {
-            this.reportMainViewMissing('onNewConsoleMessage');
-
             return;
         }
 
@@ -435,8 +388,6 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     {
         if(this._mainView === null)
         {
-            this.reportMainViewMissing('onRoomInvite');
-
             return;
         }
 
@@ -448,8 +399,6 @@ export class HabboMessenger extends Component implements IHabboMessenger, ILinkE
     {
         if(this._mainView === null)
         {
-            this.reportMainViewMissing('onInstantMessageError');
-
             return;
         }
 

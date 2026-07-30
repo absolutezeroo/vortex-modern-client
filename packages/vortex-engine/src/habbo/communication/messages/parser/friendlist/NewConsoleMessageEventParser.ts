@@ -1,5 +1,6 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import {ChatMessageContent} from './ChatMessageContent';
 
 /**
  * Parser for new console (messenger) message events.
@@ -16,11 +17,32 @@ export class NewConsoleMessageEventParser implements IMessageParser
         return this._chatId;
     }
 
-    private _messageText: string = '';
+    // AS3: .../_SafePkg_1755/_SafeCls_1887.as::_content
+    private _content: ChatMessageContent = new ChatMessageContent(ChatMessageContent.TYPE_TEXT);
 
+    // AS3: .../_SafePkg_1755/_SafeCls_1887.as::get content()
+    get content(): ChatMessageContent
+    {
+        return this._content;
+    }
+
+    // AS3: .../_SafePkg_1755/_SafeCls_1887.as::get messageText()
     get messageText(): string
     {
-        return this._messageText;
+        return this._content.messageText;
+    }
+
+    /** Zero for a text message, one for a habbicon - the discriminator, straight through. */
+    // AS3: .../_SafePkg_1755/_SafeCls_1887.as::get messageType()
+    get messageType(): number
+    {
+        return this._content.messageType;
+    }
+
+    // AS3: .../_SafePkg_1755/_SafeCls_1887.as::get habbiconId()
+    get habbiconId(): number
+    {
+        return this._content.habbiconId;
     }
 
     private _secondsSinceSent: number = 0;
@@ -68,7 +90,7 @@ export class NewConsoleMessageEventParser implements IMessageParser
     flush(): boolean
     {
         this._chatId = 0;
-        this._messageText = '';
+        this._content = new ChatMessageContent(ChatMessageContent.TYPE_TEXT);
         this._secondsSinceSent = 0;
         this._messageId = '';
         this._confirmationId = 0;
@@ -83,7 +105,12 @@ export class NewConsoleMessageEventParser implements IMessageParser
         if(!wrapper) return false;
 
         this._chatId = wrapper.readInt();
-        this._messageText = wrapper.readString();
+
+        // Same content object as the history entry, and the same bug: reading a bare
+        // string here consumed the discriminator as a length and misaligned every
+        // remaining field of the message - sender, confirmation id and all.
+        this._content = ChatMessageContent.parse(wrapper);
+
         this._secondsSinceSent = wrapper.readInt();
         this._messageId = wrapper.readString();
         this._confirmationId = wrapper.readInt();
