@@ -263,6 +263,28 @@ export class HabboNotifications extends Component implements IHabboNotifications
     }
 
     /**
+	 * Add a notification whose icon is an already-rendered bitmap rather than a named
+	 * asset — the friend-online notification cuts a circular head out of the avatar
+	 * image and passes it straight in.
+	 *
+	 * In AS3 this is the sink `addItem()` funnels into once it has resolved its asset
+	 * name to a `BitmapData`; here `addItem()` still hands the *name* down to the
+	 * singular controller (which takes an icon URI as well), so the two stay separate
+	 * entry points.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::addItemWithBitmap()
+    addItemWithBitmap(
+        content: string,
+        type: string,
+        iconBitmap: ImageBitmap | null = null,
+        internalLink: string | null = null,
+        extraData: Record<string, unknown> | null = null
+    ): void
+    {
+        this._singularController?.addItem(content, type, iconBitmap, null, null, internalLink, extraData);
+    }
+
+    /**
 	 * Show a notification popup with the given type and parameters
 	 *
 	 * @param type The notification type key

@@ -17,6 +17,24 @@ export interface IHabboNotifications
     addItem(content: string, type: string, iconAssetName?: string | null): void;
 
     /**
+	 * Add a notification item whose icon is an already-rendered bitmap
+	 *
+	 * @param content The notification message text
+	 * @param type The notification type string
+	 * @param iconBitmap Optional pre-rendered icon
+	 * @param internalLink Optional internal link followed when the bubble is clicked
+	 * @param extraData Optional per-notification data (e.g. "id" for dedup)
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_180.as::addItemWithBitmap()
+    addItemWithBitmap(
+        content: string,
+        type: string,
+        iconBitmap?: ImageBitmap | null,
+        internalLink?: string | null,
+        extraData?: Record<string, unknown> | null
+    ): void;
+
+    /**
 	 * Show a notification with the given type and optional parameters
 	 *
 	 * @param type The notification type key
