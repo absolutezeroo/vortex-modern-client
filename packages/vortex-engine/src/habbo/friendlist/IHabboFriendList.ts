@@ -19,9 +19,7 @@ export interface IHabboFriendListEvents
     'friendRequestsReceived': (requests: FriendRequestData[]) => void;
     'newFriendRequest': (request: FriendRequestData) => void;
     'acceptFriendFailed': (senderId: number, errorCode: number) => void;
-    'friendNotification': (avatarId: string, typeCode: number, message: string) => void;
     'searchResult': (friends: HabboSearchResultData[], others: HabboSearchResultData[]) => void;
-    'findFriendsResult': (success: boolean) => void;
     'followFriendFailed': (errorCode: number) => void;
     'roomInviteError': (errorCode: number, failedRecipients: number[]) => void;
     'messengerError': (errorCode: number, clientMessageId: number) => void;

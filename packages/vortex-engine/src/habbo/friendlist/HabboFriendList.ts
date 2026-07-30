@@ -57,12 +57,6 @@ import {
     AcceptFriendResultMessageEvent
 } from '@habbo/communication/messages/incoming/friendlist/AcceptFriendResultMessageEvent';
 import {
-    FriendNotificationMessageEvent
-} from '@habbo/communication/messages/incoming/friendlist/FriendNotificationMessageEvent';
-import {
-    FindFriendsProcessResultMessageEvent
-} from '@habbo/communication/messages/incoming/friendlist/FindFriendsProcessResultMessageEvent';
-import {
     HabboSearchResultMessageEvent
 } from '@habbo/communication/messages/incoming/friendlist/HabboSearchResultMessageEvent';
 import {
@@ -89,12 +83,6 @@ import type {
 import type {
     AcceptFriendResultMessageParser
 } from '@habbo/communication/messages/parser/friendlist/AcceptFriendResultMessageParser';
-import type {
-    FriendNotificationMessageParser
-} from '@habbo/communication/messages/parser/friendlist/FriendNotificationMessageParser';
-import type {
-    FindFriendsProcessResultMessageParser
-} from '@habbo/communication/messages/parser/friendlist/FindFriendsProcessResultMessageParser';
 import type {
     HabboSearchResultMessageParser
 } from '@habbo/communication/messages/parser/friendlist/HabboSearchResultMessageParser';
@@ -365,6 +353,11 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
         return Date.now();
     }
 
+    /**
+     * Every message event this component registered, so `dispose()` can remove them all.
+     * AS3 does not track them: its component base tears the registrations down.
+     */
+    // TS-only: no AS3 counterpart.
     private _messageEvents: IMessageEvent[] = [];
 
     /**
@@ -372,8 +365,10 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
      * equivalent — its consumers read the friend list directly — but several ported
      * systems were built against it, so it is kept and fed alongside the AS3 paths.
      */
+    // TS-only: no AS3 counterpart.
     private _friendListEvents: EventEmitter<IHabboFriendListEvents> = new EventEmitter<IHabboFriendListEvents>();
 
+    // TS-only: no AS3 counterpart; exposes the bus above.
     get friendListEvents(): EventEmitter<IHabboFriendListEvents>
     {
         return this._friendListEvents;
@@ -1113,7 +1108,7 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
         return this._categories.findFriend(id);
     }
 
-    /** TS-only: no AS3 equivalent; kept for the ported consumers of `IHabboFriendList`. */
+    // TS-only: no AS3 counterpart; kept for the ported consumers of `IHabboFriendList`.
     getFriendByName(name: string): IFriend | null
     {
         for(const friend of this._categories.getAllFriends().values())
@@ -1127,55 +1122,55 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
         return null;
     }
 
-    /** TS-only: no AS3 equivalent; kept for the ported consumers of `IHabboFriendList`. */
+    // TS-only: no AS3 counterpart; AS3 has getFriendNames(), which returns names only.
     getFriends(): IFriend[]
     {
         return Array.from(this._categories.getAllFriends().values());
     }
 
-    /** TS-only: no AS3 equivalent; kept for the ported consumers of `IHabboFriendList`. */
+    // TS-only: no AS3 counterpart; kept for the ported consumers of `IHabboFriendList`.
     isFriend(userId: number): boolean
     {
         return this._categories.findFriend(userId) !== null;
     }
 
-    /** TS-only wrapper over the AS3 composer send. */
+    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
     requestFriend(userName: string): void
     {
         this.send(new RequestFriendMessageComposer(userName));
     }
 
-    /** TS-only wrapper over the AS3 composer send. */
+    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
     acceptFriend(...requestIds: number[]): void
     {
         this.send(new AcceptFriendMessageComposer(...requestIds));
     }
 
-    /** TS-only wrapper over the AS3 composer send. */
+    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
     declineFriend(declineAll: boolean, ...requestIds: number[]): void
     {
         this.send(new DeclineFriendMessageComposer(declineAll, ...requestIds));
     }
 
-    /** TS-only wrapper over the AS3 composer send. */
+    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
     removeFriend(...friendIds: number[]): void
     {
         this.send(new RemoveFriendMessageComposer(...friendIds));
     }
 
-    /** TS-only wrapper over the AS3 composer send. */
+    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
     findNewFriends(): void
     {
         this.send(new FindNewFriendsMessageComposer());
     }
 
-    /** TS-only wrapper over the AS3 composer send. */
+    // TS-only: no AS3 counterpart; AS3's views build and send this composer themselves.
     searchUsers(query: string): void
     {
         this.send(new HabboSearchMessageComposer(query));
     }
 
-    /** TS-only alias of `setRelationshipStatus()`, kept for `IHabboFriendList`. */
+    // TS-only: no AS3 counterpart; an alias of setRelationshipStatus() for `IHabboFriendList`.
     setRelationship(friendId: number, status: number): void
     {
         this.setRelationshipStatus(friendId, status);
@@ -1286,10 +1281,12 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
         this.addMessageEvent(new HabboSearchResultMessageEvent(this.onHabboSearchResult.bind(this)));
         this.addMessageEvent(new NewFriendRequestMessageEvent(this.onNewFriendRequest.bind(this)));
 
-        // Port-specific: not in AS3's registerListeners(), but the parser and the typed
-        // event both exist and something has to feed `friendNotification`/`findFriendsResult`.
-        this.addMessageEvent(new FriendNotificationMessageEvent(this.onFriendNotification.bind(this)));
-        this.addMessageEvent(new FindFriendsProcessResultMessageEvent(this.onFindFriendsProcessResult.bind(this)));
+        // FriendNotification and FindFriendsProcessResult are deliberately absent, as they
+        // are from AS3's registerListeners(). Their owner is HabboFriendBarData, which
+        // registers both and acts on them. This component used to register them too, on the
+        // grounds that "something has to feed the typed bus" — written when the friend bar's
+        // data component did not exist. It does now, so those two were a second handler on
+        // the same header feeding a bus nothing subscribes to.
     }
 
     // AS3: .../HabboFriendList.as::getFriendRequests()
@@ -1537,32 +1534,7 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
         }
     }
 
-    /** Port-specific: feeds the typed bus; AS3 has no handler for this message. */
-    private onFriendNotification(event: IMessageEvent): void
-    {
-        const parser = event?.parser as FriendNotificationMessageParser | null;
-
-        if(!parser)
-        {
-            return;
-        }
-
-        this._friendListEvents.emit('friendNotification', parser.avatarId, parser.typeCode, parser.message);
-    }
-
-    /** Port-specific: feeds the typed bus; AS3 has no handler for this message. */
-    private onFindFriendsProcessResult(event: IMessageEvent): void
-    {
-        const parser = event?.parser as FindFriendsProcessResultMessageParser | null;
-
-        if(!parser)
-        {
-            return;
-        }
-
-        this._friendListEvents.emit('findFriendsResult', parser.success);
-    }
-
+    // TS-only: no AS3 counterpart; tracks registrations for `dispose()`.
     private addMessageEvent(event: IMessageEvent): void
     {
         if(this._communicationManager)
