@@ -27,6 +27,10 @@ import {RoomWidgetRoomObjectUpdateEvent} from '../events/RoomWidgetRoomObjectUpd
 import {RoomWidgetFurniInfoUpdateEvent} from '../events/RoomWidgetFurniInfoUpdateEvent';
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {RoomWidgetPetInfoUpdateEvent} from '../events/RoomWidgetPetInfoUpdateEvent';
+import type {RoomWidgetPetCommandsUpdateEvent} from '../events/RoomWidgetPetCommandsUpdateEvent';
+import type {RoomWidgetPetFigureUpdateEvent} from '../events/RoomWidgetPetFigureUpdateEvent';
+import {RoomWidgetPetCommandMessage} from '../messages/RoomWidgetPetCommandMessage';
+import {CommandConfiguration} from './CommandConfiguration';
 import {RoomWidgetInfostandExtraParamEnum} from '../enums/RoomWidgetInfostandExtraParamEnum';
 import {RoomWidgetRoomObjectMessage} from '../messages/RoomWidgetRoomObjectMessage';
 import type {InfoStandWidgetHandler} from '@habbo/ui/handler/InfoStandWidgetHandler';
@@ -55,6 +59,12 @@ const VIEW_NAME =
         CRACKABLE_FURNI: 'infostand_crackable_furni_view',
         SONGDISK: 'infostand_songdisk_view',
     } as const;
+
+// The three species AS3 gates the breeding-train command on in onPetCommands(). The values are the
+// pet type ids it compares against directly (0, 1, 5); the names are this port's.
+const PET_TYPE_DOG = 0;
+const PET_TYPE_CAT = 1;
+const PET_TYPE_PIG = 5;
 
 export class InfoStandWidget extends RoomWidgetBase
 {
@@ -341,16 +351,41 @@ export class InfoStandWidget extends RoomWidgetBase
         this.selectView(VIEW_NAME.PET);
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onPetFigureUpdate()
-    // TODO(AS3): param is RoomWidgetPetFigureUpdateEvent — pet view is a stub.
-    private onPetFigureUpdate = (_event: unknown): void =>
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetFigureUpdate()
+    // AS3's event carries a rendered BitmapData; this port's carries the figure string, so the
+    // re-render goes through the same setImage path the infostand already uses. TODO(AS3): rasterise
+    // `event.figure` and hand the result to _petView.updateImage() — the pet-image request path lives
+    // in InfoStandWidgetHandler.onPetInfo() and is not reachable from here yet.
+    private onPetFigureUpdate = (_event: RoomWidgetPetFigureUpdateEvent): void =>
     {
     };
 
-    // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onPetCommands()
-    // TODO(AS3): param is RoomWidgetPetCommandsUpdateEvent — pet view is a stub.
-    private onPetCommands = (_event: unknown): void =>
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onPetCommands()
+    // The breeding-train command (id 46) is stripped for species whose nest breeding is switched off
+    // in config — AS3 mutates the event's own arrays in place before building the configuration.
+    private onPetCommands = (event: RoomWidgetPetCommandsUpdateEvent): void =>
     {
+        const allCommands = event.allCommands;
+        const enabledCommands = event.enabledCommands;
+        const type = this._petData.type;
+
+        const breedingDisabled =
+            (type === PET_TYPE_DOG && !(this._config?.getBoolean('nest.breeding.dog.enabled') ?? false)) ||
+            (type === PET_TYPE_CAT && !(this._config?.getBoolean('nest.breeding.cat.enabled') ?? false)) ||
+            (type === PET_TYPE_PIG && !(this._config?.getBoolean('nest.breeding.pig.enabled') ?? false));
+
+        if(breedingDisabled)
+        {
+            const allIndex = allCommands.indexOf(RoomWidgetPetCommandMessage.BREED_TRAIN_COMMAND_ID);
+
+            if(allIndex !== -1) allCommands.splice(allIndex, 1);
+
+            const enabledIndex = enabledCommands.indexOf(RoomWidgetPetCommandMessage.BREED_TRAIN_COMMAND_ID);
+
+            if(enabledIndex !== -1) enabledCommands.splice(enabledIndex, 1);
+        }
+
+        this._petView.updateEnabledTrainingCommands(event.id, new CommandConfiguration(allCommands, enabledCommands));
     };
 
     // AS3: sources/win63_version/habbo/ui/widget/infostand/InfoStandWidget.as::onOpenPetTraining()

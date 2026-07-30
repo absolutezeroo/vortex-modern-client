@@ -1,4 +1,3 @@
-export * from './PetVocalMessageEventParser';
 export * from './PetInfoMessageEventParser';
 export * from './PetCommandsMessageEventParser';
 export * from './PetStatusUpdateEventParser';

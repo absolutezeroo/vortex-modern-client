@@ -609,6 +609,50 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Pets: protocol re-derived from WIN63's own registry, session + infostand chain closed**, 2026-07-30.
+  - **The derivation is gone.** `PetVocalMessageEvent` (3073) and `IssuePetCommandMessageComposer`
+    (3072) were Vortex-custom inventions with no counterpart in any AS3 tree, and 3073 is
+    `WhisperMessageEvent` — registering the pet event there silently overwrote whisper in the
+    `_events` Map. Both classes and their parser are deleted. There is no "issue pet command"
+    packet in the source: AS3 issues a command as ordinary chat, `"<pet name> <localised command>"`,
+    through `InfoStandWidgetHandler`'s `RWPCM_PET_COMMAND` branch.
+  - **Every pet header re-read from `_SafeCls_2046.as`.** The pet message package is
+    package-obfuscated in the primary dump, so each class was identified by the handler that
+    subscribes to it (`RoomUsersHandler.as:85-95`, `habbo/inventory/_SafeCls_1951.as:159-195`,
+    `RoomChatHandler.as:41`, `habbo/room/_SafeCls_1984.as:284`) and then looked up in the registry.
+    All eight previously-registered room-pet ids were already right and are now annotated with their
+    obfuscated class; the block used to claim they came from the emulator.
+  - **One real header bug found.** `MovePetMessageComposer` was registered at **2761**, which is
+    `win63_version`'s id — a different build. This revision's registry has no 2761 at all; the real
+    header is **432** (`_SafeCls_2560`, sent by `_SafeCls_1821::sendMoveUserObjectMessage()` on the
+    `monsterplant` branch). Every monster-plant move was going nowhere. `vortex-emulator`'s
+    `Revision20260701/Headers.cs` carries the same wrong 2761 and still needs fixing there.
+  - **One real parser bug found.** `PetInventoryMessageParser` never read `rarityLevel`, the last
+    field of each pet record, so in a multi-pet fragment the next pet's id was read out of the
+    previous pet's rarity field. `Pet.rarityLevel` was a hard-coded `-1` behind a TODO; it is now
+    parsed and stored.
+  - **Eight incoming messages added** with parsers: `PetBreeding` 939, `ConfirmBreedingRequest`
+    1477, `ConfirmBreedingResult` 2068, `NestBreedingSuccess` 40, `GoToBreedingNestFailure` 2441,
+    `PetRemovedFromInventory` 3013, `PetAddedToInventory` 3653, `PetSupplementedNotification` 3858 —
+    plus the two breeding DTOs (`BreedingPetInfo`, `PetBreedingRarityCategory`).
+    **Four composers added**: `BreedPets` 1922, `ConfirmPetBreeding` 2872, `CancelPetBreeding` 3367,
+    `PassCarryItemToPet` 1429.
+  - **Handlers closed.** `RoomUsersHandler` had only `onPetInfo`; the other ten AS3 pet handlers now
+    exist, so commands, placing errors, figure/status/level updates and the whole breeding chain
+    have a subscriber. `RoomChatHandler.onPetSupplementedNotification()` and the inventory's
+    `onPetAdded`/`onPetRemoved`/`onGoToBreedingNestFailure` are ported too.
+  - **Infostand chain closed.** The nine missing `RoomWidget*` pet events and their three data
+    classes, `RoomWidgetPetCommandMessage`, seven `InfoStandWidgetHandler` session subscriptions,
+    the pet-care composer branches (treat/water/light/carry-item, previously a `log.warn` TODO), and
+    **`PetCommandTool`** itself — which removes the four stubs `InfoStandPetView` was carrying and
+    makes the `train` button actually open the training window.
+  - **Scope left open, marked TODO(AS3), not omitted.** The `avatarinfo` pet views are still absent:
+    `OwnPetMenuView`, `PetMenuView`, `PetInfoData`, `BreedPetView`, `ConfirmPetBreedingView`,
+    `BreedPetsResultView`/`Data`, `NestBreedingSuccessView`, `BreedMonsterPlantsConfirmationView`,
+    `UseProductView`/`UseProductConfirmationView`. The breeding messages therefore reach
+    `desktopEvents` with nothing listening yet — the wire and session layers are complete beneath
+    them. `InfoStandWidget.onPetFigureUpdate()` also still needs the figure re-rasterised.
+
 - ✅ **Mystery box + mystery trophy wired end to end**, 2026-07-29.
   - **What landed.** The three missing incoming messages (`ShowMysteryBoxWait` 691,
     `CancelMysteryBoxWait` 3840, `GotMysteryBoxPrize` 353) with their parsers, the two composers

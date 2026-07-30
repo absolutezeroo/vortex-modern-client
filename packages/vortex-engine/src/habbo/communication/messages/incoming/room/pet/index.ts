@@ -1,4 +1,3 @@
-export * from './PetVocalMessageEvent';
 export * from './PetInfoMessageEvent';
 export * from './PetCommandsMessageEvent';
 export * from './PetStatusUpdateEvent';
@@ -8,3 +7,5 @@ export * from './PetExperienceEvent';
 export * from './PetPlacingErrorEvent';
 export * from './PetBreedingResultEvent';
 export * from './PetBreedingResultData';
+export * from './BreedingPetInfo';
+export * from './PetBreedingRarityCategory';

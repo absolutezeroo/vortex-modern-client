@@ -13,6 +13,7 @@ export {AvatarEffectSelectedComposer} from './AvatarEffectSelectedComposer';
 
 // Pets
 export {GetPetInventoryComposer} from './GetPetInventoryComposer';
+export {CancelPetBreedingComposer, ConfirmPetBreedingComposer} from './pets';
 
 // Bots
 export {GetBotInventoryComposer} from './GetBotInventoryComposer';

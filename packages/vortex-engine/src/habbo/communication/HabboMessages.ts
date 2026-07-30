@@ -86,12 +86,14 @@ import {
 // Incoming Events - Inventory
 import {
     AchievementsScoreMessageEvent,
-    AvatarEffectsMessageEvent,
-    AvatarEffectAddedMessageEvent,
     AvatarEffectActivatedMessageEvent,
+    AvatarEffectAddedMessageEvent,
     AvatarEffectExpiredMessageEvent,
+    AvatarEffectsMessageEvent,
     BadgesMessageEvent,
     BotInventoryMessageEvent,
+    ConfirmBreedingRequestEvent,
+    ConfirmBreedingResultEvent,
     CreditBalanceEvent,
     FigureSetIdsMessageEvent,
     FurniListAddOrUpdateMessageEvent,
@@ -99,7 +101,12 @@ import {
     FurniListMessageEvent,
     FurniListRemoveMessageEvent,
     FurniListRemoveMultipleMessageEvent,
+    GoToBreedingNestFailureEvent,
+    NestBreedingSuccessEvent,
+    PetAddedToInventoryEvent,
+    PetBreedingEvent,
     PetInventoryMessageEvent,
+    PetRemovedFromInventoryEvent,
     TradingAcceptMessageEvent,
     TradingCloseMessageEvent,
     TradingCompletedMessageEvent,
@@ -121,8 +128,8 @@ import {
 // Incoming Events - Catalog
 import {
     BonusRareInfoMessageEvent,
-    BuildersClubSubscriptionStatusMessageEvent,
     BuildersClubFurniCountMessageEvent,
+    BuildersClubSubscriptionStatusMessageEvent,
     CatalogIndexMessageEvent,
     CatalogPageMessageEvent,
     CatalogPageWithEarliestExpiryMessageEvent,
@@ -159,10 +166,16 @@ import {CommunityVoteReceivedEvent, PromoArticlesMessageEvent,} from './messages
 
 // Incoming Events - Competition
 import {CurrentTimingCodeMessageEvent} from './messages/incoming/competition';
-import {CompetitionEntrySubmitResultMessageEvent} from './messages/incoming/competition/CompetitionEntrySubmitResultMessageEvent';
+import {
+    CompetitionEntrySubmitResultMessageEvent
+} from './messages/incoming/competition/CompetitionEntrySubmitResultMessageEvent';
 import {CompetitionVotingInfoMessageEvent} from './messages/incoming/competition/CompetitionVotingInfoMessageEvent';
-import {AchievementResolutionCompletedMessageEvent} from './messages/incoming/game/lobby/AchievementResolutionCompletedMessageEvent';
-import {AchievementResolutionProgressMessageEvent} from './messages/incoming/game/lobby/AchievementResolutionProgressMessageEvent';
+import {
+    AchievementResolutionCompletedMessageEvent
+} from './messages/incoming/game/lobby/AchievementResolutionCompletedMessageEvent';
+import {
+    AchievementResolutionProgressMessageEvent
+} from './messages/incoming/game/lobby/AchievementResolutionProgressMessageEvent';
 import {AchievementResolutionsMessageEvent} from './messages/incoming/game/lobby/AchievementResolutionsMessageEvent';
 
 // Incoming Events - Quest
@@ -209,39 +222,39 @@ import {
 
 // Incoming Events - Room Engine
 import {
+    AreaHideMessageEvent,
+    BCPlacementWarningMessageEvent,
+    DiceValueMessageEvent,
     FloorHeightMapMessageEvent,
     FurnitureAliasesMessageEvent,
     HeightMapMessageEvent,
     HeightMapUpdateMessageEvent,
     ItemAddMessageEvent,
+    ItemDataUpdateMessageEvent,
     ItemRemoveMessageEvent,
+    ItemRemoveMultipleMessageEvent,
     ItemsMessageEvent,
+    ItemsStateUpdateMessageEvent,
+    ItemStateUpdateMessageEvent,
     ItemUpdateMessageEvent,
     ObjectAddMessageEvent,
     ObjectDataUpdateMessageEvent,
-    ObjectsDataUpdateMessageEvent,
-    DiceValueMessageEvent,
-    OneWayDoorStatusMessageEvent,
-    ItemStateUpdateMessageEvent,
-    ItemsStateUpdateMessageEvent,
-    ItemDataUpdateMessageEvent,
-    AreaHideMessageEvent,
-    WiredMovementsMessageEvent,
     ObjectRemoveConfirmMessageEvent,
-    BCPlacementWarningMessageEvent,
-    SpecialRoomEffectMessageEvent,
-    ItemRemoveMultipleMessageEvent,
-    ObjectRemoveMultipleMessageEvent,
     ObjectRemoveMessageEvent,
+    ObjectRemoveMultipleMessageEvent,
+    ObjectsDataUpdateMessageEvent,
     ObjectsMessageEvent,
     ObjectUpdateMessageEvent,
+    OneWayDoorStatusMessageEvent,
     RoomEntryInfoMessageEvent,
     RoomPropertyMessageEvent,
     RoomVisualizationSettingsEvent,
     SlideObjectBundleMessageEvent,
+    SpecialRoomEffectMessageEvent,
     UserRemoveMessageEvent,
     UsersMessageEvent,
     UserUpdateMessageEvent,
+    WiredMovementsMessageEvent,
 } from './messages/incoming/room/engine';
 
 // Incoming Events - Room Chat
@@ -270,65 +283,106 @@ import {
     PetInfoMessageEvent,
     PetLevelUpdateEvent,
     PetPlacingErrorEvent,
-    PetStatusUpdateEvent,
-    PetVocalMessageEvent
+    PetStatusUpdateEvent
 } from './messages/incoming/room/pet';
 
 // Incoming Events - User Defined Room Events (Wired)
 import {
-    WiredPermissionsEvent,
-    WiredRewardResultMessageEvent,
-    WiredEnvironmentEvent,
+    OpenEvent,
     WiredClickSettingsEvent,
     WiredClickUserResponseEvent,
-    WiredFurniTriggerEvent,
+    WiredEnvironmentEvent,
     WiredFurniActionEvent,
-    WiredFurniConditionEvent,
     WiredFurniAddonEvent,
-    WiredFurniVariableEvent,
+    WiredFurniConditionEvent,
     WiredFurniSelectorEvent,
-    WiredValidationErrorEvent,
+    WiredFurniTriggerEvent,
+    WiredFurniVariableEvent,
+    WiredPermissionsEvent,
+    WiredRewardResultMessageEvent,
     WiredSaveSuccessEvent,
-    OpenEvent
+    WiredValidationErrorEvent
 } from './messages/incoming/userdefinedroomevents';
 // Outgoing Composers - User Defined Room Events (Wired)
 import {
-    WiredClickUserMessageComposer,
+    ApplySnapshotMessageComposer,
     OpenMessageComposer,
-    UpdateTriggerMessageComposer,
     UpdateActionMessageComposer,
-    UpdateConditionMessageComposer,
     UpdateAddonMessageComposer,
-    UpdateVariableMessageComposer,
+    UpdateConditionMessageComposer,
     UpdateSelectorMessageComposer,
-    ApplySnapshotMessageComposer
+    UpdateTriggerMessageComposer,
+    UpdateVariableMessageComposer,
+    WiredClickUserMessageComposer
 } from './messages/outgoing/userdefinedroomevents';
-import {GetAllVariablesMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesMessageComposer';
-import {GetAllVariablesDiffMessageComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesDiffMessageComposer';
-import {SetWiredMenuPreferencesComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/SetWiredMenuPreferencesComposer';
-import {RequestWiredRoomLogsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomLogsComposer';
-import {SaveWiredMenuSettingsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/SaveWiredMenuSettingsComposer';
-import {ReloadWiredRoomStateComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
-import {RequestWiredMenuSettingsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredMenuSettingsComposer';
+import {
+    GetAllVariablesMessageComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesMessageComposer';
+import {
+    GetAllVariablesDiffMessageComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/GetAllVariablesDiffMessageComposer';
+import {
+    SetWiredMenuPreferencesComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/SetWiredMenuPreferencesComposer';
+import {
+    RequestWiredRoomLogsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomLogsComposer';
+import {
+    SaveWiredMenuSettingsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/SaveWiredMenuSettingsComposer';
+import {
+    ReloadWiredRoomStateComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
+import {
+    RequestWiredMenuSettingsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredMenuSettingsComposer';
 import {WiredMenuSettingsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuSettingsEvent';
 import {WiredRoomStatsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredRoomStatsEvent';
 import {WiredErrorLogsEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredErrorLogsEvent';
-import {RequestWiredRoomStatsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomStatsComposer';
-import {RequestWiredErrorLogsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredErrorLogsComposer';
-import {ClearWiredErrorLogsComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/ClearWiredErrorLogsComposer';
-import {WiredMonitorReportComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredMonitorReportComposer';
-import {AllVariablesHashMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
-import {AllVariablesDiffMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
-import {VariableInfoAndHoldersEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/VariableInfoAndHoldersEvent';
-import {RequestVariableHoldersComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
-import {RequestVariableManagementComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementComposer';
-import {WiredVariablesForObjectEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredVariablesForObjectEvent';
+import {
+    RequestWiredRoomStatsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredRoomStatsComposer';
+import {
+    RequestWiredErrorLogsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredErrorLogsComposer';
+import {
+    ClearWiredErrorLogsComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/ClearWiredErrorLogsComposer';
+import {
+    WiredMonitorReportComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredMonitorReportComposer';
+import {
+    AllVariablesHashMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesHashMessageEvent';
+import {
+    AllVariablesDiffMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/AllVariablesDiffMessageEvent';
+import {
+    VariableInfoAndHoldersEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/VariableInfoAndHoldersEvent';
+import {
+    RequestVariableHoldersComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableHoldersComposer';
+import {
+    RequestVariableManagementComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementComposer';
+import {
+    WiredVariablesForObjectEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredVariablesForObjectEvent';
 import {WiredMenuErrorEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuErrorEvent';
 import {WiredRoomLogsMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredRoomLogsMessageEvent';
-import {WiredUserVariablesPageMessageEvent} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredUserVariablesPageMessageEvent';
-import {RequestVariableManagementDetailComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementDetailComposer';
-import {RequestWiredVariablesForObjectComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredVariablesForObjectComposer';
-import {UpdateWiredVariableComposer} from './messages/outgoing/userdefinedroomevents/wiredmenu/UpdateWiredVariableComposer';
+import {
+    WiredUserVariablesPageMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredmenu/WiredUserVariablesPageMessageEvent';
+import {
+    RequestVariableManagementDetailComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestVariableManagementDetailComposer';
+import {
+    RequestWiredVariablesForObjectComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredVariablesForObjectComposer';
+import {
+    UpdateWiredVariableComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/UpdateWiredVariableComposer';
 
 // Incoming Events - Poll
 import {
@@ -344,10 +398,10 @@ import {
 import {
     ChangeUserNameResultMessageEvent,
     FaqTextMessageEvent,
-    UserNameChangedMessageEvent,
-    GuideSessionStartedMessageEvent,
     GuideSessionEndedMessageEvent,
     GuideSessionErrorMessageEvent,
+    GuideSessionStartedMessageEvent,
+    UserNameChangedMessageEvent,
 } from './messages/incoming/help';
 
 // Incoming Events - Error
@@ -378,6 +432,7 @@ import {
     IgnoredUsersMessageEvent,
     IgnoreResultMessageEvent,
     InClientLinkMessageEvent,
+    PetSupplementedNotificationEvent,
     RelationshipStatusInfoEvent,
     ScrSendKickbackInfoMessageEvent,
     ScrSendUserInfoEvent,
@@ -521,10 +576,10 @@ import {
 
 // Outgoing Composers - Room Engine
 import {
+    ClickFurniMessageComposer,
     GetFurnitureAliasesMessageComposer,
     GetHeightMapMessageComposer,
     MoveAvatarMessageComposer,
-    ClickFurniMessageComposer,
     MoveObjectMessageComposer,
     PickupObjectMessageComposer,
     PlaceObjectMessageComposer,
@@ -546,6 +601,7 @@ import {
     ChangeMottoMessageComposer,
     ChangePostureMessageComposer,
     DanceMessageComposer,
+    PassCarryItemToPetMessageComposer,
     SignMessageComposer,
 } from './messages/outgoing/room/avatar';
 
@@ -604,8 +660,8 @@ import {MysteryBoxWaitingCanceledMessageComposer} from './messages/outgoing/myst
 
 // Outgoing Composers - Room Furniture
 import {
-    ConfigureRentableSpaceMessageComposer,
     ClaimNftRewardBoxMessageComposer,
+    ConfigureRentableSpaceMessageComposer,
     CreditFurniRedeemMessageComposer,
     DiceOffMessageComposer,
     EnterOneWayDoorMessageComposer,
@@ -615,25 +671,25 @@ import {
     OpenPetPackageMessageComposer,
     PresentOpenMessageComposer,
     RemoveItemMessageComposer,
+    RoomDimmerChangeStateComposer,
+    RoomDimmerGetPresetsComposer,
+    RoomDimmerSavePresetComposer,
     SetItemDataMessageComposer,
     SetRoomBackgroundColorDataMessageComposer,
     SpinWheelOfFortuneMessageComposer,
     ThrowDiceMessageComposer,
-    RoomDimmerChangeStateComposer,
-    RoomDimmerGetPresetsComposer,
-    RoomDimmerSavePresetComposer,
     UpdateClothingChangeFurnitureComposer,
     UseFurnitureMessageComposer,
 } from './messages/outgoing/room/furniture';
 
 // Outgoing Composers - Room Pet
 import {
+    BreedPetsMessageComposer,
     CompostPlantComposer,
     GetPetCommandsComposer,
     GetPetInfoMessageComposer,
     GiveSupplementToPetMessageComposer,
     HarvestPetComposer,
-    IssuePetCommandMessageComposer,
     MountPetComposer,
     MovePetMessageComposer,
     PetSelectedMessageComposer,
@@ -654,6 +710,7 @@ import {CommunityGoalVoteMessageComposer, GetPromoArticlesComposer,} from './mes
 // Outgoing Composers - Catalog
 import {
     BuildersClubQueryFurniCountMessageComposer,
+    CheckGiftableMessageComposer,
     GetBonusRareInfoMessageComposer,
     GetCatalogIndexComposer,
     GetCatalogPageComposer,
@@ -664,20 +721,19 @@ import {
     GetProductOfferComposer,
     GetRecyclerPrizesMessageComposer,
     GetRecyclerStatusMessageComposer,
+    GetRoomAdsPurchaseInfoMessageComposer,
     GetSellablePetPalettesComposer,
+    PlaceObjectFromCatalogComposer,
+    PlaceWallItemFromCatalogComposer,
     PurchaseBasicMembershipExtensionComposer,
     PurchaseFromCatalogComposer,
+    PurchaseMintTokensMessageComposer,
+    PurchaseNftOfferMessageComposer,
+    PurchaseProductAsGiftMessageComposer,
     PurchaseVipMembershipExtensionComposer,
     RecycleItemsMessageComposer,
     RedeemVoucherMessageComposer,
     SelectClubGiftComposer,
-    PurchaseNftOfferMessageComposer,
-    PurchaseMintTokensMessageComposer,
-    CheckGiftableMessageComposer,
-    GetRoomAdsPurchaseInfoMessageComposer,
-    PurchaseProductAsGiftMessageComposer,
-    PlaceObjectFromCatalogComposer,
-    PlaceWallItemFromCatalogComposer,
 } from './messages/outgoing/catalog';
 
 // Outgoing Composers - Marketplace
@@ -754,19 +810,15 @@ import {
     BlockListInitComposer,
     BlockUserMessageComposer,
     ChangeEmailComposer,
+    CreateGuildMessageComposer,
     DeselectFavouriteHabboGroupMessageComposer,
     GetEmailStatusComposer,
     GetExtendedProfileByNameMessageComposer,
     GetExtendedProfileMessageComposer,
-    CreateGuildMessageComposer,
     GetGuildCreationInfoMessageComposer,
     GetGuildEditInfoMessageComposer,
     GetGuildEditorDataMessageComposer,
     GetGuildMembershipsMessageComposer,
-    UpdateGuildBadgeMessageComposer,
-    UpdateGuildColorsMessageComposer,
-    UpdateGuildIdentityMessageComposer,
-    UpdateGuildSettingsMessageComposer,
     GetHabboGroupBadgesMessageComposer,
     GetHabboGroupDetailsMessageComposer,
     GetIgnoredUsersMessageComposer,
@@ -779,7 +831,11 @@ import {
     ScrGetUserInfoMessageComposer,
     SelectFavouriteHabboGroupMessageComposer,
     UnblockUserMessageComposer,
-    UnignoreUserMessageComposer
+    UnignoreUserMessageComposer,
+    UpdateGuildBadgeMessageComposer,
+    UpdateGuildColorsMessageComposer,
+    UpdateGuildIdentityMessageComposer,
+    UpdateGuildSettingsMessageComposer
 } from './messages/outgoing/users';
 
 // Outgoing Composers - Campaign
@@ -797,9 +853,11 @@ import {
     AddItemToTradeComposer,
     AvatarEffectActivatedComposer,
     AvatarEffectSelectedComposer,
+    CancelPetBreedingComposer,
     CloseTradingComposer,
     ConfirmAcceptTradingComposer,
     ConfirmDeclineTradingComposer,
+    ConfirmPetBreedingComposer,
     CreditVaultStatusMessageComposer,
     GetBadgesComposer,
     GetBotInventoryComposer,
@@ -1152,23 +1210,29 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(4600, RentableSpaceConfigMessageEvent);
 
         // === ROOM PET ===
-        // Vortex-custom (not in official AS3 dumps): vortex-client commit d6bc0d0 "feat(pets): add
-        // pet vocal message, IssuePetCommand compositor and command UI"
-        this._events.set(3073, PetVocalMessageEvent);
-        this._events.set(3192, PetInfoMessageEvent);
-
-        // AS3: sources/win63_version/habbo/communication/messages/incoming/room/pets/ — the primary
-        // tree has no pet message package at all (it lives package-obfuscated under src/unknowns/),
-        // so the secondary is the authority for this whole set. Header values are taken from the
-        // emulator's own Revision20260701/Headers.cs, several of which carry its "AS3-verified"
-        // annotations; 20260701 is the revision that pairs with WIN63-202607011411 (same build,
-        // 2026-07-01 14:11).
+        // Every header below is read directly out of WIN63's own incoming-events registry,
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // (`_SafeStr_4546[id] = _SafeCls_N`). The pet message package is package-obfuscated there, so
+        // each class was identified by the handler that subscribes to it — RoomUsersHandler.as:85-95
+        // constructs them by name-bearing callback (onPetInfo, onEnabledPetCommands, …) — and the
+        // class names themselves come from the secondary tree's
+        // habbo/communication/messages/incoming/room/pets/.
         //
-        // Only 332 and 3195 currently agree with the server's wire format. The other six are
-        // registered anyway because the client's job is to speak the real protocol and the fix
-        // belongs in the emulator's serializers — three of which are empty stubs. Their parse
-        // failures are caught and logged per message by SocketConnection. See the pet mismatch
-        // table in docs/CLIENT-SERVER-ARCHITECTURE.md.
+        //   3192 -> _SafeCls_3598 (PetInfo, RoomUsersHandler::onPetInfo)
+        //    332 -> _SafeCls_3885 (PetCommands, onEnabledPetCommands)
+        //   2753 -> _SafeCls_3115 (PetStatusUpdate, onPetStatusUpdate)
+        //   3104 -> _SafeCls_3060 (PetLevelUpdate, onPetLevelUpdate)
+        //   3796 -> _SafeCls_2731 (PetFigureUpdate, onPetFigureUpdate)
+        //    946 -> _SafeCls_3946 (PetExperience, habbo/room/_SafeCls_1984.as:284 onPetExperience)
+        //   3195 -> _SafeCls_3208 (PetPlacingError, onPetPlacingError)
+        //   2940 -> _SafeCls_3328 (PetBreedingResult, onPetBreedingResult)
+        //
+        // These used to be annotated as emulator-derived, with 3192 marked Vortex-custom outright.
+        // They are not: all eight are the client's own headers, and the emulator agrees with them.
+        // The one genuinely invented member of this block, PetVocalMessageEvent at 3073, is gone —
+        // no AS3 tree has such a message, and 3073 is WhisperMessageEvent, which it silently
+        // overwrote in this Map.
+        this._events.set(3192, PetInfoMessageEvent);
         this._events.set(332, PetCommandsMessageEvent);
         this._events.set(2753, PetStatusUpdateEvent);
         this._events.set(3104, PetLevelUpdateEvent);
@@ -1176,6 +1240,29 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(946, PetExperienceEvent);
         this._events.set(3195, PetPlacingErrorEvent);
         this._events.set(2940, PetBreedingResultEvent);
+
+        // Monster-plant breeding, same registry, same identification route (RoomUsersHandler.as:90-95
+        // for the first four, habbo/inventory/_SafeCls_1951.as:195 for the last):
+        //    939 -> _SafeCls_2392 (PetBreeding, onPetBreedingEvent)
+        //   1477 -> _SafeCls_2909 (ConfirmBreedingRequest, onConfirmPetBreeding)
+        //   2068 -> _SafeCls_2894 (ConfirmBreedingResult, onConfirmPetBreedingResult)
+        //     40 -> _SafeCls_3668 (NestBreedingSuccess, onNestBreedingSuccess)
+        //   2441 -> _SafeCls_3355 (GoToBreedingNestFailure, onGoToBreedingNestFailure)
+        this._events.set(939, PetBreedingEvent);
+        this._events.set(1477, ConfirmBreedingRequestEvent);
+        this._events.set(2068, ConfirmBreedingResultEvent);
+        this._events.set(40, NestBreedingSuccessEvent);
+        this._events.set(2441, GoToBreedingNestFailureEvent);
+
+        // Pet inventory add/remove, from habbo/inventory/_SafeCls_1951.as:170/181:
+        //   3013 -> _SafeCls_2397 (PetRemovedFromInventory, onPetRemoved)
+        //   3653 -> _SafeCls_3510 (PetAddedToInventory, onPetAdded)
+        this._events.set(3013, PetRemovedFromInventoryEvent);
+        this._events.set(3653, PetAddedToInventoryEvent);
+
+        // Water/light/treat given to a pet, from RoomChatHandler.as:41:
+        //   3858 -> _SafeCls_3489 (PetSupplementedNotification, onPetSupplementedNotification)
+        this._events.set(3858, PetSupplementedNotificationEvent);
 
         // PetRespectFailedEvent (header 31, AS3 incoming/room/pets/) is deliberately absent here:
         // it was already ported and registered under incoming/notifications/ (see the NOTIFICATIONS
@@ -1689,27 +1776,39 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(4601, ConfigureRentableSpaceMessageComposer);
 
         // === ROOM PET ===
+        // Headers read directly out of WIN63's own outgoing registry,
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
+        // (`_composers[id] = _SafeCls_N`). The composer classes are package-obfuscated, so each was
+        // identified from the RoomSession/handler method that sends it — RoomSession.as:507-560,
+        // UserDataManager.as:231, InfoStandWidgetHandler.as:460-470/799, PetsModel.as:117/229,
+        // habbo/room/_SafeCls_1821.as:2236 — whose names are not obfuscated:
+        //
+        //   1640 -> _SafeCls_2851 (RemovePetFromFlat, RoomSession::pickUpPet)
+        //   1018 -> _SafeCls_2777 (PlacePet, PetsModel::placePet)
+        //    432 -> _SafeCls_2560 (MovePet, _SafeCls_1821::sendMoveUserObjectMessage, monsterplant)
+        //   3899 -> _SafeCls_2625 (GetPetInfo, UserDataManager::requestPetInfo)
+        //   2757 -> _SafeCls_3264 (PetSelected, InfoStandWidgetHandler::handleGetPetInfoMessage)
+        //   1996 -> _SafeCls_3238 (MountPet, RoomSession::mountPet/dismountPet)
+        //   3713 -> _SafeCls_3089 (TogglePetRidingPermission)
+        //   2884 -> _SafeCls_3921 (RemoveSaddleFromPet)
+        //   2425 -> _SafeCls_2559 (GetPetCommands)
+        //   1210 -> _SafeCls_2914 (HarvestPet)
+        //    144 -> _SafeCls_3539 (TogglePetBreedingPermission)
+        //   1989 -> _SafeCls_3384 (CompostPlant)
+        //   2099 -> _SafeCls_2749 (CustomizePetWithFurni, RoomSession::useProductForPet)
+        //   1694 -> _SafeCls_2695 (GiveSupplementToPet)
+        //   1922 -> _SafeCls_2980 (BreedPets, AvatarInfoWidget::breedPets/accept/cancel)
+        //
+        // MovePet used to be registered at 2761 as "Vortex-custom": that is the *secondary* tree's
+        // header (win63_version/habbo/communication/class_1881.as:754), a different build. 2761 does
+        // not exist in this revision's outgoing registry at all, so every monster-plant move was
+        // being sent to nothing. IssuePetCommandMessageComposer (3072) is gone entirely — AS3 has no
+        // such message; commands are issued as ordinary chat, "<pet name> <command>", by
+        // InfoStandWidgetHandler's "RWPCM_PET_COMMAND" branch.
         this._composers.set(1640, PickUpPetComposer);
-        // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_2777.as
-        // (guest place-pet). Header from the emulator's Revision20260701/Headers.cs
-        // (PlacePetMessageEvent = 1018, "AS3-verified: _SafeCls_3396 -> placePetToRoom()").
         this._composers.set(1018, PlacePetComposer);
-        // Vortex-custom (not in official AS3 dumps): vortex-client commit e8dc43d "chore(protocol):
-        // register rentable space (4600/4601) and pet (3072/3073) message IDs"
-        this._composers.set(3072, IssuePetCommandMessageComposer);
-        this._composers.set(2761, MovePetMessageComposer);
-
-        // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/pets/GetPetInfoMessageComposer.as
-        // Header from the emulator's Revision20260701/Headers.cs, which annotates it
-        // "AS3-verified (old-revision trace): requestPetInfo() still exists in current revision at
-        // 3899". Unlike most of the pet set, this one is fully live server-side: a real
-        // GetPetInfoMessageHandler answers it with PetInfoMessageComposer (3192).
+        this._composers.set(432, MovePetMessageComposer);
         this._composers.set(3899, GetPetInfoMessageComposer);
-
-        // AS3: sources/win63_version/habbo/communication/messages/outgoing/room/pets/PetSelectedMessageComposer.as
-        // Header from Revision20260701/Headers.cs, annotated "AS3-verified (old-revision trace):
-        // handleGetPetInfoMessage() still exists in current revision at 2757". Also live
-        // server-side (PetSelectedMessageHandler).
         this._composers.set(2757, PetSelectedMessageComposer);
         this._composers.set(1996, MountPetComposer); // Also used for dismount — AS3 sends an explicit `mount` boolean, same message ID for both
         this._composers.set(3713, TogglePetRidingPermissionComposer);
@@ -1720,6 +1819,15 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1989, CompostPlantComposer);
         this._composers.set(2099, UseProductForPetComposer);
         this._composers.set(1694, GiveSupplementToPetMessageComposer);
+        this._composers.set(1922, BreedPetsMessageComposer);
+        // Breeding-nest lifecycle, same registry, from AvatarInfoWidget.as:1789/1794:
+        //   3367 -> _SafeCls_3504 (CancelPetBreeding)
+        //   2872 -> _SafeCls_3418 (ConfirmPetBreeding)
+        this._composers.set(3367, CancelPetBreedingComposer);
+        this._composers.set(2872, ConfirmPetBreedingComposer);
+        // Hand the carried item to a pet, from InfoStandWidgetHandler.as "RWUAM_GIVE_CARRY_ITEM_TO_PET":
+        //   1429 -> _SafeCls_2543 (PassCarryItemToPet)
+        this._composers.set(1429, PassCarryItemToPetMessageComposer);
 
         // === POLL ===
         this._composers.set(743, PollStartComposer);

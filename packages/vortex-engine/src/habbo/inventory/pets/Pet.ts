@@ -11,13 +11,15 @@ export class Pet
         id: number,
         name: string,
         figureData: PetFigureData,
-        level: number
+        level: number,
+        rarityLevel: number = -1
     )
     {
         this._id = id;
         this._name = name;
         this._figureData = figureData;
         this._level = level;
+        this._rarityLevel = rarityLevel;
     }
 
     private _id: number;
@@ -97,14 +99,14 @@ export class Pet
         return this._figureData.customPartCount;
     }
 
-    // AS3 pets carry a rarityLevel used by the pets-inventory rarity filter/overlay (monster
-    // plants, typeId 16). The current PetInventory parser does not read it, so it is -1 (no
-    // rarity) — which faithfully disables the rarity filter (PetsView.isRarityFilterEnabled) and
-    // hides the overlay. TODO(AS3): read rarityLevel in PetInventoryMessageParser once the emulator
-    // serializes it.
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2554/_SafeCls_2577.as::get rarityLevel()
+    // Defaults to -1 (no rarity) exactly as AS3's field initialiser does; it drives the pets-inventory
+    // rarity filter/overlay (monster plants, typeId 16).
+    private _rarityLevel: number = -1;
+
     get rarityLevel(): number
     {
-        return -1;
+        return this._rarityLevel;
     }
 
     get figureString(): string
