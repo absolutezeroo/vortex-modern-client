@@ -1,4 +1,5 @@
 import type {IWidget} from './IWidget';
+import type {ChatBubbleMessage} from './ChatBubbleMessage';
 
 /**
  * Interface for the Illumina chat bubble widget.
@@ -46,7 +47,7 @@ export interface IIlluminaChatBubbleWidget extends IWidget
 	 * @param index - The message index
 	 * @returns The message text
 	 */
-    getMessage(index: number): string;
+    getMessage(index: number): ChatBubbleMessage | null;
 
     /**
 	 * Set a message at the given index.
@@ -54,7 +55,7 @@ export interface IIlluminaChatBubbleWidget extends IWidget
 	 * @param index - The message index
 	 * @param text - The message text
 	 */
-    setMessage(index: number, text: string): void;
+    setMessage(index: number, message: ChatBubbleMessage | string): void;
 
     /**
 	 * Append a message to the bubble.
@@ -63,7 +64,7 @@ export interface IIlluminaChatBubbleWidget extends IWidget
 	 * @param prepend - Whether to insert at the beginning
 	 * @param confirmationId - Optional awaiting confirmation ID
 	 */
-    appendMessage(text: string, prepend?: boolean, confirmationId?: number): void;
+    appendMessage(message: ChatBubbleMessage | string, prepend?: boolean, confirmationId?: number): void;
 
     /**
 	 * Set the friend online status indicator.

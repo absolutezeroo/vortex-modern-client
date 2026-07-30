@@ -1,27 +1,44 @@
+import {ChatBubbleMessage} from '@habbo/window/widgets/ChatBubbleMessage';
+
 /**
- * Represents a single chat entry in a messenger conversation.
- * Tracks message data, timing, and confirmation state.
+ * One entry in a conversation: a chat line from either side, or one of the three
+ * generated notices the messenger inserts itself.
  *
- * @see source_as_win63/habbo/messenger/ChatEntry.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as
  */
 export class ChatEntry
 {
-    public static readonly TYPE_OWN_CHAT: number = 1;
-    public static readonly TYPE_OTHER_CHAT: number = 2;
-    public static readonly TYPE_ROOM_INVITE: number = 3;
-    public static readonly TYPE_INFO: number = 4;
-    public static readonly TYPE_ROOM_INVITE_COMBO: number = 5;
-    private _seconds: number;
-    private _clientReceiveTime: number;
+    // AS3: .../messenger/ChatEntry.as::TYPE_OWN_CHAT
+    static readonly TYPE_OWN_CHAT: number = 1;
 
+    // AS3: .../messenger/ChatEntry.as::TYPE_OTHER_CHAT
+    static readonly TYPE_OTHER_CHAT: number = 2;
+
+    /**
+     * The moderation blurb and the persisted-messages notice — `recordNotificationMessage()`.
+     * **Name derived**; obfuscated in every tree. Not a room invite: that is
+     * `TYPE_INVITATION` below, and conflating the two is what the previous
+     * `TYPE_ROOM_INVITE`/`TYPE_ROOM_INVITE_COMBO` pair did.
+     */
+    // AS3: .../messenger/ChatEntry.as::TYPE_NOTIFICATION
+    static readonly TYPE_NOTIFICATION: number = 3;
+
+    // AS3: .../messenger/ChatEntry.as::TYPE_INFO
+    static readonly TYPE_INFO: number = 4;
+
+    /** **Name derived** from `recordInvitationMessage()`; obfuscated in every tree. */
+    // AS3: .../messenger/ChatEntry.as::TYPE_INVITATION
+    static readonly TYPE_INVITATION: number = 5;
+
+    // AS3: .../messenger/ChatEntry.as::ChatEntry()
     constructor(
         type: number,
         chatId: number,
-        message: string,
+        message: ChatBubbleMessage,
         seconds: number,
         senderId: number = 0,
-        senderName: string = '',
-        senderFigure: string = '',
+        senderName: string | null = null,
+        senderFigure: string | null = null,
         messageId: string = '',
         awaitConfirmationId: number = 0
     )
@@ -38,8 +55,15 @@ export class ChatEntry
         this._senderFigure = senderFigure;
     }
 
+    // AS3: .../messenger/ChatEntry.as::_SafeStr_9522
+    private _seconds: number;
+
+    // AS3: .../messenger/ChatEntry.as::_clientReceiveTime
+    private _clientReceiveTime: number;
+
     private _type: number;
 
+    // AS3: .../messenger/ChatEntry.as::get type()
     get type(): number
     {
         return this._type;
@@ -47,34 +71,29 @@ export class ChatEntry
 
     private _chatId: number;
 
+    // AS3: .../messenger/ChatEntry.as::get chatId()
     get chatId(): number
     {
         return this._chatId;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as::message
-    // TODO(AS3): AS3's message is a typed _SafeCls_2676 (type 0 = plain text, other values =
-    // structured content like room invites) with a static _SafeCls_2676.text() factory - this port
-    // simplifies it to a plain string, so there is no type discriminator to gate on. ChatEntry has
-    // zero constructors/callers anywhere in this port today, so this is undocumented rather than
-    // observably wrong; a real fix needs the typed wrapper, not a guess at its shape.
-    private _message: string;
+    private _message: ChatBubbleMessage;
 
-    get message(): string
+    // AS3: .../messenger/ChatEntry.as::get message()
+    get message(): ChatBubbleMessage
     {
         return this._message;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as::get messageText()
-    // AS3 returns "" for a non-text message (type != 0); this port's message is always plain text
-    // under the current simplification (see the TODO on `message` above), so it's returned as-is.
+    // AS3: .../messenger/ChatEntry.as::get messageText()
     get messageText(): string
     {
-        return this._message;
+        return this._message.type === ChatBubbleMessage.TYPE_TEXT ? this._message.textValue : '';
     }
 
     private _awaitConfirmationId: number;
 
+    // AS3: .../messenger/ChatEntry.as::get awaitConfirmationId()
     get awaitConfirmationId(): number
     {
         return this._awaitConfirmationId;
@@ -82,6 +101,7 @@ export class ChatEntry
 
     private _messageId: string;
 
+    // AS3: .../messenger/ChatEntry.as::get messageId()
     get messageId(): string
     {
         return this._messageId;
@@ -89,72 +109,70 @@ export class ChatEntry
 
     private _senderId: number;
 
+    // AS3: .../messenger/ChatEntry.as::get senderId()
     get senderId(): number
     {
         return this._senderId;
     }
 
-    private _senderName: string;
+    private _senderName: string | null;
 
-    get senderName(): string
+    // AS3: .../messenger/ChatEntry.as::get senderName()
+    get senderName(): string | null
     {
         return this._senderName;
     }
 
-    private _senderFigure: string;
+    private _senderFigure: string | null;
 
-    get senderFigure(): string
+    // AS3: .../messenger/ChatEntry.as::get senderFigure()
+    get senderFigure(): string | null
     {
         return this._senderFigure;
     }
 
     /**
-	 * Computes the total seconds elapsed since the message was sent,
-	 * accounting for both the server-reported delay and local time elapsed.
-	 */
+     * The server's age for the message, plus however long it has sat in this client since.
+     */
+    // AS3: .../messenger/ChatEntry.as::get secondsSinceSent()
     get secondsSinceSent(): number
     {
         const localElapsed = Math.floor((performance.now() - this._clientReceiveTime) / 1000);
+
         return this._seconds + localElapsed;
     }
 
-    /**
-	 * Returns the estimated timestamp (in ms) when the message was sent.
-	 */
+    // AS3: .../messenger/ChatEntry.as::sentTimeStamp()
     sentTimeStamp(): number
     {
         return Date.now() - this.secondsSinceSent * 1000;
     }
 
     /**
-	 * Prepends a prefix string to the message with a newline separator.
-	 *
-	 * @param prefix - The prefix to prepend
-	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/messenger/ChatEntry.as::prefixMessageWith()
-    // AS3 only prefixes when message.type === 0 (plain text) - a room-invite or other structured
-    // message is left alone. Same simplified-message gap as `message`/`messageText` above; always
-    // prefixing is the current (undocumented-until-now) behavior.
+     * A habbicon has no text to prefix, so AS3 leaves it alone rather than turning it into
+     * a text message. Kept.
+     */
+    // AS3: .../messenger/ChatEntry.as::prefixMessageWith()
     prefixMessageWith(prefix: string): void
     {
-        this._message = prefix + '\n' + this._message;
+        if(this._message.type === ChatBubbleMessage.TYPE_TEXT)
+        {
+            this._message = ChatBubbleMessage.text(`${prefix}\n${this.messageText}`);
+        }
     }
 
-    /**
-	 * Returns whether this entry is still awaiting confirmation from the server.
-	 */
+    // AS3: .../messenger/ChatEntry.as::isAwaitingConfirmation()
     isAwaitingConfirmation(): boolean
     {
         return this._awaitConfirmationId !== 0;
     }
 
     /**
-	 * Marks this entry as confirmed by the server, updating the message and ID.
-	 *
-	 * @param message - The confirmed message text
-	 * @param messageId - The server-assigned message ID
-	 */
-    isConfirmed(message: string, messageId: string): void
+     * The server echoed the message back with its real id, so the optimistic copy stops
+     * awaiting confirmation and takes the server's text.
+     */
+    // AS3: .../messenger/ChatEntry.as::isConfirmed()
+    isConfirmed(message: ChatBubbleMessage, messageId: string): void
     {
         this._awaitConfirmationId = 0;
         this._message = message;

@@ -4,7 +4,14 @@ import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
+import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
+import {ChatBubbleMessage} from './ChatBubbleMessage';
+import {Logger} from '@core/utils/Logger';
+import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+
+const log = Logger.getLogger('habbo.window.widgets.IlluminaChatBubbleWidget');
 
 /**
  * Illumina chat bubble widget.
@@ -13,11 +20,12 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
  * and online status indicator. Supports flipped layout and message
  * confirmation tracking.
  *
- * In the AS3 version, uses complex IWindowContainer hierarchy with
- * IItemListWindow for messages. In the TypeScript port, chat bubble
- * data is stored for the UI layer.
+ * Each message is its own window in the `message_container` item list, cloned from one of
+ * two templates the layout ships: `message_template` for text, `habbicon_template` for a
+ * habbicon. The widget used to keep messages as a `string[]` and never clone anything, so
+ * nothing a conversation contained was ever drawn.
  *
- * @see sources/win63_version/habbo/window/widgets/IlluminaChatBubbleWidget.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as
  */
 export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 {
@@ -31,14 +39,42 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
     private static readonly PARAM_FLAG_147456: number = 147456;
     private static readonly PARAM_FLAG_1: number = 1;
 
-    private _messages: string[] = [];
+    // AS3: .../IlluminaChatBubbleWidget.as::_SafeStr_11129 (habbicon box side, in pixels)
+    private static readonly HABBICON_SIZE: number = 80;
+
+    /** **Name derived** from its use in refresh(); obfuscated in every tree. */
+    // AS3: .../IlluminaChatBubbleWidget.as::RESIZING_OFFSETS
+    private static readonly RESIZING_OFFSETS: number = 10;
+
+    /** The gap refresh() leaves between a text message and the bubble's edge. */
+    // AS3: .../IlluminaChatBubbleWidget.as::refresh()
+    private static readonly TEXT_WIDTH_INSET: number = 5;
+
+    /** `_offline.height` when the friend is offline; zero collapses the placeholder. */
+    // AS3: .../IlluminaChatBubbleWidget.as::set friendOnlineStatus()
+    private static readonly OFFLINE_PLACEHOLDER_HEIGHT: number = 16;
+
+    /** Re-entry guard for refresh(); resizing children fires WE_CHILD_RESIZED back at us. */
+    // AS3: .../IlluminaChatBubbleWidget.as::_SafeStr_6595
+    private _refreshing: boolean = false;
+
+    /** Last wrapper-width bucket refresh() re-widthed the message list for. */
+    // AS3: .../IlluminaChatBubbleWidget.as::_SafeStr_8931
+    private _lastWidthBucket: number = 0;
+
+    /** The avatar's parent - what refresh() moves from one side to the other. */
+    // AS3: .../IlluminaChatBubbleWidget.as::_SafeStr_6125
+    private _avatarHolder: IWindow | null = null;
+
+    private _messages: ChatBubbleMessage[] = [];
     private _confirmationIds: number[] = [];
     private _widgetWindow: IWidgetWindow | null = null;
     private _windowManager: IHabboWindowManager | null = null;
 
     private _root: IWindowContainer | null = null;
-    private _messageContainer: IWindow | null = null;
-    private _messageTemplate: IWindow | null = null;
+    private _messageContainer: IItemListWindow | null = null;
+    private _messageTemplate: ITextWindow | null = null;
+    private _habbiconTemplate: IWindowContainer | null = null;
     private _spacedMessageContainer: IWindow | null = null;
     private _userNameLabel: IWindow | null = null;
     private _userAvatarWidget: IWindow | null = null;
@@ -63,30 +99,44 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         {
             this._root = root;
 
-            this._messageContainer = root.findChildByName('message_container');
+            this._messageContainer = root.findChildByName('message_container') as IItemListWindow | null;
             this._spacedMessageContainer = root.findChildByName('spaced_message_container');
             this._userNameLabel = root.findChildByName('user_name');
             this._userAvatarWidget = root.findChildByName('user_avatar');
+
+            // The *parent* of the avatar, not the avatar: refresh() moves this whole holder
+            // from one side of the bubble to the other and measures the wrapper against its
+            // width. AS3 reads it as `_loc3_.parent` off the same lookup.
+            this._avatarHolder = this._userAvatarWidget?.parent as unknown as IWindow | null ?? null;
+
             this._bubbleWrapper = root.findChildByName('bubble_wrapper') as IWindowContainer | null;
             this._postTimeWidget = root.findChildByName('post_time');
             this._offlinePlaceholder = root.findChildByName('offline_placeholder');
             this._arrowPoint = root.findChildByName('arrow_point');
             this._messageRegion = root.findChildByName('message_region');
 
-            // Clone the first message item as template, then remove it
-            if(this._messageContainer)
+            // Both templates come out of the list by name and are taken out of it, so the
+            // bubble starts empty and every later message is a clone of one of them. Taking
+            // `getChildAt(0)` instead — as this did — picks whichever the XML happens to
+            // declare first and leaves the other in the list as a permanent stray item.
+            if(this._messageContainer !== null)
             {
-                const messageContainerAsContainer = this._messageContainer as IWindowContainer;
+                this._messageTemplate = this._messageContainer.getListItemByName('message_template') as ITextWindow | null;
 
-                if(messageContainerAsContainer.numChildren > 0)
+                if(this._messageTemplate !== null)
                 {
-                    const firstItem = messageContainerAsContainer.getChildAt(0);
+                    this._messageContainer.removeListItem(this._messageTemplate as unknown as IWindow);
+                }
+                else
+                {
+                    log.warn('illumina_chat_bubble_xml has no "message_template" list item - text messages cannot be built');
+                }
 
-                    if(firstItem)
-                    {
-                        this._messageTemplate = firstItem.clone();
-                        messageContainerAsContainer.removeChildAt(0);
-                    }
+                this._habbiconTemplate = this._messageContainer.getListItemByName('habbicon_template') as IWindowContainer | null;
+
+                if(this._habbiconTemplate !== null)
+                {
+                    this._messageContainer.removeListItem(this._habbiconTemplate as unknown as IWindow);
                 }
             }
 
@@ -178,11 +228,23 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         return this._friendOnline;
     }
 
+    /**
+     * AS3 keeps no flag: the setter *is* the placeholder's height, and a zero-height
+     * placeholder is what "online" looks like. Storing a boolean and never touching the
+     * window left the offline strip permanently collapsed.
+     */
+    // AS3: .../IlluminaChatBubbleWidget.as::set friendOnlineStatus()
     public set friendOnlineStatus(value: boolean)
     {
         this._friendOnline = value;
+
+        if(this._offlinePlaceholder !== null)
+        {
+            this._offlinePlaceholder.height = value ? 0 : IlluminaChatBubbleWidget.OFFLINE_PLACEHOLDER_HEIGHT;
+        }
     }
 
+    // AS3: .../IlluminaChatBubbleWidget.as::get numMessages()
     public get numMessages(): number
     {
         return this._messages.length;
@@ -196,7 +258,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
             new PropertyStruct(IlluminaChatBubbleWidget.FLIPPED_KEY, this._flipped),
             new PropertyStruct(IlluminaChatBubbleWidget.USER_NAME_KEY, this._userName),
             new PropertyStruct(IlluminaChatBubbleWidget.FIGURE_KEY, this._figure),
-            new PropertyStruct(IlluminaChatBubbleWidget.MESSAGE_KEY, this._messages.join('\t')),
+            new PropertyStruct(IlluminaChatBubbleWidget.MESSAGE_KEY, this.getSerializedMessages().join('\t')),
         ];
     }
 
@@ -216,17 +278,8 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
                     this.figure = String(prop.value);
                     break;
                 case IlluminaChatBubbleWidget.MESSAGE_KEY:
-                {
-                    const msgs = IlluminaChatBubbleWidget.getMessagesFromProperty(String(prop.value));
-                    this._messages = [];
-                    this._confirmationIds = [];
-
-                    for(const msg of msgs)
-                    {
-                        this.appendMessage(msg);
-                    }
+                    this.setMessages(IlluminaChatBubbleWidget.getMessagesFromProperty(String(prop.value)));
                     break;
-                }
             }
         }
     }
@@ -246,39 +299,329 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         return parts;
     }
 
-    public getMessage(index: number): string
+    /**
+     * Drops every message window and rebuilds the list from plain strings. Only the
+     * property round-trip uses this, which is why it re-enters with text messages: the
+     * serialized form carries no habbicons.
+     */
+    // AS3: .../IlluminaChatBubbleWidget.as::setMessages()
+    private setMessages(messages: string[]): void
     {
-        return this._messages[index] ?? '';
+        this._messageContainer?.destroyListItems();
+        this._messages = [];
+        this._confirmationIds = [];
+
+        for(const message of messages)
+        {
+            this.appendMessage(ChatBubbleMessage.text(message));
+        }
     }
 
-    public setMessage(index: number, text: string): void
+    // AS3: .../IlluminaChatBubbleWidget.as::getMessages()
+    public getMessages(): string[]
     {
-        while(index >= this._messages.length)
+        return this.getSerializedMessages();
+    }
+
+    /** A habbicon serializes as the empty string - the property carries text only. */
+    // AS3: .../IlluminaChatBubbleWidget.as::getSerializedMessages()
+    private getSerializedMessages(): string[]
+    {
+        const out: string[] = [];
+
+        for(let i = 0; i < this.numMessages; i++)
         {
-            this._messages.push('');
+            const message = this.getMessage(i);
+
+            out.push(message !== null && message.type === ChatBubbleMessage.TYPE_TEXT ? message.textValue : '');
+        }
+
+        return out;
+    }
+
+    /**
+     * Lays the bubble out: fixes the root's width, puts the avatar on the side `flipped`
+     * asks for, points the arrow at it, and re-widths every message.
+     *
+     * The re-width is gated on a coarse bucket of the wrapper width rather than the width
+     * itself, so dragging the frame a few pixels does not walk the whole message list on
+     * every resize event. `_refreshing` guards re-entry, because resizing the children
+     * fires WE_CHILD_RESIZED straight back at us.
+     */
+    // AS3: .../IlluminaChatBubbleWidget.as::refresh()
+    public refresh(): void
+    {
+        if(this._refreshing || this._disposed)
+        {
+            return;
+        }
+
+        const root = this._root;
+        const wrapper = this._bubbleWrapper;
+        const avatarHolder = this._avatarHolder;
+
+        if(root === null || wrapper === null || avatarHolder === null)
+        {
+            return;
+        }
+
+        this._refreshing = true;
+
+        const rootWindow = root as unknown as IWindow;
+        const wrapperWindow = wrapper as unknown as IWindow;
+
+        rootWindow.limits.minWidth = rootWindow.width;
+        rootWindow.limits.maxWidth = rootWindow.width;
+        rootWindow.height = wrapperWindow.y + wrapperWindow.height;
+        wrapperWindow.width = rootWindow.width - avatarHolder.width;
+
+        const bucket = Math.floor(wrapperWindow.width / IlluminaChatBubbleWidget.RESIZING_OFFSETS);
+
+        if(bucket !== this._lastWidthBucket && this._messageContainer !== null)
+        {
+            for(let i = 0; i < this._messageContainer.numListItems; i++)
+            {
+                const item = this._messageContainer.getListItemAt(i);
+
+                if(item === null)
+                {
+                    continue;
+                }
+
+                if((this._messages[i]?.type ?? ChatBubbleMessage.TYPE_TEXT) === ChatBubbleMessage.TYPE_TEXT)
+                {
+                    item.width = wrapperWindow.width - IlluminaChatBubbleWidget.TEXT_WIDTH_INSET;
+                }
+                else
+                {
+                    item.width = IlluminaChatBubbleWidget.HABBICON_SIZE;
+                    item.height = IlluminaChatBubbleWidget.HABBICON_SIZE;
+                }
+            }
+
+            this._lastWidthBucket = bucket;
+        }
+
+        if(this._messageContainer !== null)
+        {
+            (this._messageContainer as unknown as IWindow).width = wrapperWindow.width;
+        }
+
+        if(this._spacedMessageContainer !== null)
+        {
+            this._spacedMessageContainer.width = wrapperWindow.width;
+        }
+
+        if(this._flipped)
+        {
+            avatarHolder.x = rootWindow.width - avatarHolder.width;
+            wrapperWindow.x = 0;
+
+            if(this._arrowPoint !== null)
+            {
+                this._arrowPoint.x = avatarHolder.x;
+            }
+        }
+        else
+        {
+            avatarHolder.x = 0;
+            wrapperWindow.x = avatarHolder.x + avatarHolder.width;
+
+            if(this._arrowPoint !== null)
+            {
+                this._arrowPoint.x = avatarHolder.x + avatarHolder.width - this._arrowPoint.width;
+            }
+        }
+
+        // AS3 calls Rectangle.setEmpty(), which zeroes all four bounds - it releases the
+        // min/max pin taken at the top of this method so the next layout pass can resize the
+        // bubble again. IRectLimiter has no setEmpty(); assigning zeroes is the same state.
+        rootWindow.limits.assign(0, 0, 0, 0);
+        this._arrowPoint?.invalidate();
+
+        this._refreshing = false;
+    }
+
+    // AS3: .../IlluminaChatBubbleWidget.as::getMessage()
+    public getMessage(index: number): ChatBubbleMessage | null
+    {
+        return this._messages[index] ?? null;
+    }
+
+    /**
+     * Replacing a message with one of a different kind cannot reuse its window — a text
+     * window cannot draw a habbicon — so AS3 destroys the old item and builds a new one at
+     * the same index, and only edits in place when the kind is unchanged. The confirmation
+     * id is read before the swap and re-applied after, because rebuilding the window drops
+     * the pending-blend it was carrying.
+     */
+    // AS3: .../IlluminaChatBubbleWidget.as::setMessage()
+    public setMessage(index: number, message: ChatBubbleMessage | string): void
+    {
+        const normalized = IlluminaChatBubbleWidget.normalizeMessage(message);
+
+        while(index >= this.numMessages)
+        {
+            const filler = ChatBubbleMessage.text('');
+
+            this._messages.push(filler);
+            this._messageContainer?.addListItem(this.createMessageWindow(filler)!);
             this._confirmationIds.push(0);
         }
 
-        this._messages[index] = text;
+        const confirmationId = this._confirmationIds[index] ?? 0;
+        const previous = this._messages[index]!;
+
+        this._messages[index] = normalized;
+
+        if(previous.type !== normalized.type)
+        {
+            this._messageContainer?.removeListItemAt(index)?.dispose();
+
+            const rebuilt = this.createMessageWindow(normalized);
+
+            if(rebuilt !== null)
+            {
+                this._messageContainer?.addListItemAt(rebuilt, index);
+            }
+        }
+        else
+        {
+            this.updateMessageWindow(index, normalized);
+        }
+
+        this.setAwaitingConfirmationId(index, confirmationId);
     }
 
-    public appendMessage(text: string, prepend: boolean = false, confirmationId: number = 0): void
+    // AS3: .../IlluminaChatBubbleWidget.as::appendMessage()
+    public appendMessage(message: ChatBubbleMessage | string, prepend: boolean = false, confirmationId: number = 0): void
     {
+        const normalized = IlluminaChatBubbleWidget.normalizeMessage(message);
+        const window = this.createMessageWindow(normalized);
         let index: number;
 
         if(prepend)
         {
             index = 0;
-            this._messages.splice(0, 0, '');
-            this._confirmationIds.splice(0, 0, 0);
+            this._messages.splice(0, 0, normalized);
+            this._confirmationIds.splice(0, 0, confirmationId);
+
+            if(window !== null)
+            {
+                this._messageContainer?.addListItemAt(window, 0);
+            }
         }
         else
         {
-            index = this._messages.length;
+            index = this.numMessages;
+            this._messages.push(normalized);
+            this._confirmationIds.push(confirmationId);
+
+            if(window !== null)
+            {
+                this._messageContainer?.addListItem(window);
+            }
         }
 
-        this.setMessage(index, text);
         this.setAwaitingConfirmationId(index, confirmationId);
+    }
+
+    /**
+     * AS3 types the message parameters `*` and accepts a bare string, which the property
+     * round-trip below relies on. Kept, rather than tightened: `setMessages()` feeds it
+     * strings straight out of the serialized property.
+     */
+    // AS3: .../IlluminaChatBubbleWidget.as::normalizeMessage()
+    private static normalizeMessage(value: ChatBubbleMessage | string | null): ChatBubbleMessage
+    {
+        if(value instanceof ChatBubbleMessage)
+        {
+            return value;
+        }
+
+        return ChatBubbleMessage.text(value ?? '');
+    }
+
+    // AS3: .../IlluminaChatBubbleWidget.as::createMessageWindow()
+    private createMessageWindow(message: ChatBubbleMessage): IWindow | null
+    {
+        if(message.type === ChatBubbleMessage.TYPE_HABBICON)
+        {
+            return this.createHabbiconMessage(message);
+        }
+
+        const text = this._messageTemplate?.clone() as ITextWindow | null;
+
+        if(text === null || text === undefined)
+        {
+            return null;
+        }
+
+        text.caption = message.textValue;
+
+        return text as unknown as IWindow;
+    }
+
+    // AS3: .../IlluminaChatBubbleWidget.as::createHabbiconMessage()
+    private createHabbiconMessage(message: ChatBubbleMessage): IWindow | null
+    {
+        const window = this._habbiconTemplate?.clone() as IWindowContainer | null;
+
+        if(window === null || window === undefined)
+        {
+            return null;
+        }
+
+        (window as unknown as IWindow).visible = true;
+        (window as unknown as IWindow).width = IlluminaChatBubbleWidget.HABBICON_SIZE;
+        (window as unknown as IWindow).height = IlluminaChatBubbleWidget.HABBICON_SIZE;
+
+        this.renderHabbicon(window, message.habbiconId);
+
+        return window as unknown as IWindow;
+    }
+
+    // AS3: .../IlluminaChatBubbleWidget.as::updateMessageWindow()
+    private updateMessageWindow(index: number, message: ChatBubbleMessage): void
+    {
+        const item = this._messageContainer?.getListItemAt(index) ?? null;
+
+        if(item === null)
+        {
+            return;
+        }
+
+        if(message.type === ChatBubbleMessage.TYPE_HABBICON)
+        {
+            this.renderHabbicon(item as unknown as IWindowContainer, message.habbiconId);
+        }
+        else
+        {
+            item.caption = message.textValue;
+        }
+    }
+
+    /**
+     * Sizes the habbicon box and fills its bitmap.
+     */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::renderHabbicon()
+    // The bitmap comes from HabbiconAssetManager.getPreviewBitmap(id, false), mirrored
+    // horizontally when the habbicon's direction is HABBICON_DIRECTION_RIGHT, and the widget
+    // subscribes to "habbicon_assets_loaded" to redraw once the pack arrives. None of that
+    // exists yet: habbo/habbicons/assets/ (938 l.) and habbo/catalog/habbicons/ (5089 l.) are
+    // unported. The box is laid out at the right size and left empty until they are, so a
+    // habbicon message occupies its space instead of collapsing the bubble.
+    private renderHabbicon(window: IWindowContainer, habbiconId: number): void
+    {
+        const asWindow = window as unknown as IWindow;
+
+        asWindow.width = IlluminaChatBubbleWidget.HABBICON_SIZE;
+        asWindow.height = IlluminaChatBubbleWidget.HABBICON_SIZE;
+
+        // AS3 sets `disposesBitmap = true` here and assigns a BitmapData it just composed.
+        // This port's IStaticBitmapWrapperWindow owns its bitmap through `assetUri` and has
+        // no such flag, so there is nothing to hand over until the asset manager exists.
+        log.warn(`renderHabbicon: habbicon ${habbiconId} cannot be drawn - HabbiconAssetManager is not ported, so the message shows an empty 80x80 box`);
     }
 
     public setAwaitingConfirmationId(messageIndex: number, confirmationId: number): void
@@ -348,11 +691,36 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 	 * @param event - The window event
 	 * @param window - The source window
 	 */
-    private rootProcedure(_event: WindowEvent, _window: IWindow): void
+    /**
+     * Nothing called `refresh()` before, because there was nothing to lay out — the whole
+     * body was a comment saying the client handled it. Both resize events drive it in AS3,
+     * and the bubble does not size itself without them.
+     */
+    // AS3: .../IlluminaChatBubbleWidget.as::rootProcedure()
+    private rootProcedure(event: WindowEvent, window: IWindow): void
     {
-        if(this._disposed) return;
+        if(this._disposed)
+        {
+            return;
+        }
 
-        // Event handling for chat bubble interactions
-        // Most visual logic is handled by the client UI layer
+        switch(event.type)
+        {
+            case 'WE_RESIZED':
+            case 'WE_CHILD_RESIZED':
+                this.refresh();
+                break;
+
+            case 'WME_CLICK':
+                // Clicking the name opens that user's profile. Guarded on a positive id
+                // because a group conversation carries a negative one, and on the region's
+                // name because the whole bubble shares this procedure.
+                if(this._userId > 0 && window.name === 'user_name_region')
+                {
+                    this._windowManager?.communication?.connection?.send(new GetExtendedProfileMessageComposer(this._userId));
+                }
+
+                break;
+        }
     }
 }
