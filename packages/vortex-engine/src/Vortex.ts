@@ -413,6 +413,15 @@ export class Vortex implements IVortex
     }
 
     /**
+	 * Initialize the friend list window component (friends, requests, search).
+	 * Must be called AFTER window layouts are registered.
+	 */
+    initFriendList(): void
+    {
+        this._habboMain!.initFriendList();
+    }
+
+    /**
 	 * Connect to the Habbo server (manual).
 	 *
 	 * @see sources/win63_version/habbo/communication/demo/class_467.as::initWithSSO()

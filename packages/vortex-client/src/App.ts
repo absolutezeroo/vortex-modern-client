@@ -387,6 +387,10 @@ declare global
  * - stickie_*: StickieFurniWidget's blank note, close and delete buttons.
  * - icon_nft: InfoStandFurniView's NFT marker.
  * - thumb_up: ExtraInfoPromoItem in the catalog's bundle purchase display.
+ * - the friend list block: every bitmap HabboFriendList.getButtonImage() resolves, which is
+ *   every `*_png` field of `binaryData/HabboFriendListCom.as` — that file is the authority,
+ *   not a grep of call sites, because AS3 loads them from that component's own library.
+ *   Tab headers (hdr_*), the category arrows, the footer buttons and the row buttons.
  */
 const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
     'dimmer_slider_base',
@@ -396,6 +400,39 @@ const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
     'stickie_close',
     'stickie_remove',
     'thumb_up',
+
+    // HabboFriendListCom.as
+    'arrow_down_black',
+    'arrow_down_white',
+    'arrow_right_black',
+    'arrow_right_white',
+    'ask_for_friend',
+    'follow_friend',
+    'hdr_friend_requests',
+    'hdr_friends',
+    'hdr_hilite',
+    'hdr_search',
+    'minimail',
+    'offline',
+    'open_edit_ctgs',
+    'open_homepage',
+    'open_inbox',
+    'open_minimail',
+    'opened_to_web',
+    'popup_arrow_left',
+    'popup_arrow_right',
+    'remove_friend',
+    'room_invite',
+    'search',
+    'start_chat',
+
+    // HabboFriendBarCom.as — the icons the bar's slots read by exact name.
+    // `find_friends_icon` is declared in that component but was never extracted into
+    // src/assets/images/, so AddFriendsTab shows no icon; AS3 guards the lookup the same
+    // way, so this is a missing asset rather than a code gap.
+    'add_friends_icon',
+    'plus_friend_icon',
+    'find_friends_icon',
 ]);
 
 export class VortexApp 
@@ -555,6 +592,8 @@ export class VortexApp
         {
             vortex.habboCommunication.ssoTicket = ssoTicket;
         }
+
+        this.installConnectionActions(vortex);
 
         // 5. Create the canvas and set desktop sizes BEFORE creating windows.
         //
@@ -760,6 +799,42 @@ export class VortexApp
     /**
      * Everything that only makes sense once the client is authenticated and on screen.
      */
+    /**
+     * Gives the communication manager somewhere to report connection state.
+     *
+     * Nothing ever called `setConnectionActions()`, so `_connectionActions` stayed null
+     * and every state change — including the server going away — was logged and dropped.
+     * That is why the client sat there fully rendered after the emulator stopped.
+     *
+     * Only `setDisconnected()` does anything today, and it only fires on a peer-initiated
+     * close (see HabboCommunicationManager.connectionClosed): a frozen background tab
+     * must not log the player out.
+     *
+     * AS3 hands this to the login flow (`loginFlow.showDisconnected()`), but this port
+     * disposes its LoginFlow once boot is done — there is no live instance to show. A
+     * reload is the honest equivalent: it lands on the same login screen the client
+     * starts from, with no half-torn-down engine left behind.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::disconnected()
+     */
+    private installConnectionActions(vortex: typeof Vortex.instance): void
+    {
+        vortex.habboCommunication.setConnectionActions({
+            setConnecting: () => undefined,
+            setConnected: () => undefined,
+            setAuthenticated: () => undefined,
+            setError: () => undefined,
+            setLoginStep: () => undefined,
+            reset: () => undefined,
+            setDisconnected: () =>
+            {
+                log.warn('Server closed the connection - returning to the login screen');
+
+                window.location.reload();
+            }
+        });
+    }
+
     private async initClientUi(vortex: typeof Vortex.instance): Promise<void>
     {
         // Dev-only visual window debugger (Ctrl+Shift+D). Never bundled in
@@ -774,6 +849,11 @@ export class VortexApp
 
         // 8. Initialize the Friend Bar (landing view) — desktops are now sized
         vortex.initFriendBar();
+
+        // 8b. Initialize the friend list window component. Separate from the friend bar,
+        // and its own SWF in AS3 (HabboFriendListCom). Same ordering constraint: its views
+        // are built from registered layouts.
+        vortex.initFriendList();
 
         // 9. Activate the toolbar (hotel view by default)
         vortex.toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_HOTEL_VIEW);
