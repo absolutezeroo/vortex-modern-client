@@ -376,7 +376,7 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
             this.clearTimeout();
             this._connected = false;
-            this._callback?.connectionClosed?.();
+            this._callback?.connectionClosed?.(event.code, event.wasClean);
             this.emit('disconnected');
         };
 
