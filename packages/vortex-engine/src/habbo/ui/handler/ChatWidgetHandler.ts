@@ -201,30 +201,33 @@ export class ChatWidgetHandler implements IRoomWidgetHandler
             userName = userData.name;
         }
 
-        if(chatEvent.chatType === 5) 
+        // The four special chat types below only set their style here. Their text is built by
+        // localisation lookups that used to be flagged as an unported gap — they are not: the
+        // primary source has no ui/handler/ChatWidgetHandler.as at all, and this whole path is
+        // dead the moment freeFlowChat resolves (processEvent() returns early). The live
+        // implementation is ChatBubbleFactory.applySpecialChatContent(), which ports all of
+        // chatType 3-12 verbatim, including the three below.
+        //
+        // Duplicating those lookups into this legacy handler would mean maintaining a second
+        // copy of behaviour that no build after 2023 has, so it is deliberately not done. If
+        // RWE_CHAT_WIDGET is ever revived, take it from ChatBubbleFactory, not from here.
+        if(chatEvent.chatType === 5)
         {
-            // TODO(AS3): hand-item localization lookup (widget.chatbubble.handitem) not ported.
             styleId = 1;
         }
 
-        if(chatEvent.chatType === 10) 
+        if(chatEvent.chatType === 10)
         {
-            // TODO(AS3): mute-time localization lookup (widget.chatbubble.mutetime) not ported.
             styleId = 1;
         }
 
-        if(chatEvent.chatType === 7 || chatEvent.chatType === 8 || chatEvent.chatType === 9) 
+        if(chatEvent.chatType === 7 || chatEvent.chatType === 8 || chatEvent.chatType === 9)
         {
-            // TODO(AS3): pet-revive/fertilize localization lookup not ported.
             styleId = 1;
         }
 
-        if(chatEvent.chatType === 11) 
+        if(chatEvent.chatType === 11)
         {
-            // TODO(AS3): generic "translate raw text through localization" passthrough
-            // not ported yet. IHabboLocalizationManager.getLocalization()/registerParameter()/
-            // getLocalizationRaw() already exist (see ExtendedProfileWindowCtrl.ts for a live
-            // caller) - this is just not-yet-done, not blocked on missing infra.
             styleId = 1;
         }
 
