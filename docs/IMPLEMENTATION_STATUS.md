@@ -609,6 +609,48 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- ✅ **Dormant-TODO sweep: five clusters closed, five stale notes retracted**, 2026-07-31
+  (branch `feat/dormant-todo-waves`). Chosen by scanning all 522 `TODO`s in `src/` for work that
+  was blocked on something already present, rather than by module.
+  - **Nine notification message events woken up.** `NotificationMessageHandler` gated moderator
+    messages/cautions, bans, respects, HC gift claims, safety-lock (both directions) and
+    restore-client behind "TODO: uncomment when X is implemented". Eight of the nine event classes
+    already existed — under `incoming/notifications/`, not the `moderation/`/`users/`/`catalog/`
+    paths the dead imports named, which is why they read as missing; the ninth is
+    `UserObjectMessageEvent`. Not a straight uncomment: the commented bodies had drifted from
+    `_SafeCls_1951.as` (missing `useNotifications()`/`useNotificationFeed()` gates, an empty
+    `onRespectNotification`).
+  - **Eight composers ported** (`SetObjectData` 246, `SetRandomState` 1942, `UseWallItem` 3590,
+    `PlacePostIt` 1122, `PlaceBot` 2102, `RemoveBotFromFlat` 2743, `GetDailyTasks` 4100,
+    `SetChatPreferences` 1149), all resolved from `_SafeCls_2046.as` by tracing send sites in
+    `_SafeCls_1821.as`. Three of the TODOs naming them were wrong — `PlaceBot` was documented as
+    1295, which belongs to the user-move composer; `SetChatPreferences` was documented as a
+    boolean in the `isDisabledInPreferences` setter, which sends nothing in AS3. `UseWallItem` is
+    the one header the emulator disagrees with (it listens on 1540 and calls its own entry
+    "UNRESOLVED"); registry wins, note is on the composer. Wired up random-state furni, wall-item
+    use, ad-furni stuff-data save, bot place/pickup, and the daily-tasks request at login.
+  - **`BadgeImageManager` ported** — `SessionDataManager`'s five badge accessors all returned
+    `null`, so no badge rendered anywhere in the client. Also fixed the four `*AssetName`
+    accessors, which were not stubs but inventions (`<badge>_b`, `group_badge_<badge>`) naming
+    assets nothing ever registered. Caches through a `Map` rather than the AssetLibrary, because
+    `BitmapDataAsset.content` is a PixiJS `Texture` while the whole badge API is typed
+    `HTMLImageElement`; documented on the class.
+  - **`restrict` now filters typing.** `TextController` parsed, stored and cloned the mask without
+    ever applying it, and `ITextFieldWindow` did not expose it. Flash's semantics ported and
+    validated against ten cases; masks live on the wired number/text/textarea inputs and the paged
+    table's page box.
+  - **The ten flagged `HabboMessages` headers audited.** Two describe live gaps; five were stale or
+    misread (see the commit). The one that matters: 996 `Users` is missing AS3's `badgesRank` read,
+    and it stays missing on purpose — `vortex-emulator`'s `RoomAvatarSerializer` stops at
+    `IsModerator` too, so reading it client-side alone would desync every later user in the packet.
+    Needs both repos changed together.
+  - Two smaller fixes found while reading around the above: `changeRoomObjectState()` was missing
+    the `!activeRoomHasFreeFurniMovementsMode` half of its play-test guard, and
+    `UsersMessageParser`'s `userType==3` branch set `webID = -roomIndex` instead of the id it read.
+  - Retracted rather than implemented: four `ChatWidgetHandler` localisation TODOs. The behaviour
+    is already ported in `ChatBubbleFactory.applySpecialChatContent()`, and that handler is dead
+    once `freeFlowChat` resolves — the primary tree has no `ui/handler/ChatWidgetHandler.as` at all.
+
 - ✅ **`HabboActivityPointNotificationMessageEvent` (2046) ported and wired to its three AS3 subscribers**, 2026-07-30.
   - The single-currency counterpart of `ActivityPointsMessageEvent` (509, whole wallet) was missing
     from the client entirely, while `vortex-emulator` already sends it from `PlayerWalletModule`
