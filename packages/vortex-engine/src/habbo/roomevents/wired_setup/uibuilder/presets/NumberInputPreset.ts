@@ -72,9 +72,16 @@ export class NumberInputPreset extends WiredUIPreset
             this._input.width = param.width + this._widthDelta;
         }
 
-        // TODO(AS3): AS3 sets `_field.restrict` to a digit/sign/decimal/hex character mask. The port's
-        // ITextFieldWindow has no `restrict`, so the mask is not applied — onTextChange still validates
-        // and reverts invalid input, so the field stays numeric.
+        // The mask is assembled per-parameter, exactly as AS3 does: digits always, a minus sign
+        // only when the range goes negative, the two decimal separators only when a precision is
+        // asked for, and the hex/binary letters only for non-decimal notations. `\\-` in the AS3
+        // literal is an escaped minus, not a range.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/presets/NumberInputPreset.as::NumberInputPreset()
+        this._field.restrict = '0123456789'
+            + (param.min < 0 ? '\\-' : '')
+            + (param.precision > 0 ? ',.' : '')
+            + (param.nonDecimalNotations ? 'xba-fA-F' : '');
+
         this._endsWithFive = param.endsWithFive;
         this._min = this._endsWithFive ? param.min * 5 : param.min;
         this._max = this._endsWithFive ? param.max * 5 : param.max;

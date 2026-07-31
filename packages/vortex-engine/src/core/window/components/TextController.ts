@@ -74,6 +74,13 @@ export class TextController extends WindowController implements ITextWindow
     protected _kerning: boolean = false;
     protected _restrict: string = '';
 
+    // TS-only: parsed form of `_restrict`, rebuilt whenever the raw mask changes. Flash parsed
+    // the mask inside the player; here it has to be done by hand, so the result is cached rather
+    // than recomputed per keystroke.
+    private _restrictSource: string | null = null;
+    private _restrictAllow: Array<[number, number]> = [];
+    private _restrictDeny: Array<[number, number]> = [];
+
     protected _etchingColor: number = 0;
     protected _etchingPosition: string = 'bottom';
 
@@ -960,9 +967,141 @@ export class TextController extends WindowController implements ITextWindow
         super.dispose();
     }
 
+    // AS3: sources/win63_version/core/window/components/TextController.as::get restrict()
+    get restrict(): string
+    {
+        return this._restrict;
+    }
+
+    // AS3: sources/win63_version/core/window/components/TextController.as::set restrict()
+    set restrict(value: string)
+    {
+        this._restrict = value;
+    }
+
     protected limitStringLength(value: string): string
     {
         return this._maxChars > 0 ? value.substring(0, this._maxChars) : value;
+    }
+
+    /**
+	 * Drops every character the `restrict` mask disallows.
+	 *
+	 * AS3 assigns the mask straight to `flash.text.TextField.restrict` and the player does the
+	 * filtering, so there is no algorithm in the source to copy — what is ported here is the
+	 * documented semantics of that property:
+	 *
+	 * - characters listed before any `^` are the only ones accepted;
+	 * - characters after a `^` are removed from whatever is accepted so far, and a mask that
+	 *   *starts* with `^` therefore means "everything except";
+	 * - `a-z` is an inclusive range, and a `-` that cannot form one is a literal;
+	 * - `\` escapes the next character, so `\-`, `\^` and `\\` are literals;
+	 * - the mask applies to typing only, never to text assigned in code.
+	 *
+	 * One deliberate difference: Flash distinguishes `restrict = null` (no restriction) from
+	 * `restrict = ""` (reject everything). This port has always typed the field as a plain
+	 * `string` defaulting to `''`, and every layout leaves it unset, so `''` has to keep meaning
+	 * "no restriction" — treating it as Flash's empty mask would silently make every text field
+	 * in the client read-only.
+	 */
+    // AS3: sources/win63_version/core/window/components/TextController.as::setRestrict()
+    protected applyRestrict(value: string): string
+    {
+        if(this._restrict === '') return value;
+
+        this.parseRestrict();
+
+        let result = '';
+
+        for(const char of value)
+        {
+            if(this.isCharRestrictAllowed(char.charCodeAt(0))) result += char;
+        }
+
+        return result;
+    }
+
+    // TS-only: builds the cached range lists behind applyRestrict().
+    private parseRestrict(): void
+    {
+        if(this._restrictSource === this._restrict) return;
+
+        this._restrictSource = this._restrict;
+        this._restrictAllow = [];
+        this._restrictDeny = [];
+
+        const mask = this._restrict;
+
+        // `^` flips which list subsequent characters land in, and can appear more than once.
+        let target = this._restrictAllow;
+        let index = 0;
+
+        const readChar = (): number | null =>
+        {
+            if(index >= mask.length) return null;
+
+            const char = mask[index];
+
+            if(char === '\\')
+            {
+                index++;
+
+                return index < mask.length ? mask.charCodeAt(index++) : null;
+            }
+
+            index++;
+
+            return char.charCodeAt(0);
+        };
+
+        while(index < mask.length)
+        {
+            if(mask[index] === '^')
+            {
+                target = target === this._restrictAllow ? this._restrictDeny : this._restrictAllow;
+                index++;
+                continue;
+            }
+
+            const start = readChar();
+
+            if(start === null) break;
+
+            // A `-` only opens a range when there is something on both sides of it; trailing or
+            // escaped ones are literals.
+            if(mask[index] === '-' && index + 1 < mask.length && mask[index + 1] !== '^')
+            {
+                index++;
+
+                const end = readChar();
+
+                if(end === null)
+                {
+                    target.push([start, start]);
+                    target.push([0x2D, 0x2D]);
+                    break;
+                }
+
+                target.push([start, end]);
+            }
+            else
+            {
+                target.push([start, start]);
+            }
+        }
+    }
+
+    // TS-only: range lookup for applyRestrict().
+    private isCharRestrictAllowed(code: number): boolean
+    {
+        const inRanges = (ranges: Array<[number, number]>): boolean =>
+            ranges.some(([start, end]) => code >= start && code <= end);
+
+        // No allow list at all means the mask was purely subtractive ("^abc"): everything passes
+        // except what the deny list names.
+        const allowed = this._restrictAllow.length === 0 || inRanges(this._restrictAllow);
+
+        return allowed && !inRanges(this._restrictDeny);
     }
 
     protected refreshTextImage(fromResize: boolean = false): void

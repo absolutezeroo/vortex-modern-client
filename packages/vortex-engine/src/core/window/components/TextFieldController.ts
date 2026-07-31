@@ -811,6 +811,22 @@ export class TextFieldController extends TextController implements ITextFieldWin
     {
         if(!this._inputElement) return;
 
+        // The `restrict` mask filters typing, so it belongs here and not on any of the paths
+        // that assign text in code. Rejected characters are spliced back out of the DOM value,
+        // which moves the caret to the end — so it is put back where it was, minus however many
+        // characters were dropped before it.
+        const raw = this._inputElement.value;
+        const filtered = this.applyRestrict(raw);
+
+        if(filtered !== raw)
+        {
+            const caret = this._inputElement.selectionStart ?? filtered.length;
+            const dropped = raw.length - filtered.length;
+
+            this._inputElement.value = filtered;
+            this._inputElement.setSelectionRange(Math.max(0, caret - dropped), Math.max(0, caret - dropped));
+        }
+
         this._text = this._inputElement.value;
         this._caption = this._text;
         this._context.invalidate(this, null, 1);

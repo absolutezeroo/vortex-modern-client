@@ -71,8 +71,11 @@ export class TextInputPreset extends WiredUIPreset
 
         this._field.editable = param.editable;
 
-        // TODO(AS3): AS3 sets `_field.restrict = param.restrict` (input character mask). The port's
-        // ITextFieldWindow/TextFieldController has no `restrict`, so the mask is not applied.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/presets/TextInputPreset.as::TextInputPreset()
+        // `param.restrict` is nullable, and a null mask means "no restriction" in Flash —
+        // which is what the empty string encodes here (see TextController.applyRestrict()).
+        this._field.restrict = param.restrict ?? '';
+
         if(param.tooltip != null)
         {
             this._field.toolTipCaption = param.tooltip;

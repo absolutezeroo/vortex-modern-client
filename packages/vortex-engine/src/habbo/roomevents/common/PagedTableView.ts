@@ -24,8 +24,7 @@ import {Util} from '../Util';
  * Port notes: AS3 builds from an XmlAsset (assets.getAssetByName); the port takes a layout name and
  * builds through windowManager.buildWidgetLayout (the central widget-layout registry). flash Timer →
  * LoadingIcon's setInterval. IFrameWindow.center() has no port counterpart, so the window is centered
- * manually on the desktop. ITextFieldWindow has no `restrict`, so the page-input digit mask is a
- * TODO(AS3) (the numeric parse still clamps the value).
+ * manually on the desktop.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/common/PagedTableView.as
  */
@@ -72,8 +71,8 @@ export class PagedTableView
         this._localization = localization;
         this._window = windowManager.buildWidgetLayout(layoutName) as unknown as IWindowContainer;
         this._loadingIcon = new LoadingIcon();
-        // TODO(AS3): AS3 sets pageNumberInput.restrict = "0-9" (digit-only input mask); the port's
-        // ITextFieldWindow has no `restrict`. navigateToInputPage() still clamps the parsed value.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/common/PagedTableView.as::PagedTableView()
+        this.pageNumberInput.restrict = '0-9';
         this.createTable();
         this.firstPageButton.addEventListener('WME_CLICK', this._onFirstPageClick);
         this.previousPageButton.addEventListener('WME_CLICK', this._onPreviousPageClick);

@@ -19,6 +19,13 @@ export interface ITextFieldWindow extends ITextWindow, IInteractiveWindow, IFocu
     readonly selectionEndIndex: number;
     displayRaw: boolean;
 
+    /**
+	 * Character mask applied to typing. See TextController.applyRestrict() for the supported
+	 * syntax and for the one place this port differs from Flash (the empty string).
+	 */
+    // AS3: sources/win63_version/core/window/components/ITextFieldWindow.as::get restrict()
+    restrict: string;
+
     setSelection(beginIndex: number, endIndex: number): void;
 
     requestChangeEvent(): void;
