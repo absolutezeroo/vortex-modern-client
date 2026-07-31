@@ -163,28 +163,39 @@ export interface ISessionDataManager extends IDisposable
     // Safety
     isAccountSafetyLocked(): boolean;
 
-    // Badge images
+    // Badge images — every one of these delegates straight to BadgeImageManager in AS3.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getBadgeImage()
     getBadgeImage(badge: string): HTMLImageElement | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getBadgeSmallImage()
     getBadgeSmallImage(badge: string): HTMLImageElement | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getBadgeImageAssetName()
     getBadgeImageAssetName(badge: string): string | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getBadgeImageSmallAssetName()
     getBadgeImageSmallAssetName(badge: string): string | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::requestBadgeImage()
     requestBadgeImage(badge: string): HTMLImageElement | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getBadgeImageWithInfo()
     getBadgeImageWithInfo(badge: string): BadgeInfo;
 
     // Group badge images
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getGroupBadgeId()
     getGroupBadgeId(groupId: number): string;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getGroupBadgeImage()
     getGroupBadgeImage(badge: string): HTMLImageElement | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getGroupBadgeSmallImage()
     getGroupBadgeSmallImage(badge: string): HTMLImageElement | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getGroupBadgeAssetName()
     getGroupBadgeAssetName(badge: string): string | null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/ISessionDataManager.as::getGroupBadgeSmallAssetName()
     getGroupBadgeSmallAssetName(badge: string): string | null;
 
     // Furniture data
