@@ -105,7 +105,10 @@ export class UsersMessageParser implements IMessageParser
 
                 case 3: // Old bot
                     userData.userType = RoomUserData.USER_TYPE_OLD_BOT;
-                    userData.webID = -roomIndex;
+                    // AS3 assigns the id it read at the top of the loop, like every other branch;
+                    // `-roomIndex` was invented here. Nothing observable changes — the emulator
+                    // never emits a type-3 avatar — but the two ids are not interchangeable.
+                    userData.webID = webId;
                     userData.figure = figure.includes('/') ? 'hr-100-.hd-180-1.ch-876-66.lg-270-94.sh-300-64' : figure;
                     userData.sex = 'M';
                     break;

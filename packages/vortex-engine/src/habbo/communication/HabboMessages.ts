@@ -1126,11 +1126,11 @@ export class HabboMessages implements IMessageConfiguration
         // onFurniListInvalidate (_SafeCls_2440), which has moved here from 3790 - see
         // the INVENTORY - FURNI section above.
         this._events.set(412, YouAreNotSpectatorMessageEvent);
-        // TODO(AS3): header 2942 confirmed correct (_SafeCls_3587, onConfigurationItemStates,
-        // com/sulake/habbo/room/_SafeCls_1984.as:288, parser _SafeCls_3235). Shape gap confirmed:
-        // the real parser conditionally reads 3 more booleans after isHanditemControlBlocked -
-        // chooserDisabled, freeFurniMovementsEnabled, invisibleFurni (each only if bytesAvailable) -
-        // that this TS parser does not read at all.
+        // Header 2942 (_SafeCls_3587, onConfigurationItemStates, parser _SafeCls_3235). The shape
+        // gap this used to flag is closed: HanditemConfigurationMessageEventParser now reads
+        // chooserDisabled / freeFurniMovementsEnabled / invisibleFurni, each behind its own
+        // bytes-available guard exactly as AS3 does. The emulator writes only the first boolean,
+        // which the guards already tolerate.
         this._events.set(2942, HanditemConfigurationMessageEvent);
         this._events.set(3339, RoomForwardMessageEvent);
         this._events.set(1052, GamePlayerValueMessageEvent);
@@ -1171,8 +1171,14 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3643, ObjectRemoveConfirmMessageEvent);
         this._events.set(2458, BCPlacementWarningMessageEvent);
         this._events.set(536, SpecialRoomEffectMessageEvent);
-        // TODO(AS3): header verified against sources/WIN63-202607011411-782849652 (_SafeCls_2131), but
-        // the new parser reads one more Integer than the TS parser - re-verify field order.
+        // Header verified (_SafeCls_2131 -> parser _SafeCls_2309). The extra Integer is now
+        // identified: AS3 reads `badgesRank` after `isModerator` on the userType==1 branch, and
+        // this port does not.
+        //
+        // It is deliberately still not read. vortex-emulator's RoomAvatarSerializer ends its
+        // player block at IsModerator too, so client and server agree today; adding the read to
+        // match AS3 alone would consume four bytes that are not on the wire and desync every
+        // remaining user in the packet. Fixing it means changing both sides together.
         this._events.set(996, UsersMessageEvent);
         this._events.set(2613, UserUpdateMessageEvent);
         this._events.set(3693, UserRemoveMessageEvent);
@@ -1647,9 +1653,11 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(2022, InitDiffieHandshakeMessageComposer);
         this._composers.set(2526, CompleteDiffieHandshakeMessageComposer);
         this._composers.set(3584, VersionCheckMessageComposer);
-        // TODO(AS3): header fixed to match sources/WIN63-202607011411-782849652 (_SafeCls_2052 via
-        // demo sendConnectionParameters()), but field shape may also need re-verification - the
-        // AS3 composer takes only the ticket string, the TS one has an extra second param.
+        // Header from _SafeCls_2052 (via sendConnectionParameters()). The shape warning that used
+        // to sit here was wrong: AS3's constructor takes only the ticket, but its body pushes
+        // *two* values — the ticket then getTimer() — so the wire really does carry both. The TS
+        // composer takes the timer as an optional second parameter defaulting to the same call,
+        // which produces an identical payload.
         this._composers.set(882, SSOTicketMessageComposer);
         this._composers.set(2309, UniqueIDMessageComposer);
 
@@ -1886,12 +1894,15 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(727, GetMessengerHistoryComposer);
         this._composers.set(886, FollowFriendMessageComposer);
         this._composers.set(3278, MessengerInitMessageComposer);
-        // TODO(AS3): header fixed to match sources/WIN63-202607011411-782849652 (_SafeCls_3920), but
-        // field shape may also need re-verification - the AS3 composer is built via
-        // addAcceptedRequest() mutation, not a request-id array constructor arg.
+        // Both headers verified (_SafeCls_3920 / _SafeCls_3339), and both shapes re-checked: AS3
+        // builds the id list by mutation (addAcceptedRequest/addDeclinedRequest) where the TS
+        // composers take varargs, but getMessageArray() emits the same payload either way —
+        // [count, ...ids] for accept, [declineAll, count, ...ids] for decline.
+        //
+        // One edge case survives: AS3 derives declineAll from an empty id list, so
+        // `new DeclineFriendMessageComposer(false)` with no ids sends [false, 0] where the real
+        // client would send [true, 0]. No caller does that today.
         this._composers.set(1772, AcceptFriendMessageComposer);
-        // TODO(AS3): header fixed to match sources/WIN63-202607011411-782849652 (_SafeCls_3339), but
-        // field shape may also need re-verification - same mutation-style building as accept.
         this._composers.set(2778, DeclineFriendMessageComposer);
         this._composers.set(546, FindNewFriendsMessageComposer);
         this._composers.set(3679, FriendListUpdateMessageComposer);
@@ -1995,13 +2006,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3148, GetBotInventoryComposer);
         this._composers.set(3022, AvatarEffectActivatedComposer);
         this._composers.set(2362, AvatarEffectSelectedComposer);
-        // TODO(AS3): header 699 is correct (sources/WIN63-202607011411-782849652
-        // unknowns/_SafePkg_3364/_SafeCls_3363.as, real construction confirmed at
-        // com/sulake/habbo/inventory/UnseenItemTracker.as:209), but the real
-        // getMessageArray() sends only [category] - the TS composer's
-        // (category, ...itemIds) shape sends extra fields the server never
-        // receives from the real client. Low urgency: its only caller is
-        // currently commented out in UnseenItemTracker.ts.
+        // Header 699 (_SafeCls_3363, constructed at UnseenItemTracker.as:209). The extra-fields
+        // warning that used to sit here is closed — ResetUnseenItemsComposer now sends [category]
+        // and nothing else, matching AS3.
         this._composers.set(699, ResetUnseenItemsComposer);
         this._composers.set(3771, ResetUnseenItemIdsComposer);
         this._composers.set(3258, RequestABadgeComposer);
