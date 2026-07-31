@@ -193,7 +193,7 @@ import {IgnoredUsersManager} from './IgnoredUsersManager';
 import {BlockedUsersManager} from './BlockedUsersManager';
 import {HabboGroupInfoManager} from './HabboGroupInfoManager';
 
-const log = Logger.getLogger('Session');
+const log = Logger.getLogger('habbo.session.SessionDataManager');
 
 /**
  * Session data manager
@@ -1309,7 +1309,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this._messageEvents = [];
 
-        log.info('SessionDataManager disposed');
+        log.debug('SessionDataManager disposed');
 
         super.dispose();
     }
@@ -1354,7 +1354,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this.registerMessageEvents();
 
-        log.info('SessionDataManager initialized');
+        log.debug('SessionDataManager initialized');
     }
 
     /**
@@ -1387,7 +1387,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         {
             let url = this.getProperty('furnidata.load.url');
 
-            log.info(`Loading furnidata from: ${url}`);
+            log.debug(`Loading furnidata from: ${url}`);
 
             if(this._newFurniDataHash)
             {
@@ -1602,7 +1602,7 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._nameChangeAllowed = parser.nameChangeAllowed;
         this._accountSafetyLocked = parser.accountSafetyLocked;
 
-        // log.success(`User loaded: ${this._userName} (ID: ${this._userId})`);
+        // log.info(`User loaded: ${this._userName} (ID: ${this._userId})`);
     }
 
     private onUserRights(event: IMessageEvent): void

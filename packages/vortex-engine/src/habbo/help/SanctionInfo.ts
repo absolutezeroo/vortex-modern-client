@@ -1,6 +1,6 @@
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('SanctionInfo');
+const log = Logger.getLogger('habbo.help.SanctionInfo');
 
 /**
  * Sanction information display handler
@@ -47,7 +47,7 @@ export class SanctionInfo
         _tradeLockExpiryTime: string
     ): void
     {
-        log.debug('Sanction status received -',
+        log.trace('Sanction status received -',
             'name:', sanctionName,
             'reason:', sanctionReason,
             'hours:', sanctionLengthHours,

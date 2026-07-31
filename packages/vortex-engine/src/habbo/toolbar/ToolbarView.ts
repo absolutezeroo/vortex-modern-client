@@ -3,7 +3,7 @@ import type {MeMenuController} from './memenu/MeMenuController';
 import {HabboToolbarIconEnum} from './HabboToolbarIconEnum';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ToolbarView');
+const log = Logger.getLogger('habbo.toolbar.ToolbarView');
 
 /**
  * Main toolbar view that manages the vertical icon bar layout
@@ -179,7 +179,7 @@ export class ToolbarView
 
         if(!iconName)
         {
-            log.warn(`[Toolbar] Unknown icon type for unseen item counter for iconId: ${iconId}`);
+            log.warn(`Unknown icon type for unseen item counter for iconId: ${iconId}`);
             return;
         }
 

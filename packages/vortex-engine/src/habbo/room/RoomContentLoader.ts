@@ -30,7 +30,7 @@ import {getVisualizationType} from './object/RoomObjectUserTypes';
 import {PetColorResult} from './PetColorResult';
 import {Logger} from '@core';
 
-const log = Logger.getLogger('RoomContentLoader');
+const log = Logger.getLogger('habbo.room.RoomContentLoader');
 
 /**
  * RoomContentLoader states.
@@ -1416,7 +1416,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
             }
         }
 
-        log.warn(`[RoomContentLoader] Failed to load content asset ${type}: ${failedUrl}`);
+        log.warn(`Failed to load content asset ${type}: ${failedUrl}`);
     }
 
     /**

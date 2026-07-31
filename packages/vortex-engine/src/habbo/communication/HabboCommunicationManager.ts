@@ -21,7 +21,7 @@ import {HabboWebApiSession} from './HabboWebApiSession';
 import {IID_CoreCommunicationManager} from "@iid/IIDCoreCommunicationManager";
 import {ErrorReportStorage} from '@core/utils/ErrorReportStorage';
 
-const log = Logger.getLogger('Communication');
+const log = Logger.getLogger('habbo.communication.HabboCommunicationManager');
 
 export interface IHabboConnectionConfig
 {
@@ -387,14 +387,38 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
     connectionOpened(): void
     {
-        log.success('Connected to server');
+        log.info('Connected to server');
 
         this._connectionActions?.setConnected();
     }
 
-    connectionClosed(): void
+    /**
+	 * Only a *clean* close means the session is over.
+	 *
+	 * 1000/1001 is the peer closing deliberately — the server stopped, or went into
+	 * maintenance. 1006 is no close frame at all: the transport died under us, which is
+	 * what a tab Chrome froze in the background looks like, and what a flaky route looks
+	 * like. Logging the player out on that would undo the background-tab work (see
+	 * SocketConnection's own note on the close code) and throw them back to the login
+	 * screen every time they came back to the tab.
+	 *
+	 * AS3 has no equivalent decision because Flash sockets do not have close codes: it
+	 * reacts to the server's own disconnect *message* instead
+	 * (`_SafeCls_98.disconnected()` → `loginFlow.showDisconnected()`), which only exists
+	 * when the server had a chance to send it.
+	 */
+    connectionClosed(code?: number, wasClean?: boolean): void
     {
-        log.info('Connection closed');
+        const closedByPeer = code === 1000 || code === 1001;
+
+        log.info(`Connection closed (code=${code ?? 'n/a'}, clean=${wasClean ?? 'n/a'})`);
+
+        if(!closedByPeer)
+        {
+            log.debug('Close was not peer-initiated; keeping the session alive');
+
+            return;
+        }
 
         this._connectionActions?.setDisconnected();
     }
@@ -493,7 +517,7 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
             if(this._connectionAttempt > this._maxConnectionAttempts)
             {
-                log.failure('Failed to connect after all attempts');
+                log.error('Failed to connect after all attempts');
 
                 return;
             }

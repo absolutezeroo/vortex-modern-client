@@ -169,7 +169,10 @@ export interface IRoomEngine extends IDisposable {
         category: number,
         type: number,
         extra: string,
-        stuffData?: unknown
+        stuffData?: unknown,
+        state?: number,
+        animFrame?: number,
+        posture?: string | null
     ): boolean;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()
@@ -272,6 +275,20 @@ export interface IRoomEngine extends IDisposable {
     // AS3: sources/win63_version/habbo/room/class_34.as::modifyRoomObjectDataWithMap()
     modifyRoomObjectDataWithMap(objectId: number, category: number, action: string, data: Map<string, string>): boolean;
 
+    /**
+     * Wall items only (category 20) — anything else returns false without touching the wire.
+     * Backs the sticky note's save path.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::modifyRoomObjectData()
+    modifyRoomObjectData(objectId: number, category: number, colorHex: string, text: string): boolean;
+
+    /**
+     * Wall items only (category 20), same as modifyRoomObjectData(). Backs the sticky note's
+     * delete path.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::deleteRoomObject()
+    deleteRoomObject(objectId: number, category: number): boolean;
+
     // User updates
     updateRoomObjectUser(
         roomId: number,
@@ -344,6 +361,19 @@ export interface IRoomEngine extends IDisposable {
      * Modifies the dimensions of an existing room canvas.
      */
     modifyRoomCanvas(roomId: number, canvasId: number, width: number, height: number): boolean;
+
+    /**
+     * Releases a rendering canvas: detaches its container from whatever holds it
+     * and frees the renderer's resources.
+     *
+     * TS-only — AS3's IRoomEngine has no counterpart because Flash's display list
+     * did this for free: a preview canvas was a DisplayObject child of the widget's
+     * own window, so disposing the window took the canvas with it. Here
+     * `createRoomCanvas()` parents it onto the shared root PixiJS stage instead
+     * (see RoomEngine.createRoomCanvas), where nothing owns it — so every owner of
+     * a canvas has to hand it back explicitly.
+     */
+    disposeRenderingCanvas(roomId: number, canvasId?: number): void;
 
     /**
      * AS3: sources/win63_version/habbo/room/IRoomEngine.as::setRoomCanvasMask()

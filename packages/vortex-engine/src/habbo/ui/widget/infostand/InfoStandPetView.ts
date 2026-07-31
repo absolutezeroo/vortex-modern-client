@@ -8,14 +8,8 @@
  * button strip. Structure follows InfoStandFurniView, the sibling that already works against the
  * same `info_border` / `infostand_element_list` / `button_list` layout shape.
  *
- * TODO(AS3): PetCommandTool is not ported (only its CommandConfiguration is), so the training tool
- * is stubbed at four call sites — openTrainView(), closeTrainView(), updateEnabledTrainingCommands()
- * and update()'s "refresh the open command tool" tail. Each is marked below. Everything else in the
- * AS3 is ported. The `train` button still shows for an own pet, matching AS3; clicking it currently
- * only logs.
- *
  * AS3 caches the last InfoStandPetData per pet id purely to feed PetCommandTool on a later
- * openTrainView(); that cache is kept (_petDataCache) so the deferred tool has its data waiting.
+ * openTrainView(); that cache is kept (_petDataCache) and is what openTrainView() reads.
  */
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -28,15 +22,13 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IRarityItemPreviewOverlayWidget} from '@habbo/window/widgets/IRarityItemPreviewOverlayWidget';
 import type {CountdownWidget} from '@habbo/window/widgets/CountdownWidget';
-import {Logger} from '@core/utils/Logger';
 import {RoomWidgetFurniActionMessage} from '../messages/RoomWidgetFurniActionMessage';
 import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
 import {SecondsFormatter} from './SecondsFormatter';
 import type {CommandConfiguration} from './CommandConfiguration';
+import {PetCommandTool} from './PetCommandTool';
 import type {InfoStandPetData} from './InfoStandPetData';
 import type {InfoStandWidget} from './InfoStandWidget';
-
-const log = Logger.getLogger('InfoStandPetView');
 
 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::STATUS_BAR_WIDTH
 const STATUS_BAR_WIDTH = 162;
@@ -87,6 +79,10 @@ export class InfoStandPetView
     private _buttonsContainer: IWindowContainer | null = null;
     private _currentPetId: number = 0;
     private _petDataCache: Map<number, InfoStandPetData> | null = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::_petCommandTool
+    // Built lazily on the first openTrainView(), exactly as AS3 does.
+    private _commandTool: PetCommandTool | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::InfoStandPetView()
     // AS3 also grabs HabboTracking.getInstance() for the buy-food click; this port reads tracking
@@ -193,9 +189,9 @@ export class InfoStandPetView
         this._petDataCache?.delete(petData.id);
         this._petDataCache?.set(petData.id, petData);
 
-        // TODO(AS3): AS3 refreshes an already-open PetCommandTool here via showCommandToolForPet(
-        // id, name, image, type, level - lowerTreshold, experience / experienceMax,
-        // upperTreshold - lowerTreshold, skillTresholds). Deferred with the tool.
+        // AS3 refreshes an already-open PetCommandTool with the same arguments openTrainView()
+        // passes, so a re-selected pet's skill bar follows its new data.
+        this.showCommandToolForPetData(petData);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::updateImage()
@@ -206,28 +202,58 @@ export class InfoStandPetView
         this.setImage(image);
         this.updateWindow();
 
-        // TODO(AS3): AS3 also forwards to PetCommandTool.updatePetImage() — deferred with the tool.
+        this._commandTool?.updatePetImage(image);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::updateEnabledTrainingCommands()
-    // TODO(AS3): forwards to PetCommandTool.setEnabledCommands(petId, config) — not ported.
-    public updateEnabledTrainingCommands(_petId: number, _config: CommandConfiguration): void
+    public updateEnabledTrainingCommands(petId: number, config: CommandConfiguration): void
     {
-        log.debug('TODO(AS3): updateEnabledTrainingCommands needs PetCommandTool, not ported yet');
+        if(this._commandTool === null) return;
+
+        this._commandTool.setEnabledCommands(petId, config);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::openTrainView()
-    // TODO(AS3): constructs PetCommandTool on demand, shows it, and calls showCommandToolForPet()
-    // with the cached InfoStandPetData for _currentPetId (still cached above, ready for it).
     public openTrainView(): void
     {
-        log.debug('TODO(AS3): openTrainView needs PetCommandTool, not ported yet');
+        if(this._commandTool === null) this._commandTool = new PetCommandTool(this._widget);
+
+        const petData = this._petDataCache?.get(this._currentPetId) ?? null;
+
+        if(petData === null) return;
+
+        this._commandTool.showWindow(true);
+        this.showCommandToolForPetData(petData);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::closeTrainView()
-    // TODO(AS3): hides PetCommandTool when it is showing the current pet — not ported.
     public closeTrainView(): void
     {
+        if(this._commandTool && this._commandTool.getPetId() === this._currentPetId)
+        {
+            this._commandTool.showWindow(false);
+        }
+    }
+
+    // TS-only: no AS3 counterpart; AS3 spells this call out twice, in openTrainView() and at the
+    // tail of update(). The argument list is identical in both, so it lives here once.
+    private showCommandToolForPetData(petData: InfoStandPetData): void
+    {
+        if(this._commandTool === null) return;
+
+        const lower = this.getLowerSkillTreshold(petData.level, petData.skillTresholds);
+        const experienceRatio = petData.experience / petData.experienceMax;
+
+        this._commandTool.showCommandToolForPet(
+            petData.id,
+            petData.name,
+            petData.image,
+            petData.type,
+            petData.level - lower,
+            experienceRatio,
+            this.getUpperSkillTreshold(petData.level, petData.skillTresholds) - lower,
+            petData.skillTresholds
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandPetView.as::dispose()
@@ -239,6 +265,9 @@ export class InfoStandPetView
 
         this._window?.dispose();
         this._window = null;
+
+        this._commandTool?.dispose();
+        this._commandTool = null;
 
         this._petDataCache?.clear();
         this._petDataCache = null;

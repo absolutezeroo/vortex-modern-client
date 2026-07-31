@@ -17,7 +17,7 @@ import {GetCurrentTimingCodeMessageComposer} from '@habbo/communication/messages
 import {CurrentTimingCodeMessageEvent} from '@habbo/communication/messages/incoming/competition/CurrentTimingCodeMessageEvent';
 import type {CurrentTimingCodeMessageEventParser} from '@habbo/communication/messages/parser/competition/CurrentTimingCodeMessageEventParser';
 
-const log = Logger.getLogger('WidgetContainerLayout');
+const log = Logger.getLogger('habbo.friendbar.landingview.layout.WidgetContainerLayout');
 
 const DEFAULT_LAYOUT: string = 'landing_view_default_dynamic_layout';
 const GENERIC_RECEPTION_LAYOUT: string = 'landing_view_generic_reception';
@@ -239,7 +239,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
             this._window.visible = true;
         }
 
-        log.info('Landing view layout activated');
+        log.debug('Landing view layout activated');
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::get navigatorPosition()
@@ -302,7 +302,7 @@ export class WidgetContainerLayout implements IUpdateReceiver
         this.setOrgWindowSize();
         this.setupBottomSlotWidgetName();
 
-        log.info(`Landing view window created from layout: ${layoutName}`);
+        log.debug(`Landing view window created from layout: ${layoutName}`);
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/friendbar/landingview/layout/WidgetContainerLayout.as::hideWarningIfPresent()

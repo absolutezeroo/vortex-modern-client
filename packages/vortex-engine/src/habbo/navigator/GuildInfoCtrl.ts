@@ -1,16 +1,20 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
+import {GetHabboGroupDetailsMessageComposer} from '../communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
 import type {GuestRoomData} from '../communication/messages/incoming/navigator';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 
 /**
- * Displays guild badge and name in room details.
+ * GuildInfoCtrl
  *
- * Creates a "guild_info" container from XML if absent, and populates it
- * with group badge and name. Clicking opens group details.
+ * The "base of <group>" strip in a room's details — badge, name, and a click that opens
+ * the group's info panel. Used by both the in-room room-info view and the navigator's
+ * room popup.
  *
- * @see sources/win63_version/habbo/navigator/GuildInfoCtrl.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/GuildInfoCtrl.as
  */
 export class GuildInfoCtrl implements IDisposable
 {
@@ -71,6 +75,17 @@ export class GuildInfoCtrl implements IDisposable
             guildText.caption = this._navigator.getText('navigator.guildbase');
         }
 
+        // AS3 looks the badge up on the *outer* container, not on the guild_info window it
+        // just built - keep that, the two are different windows.
+        const badgeWindow = container.findChildByName('guild_badge') as IWidgetWindow | null;
+        const badgeWidget = (badgeWindow?.widget ?? null) as IBadgeImageWidget | null;
+
+        if(badgeWidget)
+        {
+            badgeWidget.badgeId = roomData.groupBadgeCode;
+            badgeWidget.groupId = roomData.habboGroupId;
+        }
+
         this._groupId = roomData.habboGroupId;
     }
 
@@ -79,9 +94,9 @@ export class GuildInfoCtrl implements IDisposable
         this._navigator = null;
     }
 
+    // AS3: .../GuildInfoCtrl.as::onGuildInfo()
     private onGuildInfo = (_event: WindowEvent): void =>
     {
-        // Would send GetHabboGroupDetailsMessageComposer when available
-        // this._navigator?.send(new GetHabboGroupDetailsMessageComposer(this._groupId, true));
+        this._navigator?.send(new GetHabboGroupDetailsMessageComposer(this._groupId, true));
     };
 }

@@ -19,7 +19,7 @@ import {WindowParam} from '@core/window/enum/WindowParam';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 
-const log = Logger.getLogger('RoomDesktopLayoutManager');
+const log = Logger.getLogger('habbo.ui.RoomDesktopLayoutManager');
 
 const ROOM_VIEW = 'room_view';
 const ROOM_NEW_CHAT = 'room_new_chat';

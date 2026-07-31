@@ -1,7 +1,7 @@
 import {EventEmitter} from 'eventemitter3';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('HabboAlertDialogManager');
+const log = Logger.getLogger('habbo.notifications.singular.HabboAlertDialogManager');
 
 /**
  * Events emitted by the alert dialog manager

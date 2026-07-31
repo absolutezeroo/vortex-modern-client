@@ -1,5 +1,6 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import {ChatMessageContent} from './ChatMessageContent';
 
 /**
  * Data class for a single history message entry.
@@ -14,9 +15,36 @@ export class HistoryMessageEntry
         this._senderId = wrapper.readInt();
         this._senderName = wrapper.readString();
         this._senderFigure = wrapper.readString();
-        this._message = wrapper.readString();
+
+        // Not a string. AS3 parses a content object here - an int discriminator, then the
+        // text or a habbicon id - and reading a bare string took the discriminator's bytes
+        // as a length. Entries arrive as an array, so from the second one on the sender id
+        // was being read out of the previous entry's tail.
+        this._content = ChatMessageContent.parse(wrapper);
+
         this._secondsSinceSent = wrapper.readInt();
         this._messageId = wrapper.readString();
+    }
+
+    // AS3: .../_SafePkg_1764/_SafeCls_3273.as::_content
+    private _content: ChatMessageContent;
+
+    // AS3: .../_SafePkg_1764/_SafeCls_3273.as::get content()
+    get content(): ChatMessageContent
+    {
+        return this._content;
+    }
+
+    // AS3: .../_SafePkg_1764/_SafeCls_3273.as::get messageType()
+    get messageType(): number
+    {
+        return this._content.messageType;
+    }
+
+    // AS3: .../_SafePkg_1764/_SafeCls_3273.as::get habbiconId()
+    get habbiconId(): number
+    {
+        return this._content.habbiconId;
     }
 
     private _senderId: number;
@@ -40,11 +68,10 @@ export class HistoryMessageEntry
         return this._senderFigure;
     }
 
-    private _message: string;
-
+    // AS3: .../_SafePkg_1764/_SafeCls_3273.as::get message()
     get message(): string
     {
-        return this._message;
+        return this._content.messageText;
     }
 
     private _secondsSinceSent: number;

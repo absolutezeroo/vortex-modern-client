@@ -13,7 +13,7 @@ import {
     getXmlText
 } from '../structure/AvatarXmlUtils';
 
-const log = Logger.getLogger('AvatarModelGeometry');
+const log = Logger.getLogger('habbo.avatar.geometry.AvatarModelGeometry');
 
 /**
  * Avatar model geometry that manages body parts, transforms and depth sorting.

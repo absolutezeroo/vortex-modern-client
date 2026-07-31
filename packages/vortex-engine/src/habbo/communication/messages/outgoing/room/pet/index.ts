@@ -1,3 +1,4 @@
+export * from './BreedPetsMessageComposer';
 export * from './PickUpPetComposer';
 export * from './PlacePetComposer';
 export * from './MountPetComposer';
@@ -9,7 +10,6 @@ export * from './TogglePetBreedingPermissionComposer';
 export * from './CompostPlantComposer';
 export * from './UseProductForPetComposer';
 export * from './GiveSupplementToPetMessageComposer';
-export * from './IssuePetCommandMessageComposer';
 export * from './MovePetMessageComposer';
 export * from './GetPetInfoMessageComposer';
 export * from './PetSelectedMessageComposer';

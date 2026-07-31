@@ -13,6 +13,10 @@ import {SkinRenderer} from './SkinRenderer';
  */
 export interface ITextWindowShape
 {
+    // AS3: TextController.as::get border() / get borderColor() — Flash's TextField
+    // paints these itself; see drawBorder().
+    border?: boolean;
+    borderColor?: number;
     textColor?: number;
     fontSize?: number;
     fontFace?: string;
@@ -90,6 +94,27 @@ export class TextSkinRenderer extends SkinRenderer
     protected static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
 
     /**
+	 * The same gutter on the left — applied to editable fields only.
+	 *
+	 * Flash reserves the gutter on all four sides, and AS3's draw() inherits it:
+	 * the matrix translates by `margins.left`, but what it blits is the
+	 * TextField's own bitmap, whose glyphs are already inset by the gutter. So
+	 * every text window in this port sits 2px left of where the layouts (authored
+	 * in Flash) put it. It went unnoticed while nothing drew the field's border;
+	 * with the border painted, the first glyph runs straight into it.
+	 *
+	 * TODO(AS3): sources/win63_version/core/window/components/TextController.as::_field —
+	 * apply it to non-editable text too. It is held back to input/password fields
+	 * here because those have fixed layout sizes, while an auto-sized label takes
+	 * its width from the measured text: shifting the glyphs right without also
+	 * widening the box (TextController.measureLayout(), which only compensates for
+	 * the vertical gutter, and only for background-filled fields) would clip the
+	 * last 2px off captions all over the client.
+	 */
+    // AS3: sources/win63_version/core/window/components/TextController.as::_field
+    protected static readonly FLASH_TEXT_FIELD_LEFT_GUTTER: number = 2;
+
+    /**
 	 * Glyph atlas for the text currently being drawn, resolved once per
 	 * `draw()` and consumed by the line-drawing helpers below.
 	 *
@@ -131,9 +156,21 @@ export class TextSkinRenderer extends SkinRenderer
         const typedWindow = window as unknown as { text?: string };
         const text = typedWindow.text ?? window.caption;
 
-        if(!text) return;
-
         const tw = window as unknown as ITextWindowShape;
+
+        // Flash's TextField draws its own 1px border, and AS3 gets it here for
+        // free: draw() blits the whole live TextField into the window's buffer
+        // (`param2.draw(_loc8_, ...)`), border included. This port has no
+        // TextField — it strokes the glyphs itself below — so the border has to be
+        // drawn explicitly, or every layout field that asks for one renders as a
+        // bare fill: room settings' name/description/tags, the group wizard's
+        // name/description, and every other `<var key="border">` input.
+        //
+        // Before the empty-text return, because AS3 blits the field whatever it
+        // holds: an empty bordered field still has its border.
+        this.drawBorder(tw, ctx, rect);
+
+        if(!text) return;
 
         const fontSize = tw.fontSize ?? 12;
         const fontFace = tw.fontFace || 'Ubuntu, Arial, sans-serif';
@@ -174,7 +211,16 @@ export class TextSkinRenderer extends SkinRenderer
         const autoSize = (tw.autoSize ?? tw._autoSize ?? 'none').toLowerCase();
         const spacing = tw.spacing ?? tw._spacing ?? 0;
         const leading = tw.leading ?? tw._leading ?? 0;
-        const maxWidth = w - marginL - marginR;
+
+        // See FLASH_TEXT_FIELD_LEFT_GUTTER: editable fields only, for now. Taking
+        // it out of maxWidth as well as adding it to the origin keeps the line's
+        // right-hand clip exactly where it was, so nothing that fitted before is
+        // cut off now — only the start moves inwards, off the border.
+        const flashTextFieldLeftGutter = (type === WindowType.TEXTFIELD || type === WindowType.PASSWORD)
+            ? TextSkinRenderer.FLASH_TEXT_FIELD_LEFT_GUTTER
+            : 0;
+        const textLeft = absX + marginL + flashTextFieldLeftGutter;
+        const maxWidth = w - marginL - marginR - flashTextFieldLeftGutter;
         const flashTextFieldTopGutter = isCompactDropListText
             ? 0
             : TextSkinRenderer.FLASH_TEXT_FIELD_TOP_GUTTER;
@@ -206,7 +252,7 @@ export class TextSkinRenderer extends SkinRenderer
 
             const measuredWidth = this.measureTextWidth(ctx, displayText, spacing);
             const textW = Math.min(measuredWidth, maxWidth);
-            const textX = this.resolveAlignedTextX(absX + marginL, maxWidth, measuredWidth, autoSize);
+            const textX = this.resolveAlignedTextX(textLeft, maxWidth, measuredWidth, autoSize);
             const textY = absY + marginT + flashTextFieldTopGutter;
 
             if(hasEtching)
@@ -231,12 +277,20 @@ export class TextSkinRenderer extends SkinRenderer
         }
 
         // Multiline / word-wrap rendering
-        if((tw.multiline || tw.wordWrap) && (type === WindowType.TEXT || type === WindowType.FORMATTED_TEXT || type === WindowType.HTML))
+        //
+        // Editable fields wrap too: Flash's TextField lays out its text from
+        // `multiline`/`wordWrap` alone, with no regard for whether the user can
+        // type into it, and the layouts rely on it — `group_management_window`'s
+        // `desc_txt` is an 80px-tall `<input>` with `word_wrap`, i.e. four lines
+        // of description. Leaving TEXTFIELD out of this test drew it as one line
+        // clipped at the right edge.
+        if((tw.multiline || tw.wordWrap)
+			&& (type === WindowType.TEXT || type === WindowType.FORMATTED_TEXT || type === WindowType.HTML || type === WindowType.TEXTFIELD))
         {
             this.compositeTextMultiline(
                 ctx,
                 displayText,
-                absX + marginL,
+                textLeft,
                 absY + marginT + flashTextFieldTopGutter,
                 maxWidth,
                 h - marginT - marginB - flashTextFieldTopGutter,
@@ -253,7 +307,7 @@ export class TextSkinRenderer extends SkinRenderer
         }
 
         const measuredWidth = this.measureTextWidth(ctx, displayText, spacing);
-        const textX = this.resolveAlignedTextX(absX + marginL, maxWidth, measuredWidth, autoSize);
+        const textX = this.resolveAlignedTextX(textLeft, maxWidth, measuredWidth, autoSize);
         const textY = isCompactDropListText
             ? this.resolveCompactDropListTextY(ctx, displayText, absY, h, fontSize)
             : absY + marginT + flashTextFieldTopGutter;
@@ -278,6 +332,40 @@ export class TextSkinRenderer extends SkinRenderer
         {
             this.drawTextLine(ctx, displayText, textX, textY, maxWidth, spacing, clipY, clipHeight);
         }
+    }
+
+    /**
+	 * Strokes the field's Flash `border` in its `borderColor`.
+	 *
+	 * TS-only in the same sense the rest of this class is: AS3 never draws a
+	 * border because Flash's TextField has already drawn one into the bitmap
+	 * draw() blits. The colour is Flash's `TextField.borderColor`, a plain RGB
+	 * uint with no alpha byte — so it is always opaque, and its default (0) is
+	 * black, which is what the layouts that set only `border` expect.
+	 *
+	 * Half-pixel offsets keep the 1px stroke on whole pixels instead of
+	 * straddling two, and the inset matches Flash: the border is drawn INSIDE the
+	 * field's bounds, not around them.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::setBorder()
+    protected drawBorder(
+        tw: ITextWindowShape,
+        ctx: OffscreenCanvasRenderingContext2D,
+        rect: { x: number; y: number; width: number; height: number }
+    ): void
+    {
+        if(tw.border !== true || rect.width < 1 || rect.height < 1) return;
+
+        const color = (tw.borderColor ?? 0) & 0xFFFFFF;
+        const r = (color >> 16) & 0xFF;
+        const g = (color >> 8) & 0xFF;
+        const b = color & 0xFF;
+
+        ctx.save();
+        ctx.strokeStyle = `rgb(${r},${g},${b})`;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.width - 1, rect.height - 1);
+        ctx.restore();
     }
 
     /**

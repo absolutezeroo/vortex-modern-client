@@ -62,7 +62,7 @@ import type {IMessageComposer} from '@core';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {IID_HabboNavigator} from "@iid/IIDHabboNavigator";
 
-const log = Logger.getLogger('NewNavigator');
+const log = Logger.getLogger('habbo.navigator.HabboNewNavigator');
 
 /**
  * New Habbo Navigator component
@@ -1013,7 +1013,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
         this._groupDetails.clear();
         this._roomNames.clear();
 
-        log.info('New Navigator disposed');
+        log.debug('New Navigator disposed');
 
         super.dispose();
     }
@@ -1041,7 +1041,7 @@ export class HabboNewNavigator extends Component implements IHabboNewNavigator
 
         this._isInitialized = true;
 
-        log.info('New Navigator initialized');
+        log.debug('New Navigator initialized');
     }
 
     /**

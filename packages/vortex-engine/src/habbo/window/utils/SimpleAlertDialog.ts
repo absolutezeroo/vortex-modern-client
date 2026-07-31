@@ -8,7 +8,7 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '../IHabboWindowManager';
 import type {IModalDialog} from './IModalDialog';
 
-const log = Logger.getLogger('SimpleAlertDialog');
+const log = Logger.getLogger('habbo.window.utils.SimpleAlertDialog');
 
 /**
  * Simplified alert dialog with optional subtitle, link, and illustration.
@@ -104,7 +104,19 @@ export class SimpleAlertDialog implements IDisposable
 
         // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/utils/SimpleAlertDialog.as
         // loads "simple_alert_xml" via assets.getAssetByName() and builds a modal dialog from it.
-        const layoutXml = windowManager.requireWidgetLayout('simple_alert_xml', 'simple alert dialog');
+        //
+        // In AS3 that name only has to be unique inside HabboWindowManagerCom. Here every
+        // component's layouts share one registry, and `simple_alert_xml` is declared by
+        // two of them (HabboWindowManagerCom and HabboFriendListCom), so both shipped
+        // component-qualified and the bare key does not exist — `simpleAlert()` threw for
+        // every caller in the client, not just the friend list's. Take this component's
+        // own copy, and keep the bare name as the fallback for bundles built before the
+        // collision was qualified.
+        const layoutName = windowManager.hasWidgetLayout('HabboWindowManager_simple_alert_xml')
+            ? 'HabboWindowManager_simple_alert_xml'
+            : 'simple_alert_xml';
+
+        const layoutXml = windowManager.requireWidgetLayout(layoutName, 'simple alert dialog');
 
         this._modalDialog = windowManager.buildModalDialogFromXML(layoutXml);
         this._window = this._modalDialog?.rootWindow as IWindowContainer ?? null;

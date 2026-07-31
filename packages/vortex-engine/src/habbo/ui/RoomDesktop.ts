@@ -59,9 +59,19 @@ import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
 import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
+import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
+import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
+import {PlaceholderWidgetHandler} from './handler/PlaceholderWidgetHandler';
+import {FurnitureBackgroundColorWidgetHandler} from './handler/FurnitureBackgroundColorWidgetHandler';
+import {FurnitureCreditWidgetHandler} from './handler/FurnitureCreditWidgetHandler';
+import {FurnitureEcotronBoxWidgetHandler} from './handler/FurnitureEcotronBoxWidgetHandler';
+import {PetPackageFurniWidgetHandler} from './handler/PetPackageFurniWidgetHandler';
+import {FurnitureContextMenuWidgetHandler} from './handler/FurnitureContextMenuWidgetHandler';
+import {RoomWidgetFurniToWidgetMessage} from './widget/messages/RoomWidgetFurniToWidgetMessage';
+import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {IRoomWidget} from './widget/IRoomWidget';
 
-const log = Logger.getLogger('RoomDesktop');
+const log = Logger.getLogger('habbo.ui.RoomDesktop');
 
 // AS3: sources/win63_version/habbo/ui/RoomUI.as:71 (var_4627)
 const REUSABLE_WIDGET_TYPES = new Set([
@@ -730,6 +740,42 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
                 handler = new AvatarInfoWidgetHandler();
                 break;
+            case 'RWE_FURNI_TROPHY_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:792
+                handler = new FurnitureTrophyWidgetHandler();
+                break;
+            case 'RWE_FURNI_PET_PACKAGE_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:798
+                handler = new PetPackageFurniWidgetHandler();
+                break;
+            case 'RWE_FURNI_ECOTRONBOX_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:795
+                handler = new FurnitureEcotronBoxWidgetHandler();
+                break;
+            case 'RWE_FURNI_CREDIT_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:783
+                handler = new FurnitureCreditWidgetHandler();
+                break;
+            case 'RWE_ROOM_BACKGROUND_COLOR':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidgetHandler()
+                handler = new FurnitureBackgroundColorWidgetHandler();
+                break;
+            case 'RWE_FURNI_PLACEHOLDER':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:780
+                handler = new PlaceholderWidgetHandler();
+                break;
+            case 'RWE_FURNI_STICKIE_WIDGET':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:786
+                handler = new FurnitureStickieWidgetHandler();
+                break;
+            case 'RWE_FURNITURE_CONTEXT_MENU': {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:853-857
+                const contextMenuHandler = new FurnitureContextMenuWidgetHandler();
+
+                contextMenuHandler.connection = this._connection;
+                handler = contextMenuHandler;
+                break;
+            }
             case 'RWE_CHAT_WIDGET': {
                 // AS3: sources/win63_2023_version/com/sulake/habbo/ui/RoomDesktop.as::734-737
                 const chatHandler = new ChatWidgetHandler();
@@ -928,6 +974,49 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 return;
             case RoomEngineObjectEvent.REOE_REQUEST_PICKUP:
                 this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_PICKUP');
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_TROPHY" (line 1249) —
+            // the engine says a trophy was used; turn it into the widget message the trophy
+            // handler claims. The remaining RETWE_REQUEST_* cases follow the same two lines each,
+            // and land as their widgets are ported.
+            case RoomEngineToWidgetEvent.REQUEST_TROPHY:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_TROPHY_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_ECOTRONBOX" (line 1257)
+            case RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_ECOTRONBOX_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_CREDITFURNI" (line 1237)
+            case RoomEngineToWidgetEvent.REQUEST_CREDITFURNI:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_CREDITFURNI_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_PLACEHOLDER" (line 1265)
+            case RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_PLACEHOLDER_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
+
+                return;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_STICKIE" (line 1241)
+            case RoomEngineToWidgetEvent.REQUEST_STICKIE:
+                this.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(
+                    RoomWidgetFurniToWidgetMessage.WIDGET_MESSAGE_REQUEST_STICKIE_WIDGET,
+                    event.objectId, event.category, event.roomId
+                ));
 
                 return;
             case RoomEngineObjectEvent.REOE_SELECTED:

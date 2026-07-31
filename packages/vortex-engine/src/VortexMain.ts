@@ -28,6 +28,8 @@ import {HabboFreeFlowChat} from '@habbo/freeflowchat/HabboFreeFlowChat';
 import {AvatarRenderManager} from '@habbo/avatar/AvatarRenderManager';
 import {HabboWindowManager} from '@habbo/window/HabboWindowManager';
 import {HabboFriendBar} from '@habbo/friendbar/HabboFriendBar';
+import {HabboFriendList} from '@habbo/friendlist/HabboFriendList';
+import {HabboMessenger} from '@habbo/messenger/HabboMessenger';
 import {RoomUI} from '@habbo/ui/RoomUI';
 import {Core} from '@core/Core';
 import {AssetLibrary} from '@core/assets/AssetLibrary';
@@ -79,12 +81,14 @@ import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
+import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
+import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
 import {IID_HabboFreeFlowChat} from '@iid/IIDHabboFreeFlowChat';
 import type {IVortexMain} from "./IVortexMain";
 import type {IVortexLoadingScreen} from './IVortexLoadingScreen';
 import type {Application, Ticker} from 'pixi.js';
 
-const log = Logger.getLogger('HabboMain');
+const log = Logger.getLogger('VortexMain');
 
 /**
  * HabboMain
@@ -180,6 +184,8 @@ export class VortexMain implements IVortexMain
     private _notifications: HabboNotifications | null = null;
     private _freeFlowChat: HabboFreeFlowChat | null = null;
     private _friendBar: HabboFriendBar | null = null;
+    private _messenger: HabboMessenger | null = null;
+    private _friendList: HabboFriendList | null = null;
 
     /**
      * AS3: HabboAirMain(_arg_1:IHabboLoadingScreen, _arg_2:Dictionary)
@@ -512,6 +518,8 @@ export class VortexMain implements IVortexMain
         // Nullify Habbo manager refs (inverse init order)
         this._clubCenter = null;
         this._userDefinedRoomEvents = null;
+        this._messenger = null;
+        this._friendList = null;
         this._friendBar = null;
         this._roomUI = null;
         this._windowManager = null;
@@ -701,7 +709,10 @@ export class VortexMain implements IVortexMain
         // 12e. Groups Manager
         // AS3 registers this via the HabboGroupsCom SWF library. Consumers waiting on the IID:
         // HabboCatalog.ts:481, RoomUI.ts:310.
-        this._groupsManager = new HabboGroupsManager(ctx);
+        // The asset library is what AS3's HabboGroupsCom SWF supplies; without it
+        // Component.assets stays null and every getButtonImage()/ColorGridCtrl bitmap
+        // lookup in the group windows returns nothing.
+        this._groupsManager = new HabboGroupsManager(ctx, 0, this._assets);
         ctx.attachComponent(this._groupsManager, [IID_HabboGroupsManager]);
 
         // 12f. Notifications
@@ -808,14 +819,58 @@ export class VortexMain implements IVortexMain
      *
      * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
      */
-    initFriendBar(): void 
+    initFriendBar(): void
     {
         const ctx = Core.instance as CoreComponentContext;
 
-        this._friendBar = new HabboFriendBar(ctx);
+        // The asset library is not optional decoration: HabboFriendBar hands it straight
+        // down to HabboFriendBarData, HabboFriendBarView and HabboLandingView, and the
+        // view pushes it into `Tab.assets`/`Token.ASSETS`, which every slot reads its
+        // icons through. Constructed without one, `Component.assets` stays null and every
+        // lookup returns null before it ever touches the library — the same oversight
+        // already fixed for HabboGroupsManager (see "fix(assets): give the groups manager
+        // an asset library"), and the reason HabboCatalog/HabboGroupsManager above are
+        // constructed with `this._assets`.
+        this._friendBar = new HabboFriendBar(ctx, 0, this._assets);
         ctx.attachComponent(this._friendBar, [IID_HabboFriendBar]);
 
-        log.info('Friend Bar initialized');
+        log.debug('Friend Bar initialized');
+    }
+
+    /**
+     * Initialize the friend list (the friends/requests/search window).
+     *
+     * A separate component from the friend bar, and a separate SWF in AS3:
+     * `HabboAir.as` prepares `HabboFriendListCom` right after the navigator and long
+     * before `HabboFriendBarCom`. Nothing in this port constructed it at all until now,
+     * so `IID_HabboFriendList` resolved to null for every dependent — the group profile's
+     * "add friend" button and the infostand's friend state among them.
+     *
+     * Must be called after the window layouts are registered, like the friend bar: the
+     * component itself builds no window at construction, but the first message it handles
+     * (`MessengerInit`) creates `FriendListView` and its three tabs.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as
+     */
+    initFriendList(): void
+    {
+        const ctx = Core.instance as CoreComponentContext;
+
+        // Same as the friend bar above: HabboFriendList.getButtonImage() reads every
+        // toolbar/row bitmap off `Component.assets`, which stays null when no library is
+        // passed. AS3 hands it HabboFriendListCom's own.
+        this._friendList = new HabboFriendList(ctx, 0, this._assets);
+        ctx.attachComponent(this._friendList, [IID_HabboFriendList]);
+
+        // The messenger, attached after the friend list it depends on. Nothing provided
+        // IID_HabboMessenger before this: HabboFriendBarData and FriendCategories both
+        // reach for it, and its absence is what forced null-guards through the friend
+        // list's domain layer. AS3 prepares HabboMessengerCom right after
+        // HabboFriendListCom for the same reason.
+        this._messenger = new HabboMessenger(ctx, 0, this._assets);
+        ctx.attachComponent(this._messenger, [IID_HabboMessenger]);
+
+        log.debug('Friend List initialized');
     }
 
     /**
@@ -1144,7 +1199,7 @@ export class VortexMain implements IVortexMain
 
         if(spaweb === '1') 
         {
-            log.info('SPA heartbeat enabled');
+            log.debug('SPA heartbeat enabled');
 
             this.sendHeartBeat();
 

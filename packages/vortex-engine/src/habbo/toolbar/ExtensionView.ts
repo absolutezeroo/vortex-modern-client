@@ -7,7 +7,7 @@ import type {IHabboWindowManager} from '../window/IHabboWindowManager';
 import {ExtensionViewEvent} from './events/ExtensionViewEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ExtensionView');
+const log = Logger.getLogger('habbo.toolbar.ExtensionView');
 
 /**
  * Container for toolbar extensions (purse, settings, promos, etc.)

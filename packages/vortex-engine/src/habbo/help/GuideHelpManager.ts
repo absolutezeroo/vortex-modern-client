@@ -1,7 +1,7 @@
 import {GuideSessionData} from './GuideSessionData';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('GuideHelpManager');
+const log = Logger.getLogger('habbo.help.GuideHelpManager');
 
 /**
  * Guide help coordination manager

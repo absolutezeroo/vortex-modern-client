@@ -1,7 +1,7 @@
 import type {HabboToolbar} from '../../HabboToolbar';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('OtherSettingsView');
+const log = Logger.getLogger('habbo.toolbar.extensions.settings.OtherSettingsView');
 
 /**
  * Other settings panel view

@@ -7,7 +7,7 @@ import type {IRecyclerVisualization} from './IRecyclerVisualization';
 import {FurniSlotItem} from './FurniSlotItem';
 import {PrizeLevelContainer} from './PrizeLevelContainer';
 
-const log = Logger.getLogger('RecyclerLogic');
+const log = Logger.getLogger('habbo.catalog.recycler.RecyclerLogic');
 
 /**
  * Recycler state machine: manages the slot pool, server status/timeout, and prize table cache.

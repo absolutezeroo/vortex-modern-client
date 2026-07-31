@@ -52,7 +52,7 @@ import {
 import {EventLogMessageComposer} from '../messages/outgoing/tracking';
 import {GetFurnitureAliasesMessageComposer} from '../messages/outgoing/room/engine';
 
-const log = Logger.getLogger('Handshake');
+const log = Logger.getLogger('habbo.communication.demo.IncomingMessages');
 
 /**
  * Handles incoming messages during connection/handshake
@@ -266,7 +266,7 @@ export class IncomingMessages
 
         this._demo.dispatchLoginStepEvent(HabboCommunicationEvent.HANDSHAKED);
 
-        log.success('Encryption enabled');
+        log.info('Encryption enabled');
 
         // AS3: var_1660.sendConnectionParameters(connection)
         this._demo.sendConnectionParameters(connection);
@@ -286,7 +286,7 @@ export class IncomingMessages
         connection.send(new GetFurnitureAliasesMessageComposer());
         this._communication.suggestedLoginActions = (event as AuthenticationOKMessageEvent).suggestedLoginActions;
 
-        log.success('Authenticated');
+        log.info('Authenticated');
 
         this._demo.loginOk();
     }
@@ -403,7 +403,7 @@ export class IncomingMessages
 
         // AS3: var_1660.onUserList(avatars) - populates login screen character list (VIEW)
         // We skip the UI callback but log the data
-        log.debug(`Identity accounts received: ${parser.accounts.size} accounts`);
+        log.trace(`Identity accounts received: ${parser.accounts.size} accounts`);
     }
 
     /**

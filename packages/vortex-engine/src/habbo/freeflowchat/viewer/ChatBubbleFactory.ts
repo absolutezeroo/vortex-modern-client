@@ -17,7 +17,7 @@ import {ChatBubble} from './visualization/ChatBubble';
 import type {IUserData} from '@habbo/session/IUserData';
 import {HabboFaceFocuser} from '@habbo/utils/HabboFaceFocuser';
 
-const log = Logger.getLogger('ChatBubbleFactory');
+const log = Logger.getLogger('habbo.freeflowchat.viewer.ChatBubbleFactory');
 
 const MAX_DISPOSABLE_BITMAPS = 30;
 

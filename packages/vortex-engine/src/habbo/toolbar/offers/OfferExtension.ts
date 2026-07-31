@@ -1,7 +1,7 @@
 import type {HabboToolbar} from '../HabboToolbar';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('OfferExtension');
+const log = Logger.getLogger('habbo.toolbar.offers.OfferExtension');
 
 /**
  * Offer display extension for the toolbar

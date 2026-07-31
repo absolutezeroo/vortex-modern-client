@@ -19,7 +19,7 @@ import {CatalogWidgetGuildSelectedEvent} from './events/CatalogWidgetGuildSelect
 import {SetExtraPurchaseParameterEvent} from './events/SetExtraPurchaseParameterEvent';
 import {SetRoomPreviewerStuffDataEvent} from './events/SetRoomPreviewerStuffDataEvent';
 
-const log = Logger.getLogger('GuildSelectorCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.GuildSelectorCatalogWidget');
 
 const CWE_EXTRA_PARAM_REQUIRED_FOR_BUY = 'CWE_EXTRA_PARAM_REQUIRED_FOR_BUY';
 

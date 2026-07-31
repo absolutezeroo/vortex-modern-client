@@ -1,7 +1,7 @@
 import type {InstantMessageRegistry} from './InstantMessageRegistry';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('InstantMessageEventHandler');
+const log = Logger.getLogger('habbo.help.cfh.registry.instantmessage.InstantMessageEventHandler');
 
 /**
  * Instant message event listener for CFH reports

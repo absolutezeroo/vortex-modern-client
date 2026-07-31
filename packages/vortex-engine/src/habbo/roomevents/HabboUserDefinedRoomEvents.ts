@@ -39,7 +39,7 @@ import {NewVariablePickerHelper} from './wired_setup/uibuilder/presets/newvariab
 import {IncomingMessages} from './IncomingMessages';
 import {WiredClickUserMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredClickUserMessageComposer';
 
-const log = Logger.getLogger('HabboUserDefinedRoomEvents');
+const log = Logger.getLogger('habbo.roomevents.HabboUserDefinedRoomEvents');
 
 /**
  * HabboUserDefinedRoomEvents — the top-level "wired" component. Owns the wired-setup controller

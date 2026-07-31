@@ -1,7 +1,7 @@
 import type {ChatRegistry} from './ChatRegistry';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('ChatEventHandler');
+const log = Logger.getLogger('habbo.help.cfh.registry.chat.ChatEventHandler');
 
 /**
  * Room chat event listener for CFH reports

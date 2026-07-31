@@ -9,7 +9,7 @@ import {BadgeBaseAndLevel} from './BadgeBaseAndLevel';
 import {HabboCommunicationEvent, type HabboCommunicationEventType} from '@habbo/communication/enum';
 import {HabboConfigurationFlags} from '@habbo/configuration/enum/HabboConfigurationFlags';
 
-const log = Logger.getLogger('HabboLocalization');
+const log = Logger.getLogger('habbo.localization.HabboLocalizationManager');
 
 /**
  * Habbo-specific localization manager
@@ -79,11 +79,11 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
     {
         // In TypeScript version, embedded localizations would be imported modules
         // For now, we log and return false as external loading is preferred
-        log.info(`Loading default localizations for language: ${language}`);
+        log.debug(`Loading default localizations for language: ${language}`);
 
         if(fallback && language !== 'en')
         {
-            log.info('Trying with default language: en');
+            log.debug('Trying with default language: en');
             return this.loadDefaultEmbedLocalizations('en', false);
         }
 
@@ -250,7 +250,7 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
         this.events.once('loaded', () =>
         {
             this._isLocalizationInitialized = false;
-            log.success('Localizations ready');
+            log.info('Localizations ready');
 
             this.events.emit('complete');
         });

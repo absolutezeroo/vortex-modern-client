@@ -139,9 +139,18 @@ looked like and why they were convincing.
 | `dispose()`     | Always last method, checks `_disposed`           |
 | Null safety     | `| null` (never `| undefined`)                   |
 | Spacing         | `if(condition)` not `if (condition)`             |
-| Logger          | `Logger.getLogger('Name')` (never `console.log`) |
+| Logger          | `Logger.getLogger('habbo.room.RoomEngine')` — dotted module path, never `console.log` |
 
 Full reference: `docs/STYLEGUIDE.md`
+
+## Logging
+
+The level decides whether anyone ever reads it — `docs/STYLEGUIDE.md` → Logging has the table.
+Short version: `trace` for anything per-frame/per-packet/per-item, `debug` for a subsystem's own
+commentary (including "X initialized"), `info` only for milestones worth seeing while working on
+something *else*, `warn` for data or a code path the client does not handle (unknown enum, unported
+branch, missing asset — these render nothing and throw nothing, so `debug` buries them), `error`
+when the user will notice. Dev shows `info` and up; production `warn` and up.
 
 ## Path aliases
 
@@ -193,6 +202,15 @@ For AS3 accessors and properties:
 Always trace to the primary (`WIN63-202607011411-782849652`) path even if the member's identifier had to be recovered by cross-referencing `sources/win63_version/<path>/<Class>.as` — the trace comment must still use a real, human-readable member name, never an obfuscated `_SafeStr_N`/`_SafeCls_N` placeholder.
 
 If the primary source does not contain the member, fall back to `sources/win63_version/...`, then `sources/PRODUCTION-201601012205-226667486/...`, and point the trace at whichever tree actually has it.
+
+Members with **no AS3 counterpart at all** — a port-specific event bus, a convenience accessor kept for ported callers — take `// TS-only:` instead, with a short reason:
+
+```ts
+// TS-only: no AS3 counterpart; kept for the ported consumers of `IHabboFriendList`.
+getFriendByName(name: string): IFriend | null
+```
+
+This rule covers members *ported from* AS3, and `scripts/check-as3-trace.mjs` cannot tell those apart from ones that were never in the source, so it asked for a trace that could not honestly be written. The marker makes the exemption explicit and greppable rather than silent. It is not a way to quiet the check: if the member exists in any tree, it needs the real trace. Confirm it does not before reaching for `TS-only` — several friend-list methods read like AS3 (`acceptFriend`, `removeFriend`) where the source has `acceptFriendRequest`/`declineAllFriendRequests` and no such member.
 
 Incomplete members still require a compatible TypeScript signature and a `TODO(AS3)` comment with source path, class/member name, and exact remaining behavior. Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface.
 

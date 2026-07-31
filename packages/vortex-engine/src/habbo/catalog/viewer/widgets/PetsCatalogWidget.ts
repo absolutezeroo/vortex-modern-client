@@ -19,7 +19,7 @@ import {CatalogWidgetPurchaseOverrideEvent} from './events/CatalogWidgetPurchase
 import {CatalogWidgetApproveNameResultEvent} from './events/CatalogWidgetApproveNameResultEvent';
 import {CatalogWidgetSellablePetPalettesEvent} from './events/CatalogWidgetSellablePetPalettesEvent';
 
-const log = Logger.getLogger('PetsCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.PetsCatalogWidget');
 
 /**
  * Buy-a-pet page widget for the classic pet types (type index < 8): name field, breed drop-menu,

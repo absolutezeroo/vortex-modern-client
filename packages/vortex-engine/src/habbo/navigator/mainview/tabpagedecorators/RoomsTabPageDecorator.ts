@@ -5,7 +5,7 @@ import type { ITabPageDecorator } from './ITabPageDecorator';
 import type { ITabNavigator } from '../../domain/Tab';
 import { Logger } from '@core/utils/Logger';
 
-const log = Logger.getLogger('RoomsTabPageDecorator');
+const log = Logger.getLogger('habbo.navigator.mainview.tabpagedecorators.RoomsTabPageDecorator');
 
 /**
  * Tab page decorator for the Rooms (popular/categories) tab.

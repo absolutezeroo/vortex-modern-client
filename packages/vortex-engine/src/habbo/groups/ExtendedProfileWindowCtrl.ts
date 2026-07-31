@@ -40,7 +40,7 @@ import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import {Logger} from '@core/utils/Logger';
 import type {HabboGroupsManager} from './HabboGroupsManager';
 
-const log = Logger.getLogger('ExtendedProfileWindowCtrl');
+const log = Logger.getLogger('habbo.groups.ExtendedProfileWindowCtrl');
 const BADGE_SLOT_COUNT = 5;
 
 export class ExtendedProfileWindowCtrl

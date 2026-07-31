@@ -16,7 +16,7 @@ import type {BadgeImageWidget} from './BadgeImageWidget';
 import type {PetImageWidget} from './PetImageWidget';
 import type {AvatarImageWidget} from './AvatarImageWidget';
 
-const log = Logger.getLogger('ProductImageWidget');
+const log = Logger.getLogger('habbo.window.widgets.ProductImageWidget');
 
 /**
  * Renders a large preview image for a catalog product: a wall/floor item
@@ -287,7 +287,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
                 break;
             }
             default:
-                log.debug(`[ProductImageWidget] Can not yet handle this type of product: ${info.productTypeId}`);
+                log.warn(`Can not yet handle this type of product: ${info.productTypeId}`);
                 this.clearPreviewer();
         }
     }
@@ -436,7 +436,7 @@ export class ProductImageWidget implements IWidget, IGetImageListener
         this.centerWindow(effect);
         effect.y += 50;
 
-        log.debug('[ProductImageWidget] Pixel effect preview not implemented yet (EffectPreviewer not ported)');
+        log.warn('Pixel effect preview not implemented yet (EffectPreviewer not ported)');
     }
 
     // AS3: sources/win63_2026_crypted_version/src/com/sulake/habbo/window/widgets/ProductImageWidget.as::setUnknownImage()

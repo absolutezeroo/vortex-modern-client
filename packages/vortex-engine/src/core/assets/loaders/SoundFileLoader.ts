@@ -99,7 +99,7 @@ export class SoundFileLoader extends BinaryFileLoader
         }
         catch (e)
         {
-            Logger.getLogger('SoundFileLoader').error('Error decoding audio:', e);
+            Logger.getLogger('core.assets.loaders.SoundFileLoader').error('Error decoding audio:', e);
 
             super.handleLoadEvent('ioError');
         }

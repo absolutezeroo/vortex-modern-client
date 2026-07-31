@@ -3,7 +3,7 @@ import type {AssetLoaderEvent, IAssetLibrary} from '@core/assets';
 import {AssetLoaderEventType} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AvatarAssetDownloadLibrary');
+const log = Logger.getLogger('habbo.avatar.AvatarAssetDownloadLibrary');
 
 /**
  * Manages downloading a single avatar asset library (spritesheet).

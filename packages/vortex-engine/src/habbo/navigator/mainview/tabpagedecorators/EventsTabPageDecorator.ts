@@ -5,7 +5,7 @@ import type { ITabPageDecorator } from './ITabPageDecorator';
 import type { ITabNavigator } from '../../domain/Tab';
 import { Logger } from '@core/utils/Logger';
 
-const log = Logger.getLogger('EventsTabPageDecorator');
+const log = Logger.getLogger('habbo.navigator.mainview.tabpagedecorators.EventsTabPageDecorator');
 
 /**
  * Tab page decorator for the Events / Room Ads tab.

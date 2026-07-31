@@ -1015,10 +1015,30 @@ export class RoomPreviewer
         return true;
     }
 
+    /**
+	 * Hands the preview's rendering canvas back to the room engine.
+	 *
+	 * TS-only, and it is not optional here the way it is in AS3. Flash parents the
+	 * canvas into the widget's own window (`RoomPreviewerWidget.as`), so disposing
+	 * that window removes it from the display list and AS3's `dispose()` can — and
+	 * does — ignore it entirely. This port parents it onto the shared root PixiJS
+	 * stage (see `RoomEngine.createRoomCanvas()`), which nothing else tears down:
+	 * left alone, a disposed previewer's fully-rendered mini-room stayed on the
+	 * stage forever, frozen at its last screen position and still drawing, showing
+	 * through every transparent hole the window composite punches for the room
+	 * view. That is the furniture "ghost" left behind after closing the
+	 * catalog/inventory.
+	 */
+    releaseRoomCanvas(): void
+    {
+        this._roomEngine?.disposeRenderingCanvas(this._previewRoomId, RoomPreviewer.PREVIEW_CANVAS_ID);
+    }
+
     // AS3: sources/win63_version/habbo/room/preview/RoomPreviewer.as::dispose()
     dispose(): void
     {
         this.reset(true);
+        this.releaseRoomCanvas();
 
         if(this._roomEngine)
         {

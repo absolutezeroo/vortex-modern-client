@@ -5,7 +5,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('CurrencyIndicatorBase');
+const log = Logger.getLogger('habbo.toolbar.extensions.purse.CurrencyIndicatorBase');
 
 /**
  * Interface for currency indicator implementations

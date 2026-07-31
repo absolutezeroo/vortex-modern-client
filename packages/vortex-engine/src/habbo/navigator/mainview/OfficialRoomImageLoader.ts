@@ -2,7 +2,7 @@ import type { IBitmapWrapperWindow } from '@core/window/components/IBitmapWrappe
 import type { IHabboTransitionalNavigator } from '../IHabboTransitionalNavigator';
 import { Logger } from '@core/utils/Logger';
 
-const logger = Logger.getLogger('OfficialRoomImageLoader');
+const logger = Logger.getLogger('habbo.navigator.mainview.OfficialRoomImageLoader');
 
 /**
  * Loads an official room icon image into a bitmap wrapper window.

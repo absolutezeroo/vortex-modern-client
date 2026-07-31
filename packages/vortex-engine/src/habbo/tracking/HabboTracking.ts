@@ -30,7 +30,7 @@ import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const log = Logger.getLogger('HabboTracking');
+const log = Logger.getLogger('habbo.tracking.HabboTracking');
 
 /**
  * Main tracking component for the Habbo client.
@@ -205,7 +205,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 	 */
     trackLoginStep(step: string, extra?: string): void
     {
-        log.info('Track Login Step:', step, extra ?? '');
+        log.debug('Track Login Step:', step, extra ?? '');
 
         if(!this.getBoolean('processlog.enabled'))
         {
@@ -341,7 +341,7 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
             this._latencyTracker.init();
         }
 
-        log.info('HabboTracking initialized');
+        log.debug('HabboTracking initialized');
     }
 
     /**

@@ -65,4 +65,10 @@ export interface IVortexMain extends IDisposable
 	 * Must be called AFTER window layouts are registered.
 	 */
     initFriendBar(): void;
+
+    /**
+	 * Initialize the friend list window component.
+	 * Must be called AFTER window layouts are registered.
+	 */
+    initFriendList(): void;
 }

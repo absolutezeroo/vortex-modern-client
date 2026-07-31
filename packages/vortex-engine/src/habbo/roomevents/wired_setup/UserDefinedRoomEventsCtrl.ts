@@ -58,7 +58,7 @@ import type {FooterPreset} from './uibuilder/presets/main_layout/FooterPreset';
 import type {SectionPreset} from './uibuilder/presets/SectionPreset';
 import type {CheckboxGroupPreset} from './uibuilder/presets/CheckboxGroupPreset';
 
-const log = Logger.getLogger('UserDefinedRoomEventsCtrl');
+const log = Logger.getLogger('habbo.roomevents.wired_setup.UserDefinedRoomEventsCtrl');
 
 /**
  * UserDefinedRoomEventsCtrl — the core wired-setup controller ("wiredCtrl"): owns the wired

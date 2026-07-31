@@ -14,7 +14,7 @@ import {UnseenAchievementsCountUpdateEvent} from './events/UnseenAchievementsCou
 import {GetAchievementsComposer} from '@habbo/communication/messages/outgoing/inventory/achievements/GetAchievementsComposer';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AchievementController');
+const log = Logger.getLogger('habbo.quest.AchievementController');
 
 /**
  * Achievement controller — data + the Achievements panel window.

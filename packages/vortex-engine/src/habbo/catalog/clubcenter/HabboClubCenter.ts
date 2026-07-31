@@ -37,7 +37,7 @@ import {BadgesMessageEvent} from '@habbo/communication/messages/incoming/invento
 import type {BadgesMessageParser} from '@habbo/communication/messages/parser/inventory/badges/BadgesMessageParser';
 import {GetBadgesComposer} from '@habbo/communication/messages/outgoing/inventory/GetBadgesComposer';
 
-const log = Logger.getLogger('HabboClubCenter');
+const log = Logger.getLogger('habbo.catalog.clubcenter.HabboClubCenter');
 
 /**
  * Habbo Club Center manager.

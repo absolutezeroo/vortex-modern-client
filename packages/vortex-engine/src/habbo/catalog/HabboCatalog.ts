@@ -51,6 +51,9 @@ import {
 import type {
     ActivityPointsMessageParser
 } from '@habbo/communication/messages/parser/notifications/ActivityPointsMessageParser';
+import {
+    HabboActivityPointNotificationMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/HabboActivityPointNotificationMessageEvent';
 import {ScrSendUserInfoEvent} from '@habbo/communication/messages/incoming/users/ScrSendUserInfoEvent';
 import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog/FrontPageItem';
 import type {ScrSendUserInfoMessageParser} from '@habbo/communication/messages/parser/users/ScrSendUserInfoMessageParser';
@@ -180,7 +183,7 @@ import {Purse} from './purse/Purse';
 import {PurseEvent} from './purse/PurseEvent';
 import {PurseUpdateEvent} from './purse/PurseUpdateEvent';
 
-const log = Logger.getLogger('HabboCatalog');
+const log = Logger.getLogger('habbo.catalog.HabboCatalog');
 
 /**
  * Habbo catalog component.
@@ -1774,7 +1777,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 break;
 
             default:
-                log.debug(`Catalog unknown link-type receive: ${parts[1]}`);
+                log.warn(`Catalog unknown link-type receive: ${parts[1]}`);
 
                 break;
         }
@@ -2037,6 +2040,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         this.addMessageEvent(new CreditBalanceEvent(this.onCreditBalance.bind(this)));
         this.addMessageEvent(new ActivityPointsMessageEvent(this.onActivityPoints.bind(this)));
+        this.addMessageEvent(new HabboActivityPointNotificationMessageEvent(this.onActivityPointNotification.bind(this)));
         this.addMessageEvent(new CatalogIndexMessageEvent(this.onCatalogIndex.bind(this)));
         this.addMessageEvent(new CatalogPageMessageEvent(this.onCatalogPage.bind(this)));
         this.addMessageEvent(new BuildersClubSubscriptionStatusMessageEvent(this.onBuildersClubSubscriptionStatus.bind(this)));
@@ -2634,7 +2638,36 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
     }
 
-    private onActivityPoints(event: IMessageEvent): void 
+    /**
+	 * Single-currency balance update, as opposed to onActivityPoints()'s whole wallet.
+	 *
+	 * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onActivityPointNotification()
+	 * also plays "HBST_pixels" through the sound manager when type === 0 (duckets). This port's
+	 * HabboCatalog has no sound manager dependency at all, so the sound is not played.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onActivityPointNotification()
+    private onActivityPointNotification(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const notification = event as HabboActivityPointNotificationMessageEvent;
+
+        if(!notification.parser) return;
+
+        // AS3 writes straight into the purse's dictionary (`purse.activityPoints[type] = amount`),
+        // which leaves the other currencies untouched - setActivityPoints() would clear them.
+        this._purse.activityPoints.set(notification.type, notification.amount);
+
+        this.updatePurse();
+
+        this.events.emit(
+            PurseEvent.ACTIVITY_POINT_BALANCE,
+            new PurseEvent(PurseEvent.ACTIVITY_POINT_BALANCE, notification.amount, notification.type)
+        );
+        this.events.emit(PurseUpdateEvent.UPDATE, new PurseUpdateEvent());
+    }
+
+    private onActivityPoints(event: IMessageEvent): void
     {
         if(!event) return;
 

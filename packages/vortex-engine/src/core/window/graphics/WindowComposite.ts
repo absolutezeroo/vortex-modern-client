@@ -215,7 +215,8 @@ export class WindowComposite
         window: IWindow,
         offsetX: number,
         offsetY: number,
-        inheritedClip: ClipRect | null
+        inheritedClip: ClipRect | null,
+        inheritedVisibleRegion: ClipRect | null = null
     ): void
     {
         if(!window.visible) return;
@@ -246,6 +247,32 @@ export class WindowComposite
         const forceClipping = window.testParamFlag(WindowParam.FORCE_CLIPPING);
         const base: ClipRect | null = (!usesParentContext && !forceClipping) ? null : inheritedClip;
 
+        /**
+         * Discarding the ancestor clip above is only half of what AS3 does with such a window.
+         * `WindowRenderer.renderWindowBranch()` also narrows a `visibleRegion` at every clipping
+         * ancestor and switches a child's graphic context off outright when it falls outside —
+         * `else if(!RECT.intersects(param3)) → getGraphicContext(true).visible = false`. An
+         * own-context window may widen the *draw* clip past its ancestors; it may not appear
+         * outside a clipping ancestor's box at all.
+         *
+         * Only this branch needs the gate: every other window is already clipped to nothing by
+         * `effectiveClip` when it lands outside, so the rendered result elsewhere is unchanged.
+         *
+         * Without it, collapsing a container by shrinking its height left its own-context
+         * descendants on screen — how the mystery-box tracker kept its `${mysterybox.tracker.link}`
+         * FAQ link visible after being minimised to 25px. That link is params 193: no
+         * USE_PARENT_GRAPHIC_CONTEXT, no FORCE_CLIPPING, so the draw clip lets it straight through.
+         */
+        if(base === null && inheritedVisibleRegion !== null)
+        {
+            const outside = absX >= inheritedVisibleRegion.right
+                || (absX + w) <= inheritedVisibleRegion.left
+                || absY >= inheritedVisibleRegion.bottom
+                || (absY + h) <= inheritedVisibleRegion.top;
+
+            if(outside) return;
+        }
+
         let effectiveClip: ClipRect | null = base;
 
         if(window.clipping)
@@ -260,6 +287,15 @@ export class WindowComposite
         {
             return;
         }
+
+        // AS3 narrows the visible region at a clipping window only (`param3 =
+        // param3.intersection(param1.renderingRectangle)`), and threads it down untouched
+        // otherwise. Unlike the draw clip, it is never discarded on the way down.
+        const visibleRegion: ClipRect | null = window.clipping
+            ? (inheritedVisibleRegion
+                ? this.intersectClip(inheritedVisibleRegion, {left: absX, top: absY, right: absX + w, bottom: absY + h})
+                : {left: absX, top: absY, right: absX + w, bottom: absY + h})
+            : inheritedVisibleRegion;
 
         ctx.save();
 
@@ -371,7 +407,7 @@ export class WindowComposite
 
                 if(child)
                 {
-                    this.compositeWindow(ctx, child, absX, absY, effectiveClip);
+                    this.compositeWindow(ctx, child, absX, absY, effectiveClip, visibleRegion);
                 }
             }
         }

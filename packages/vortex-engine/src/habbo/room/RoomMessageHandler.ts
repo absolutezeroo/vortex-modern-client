@@ -193,7 +193,7 @@ import {LegacyWallGeometry} from './utils/LegacyWallGeometry';
 import {Logger} from "@core";
 import type {IRoomMessageHandler} from "@habbo/room/IRoomMessageHandler";
 
-const log = Logger.getLogger('RoomMessageHandler');
+const log = Logger.getLogger('habbo.room.RoomMessageHandler');
 
 // AS3: _SafeCls_1984.as::onSpecialRoomEvent() — `new Timer(1000, discoColours.length + 1)`
 const DISCO_TICK_MS = 1000;
@@ -389,7 +389,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
 
         const count = parser.aliasCount;
 
-        log.debug(`[RoomMessageHandler] Received ${count} furniture aliases`);
+        log.trace(`Received ${count} furniture aliases`);
 
         for(let i = 0; i < count; i++) 
         {
@@ -641,7 +641,7 @@ export class RoomMessageHandler implements IRoomMessageHandler
                 doorZ + this._planeParser.wallHeight
             );
 
-            log.debug(`[RoomMessageHandler] Door detected at (${doorX}, ${doorY}, ${doorZ}) dir=${doorDir}`);
+            log.debug(`Door detected at (${doorX}, ${doorY}, ${doorZ}) dir=${doorDir}`);
         }
 
         // Initialize room with plane parser data and door info

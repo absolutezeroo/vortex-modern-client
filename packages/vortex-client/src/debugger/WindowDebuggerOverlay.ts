@@ -7,7 +7,7 @@ import {TYPE_CODE_TO_NAME, WindowType} from '@core/window/enum/WindowType';
 import {Logger} from '@core/utils/Logger';
 import type {IElementDescriptor} from '@habbo/window/IElementDescriptor';
 
-const log = Logger.getLogger('WindowDebugger');
+const log = Logger.getLogger('client.debugger.WindowDebuggerOverlay');
 
 /**
  * Dev-only visual debugger overlay (vortex-client/src/debugger).

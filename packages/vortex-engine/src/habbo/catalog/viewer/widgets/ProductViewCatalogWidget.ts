@@ -30,7 +30,7 @@ import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
 
-const log = Logger.getLogger('ProductViewCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWidget');
 
 /**
  * Shows the currently selected offer's name/description/price and a preview (room-canvas
@@ -198,6 +198,22 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.stopPreviewZoomAnimation();
         PreviewCanvasStack.unregister(this._canvasDisplayObject);
         this._catalog?.roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+
+        // Take the canvas off the stage rather than merely dropping the reference
+        // to it: it is parented onto the shared root PixiJS stage, not into this
+        // widget's window tree (see init()), so nothing else takes it off screen —
+        // and with the sync callback unregistered nothing hides it either, which
+        // left the last previewed piece of furniture floating over the room after
+        // the catalog closed.
+        //
+        // Detaching only THIS container, rather than asking the previewer to
+        // release its canvas: the previewer belongs to HabboCatalog and is shared,
+        // so a widget disposed *after* its replacement was built (page switches
+        // rebuild the product view) would otherwise dispose the fresh widget's
+        // canvas out from under it — they key on the same preview room id. The
+        // engine's own canvas record is replaced safely on the next
+        // getRoomCanvas() in init(), which disposes whatever it superseded.
+        this._canvasDisplayObject?.parent?.removeChild(this._canvasDisplayObject);
         this._canvasDisplayObject = null;
         this._catalog = null;
         this._priceBox = null;
@@ -310,7 +326,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
         if(this._bundleGrid == null)
         {
-            log.warn('[Product View Catalog Widget] Bundle Grid not initialized!');
+            log.warn('Bundle Grid not initialized!');
         }
 
         this._gridItemLayout = this._catalog!.windowManager!.buildWidgetLayout('gridItem');
@@ -1021,7 +1037,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             case 'pricing_model_furniture':
                 return this.renderProductPreview(offer);
             default:
-                log.warn(`[Product View Catalog Widget] Unknown pricing model ${offer.pricingModel}`);
+                log.warn(`Unknown pricing model ${offer.pricingModel}`);
 
                 return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }
@@ -1055,14 +1071,14 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             case 'r':
                 // TODO(AS3): rentable/avatar-effect preview needs multi-layer sprite compositing
                 // (addEffectSprites()) - not ported, see class doc comment.
-                log.warn('[Product View Catalog Widget] "r" preview not ported yet');
+                log.warn('"r" preview not ported yet');
                 this.setPreviewImage(null);
 
                 break;
             case 'e':
                 // TODO(AS3): avatar effect preview needs multi-layer sprite compositing
                 // (addEffectSprites()) - not ported, see class doc comment.
-                log.warn('[Product View Catalog Widget] "e" preview not ported yet');
+                log.warn('"e" preview not ported yet');
                 this.setPreviewImage(null);
 
                 break;
@@ -1080,7 +1096,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
                     break;
                 }
 
-                log.warn(`[Product View Catalog Widget] Unknown Product Type: ${product.productType}`);
+                log.warn(`Unknown Product Type: ${product.productType}`);
         }
 
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
@@ -1146,7 +1162,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         {
             // TODO(AS3): wallpaper/floor/landscape category-specific editing needs
             // roomEngine.getRoomStringValue(), which IRoomEngine doesn't expose yet.
-            log.warn('[Product View Catalog Widget] Wall-item category 2/3/4 preview not ported yet');
+            log.warn('Wall-item category 2/3/4 preview not ported yet');
 
             return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
         }

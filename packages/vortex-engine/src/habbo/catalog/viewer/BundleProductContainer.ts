@@ -8,7 +8,7 @@ import type {IGridItem} from './IGridItem';
 import type {IItemGrid} from './IItemGrid';
 import {ProductContainer} from './ProductContainer';
 
-const log = Logger.getLogger('BundleProductContainer');
+const log = Logger.getLogger('habbo.catalog.viewer.BundleProductContainer');
 
 /**
  * A bundle offer's grid item: shows a "deal" icon and populates a sub-grid of its products.

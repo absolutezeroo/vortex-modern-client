@@ -9,7 +9,7 @@ import type {ICatalogViewer} from './ICatalogViewer';
 import type {IPageLocalization} from './IPageLocalization';
 import {CatalogPage} from './CatalogPage';
 
-const log = Logger.getLogger('CatalogViewer');
+const log = Logger.getLogger('habbo.catalog.viewer.CatalogViewer');
 
 /**
  * Owns the currently-shown catalog page window and its container.
@@ -81,7 +81,7 @@ export class CatalogViewer implements ICatalogViewer
         acceptSeasonCurrencyAsCredits: boolean
     ): void
     {
-        log.debug(`[Catalog Viewer] Show Catalog Page: ${[pageId, layoutCode, offers.length, offerId]}`);
+        log.debug(`Show Catalog Page: ${[pageId, layoutCode, offers.length, offerId]}`);
 
         if(this._currentPage != null)
         {
@@ -114,7 +114,7 @@ export class CatalogViewer implements ICatalogViewer
         }
         else
         {
-            log.warn(`[CatalogViewer] No window for page: ${layoutCode}`);
+            log.warn(`No window for page: ${layoutCode}`);
         }
 
         this._container!.visible = true;

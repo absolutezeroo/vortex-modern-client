@@ -110,13 +110,32 @@ bodyparts `order-before` applies to.
 
 ## Documentation
 
-| File                                 | Content                                                                                               |
-|--------------------------------------|-------------------------------------------------------------------------------------------------------|
-| `.claude/rules/`                     | Auto-loaded enforcement rules for Claude Code                                                         |
-| `AGENTS.md`                          | Universal AI agent instructions (generated from `.claude/rules/`, for non-Claude tools)               |
-| `docs/CONTEXT.md`                    | Full architecture and project context                                                                 |
-| `docs/PATTERNS.md`                   | Implementation templates with code examples                                                           |
-| `docs/STYLEGUIDE.md`                 | Complete code style reference + performance                                                           |
-| `docs/IMPLEMENTATION_STATUS.md`      | Progress tracking (~35% overall, ~710+ files)                                                         |
-| `docs/architectures/`                | Per-module AS3 architecture deep-dives, created on demand — see `docs/architectures/README.md`        |
-| `docs/CLIENT-SERVER-ARCHITECTURE.md` | Real client↔server protocol, message flows, and known server-side bugs (Arcturus-Community reference) |
+| File                                 | Content                                                                                                              |
+|--------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `.claude/rules/`                     | Auto-loaded enforcement rules for Claude Code                                                                        |
+| `AGENTS.md`                          | Universal AI agent instructions (generated from `.claude/rules/`, for non-Claude tools)                              |
+| `docs/CONTEXT.md`                    | Full architecture and project context                                                                                |
+| `docs/PATTERNS.md`                   | Implementation templates with code examples                                                                          |
+| `docs/STYLEGUIDE.md`                 | Complete code style reference + performance                                                                          |
+| `docs/IMPLEMENTATION_STATUS.md`      | Progress tracking — per-module counts, remaining gaps, and the re-measure recipe. Never state a global % from it     |
+| `docs/architectures/`                | Per-module AS3 architecture deep-dives, created on demand — see `docs/architectures/README.md`                       |
+| `docs/CLIENT-SERVER-ARCHITECTURE.md` | Real client↔server protocol, message flows, and known server-side bugs — the server is `vortex-emulator` (see below) |
+
+### The server is `vortex-emulator`, and `sources/HABBO-ARCTURUS-DAYBREAK/` is not it
+
+The server this client talks to is **Turbo Cloud / `vortex-emulator`** (C#), a sibling checkout at
+`../vortex-emulator`. Packet headers live in one file there:
+`Vortex.Revisions/Revision20260701/Headers.cs` — `MessageComposer` constants are server→client (the
+client's `_events`), `MessageEvent` constants are client→server (the client's `_composers`).
+
+`sources/HABBO-ARCTURUS-DAYBREAK/` is an unrelated **Java** reference dump, useful only for reading
+how someone else serialized a message. It is **not** this project's server and its
+`messages/outgoing/Outgoing.java` headers are a 2016 build's — 221 of the 229 that share a name with
+a client event disagree on the id, `ChatMessageComposer` included. Editing it changes nothing and
+its numbers must never be treated as authority. `docs/CLIENT-SERVER-ARCHITECTURE.md` says this too
+(its opening note discards an earlier Arcturus-based draft), but the table row above used to imply
+the opposite, which is how an entire round of "fixes" once landed in the wrong repository.
+
+Header source-of-truth order stays: WIN63's own registry
+(`.../habbo/communication/_SafeCls_2046.as`) first, then the emulator as corroboration — never the
+emulator alone.

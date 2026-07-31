@@ -6,7 +6,7 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {HabboProperty} from './enum/HabboProperty';
 import {HabboConfigurationFlags} from './enum/HabboConfigurationFlags';
 
-const log = Logger.getLogger('Configuration');
+const log = Logger.getLogger('habbo.configuration.HabboConfigurationManager');
 
 /**
  * Habbo Configuration Manager
@@ -324,7 +324,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 
         try 
         {
-            log.info(`Loading configuration from ${externalVariablesUrl}`);
+            log.debug(`Loading configuration from ${externalVariablesUrl}`);
 
             const response = await fetch(externalVariablesUrl);
 
@@ -630,7 +630,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
         }
         else 
         {
-            log.debug(`Could not parse configuration ${assetName}`);
+            log.warn(`Could not parse configuration ${assetName}`);
         }
     }
 
@@ -677,7 +677,7 @@ export class HabboConfigurationManager extends Component implements IHabboConfig
 
         this._isConfigLoaded = true;
 
-        log.success('Configuration loaded');
+        log.info('Configuration loaded');
 
         this.events.emit('complete');
     }

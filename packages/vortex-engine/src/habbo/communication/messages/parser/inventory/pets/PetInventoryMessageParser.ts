@@ -13,12 +13,24 @@ export interface IPetData
         customParts: number[];
     };
     level: number;
+    rarityLevel: number;
 }
 
 /**
- * Parser for pet inventory message
+ * Parser for pet inventory message (header 1200).
  *
- * @see source_as_win63/habbo/communication/messages/parser/inventory/pets/PetInventoryEventParser.as
+ * Each entry is AS3's own pet DTO — id, name, an inlined PetFigureData, level, rarityLevel — read in
+ * that exact order. `rarityLevel` used to be skipped here, which desynchronised every pet after the
+ * first in a multi-pet fragment: the next pet's id was read out of the previous pet's rarity field.
+ *
+ * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2554/_SafeCls_2926.as
+ * (obfuscated in the primary dump; `_SafeStr_4546[1200] = _SafeCls_3085` in the registry
+ * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as:1207, and
+ * the class name is recovered from
+ * sources/win63_version/habbo/communication/messages/parser/inventory/pets/PetInventoryEventParser.as).
+ * The per-pet DTO is _SafeCls_2577 (win63_version `class_2838`), its figure block _SafeCls_3943,
+ * whose real name PetFigureData survives unobfuscated in
+ * sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/inventory/pets/PetFigureData.as.
  */
 export class PetInventoryMessageParser implements IMessageParser
 {
@@ -78,6 +90,7 @@ export class PetInventoryMessageParser implements IMessageParser
             }
 
             const level = wrapper.readInt();
+            const rarityLevel = wrapper.readInt();
 
             this._pets.push({
                 id,
@@ -90,6 +103,7 @@ export class PetInventoryMessageParser implements IMessageParser
                     customParts,
                 },
                 level,
+                rarityLevel,
             });
         }
 

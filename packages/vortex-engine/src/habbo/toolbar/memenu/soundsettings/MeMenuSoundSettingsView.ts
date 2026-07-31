@@ -4,7 +4,7 @@ import type {ToolbarView} from '../../ToolbarView';
 import {MeMenuSoundSettingsItem} from './MeMenuSoundSettingsItem';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuSoundSettingsView');
+const log = Logger.getLogger('habbo.toolbar.memenu.soundsettings.MeMenuSoundSettingsView');
 
 /**
  * Sound settings view within the me menu

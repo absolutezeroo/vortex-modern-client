@@ -3,7 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {CurrencyIndicatorBase} from './CurrencyIndicatorBase';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('PurseClubArea');
+const log = Logger.getLogger('habbo.toolbar.extensions.purse.PurseClubArea');
 
 /**
  * Club membership area display in the purse extension

@@ -12,7 +12,7 @@ import {
 } from '@habbo/communication/messages/outgoing/moderation/CloseIssueDefaultActionMessageComposer';
 import {ModToolSanctionComposer} from '@habbo/communication/messages/outgoing/moderation/ModToolSanctionComposer';
 
-const log = Logger.getLogger('Moderation');
+const log = Logger.getLogger('habbo.moderation.IssueManager');
 
 /**
  * Core issue/report management.

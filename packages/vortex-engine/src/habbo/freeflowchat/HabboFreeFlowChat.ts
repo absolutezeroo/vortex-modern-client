@@ -36,7 +36,7 @@ import type {IChatStyleInternal} from './viewer/visualization/style/IChatStyleIn
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const log = Logger.getLogger('HabboFreeFlowChat');
+const log = Logger.getLogger('habbo.freeflowchat.HabboFreeFlowChat');
 
 /**
  * Events emitted by HabboFreeFlowChat for the UI layer.
@@ -714,7 +714,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 
         this._communication?.addHabboConnectionMessageEvent(new AccountPreferencesEvent(this.onAccountPreferences.bind(this)));
 
-        log.info('HabboFreeFlowChat initialized');
+        log.debug('HabboFreeFlowChat initialized');
 
         // If we were already in a room when initialization completed, enter now
         if(this._isInRoom)

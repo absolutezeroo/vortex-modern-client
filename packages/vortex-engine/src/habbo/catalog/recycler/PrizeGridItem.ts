@@ -5,7 +5,7 @@ import type {HabboCatalog} from '../HabboCatalog';
 import {ProductGridItem} from '../viewer/ProductGridItem';
 import type {IGridItem} from '../viewer/IGridItem';
 
-const log = Logger.getLogger('PrizeGridItem');
+const log = Logger.getLogger('habbo.catalog.recycler.PrizeGridItem');
 
 /**
  * Base recycler prize grid-item: resolves and displays the prize's icon.
@@ -40,11 +40,11 @@ export class PrizeGridItem extends ProductGridItem implements IGridItem, IGetIma
                 break;
 
             case 'chat_style':
-                log.warn(`[PrizeGridItem] chat_style prize icons are not supported yet (item ${productItemTypeId})`);
+                log.warn(`chat_style prize icons are not supported yet (item ${productItemTypeId})`);
                 return;
 
             default:
-                log.warn(`[PrizeGridItem] Can not yet handle this type of product: ${productItemType}`);
+                log.warn(`Can not yet handle this type of product: ${productItemType}`);
                 return;
         }
 

@@ -11,7 +11,7 @@ import {VipBuyItem} from '../../club/VipBuyItem';
 import type {IVipBuyCatalogWidget} from './IVipBuyCatalogWidget';
 import {CatalogWidget} from './CatalogWidget';
 
-const log = Logger.getLogger('VipBuyCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.VipBuyCatalogWidget');
 
 /**
  * VIP purchase widget (also reused for gifting VIP to another user via the `isGift` constructor

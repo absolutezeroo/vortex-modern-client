@@ -3,7 +3,7 @@ import type {HabboQuestEngine} from './HabboQuestEngine';
 import type {AchievementData} from './AchievementCategory';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AchievementsResolutionController');
+const log = Logger.getLogger('habbo.quest.AchievementsResolutionController');
 
 /**
  * Achievement resolution controller
@@ -92,7 +92,7 @@ export class AchievementsResolutionController implements IDisposable
         const first = achievements[0] as Record<string, unknown>;
         this._selectedAchievementId = (first.achievementId as number) ?? -1;
 
-        log.info(`Resolution achievements received: stuffId=${stuffId}, count=${achievements.length}, endTime=${endTime}`);
+        log.debug(`Resolution achievements received: stuffId=${stuffId}, count=${achievements.length}, endTime=${endTime}`);
     }
 
     /**
@@ -128,7 +128,7 @@ export class AchievementsResolutionController implements IDisposable
 	 */
     onLevelUp(_data: unknown): void
     {
-        log.debug('Resolution level-up received');
+        log.trace('Resolution level-up received');
     }
 
     /**

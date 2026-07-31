@@ -3,7 +3,7 @@ import {Logger} from '@core/utils/Logger';
 import {PivotPoint} from '../../enum/PivotPoint';
 import {SkinRenderer} from './SkinRenderer';
 
-const log = Logger.getLogger('BitmapDataRenderer');
+const log = Logger.getLogger('core.window.graphics.renderer.BitmapDataRenderer');
 
 /**
  * PERFORMANCE CACHE — do not remove or "simplify away".

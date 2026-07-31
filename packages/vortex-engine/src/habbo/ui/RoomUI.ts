@@ -60,8 +60,10 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 
 // Events
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
+import {RoomSessionErrorMessageEvent} from '@habbo/session/events/RoomSessionErrorMessageEvent';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
+import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
@@ -71,7 +73,24 @@ import type {IRoomDesktop} from './IRoomDesktop';
 import {RoomDesktop} from './RoomDesktop';
 import {RoomWidgetFactory} from './RoomWidgetFactory';
 
-const log = Logger.getLogger('RoomUI');
+const log = Logger.getLogger('habbo.ui.RoomUI');
+
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
+// listener table whose callback is roomSessionDialogEventHandler, in the source's own order.
+const ROOM_SESSION_DIALOG_EVENTS: readonly string[] = [
+    RoomSessionErrorMessageEvent.KICKED_BY_OWNER,
+    RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_HOTEL,
+    RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_FLAT,
+    RoomSessionErrorMessageEvent.MAX_NUMBER_OF_PETS,
+    RoomSessionErrorMessageEvent.MAX_NUMBER_OF_OWN_PETS,
+    RoomSessionErrorMessageEvent.NO_FREE_TILES_FOR_PET,
+    RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_PET,
+    RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL,
+    RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT,
+    RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED,
+    'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT',
+    'RSEME_BOT_NAME_NOT_ACCEPTED',
+];
 
 export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
 {
@@ -238,6 +257,20 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_ROTATE, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_PICKUP, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_MOVE, this.roomObjectEventHandler, this);
+                        // AS3: RoomUI.as:252 — the same roomObjectEventHandler is registered for
+                        // the RETWE_REQUEST_* furni-widget requests. Without this the engine's
+                        // new bridge would emit into nothing.
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_TROPHY, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_STICKIE, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CREDITFURNI, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX, this.roomObjectEventHandler, this);
+                        // The furniture context menu reaches its handler through the desktop's
+                        // per-event handler map, so the bubble only ever opens if these two are
+                        // forwarded like the widget requests above.
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
                     }
                 },
                 true
@@ -253,6 +286,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
+
+                        // AS3: RoomUI.as's listener table routes all of these to
+                        // roomSessionDialogEventHandler.
+                        for(const type of ROOM_SESSION_DIALOG_EVENTS)
+                        {
+                            mgr.sessionEvents.on(type, this.roomSessionDialogEventHandler, this);
+                        }
                     }
                 },
                 true
@@ -520,7 +560,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._currentDesktop = null;
         }
 
-        log.info(`Desktop disposed: ${identifier}`);
+        log.debug(`Desktop disposed: ${identifier}`);
     }
 
     /**
@@ -604,6 +644,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
+
+            for(const type of ROOM_SESSION_DIALOG_EVENTS)
+            {
+                this._roomSessionManager.sessionEvents.off(type, this.roomSessionDialogEventHandler, this);
+            }
         }
 
         // Dispose all desktops
@@ -622,7 +667,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     protected override initComponent(): void 
     {
-        log.info('RoomUI initialized');
+        log.debug('RoomUI initialized');
     }
 
     // AS3: sources/win63_version/habbo/ui/RoomUI.as::bottomBarResizeHandler()
@@ -637,12 +682,68 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Handles room session lifecycle events.
      */
-    private roomSessionStateEventHandler(event: RoomSessionEvent): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::roomSessionDialogEventHandler()
+    // The room-session errors that surface as a plain alert. Without this the server's
+    // PetPlacingError (3195) and its bot/kick siblings reached RoomUsersHandler, were turned into a
+    // RoomSessionErrorMessageEvent, and then died with no subscriber — the placement simply failed
+    // in silence.
+    private roomSessionDialogEventHandler(event: RoomSessionEvent): void
+    {
+        let errorTitle = '${error.title}';
+        let errorMessage: string;
+
+        switch(event.type)
+        {
+            case RoomSessionErrorMessageEvent.MAX_NUMBER_OF_PETS:
+                errorMessage = '${room.error.max_pets}';
+                break;
+            case RoomSessionErrorMessageEvent.MAX_NUMBER_OF_OWN_PETS:
+                errorMessage = '${room.error.max_own_pets}';
+                break;
+            case RoomSessionErrorMessageEvent.KICKED_BY_OWNER:
+                errorMessage = '${room.error.kicked}';
+                errorTitle = '${generic.alert.title}';
+                break;
+            case RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_HOTEL:
+                errorMessage = '${room.error.pets.forbidden_in_hotel}';
+                break;
+            case RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_FLAT:
+                errorMessage = '${room.error.pets.forbidden_in_flat}';
+                break;
+            case RoomSessionErrorMessageEvent.NO_FREE_TILES_FOR_PET:
+                errorMessage = '${room.error.pets.no_free_tiles}';
+                break;
+            case RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_PET:
+                errorMessage = '${room.error.pets.selected_tile_not_free}';
+                break;
+            case RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL:
+                errorMessage = '${room.error.bots.forbidden_in_hotel}';
+                break;
+            case RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT:
+                errorMessage = '${room.error.bots.forbidden_in_flat}';
+                break;
+            case RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED:
+                errorMessage = '${room.error.max_bots}';
+                break;
+            case 'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT':
+                errorMessage = '${room.error.bots.selected_tile_not_free}';
+                break;
+            case 'RSEME_BOT_NAME_NOT_ACCEPTED':
+                errorMessage = '${room.error.bots.name.not.accepted}';
+                break;
+            default:
+                return;
+        }
+
+        this._windowManager?.alert(errorTitle, errorMessage, 0, (dialog) => dialog.dispose());
+    }
+
+    private roomSessionStateEventHandler(event: RoomSessionEvent): void
     {
         switch(event.type) 
         {
             case RoomSessionEvent.RSE_CREATED: {
-                log.info(`Session created for room ${event.session.roomId}`);
+                log.debug(`Session created for room ${event.session.roomId}`);
 
                 this.createDesktop(event.session);
 
@@ -665,7 +766,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             }
 
             case RoomSessionEvent.RSE_STARTED: {
-                log.info(`Session started for room ${event.session.roomId}`);
+                log.debug(`Session started for room ${event.session.roomId}`);
 
                 // Switch toolbar to room view mode
                 // AS3: RoomUI.defineToolbarState()
@@ -684,7 +785,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             }
 
             case RoomSessionEvent.RSE_ENDED: {
-                log.info(`Session ended for room ${event.session.roomId}`);
+                log.debug(`Session ended for room ${event.session.roomId}`);
 
                 const identifier = this.getRoomIdentifier(event.session.roomId);
 
@@ -757,6 +858,16 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_ROOM_TOOLS');
                     desktop.createWidget('RWE_FURNITURE_CONTEXT_MENU');
                     desktop.createWidget('RWE_EFFECTS');
+                    // AS3: RoomUI.as:941. The furni widgets are created eagerly at room entry,
+                    // not on demand — creating one is what registers its handler's message
+                    // types, so the widget must exist before the furni is ever clicked.
+                    desktop.createWidget('RWE_FURNI_PET_PACKAGE_WIDGET');
+                    desktop.createWidget('RWE_FURNI_ECOTRONBOX_WIDGET');
+                    desktop.createWidget('RWE_FURNI_CREDIT_WIDGET');
+                    desktop.createWidget('RWE_ROOM_BACKGROUND_COLOR');
+                    desktop.createWidget('RWE_FURNI_PLACEHOLDER');
+                    desktop.createWidget('RWE_FURNI_STICKIE_WIDGET');
+                    desktop.createWidget('RWE_FURNI_TROPHY_WIDGET');
 
                     this._isInRoom = true;
 

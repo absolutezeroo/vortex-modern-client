@@ -45,7 +45,7 @@ import {RoomCompetitionController} from './RoomCompetitionController';
 import {QuestMessageHandler} from './QuestMessageHandler';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('HabboQuestEngine');
+const log = Logger.getLogger('habbo.quest.HabboQuestEngine');
 
 /**
  * Main Quest Engine component
@@ -364,7 +364,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
             case 'calendar':
                 // TODO(AS3): AS3 calls questController.seasonalCalendarWindow.onToolbarClick() -
                 // the seasonal calendar isn't ported (see QuestController's own TODOs).
-                log.debug('QuestEngine "calendar" link received but the seasonal calendar is not ported');
+                log.warn('QuestEngine "calendar" link received but the seasonal calendar is not ported');
                 break;
 
             case 'quests':
@@ -847,7 +847,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
             this._competitionController = null;
         }
 
-        log.info('HabboQuestEngine disposed');
+        log.debug('HabboQuestEngine disposed');
 
         super.dispose();
     }
@@ -875,7 +875,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         // IUpdateReceiver mechanism other per-frame-animated managers use instead.
         this.registerUpdateReceiver(this, 10);
 
-        log.info('HabboQuestEngine initialized');
+        log.debug('HabboQuestEngine initialized');
     }
 
     /**

@@ -10,7 +10,7 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {Logger} from '@core';
 
-const log = Logger.getLogger('TileObjectMap');
+const log = Logger.getLogger('habbo.room.utils.TileObjectMap');
 
 export class TileObjectMap
 {

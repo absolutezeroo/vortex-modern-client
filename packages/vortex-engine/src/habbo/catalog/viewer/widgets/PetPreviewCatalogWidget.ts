@@ -11,7 +11,7 @@ import {Offer} from '../Offer';
 import {CatalogWidget} from './CatalogWidget';
 import {SelectProductEvent} from './events/SelectProductEvent';
 
-const log = Logger.getLogger('PetPreviewCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.PetPreviewCatalogWidget');
 
 /**
  * Read-only pet preview panel: renders the selected offer's pet, plus its localized name and
@@ -140,7 +140,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
         }
         else
         {
-            log.debug(`[Pet Preview Catalog Widget] Unknown pricing model${offer.pricingModel}`);
+            log.warn(`Unknown pricing model${offer.pricingModel}`);
         }
 
         this.setPreviewImage(image, true, {x: 0, y: 0});
@@ -157,7 +157,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
 
         if(furnitureData == null || furnitureData.customParams == null)
         {
-            log.debug(`[Pet Preview Catalog Widget] Unsupported product: ${product?.productType}`);
+            log.warn(`Unsupported product: ${product?.productType}`);
 
             return null;
         }
@@ -166,7 +166,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
 
         if(params.length < 1)
         {
-            log.debug(`[Pet Preview Catalog Widget] Invalid custom params: ${product?.productType}`);
+            log.warn(`Invalid custom params: ${product?.productType}`);
 
             return null;
         }
@@ -188,7 +188,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
             case 3:
                 return this.renderBySingleTriple(roomEngine, petType, params, product!.productType);
             default:
-                log.debug(`[Pet Preview Catalog Widget] Unsupported Product Type: ${product?.productType}`);
+                log.warn(`Unsupported Product Type: ${product?.productType}`);
 
                 return null;
         }
@@ -199,7 +199,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
     {
         if(params.length < 2)
         {
-            log.debug(`[Pet Preview Catalog Widget] Invalid custom params: ${productType}`);
+            log.warn(`Invalid custom params: ${productType}`);
 
             return null;
         }
@@ -240,7 +240,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
     {
         if(params.length < 4)
         {
-            log.debug(`[Pet Preview Catalog Widget] Invalid custom params: ${productType}`);
+            log.warn(`Invalid custom params: ${productType}`);
 
             return null;
         }
@@ -263,7 +263,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
     {
         if(params.length < 3)
         {
-            log.debug(`[Pet Preview Catalog Widget] Invalid custom params: ${productType}`);
+            log.warn(`Invalid custom params: ${productType}`);
 
             return null;
         }
@@ -285,7 +285,7 @@ export class PetPreviewCatalogWidget extends CatalogWidget implements IGetImageL
     // falls through to build the part from the missing entries anyway. Preserved.
     private renderBySingleTriple(roomEngine: IRoomEngine, petType: number, params: string[], productType: string): {id: number; data: ImageBitmap | null} | null
     {
-        if(params.length < 4) log.debug(`[Pet Preview Catalog Widget] Invalid custom params: ${productType}`);
+        if(params.length < 4) log.warn(`Invalid custom params: ${productType}`);
 
         const customParts = [new PetCustomPart(parseInt(params[1]!), parseInt(params[2]!), parseInt(params[3]!))];
 

@@ -15,7 +15,7 @@ import {CommunicationUtils} from '@habbo/utils/CommunicationUtils';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import type {IHabboCommunicationDemo} from "@habbo/communication/demo/IHabboCommunicationDemo";
 
-const log = Logger.getLogger('CommunicationDemo');
+const log = Logger.getLogger('habbo.communication.demo.HabboCommunicationDemo');
 
 /**
  * Habbo Communication Demo
@@ -269,7 +269,7 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         this._isDisconnected = false;
         this._isLoggedIn = true;
 
-        log.success('Login successful');
+        log.info('Login successful');
     }
 
     // AS3: sources/win63_version/habbo/communication/demo/class_467.as::disconnected()

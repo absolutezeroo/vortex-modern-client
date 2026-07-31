@@ -3,7 +3,7 @@ import type {WindowController} from '@core/window/WindowController';
 import {Logger} from '@core/utils/Logger';
 import {EditorEvents, type EditorState} from '../../state/EditorState';
 
-const log = Logger.getLogger('GlazeBottomBar');
+const log = Logger.getLogger('glaze.ui.windows.WindowBottomBar');
 
 interface IContainerLike { addChild(child: IWindow): IWindow; }
 interface ICheckWidget { isSelected: boolean; addEventListener(type: string, cb: () => void): void; }

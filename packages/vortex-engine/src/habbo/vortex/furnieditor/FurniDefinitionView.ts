@@ -16,7 +16,7 @@ import {
     STUFF_DATA_TYPE_OPTIONS
 } from './FurniDefinitionOptions';
 
-const log = Logger.getLogger('FurniDefinitionView');
+const log = Logger.getLogger('habbo.vortex.furnieditor.FurniDefinitionView');
 
 /** The checkbox surface — declared structurally, the way vortex-glaze does. */
 interface ICheckWidget

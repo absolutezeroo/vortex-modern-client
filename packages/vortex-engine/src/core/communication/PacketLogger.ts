@@ -1,6 +1,8 @@
-import {Logger} from '@core/utils/Logger';
+import {Logger, LogLevel} from '@core/utils/Logger';
 
-const log = Logger.getLogger('Packets');
+const NAMESPACE = 'core.communication.PacketLogger';
+
+const log = Logger.getLogger(NAMESPACE);
 
 /**
  * Packet tracing for the client's wire layer.
@@ -85,6 +87,10 @@ export class PacketLogger
                 PacketLogger._enabled = true;
                 PacketLogger._filter = filter ?? null;
 
+                // Per-packet lines are TRACE, which is off at every default level — turning tracing
+                // on has to raise this one namespace or `__packets.on()` would silently do nothing.
+                Logger.setNamespaceLevel(NAMESPACE, LogLevel.TRACE);
+
                 log.info(`Packet tracing ON${filter ? ` (filter: "${filter}")` : ''}, direction: ${PacketLogger._direction}`);
             },
             off()
@@ -92,6 +98,8 @@ export class PacketLogger
                 PacketLogger._enabled = false;
 
                 log.info('Packet tracing OFF');
+
+                Logger.clearNamespaceLevel(NAMESPACE);
             },
             only(direction: 'in' | 'out' | 'both')
             {
@@ -150,7 +158,7 @@ export class PacketLogger
 
         const handlers = entry.handlers !== null ? ` (${entry.handlers} handler${entry.handlers === 1 ? '' : 's'})` : '';
 
-        log.debug(`${arrow} [${entry.id}] ${entry.name}${handlers}`);
+        log.trace(`${arrow} [${entry.id}] ${entry.name}${handlers}`);
     }
 }
 

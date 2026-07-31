@@ -1,6 +1,6 @@
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuSoundSettingsSlider');
+const log = Logger.getLogger('habbo.toolbar.memenu.soundsettings.MeMenuSoundSettingsSlider');
 
 /**
  * Sound settings slider for the me menu

@@ -6,7 +6,7 @@ import type {GenericWidget} from '../GenericWidget';
 import type {IElementHandler} from '../../interfaces/elements/IElementHandler';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('RewardBadgeElementHandler');
+const log = Logger.getLogger('habbo.friendbar.landingview.widget.elements.RewardBadgeElementHandler');
 
 /**
  * Static reward-badge image content element.

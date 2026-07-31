@@ -5,7 +5,7 @@ import type {GuildSelectorCatalogWidget} from '../viewer/widgets/GuildSelectorCa
 import type {GuildMembershipsMessageEventParser} from '@habbo/communication/messages/parser/users/GuildMembershipsMessageEventParser';
 import {GetGuildMembershipsMessageComposer} from '@habbo/communication/messages/outgoing/users/GetGuildMembershipsMessageComposer';
 
-const log = Logger.getLogger('GuildMembershipsController');
+const log = Logger.getLogger('habbo.catalog.guilds.GuildMembershipsController');
 
 /**
  * Mediator owned by HabboCatalog: fetches the current user's guild memberships and feeds them

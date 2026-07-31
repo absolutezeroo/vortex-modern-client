@@ -16,8 +16,16 @@ import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
 import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 import {EffectsWidget} from './widget/effects/EffectsWidget';
 import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
+import {TrophyFurniWidget} from './widget/furniture/trophy/TrophyFurniWidget';
+import {StickieFurniWidget} from './widget/furniture/stickie/StickieFurniWidget';
+import {PlaceholderWidget} from './widget/furniture/placeholder/PlaceholderWidget';
+import {BackgroundColorFurniWidget} from './widget/furniture/backgroundcolor/BackgroundColorFurniWidget';
+import {CreditFurniWidget} from './widget/furniture/credit/CreditFurniWidget';
+import {EcotronBoxFurniWidget} from './widget/furniture/ecotronbox/EcotronBoxFurniWidget';
+import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
+import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 
-const log = Logger.getLogger('RoomWidgetFactory');
+const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
 export class RoomWidgetFactory implements IRoomWidgetFactory
 {
@@ -58,6 +66,44 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new RoomChatInputWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI, this._roomUI.desktop
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_PET_PACKAGE_WIDGET"
+            case 'RWE_FURNI_PET_PACKAGE_WIDGET':
+                return new PetPackageFurniWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_ECOTRONBOX_WIDGET"
+            case 'RWE_FURNI_ECOTRONBOX_WIDGET':
+                return new EcotronBoxFurniWidget(handler, this._roomUI.windowManager, this._roomUI.assets);
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_CREDIT_WIDGET"
+            case 'RWE_FURNI_CREDIT_WIDGET':
+                return new CreditFurniWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_ROOM_BACKGROUND_COLOR"
+            case 'RWE_ROOM_BACKGROUND_COLOR':
+                return new BackgroundColorFurniWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_PLACEHOLDER"
+            case 'RWE_FURNI_PLACEHOLDER':
+                return new PlaceholderWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_STICKIE_WIDGET"
+            case 'RWE_FURNI_STICKIE_WIDGET':
+                return new StickieFurniWidget(handler, this._roomUI.windowManager, this._roomUI.assets);
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNI_TROPHY_WIDGET"
+            case 'RWE_FURNI_TROPHY_WIDGET':
+                return new TrophyFurniWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.config
+                );
+            // AS3: RoomWidgetFactory.as::createWidget() "RWE_FURNITURE_CONTEXT_MENU"
+            case 'RWE_FURNITURE_CONTEXT_MENU':
+                return new FurnitureContextMenuWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.catalog
                 );
             case 'RWE_CHAT_WIDGET':
                 return new RoomChatWidget(

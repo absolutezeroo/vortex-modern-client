@@ -51,7 +51,7 @@ import {ClubGiftWidget} from './widgets/ClubGiftWidget';
 import {CatalogWidgetName} from './widgets/CatalogWidgetName';
 import {CatalogWidgetEvent} from './widgets/events/CatalogWidgetEvent';
 
-const log = Logger.getLogger('CatalogPage');
+const log = Logger.getLogger('habbo.catalog.viewer.CatalogPage');
 
 /**
  * A single loaded catalog page: its window, offers, localization, and widgets.

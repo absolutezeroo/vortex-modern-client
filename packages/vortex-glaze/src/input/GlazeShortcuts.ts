@@ -5,7 +5,7 @@ import {copySelected, cutSelected, pasteClipboard} from '../ops/ClipboardOps';
 import {saveLayout} from '../ops/LayoutSerializer';
 import type {EditorState} from '../state/EditorState';
 
-const log = Logger.getLogger('GlazeShortcuts');
+const log = Logger.getLogger('glaze.input.GlazeShortcuts');
 
 /**
  * GlazeShortcuts — keyboard bindings for the editor, à la Glaze.

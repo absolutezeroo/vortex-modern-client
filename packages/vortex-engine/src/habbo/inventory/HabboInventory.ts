@@ -27,6 +27,16 @@ import {Pet} from './pets/Pet';
 import {PetFigureData} from './pets/PetFigureData';
 import {PetInventoryMessageEvent} from '../communication/messages/incoming/inventory/pets/PetInventoryMessageEvent';
 import type {PetInventoryMessageParser} from '../communication/messages/parser/inventory/pets/PetInventoryMessageParser';
+import {
+    GoToBreedingNestFailureEvent,
+    PetAddedToInventoryEvent,
+    PetRemovedFromInventoryEvent
+} from '../communication/messages/incoming/inventory/pets';
+import type {
+    GoToBreedingNestFailureEventParser,
+    PetAddedToInventoryEventParser,
+    PetRemovedFromInventoryEventParser
+} from '../communication/messages/parser/inventory/pets';
 import {BotsModel} from './bots/BotsModel';
 import {TradingModel} from './trading/TradingModel';
 import {Purse} from './purse/Purse';
@@ -76,7 +86,7 @@ import type {AvatarEffectExpiredMessageParser} from '../communication/messages/p
 import {HabboInventoryEffectsEvent} from './events/HabboInventoryEffectsEvent';
 import {Effect} from './effects/Effect';
 
-const log = Logger.getLogger('Inventory');
+const log = Logger.getLogger('habbo.inventory.HabboInventory');
 
 /**
  * Main inventory controller
@@ -435,7 +445,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         this._initializedCategories.clear();
 
-        log.info('Inventory disposed');
+        log.debug('Inventory disposed');
         super.dispose();
     }
 
@@ -788,7 +798,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this.registerFurniMessageEvents();
         this.registerPetMessageEvents();
         this.registerEffectMessageEvents();
-        log.info('Inventory initialized');
+        log.debug('Inventory initialized');
     }
 
     /**
@@ -840,7 +850,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         if(parts[1] !== 'open')
         {
-            log.debug(`Inventory unknown link-type received: ${parts[1]}`);
+            log.warn(`Inventory unknown link-type received: ${parts[1]}`);
         }
         else if(parts.length === 2)
         {
@@ -880,9 +890,77 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         if(!this._communication) return;
 
         this._petMessageEvents.push(
-            this._communication.addMessageEvent(new PetInventoryMessageEvent(this.onPetInventory))
+            this._communication.addMessageEvent(new PetInventoryMessageEvent(this.onPetInventory)),
+            this._communication.addMessageEvent(new PetAddedToInventoryEvent(this.onPetAdded)),
+            this._communication.addMessageEvent(new PetRemovedFromInventoryEvent(this.onPetRemoved)),
+            this._communication.addMessageEvent(new GoToBreedingNestFailureEvent(this.onGoToBreedingNestFailure))
         );
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onPetAdded()
+    // AS3's `if(parser.openInventory()) {}` is an empty branch in the dump — the body was compiled
+    // away — so the flag is read and deliberately acted on by nothing here too.
+    private onPetAdded = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as PetAddedToInventoryEventParser | null;
+
+        if(!parser || !this._petsModel || !parser.pet) return;
+
+        this._petsModel.addPet(parser.pet);
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onPetRemoved()
+    private onPetRemoved = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as PetRemovedFromInventoryEventParser | null;
+
+        if(!parser || !this._petsModel) return;
+
+        this._petsModel.removePet(parser.petId);
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onGoToBreedingNestFailure()
+    // Reason 6 is "no food": the alert's action button then points at the food catalog page instead
+    // of the nests page. Every other reason keeps the nest page, and the message key itself is built
+    // from the raw reason code.
+    private onGoToBreedingNestFailure = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as GoToBreedingNestFailureEventParser | null;
+
+        if(!parser || !this._windowManager) return;
+
+        let linkCaption = '${gotobreedingnestfailure.getnest}';
+        let linkClickCallback = this.getNest;
+
+        if(parser.reason === 6)
+        {
+            linkCaption = '${gotobreedingnestfailure.getfood}';
+            linkClickCallback = this.getFood;
+        }
+
+        this._windowManager.simpleAlert(
+            '${gotobreedingnestfailure.caption}',
+            '${gotobreedingnestfailure.subtitle}',
+            `\${gotobreedingnestfailure.message.${parser.reason}}`,
+            linkCaption,
+            '',
+            null,
+            null,
+            linkClickCallback
+        );
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::getNest()
+    private getNest = (): void =>
+    {
+        this._catalog?.openCatalogPage(this.getProperty('gotobreedingnestfailure.catalogpage.nests'));
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::getFood()
+    private getFood = (): void =>
+    {
+        this._catalog?.openCatalogPage(this.getProperty('gotobreedingnestfailure.catalogpage.food'));
+    };
 
     // Mirrors onFurniList: accumulate across fragments, then hand the full set to the model.
     private onPetInventory = (event: IMessageEvent): void =>
@@ -902,7 +980,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 data.figureData.customParts
             );
 
-            this._petListFragments.set(data.id, new Pet(data.id, data.name, figureData, data.level));
+            this._petListFragments.set(data.id, new Pet(data.id, data.name, figureData, data.level, data.rarityLevel));
         }
 
         if(parser.fragmentNo < parser.totalFragments - 1) return;

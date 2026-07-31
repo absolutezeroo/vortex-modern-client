@@ -222,6 +222,15 @@ export class RoomPreviewerWidget implements IRoomPreviewerWidget
 
         PreviewCanvasStack.unregister(this._canvasDisplayObject);
         this._roomEngine?.unregisterCanvasSyncCallback(this._syncCanvasPositionBound);
+
+        // Take the canvas off the stage, exactly as showPreview() does when it
+        // swaps the live canvas for a static bitmap. Dropping the reference is not
+        // enough: this container is parented onto the shared root stage rather
+        // than into the window tree (see createRoomPreviewer()), so nothing else
+        // removes it — and with the sync callback gone it also stops being hidden,
+        // freezing a rendered mini-room on screen at the widget's last position.
+        this._canvasDisplayObject?.parent?.removeChild(this._canvasDisplayObject);
+
         this._roomEngine = null;
         this._canvasWrapper = null;
         this._canvasDisplayObject = null;

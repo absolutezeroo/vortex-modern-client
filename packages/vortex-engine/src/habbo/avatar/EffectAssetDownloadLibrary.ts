@@ -3,7 +3,7 @@ import type {AssetLoaderEvent, IAssetLibrary, NitroAsset} from '@core/assets';
 import {AssetLoaderEventType} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('EffectAssetDownloadLibrary');
+const log = Logger.getLogger('habbo.avatar.EffectAssetDownloadLibrary');
 
 /**
  * Manages downloading a single avatar effect asset library.

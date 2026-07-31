@@ -213,7 +213,7 @@ export class NitroBundleLoader extends BinaryFileLoader
                 super.handleLoadEvent('complete', httpStatus);
             }).catch((error) =>
             {
-                Logger.getLogger('NitroBundleLoader').error('Error parsing bundle:', error);
+                Logger.getLogger('core.assets.loaders.NitroBundleLoader').error('Error parsing bundle:', error);
 
                 super.handleLoadEvent('ioError', httpStatus);
             });

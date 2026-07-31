@@ -12,7 +12,7 @@ import {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
 import {CatalogWidgetUpdateRoomPreviewEvent} from './events/CatalogWidgetUpdateRoomPreviewEvent';
 import {ItemGridCatalogWidget} from './ItemGridCatalogWidget';
 
-const log = Logger.getLogger('SpacesNewCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.SpacesNewCatalogWidget');
 
 /**
  * Item grid grouped into wall/floor/landscape categories via a radio selector, driving the
@@ -171,7 +171,7 @@ export class SpacesNewCatalogWidget extends ItemGridCatalogWidget
                     this._offersByGroup[groupIndex].push(offer);
                     break;
                 default:
-                    log.debug(`[Spaces Catalog Widget] : ${className}`);
+                    log.warn(`[Spaces Catalog Widget] : ${className}`);
             }
         }
 

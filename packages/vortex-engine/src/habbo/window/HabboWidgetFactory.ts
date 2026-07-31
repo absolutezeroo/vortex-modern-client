@@ -29,7 +29,7 @@ import {RunningNumberWidget} from './widgets/RunningNumberWidget';
 import {SeparatorWidget} from './widgets/SeparatorWidget';
 import {UpdatingTimeStampWidget} from './widgets/UpdatingTimeStampWidget';
 
-const log = Logger.getLogger('HabboWidgetFactory');
+const log = Logger.getLogger('habbo.window.HabboWidgetFactory');
 
 /**
  * Widget constructor signature.

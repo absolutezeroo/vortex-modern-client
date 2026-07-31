@@ -1,7 +1,7 @@
 import type {HabboToolbar} from '../HabboToolbar';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('SettingsExtension');
+const log = Logger.getLogger('habbo.toolbar.extensions.SettingsExtension');
 
 /**
  * Settings panel extension for the toolbar

@@ -134,15 +134,35 @@ function findClassMemberLines(content)
     const stack = [];
     const memberLines = [];
 
+    // Parenthesis depth carried across lines. A member declared over several lines —
+    // `addItemWithBitmap(\n  content: string,\n  ...\n): void` — keeps the brace stack at
+    // class depth for every one of its parameter lines, and `content: string,` matches the
+    // property pattern exactly. Every such parameter was reported as an untraced property,
+    // which is most of the noise this check produces on a large port. Only consider a line
+    // a declaration when no parameter list is open on it.
+    let parenDepth = 0;
+
     for(let i = 0; i < lines.length; i++)
     {
         const line = lines[i];
         const trimmed = line.trim();
         const atClassDepth = stack.length === 1 && stack[stack.length - 1] === 'class';
 
-        if(atClassDepth)
+        if(atClassDepth && parenDepth === 0)
         {
             memberLines.push({ lineNo: i + 1, trimmed });
+        }
+
+        for(const ch of line)
+        {
+            if(ch === '(')
+            {
+                parenDepth++;
+            }
+            else if(ch === ')' && parenDepth > 0)
+            {
+                parenDepth--;
+            }
         }
 
         for(const ch of line)
@@ -198,7 +218,15 @@ function hasPrecedingAs3Trace(lines, declLineIndex)
             continue;
         }
 
-        if(trimmed.startsWith('// AS3:') || trimmed.startsWith('// TODO(AS3)'))
+        // `// TS-only:` marks a member with no AS3 counterpart at all — a port-specific
+        // event bus, a convenience accessor kept for ported callers. The rule covers members
+        // *ported from* AS3, and this check cannot tell those apart from ones that were never
+        // in the source, so it asked for a trace that cannot honestly be written. The marker
+        // makes the exemption explicit and greppable rather than silent.
+        //
+        // It is not a way to quiet the check on a member that does come from AS3. If the
+        // member exists in any tree, it needs the trace.
+        if(trimmed.startsWith('// AS3:') || trimmed.startsWith('// TODO(AS3)') || trimmed.startsWith('// TS-only:'))
         {
             return true;
         }
@@ -252,7 +280,7 @@ function checkFile(file, addedLines)
 
         if(!hasPrecedingAs3Trace(lines, lineNo - 1))
         {
-            findings.push(`  ${file}:${lineNo} — ${kind} \`${trimmed.slice(0, 80)}\` has no AS3: trace comment or TODO(AS3) marker`);
+            findings.push(`  ${file}:${lineNo} — ${kind} \`${trimmed.slice(0, 80)}\` has no AS3: trace comment, TODO(AS3) or TS-only: marker`);
         }
     }
 

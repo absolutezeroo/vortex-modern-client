@@ -33,6 +33,44 @@ import type {PetInfoMessageEventParser} from '@habbo/communication/messages/pars
 import {PetInfo} from '../PetInfo';
 import {RoomSessionPetInfoUpdateEvent} from '../events/RoomSessionPetInfoUpdateEvent';
 
+// Pet message events + parsers — AS3 registers all of these in the RoomUsersHandler constructor
+// (sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as:85-95).
+import {PetCommandsMessageEvent} from '@habbo/communication/messages/incoming/room/pet/PetCommandsMessageEvent';
+import {PetPlacingErrorEvent} from '@habbo/communication/messages/incoming/room/pet/PetPlacingErrorEvent';
+import {PetFigureUpdateEvent} from '@habbo/communication/messages/incoming/room/pet/PetFigureUpdateEvent';
+import {PetStatusUpdateEvent} from '@habbo/communication/messages/incoming/room/pet/PetStatusUpdateEvent';
+import {PetLevelUpdateEvent} from '@habbo/communication/messages/incoming/room/pet/PetLevelUpdateEvent';
+import {PetBreedingResultEvent} from '@habbo/communication/messages/incoming/room/pet/PetBreedingResultEvent';
+import {
+    ConfirmBreedingRequestEvent,
+    ConfirmBreedingResultEvent,
+    NestBreedingSuccessEvent,
+    PetBreedingEvent
+} from '@habbo/communication/messages/incoming/inventory/pets';
+import type {PetCommandsMessageEventParser} from '@habbo/communication/messages/parser/room/pet/PetCommandsMessageEventParser';
+import type {PetPlacingErrorEventParser} from '@habbo/communication/messages/parser/room/pet/PetPlacingErrorEventParser';
+import type {PetFigureUpdateEventParser} from '@habbo/communication/messages/parser/room/pet/PetFigureUpdateEventParser';
+import type {PetStatusUpdateEventParser} from '@habbo/communication/messages/parser/room/pet/PetStatusUpdateEventParser';
+import type {PetLevelUpdateEventParser} from '@habbo/communication/messages/parser/room/pet/PetLevelUpdateEventParser';
+import type {PetBreedingResultEventParser} from '@habbo/communication/messages/parser/room/pet/PetBreedingResultEventParser';
+import type {
+    ConfirmBreedingRequestEventParser,
+    ConfirmBreedingResultEventParser,
+    NestBreedingSuccessEventParser,
+    PetBreedingEventParser
+} from '@habbo/communication/messages/parser/inventory/pets';
+
+import {RoomSessionPetCommandsUpdateEvent} from '../events/RoomSessionPetCommandsUpdateEvent';
+import {RoomSessionPetFigureUpdateEvent} from '../events/RoomSessionPetFigureUpdateEvent';
+import {RoomSessionPetStatusUpdateEvent} from '../events/RoomSessionPetStatusUpdateEvent';
+import {RoomSessionPetLevelUpdateEvent} from '../events/RoomSessionPetLevelUpdateEvent';
+import {RoomSessionPetBreedingEvent} from '../events/RoomSessionPetBreedingEvent';
+import {RoomSessionPetBreedingResultEvent} from '../events/RoomSessionPetBreedingResultEvent';
+import {RoomSessionConfirmPetBreedingEvent} from '../events/RoomSessionConfirmPetBreedingEvent';
+import {RoomSessionConfirmPetBreedingResultEvent} from '../events/RoomSessionConfirmPetBreedingResultEvent';
+import {RoomSessionNestBreedingSuccessEvent} from '../events/RoomSessionNestBreedingSuccessEvent';
+import {RoomSessionErrorMessageEvent} from '../events/RoomSessionErrorMessageEvent';
+
 /**
  * Room users handler
  *
@@ -66,8 +104,21 @@ export class RoomUsersHandler extends BaseHandler
         this.addMessageEvent(connection, new UserRemoveMessageEvent(this.onUserRemove.bind(this)));
         this.addMessageEvent(connection, new HabboUserBadgesMessageEvent(this.onUserBadges.bind(this)));
         this.addMessageEvent(connection, new DoorbellMessageEvent(this.onDoorbell.bind(this)));
-        // AS3: sources/win63_version/habbo/session/handler/RoomUsersHandler.as::registerMessageEvents()
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::RoomUsersHandler()
+        // The full pet block, in AS3's own registration order. Only onPetInfo used to be here, so
+        // every other pet message reached the registry and then died with no subscriber: commands,
+        // placing errors, figure/status/level updates and the whole breeding chain.
         this.addMessageEvent(connection, new PetInfoMessageEvent(this.onPetInfo.bind(this)));
+        this.addMessageEvent(connection, new PetCommandsMessageEvent(this.onEnabledPetCommands.bind(this)));
+        this.addMessageEvent(connection, new PetPlacingErrorEvent(this.onPetPlacingError.bind(this)));
+        this.addMessageEvent(connection, new PetFigureUpdateEvent(this.onPetFigureUpdate.bind(this)));
+        this.addMessageEvent(connection, new PetBreedingResultEvent(this.onPetBreedingResult.bind(this)));
+        this.addMessageEvent(connection, new PetBreedingEvent(this.onPetBreedingEvent.bind(this)));
+        this.addMessageEvent(connection, new PetStatusUpdateEvent(this.onPetStatusUpdate.bind(this)));
+        this.addMessageEvent(connection, new PetLevelUpdateEvent(this.onPetLevelUpdate.bind(this)));
+        this.addMessageEvent(connection, new ConfirmBreedingRequestEvent(this.onConfirmPetBreeding.bind(this)));
+        this.addMessageEvent(connection, new ConfirmBreedingResultEvent(this.onConfirmPetBreedingResult.bind(this)));
+        this.addMessageEvent(connection, new NestBreedingSuccessEvent(this.onNestBreedingSuccess.bind(this)));
         this.addMessageEvent(connection, new BlockUserUpdateMessageEvent(this.onBlockUserUpdate.bind(this)));
 
         this.addMessageEvent(connection, new UserChangeMessageEvent(this.onUserChange.bind(this)));
@@ -305,6 +356,257 @@ export class RoomUsersHandler extends BaseHandler
             this.listener.sessionEvents.emit(
                 RoomSessionPetInfoUpdateEvent.PET_INFO,
                 new RoomSessionPetInfoUpdateEvent(session, petInfo)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onEnabledPetCommands()
+    private onEnabledPetCommands(event: IMessageEvent): void
+    {
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const parser = event.parser as PetCommandsMessageEventParser | null;
+
+        if(parser === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetCommandsUpdateEvent.PET_COMMANDS,
+                new RoomSessionPetCommandsUpdateEvent(session, parser.petId, parser.allCommands, parser.enabledCommands)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetPlacingError()
+    // The error codes and their event types are AS3's switch, verbatim; an unmapped code dispatches
+    // nothing, exactly as in the source.
+    private onPetPlacingError(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetPlacingErrorEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        let type: string | null = null;
+
+        switch(parser.errorCode)
+        {
+            case 0:
+                type = 'RSEME_PETS_FORBIDDEN_IN_HOTEL';
+                break;
+            case 1:
+                type = 'RSEME_PETS_FORBIDDEN_IN_FLAT';
+                break;
+            case 2:
+                type = 'RSEME_MAX_PETS';
+                break;
+            case 3:
+                type = 'RSEME_NO_FREE_TILES_FOR_PET';
+                break;
+            case 4:
+                type = 'RSEME_SELECTED_TILE_NOT_FREE_FOR_PET';
+                break;
+            case 5:
+                type = 'RSEME_MAX_NUMBER_OF_OWN_PETS';
+                break;
+        }
+
+        if(type !== null && this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(type, new RoomSessionErrorMessageEvent(type, session));
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetFigureUpdate()
+    private onPetFigureUpdate(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetFigureUpdateEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        const figure = parser.figureData ? parser.figureData.figureString : '';
+
+        session.userDataManager.updateFigure(parser.roomIndex, figure, '', parser.hasSaddle, parser.isRiding);
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetFigureUpdateEvent.PET_FIGURE_UPDATE,
+                new RoomSessionPetFigureUpdateEvent(session, parser.petId, figure)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetStatusUpdate()
+    private onPetStatusUpdate(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetStatusUpdateEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        session.userDataManager.updatePetBreedingStatus(
+            parser.roomIndex,
+            parser.canBreed,
+            parser.canHarvest,
+            parser.canRevive,
+            parser.hasBreedingPermission
+        );
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE,
+                new RoomSessionPetStatusUpdateEvent(
+                    session,
+                    parser.petId,
+                    parser.canBreed,
+                    parser.canHarvest,
+                    parser.canRevive,
+                    parser.hasBreedingPermission
+                )
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetLevelUpdate()
+    private onPetLevelUpdate(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetLevelUpdateEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        session.userDataManager.updatePetLevel(parser.roomIndex, parser.level);
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetLevelUpdateEvent.PET_LEVEL_UPDATE,
+                new RoomSessionPetLevelUpdateEvent(session, parser.petId, parser.level)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetBreedingResult()
+    private onPetBreedingResult(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetBreedingResultEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetBreedingResultEvent.PET_BREEDING_RESULT,
+                new RoomSessionPetBreedingResultEvent(session, parser.resultData, parser.otherResultData)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onPetBreedingEvent()
+    private onPetBreedingEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as PetBreedingEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionPetBreedingEvent.PET_BREEDING,
+                new RoomSessionPetBreedingEvent(session, parser.state, parser.ownPetId, parser.otherPetId)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onConfirmPetBreeding()
+    private onConfirmPetBreeding(event: IMessageEvent): void
+    {
+        const parser = event.parser as ConfirmBreedingRequestEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionConfirmPetBreedingEvent.CONFIRM_PET_BREEDING,
+                new RoomSessionConfirmPetBreedingEvent(
+                    session,
+                    parser.nestId,
+                    parser.pet1,
+                    parser.pet2,
+                    parser.rarityCategories,
+                    parser.resultPetType
+                )
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onConfirmPetBreedingResult()
+    private onConfirmPetBreedingResult(event: IMessageEvent): void
+    {
+        const parser = event.parser as ConfirmBreedingResultEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT,
+                new RoomSessionConfirmPetBreedingResultEvent(session, parser.breedingNestStuffId, parser.result)
+            );
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onNestBreedingSuccess()
+    private onNestBreedingSuccess(event: IMessageEvent): void
+    {
+        const parser = event.parser as NestBreedingSuccessEventParser | null;
+
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null) return;
+
+        if(this.listener.sessionEvents)
+        {
+            this.listener.sessionEvents.emit(
+                RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS,
+                new RoomSessionNestBreedingSuccessEvent(session, parser.petId, parser.rarityCategory)
             );
         }
     }

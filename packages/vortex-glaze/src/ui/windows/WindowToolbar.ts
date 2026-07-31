@@ -10,7 +10,7 @@ import {toggleLocalisation} from '../../ops/LocaliseOps';
 import type {WindowGallery} from './WindowGallery';
 import {slotsOf} from '../LayoutSlots';
 
-const log = Logger.getLogger('GlazeToolbar');
+const log = Logger.getLogger('glaze.ui.windows.WindowToolbar');
 
 const SMALL_INPUT = slotsOf('glaze_smallinput_xml');
 
@@ -62,7 +62,7 @@ export class WindowToolbar
         this.button('Localise', () => void toggleLocalisation(this._state));
         this.button('Save Screenshot', () => this.saveScreenshot());
         this.button('Generate Screenshots', () => this.saveScreenshot());
-        this.button('Batch Theme Convert', () => log.info('Batch Theme Convert — batch over the whole asset set, not implemented'));
+        this.button('Batch Theme Convert', () => log.warn('Batch Theme Convert — batch over the whole asset set, not implemented'));
         this.button('Background', () => this.toggleBackground());
         this.button('Canvas Back Color', () => this.cycleBackColor());
         this.button('Load Image', () => this.loadImage());

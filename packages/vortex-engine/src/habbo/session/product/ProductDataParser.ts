@@ -4,7 +4,7 @@ import {ProductData} from './ProductData';
 
 import type {IProductData} from './IProductData';
 
-const log = Logger.getLogger('ProductDataParser');
+const log = Logger.getLogger('habbo.session.product.ProductDataParser');
 
 /**
  * Events emitted by ProductDataParser

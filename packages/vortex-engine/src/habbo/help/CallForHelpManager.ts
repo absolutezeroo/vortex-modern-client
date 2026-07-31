@@ -1,6 +1,6 @@
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('CallForHelpManager');
+const log = Logger.getLogger('habbo.help.CallForHelpManager');
 
 /**
  * Call For Help manager

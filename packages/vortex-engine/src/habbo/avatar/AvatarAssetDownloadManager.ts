@@ -7,7 +7,7 @@ import type {AssetAliasCollection} from './alias/AssetAliasCollection';
 import {AvatarAssetDownloadLibrary} from './AvatarAssetDownloadLibrary';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('AvatarAssetDownloadManager');
+const log = Logger.getLogger('habbo.avatar.AvatarAssetDownloadManager');
 
 /**
  * Manages downloading avatar asset libraries based on figure data.

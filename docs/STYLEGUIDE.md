@@ -13,7 +13,8 @@ This document defines all code conventions for the project. These rules are mand
 7. [JSDoc](#jsdoc)
 8. [File structure](#file-structure)
 9. [Habbo-specific conventions](#habbo-specific-conventions)
-10. [Performance](#performance)
+10. [Logging](#logging)
+11. [Performance](#performance)
 
 ---
 
@@ -459,6 +460,85 @@ private _data: any;
 private _data: Map<number, RoomData>;
 private _data: Record<string, unknown>;  // If type is truly unknown
 ```
+
+---
+
+## Logging
+
+`console` is banned by ESLint everywhere except `core/utils/Logger.ts`. Every file that logs declares
+one module-level logger:
+
+```typescript
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('habbo.room.RoomEngine');
+```
+
+### The name is a dotted module path (MANDATORY)
+
+The namespace mirrors the file's path under `src/`, with the class as the leaf — `client.` and
+`glaze.` prefix the two non-engine packages. This is enforced by `no-restricted-syntax`, and it is
+not cosmetic: levels resolve by walking the path outwards, so `__log.set('habbo.room', 'debug')`
+covers `RoomEngine`, `RoomContentLoader`, `TileObjectMap` and everything else under `habbo.room`.
+Flat names also collided silently — `Moderation` was three different files, `Navigator` two.
+
+Do not repeat the class name inside the message (`log.warn('[CatalogViewer] …')`) — the prefix
+already carries it. A bracket that names a *method* or a sub-scope (`[GA]`, `[LoginStep]`) is fine,
+and `log.child('preload')` is better.
+
+### Choosing a level
+
+| Level | For | Visible in dev | Visible in prod |
+|-------|-----|----------------|-----------------|
+| `trace` | Per frame, per packet, per room object, per grid item | no | no |
+| `debug` | What a subsystem decided and why; component lifecycle | no | no |
+| `info` | Milestones a developer wants unasked: connected, room entered, assets ready | **yes** | no |
+| `warn` | The client met data or a code path it does not handle — unported branch, unknown enum, missing asset | **yes** | **yes** |
+| `error` | Something failed and the user will notice | **yes** | **yes** |
+
+Two recurring mistakes, both of which this codebase had at scale:
+
+- **`info` for lifecycle.** `'Navigator initialized'` is `debug`. `info` is for things that are
+  interesting when you are *not* working on that subsystem.
+- **`debug` for a defect.** `'Unknown pricing model'`, `'not ported yet'`, `'Could not find
+  element'` are `warn`. A silent format mismatch renders nothing and throws nothing — see
+  `docs/IMPLEMENTATION_STATUS.md`; hiding it at `debug` is how it stays unnoticed for months.
+
+### Cost
+
+`log.debug` and friends are *properties* holding a pre-bound `console` method, so a disabled level
+costs one property read and a no-op call — and DevTools attributes the line to your call site
+instead of to `Logger.ts`. What is **not** free is the argument:
+
+```typescript
+// WRONG — the template literal, the map and the join all run at WARN too
+log.trace(`libs: ${libs.map(l => l.libraryName).join(', ')}`);
+
+// CORRECT
+if(log.isEnabled(LogLevel.TRACE)) log.trace(`libs: ${libs.map(l => l.libraryName).join(', ')}`);
+```
+
+For a warning raised from a loop, use `log.once(key)` so it fires once per key:
+
+```typescript
+log.once(`missing-lib:${name}`).warn(`Avatar library not in the figure map: ${name}`);
+```
+
+### Changing levels at runtime
+
+No rebuild, no code change. In the browser console:
+
+```js
+__log.list()                        // every logger and its resolved level
+__log.set('habbo.room', 'trace')    // one subsystem
+__log.only('habbo.catalog')         // silence everything else
+__log.level('debug')                // the root level
+__log.reset()                       // back to the build default
+__log.spec()                        // copy into a ?log= URL to share a repro
+```
+
+The same spec works as a URL parameter (`?log=warn,habbo.room:trace,-core.window`) and persists in
+the `vortex:log` localStorage key. Precedence: build default < localStorage < URL.
 
 ---
 

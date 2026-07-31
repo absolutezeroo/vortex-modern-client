@@ -16,7 +16,7 @@ import {Logger} from '@core/utils/Logger';
 import type {BadgeImageWidget} from './BadgeImageWidget';
 import type {PetImageWidget} from './PetImageWidget';
 
-const log = Logger.getLogger('ProductIconWidget');
+const log = Logger.getLogger('habbo.window.widgets.ProductIconWidget');
 
 /**
  * Renders a small preview icon for a catalog product: a wall/floor item icon,
@@ -261,7 +261,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
                 this.setHabbiconResult(parseInt(info.itemTypeId, 10));
                 break;
             default:
-                log.debug(`[ProductIconWidget] Can not yet handle this type of product: ${info.productTypeId}`);
+                log.warn(`Can not yet handle this type of product: ${info.productTypeId}`);
                 this.clearPreviewer();
         }
     }

@@ -10,6 +10,10 @@ import type {IPetsModel} from './IPetsModel';
 import type {Pet} from './Pet';
 import {PetsView} from './PetsView';
 
+// AS3: PetsModel.as::placePetToRoom() compares against these literals directly (16 and 7).
+const PET_TYPE_MONSTERPLANT = 16;
+const MONSTERPLANT_FULLY_GROWN_LEVEL = 7;
+
 // Unseen-item tracker category for pets (AS3 uses category 3).
 const UNSEEN_CATEGORY_PETS = 3;
 
@@ -184,17 +188,27 @@ export class PetsModel implements IPetsModel
 
         const roomSession = this._controller.roomSession;
 
+        // AS3: PetsModel.as::placePetToRoom() — the monster plant (typeId 16) previews at its growth
+        // stage rather than full grown, so the ghost is given a posture.
+        let posture: string | null = null;
+
+        if(pet.typeId === PET_TYPE_MONSTERPLANT)
+        {
+            posture = pet.level >= MONSTERPLANT_FULLY_GROWN_LEVEL ? 'std' : `grw${pet.level}`;
+        }
+
         if(roomSession !== null && roomSession.isRoomOwner)
         {
-            // TODO(AS3): initializeRoomObjectInsert takes 6 params in this port; AS3 also passes the
-            // monster-plant growth posture as a 9th arg. The pet still places, but a young monster
-            // plant previews at its full-grown posture until that arg is threaded through.
             this._placementPending = this._roomEngine.initializeRoomObjectInsert(
                 'inventory',
                 id * -1,
                 100,
                 2,
-                pet.figureString
+                pet.figureString,
+                null,
+                -1,
+                -1,
+                posture
             );
             this._controller.closeView();
 

@@ -65,7 +65,7 @@ import {
 
 import type {ModerationManager} from './ModerationManager';
 
-const log = Logger.getLogger('Moderation');
+const log = Logger.getLogger('habbo.moderation.ModerationMessageHandler');
 
 /**
  * Handles all incoming moderation server messages and routes them
@@ -179,7 +179,7 @@ export class ModerationMessageHandler
         this._manager.issueManager?.updateIssueBrowser();
         this._manager.initData = data;
 
-        log.info('Moderator initialized with', issues.length, 'issues');
+        log.debug('Moderator initialized with', issues.length, 'issues');
     }
 
     /**

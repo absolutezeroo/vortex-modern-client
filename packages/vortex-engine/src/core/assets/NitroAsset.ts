@@ -230,7 +230,7 @@ export class NitroAsset implements ILazyAsset
             return;
         }
 
-        Logger.getLogger('NitroAsset').warn('Unknown content type:', typeof this._unknown);
+        Logger.getLogger('core.assets.NitroAsset').warn('Unknown content type:', typeof this._unknown);
         this._unknown = null;
     }
 

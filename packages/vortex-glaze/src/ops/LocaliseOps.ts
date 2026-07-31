@@ -3,7 +3,7 @@ import {GameDataResources} from '@core/localization';
 import {Logger} from '@core/utils/Logger';
 import type {EditorState} from '../state/EditorState';
 
-const log = Logger.getLogger('GlazeLocalise');
+const log = Logger.getLogger('glaze.ops.LocaliseOps');
 
 let localeMap: Map<string, string> | null = null;
 let active = false;

@@ -16,9 +16,14 @@ export interface IConnectionCallback
     connectionOpened?(): void;
 
     /**
-	 * Called when connection is closed
+	 * Called when connection is closed.
+	 *
+	 * The close code is the only thing distinguishing a peer that shut down cleanly
+	 * (1000/1001 — server stopped, maintenance) from a transport that simply died
+	 * (1006 — backgrounded tab, sleeping machine, dropped route). It is gone the moment
+	 * the socket's own handler returns, so it is passed on rather than re-derived.
 	 */
-    connectionClosed?(): void;
+    connectionClosed?(code?: number, wasClean?: boolean): void;
 
     /**
 	 * Called when connection fails

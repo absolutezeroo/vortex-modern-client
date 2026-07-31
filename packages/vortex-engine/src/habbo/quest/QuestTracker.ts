@@ -11,7 +11,7 @@ import {OpenQuestTrackerMessageComposer} from '@habbo/communication/messages/out
 import {StartCampaignMessageComposer} from '@habbo/communication/messages/outgoing/quest/StartCampaignMessageComposer';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('QuestTracker');
+const log = Logger.getLogger('habbo.quest.QuestTracker');
 
 // AS3: QuestTracker.as animation status constants
 const STATUS_NONE = 0;

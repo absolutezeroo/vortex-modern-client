@@ -15,7 +15,7 @@ import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 
-const log = Logger.getLogger('AvatarImageWidget');
+const log = Logger.getLogger('habbo.window.widgets.AvatarImageWidget');
 
 /**
  * Avatar image rendering widget.
@@ -465,11 +465,15 @@ export class AvatarImageWidget implements IAvatarImageWidget, IAvatarImageListen
     {
         if(!this._bitmap || !this._windowManager?.resourceManager) return;
 
+        // No `_png` suffix: images register under the bare file basename
+        // (App.ts::registerImageAssets), so every variant but one missed. The odd one out
+        // is why `placeholder_avatar_small_head_cropped_png.png` exists in the bundle —
+        // that single combination was made to work by renaming the *file* instead. All
+        // eight bare names ship, so the lookup is correct for every combination now.
         const assetUri = 'placeholder_avatar'
 			+ (this._scale === 'sh' ? '_small' : '')
 			+ (this._onlyHead ? '_head' : '')
-			+ (this._cropped ? '_cropped' : '')
-			+ '_png';
+			+ (this._cropped ? '_cropped' : '');
         const requestId = this._placeholderRequestId;
         const receiver: IAssetReceiver = {
             get disposed(): boolean

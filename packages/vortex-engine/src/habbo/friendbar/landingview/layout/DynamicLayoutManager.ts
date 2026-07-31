@@ -8,7 +8,7 @@ import type {CommonWidgetSettings} from './CommonWidgetSettings';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('DynamicLayoutManager');
+const log = Logger.getLogger('habbo.friendbar.landingview.layout.DynamicLayoutManager');
 
 const SLOT_COUNT = 6;
 

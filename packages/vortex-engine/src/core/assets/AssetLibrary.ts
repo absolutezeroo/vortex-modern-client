@@ -230,7 +230,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
         }
         catch (error) 
         {
-            Logger.getLogger('AssetLibrary').error(`Failed to load from ${url}:`, error);
+            Logger.getLogger('core.assets.AssetLibrary').error(`Failed to load from ${url}:`, error);
             this._isReady = false;
             this._libraryEvents.emit(AssetLibraryEvents.LOAD_ERROR);
             throw error;
@@ -709,7 +709,7 @@ export class AssetLibrary extends Component implements IAssetLibrary
             }
             catch (error) 
             {
-                Logger.getLogger('AssetLibrary').error('Error creating asset:', error);
+                Logger.getLogger('core.assets.AssetLibrary').error('Error creating asset:', error);
                 struct.dispatchEvent(new AssetLoaderEvent(AssetLoaderEventType.ERROR, event.status));
             }
 

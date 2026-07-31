@@ -2,7 +2,7 @@ import type {HabboToolbar} from '../HabboToolbar';
 import type {IExtensionView} from '../IExtensionView';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('CitizenshipVipQuestsPromoExtension');
+const log = Logger.getLogger('habbo.toolbar.extensions.CitizenshipVipQuestsPromoExtension');
 
 /**
  * VIP quests promotion extension for the toolbar

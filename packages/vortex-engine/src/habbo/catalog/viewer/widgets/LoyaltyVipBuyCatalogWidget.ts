@@ -11,7 +11,7 @@ import {VipBuyItem} from '../../club/VipBuyItem';
 import type {IVipBuyCatalogWidget} from './IVipBuyCatalogWidget';
 import {CatalogWidget} from './CatalogWidget';
 
-const log = Logger.getLogger('LoyaltyVipBuyCatalogWidget');
+const log = Logger.getLogger('habbo.catalog.viewer.widgets.LoyaltyVipBuyCatalogWidget');
 
 /**
  * Loyalty-program VIP purchase widget (source 6 - a distinct offer-request source from the

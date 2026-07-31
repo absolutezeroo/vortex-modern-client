@@ -9,7 +9,7 @@ import {AvatarRenderEvent} from '@habbo/avatar/enum/AvatarRenderEvent';
 import {HabboFaceFocuser} from '@habbo/utils/HabboFaceFocuser';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('MeMenuNewIconLoader');
+const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuNewIconLoader');
 
 /**
  * Icon loading for the new me menu variant

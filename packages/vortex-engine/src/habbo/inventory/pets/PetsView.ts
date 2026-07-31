@@ -16,7 +16,7 @@ import type {Pet} from './Pet';
 import type {PetsModel} from './PetsModel';
 import {PetsGridItem} from './PetsGridItem';
 
-const log = Logger.getLogger('PetsView');
+const log = Logger.getLogger('habbo.inventory.pets.PetsView');
 
 /**
  * PetsView — the pets-inventory tab (grid of the player's pets + preview/action panel).

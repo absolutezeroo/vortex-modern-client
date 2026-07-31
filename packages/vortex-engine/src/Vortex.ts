@@ -413,6 +413,15 @@ export class Vortex implements IVortex
     }
 
     /**
+	 * Initialize the friend list window component (friends, requests, search).
+	 * Must be called AFTER window layouts are registered.
+	 */
+    initFriendList(): void
+    {
+        this._habboMain!.initFriendList();
+    }
+
+    /**
 	 * Connect to the Habbo server (manual).
 	 *
 	 * @see sources/win63_version/habbo/communication/demo/class_467.as::initWithSSO()
@@ -434,7 +443,7 @@ export class Vortex implements IVortex
             throw new Error('[Vortex] Login without an SSO ticket is not supported');
         }
 
-        log.info('Connecting to server...');
+        log.debug('Connecting to server...');
 
         demo.startConnectionWithSSO(ssoTicket);
         await demo.waitForAuthentication();
@@ -555,7 +564,7 @@ export class Vortex implements IVortex
 
             this._events.emit('ready');
 
-            log.success('Ready!');
+            log.info('Ready!');
         }
         catch (error)
         {

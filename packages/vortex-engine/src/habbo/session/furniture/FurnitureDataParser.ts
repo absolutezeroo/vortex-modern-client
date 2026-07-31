@@ -5,7 +5,7 @@ import {FurnitureData} from './FurnitureData';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IFurnitureData} from './IFurnitureData';
 
-const log = Logger.getLogger('FurnitureDataParser');
+const log = Logger.getLogger('habbo.session.furniture.FurnitureDataParser');
 
 export interface IFurnitureDataParserEvents
 {

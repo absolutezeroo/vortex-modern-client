@@ -1,7 +1,7 @@
 import type {SoundSettingsView} from './SoundSettingsView';
 import {Logger} from '@core/utils/Logger';
 
-const log = Logger.getLogger('SoundSettingsItem');
+const log = Logger.getLogger('habbo.toolbar.extensions.settings.SoundSettingsItem');
 
 /**
  * Individual sound setting item (UI volume, furni volume, or trax volume)

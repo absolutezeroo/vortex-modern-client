@@ -13,7 +13,7 @@ import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import {Logger} from '@core/utils/Logger';
 import {ChatBubbleStyle} from './ChatBubbleStyle';
 
-const log = Logger.getLogger('ChatBubbleFactory');
+const log = Logger.getLogger('habbo.ui.widget.roomchat.style.ChatBubbleFactory');
 
 const NORMAL_STYLE_DESCRIPTOR = {
     id: 0,
