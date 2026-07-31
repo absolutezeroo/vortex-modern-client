@@ -19,6 +19,9 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class SetObjectDataMessageComposer extends MessageComposer<(string | number)[]>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_3000.as::getMessageArray() backing fields — the
+    // constructor-assigned members. Their AS3 identifiers are obfuscated in every available
+    // tree, so there is no real name to trace to.
     private _data: (string | number)[];
 
     constructor(objectId: number, data: Map<string, string>)
@@ -33,6 +36,7 @@ export class SetObjectDataMessageComposer extends MessageComposer<(string | numb
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_3000.as::getMessageArray()
     getMessageArray(): (string | number)[]
     {
         return this._data;

@@ -17,6 +17,9 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class PlacePostItMessageComposer extends MessageComposer<[number, string]>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2609/_SafeCls_3815.as::getMessageArray() backing fields — the
+    // constructor-assigned members. Their AS3 identifiers are obfuscated in every available
+    // tree, so there is no real name to trace to.
     private _data: [number, string];
 
     constructor(itemId: number, wallLocation: string)
@@ -25,6 +28,7 @@ export class PlacePostItMessageComposer extends MessageComposer<[number, string]
         this._data = [itemId, wallLocation];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2609/_SafeCls_3815.as::getMessageArray()
     getMessageArray(): [number, string]
     {
         return this._data;

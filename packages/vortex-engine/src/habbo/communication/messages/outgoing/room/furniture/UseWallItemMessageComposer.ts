@@ -22,6 +22,9 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class UseWallItemMessageComposer extends MessageComposer<[number, number]>
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_3754.as::getMessageArray() backing fields — the
+    // constructor-assigned members. Their AS3 identifiers are obfuscated in every available
+    // tree, so there is no real name to trace to.
     private _data: [number, number];
 
     constructor(objectId: number, state: number = 0)
@@ -30,6 +33,7 @@ export class UseWallItemMessageComposer extends MessageComposer<[number, number]
         this._data = [objectId, state];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2136/_SafeCls_3754.as::getMessageArray()
     getMessageArray(): [number, number]
     {
         return this._data;
