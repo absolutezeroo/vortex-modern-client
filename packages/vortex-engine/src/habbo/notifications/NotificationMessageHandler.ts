@@ -51,27 +51,60 @@ import {
 import {GenericNotificationItemData} from "@habbo/notifications/feed";
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 
-// TODO: Import these events once they are implemented:
-// import {ModeratorMessageEvent} from '@habbo/communication/messages/incoming/moderation/ModeratorMessageEvent';
-// import {ModeratorCautionEvent} from '@habbo/communication/messages/incoming/moderation/ModeratorCautionEvent';
-// import {UserBannedMessageEvent} from '@habbo/communication/messages/incoming/moderation/UserBannedMessageEvent';
-// import {RespectNotificationMessageEvent} from '@habbo/communication/messages/incoming/users/RespectNotificationMessageEvent';
-// import {UserObjectEvent} from '@habbo/communication/messages/incoming/handshake/UserObjectEvent';
-// import {MOTDNotificationEvent} from '@habbo/communication/messages/incoming/notifications/MOTDNotificationEvent';
-// import {HabboBroadcastMessageEvent} from '@habbo/communication/messages/incoming/notifications/HabboBroadcastMessageEvent';
-// import {HabboActivityPointNotificationMessageEvent} from '@habbo/communication/messages/incoming/notifications/HabboActivityPointNotificationMessageEvent';
-// import {NotificationDialogMessageEvent} from '@habbo/communication/messages/incoming/notifications/NotificationDialogMessageEvent';
-// import {ClubGiftNotificationEvent} from '@habbo/communication/messages/incoming/notifications/ClubGiftNotificationEvent';
-// import {HabboAchievementNotificationMessageEvent} from '@habbo/communication/messages/incoming/notifications/HabboAchievementNotificationMessageEvent';
-// import {PetLevelNotificationEvent} from '@habbo/communication/messages/incoming/notifications/PetLevelNotificationEvent';
-// import {RestoreClientMessageEvent} from '@habbo/communication/messages/incoming/notifications/RestoreClientMessageEvent';
-// import {InfoHotelClosingMessageEvent} from '@habbo/communication/messages/incoming/availability/InfoHotelClosingMessageEvent';
-// import {InfoHotelClosedMessageEvent} from '@habbo/communication/messages/incoming/availability/InfoHotelClosedMessageEvent';
-// import {PetReceivedMessageEvent} from '@habbo/communication/messages/incoming/inventory/pets/PetReceivedMessageEvent';
-// import {PetRespectFailedEvent} from '@habbo/communication/messages/incoming/room/pets/PetRespectFailedEvent';
-// import {ClubGiftSelectedEvent} from '@habbo/communication/messages/incoming/catalog/ClubGiftSelectedEvent';
-// import {AccountSafetyLockStatusChangeMessageEvent} from '@habbo/communication/messages/incoming/users/AccountSafetyLockStatusChangeMessageEvent';
-// import {RoomMessageNotificationMessageEvent} from '@habbo/communication/messages/incoming/room/furniture/RoomMessageNotificationMessageEvent';
+// Moderation / safety-lock / club-gift events. These all live under
+// `incoming/notifications/` in this port, not under the `moderation/`, `users/` and
+// `catalog/` paths the AS3 package tree uses.
+import {
+    ModeratorMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/ModeratorMessageEvent';
+import {
+    ModeratorCautionEvent
+} from '@habbo/communication/messages/incoming/notifications/ModeratorCautionEvent';
+import {
+    UserBannedMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/UserBannedMessageEvent';
+import {
+    RespectNotificationMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/RespectNotificationMessageEvent';
+import {
+    ClubGiftNotificationEvent
+} from '@habbo/communication/messages/incoming/notifications/ClubGiftNotificationEvent';
+import {
+    ClubGiftSelectedEvent
+} from '@habbo/communication/messages/incoming/notifications/ClubGiftSelectedEvent';
+import {
+    AccountSafetyLockStatusChangeMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/AccountSafetyLockStatusChangeMessageEvent';
+import {
+    RestoreClientMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/RestoreClientMessageEvent';
+import {UserObjectMessageEvent} from '@habbo/communication/messages/incoming/handshake/UserObjectMessageEvent';
+
+import type {
+    ModeratorMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/ModeratorMessageEventParser';
+import type {
+    ModeratorCautionEventParser
+} from '@habbo/communication/messages/parser/notifications/ModeratorCautionEventParser';
+import type {
+    UserBannedMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/UserBannedMessageEventParser';
+import type {
+    RespectNotificationMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/RespectNotificationMessageEventParser';
+import type {
+    ClubGiftNotificationEventParser
+} from '@habbo/communication/messages/parser/notifications/ClubGiftNotificationEventParser';
+import type {
+    ClubGiftSelectedEventParser
+} from '@habbo/communication/messages/parser/notifications/ClubGiftSelectedEventParser';
+import type {
+    AccountSafetyLockStatusChangeMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/AccountSafetyLockStatusChangeMessageEventParser';
+import type {
+    UserObjectMessageParser
+} from '@habbo/communication/messages/parser/handshake/UserObjectMessageParser';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 
 const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
 
@@ -155,26 +188,25 @@ export class NotificationMessageHandler
         this.addMessageEvent(new OpenConnectionMessageEvent(this.onRoomEnter.bind(this)));
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
 
-        // TODO: Register these events once their message event classes are implemented:
-        // this.addMessageEvent(new ModeratorMessageEvent(this.onModMessageEvent.bind(this)));
-        // this.addMessageEvent(new ModeratorCautionEvent(this.onModCautionEvent.bind(this)));
-        // this.addMessageEvent(new UserBannedMessageEvent(this.onUserBannedMessageEvent.bind(this)));
-        // this.addMessageEvent(new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
-        // this.addMessageEvent(new UserObjectEvent(this.onUserObject.bind(this)));
+        this.addMessageEvent(new ModeratorMessageEvent(this.onModMessageEvent.bind(this)));
+        this.addMessageEvent(new ModeratorCautionEvent(this.onModCautionEvent.bind(this)));
+        this.addMessageEvent(new UserBannedMessageEvent(this.onUserBannedMessageEvent.bind(this)));
+        this.addMessageEvent(new RespectNotificationMessageEvent(this.onRespectNotification.bind(this)));
+        this.addMessageEvent(new UserObjectMessageEvent(this.onUserObject.bind(this)));
         this.addMessageEvent(new MOTDNotificationEvent(this.onMOTD.bind(this)));
         this.addMessageEvent(new HabboBroadcastMessageEvent(this.onBroadcastMessageEvent.bind(this)));
         this.addMessageEvent(new HabboActivityPointNotificationMessageEvent(this.onActivityPointNotification.bind(this)));
         this.addMessageEvent(new NotificationDialogMessageEvent(this.onNotificationDialogMessageEvent.bind(this)));
-        // this.addMessageEvent(new ClubGiftNotificationEvent(this.onClubGiftNotification.bind(this)));
-        // this.addMessageEvent(new ClubGiftSelectedEvent(this.onClubGiftSelected.bind(this)));
+        this.addMessageEvent(new ClubGiftNotificationEvent(this.onClubGiftNotification.bind(this)));
+        this.addMessageEvent(new ClubGiftSelectedEvent(this.onClubGiftSelected.bind(this)));
         this.addMessageEvent(new HabboAchievementNotificationMessageEvent(this.onLevelUp.bind(this)));
         this.addMessageEvent(new PetLevelNotificationEvent(this.onPetLevelNotification.bind(this)));
         this.addMessageEvent(new PetReceivedMessageEvent(this.onPetReceived.bind(this)));
         this.addMessageEvent(new PetRespectFailedEvent(this.onPetRespectFailed.bind(this)));
         this.addMessageEvent(new InfoHotelClosingMessageEvent(this.onHotelClosing.bind(this)));
         this.addMessageEvent(new InfoHotelClosedMessageEvent(this.onHotelClosed.bind(this)));
-        // this.addMessageEvent(new RestoreClientMessageEvent(this.onRestoreClientMessageEvent.bind(this)));
-        // this.addMessageEvent(new AccountSafetyLockStatusChangeMessageEvent(this.onAccountSafetyLockStatusChanged.bind(this)));
+        this.addMessageEvent(new RestoreClientMessageEvent(this.onRestoreClientMessageEvent.bind(this)));
+        this.addMessageEvent(new AccountSafetyLockStatusChangeMessageEvent(this.onAccountSafetyLockStatusChanged.bind(this)));
         this.addMessageEvent(new RoomMessageNotificationMessageEvent(this.onRoomMessagesNotification.bind(this)));
 
         log.debug('Notification message handlers registered');
@@ -192,6 +224,26 @@ export class NotificationMessageHandler
             this._communication.addMessageEvent(event);
             this._messageEvents.push(event);
         }
+    }
+
+    /**
+	 * Whether the notification *feed* is enabled by hotel configuration.
+	 * AS3 gates every feed-item write behind this.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::useNotificationFeed()
+    private useNotificationFeed(): boolean
+    {
+        return this._notifications?.getBoolean('notification.feed.enabled') ?? false;
+    }
+
+    /**
+	 * Whether singular notification bubbles/dialogs are enabled by hotel configuration.
+	 * AS3 gates the moderator alert dialogs behind this.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::useNotifications()
+    private useNotifications(): boolean
+    {
+        return this._notifications?.getBoolean('notification.items.enabled') ?? false;
     }
 
     /**
@@ -247,78 +299,100 @@ export class NotificationMessageHandler
         }
     }
 
-    // === Handler stubs for events not yet available ===
-    // These methods follow the AS3 source structure and will be fully implemented
-    // when the corresponding message event classes are created.
+    /**
+	 * Handle moderator message event.
+	 *
+	 * The alert dialog is gated on `useNotifications()` and the feed item on
+	 * `useNotificationFeed()` — two separate switches in AS3, not one.
+	 *
+	 * TODO(AS3): the `useNotificationFeed()` branch calls
+	 * `feedController.addFeedItem(3, GenericNotificationItemData{title, buttonAction,
+	 * buttonCaption, timeStamp})`. This port has no feed controller at all
+	 * (`habbo/notifications/feed/` holds only `FeedSettings`/`StateController`/`data`),
+	 * so the feed half is unreachable — the dialog half below is faithful.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onModMessageEvent()
+    private onModMessageEvent(event: IMessageEvent): void
+    {
+        const parser = (event as ModeratorMessageEvent).parser as ModeratorMessageEventParser;
+
+        if(parser == null || this._notifications?.singularController?.alertDialogManager == null) return;
+
+        if(this.useNotifications())
+        {
+            this._notifications.singularController.alertDialogManager.handleModeratorMessage(parser.message, parser.url);
+        }
+    }
 
     /**
-	 * Handle moderator message event
+	 * Handle moderator caution event.
 	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onModMessageEvent()
+	 * TODO(AS3): same missing `feedController.addFeedItem(3, ...)` branch as
+	 * onModMessageEvent() above.
 	 */
-    // TODO: Uncomment when ModeratorMessageEvent is implemented
-    // private onModMessageEvent(event: IMessageEvent): void
-    // {
-    //     const parser = (event as ModeratorMessageEvent).parser as ModeratorMessageEventParser;
-    //     if (parser == null || this._notifications?.singularController?.alertDialogManager == null) return;
-    //     this._notifications.singularController.alertDialogManager.handleModeratorMessage(parser.message, parser.url);
-    //     if (this._notifications.feedController)
-    //     {
-    //         const data = new GenericNotificationItemData();
-    //         data.title = parser.message;
-    //         data.buttonAction = parser.url;
-    //         data.buttonCaption = parser.url;
-    //         data.timeStamp = performance.now();
-    //         this._notifications.feedController.addFeedItem(3, data);
-    //     }
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onModCautionEvent()
+    private onModCautionEvent(event: IMessageEvent): void
+    {
+        const parser = (event as ModeratorCautionEvent).parser as ModeratorCautionEventParser;
+
+        if(parser == null || this._notifications?.singularController?.alertDialogManager == null) return;
+
+        if(this.useNotifications())
+        {
+            this._notifications.singularController.alertDialogManager.handleModeratorCaution(parser.message, parser.url);
+        }
+    }
 
     /**
-	 * Handle moderator caution event
+	 * Handle user banned message.
 	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onModCautionEvent()
+	 * Note this one is NOT gated on useNotifications() in AS3 — a ban dialog always shows.
 	 */
-    // TODO: Uncomment when ModeratorCautionEvent is implemented
-    // private onModCautionEvent(event: IMessageEvent): void
-    // {
-    //     const parser = (event as ModeratorCautionEvent).parser as ModeratorCautionEventParser;
-    //     if (parser == null || this._notifications?.singularController?.alertDialogManager == null) return;
-    //     this._notifications.singularController.alertDialogManager.handleModeratorCaution(parser.message, parser.url);
-    //     if (this._notifications.feedController)
-    //     {
-    //         const data = new GenericNotificationItemData();
-    //         data.title = parser.message;
-    //         data.buttonAction = parser.url;
-    //         data.buttonCaption = parser.url;
-    //         data.timeStamp = performance.now();
-    //         this._notifications.feedController.addFeedItem(3, data);
-    //     }
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onUserBannedMessageEvent()
+    private onUserBannedMessageEvent(event: IMessageEvent): void
+    {
+        const parser = (event as UserBannedMessageEvent).parser as UserBannedMessageEventParser;
+
+        if(parser == null || this._notifications?.singularController?.alertDialogManager == null) return;
+
+        this._notifications.singularController.alertDialogManager.handleUserBannedMessage(parser.message);
+    }
 
     /**
-	 * Handle user banned message
+	 * Handle respect notification.
 	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onUserBannedMessageEvent()
+	 * The message is broadcast for every respect in the room, so the userId check is what
+	 * makes it "someone respected *me*". AS3 shows two separate bubbles — `.1` (unparameterised)
+	 * and `.2` (carrying the running total) — and skips either if its key is missing.
 	 */
-    // TODO: Uncomment when UserBannedMessageEvent is implemented
-    // private onUserBannedMessageEvent(event: IMessageEvent): void
-    // {
-    //     const parser = (event as UserBannedMessageEvent).parser as UserBannedMessageEventParser;
-    //     if (parser == null || this._notifications?.singularController?.alertDialogManager == null) return;
-    //     this._notifications.singularController.alertDialogManager.handleUserBannedMessage(parser.message);
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onRespectNotification()
+    private onRespectNotification(event: IMessageEvent): void
+    {
+        const parser = (event as RespectNotificationMessageEvent).parser as RespectNotificationMessageEventParser;
 
-    /**
-	 * Handle respect notification
-	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onRespectNotification()
-	 */
-    // TODO: Uncomment when RespectNotificationMessageEvent is implemented
-    // private onRespectNotification(event: IMessageEvent): void
-    // {
-    //     // Check if the respect was for us (userId matches sessionDataManager.userId)
-    //     // Then show "respect" type notifications
-    // }
+        if(parser == null) return;
+
+        const localization = this._notifications?.localizationManager;
+
+        if(localization == null || this._notifications?.sessionDataManager == null) return;
+
+        if(this._notifications.sessionDataManager.userId !== parser.userId) return;
+
+        localization.registerParameter('notifications.text.respect.2', 'count', String(parser.respectTotal));
+
+        const first = localization.getLocalizationRaw('notifications.text.respect.1');
+        const second = localization.getLocalizationRaw('notifications.text.respect.2');
+
+        if(first)
+        {
+            this._notifications.singularController?.addItem(first.value, 'respect', null);
+        }
+
+        if(second)
+        {
+            this._notifications.singularController?.addItem(second.value, 'respect', null);
+        }
+    }
 
     /**
 	 * Handle MOTD (Message of the Day)
@@ -480,59 +554,85 @@ export class NotificationMessageHandler
     }
 
     /**
-	 * Handle club gift notification
-	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onClubGiftNotification()
+	 * Handle club gift notification (N gifts are waiting to be claimed).
 	 */
-    // TODO: Uncomment when ClubGiftNotificationEvent is implemented
-    // private onClubGiftNotification(event: IMessageEvent): void
-    // {
-    //     const parser = (event as ClubGiftNotificationEvent).parser as ClubGiftNotificationEventParser;
-    //     if (parser.numGifts < 1) return;
-    //     this._notifications?.singularController?.showClubGiftNotification(parser.numGifts);
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onClubGiftNotification()
+    private onClubGiftNotification(event: IMessageEvent): void
+    {
+        if(!event) return;
+
+        const parser = (event as ClubGiftNotificationEvent).parser as ClubGiftNotificationEventParser;
+
+        if(!parser) return;
+
+        if(parser.numGifts < 1) return;
+
+        this._notifications?.singularController?.showClubGiftNotification(parser.numGifts);
+    }
 
     /**
-	 * Handle club gift selected
+	 * Handle club gift selected — the bubble confirming which gift was claimed.
 	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onClubGiftSelected()
+	 * TODO(AS3): AS3 illustrates the bubble with
+	 * `productImageUtility.getProductImage(product.productType, product.furniClassId,
+	 * product.extraParam)`. There is no product-image utility in this port (nothing
+	 * references `productImageUtility` anywhere), so the bubble goes out without its
+	 * icon. Everything else — the products guard and the localisation key — is faithful.
 	 */
-    // TODO: Uncomment when ClubGiftSelectedEvent is implemented
-    // private onClubGiftSelected(event: IMessageEvent): void
-    // {
-    //     const parser = (event as ClubGiftSelectedEvent).parser as ClubGiftSelectedEventParser;
-    //     // Show club gift received notification with product image
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onClubGiftSelected()
+    private onClubGiftSelected(event: IMessageEvent): void
+    {
+        if(!event || !this._notifications?.localizationManager) return;
+
+        const parser = (event as ClubGiftSelectedEvent).parser as ClubGiftSelectedEventParser;
+
+        if(!parser) return;
+
+        const products = parser.products;
+
+        if(!products || products.length === 0) return;
+
+        const product = products[0];
+
+        if(!product) return;
+
+        const message = this._notifications.localizationManager.getLocalization('notifications.text.club_gift.received');
+
+        this._notifications.singularController?.addItem(message, 'info', null);
+    }
 
     /**
-	 * Handle user object (for safety lock check)
-	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onUserObject()
+	 * Handle the user object — the handshake message that says whether the account is
+	 * safety-locked, in which case the lock notification goes up immediately at login.
 	 */
-    // TODO: Uncomment when UserObjectEvent is implemented
-    // private onUserObject(event: IMessageEvent): void
-    // {
-    //     const parser = (event as UserObjectEvent).parser as UserObjectEventParser;
-    //     if (parser.accountSafetyLocked)
-    //     {
-    //         this._notifications?.singularController?.showSafetyLockedNotification(parser.id);
-    //     }
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onUserObject()
+    private onUserObject(event: IMessageEvent): void
+    {
+        const parser = (event as UserObjectMessageEvent).parser as UserObjectMessageParser;
+
+        if(!parser) return;
+
+        if(parser.accountSafetyLocked)
+        {
+            this._notifications?.singularController?.showSafetyLockedNotification(parser.id);
+        }
+    }
 
     /**
-	 * Handle account safety lock status change
-	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onAccountSafetyLockStatusChanged()
+	 * Handle account safety lock status change — status 1 means the lock was cleared.
 	 */
-    // TODO: Uncomment when AccountSafetyLockStatusChangeMessageEvent is implemented
-    // private onAccountSafetyLockStatusChanged(event: IMessageEvent): void
-    // {
-    //     const parser = (event as AccountSafetyLockStatusChangeMessageEvent).parser;
-    //     if (parser.status === 1)
-    //     {
-    //         this._notifications?.singularController?.hideSafetyLockedNotification();
-    //     }
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onAccountSafetyLockStatusChanged()
+    private onAccountSafetyLockStatusChanged(event: IMessageEvent): void
+    {
+        const parser = (event as AccountSafetyLockStatusChangeMessageEvent).parser as AccountSafetyLockStatusChangeMessageEventParser;
+
+        if(!parser) return;
+
+        if(parser.status === 1)
+        {
+            this._notifications?.singularController?.hideSafetyLockedNotification();
+        }
+    }
 
     /**
 	 * Handle activity point notification (loyalty points etc.)
@@ -568,16 +668,16 @@ export class NotificationMessageHandler
     }
 
     /**
-	 * Handle restore client message (close web page)
+	 * Handle restore client message — the server asking the surrounding web page to
+	 * close whatever it opened over the client and hand focus back.
 	 *
-	 * @see source_as_win63/habbo/notifications/class_3353.as onRestoreClientMessageEvent()
+	 * AS3 ignores the event payload entirely; only the call matters.
 	 */
-    // TODO: Uncomment when RestoreClientMessageEvent is implemented
-    // private onRestoreClientMessageEvent(_event: IMessageEvent): void
-    // {
-    //     // In AS3 this calls HabboWebTools.closeWebPageAndRestoreClient()
-    //     // In web client this may not be applicable
-    // }
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onRestoreClientMessageEvent()
+    private onRestoreClientMessageEvent(_event: IMessageEvent): void
+    {
+        HabboWebTools.closeWebPageAndRestoreClient();
+    }
 
     /**
 	 * Handle room enter events (triggers moderation disclaimer)
