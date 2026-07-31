@@ -60,6 +60,7 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 
 // Events
 import {RoomSessionEvent} from '@habbo/session/events/RoomSessionEvent';
+import {RoomSessionErrorMessageEvent} from '@habbo/session/events/RoomSessionErrorMessageEvent';
 import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
@@ -73,6 +74,23 @@ import {RoomDesktop} from './RoomDesktop';
 import {RoomWidgetFactory} from './RoomWidgetFactory';
 
 const log = Logger.getLogger('habbo.ui.RoomUI');
+
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of the
+// listener table whose callback is roomSessionDialogEventHandler, in the source's own order.
+const ROOM_SESSION_DIALOG_EVENTS: readonly string[] = [
+    RoomSessionErrorMessageEvent.KICKED_BY_OWNER,
+    RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_HOTEL,
+    RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_FLAT,
+    RoomSessionErrorMessageEvent.MAX_NUMBER_OF_PETS,
+    RoomSessionErrorMessageEvent.MAX_NUMBER_OF_OWN_PETS,
+    RoomSessionErrorMessageEvent.NO_FREE_TILES_FOR_PET,
+    RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_PET,
+    RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL,
+    RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT,
+    RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED,
+    'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT',
+    'RSEME_BOT_NAME_NOT_ACCEPTED',
+];
 
 export class RoomUI extends Component implements IRoomUI, IUpdateReceiver 
 {
@@ -268,6 +286,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
                         mgr.sessionEvents.on(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
+
+                        // AS3: RoomUI.as's listener table routes all of these to
+                        // roomSessionDialogEventHandler.
+                        for(const type of ROOM_SESSION_DIALOG_EVENTS)
+                        {
+                            mgr.sessionEvents.on(type, this.roomSessionDialogEventHandler, this);
+                        }
                     }
                 },
                 true
@@ -619,6 +644,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this.roomSessionStateEventHandler, this);
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this.roomSessionStateEventHandler, this);
             this._roomSessionManager.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this.roomSessionStateEventHandler, this);
+
+            for(const type of ROOM_SESSION_DIALOG_EVENTS)
+            {
+                this._roomSessionManager.sessionEvents.off(type, this.roomSessionDialogEventHandler, this);
+            }
         }
 
         // Dispose all desktops
@@ -652,7 +682,63 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     /**
      * Handles room session lifecycle events.
      */
-    private roomSessionStateEventHandler(event: RoomSessionEvent): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::roomSessionDialogEventHandler()
+    // The room-session errors that surface as a plain alert. Without this the server's
+    // PetPlacingError (3195) and its bot/kick siblings reached RoomUsersHandler, were turned into a
+    // RoomSessionErrorMessageEvent, and then died with no subscriber — the placement simply failed
+    // in silence.
+    private roomSessionDialogEventHandler(event: RoomSessionEvent): void
+    {
+        let errorTitle = '${error.title}';
+        let errorMessage: string;
+
+        switch(event.type)
+        {
+            case RoomSessionErrorMessageEvent.MAX_NUMBER_OF_PETS:
+                errorMessage = '${room.error.max_pets}';
+                break;
+            case RoomSessionErrorMessageEvent.MAX_NUMBER_OF_OWN_PETS:
+                errorMessage = '${room.error.max_own_pets}';
+                break;
+            case RoomSessionErrorMessageEvent.KICKED_BY_OWNER:
+                errorMessage = '${room.error.kicked}';
+                errorTitle = '${generic.alert.title}';
+                break;
+            case RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_HOTEL:
+                errorMessage = '${room.error.pets.forbidden_in_hotel}';
+                break;
+            case RoomSessionErrorMessageEvent.PETS_FORBIDDEN_IN_FLAT:
+                errorMessage = '${room.error.pets.forbidden_in_flat}';
+                break;
+            case RoomSessionErrorMessageEvent.NO_FREE_TILES_FOR_PET:
+                errorMessage = '${room.error.pets.no_free_tiles}';
+                break;
+            case RoomSessionErrorMessageEvent.SELECTED_TILE_NOT_FREE_FOR_PET:
+                errorMessage = '${room.error.pets.selected_tile_not_free}';
+                break;
+            case RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_HOTEL:
+                errorMessage = '${room.error.bots.forbidden_in_hotel}';
+                break;
+            case RoomSessionErrorMessageEvent.BOTS_FORBIDDEN_IN_FLAT:
+                errorMessage = '${room.error.bots.forbidden_in_flat}';
+                break;
+            case RoomSessionErrorMessageEvent.BOT_LIMIT_REACHED:
+                errorMessage = '${room.error.max_bots}';
+                break;
+            case 'RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT':
+                errorMessage = '${room.error.bots.selected_tile_not_free}';
+                break;
+            case 'RSEME_BOT_NAME_NOT_ACCEPTED':
+                errorMessage = '${room.error.bots.name.not.accepted}';
+                break;
+            default:
+                return;
+        }
+
+        this._windowManager?.alert(errorTitle, errorMessage, 0, (dialog) => dialog.dispose());
+    }
+
+    private roomSessionStateEventHandler(event: RoomSessionEvent): void
     {
         switch(event.type) 
         {

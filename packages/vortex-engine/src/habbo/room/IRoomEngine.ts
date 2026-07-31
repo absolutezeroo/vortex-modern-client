@@ -169,7 +169,10 @@ export interface IRoomEngine extends IDisposable {
         category: number,
         type: number,
         extra: string,
-        stuffData?: unknown
+        stuffData?: unknown,
+        state?: number,
+        animFrame?: number,
+        posture?: string | null
     ): boolean;
 
     // AS3: sources/win63_version/habbo/room/class_34.as::cancelRoomObjectInsert()

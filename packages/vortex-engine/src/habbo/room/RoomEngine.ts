@@ -72,6 +72,8 @@ import type {IVector3d} from '@room/utils/IVector3d';
 import {Vector3d} from '@room/utils/Vector3d';
 import {RoomCamera} from './utils/RoomCamera';
 import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
+import {PetFigureData as AvatarPetFigureData, PetFigureData} from '@habbo/avatar/pets/PetFigureData';
+import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelController';
 import {SelectedRoomObjectData} from './utils/SelectedRoomObjectData';
 import {TileObjectMap} from './utils/TileObjectMap';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
@@ -96,10 +98,13 @@ import {RoomContentLoadedEvent} from '@room/events/RoomContentLoadedEvent';
 import {RoomObjectTileCursorUpdateMessage} from './messages/RoomObjectTileCursorUpdateMessage';
 import {MoveAvatarMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveAvatarMessageComposer';
 import {ClickFurniMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/ClickFurniMessageComposer';
-import {UseFurnitureMessageComposer} from '@habbo/communication/messages/outgoing/room/furniture/UseFurnitureMessageComposer';
+import {
+    UseFurnitureMessageComposer
+} from '@habbo/communication/messages/outgoing/room/furniture/UseFurnitureMessageComposer';
 import {
     PlaceObjectMessageComposer
 } from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
+import {PlacePetComposer} from '@habbo/communication/messages/outgoing/room/pet/PlacePetComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
     PickupObjectMessageComposer
@@ -115,7 +120,6 @@ import {RoomObjectRoomColorUpdateMessage} from './messages/RoomObjectRoomColorUp
 import {RoomEngineRoomColorEvent} from './events/RoomEngineRoomColorEvent';
 import {LegacyStuffData} from './object/data/LegacyStuffData';
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
-import {PetFigureData} from '@habbo/avatar/pets/PetFigureData';
 import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
 import {RoomObjectRoomPlaneVisibilityUpdateMessage} from './messages/RoomObjectRoomPlaneVisibilityUpdateMessage';
 import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoomPlanePropertyUpdateMessage';
@@ -137,6 +141,11 @@ import {
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 
 const log = Logger.getLogger('habbo.room.RoomEngine');
+
+// AS3: _SafeCls_1821.as::placeObject() compares the selected object's typeId against these literals
+// to pick the placement composer. They are the same numeric user types addObjectUser() switches on.
+const USER_TYPE_PET = 2;
+const USER_TYPE_RENTABLE_BOT = 4;
 
 // Room identifier prefix
 const ROOM_ID_PREFIX = 'room_';
@@ -667,12 +676,20 @@ export class RoomEngine extends Component implements IRoomEngine,
         category: number,
         type: number,
         extra: string,
-        stuffData: unknown = null
+        stuffData: unknown = null,
+        state: number = -1,
+        animFrame: number = -1,
+        posture: string | null = null
     ): boolean 
     {
-        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
+        // AS3's initializeRoomObjectInsert() has no category guard at all — it accepts whatever it is
+        // handed and lets handleObjectPlace() build the right kind of ghost. Wall items (category 20)
+        // are still refused here because finalizing one needs PlaceObjectMessageComposer's
+        // wallLocation encode, which no available AS3 tree contains the inverse of (see the class
+        // header). Floor furniture (10) and users/pets/bots (100) both have a real ghost path.
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
         {
-            log.warn(`Wall/avatar item placement is not implemented yet (category ${category})`);
+            log.warn('Wall item placement is not implemented yet (category 20)');
 
             return false;
         }
@@ -681,9 +698,9 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         this.setSelectedObjectData(
             this._activeRoomId, itemId, category, new Vector3d(-100, -100), new Vector3d(0),
-            'OBJECT_PLACE', type, extra, stuffData as IStuffData | null
+            'OBJECT_PLACE', type, extra, stuffData as IStuffData | null, state, animFrame, posture
         );
-        this.setObjectMoverIconSprite(type, category, false, extra);
+        this.setObjectMoverIconSprite(type, category, false, extra, posture);
         this.setObjectMoverIconSpriteVisible(false);
 
         return true;
@@ -4037,9 +4054,23 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this.setObjectAlphaMultiplier(object, 1);
             }
         }
-        else if(data.operation === 'OBJECT_PLACE' && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
+        else if(data.operation === 'OBJECT_PLACE')
         {
-            this.disposeObjectFurniture(roomId, data.id);
+            // AS3: _SafeCls_1821.as::resetSelectedObjectData() switches the ghost's disposal on its
+            // category — 10 furniture, 20 wall item, 100 user. Only the furniture arm was ported, so
+            // a pet ghost survived the placement and stayed in the room as a phantom.
+            switch(data.category)
+            {
+                case RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE:
+                    this.disposeObjectFurniture(roomId, data.id);
+                    break;
+                case RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL:
+                    this.disposeObjectWallItem(roomId, data.id);
+                    break;
+                case RoomObjectCategoryEnum.OBJECT_CATEGORY_USER:
+                    this.disposeObjectUser(roomId, data.id);
+                    break;
+            }
         }
 
         if(instanceData) instanceData.selectedObjectData = null;
@@ -4063,7 +4094,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // Passing it through crashes FurnitureMultiStateLogic.handleDataUpdateMessage(). The icon
     // preview doesn't need it anyway (matches the old getFurnitureIcon()-based icon, whose
     // getGenericRoomObjectThumbnail() path silently ignored this same stuffData).
-    private setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra: string | null = null): void 
+    private setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra: string | null = null, posture: string | null = null): void 
     {
         this.removeObjectMoverIconSprite();
 
@@ -4092,6 +4123,35 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(direct) 
         {
             this.getRoomObjectImage(roomId, id, category, new Vector3d(), 1, listener);
+
+            return;
+        }
+
+        // AS3: _SafeCls_90.as::setObjectMoverIconSprite() — the category-100 branch. `id` is the user
+        // type, not a furniture type id, so the furniture lookup below would fail (it logged
+        // "Could not find type for id: 2" and rendered nothing). A pet's icon comes from its figure,
+        // rendered at scale 64 facing 180.
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        {
+            if(id === USER_TYPE_PET && extra !== null)
+            {
+                const figureData = new AvatarPetFigureData(extra);
+
+                this.getPetImage(
+                    figureData.typeId, figureData.paletteId, figureData.color, new Vector3d(180), 64,
+                    listener, true, 0,
+                    figureData.customParts.map((part) => ({
+                        layerId: part.layerId, partId: part.partId, paletteId: part.paletteId
+                    })),
+                    posture
+                );
+
+                return;
+            }
+
+            // TODO(AS3): the non-pet category-100 icons (user, bot, rentable bot) go through
+            // getUserImage()/getBotImage() in AS3; neither is ported, so no icon is shown for them.
+            log.warn(`setObjectMoverIconSprite: no icon path for user type ${id}`);
 
             return;
         }
@@ -4335,16 +4395,43 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         let object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
-        if(object === null) 
+        const isUserCategory = data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER;
+
+        if(object === null)
         {
-            this.addObjectFurniture(
-                roomId, data.id, data.typeId, data.loc, data.dir, data.state,
-                data.stuffData, Number(data.instanceData), -1, 0, 0, '', false, true, -1
-            );
+            if(isUserCategory)
+            {
+                // AS3: _SafeCls_1821.as::handleObjectPlace() — the category-100 branch. The ghost is
+                // built at the origin facing 180; handleUserPlace() below moves it onto the hovered
+                // tile. `instanceData` carries the pet's figure string, `typeId` its user type (2 for
+                // a pet, 4 for a rentable bot).
+                this.addObjectUser(
+                    roomId, data.id, new Vector3d(), new Vector3d(180), 180, data.typeId, data.instanceData ?? ''
+                );
+
+                const ghost = this.getRoomObject(roomId, data.id, data.category);
+
+                if(ghost !== null && data.posture !== null)
+                {
+                    // AS3 sets the raw "figure_posture" key here — the same one AvatarLogic writes
+                    // for a live avatar. It is what makes a young monster plant preview at its
+                    // growth stage instead of full grown.
+                    (ghost.getModel() as IRoomObjectModelController | null)?.setString('figure_posture', data.posture);
+                }
+            }
+            else
+            {
+                this.addObjectFurniture(
+                    roomId, data.id, data.typeId, data.loc, data.dir, data.state,
+                    data.stuffData, Number(data.instanceData), -1, 0, 0, '', false, true, -1
+                );
+            }
 
             object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
-            if(object !== null) 
+            // AS3 only resolves allowed directions for category 10; a user ghost keeps the 180 it
+            // was created with.
+            if(object !== null && !isUserCategory)
             {
                 const allowedDirections = object.getModel()?.getNumberArray(RoomObjectVariableEnum.FURNITURE_ALLOWED_DIRECTIONS) ?? null;
 
@@ -4370,18 +4457,50 @@ export class RoomEngine extends Component implements IRoomEngine,
             this.setObjectMoverIconSpriteVisible(true);
         }
 
-        if(object !== null) 
+        if(object !== null)
         {
             const stackingMap = this.getFurniStackingHeightMap(roomId);
-            const success = this.handleFurnitureMove(object, data, tileX + 0.5, tileY + 0.5, stackingMap);
+            let success: boolean;
 
-            if(!success) 
+            if(isUserCategory)
             {
-                this.disposeObjectFurniture(roomId, data.id);
+                success = this.handleUserPlace(object, tileX + 0.5, tileY + 0.5, stackingMap);
+
+                if(!success) this.disposeObjectUser(roomId, data.id);
+            }
+            else
+            {
+                success = this.handleFurnitureMove(object, data, tileX + 0.5, tileY + 0.5, stackingMap);
+
+                if(!success) this.disposeObjectFurniture(roomId, data.id);
             }
 
             this.setObjectMoverIconSpriteVisible(!success);
         }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleUserPlace()
+    // AS3 reads tile validity and height off the room's LegacyWallGeometry
+    // (`roomEngine.getLegacyGeometry()`), which this port does not have. FurniStackingHeightMap
+    // carries the same two facts — RoomMessageHandler fills its isRoomTile/tileHeight straight from
+    // the HeightMap message — so it stands in for the geometry here.
+    private handleUserPlace(
+        object: IRoomObjectController,
+        x: number,
+        y: number,
+        stackingMap: FurniStackingHeightMap | null
+    ): boolean
+    {
+        const tileX = Math.floor(x);
+        const tileY = Math.floor(y);
+
+        if(stackingMap === null) return false;
+
+        if(!stackingMap.getIsRoomTile(tileX, tileY)) return false;
+
+        object.setLocation(new Vector3d(x, y, stackingMap.getTileHeight(tileX, tileY)));
+
+        return true;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::placeObject()
@@ -4409,13 +4528,37 @@ export class RoomEngine extends Component implements IRoomEngine,
             z = location.z;
             rotation = (Math.round(direction.x / 45) % 8 + 8) % 8;
 
-            // TODO(AS3): AS3's placeObject() (_SafeCls_1821.as:2444-2530) branches on
-            // data.category to pick a different composer (group-item types 2/4, stickie
-            // notes, and category===OBJECT_CATEGORY_WALL's wall-location-string variant) -
+            // AS3: _SafeCls_1821.as::placeObject() — the id is un-negated *before* the composer is
+            // built, not after. Pets and bots arrive here with a negative id (PetsModel passes
+            // `id * -1` so the ghost cannot collide with a real room object), so sending first would
+            // put a negative id on the wire.
+            let sentId = data.id;
+
+            if(sentId < 0 && data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) sentId *= -1;
+
+            // TODO(AS3): the stickie-note branch (PlacePostItMessageComposer) and
+            // category===OBJECT_CATEGORY_WALL's wall-location-string variant are still missing —
             // see PlaceObjectMessageComposer.ts's own TODO for the wall case specifically.
             if(this._connection !== null && this._objectPlacementSource === 'inventory')
             {
-                this._connection.send(new PlaceObjectMessageComposer(data.id, x, y, rotation));
+                if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_PET)
+                {
+                    // AS3 wraps both coordinates in `int(...)` at every one of these three send
+                    // sites. The ghost sits at the tile centre (tileX + 0.5), so sending the raw
+                    // location would put a fractional tile on the wire.
+                    this._connection.send(new PlacePetComposer(sentId, Math.trunc(x), Math.trunc(y)));
+                }
+                else if(data.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER && data.typeId === USER_TYPE_RENTABLE_BOT)
+                {
+                    // TODO(AS3): AS3 sends PlaceBotMessageComposer (_SafeCls_3369, header 1295) here.
+                    // No port equivalent exists yet, so the bot ghost places locally and the server
+                    // is never told — visible as a TODO rather than a silently wrong composer.
+                    log.warn('TODO(AS3): PlaceBotMessageComposer is not ported — bot placement not sent');
+                }
+                else
+                {
+                    this._connection.send(new PlaceObjectMessageComposer(sentId, Math.trunc(x), Math.trunc(y), rotation));
+                }
             }
         }
 
@@ -5413,10 +5556,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             // AS3: _SafeCls_1821.as::handleObjectPlace()/handleObjectMove() — real ghost-object
             // preview while an inventory item is pending placement or an already-placed object
-            // is being dragged (category 10 only, see initializeRoomObjectInsert()'s TODO(AS3)).
+            // is being dragged. AS3 gates on neither category nor tile-vs-wall event here; it hands
+            // the event to handleObjectPlace(), which branches internally (10 furniture, 20 wall,
+            // 100 user/pet/bot). Restricting this to category 10 is what kept the pet ghost from
+            // ever being built, even once initializeRoomObjectInsert() started accepting it.
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-            if(selectedObjectData !== null && selectedObjectData.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) 
+            if(selectedObjectData !== null && selectedObjectData.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL)
             {
                 if(selectedObjectData.operation === 'OBJECT_PLACE') 
                 {
