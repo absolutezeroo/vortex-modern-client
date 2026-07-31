@@ -705,12 +705,13 @@ export class HabboFriendList extends Component implements IHabboFriendList, IAva
     }
 
     /**
-     * TODO(AS3): AS3 returns `_sessionData.getGroupBadgeSmallImage(figure)`. This port's
-     * `SessionDataManager.getGroupBadgeSmallImage()` is itself an unimplemented stub that
-     * returns null, and its declared type (`HTMLImageElement`) is not what a window's
-     * `bitmap` takes (`ImageBitmap`), so there is nothing to hand back and no decode path
-     * to build one. Group entries in the friend list and the search results therefore show
-     * no badge. AS3: HabboFriendList.as::getSmallGroupBadgeBitmap().
+     * TODO(AS3): AS3 returns `_sessionData.getGroupBadgeSmallImage(figure)`. That accessor now
+     * works — BadgeImageManager loads and caches the image — but it hands back an
+     * `HTMLImageElement` and a window's `bitmap` takes an `ImageBitmap`. The only bridge is
+     * `createImageBitmap()`, which is async, and this getter is synchronous, so the badge
+     * cannot be returned from here. Closing it means repainting the row when the bitmap
+     * resolves (the shape `Product.initIcon()` already uses) rather than returning it inline.
+     * Group entries in the friend list and search results still show no badge.
      */
     // AS3: .../HabboFriendList.as::getSmallGroupBadgeBitmap()
     getSmallGroupBadgeBitmap(_badge: string): ImageBitmap | null

@@ -708,10 +708,11 @@ export class HabboFriendBarView extends AbstractView implements IHabboFriendBarV
     }
 
     /**
-     * TODO(AS3): AS3 returns `_sessionDataManager.getGroupBadgeImage(figure)`. That
-     * method is an unimplemented stub in this port and its declared type
-     * (`HTMLImageElement`) is not what a window's `bitmap` takes, so group slots show no
-     * badge. Same gap as `HabboFriendList.getSmallGroupBadgeBitmap()`.
+     * TODO(AS3): AS3 returns `_sessionDataManager.getGroupBadgeImage(figure)`. That method is
+     * implemented now (BadgeImageManager), but it returns an `HTMLImageElement` where a
+     * window's `bitmap` takes an `ImageBitmap`, and the conversion is async while this getter
+     * is not. Group slots still show no badge. Same remaining gap, and same fix, as
+     * `HabboFriendList.getSmallGroupBadgeBitmap()`.
      */
     // AS3: .../view/HabboFriendBarView.as::getGroupIconBitmap()
     getGroupIconBitmap(_badge: string): ImageBitmap | null

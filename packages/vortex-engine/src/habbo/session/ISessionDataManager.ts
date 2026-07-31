@@ -168,9 +168,9 @@ export interface ISessionDataManager extends IDisposable
 
     getBadgeSmallImage(badge: string): HTMLImageElement | null;
 
-    getBadgeImageAssetName(badge: string): string;
+    getBadgeImageAssetName(badge: string): string | null;
 
-    getBadgeImageSmallAssetName(badge: string): string;
+    getBadgeImageSmallAssetName(badge: string): string | null;
 
     requestBadgeImage(badge: string): HTMLImageElement | null;
 
@@ -183,9 +183,9 @@ export interface ISessionDataManager extends IDisposable
 
     getGroupBadgeSmallImage(badge: string): HTMLImageElement | null;
 
-    getGroupBadgeAssetName(badge: string): string;
+    getGroupBadgeAssetName(badge: string): string | null;
 
-    getGroupBadgeSmallAssetName(badge: string): string;
+    getGroupBadgeSmallAssetName(badge: string): string | null;
 
     // Furniture data
     getProductData(productCode: string): IProductData | null;

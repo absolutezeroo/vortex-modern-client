@@ -15,6 +15,7 @@ import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import {FurnitureDataParser} from './furniture/FurnitureDataParser';
 import {ProductDataParser} from './product/ProductDataParser';
 import {BadgeInfo} from './BadgeInfo';
+import {BadgeImageManager} from './BadgeImageManager';
 
 import type {IHabboLocalizationManager} from '../localization/IHabboLocalizationManager';
 import type {IHabboNotifications} from '../notifications/IHabboNotifications';
@@ -299,6 +300,9 @@ export class SessionDataManager extends Component implements ISessionDataManager
     private _blockedUsersManager: BlockedUsersManager | null = null;
 
     private _groupInfoManager: HabboGroupInfoManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::_badgeImageManager
+    private _badgeImageManager: BadgeImageManager | null = null;
 
     get groupInfoManager(): IHabboGroupInfoManager
     {
@@ -903,38 +907,48 @@ export class SessionDataManager extends Component implements ISessionDataManager
         }
     }
 
-    getBadgeImage(_badge: string): HTMLImageElement | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getBadgeImage()
+    getBadgeImage(badge: string): HTMLImageElement | null
     {
-        // TODO: Implement badge image loading
-        return null;
+        return this._badgeImageManager?.getBadgeImage(badge) ?? null;
     }
 
-    getBadgeSmallImage(_badge: string): HTMLImageElement | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getBadgeSmallImage()
+    getBadgeSmallImage(badge: string): HTMLImageElement | null
     {
-        // TODO: Implement small badge image loading
-        return null;
+        return this._badgeImageManager?.getSmallBadgeImage(badge) ?? null;
     }
 
-    getBadgeImageAssetName(badge: string): string
+    /**
+	 * Returns null while the image is still loading — these used to return the invented
+	 * `<badge>_b` / `<badge>_s` names, which matched no asset the manager ever registers.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getBadgeImageAssetName()
+    getBadgeImageAssetName(badge: string): string | null
     {
-        return `${badge}_b`;
+        return this._badgeImageManager?.getBadgeImageAssetName(badge) ?? null;
     }
 
-    getBadgeImageSmallAssetName(badge: string): string
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getBadgeImageSmallAssetName()
+    getBadgeImageSmallAssetName(badge: string): string | null
     {
-        return `${badge}_s`;
+        return this._badgeImageManager?.getSmallScaleBadgeAssetName(badge) ?? null;
     }
 
-    requestBadgeImage(_badge: string): HTMLImageElement | null
+    /**
+	 * Same lookup as getBadgeImage() but without the placeholder fallback — callers use this to
+	 * ask for a badge they intend to draw themselves once BADGE_IMAGE_READY fires.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::requestBadgeImage()
+    requestBadgeImage(badge: string): HTMLImageElement | null
     {
-        // TODO: Implement badge image request
-        return null;
+        return this._badgeImageManager?.getBadgeImage(badge, BadgeImageManager.TYPE_NORMAL, false) ?? null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getBadgeImageWithInfo()
     getBadgeImageWithInfo(badge: string): BadgeInfo
     {
-        const image = this.getBadgeImage(badge);
-        return new BadgeInfo(image, image === null);
+        return this._badgeImageManager?.getBadgeImageWithInfo(badge) ?? new BadgeInfo(null, true);
     }
 
     getGroupBadgeId(_groupId: number): string
@@ -942,26 +956,32 @@ export class SessionDataManager extends Component implements ISessionDataManager
         return this._groupInfoManager?.getBadgeId(_groupId) ?? '';
     }
 
-    getGroupBadgeImage(_badge: string): HTMLImageElement | null
+    /**
+	 * Group badges take the same four accessors as normal ones, differing only by the type
+	 * passed down — the manager picks a different config URL and deduplicates the request.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getGroupBadgeImage()
+    getGroupBadgeImage(badge: string): HTMLImageElement | null
     {
-        // TODO: Implement group badge image loading
-        return null;
+        return this._badgeImageManager?.getBadgeImage(badge, BadgeImageManager.TYPE_GROUP) ?? null;
     }
 
-    getGroupBadgeSmallImage(_badge: string): HTMLImageElement | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getGroupBadgeSmallImage()
+    getGroupBadgeSmallImage(badge: string): HTMLImageElement | null
     {
-        // TODO: Implement small group badge image loading
-        return null;
+        return this._badgeImageManager?.getSmallBadgeImage(badge, BadgeImageManager.TYPE_GROUP) ?? null;
     }
 
-    getGroupBadgeAssetName(badge: string): string
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getGroupBadgeAssetName()
+    getGroupBadgeAssetName(badge: string): string | null
     {
-        return `group_badge_${badge}`;
+        return this._badgeImageManager?.getBadgeImageAssetName(badge, BadgeImageManager.TYPE_GROUP) ?? null;
     }
 
-    getGroupBadgeSmallAssetName(badge: string): string
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getGroupBadgeSmallAssetName()
+    getGroupBadgeSmallAssetName(badge: string): string | null
     {
-        return `group_badge_${badge}_s`;
+        return this._badgeImageManager?.getSmallScaleBadgeAssetName(badge, BadgeImageManager.TYPE_GROUP) ?? null;
     }
 
     /**
@@ -1282,12 +1302,14 @@ export class SessionDataManager extends Component implements ISessionDataManager
         this._ignoredUsersManager?.dispose();
         this._blockedUsersManager?.dispose();
         this._groupInfoManager?.dispose();
+        this._badgeImageManager?.dispose();
 
         this._userDataManager = null;
         this._perkManager = null;
         this._ignoredUsersManager = null;
         this._blockedUsersManager = null;
         this._groupInfoManager = null;
+        this._badgeImageManager = null;
         this._roomSessionManager = null;
         this._windowManager = null;
         this._localization = null;
@@ -1336,6 +1358,21 @@ export class SessionDataManager extends Component implements ISessionDataManager
 
         this.initFurnitureData();
         this.initProductData();
+        this.initBadgeImageManager();
+        // TODO(AS3): AS3 also calls initFurniIconImageManager() here — FurniIconImageManager
+        // (habbo/session/FurniIconImageManager.as) has no port equivalent yet.
+    }
+
+    /**
+	 * Idempotent, like AS3's — onConfigurationComplete() can fire more than once and the badge
+	 * cache must survive it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::initBadgeImageManager()
+    private initBadgeImageManager(): void
+    {
+        if(this._badgeImageManager !== null) return;
+
+        this._badgeImageManager = new BadgeImageManager(this.events, this);
     }
 
     protected override initComponent(): void
